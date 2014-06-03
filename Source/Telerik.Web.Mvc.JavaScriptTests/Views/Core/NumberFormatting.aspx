@@ -10,6 +10,13 @@
     Response.Write(culture);
     Response.Write("';</script>");
 %>
+
+<ul>
+    <li><%= .5.ToString("#,###.00") %></li>
+    <li><%= 0.5.ToString("#,###.00") %></li>
+    <li><%= 0.ToString("#,###.00") %></li>
+</ul>
+
     <h2>
         NumberFormatting</h2>
 
@@ -167,6 +174,31 @@
         function test_custom_number_formatting_with_one_zero() {
             var number = 123.12;
             assertEquals(culture, '<%= (123.12).ToString("0$") %>', $t.textbox.formatNumber(number, "0$"));
+        }
+
+        function test_custom_number_format_with_less_digits_than_specified_in_format() {
+            var value = $t.textbox.formatNumber(666, "#,###.00");
+            assertEquals(culture, '<%= 666.ToString("#,###.00") %>', value);
+        }
+
+        function test_custom_number_format_with_less_digits_than_specified_in_format1() {
+            var value = $t.textbox.formatNumber(666, "#,##,###.00");
+            assertEquals(culture, '<%= 666.ToString("#,##,###.00") %>', value);
+        }
+
+        function test_custom_number_format_with_less_digits_than_specified_in_format_which_has_more_than_two_group_separators() {
+            var value = $t.textbox.formatNumber(6666, "#,##,###.00");
+            assertEquals(culture, '<%= 6666.ToString("#,##,###.00") %>', value);
+        }
+
+        function test_custom_number_format_exact_digits_count_as_format() {
+            var value = $t.textbox.formatNumber(6666666, "#,###,###.00");
+            assertEquals(culture, '<%= 6666666.ToString("#,###,###.00") %>', value);
+        }
+
+        function test_custom_number_format_with_less_digits_than_specified_in_format_less_than_zero() {
+            var value = $t.textbox.formatNumber(.5, "#,###.00");
+            assertEquals(culture, '<%= .5.ToString("#,###.00") %>', value);
         }
     </script>
 

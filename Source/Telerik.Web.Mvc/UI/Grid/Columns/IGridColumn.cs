@@ -5,7 +5,6 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-
     using System.Collections.Generic;
 
     public interface IGridColumn
@@ -23,6 +22,18 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
+        HtmlTemplate HeaderTemplate
+        {
+            get;
+            set;
+        }
+
+        HtmlTemplate FooterTemplate
+        {
+            get;
+            set;
+        }
+
         bool Encoded
         {
             get;
@@ -33,7 +44,12 @@ namespace Telerik.Web.Mvc.UI
         { 
             get; 
         }
-        
+
+        IDictionary<string, object> FooterHtmlAttributes
+        {
+            get;
+        }
+
         bool Hidden 
         { 
             get; 

@@ -10,7 +10,7 @@
                    {
                        item.Text = navigationData.Text;
                        item.ImageUrl = navigationData.ImageUrl;
-                       // item.Url = navigationData.NavigateUrl;
+                       item.Url = navigationData.NavigateUrl;
                    })
            .Render();
     %>

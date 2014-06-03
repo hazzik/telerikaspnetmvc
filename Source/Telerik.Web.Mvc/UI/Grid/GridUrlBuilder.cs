@@ -25,13 +25,8 @@ namespace Telerik.Web.Mvc.UI
             
             routeValues[grid.Prefix(key)] = value;
 
-            return Url(routeValues);
-        }
-
-        public string Url(RouteValueDictionary routeValues)
-        {
-            return new UrlHelper(grid.ViewContext.RequestContext).RouteUrl(routeValues);
-        }
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, routeValues);
+        }      
 
         public string Url(INavigatable navigatable, Action<RouteValueDictionary> configurator)
         {

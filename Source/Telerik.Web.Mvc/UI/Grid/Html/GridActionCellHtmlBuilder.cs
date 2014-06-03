@@ -19,7 +19,7 @@ namespace Telerik.Web.Mvc.UI.Html
             var td = CreateCell();
             var commands = ((GridActionColumn<T>)Cell.Column).Commands;
 
-#if MVC2
+#if MVC2 || MVC3
             if (Cell.Grid.Editing.Mode != GridEditMode.PopUp)
             {
                 if (Cell.InEditMode)

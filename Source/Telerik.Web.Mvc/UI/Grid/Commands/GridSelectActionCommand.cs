@@ -25,7 +25,6 @@ namespace Telerik.Web.Mvc.UI
 
         public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
         {
-            #if MVC2
             Grid<T> grid = context.Grid;
             var urlBuilder = new GridUrlBuilder(grid);
 
@@ -42,7 +41,6 @@ namespace Telerik.Web.Mvc.UI
                 }))
                 .Html(this.ButtonContent(grid.Localization.Select, "t-select"))
                 .AppendTo(parent);
-            #endif
         }
     }
 }

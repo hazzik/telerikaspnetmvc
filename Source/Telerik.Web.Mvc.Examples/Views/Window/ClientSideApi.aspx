@@ -5,8 +5,8 @@
             .Name("Window")
             .LoadContentFrom("AjaxView", "Window")
             .Buttons(buttons => buttons.Refresh().Maximize().Close())
-		    .Width(450)    
-            .Draggable(true) 
+		    .Width(450)     
+            .Draggable(true)
 		%>
 		
 		<% using (Html.Configurator("Client API").Begin()) { %>
@@ -52,6 +52,12 @@
 
 	            window.restore();
 	        }
+
+            function centerWindow() {
+	            var window = $("#Window").data("tWindow");
+
+	            window.center();
+            }
 	    </script>
 		
 	</asp:content>

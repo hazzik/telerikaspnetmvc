@@ -10,12 +10,17 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Linq;
     using System.Reflection;
 
-    public class PropertyCache : CacheBase<RuntimeTypeHandle, IEnumerable<PropertyInfo>>, IPropertyCache
+    internal class PropertyCache : IPropertyCache
     {
+        private readonly ICache cache;
+
+        public PropertyCache(ICache cache)
+        {
+            this.cache = cache;
+        }
+
         public IEnumerable<PropertyInfo> GetProperties(Type type)
         {
-            Guard.IsNotNull(type, "type");
-
             Func<PropertyInfo, bool> canInclude = property => CreateMatchingGet(property)() && CreateMatchingSet(property)();
 
             return GetInternalProperties(type).Where(canInclude);
@@ -23,8 +28,6 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         public IEnumerable<PropertyInfo> GetReadOnlyProperties(Type type)
         {
-            Guard.IsNotNull(type, "type");
-
             Func<PropertyInfo, bool> canInclude = property => CreateMatchingGet(property)();
 
             return GetInternalProperties(type).Where(canInclude);
@@ -32,8 +35,6 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         public IEnumerable<PropertyInfo> GetWriteOnlyProperties(Type type)
         {
-            Guard.IsNotNull(type, "type");
-
             Func<PropertyInfo, bool> canInclude = property => CreateMatchingSet(property)();
 
             return GetInternalProperties(type).Where(canInclude);
@@ -43,7 +44,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         {
             Func<PropertyInfo, bool> canInclude = property => CreateMatchingGet(property)() || CreateMatchingSet(property)();
 
-            return GetOrCreate(type.TypeHandle, () => type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(canInclude));
+            return cache.Get(type.AssemblyQualifiedName, () => type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(canInclude));
         }
 
         private static Func<bool> CreateMatchingGet(PropertyInfo property)

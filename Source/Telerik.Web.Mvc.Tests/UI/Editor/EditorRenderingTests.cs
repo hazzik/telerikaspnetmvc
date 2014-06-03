@@ -1,10 +1,9 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using Moq;
-    using System.IO;
     using System.Collections.Generic;
+    using System.IO;
     using Xunit;
-    using Telerik.Web.Mvc.Infrastructure;
 
     public class EditorRenderingTests
     {
@@ -15,14 +14,6 @@
 
         public EditorRenderingTests()
         {
-            var virtualPathProvider = new Mock<IVirtualPathProvider>();
-            virtualPathProvider.Setup(vpp => vpp.FileExists(It.IsAny<string>())).Returns(false);
-
-            var serviceLocator = new Mock<IServiceLocator>();
-            serviceLocator.Setup(sl => sl.Resolve<IVirtualPathProvider>()).Returns(virtualPathProvider.Object);
-
-            ServiceLocator.SetCurrent(() => serviceLocator.Object);
-
             rootTag = new Mock<IHtmlNode>();
             rootTag.SetupGet(t => t.Children).Returns(() => new List<IHtmlNode>());
 

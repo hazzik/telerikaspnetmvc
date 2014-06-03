@@ -22,7 +22,7 @@
                       } %>
                    />
                 <%
-            }).Title("Check").Width(50).HtmlAttributes(new { style = "text-align:center" });
+            }).Title("").Width(36).HtmlAttributes(new { style = "text-align:center" });
             columns.Bound(o => o.OrderID).Width(100);
             columns.Bound(o => o.Customer.ContactName).Width(200);
             columns.Bound(o => o.ShipAddress);

@@ -32,7 +32,13 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             {
                 return new XmlNodeChildElementAccessExpressionBuilder(memberName);
             }
-
+            
+#if MVC3
+            if (elementType == typeof(object) || elementType.IsCompatibleWith(typeof(System.Dynamic.IDynamicMetaObjectProvider)))
+            {
+                return new DynamicPropertyAccessExpressionBuilder(elementType, memberName);
+            }
+#endif      
             return new PropertyAccessExpressionBuilder(elementType, memberName);
         }
 

@@ -40,6 +40,8 @@ namespace Telerik.Web.Mvc.UI
             Grid = grid;
             Settings = new GridColumnSettings();
             Visible = true;
+            HeaderTemplate = new HtmlTemplate();
+            FooterTemplate = new HtmlTemplate();
         }
 
         /// <summary>
@@ -75,6 +77,24 @@ namespace Telerik.Web.Mvc.UI
         public virtual Action<T> Template
         {
             get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets the header template of the column.
+        /// </summary>
+        public HtmlTemplate HeaderTemplate
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets the footer template of the column.
+        /// </summary>
+        public HtmlTemplate FooterTemplate
+        {
+            get; 
             set;
         }
 
@@ -127,7 +147,6 @@ namespace Telerik.Web.Mvc.UI
                 Settings.ClientTemplate = value;
             }
         }
-
         /// <summary>
         /// Gets or sets a value indicating whether this column is hidden.
         /// </summary>
@@ -169,6 +188,18 @@ namespace Telerik.Web.Mvc.UI
             get
             {
                 return Settings.HeaderHtmlAttributes;
+            }
+        }
+
+        /// <summary>
+        /// Gets the footer HTML attributes.
+        /// </summary>
+        /// <value>The footer HTML attributes.</value>
+        public IDictionary<string, object> FooterHtmlAttributes
+        {
+            get
+            {
+                return Settings.FooterHtmlAttributes;
             }
         }
 

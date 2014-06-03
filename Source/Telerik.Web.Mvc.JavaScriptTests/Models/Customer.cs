@@ -26,6 +26,30 @@
 
         [UIHint("int")]
         public int IntegerValue { get; set; }
+
+        [UIHint("Address")]
+        public Address Address
+        {
+            get;
+            set;
+        }
+
+        public Customer()
+        {
+            Address = new Address
+            {
+                Street = "foo"
+            };
+        }
+    }
+
+    public class Address
+    {
+        public string Street
+        {
+            get;
+            set;
+        }
     }
 
     public enum Gender

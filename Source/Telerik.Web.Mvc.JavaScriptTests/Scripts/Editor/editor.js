@@ -10,17 +10,22 @@ function createContentElement($textarea, stylesheets) {
     // <img>\s+\w+ creates invalid nodes after cut in IE
     var html = $textarea.val().replace(/(<\/?img[^>]*>)[\r\n\v\f\t ]+/ig, '$1');
 
+    if (!html.length && $.browser.mozilla)
+        html = '<br _moz_dirty="true" />';
+
     document.designMode = 'On';
     document.open();
     document.write(
         new $t.stringBuilder()
-            .cat('<!DOCTYPE><html><head xmlns="http://www.w3.org/1999/xhtml">')
+            .cat('<!DOCTYPE html><html><head>')
             .cat('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />')
             .cat('<style type="text/css">')
                 .cat('html,body{padding:0;margin:0;font-family:Verdana,Geneva,sans-serif;background:#fff;}')
-                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5em;padding-top:1px;margin-top:-1px;}')
+                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5em;padding-top:1px;margin-top:-1px;')
+                    .catIf('direction:rtl;', $textarea.closest('.t-rtl').length)
+                .cat('}')
                 .cat('h1{font-size:2em;margin:.67em 0}h2{font-size:1.5em}h3{font-size:1.16em}h4{font-size:1em}h5{font-size:.83em}h6{font-size:.7em}')
-                .cat('p{margin:1em 0;padding:0 .2em}.t-marker{display:none;}')
+                .cat('p{margin:1em 0;padding:0 .2em}.t-marker{display:none;}.t-paste-container{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}')
                 .cat('ul,ol{padding-left:2.5em}')
                 .cat('a{color:#00a}')
                 .cat('code{font-size:1.23em}')
@@ -138,15 +143,25 @@ $t.editor = function (element, options) {
         }))
         .find(toolbarItems)
             .each(function () {
-                var toolName = toolFromClassName(this);
-                var tool = self.tools[toolName];
+                var toolName = toolFromClassName(this),
+                    tool = self.tools[toolName],
+                    description = self.localization[toolName],
+                    $this = $(this);
 
                 if (!tool)
                     return;
+                    
+                if (toolName == 'fontSize' || toolName == 'fontName') {
+                    var inheritText = self.localization[toolName + 'Inherit'] || localization[toolName + 'Inherit']
+                    self[toolName][0].Text = inheritText;
+                    $this.find('input').val(inheritText).end()
+                         .find('span.t-input').text(inheritText).end();
+                }
 
-                var description = appendShortcutSequence(self.localization[toolName], tool);
-
-                tool.init($(this), {title:description, editor:self});
+                tool.init($this, {
+                    title: appendShortcutSequence(description, tool),
+                    editor: self
+                });
 
             }).end()
         .bind('selectionChange', function() {
@@ -163,30 +178,44 @@ $t.editor = function (element, options) {
                 });
         });
 
+    $(document).bind('mousedown', function() {
+                if (self.keyboard.typingInProgress())
+                    self.keyboard.endTyping(true);
+               })
+               .bind('DOMNodeInserted', function(e) {
+                    if ($.contains(e.target, self.element) || self.element == e.target) {
+                        $(self.element).find('iframe').remove();
+                        self.window = createContentElement($(self.textarea), self.stylesheets);
+                        self.document = self.window.contentDocument || self.window.document;
+                        self.body = self.document.body;
+                    }
+               });
+
     $(this.document)
-        .bind('keyup', function (e) {
-            var selectionCodes = [8, 9, 13, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+        .bind({
+            keydown: function (e) {
+                var toolName = self.keyboard.toolFromShortcut(self.tools, e);
+                if (toolName) {
+                    e.preventDefault();
+                    self.exec(toolName);
+                    return false;
+                }
 
-            if ($.inArray(e.keyCode, selectionCodes) > -1)
+                self.keyboard.clearTimeout();
+
+                self.keyboard.keydown(e);
+            },
+            keyup: function (e) {
+                var selectionCodes = [8, 9, 13, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+
+                if ($.inArray(e.keyCode, selectionCodes) > -1)
+                    selectionChanged(self);
+
+                self.keyboard.keyup(e);
+            },
+            mouseup: function () {
                 selectionChanged(self);
-        })
-        .keydown(function (e) {
-            var toolName = self.keyboard.toolFromShortcut(self.tools, e);
-            if (toolName) {
-                e.preventDefault();
-                self.exec(toolName);
-                return false;
             }
-
-            self.keyboard.clearTimeout();
-
-            self.keyboard.keydown(e);
-        })
-        .keyup(function (e) {
-            self.keyboard.keyup(e);
-        })
-        .mouseup(function () {
-            selectionChanged(self);
         });
     
     $(this.body)
@@ -234,7 +263,8 @@ $.extend($t.editor, {
 // public api
 $t.editor.prototype = {
     value: function (html) {
-        if (html === undefined) return domToXhtml(this.body);
+        var body = this.body;
+        if (html === undefined) return domToXhtml(body);
 
         // Some browsers do not allow setting CDATA sections through innerHTML so we encode them as comments
         html = html.replace(/<!\[CDATA\[(.*)?\]\]>/g, '<!--[CDATA[$1]]-->');
@@ -246,25 +276,29 @@ $t.editor.prototype = {
             // Internet Explorer removes comments from the beginning of the html
             html = '<br/>' + html;
 
+            var originalSrc = 'originalsrc',
+                originalHref = 'originalhref';
+
             // IE < 8 makes href and src attributes absolute
-            html = html.replace(/href\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, 'originalhref="$1"');
-            html = html.replace(/src\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, 'originalsrc="$1"');
+            html = html.replace(/href\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, originalHref + '="$1"');
+            html = html.replace(/src\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, originalSrc + '="$1"');
 
-            this.body.innerHTML = html;
-            dom.remove(this.body.firstChild);
+            body.innerHTML = html;
+            dom.remove(body.firstChild);
 
-            $('script,link,img,a', this.body).each(function () {
-                if (this['originalhref']) {
-                    this.setAttribute('href', this['originalhref']);
-                    this.removeAttribute('originalhref');
+            $(body).find('telerik\\:script,script,link,img,a').each(function () {
+                var node = this;
+                if (node[originalHref]) {
+                    node.setAttribute('href', node[originalHref]);
+                    node.removeAttribute(originalHref);
                 }
-                if (this['originalsrc']) {
-                    this.setAttribute('src', this['originalsrc']);
-                    this.removeAttribute('originalsrc');
+                if (node[originalSrc]) {
+                    node.setAttribute('src', node[originalSrc]);
+                    node.removeAttribute(originalSrc);
                 }
-            })
+            });
         } else {
-            this.body.innerHTML = html;
+            body.innerHTML = html;
         }
 
         this.update();
@@ -439,29 +473,33 @@ function FormatTool(options) {
 
 var emptyFinder = function () { return { isFormatted: function () { return false } } };
 
+var localization = {
+    bold: 'Bold',
+    italic: 'Italic',
+    underline: 'Underline',
+    strikethrough: 'Strikethrough',
+    justifyCenter: 'Center text',
+    justifyLeft: 'Align text left',
+    justifyRight: 'Align text right',
+    justifyFull: 'Justify',
+    insertUnorderedList: 'Insert unordered list',
+    insertOrderedList: 'Insert ordered list',
+    indent: 'Indent',
+    outdent: 'Outdent',
+    createLink: 'Insert hyperlink',
+    unlink: 'Remove hyperlink',
+    insertImage: 'Insert image',
+    insertHtml: 'Insert HTML',
+    fontName: 'Select font family',
+    fontNameInherit: '(inherited font)',
+    fontSize: 'Select font size',
+    fontSizeInherit: '(inherited size)',
+    formatBlock: 'Format',
+    style: 'Styles'
+};
+
 $.fn.tEditor.defaults = {
-    localization: {
-        bold: 'Bold',
-        italic: 'Italic',
-        underline: 'Underline',
-        strikethrough: 'Strikethrough',
-        justifyCenter: 'Center text',
-        justifyLeft: 'Align text left',
-        justifyRight: 'Align text right',
-        justifyFull: 'Justify',
-        insertUnorderedList: 'Insert unordered list',
-        insertOrderedList: 'Insert ordered list',
-        indent: 'Indent',
-        outdent: 'Outdent',
-        createLink: 'Insert hyperlink',
-        unlink: 'Remove hyperlink',
-        insertImage: 'Insert image',
-        insertHtml: 'Insert HTML',
-        fontName: 'Select font family',
-        fontSize: 'Select font size',
-        formatBlock: 'Format',
-        style: 'Styles'
-    },
+    localization: localization,
     formats: formats,
     encoded: true,
     stylesheets: [],
@@ -470,7 +508,7 @@ $.fn.tEditor.defaults = {
         effects: {list:[{name:'toggle'}]}
     },
     fontName: [
-        { Text: 'inherit',  Value: 'inherit' },
+        { Text: localization.fontNameInherit,  Value: 'inherit' },
         { Text: 'Arial', Value: "Arial,Helvetica,sans-serif" },
         { Text: 'Courier New', Value: "'Courier New',Courier,monospace" },
         { Text: 'Georgia', Value: "Georgia,serif" },
@@ -482,7 +520,7 @@ $.fn.tEditor.defaults = {
         { Text: 'Verdana', Value: "Verdana,Geneva,sans-serif" }
     ],
     fontSize: [
-        { Text: 'inherit',  Value: 'inherit' },
+        { Text: localization.fontSizeInherit,  Value: 'inherit' },
         { Text: '1 (8pt)',  Value: 'xx-small' },
         { Text: '2 (10pt)', Value: 'x-small' },
         { Text: '3 (12pt)', Value: 'small' },

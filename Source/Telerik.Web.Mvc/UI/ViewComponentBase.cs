@@ -7,12 +7,13 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Web.Mvc;
     using System.Web.Routing;
     using System.Web.UI;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Resources;
 
     /// <summary>
     /// View component base class.
@@ -50,13 +51,11 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The name.</value>
         public string Name
         {
-            [DebuggerStepThrough]
             get
             {
                 return name;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -74,7 +73,6 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The id.</value>
         public string Id
         {
-            [DebuggerStepThrough]
             get
             {
                 // Return from htmlattributes if user has specified
@@ -111,13 +109,11 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The script files path.</value>
         public string ScriptFilesPath
         {
-            [DebuggerStepThrough]
             get
             {
                 return scriptFilesLocation;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotVirtualPath(value, "value");
@@ -190,15 +186,14 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        /// <summary>
-        /// Ensures the required settings.
-        /// </summary>
-        protected virtual void EnsureRequired()
+        public virtual void VerifySettings()
         {
             if (string.IsNullOrEmpty(Name))
             {
                 throw new InvalidOperationException(Resources.TextResource.NameCannotBeBlank);
             }
+
+            this.ThrowIfClassIsPresent("t-" + GetType().GetTypeName().ToLower() + "-rtl", TextResource.Rtl);
         }
 
         public string ToHtmlString()
@@ -215,7 +210,7 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         protected virtual void WriteHtml(HtmlTextWriter writer)
         {
-            EnsureRequired();
+            VerifySettings();
 
             if (IsSelfInitialized)
             {

@@ -156,6 +156,27 @@
             assertEquals(item.Value, result);
         }
 
+        function test_value_method_should_select_item_depending_on_its_text_if_item_value_is_not_set() {
+            var combo = $('#ComboWithNoValues').data('tComboBox');
+
+            combo.value('Item1');
+
+            assertEquals(null, combo.data[0].Value)
+            assertEquals(combo.data[0].Text, combo.text())
+            assertEquals(combo.data[0].Text, combo.value())
+        }
+
+        function test_value_method_should_not_select_item_and_set_passed_argument_to_hidden_and_visible_textbox() {
+            var combo = $('#ComboWithNoValues').data('tComboBox');
+
+            combo.value('3');
+
+            combo.value('Illegal');
+
+            assertEquals('Illegal', combo.text())
+            assertEquals('Illegal', combo.value())
+        }
+
         function test_open_method_should_show_hidden_items_if_there_is_selected_item() {
 
             var combo = getComboBox();
@@ -340,7 +361,118 @@
             combo.fill = oldFill;
         }
 
+        function test_fill_method_should_preserve_current_status_when_call_dataBind() {
+            
+            var preserveStatus = false;
+            var combo = getComboBox('#ComboBox3');
+            combo.dataBind([{ Text: 'Item1', Value: '1' },
+                            { Text: 'Item1', Value: '2' },
+                            { Text: 'Item1', Value: '3' },
+                            { Text: 'Item1', Value: '4' },
+                            { Text: 'Item1', Value: '5' }]);
+            
+            var oldDataBind = combo.dataBind;
+            combo.dataBind = function (data, combostatus) { preserveStatus = combostatus; combo.dropDown.dataBind(data); };
+            combo.dropDown.$items = null;
+            combo.fill();
+            
+            assertTrue('status is not preserved', preserveStatus);
+            combo.dataBind = oldDataBind;
+        }
+
+        function test_dataBind_method_should_preserve_selectedItem_depending_on_Selected_property_even_selectedIndex_is_present() {
+            var combo = getComboBox('#ComboBox3');
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item1', Value: '2', Selected: false },
+                        { Text: 'Item1', Value: '3', Selected: false },
+                        { Text: 'Item1', Value: '4', Selected: false },
+                        { Text: 'Item1', Value: '5', Selected: true}];
+            combo.index = 1;
+
+            combo.dataBind(data);
+
+            assertEquals(4, combo.index);
+        }
+
+        function test_dataBind_method_should_override_selectedIndex_there_is_no_Selected_true() {
+            var combo = getComboBox('#ComboBox3');
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item1', Value: '2', Selected: false },
+                        { Text: 'Item1', Value: '3', Selected: false },
+                        { Text: 'Item1', Value: '4', Selected: false },
+                        { Text: 'Item1', Value: '5', Selected: false}];
+
+            combo.index = 1;
+
+            combo.dataBind(data);
+
+            assertEquals(1, combo.index);
+        }
+
+        function test_dataBind_method_should_override_selectedIndex_there_is_no_Selected_defined() {
+            var combo = getComboBox('#ComboBox3');
+            var data = [{ Text: 'Item1', Value: '1' },
+                        { Text: 'Item1', Value: '2' },
+                        { Text: 'Item1', Value: '3' },
+                        { Text: 'Item1', Value: '4' },
+                        { Text: 'Item1', Value: '5'}];
+
+            combo.index = 2;
+
+            combo.dataBind(data);
+
+            assertEquals(2, combo.index);
+        }
+
+        function test_fill_method_should_call_component_dataBind_method() {
+            var combo = getComboBox('#ComboBox3');
+            combo.data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item1', Value: '2', Selected: false },
+                        { Text: 'Item1', Value: '3', Selected: true },
+                        { Text: 'Item1', Value: '4', Selected: false },
+                        { Text: 'Item1', Value: '5', Selected: false}];
+
+            combo.index = 1;
+            combo.dropDown.$items = null;
+            combo.fill();
+
+            assertEquals(2, combo.index);
+            assertTrue(combo.dropDown.$items.eq(2).hasClass('t-state-selected'));
+        }
+
+        function test_enable_method_should_enable_comboBox() {
+            var combo = getComboBox('#ComboBox3');
+
+            combo.enable();
+            combo.disable();
+
+            assertTrue($('#ComboBox3').hasClass('t-state-disabled'));
+            assertEquals(true, $('#ComboBox3').find('.t-input').attr('disabled'));
+        }
+
+        function test_enable_method_should_disable_comboBox() {
+            var combo = getComboBox('#ComboBox3');
+
+            combo.disable();
+            combo.enable();
+
+            assertFalse($('#ComboBox3').hasClass('t-state-disabled'));
+            assertFalse($('#ComboBox3').find('.t-input').attr('disabled'));
+        }
+
 </script>
+
+    <%= Html.Telerik().ComboBox()
+            .Name("ComboWithNoValues")
+            .Items(items =>
+            {
+                items.Add().Text("Item1");
+                items.Add().Text("Item2").Value("2");
+                items.Add().Text("Item3");
+                items.Add().Text("Item4");
+                items.Add().Text("Item5").Value("5");
+            })
+    %>
 
     <%= Html.Telerik().ComboBox()
             .Name("ComboBox")
@@ -367,6 +499,10 @@
                 items.Add().Text("Item19").Value("19");
                 items.Add().Text("тtem20").Value("20");
             })
+    %>
+
+    <%= Html.Telerik().ComboBox()
+            .Name("ComboBox3")
     %>
 
         <%= Html.Telerik().ComboBox()

@@ -1,20 +1,23 @@
 namespace Telerik.Web.Mvc.Examples
 {
+    using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Data.Linq;
     using System.Linq;
     using System.Web.Mvc;
-
     using Models;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public partial class GridController : Controller
     {
         private static int count;
 
+        [SourceCodeFile("Binding Helper", "~/Extensions/CustomBindingExtensions.cs")]
         public ActionResult CustomBinding()
         {
-            IEnumerable<Order> data = GetData(new GridCommand());
+            IEnumerable data = GetData(new GridCommand());
 
             // Required for pager configuration
             ViewData["total"] = GetCount();
@@ -25,7 +28,7 @@ namespace Telerik.Web.Mvc.Examples
         [GridAction(EnableCustomBinding = true)]
         public ActionResult _CustomBinding(GridCommand command)
         {
-            IEnumerable<Order> data = GetData(command);
+            IEnumerable data = GetData(command);
 
             return View(new GridModel
                             {
@@ -34,7 +37,7 @@ namespace Telerik.Web.Mvc.Examples
                             });
         }
 
-        private static IEnumerable<Order> GetData(GridCommand command)
+        private static IEnumerable GetData(GridCommand command)
         {
             DataLoadOptions loadOptions = new DataLoadOptions();
             loadOptions.LoadWith<Order>(o => o.Customer);
@@ -47,63 +50,22 @@ namespace Telerik.Web.Mvc.Examples
             IQueryable<Order> data = dataContext.Orders;
 
             //Apply filtering
-            if (command.FilterDescriptors.Any())
-            {
-                data = data.Where(ExpressionBuilder.Expression<Order>(command.FilterDescriptors));
-            }
-
-            // Apply sorting
-            foreach (SortDescriptor sortDescriptor in command.SortDescriptors)
-            {
-                if (sortDescriptor.SortDirection == ListSortDirection.Ascending)
-                {
-                    switch (sortDescriptor.Member)
-                    {
-                        case "OrderID":
-                            data = data.OrderBy(ExpressionBuilder.Expression<Order, int>(sortDescriptor.Member));
-                            break;
-                        case "Customer.ContactName":
-                            data = data.OrderBy(order => order.Customer.ContactName);
-                            break;
-                        case "ShipAddress":
-                            data = data.OrderBy(order => order.ShipAddress);
-                            break;
-                        case "OrderDate":
-                            data = data.OrderBy(order => order.OrderDate);
-                            break;
-                    }
-                }
-                else
-                {
-                    switch (sortDescriptor.Member)
-                    {
-                        case "OrderID":
-                            data = data.OrderByDescending(order => order.OrderID);
-                            break;
-                        case "Customer.ContactName":
-                            data = data.OrderByDescending(order => order.Customer.ContactName);
-                            break;
-                        case "ShipAddress":
-                            data = data.OrderByDescending(order => order.ShipAddress);
-                            break;
-                        case "OrderDate":
-                            data = data.OrderByDescending(order => order.OrderDate);
-                            break;
-                    }
-                }
-            }
+            data = data.ApplyFiltering(command.FilterDescriptors);
 
             count = data.Count();
 
-            // ... and paging
-            if (command.PageSize > 0)
+            //Apply sorting
+            data = data.ApplySorting(command.GroupDescriptors, command.SortDescriptors);
+
+            //Apply paging
+            data = data.ApplyPaging(command.Page, command.PageSize);
+
+            //Apply grouping
+            if (command.GroupDescriptors.Any())
             {
-                data = data.Skip((command.Page - 1) * command.PageSize);
+                return data.ApplyGrouping(command.GroupDescriptors);
             }
-
-            data = data.Take(command.PageSize);
-
-            return data;
+            return data.ToList();
         }
 
         private static int GetCount()

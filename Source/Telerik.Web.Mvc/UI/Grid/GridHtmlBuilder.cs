@@ -50,7 +50,7 @@ namespace Telerik.Web.Mvc.UI
             var toolbar = new HtmlTag("div")
                       .AddClass(UIPrimitives.ToolBar, UIPrimitives.Grid.ToolBar);
 
-            grid.ToolBar.Commands.Each(command => command.Html(grid, toolbar));
+            grid.ToolBar.AppendTo(toolbar);
 
             return toolbar;
         }
@@ -72,7 +72,7 @@ namespace Telerik.Web.Mvc.UI
                 toolbar.AppendTo(div);
             }
 
-            if (grid.Grouping.Enabled)
+            if (grid.Grouping.Enabled && grid.Grouping.Visible)
             {
                 var groupHeader = GroupHeader();
                 groupHeader.AppendTo(div);
@@ -122,6 +122,12 @@ namespace Telerik.Web.Mvc.UI
                 {
                     var footer = new HtmlTag("div").AddClass("t-grid-footer");
                     footer.AppendTo(div);
+
+                    if (grid.Columns.Where(c => c.FooterTemplate.HasValue() && c.Visible).Any())
+                    {
+                        CreateFooterRow().AppendTo(footer);
+                    }
+
                     bottomPager.Build().AppendTo(footer);
                 }
             }
@@ -141,6 +147,11 @@ namespace Telerik.Web.Mvc.UI
                 {
                     var footer = new HtmlTag("tfoot");
                     footer.AppendTo(table);
+
+                    if (grid.Columns.Where(c => c.FooterTemplate.HasValue() && c.Visible).Any())
+                    {
+                        CreateFooterRow().AppendTo(footer);
+                    }
 
                     var footerRow = new HtmlTag("tr");
                     footerRow.AppendTo(footer);
@@ -168,7 +179,8 @@ namespace Telerik.Web.Mvc.UI
 
             if (grid.DataProcessor.ProcessedDataSource != null)
             {
-                if (grid.DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup>)
+                if (grid.DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup> ||
+                    grid.DataProcessor.ProcessedDataSource is IQueryable<IGroup>)
                 {
                     var grouppedDataSource = grid.DataProcessor.ProcessedDataSource.Cast<IGroup>();
 
@@ -186,7 +198,10 @@ namespace Telerik.Web.Mvc.UI
 
             if (body.Children.Count == 0)
             {
-                var emptyRowBuilder = new GridEmptyRowHtmlBuilder(grid.Colspan);
+                if (!grid.NoRecordsTemplate.HasValue())
+                    grid.NoRecordsTemplate.Html = grid.Localization.NoRecords;
+
+                var emptyRowBuilder = new GridEmptyRowHtmlBuilder(grid.Colspan, grid.NoRecordsTemplate);
                 emptyRowBuilder.Build().AppendTo(body);
             }
 
@@ -197,10 +212,18 @@ namespace Telerik.Web.Mvc.UI
         {
             int rowIndex = 0;
 
-#if MVC2
+#if MVC2 || MVC3
             if (grid.IsInInsertMode())
             {
-                T dataItem = Activator.CreateInstance<T>();
+                T dataItem;
+                if (typeof(T) == typeof(System.Data.DataRowView))
+                {
+                    dataItem = (T)((object)new System.Data.DataTable().DefaultView.AddNew());
+                }
+                else
+                {
+                    dataItem = Activator.CreateInstance<T>();
+                }
 
                 GridRow<T> row = new GridRow<T>(grid, dataItem, rowIndex) { InInsertMode = true };
 
@@ -223,7 +246,7 @@ namespace Telerik.Web.Mvc.UI
                 {
                     row.DetailRow = new GridDetailRow<T>();
                 }
-#if MVC2
+#if MVC2 || MVC3
                 if (grid.Editing.Enabled)
                 {
                     row.InEditMode = grid.IsRecordInEditMode(row.DataItem);
@@ -318,7 +341,26 @@ namespace Telerik.Web.Mvc.UI
             
             return headRowBuilder.Build();
         }
-        
+
+        private IHtmlNode CreateFooterRow()
+        {
+            var footerRowBuilder = new GridFooterRowHtmlBuilder(((IGrid) grid).Columns,
+                                                                c => new GridFooterCellHtmlBuilder(c))
+                                       {
+                                           RepeatingAdornerCount =
+                                               !grid.HasDetailView
+                                                   ? grid.DataProcessor.GroupDescriptors.Count
+                                                   : grid.DataProcessor.GroupDescriptors.Count + 1
+                                       };
+
+            if (grid.Scrolling.Enabled)
+            {
+                return new GridFooterRowHtmlScrollingBuilder(footerRowBuilder, new GridColgroupHtmlBuilder(grid)).Build();
+            }
+
+            return footerRowBuilder.Build();
+        }
+
         private IHtmlNode CreateTopPager()
         {
             var pagerWrapperBuilder = new GridPagerWrapperHtmlBuilder<T>(grid);

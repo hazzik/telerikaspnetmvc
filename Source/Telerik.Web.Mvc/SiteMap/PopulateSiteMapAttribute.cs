@@ -6,7 +6,6 @@
 namespace Telerik.Web.Mvc
 {
     using System;
-    using System.Diagnostics;
     using System.Web.Mvc;
 
     using Infrastructure;
@@ -44,13 +43,11 @@ namespace Telerik.Web.Mvc
         /// <value>The default view data key.</value>
         public static string DefaultViewDataKey
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultViewDataKey;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");

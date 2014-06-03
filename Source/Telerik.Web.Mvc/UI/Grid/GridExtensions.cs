@@ -107,7 +107,7 @@ namespace Telerik.Web.Mvc.UI
             return true;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         public static void WriteDataKeys<T>(this Grid<T> grid, T dataItem, IHtmlNode parent)
             where T : class
         {

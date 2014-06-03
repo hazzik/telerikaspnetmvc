@@ -54,10 +54,10 @@ namespace Telerik.Web.Mvc.UI
             IHtmlNode title = new HtmlTag("span")
                    .AddClass("t-window-title");
 
-            if (!Window.IconUrl.IsNullOrEmpty())
+            if (Window.IconUrl.HasValue())
                 IconTag().AppendTo(title);
 
-            new TextNode(Window.Title.IsNullOrEmpty() ? Window.Name : Window.Title).AppendTo(title);
+            new TextNode(Window.Title.HasValue() ? Window.Title : Window.Name).AppendTo(title);
 
             return title;
         }

@@ -35,6 +35,7 @@ namespace Telerik.Web.Mvc.UI
             Visible = true;
             HeaderHtmlAttributes = new RouteValueDictionary();
             HtmlAttributes = new RouteValueDictionary();
+            FooterHtmlAttributes = new RouteValueDictionary();
         }
 
         public string ClientTemplate
@@ -74,6 +75,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public IDictionary<string, object> HeaderHtmlAttributes
+        {
+            get;
+            private set;
+        }
+
+        public IDictionary<string, object> FooterHtmlAttributes
         {
             get;
             private set;

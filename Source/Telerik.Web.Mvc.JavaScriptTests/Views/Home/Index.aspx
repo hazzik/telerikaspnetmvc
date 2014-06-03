@@ -50,6 +50,7 @@
             if (!value ||
                 p == 'testpage' ||
                 p == 'autorun' ||
+                p == 'coverage' ||
                 p == 'submitresults' ||
                 p == 'showtestframe' ||
                 p == 'resultid') {

@@ -1,7 +1,7 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 
-<div class="configurator">
-    <h3 class="configurator-legend" style="margin-bottom: .6em;">Select culture</h3>
+<div class="culture-picker configurator">
+    <h3 class="legend" style="margin-bottom: .6em;">Select culture</h3>
     <select title="select culture" id="culture">
          <option value="en-US">English</option>
          <option value="es-ES">Español</option>
@@ -10,5 +10,7 @@
          <option value="bg-BG">Български</option>
          <option value="pt-PT">Português Europeu</option>
          <option value="pt-BR">Português do Brasil</option>
+         <option value="ru-RU">Русский</option>
+         <option value="uk-UA">Українське</option>
     </select>
 </div>

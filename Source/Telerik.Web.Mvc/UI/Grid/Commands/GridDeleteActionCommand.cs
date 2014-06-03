@@ -27,7 +27,7 @@ namespace Telerik.Web.Mvc.UI
 
         public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
         {
-            #if MVC2
+            #if MVC2 || MVC3
 
             Grid<T> grid = context.Grid;
             GridUrlBuilder urlBuilder = new GridUrlBuilder(grid);

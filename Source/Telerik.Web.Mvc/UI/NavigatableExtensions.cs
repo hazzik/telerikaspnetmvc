@@ -22,6 +22,16 @@ namespace Telerik.Web.Mvc.UI
     public static class NavigatableExtensions
     {
         /// <summary>
+        /// Sets the action, controller name and route values of <see cref="INavigatable"/> object.
+        /// </summary>
+        /// <param name="navigatable">The <see cref="INavigatable"/> object.</param>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        public static void Action(this INavigatable navigatable, RouteValueDictionary routeValues)
+        {
+            routeValues.ApplyTo(navigatable, SetAction);
+        }
+
+        /// <summary>
         /// Sets the action and controller name, along with Route values of <see cref="INavigatable"/> object.
         /// </summary>
         /// <param name="navigatable">The <see cref="INavigatable"/> object.</param>
@@ -44,9 +54,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="routeValues">Route values as <see cref="RouteValueDictionary"/></param>
         public static void Action(this INavigatable navigatable, string actionName, string controllerName, RouteValueDictionary routeValues)
         {
-            navigatable.ControllerName = controllerName;
-            navigatable.ActionName = actionName;
-            navigatable.SetRouteValues(routeValues);
+            SetAction(navigatable, actionName, controllerName, routeValues);
         }
 
         public static void Action<TController>(this INavigatable item, Expression<Action<TController>> controllerAction) where TController : Controller
@@ -154,6 +162,15 @@ namespace Telerik.Web.Mvc.UI
             return urlGenerator.Generate(viewContext.RequestContext, navigatable);
         }
 
+        public static bool IsCurrent(this INavigatable navigatable, ViewContext viewContext, IUrlGenerator urlGenerator)
+        {
+            var currentUrl = viewContext.HttpContext.Request.Url.PathAndQuery;
+            var url = urlGenerator.Generate(viewContext.RequestContext, navigatable);
+            var currentRoute = new UrlHelper(viewContext.RequestContext).RouteUrl(viewContext.RequestContext.RouteData.Values);
+            
+            return url.IsCaseInsensitiveEqual(currentUrl) || url.IsCaseInsensitiveEqual(currentRoute);
+        }
+
         /// <summary>
         /// Generating url depending on the ViewContext and the <see cref="IUrlGenerator"/> generator.
         /// </summary>
@@ -185,6 +202,13 @@ namespace Telerik.Web.Mvc.UI
         public static bool IsAccessible<T>(this IEnumerable<T> items, INavigationItemAuthorization authorization, ViewContext viewContext)
         {
             return items.Any(item => authorization.IsAccessibleToUser(viewContext.RequestContext, (INavigatable)item));
+        }
+
+        private static void SetAction(INavigatable navigatable, string actionName, string controllerName, RouteValueDictionary routeValues)
+        {
+            navigatable.ActionName = actionName;
+            navigatable.ControllerName = controllerName;
+            navigatable.SetRouteValues(routeValues);
         }
 
         private static void SetRouteValues(this INavigatable navigatable, object values)

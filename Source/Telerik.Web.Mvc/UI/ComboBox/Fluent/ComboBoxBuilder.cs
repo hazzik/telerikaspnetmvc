@@ -146,5 +146,17 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        /// <summary>
+        /// Enables or disables the combobox.
+        /// </summary>
+        /// <param name="allowSpinner"></param>
+        /// <returns></returns>
+        public ComboBoxBuilder Enable(bool value)
+        {
+            Component.Enabled = value;
+
+            return this;
+        }
     }
 }

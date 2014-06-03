@@ -45,5 +45,24 @@
 
             Assert.Equal(0, pager.Total);
         }
+
+        [Fact]
+        public void PageTo_sets_current_page()
+        {
+            builder.PageTo(2);
+            Assert.Equal(2, pager.CurrentPage);
+        }
+
+        [Fact]
+        public void PageTo_should_fail_on_negative()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => builder.PageTo(-1));
+        }
+        
+        [Fact]
+        public void PageTo_should_fail_on_zero()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => builder.PageTo(0));
+        }
     }
 }

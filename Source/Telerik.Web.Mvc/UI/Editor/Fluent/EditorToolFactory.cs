@@ -175,7 +175,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             var items = new List<DropDownItem>();
             
-            var builder = new EditorSnippetBuilder(items);
+            var builder = new EditorSnippetBuilder(items, DI.Current.Resolve<IVirtualPathProvider>());
 
             configurator(builder);
 
@@ -212,7 +212,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
         private EditorToolFactory ComboBox(string identifier, IList<DropDownItem> items)
         {
-            group.Tools.Add(new EditorComboBox(identifier, items));
+            group.Tools.Add(new EditorComboBox(identifier, items, group.Editor.ViewContext));
 
             return this;
         }

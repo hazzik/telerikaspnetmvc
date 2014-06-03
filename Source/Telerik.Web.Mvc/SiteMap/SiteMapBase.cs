@@ -6,7 +6,6 @@
 namespace Telerik.Web.Mvc
 {
     using System.ComponentModel;
-    using System.Diagnostics;
     using Infrastructure;
 
     /// <summary>
@@ -38,13 +37,11 @@ namespace Telerik.Web.Mvc
         /// <value>The default cache duration in minutes.</value>
         public static float DefaultCacheDurationInMinutes
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultCacheDurationInMinutes;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNegative(value, "value");
@@ -59,13 +56,11 @@ namespace Telerik.Web.Mvc
         /// <value><c>true</c> if [default compress]; otherwise, <c>false</c>.</value>
         public static bool DefaultCompress
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultCompress;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 defaultCompress = value;
@@ -80,13 +75,11 @@ namespace Telerik.Web.Mvc
         /// </value>
         public static bool DefaultGenerateSearchEngineMap
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultGenerateSearchEngineMap;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 defaultGenerateSearchEngineMap = value;
@@ -109,13 +102,11 @@ namespace Telerik.Web.Mvc
         /// <value>The cache duration in minutes.</value>
         public float CacheDurationInMinutes
         {
-            [DebuggerStepThrough]
             get
             {
                 return cacheDurationInMinutes;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNegative(value, "value");

@@ -82,7 +82,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-#if MVC2
+#if MVC2 || MVC3
         public bool InEditMode
         {
             get;

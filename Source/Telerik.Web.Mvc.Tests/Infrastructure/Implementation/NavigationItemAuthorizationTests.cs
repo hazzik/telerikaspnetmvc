@@ -45,7 +45,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
             item.SetupGet(i => i.ControllerName).Returns("Product");
             item.SetupGet(i => i.ActionName).Returns("Detail");
 
-            _controllerAuthorization.Setup(authorization => authorization.IsAccessibleToUser(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>())).Returns(true);
+            _controllerAuthorization.Setup(authorization => authorization.IsAccessibleToUser(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<RouteValueDictionary>())).Returns(true);
 
             Assert.True(_authorization.IsAccessibleToUser(TestHelper.CreateRequestContext(), item.Object));
         }

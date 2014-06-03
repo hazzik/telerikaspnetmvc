@@ -13,6 +13,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Routing;
 
     using Resources;
+    using Extensions;
 
     public class GridToolBarCustomCommandBuilder<T> : GridToolBarCommandBuilderBase<T, GridToolBarCustomCommand<T>, GridToolBarCustomCommandBuilder<T>> where T : class
     {
@@ -97,6 +98,18 @@ namespace Telerik.Web.Mvc.UI
             }
 
             return this;
+        }
+
+        public virtual GridToolBarCustomCommandBuilder<T> Action(RouteValueDictionary routeValues)
+        {
+             Command.Action(routeValues);
+
+             if (Command.ActionName.HasValue()) 
+             {
+                 SetTextIfEmpty(Command.ActionName);
+             }
+
+             return this;
         }
 
         public virtual GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName)

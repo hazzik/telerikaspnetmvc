@@ -1,7 +1,7 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<OrderDto>>" %>
 
 <%@ Import Namespace="System.Web.Script.Serialization" %>
-<asp:content contentplaceholderid="maincontent" runat="server">
+<asp:content ID="Content1" contentplaceholderid="maincontent" runat="server">
 <%
     var config = (IDictionary<string, int>)ViewData["config"];
 %>    
@@ -25,7 +25,6 @@
 
 <%= Html.Telerik().Grid(Model)
         .Name("Grid")
-        .TableHtmlAttributes(new { style = "width:" + (config["GridWidth"] > 0 ? config["GridWidth"] + "px" : "100%") })
         .Columns(columns =>
         {
             columns.Bound(o => o.OrderID).Width(config["OrderIDWidth"]);

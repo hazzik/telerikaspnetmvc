@@ -1,21 +1,140 @@
 ﻿(function ($) {
     var $t = $.telerik;
 
-    var dropClueOffsetTop = 3;
-    var dropClueOffsetLeft = 0;
+    var dropCueOffsetTop = 3;
+    var dropCueOffsetLeft = 0;
 
     $t.grouping = {};
 
     $t.grouping.initialize = function (grid) {
         $.extend(grid, $t.grouping.implementation);
 
-        grid.$groupDropClue = $('<div class="t-grouping-dropclue"/>');
+        grid.$groupDropCue = $('<div class="t-grouping-dropclue"/>');
         grid.$groupHeader = $('> .t-grouping-header', grid.element);
         
-        $t.draganddrop(grid.element.id, $.extend({
-            useDragClue: true,
-            draggables: [$('.t-link', grid.$groupHeader[0]), $('.t-header:not(.t-group-cell,.t-hierarchy-cell)', grid.$header[0])]
-        }, $t.draganddrop.applyContext($t.draganddrop.grouping, grid)));
+        function groups() {
+            var all = $.map(grid.$groupHeader.find('.t-group-indicator'), function (group) {
+                var $group = $(group);
+                var left = $group.offset().left;
+                var width = $group.outerWidth();
+                return { left: left, right: left + width, width: width, $group: $group };
+            });
+
+            return {
+                first: all[0],
+                all: all,
+                last: all[all.length - 1]
+            };
+        }
+
+        function drag(e) {
+            var title = e.$cue.text();
+            
+            if (!$.contains(grid.element, e.target) 
+                || !$(e.target).closest('.t-grouping-header').length
+                || (grid.groupFromTitle(title) && e.$draggable.closest('.t-header').length)) {
+                grid.$groupDropCue.remove();
+                return;
+            }
+            
+            var top = $('> .t-grid-toolbar', grid.element).outerHeight() + dropCueOffsetTop;
+                
+            var state = groups();
+                
+            if (!state.all.length) {
+                grid.$groupDropCue.css({ top: top, left: dropCueOffsetLeft }).appendTo(grid.$groupHeader);
+                return;
+            }
+
+            var firstGroupIndicator = state.first;
+            var lastGroupIndicator = state.last;
+            var leftMargin = parseInt(firstGroupIndicator.$group.css('marginLeft'));
+            var rightMargin = parseInt(firstGroupIndicator.$group.css('marginRight'));
+
+            var currentGroupIndicator = $.grep(state.all, function (g) {
+                return e.pageX >= g.left - leftMargin - rightMargin && e.pageX <= g.right;
+            })[0];
+
+            if (!currentGroupIndicator && firstGroupIndicator && e.pageX < firstGroupIndicator.left) {
+                currentGroupIndicator = firstGroupIndicator;
+            }
+
+            if (currentGroupIndicator)
+                grid.$groupDropCue.css({ top: top, left: currentGroupIndicator.$group.position().left - leftMargin + dropCueOffsetLeft })
+                    .insertBefore(currentGroupIndicator.$group);
+            else
+                grid.$groupDropCue.css({ top: top, left: lastGroupIndicator.$group.position().left + lastGroupIndicator.$group.outerWidth() + rightMargin + dropCueOffsetLeft })
+                                .appendTo(grid.$groupHeader);
+        }
+
+        function cue(e) {
+            var column = grid.columnFromTitle(e.$draggable.text());
+            return $t.dragCue(column.title);
+        }
+        
+        function stop(e) {
+            var title = e.$cue.text();
+            
+            grid.$groupDropCue.remove();
+
+            if (e.$draggable.is('.t-group-indicator') && e.keyCode != 27) {
+                grid.unGroup(title);
+                return false;
+            }
+        }
+
+        function destroy(e) {
+            e.$cue.remove();
+        }
+
+        new $t.draggable({
+            owner: grid.$header,
+            selector: '.t-header:not(.t-group-cell,.t-hierarchy-cell)',
+            scope: grid.element.id + '-grouping',
+            cue: cue,
+            start: function(e) {
+                var column = grid.columnFromTitle(e.$draggable.text());
+                return !!column.member && column.groupable !== false;
+            },
+            stop: stop,
+            drag: drag,
+            destroy: destroy
+        });
+        
+        new $t.draggable({
+            owner: grid.$groupingHeader,
+            selector: '.t-group-indicator',
+            scope: grid.element.id + '-grouping',
+            cue: cue,
+            stop: stop,
+            drag: drag,
+            destroy: destroy
+        });        
+        
+        new $t.droppable({
+            owner: grid.element,
+            selector: '.t-grouping-header',
+            scope: grid.element.id + '-grouping',
+            over: function(e) {
+                $t.dragCueStatus(e.$cue, 't-add');
+            },
+            out: function(e) {
+                $t.dragCueStatus(e.$cue, 't-denied');
+            },
+            drop: function(e) {
+                var title = e.$cue.text();
+                var group = grid.groupFromTitle(title);
+
+                var groupIndex = $.inArray(group, grid.groups);
+
+                var position = grid.$groupHeader.find('div').index(grid.$groupDropCue);
+                var delta = groupIndex - position;
+                if (!group || (grid.$groupDropCue.is(':visible') && delta != 0 && delta != -1))
+                    grid.group(title, position);
+                 
+                grid.$groupDropCue.remove();
+            }
+        });
 
         if (grid.isAjax()) {
             grid.$groupHeader
@@ -40,29 +159,22 @@
 
         grid.$tbody.delegate('.t-grouping-row .t-collapse, .t-grouping-row .t-expand', 'click', $t.stop(function (e) {
             e.preventDefault();
-            var $tr = $(this).closest('tr');
-            if ($(this).hasClass('t-collapse'))
+            var $this = $(this), $tr = $this.closest('tr');
+            if ($this.hasClass('t-collapse'))
                 grid.collapseGroup($tr);
             else
                 grid.expandGroup($tr);
         }));
-    }
 
-    $t.grouping.implementation = {
+        grid.groupFromTitle = function (title) {
+            return $.grep(grid.groups, function (g) { return g.title == title; })[0];
+        }
 
-        columnFromTitle: function (title) {
-            return $.grep(this.columns, function (c) { return c.title == title; })[0];
-        },
-
-        groupFromTitle: function (title) {
-            return $.grep(this.groups, function (g) { return g.title == title; })[0];
-        },
-
-        expandGroup: function (group) {
+        grid.expandGroup = function (group) {
             var $group = $(group);
             var depth = $group.find('.t-group-cell').length;
             
-            $group.find('~ tr').each($.proxy(function (i, tr) {
+            $group.nextAll('tr').each(function (i, tr) {
                 var $tr = $(tr);
                 var offset = $tr.find('.t-group-cell').length;
                 if (offset <= depth)
@@ -72,19 +184,19 @@
                     $tr.show();
 
                     if ($tr.hasClass('t-grouping-row') && $tr.find('.t-icon').hasClass('t-collapse'))
-                        this.expandGroup($tr);
+                        grid.expandGroup($tr);
                     if ($tr.hasClass('t-master-row') && $tr.find('.t-icon').hasClass('t-minus'))
                         $tr.next().show();
                 }
-            }, this));
+            });
 
             $group.find('.t-icon').addClass('t-collapse').removeClass('t-expand');
-        },
+        }
 
-        collapseGroup: function (group) {
+        grid.collapseGroup = function (group) {
             var $group = $(group);
             var depth = $group.find('.t-group-cell').length;
-            $group.find('~ tr').each(function () {
+            $group.nextAll('tr').each(function () {
                 var $tr = $(this);
                 var offset = $tr.find('.t-group-cell').length;
                 if (offset <= depth)
@@ -93,28 +205,28 @@
                 $tr.hide();
             });
             $group.find('.t-icon').addClass('t-expand').removeClass('t-collapse');
-        },
+        }
 
-        group: function (title, position) {
+        grid.group = function (title, position) {
             if (this.groups.length == 0 && this.isAjax())
-                this.$groupHeader.empty();
+                grid.$groupHeader.empty();
 
-            var group = $.grep(this.groups, function (group) {
+            var group = $.grep(grid.groups, function (group) {
                 return group.title == title;
             })[0];
 
             if (!group) {
-                var column = this.columnFromTitle(title);
+                var column = grid.columnFromTitle(title);
                 group = { order: 'asc', member: column.member, title: title };
-                this.groups.push(group);
+                grid.groups.push(group);
             }
 
             if (position >= 0) {
-                this.groups.splice($.inArray(group, this.groups), 1);
-                this.groups.splice(position, 0, group);
+                grid.groups.splice($.inArray(group, grid.groups), 1);
+                grid.groups.splice(position, 0, group);
             }
 
-            this.groupBy = $.map(this.groups, function (g) { return g.member + '-' + g.order; }).join('~')
+            grid.groupBy = $.map(grid.groups, function (g) { return g.member + '-' + g.order; }).join('~')
 
             if (this.isAjax()) {
                 var $groupItem = this.$groupHeader.find('div:contains("' + title + '")');
@@ -128,8 +240,8 @@
                     $groupItem = $(html).appendTo(this.$groupHeader);
                 }
 
-                if (this.$groupDropClue.is(':visible'))
-                    $groupItem.insertBefore(this.$groupDropClue);
+                if (this.$groupDropCue.is(':visible'))
+                    $groupItem.insertBefore(this.$groupDropCue);
 
                 $groupItem.find('.t-link .t-icon')
                           .toggleClass('t-arrow-up-small', group.order == 'asc')
@@ -139,60 +251,57 @@
             } else {
                 this.serverRequest();
             }
-        },
+        }
 
-        unGroup: function (title) {
-            var group = this.groupFromTitle(title);
-            this.groups.splice($.inArray(group, this.groups), 1);
+        grid.unGroup = function (title) {
+            var group = grid.groupFromTitle(title);
+            grid.groups.splice($.inArray(group, grid.groups), 1);
 
-            if (this.groups.length == 0)
-                this.$groupHeader.html(this.localization.groupHint);
+            if (grid.groups.length == 0)
+                grid.$groupHeader.html(grid.localization.groupHint);
 
-            this.groupBy = $.map(this.groups, function (g) { return g.member + '-' + g.order; }).join('~');
+            grid.groupBy = $.map(grid.groups, function (g) { return g.member + '-' + g.order; }).join('~');
 
-            if (this.isAjax()) {
-                this.$groupHeader.find('div:contains("' + group.title + '")').remove();
-                this.ajaxRequest();
+            if (grid.isAjax()) {
+                grid.$groupHeader.find('div:contains("' + group.title + '")').remove();
+                grid.ajaxRequest();
             } else {
-                this.serverRequest();
+                grid.serverRequest();
             }
         },
 
-        normalizeColumns: function(colspan) {
-            var groups = this.groups.length;
-            var diff = colspan - this.$tbody.parent().find('col').length;
+        grid.normalizeColumns = function(colspan) {
+            var groups = grid.groups.length;
+            var diff = colspan - grid.$tbody.parent().find(' > colgroup > col').length;
             if (diff == 0) return;
-
-            var $tables = this.$tbody.parent().add(this.$headerWrap.find('table'));
+            
+            var $tables = grid.$tbody.parent().add(grid.$headerWrap.find('table')).add(grid.$footerWrap.find("table"));
             if ($.browser.msie) {
                 // ie8 goes into compatibility mode if the columns get removed
                 if (diff > 0) {
                     $(new $t.stringBuilder().rep('<col class="t-group-col" />', diff).string())
-                            .prependTo($tables.find('colgroup'))
+                        .prependTo($tables.find('colgroup'))
                     $(new $t.stringBuilder().rep('<th class="t-group-cell t-header">&nbsp;</th>', diff).string())
                         .insertBefore($tables.find('th.t-header:first'));
+                    $(new $t.stringBuilder().rep('<td class="t-group-cell">&nbsp;</td>', diff).string())
+                        .insertBefore($tables.find('tr.t-footer-template > td:first'));
 
                 } else {
-                    $tables.find('th:lt(' + Math.abs(diff) + ')')
+                    $tables.find('th:lt(' + Math.abs(diff) + '), tr.t-footer-template > td:lt(' + Math.abs(diff) + ')')
                            .remove()
                            .end()
                            .find('col:lt(' + Math.abs(diff) + ')')
                            .remove();
                 }
+                
+                // take the tables out for a walk. ie8 does not recalculate table layout properly.
+                var containers = [];
+                var i = 0;
 
-                // ie8 does not resize columns in scrollable grids correctly
-                if (document.documentMode == 8) {
-                    if (this.scrollable)
-                        $tables.css('table-layout', 'auto');
-
-                    var me = this;
-                    var groupWidth = 30;
-
-                    $tables.find('col').css('width', function () {
-                        return $(this).is('.t-group-col,.t-hierarchy-col') ? groupWidth :
-                                          ($(me.element).width() - groups * groupWidth - 16) / me.columns.length;
-                    });
-                }
+                $('table', grid.element)
+                    .each(function() { containers.push(this.parentNode); })
+                    .appendTo($('<div />'))
+                    .each(function() { containers[i++].appendChild(this); });
             } else {
                 $tables.find('col.t-group-col').remove();
 
@@ -200,17 +309,22 @@
                         .prependTo($tables.find('colgroup'));
 
                 $tables.find('th.t-group-cell').remove();
+                $tables.find('tr.t-footer-template > td.t-group-cell').remove();
+
                 $(new $t.stringBuilder().rep('<th class="t-group-cell t-header">&nbsp;</th>', groups).string())
                         .insertBefore($tables.find('th.t-header:first'));
-            }
-
-            this.$footer.attr('colspan', colspan);
+                
+                $(new $t.stringBuilder().rep('<td class="t-group-cell">&nbsp;</td>', groups).string())
+                        .insertBefore($tables.find('tr.t-footer-template > td:first'));
+            }            
+            
+            grid.$footer.find(".t-pager-wrapper").attr('colspan', colspan);
         },
 
-        bindGroup: function (dataItem, colspan, html, level) {
-            var group = this.groups[level];
+        grid.bindGroup = function (dataItem, colspan, html, level) {
+            var group = grid.groups[level];
             var key = dataItem.Key;
-            var column = $.grep(this.columns, function (column) { return group.member == column.member })[0];
+            var column = $.grep(grid.columns, function (column) { return group.member == column.member })[0];
 
             if (column && (column.format || column.type == 'Date'))
                 key = $t.formatString(column.format || '{0:G}', key);
@@ -227,110 +341,10 @@
 
             if (dataItem.HasSubgroups) {
                 for (var i = 0, l = dataItem.Items.length; i < l; i++)
-                    this.bindGroup(dataItem.Items[i], colspan, html, level + 1);
+                    grid.bindGroup(dataItem.Items[i], colspan, html, level + 1);
             } else {
-                this.bindData(dataItem.Items, html, level + 1);
+                grid.bindData(dataItem.Items, html, level + 1);
             }
         }
     }
-
-    $.extend($t.draganddrop, {
-        grouping: {
-            shouldDrag: function ($element) {
-                if ($element.closest('.t-grid-filter, .t-filter').length)
-                    return false;
-                
-                if ($element.closest('.t-grid')[0] != this.element)
-                    return false;
-                
-                var column = this.columnFromTitle($element.text());
-                if (column && column.groupable === false)
-                    return false;
-
-                return true;
-            },
-
-            createDragClue: function ($draggedElement) {
-                return $draggedElement.text();
-            },
-
-            onDragStart: function () { return false; },
-
-            onDragMove: function (e, $source) {
-                e.stopPropagation();
-
-                // change status & show drop clue
-                if (!$.contains(this.element, e.target) ||
-                !$(e.target).closest('.t-grouping-header').length
-                || (this.groupFromTitle($source.text()) && $source.closest('.t-header').length)) {
-                    this.$groupDropClue.remove();
-                    return 't-denied';
-                }
-
-                var groupIndicators = $.map(this.$groupHeader.find('.t-group-indicator'), function (group) {
-                    var $group = $(group);
-                    var left = $group.offset().left;
-                    return { left: left, right: left + $group.outerWidth(), $group: $group };
-                });
-
-                var top = $('> .t-grid-toolbar', this.element).outerHeight() + dropClueOffsetTop;
-
-                if (!groupIndicators.length) {
-                    this.$groupDropClue.css({ top: top, left: dropClueOffsetLeft }).appendTo(this.$groupHeader);
-                    return 't-add';
-                }
-
-                var firstGroupIndicator = groupIndicators[0];
-                var lastGroupIndicator = groupIndicators[groupIndicators.length - 1];
-                var leftMargin = parseInt(firstGroupIndicator.$group.css('marginLeft'));
-                var rightMargin = parseInt(firstGroupIndicator.$group.css('marginRight'));
-
-                var currentGroupIndicator = $.grep(groupIndicators, function (g) {
-                    return e.pageX >= g.left - leftMargin - rightMargin && e.pageX <= g.right;
-                })[0];
-
-                if (!currentGroupIndicator && firstGroupIndicator && e.pageX < firstGroupIndicator.left) {
-                    currentGroupIndicator = firstGroupIndicator;
-                }
-
-                if (currentGroupIndicator)
-                    this.$groupDropClue.css({ top: top, left: currentGroupIndicator.$group.position().left - leftMargin + dropClueOffsetLeft })
-                        .insertBefore(currentGroupIndicator.$group);
-                else
-                    this.$groupDropClue.css({ top: top, left: lastGroupIndicator.$group.position().left + lastGroupIndicator.$group.outerWidth() + rightMargin + dropClueOffsetLeft })
-                                   .appendTo(this.$groupHeader);
-
-
-                return 't-add';
-            },
-
-            onDragCancelled: function () {
-                this.$groupDropClue.remove();
-            },
-
-            onDrop: function (e, $draggedElement) {
-                var groupingHeader = $(e.target).closest('.t-grouping-header');
-                var title = $draggedElement.text();
-                var group = this.groupFromTitle(title);
-
-                var groupIndex = $.inArray(group, this.groups);
-
-                if (groupingHeader.length > 0) {
-                    var position = this.$groupHeader.find('div').index(this.$groupDropClue);
-                    var delta = groupIndex - position;
-                    if (!group || (this.$groupDropClue.is(':visible') && delta != 0 && delta != -1))
-                        this.group(title, position);
-                } else if ($draggedElement.parent().is('.t-group-indicator')) {
-                    this.unGroup(title);
-                } else {
-                    this.$groupDropClue.remove();
-                    return false;
-                }
-
-                this.$groupDropClue.remove();
-
-                return true;
-            }
-        }
-    });
 })(jQuery);

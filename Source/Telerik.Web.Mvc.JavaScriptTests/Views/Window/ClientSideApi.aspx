@@ -73,6 +73,22 @@
 
         assertEquals(1, $('body > .t-overlay').length);
     }
+
+    function test_dblclick_on_resizable_window_title_maximizes_window() {
+        var $window = $('<div />').tWindow();
+
+        $window.find('.t-window-titlebar').trigger('dblclick');
+
+        assertTrue($window.data('tWindow').isMaximized);
+    }
+
+    function test_dblclick_on_non_resizable_window_title_does_not_maximize_window() {
+        var $window = $('<div />').tWindow({ resizable: false });
+
+        $window.find('.t-window-titlebar').trigger('dblclick');
+
+        assertTrue(!$window.data('tWindow').isMaximized);
+    }
     
     </script>
 </asp:Content>

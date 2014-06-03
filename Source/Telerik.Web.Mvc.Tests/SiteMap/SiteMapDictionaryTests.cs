@@ -8,11 +8,7 @@ namespace Telerik.Web.Mvc.Tests
     using System;
     using System.Collections;
     using System.Collections.Generic;
-
-    using Extensions;
-    using Infrastructure;
-
-    using Moq;
+    using Telerik.Web.Mvc.Extensions;
     using Xunit;
 
     public class SiteMapDictionaryTests
@@ -21,14 +17,6 @@ namespace Telerik.Web.Mvc.Tests
 
         public SiteMapDictionaryTests()
         {
-            var locator = new Mock<IServiceLocator>();
-
-            locator.Setup(l => l.Resolve<IPathResolver>()).Returns(new Mock<IPathResolver>().Object);
-            locator.Setup(l => l.Resolve<IFileSystem>()).Returns(new Mock<IFileSystem>().Object);
-            locator.Setup(l => l.Resolve<ICacheManager>()).Returns(new Mock<ICacheManager>().Object);
-
-            ServiceLocator.SetCurrent(() => locator.Object);
-
             _sitemaps = new SiteMapDictionary();
         }
 
@@ -43,18 +31,6 @@ namespace Telerik.Web.Mvc.Tests
             Assert.Same(newFactory, SiteMapDictionary.DefaultSiteMapFactory);
 
             SiteMapDictionary.DefaultSiteMapFactory = oldFactory;
-        }
-
-        [Fact]
-        public void Default_site_map_should_not_be_null()
-        {
-            Assert.NotNull(_sitemaps.DefaultSiteMap);
-        }
-
-        [Fact]
-        public void Default_site_maps_should_be_xml_site_map()
-        {
-            Assert.IsType<XmlSiteMap>(_sitemaps.DefaultSiteMap);
         }
 
         [Fact]

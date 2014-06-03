@@ -14,6 +14,11 @@
     {
         public static Mock<IClientSideObjectWriter> clientSideObjectWriter;
 
+        public static PanelBar CreatePanelbar()
+        {
+            return CreatePanelbar(new HtmlTextWriter(TextWriter.Null), new Mock<INavigationComponentHtmlBuilder<PanelBarItem>>().Object);
+        }
+
         public static PanelBar CreatePanelbar(HtmlTextWriter writer, INavigationComponentHtmlBuilder<PanelBarItem> renderer)
         {
             Mock<HttpContextBase> httpContext = TestHelper.CreateMockedHttpContext();

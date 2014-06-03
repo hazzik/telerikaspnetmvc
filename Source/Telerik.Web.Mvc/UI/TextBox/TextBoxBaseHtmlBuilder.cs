@@ -6,10 +6,10 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Globalization;
     using System.Web.Mvc;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class TextboxBaseHtmlBuilder<T> : ITextBoxBaseHtmlBuilder where T : struct {
         
@@ -29,13 +29,15 @@ namespace Telerik.Web.Mvc.UI
             return new HtmlTag("div")
                    .Attribute("id", Input.Id)
                    .Attributes(Input.HtmlAttributes)
-                   .PrependClass(UIPrimitives.Widget, objectName);
+                   .PrependClass(UIPrimitives.Widget, objectName)
+                   .ToggleClass("t-state-disabled", !Input.Enabled);
         }
 
         public IHtmlNode InputTag()
         {
             return new HtmlTag("input", TagRenderMode.SelfClosing)
-                   .Attributes(new { name = Input.Name, id = Input.Id + "-input", value = "{0}".FormatWith(GetValue()), title = Input.Name })
+                   .Attributes(new { name = Input.Name, id = Input.Id + "-input", value = "{0}".FormatWith(GetValue())})
+                   .ToggleAttribute("disabled", "disabled", !Input.Enabled)
                    .Attributes(Input.InputHtmlAttributes)
                    .PrependClass(UIPrimitives.Input);
         }
@@ -74,7 +76,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (state.Errors.Count == 0)
                 {
-                    value = state.Value.ConvertTo(typeof(T), Culture.Current) as T?;
+                    value = state.Value.ConvertTo(typeof(T), CultureInfo.CurrentCulture) as T?;
                 }
             }
             

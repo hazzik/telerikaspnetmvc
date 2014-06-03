@@ -235,6 +235,9 @@ function InlineFormatTool(options) {
 
 function FontTool(options){
     Tool.call(this, options);
+    
+    // IE has single selection hence we are using select box instead of combobox
+    var type = $.browser.msie ? 'tSelectBox' : 'tComboBox';
 
     var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], options.cssAttr);
 
@@ -250,7 +253,7 @@ function FontTool(options){
     }
 
     this.update = function ($ui, nodes) {
-        var list = $ui.data('tComboBox');
+        var list = $ui.data(type);
         list.close();
         list.value(finder.getFormat(nodes));
     } 
@@ -258,7 +261,7 @@ function FontTool(options){
     this.init = function($ui, initOptions) {
         var editor = initOptions.editor;
         
-        $ui.tComboBox({
+        $ui[type]({
             data: editor[options.name],
             onChange: function (e) {
                 Tool.exec(editor, options.name, e.value);
@@ -266,7 +269,7 @@ function FontTool(options){
             highlightFirst: false
         });
 
-        $ui.data('tComboBox').dropDown.onItemCreate =
+        $ui.data(type).dropDown.onItemCreate =
             function (e) {
                 e.html = '<span unselectable="on" style="' + options.cssAttr +  ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
             };

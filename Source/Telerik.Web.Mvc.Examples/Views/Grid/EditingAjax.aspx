@@ -49,7 +49,7 @@
         {
             columns.Bound(p => p.ProductName).Width(210);
             columns.Bound(p => p.UnitPrice).Width(130).Format("{0:c}");
-            columns.Bound(p => p.UnitsInStock).Width(130).Format("{0:N4}");
+            columns.Bound(p => p.UnitsInStock).Width(130).Format("{0:N}");
             columns.Bound(p => p.LastSupply).Width(130).Format("{0:d}");
             columns.Bound(p => p.Discontinued)
                    .ClientTemplate("<input type='checkbox' disabled='disabled' name='Discontinued' <#= Discontinued? checked='checked' : '' #> />");
@@ -106,6 +106,7 @@
         width: 30%;
         text-align: right;
         padding-right: 3%;
+        clear: left;
     }
     
     .t-edit-form-container .editor-field

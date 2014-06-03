@@ -720,6 +720,12 @@ function Marker() {
         dom.remove(this.start);
         dom.remove(this.end);
 
+        if (start == null || end == null) {
+            range.selectNodeContents(range.commonAncestorContainer);
+            range.collapse(true);
+            return;
+        }
+
         var startOffset = collapsed ? isDataNode(start) ? start.nodeValue.length : start.childNodes.length : 0;
         var endOffset = isDataNode(end) ? end.nodeValue.length : end.childNodes.length;
 

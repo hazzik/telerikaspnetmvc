@@ -115,10 +115,5 @@
             assertFalse(grid.columns[grid.columns.length - 1].groupable);
         }
 
-        function test_cannot_drag_ungroupable_column() {
-            var grid = getGrid('#Grid2');
-
-            assertFalse($.telerik.draganddrop.grouping.shouldDrag.call(grid, $('th:contains(Ungroupable)', grid.element)));
-        }
     </script>        
 </asp:Content>

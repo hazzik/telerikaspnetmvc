@@ -46,7 +46,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         /// <summary>
         /// Makes the column read-only or not. By default bound columns are not read-only.
         /// </summary>
@@ -85,6 +85,18 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public virtual GridBoundColumnBuilder<T> ReadOnly()
         {
             return ReadOnly(true);
+        }
+
+        /// <summary>
+        /// Specify which editor template should be used for the column
+        /// </summary>
+        /// <param name="templateName">name of the editor template</param>
+        public GridBoundColumnBuilder<T> EditorTemplateName(string templateName)
+        {
+            Guard.IsNotNullOrEmpty(templateName, "templateName");
+
+            Column.EditorTemplateName = templateName;
+            return this;
         }
 #endif
         /// <summary>
@@ -181,7 +193,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///            .Render();
         /// %&gt;
         /// </code>
-        /// </example
+        /// </example>
         public virtual GridBoundColumnBuilder<T> Template(Action<T> templateAction)
         {
             Guard.IsNotNull(templateAction, "templateAction");

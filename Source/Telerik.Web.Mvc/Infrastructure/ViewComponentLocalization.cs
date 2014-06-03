@@ -8,53 +8,48 @@ namespace Telerik.Web.Mvc.Infrastructure
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using Implementation;
+    using System;
+
+    using Extensions;
     
     public abstract class ViewComponentLocalization
     {
         private readonly string resourceLocation;
         private readonly string resourceName;
         private readonly CultureInfo culture;
+        
+        private readonly ILocalizationService localizationService;
 
-        private ILocalizationService localization;
-
-        private ILocalizationService Localization
+        protected ViewComponentLocalization(ILocalizationService localizationService, string resourceLocation, string resourceName, CultureInfo culture)
         {
-            get 
-            {
-                return localization = localization ?? new LocalizationService(resourceLocation, resourceName, culture);
-            }
-        }
-
-        protected ViewComponentLocalization(string resourceLocation, string resourceName, CultureInfo culture)
-        {
-            if (!string.IsNullOrEmpty(resourceLocation))
-            {
-                Guard.IsNotVirtualPath(resourceLocation, "resourceLocation");
-            }
-
-            Guard.IsNotNullOrEmpty(resourceName, "resourceName");
-
+            this.localizationService = localizationService;
             this.resourceLocation = string.IsNullOrEmpty(resourceLocation) ? "~/App_GlobalResources" : resourceLocation;
             this.resourceName = resourceName;
-            this.culture = culture ?? Culture.CurrentUI;
+            this.culture = culture ?? CultureInfo.CurrentUICulture;
         }
 
         protected virtual string GetValue(string key)
         {
-            return Localization.One(key);
+            try
+            {
+                return localizationService.One(key);
+            }
+            catch (KeyNotFoundException)
+            {
+                throw new ArgumentException(Resources.TextResource.LocalizationKeyNotFound.FormatWith(key));
+            }
         }
 
         public IDictionary<string, string> ToJson()
         {
-            return Localization.All().ToDictionary(k => k.Key[0].ToString(CultureInfo.CurrentCulture).ToLower() + k.Key.Substring(1), k => k.Value);
+            return localizationService.All().ToDictionary(k => k.Key[0].ToString(CultureInfo.CurrentCulture).ToLower() + k.Key.Substring(1), k => k.Value);
         }
 
         public bool IsDefault
         {
             get
             {
-                return Localization.IsDefault;
+                return localizationService.IsDefault;
             }
         }
     }

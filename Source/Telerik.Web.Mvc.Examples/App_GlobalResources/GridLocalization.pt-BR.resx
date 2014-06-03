@@ -228,4 +228,7 @@
   <data name="FilterBoolIsTrue" xml:space="preserve">
     <value>É verdade</value>
   </data>
+  <data name="NoRecords" xml:space="preserve">
+    <value>No records to display.</value>
+  </data>
 </root>

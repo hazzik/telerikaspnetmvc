@@ -24,6 +24,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View();
         }
 
+        public ActionResult ErrorView()
+        {
+            return View(TestData(20));
+        }
+
         public ActionResult ClientEvents()
         {
             return View(TestData(20));
@@ -49,6 +54,16 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         public ActionResult Selection()
         {
             return View(TestData(20));
+        }        
+        
+        public ActionResult FormViewBinder()
+        {
+            return View(TestData(20));
+        }        
+        
+        public ActionResult ModelBinder()
+        {
+            return View(TestData(20));
         }
 
         public ActionResult Binding()
@@ -64,7 +79,12 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         public ActionResult Editing()
         {
             return View(TestData(20));
-        }
+        }         
+        
+        public ActionResult ModelStateErrors()
+        {
+            return View(TestData(20));
+        }        
         
         public ActionResult ClientTemplates()
         {

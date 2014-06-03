@@ -231,4 +231,7 @@
   <data name="FilterBoolIsTrue" xml:space="preserve">
     <value>е вярно</value>
   </data>
+  <data name="NoRecords" xml:space="preserve">
+    <value>Няма записи за показване!</value>
+  </data>
 </root>

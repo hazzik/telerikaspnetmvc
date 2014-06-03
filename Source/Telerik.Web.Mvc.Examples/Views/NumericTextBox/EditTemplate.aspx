@@ -21,25 +21,17 @@
                 </li>
             </ul>
             <button type="submit" class="t-button t-state-default">Save</button>
-        <% if (ViewData["ProductJson"] != null)
-           { %>
-                <ul>
-                    <li>
-                         <h4>Product saved</h4>
-                    </li>
-                    <li>
-                        <div id="jsonResult" class="prettyprint">
-                            <strong>JSON</strong><br /><%= ViewData["ProductJson"] %>
-                        </div>
-                    </li>
-                </ul>
-           <% } %>
         </div>
+    <% } %>
+
+    <% if (ViewData["product"] != null)
+       { %>
+            <h4>Product saved</h4>
+            <%= Html.DisplayForModel(ViewData["product"]) %>
     <% } %>
 </asp:content>
 
 <asp:content contentPlaceHolderId="HeadContent" runat="server">
-
     <style type="text/css">
         .list
         {

@@ -8,15 +8,20 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using System.Web.Script.Serialization;
     using System.Web.UI;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
     using Telerik.Web.Mvc.UI.Html;
+#if MVC3
+    using Infrastructure.Implementation;
+#endif
 
     /// <summary>
     /// Telerik Grid for ASP.NET MVC is a view component for presenting tabular data.
@@ -37,11 +42,12 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="clientSideObjectWriterFactory">The client side object writer factory.</param>
         /// <param name="urlGenerator">The URL generator.</param>
         /// <param name="builderFactory">The builder factory.</param>
-        public Grid(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator)
+        public Grid(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator,
+            ILocalizationService localizationService)
             : base(viewContext, clientSideObjectWriterFactory)
         {
             Guard.IsNotNull(urlGenerator, "urlGenerator");
-            
+
             UrlGenerator = urlGenerator;
 
             PrefixUrlParameters = true;
@@ -64,6 +70,7 @@ namespace Telerik.Web.Mvc.UI
 
             Grouping = new GridGroupingSettings(this);
             Resizing = new GridResizingSettings();
+            Reordering = new GridReorderingSettings();
 
             TableHtmlAttributes = new RouteValueDictionary();
 
@@ -76,8 +83,19 @@ namespace Telerik.Web.Mvc.UI
             Selection = new GridSelectionSettings();
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.grid.js" });
 
-            ToolBar = new GridToolBarSettings<T>();
-            Localization = new GridLocalization();
+            ToolBar = new GridToolBarSettings<T>(this);
+            Localization = new GridLocalization(localizationService, CultureInfo.CurrentUICulture);
+            NoRecordsTemplate = new HtmlTemplate();
+
+            ValidationMetadata = new Dictionary<string, object>();
+
+            AutoGenerateColumns = true;
+        }
+
+        public IDictionary<string, object> ValidationMetadata
+        {
+            get;
+            private set;
         }
 
         public IGridDetailView<T> DetailView
@@ -93,6 +111,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public GridResizingSettings Resizing
+        {
+            get;
+            private set;
+        }
+
+        public GridReorderingSettings Reordering
         {
             get;
             private set;
@@ -348,6 +372,14 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        public int CurrentPage
+        {
+            get
+            {
+                return Paging.CurrentPage;
+            }
+        }
+
         /// <summary>
         /// Gets the sorting configuration.
         /// </summary>
@@ -386,6 +418,12 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
+        public HtmlTemplate NoRecordsTemplate
+        {
+            get;
+            private set;
+        }
+
         public string Prefix(string parameter)
         {
             return PrefixUrlParameters ? Id + "-" + parameter : parameter;
@@ -421,10 +459,10 @@ namespace Telerik.Web.Mvc.UI
 
         protected override void WriteHtml(HtmlTextWriter writer)
         {
-#if MVC2
+#if MVC2 || MVC3
             bool orignalClientValidationEnabled = ViewContext.ClientValidationEnabled;
             FormContext originalFormContext = ViewContext.FormContext;
-            
+
             try
             {
                 ViewContext.ClientValidationEnabled = true;
@@ -439,25 +477,31 @@ namespace Telerik.Web.Mvc.UI
                 }
 
 #endif
-
-                if (Columns.IsEmpty())
+                if (!Columns.Any() && AutoGenerateColumns) 
                 {
                     foreach (GridColumnBase<T> column in new GridColumnGenerator<T>(this).GetColumns())
                     {
                         Columns.Add(column);
                     }
                 }
+#if MVC3
+                AdjustColumnsTypesFromDynamic();
+#endif
+
 
                 RegisterScriptFiles();
-                
+
                 var builder = new GridHtmlBuilder<T>(this);
-                
+
                 builder.Build()
                        .WriteTo(writer);
-#if MVC2
-                if (this.IsInInsertMode() || this.IsInEditMode() || (Editing.Enabled && IsClientBinding))
+
+#if MVC2 || MVC3
+                if (ViewContext.FormContext != null)
                 {
-                    ViewContext.OutputClientValidation();
+                    ValidationMetadata.Add("Fields", ProcessValidationMetadata());
+
+                    ValidationMetadata.Add("FormId", ViewContext.FormContext.FormId);
                 }
             }
             finally
@@ -469,6 +513,90 @@ namespace Telerik.Web.Mvc.UI
 #endif
             base.WriteHtml(writer);
         }
+#if MVC2 || MVC3
+        private IEnumerable<FieldValidationMetadata> ProcessValidationMetadata()
+        {
+            var validators = ViewContext.FormContext
+                              .FieldValidators
+                              .Values
+                              .Where(IsBooleanField);
+
+            if (Name.Contains("<#="))
+            {
+                validators = validators.Select(EncodeRegularExpressionValidators);
+            }
+            
+            return validators;
+        }
+
+        private static FieldValidationMetadata EncodeRegularExpressionValidators(FieldValidationMetadata metadata)
+        {
+            metadata.ValidationRules.Each(validationRule =>
+            {
+                if (validationRule.ValidationType == "regularExpression")
+                {
+                    if (validationRule.ValidationParameters.ContainsKey("pattern"))
+                    {
+                        validationRule.ValidationParameters["pattern"] =
+                            new JavaScriptSerializer().Serialize(validationRule.ValidationParameters["pattern"]).Trim('"');
+                    }
+                }
+            });
+            return metadata;
+        }
+
+        private bool IsBooleanField(FieldValidationMetadata validationMetadata)
+        {
+            ModelMetadata modelMetadata = ModelMetadata.FromStringExpression(validationMetadata.FieldName, ViewContext.ViewData);
+
+            return modelMetadata.ModelType != typeof(bool);
+        }
+#endif
+
+#if MVC3
+        private void AdjustColumnsTypesFromDynamic()
+        {
+            if (!typeof (T).IsDynamicObject() || DataProcessor.ProcessedDataSource == null ||
+                !Columns.OfType<IGridBoundColumn>().Any(c => c.MemberType == null && c.Member.HasValue())
+                ) 
+                return;
+
+            var processedDataSource = DataProcessor.ProcessedDataSource;
+            var firstItem = GetFirstItemFromGroups(processedDataSource);
+            if (firstItem != null)
+            {
+                Columns.OfType<IGridBoundColumn>().Where(
+                    c => c.MemberType == null && c.Member.HasValue()).Each(
+                        c => c.MemberType = BindingHelper.ExtractMemberTypeFromObject(firstItem, c.Member));
+            }
+        }
+
+        private static object GetFirstItemFromGroups(IEnumerable dataSource)
+        {
+            var groupItem = dataSource.OfType<IGroup>().FirstOrDefault();
+            if (groupItem != null)
+            {
+                return groupItem.Leaves().Cast<object>().FirstOrDefault();
+            }
+            return dataSource.OfType<object>().FirstOrDefault();
+        }
+#endif
+
+#if MVC2 || MVC3
+
+        internal bool OutputValidation
+        {
+            get
+            {
+                return (this.IsInInsertMode() || this.IsInEditMode() || (Editing.Enabled && IsClientBinding))
+#if MVC3
+                       && !ViewContext.UnobtrusiveJavaScriptEnabled
+#endif
+                    ;
+            }
+        }
+
+#endif
 
         public void RegisterScriptFiles()
         {
@@ -521,6 +649,12 @@ namespace Telerik.Web.Mvc.UI
                 ScriptFileNames.Add("telerik.draganddrop.js");
                 ScriptFileNames.Add("telerik.grid.resizing.js");
             }
+            
+            if (Reordering.Enabled)
+            {
+                ScriptFileNames.Add("telerik.draganddrop.js");
+                ScriptFileNames.Add("telerik.grid.reordering.js");
+            }
 
             var dateColumns = Columns.OfType<IGridBoundColumn>().Where(c => c.MemberType.IsDateTime());
 
@@ -538,6 +672,8 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        public bool AutoGenerateColumns { get; set; }
+
         public bool IsEmpty
         {
             get;
@@ -551,15 +687,12 @@ namespace Telerik.Web.Mvc.UI
                 return Ajax.Enabled || WebService.Enabled;
             }
         }
-
-        public void VerifySettings()
+        
+        public override void VerifySettings()
         {
-            EnsureRequired();
-        }
-
-        protected override void EnsureRequired()
-        {
-            base.EnsureRequired();
+            base.VerifySettings();
+            
+            this.ThrowIfClassIsPresent("t-grid-rtl", TextResource.Rtl);
 
             if (Ajax.Enabled && WebService.Enabled)
             {
@@ -609,6 +742,13 @@ namespace Telerik.Web.Mvc.UI
                         throw new NotSupportedException(TextResource.InsertCommandRequiresInsert);
                     }
                 }
+#if MVC2 || MVC3
+                if(typeof(T) == typeof(System.Data.DataRowView) && Editing.Mode == GridEditMode.InLine 
+                    && Columns.OfType<IGridBoundColumn>().Where(c => c.EditorTemplateName.HasValue()).Any())
+                {
+                    throw new NotSupportedException(TextResource.DataTableInLineEditingWithCustomEditorTemplates);
+                }
+#endif
             }
         }
 
@@ -639,7 +779,7 @@ namespace Telerik.Web.Mvc.UI
         public IHtmlBuilder CreateBuilderFor(GridRow<T> row)
         {
             IHtmlBuilder builder = new GridRowHtmlBuilder<T>(row);
-#if MVC2
+#if MVC2 || MVC3
             if (row.InEditMode || row.InInsertMode)
             {
                 var editorBuilder = Editing.Mode != GridEditMode.InLine ? new GridFormEditRowHtmlBuilder<T>(row) : new GridEditRowHtmlBuilder<T>(row);
@@ -676,7 +816,7 @@ namespace Telerik.Web.Mvc.UI
 #endif
             if (HasDetailView)
             {
-#if MVC2                
+#if MVC2 || MVC3
                 if (!(row.InEditMode || row.InInsertMode))
 #endif
                 {
@@ -695,7 +835,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (DataProcessor.GroupDescriptors.Any())
             {
-#if MVC2                
+#if MVC2 || MVC3
                 if (!(row.InEditMode || row.InInsertMode))
 #endif
                 {
@@ -715,12 +855,21 @@ namespace Telerik.Web.Mvc.UI
             return builder;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         private void InitializeEditors()
         {
             ViewContext.HttpContext.Items["$SelfInitialize$"] = true;
+            T dataItem;
+            if (typeof(T) == typeof(System.Data.DataRowView))
+            {
+                dataItem = (T)((object)new System.Data.DataTable().DefaultView.AddNew());
+            }
+            else
+            {
+                dataItem = Activator.CreateInstance<T>();
+            }
+             
 
-            T dataItem = Activator.CreateInstance<T>();
             var row = new GridRow<T>(this, dataItem, 0);
 
             if (Editing.Mode != GridEditMode.InLine)

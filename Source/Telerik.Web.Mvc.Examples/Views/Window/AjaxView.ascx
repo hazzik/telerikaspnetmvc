@@ -3,5 +3,5 @@
 <p>Click refresh button from the configurator to reload the content of the window.</p>
 <p>You can also maximize/restore window size.</p>
 <p>
-    <button onclick="maximizeWindow()">Maximize</button> / <button onclick="restoreWindow()">Restore</button>
+    <button onclick="maximizeWindow()">Maximize</button> / <button onclick="restoreWindow()">Restore</button> / <button onclick="centerWindow()">Center</button>
 </p>

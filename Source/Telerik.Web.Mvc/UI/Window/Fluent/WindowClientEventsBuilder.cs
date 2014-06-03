@@ -133,6 +133,56 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
+        /// Defines the inline handler of the OnActivate client-side event
+        /// </summary>
+        /// <param name="javaScript">The action defining the inline handler.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnActivate(() =>
+        ///            {
+        ///                 %&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;%
+        ///            }))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnActivate(Action onActivateInlineCode)
+        {
+            Guard.IsNotNull(onActivateInlineCode, "onActivateInlineCode");
+
+            clientEvents.OnActivate.InlineCode = onActivateInlineCode;
+
+            return this;
+        }
+
+        /// <summary>
+        ///  Defines the name of the JavaScript function that will handle the the OnActivate client-side event.
+        /// </summary>
+        /// <param name="handlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Window()
+        ///             .Name("Window")
+        ///             .ClientEvents(events => events.OnActivate("onActivate"))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnActivate(string onActivateHandlerName)
+        {
+            Guard.IsNotNullOrEmpty(onActivateHandlerName, "onActivateHandlerName");
+
+            clientEvents.OnActivate.HandlerName = onActivateHandlerName;
+
+            return this;
+        }
+
+        /// <summary>
         /// Defines the inline handler of the OnClose client-side event
         /// </summary>
         /// <param name="javaScript">The action defining the inline handler.</param>

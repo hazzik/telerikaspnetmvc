@@ -14,6 +14,12 @@
                 + "');}return p.join('');"));
     }
 
+    function encode(value) {
+        return (value != null ? value + '' : '').replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+    }
+
     $t.grid = function (element, options) {
         this.element = element;
         this.groups = [];
@@ -32,13 +38,14 @@
         if (!this.scrollable) {
             this.$tbody = $('> table > tbody', element);
             this.$header = $('> table > thead tr', element);
-            this.$footer = $('> table > tfoot .t-pager-wrapper', element);
+            this.$footer = $('> table > tfoot', element);
         } else {
             this.$header = $('> .t-grid-header tr', element);
             this.$footer = $('> .t-grid-footer', element);
         }
-        var headerWrap = this.$headerWrap = $('> .t-grid-header > .t-grid-header-wrap', element);
+        this.$footerWrap = this.$footer.find(".t-footer-template-wrap");
 
+        var headerWrap = this.$headerWrap = $('> .t-grid-header > .t-grid-header-wrap', element);        
         $('> .t-grid-content', element).bind('scroll', function () {
             headerWrap.scrollLeft(this.scrollLeft);
         });
@@ -61,17 +68,16 @@
                         .cat('">')
                         .cat(this.displayDetails(this.dataItem($tr)))
                         .cat('</td></tr>').string()).insertAfter($tr);
-            
-            $t.trigger(this.element, expanding ? 'detailViewExpand' : 'detailViewCollapse', {masterRow:$tr[0], detailRow:$tr.next('.t-detail-row')[0]});
+
+            $t.trigger(this.element, expanding ? 'detailViewExpand' : 'detailViewCollapse', { masterRow: $tr[0], detailRow: $tr.next('.t-detail-row')[0] });
             $tr.next().toggle(expanding);
         }, this));
 
         this.$pager = $('> .t-pager-wrapper .t-pager', element).add(this.$footer.find('.t-pager'));
 
         this.$pager.delegate('.t-state-disabled', 'click', $t.preventDefault)
-                   .delegate('.t-link:not(.t-state-disabled)', 'hover', function () {
-                       $(this).toggleClass('t-state-hover');
-                   })
+                   .delegate('.t-link:not(.t-state-disabled)', 'mouseenter', $t.hover)
+                   .delegate('.t-link:not(.t-state-disabled)', 'mouseleave', $t.leave)
                    .delegate('input[type=text]', 'keydown', $.proxy(this.pagerKeyDown, this));
 
         this.$footer.add($('> .t-pager-wrapper', element)).delegate('.t-refresh', 'click', $.proxy(this.refreshClick, this));
@@ -85,19 +91,19 @@
                 $(this).toggleClass('t-state-hover');
             });
 
-        var nonGroupingRowsSelector = 'tr:not(.t-grouping-row,.t-detail-row)';
+        var nonSelectableRows = 'tr:not(.t-grouping-row,.t-detail-row,.t-no-data)';
         
         if (this.selectable) {
             var tbody = this.$tbody[0];
             var grid = this;
-            this.$tbody.delegate(nonGroupingRowsSelector, 'click', function(e) {
-                            if (this.parentNode == tbody)
-                                grid.rowClick(e);
-                        })
-                       .delegate(nonGroupingRowsSelector, 'hover', function() {
-                            if (this.parentNode == tbody)
-                                $(this).toggleClass('t-state-hover');
-                       });
+            this.$tbody.delegate(nonSelectableRows, 'click', function (e) {
+                if (this.parentNode == tbody)
+                    grid.rowClick(e);
+            })
+            .delegate(nonSelectableRows, 'hover', function () {
+                if (this.parentNode == tbody)
+                    $(this).toggleClass('t-state-hover');
+            });
         }
         if (this.isAjax()) {
             this.$pager.delegate('.t-link:not(.t-state-disabled)', 'click', $t.stop(this.pagerClick, this));
@@ -110,6 +116,7 @@
 
         $t.bind(this, {
             columnResize: this.onColumnResize,
+            columnReorder: this.onColumnReorder,
             'delete': this.onDelete,
             detailViewExpand: this.onDetailViewExpand,
             detailViewCollapse: this.onDetailViewCollapse,
@@ -172,6 +179,19 @@
             this.orderBy = orderBy;
             this.ajaxRequest();
         },
+        
+        columnFromTitle: function (title) {
+            title = $.trim(title);
+            
+            var result = $.grep(this.$columns(), function(th) {
+                return $.trim($(th).text()) == title;
+            })[0];
+
+            if (result)
+                return this.columns[this.$columns().index(result)];
+
+            return $.grep(this.columns, function (c) { return c.title == title; })[0];
+        },
 
         columnFromMember: function (member) {
             var column = $.grep(this.columns, function (c) { return c.member == member })[0];
@@ -222,7 +242,7 @@
                 if (page != this.currentPage)
                     this.pageTo(page);
                 else
-                    $(element).val(page);
+                    $(e.target).val(page);
             }
         },
 
@@ -236,7 +256,6 @@
 
         pagerClick: function (e) {
             e.preventDefault();
-
             var $element = $(e.target).closest('.t-link');
 
             var page = this.currentPage;
@@ -265,7 +284,7 @@
                 }
             }
 
-            this.pageTo(page);
+            this.pageTo(isFinite(page) ? page : this.currentPage);
         },
 
         pageTo: function (page) {
@@ -302,6 +321,12 @@
                     }
 
                     data = data.d || data; // Support the `d` returned by MS Web Services 
+
+                    if (options.hasErrors && options.hasErrors(data)) {
+                        options.displayErrors(data);
+                        return;
+                    }
+
                     this.total = data.total || data.Total || 0;
                     this.dataBind(data.data || data.Data);
                 }, this)
@@ -325,13 +350,13 @@
 
         showBusy: function () {
             this.busyTimeout = setTimeout($.proxy(function () {
-                this.$footer.find('.t-status .t-icon').addClass('t-loading');
+                $('.t-pager-wrapper', this.element).find('.t-status .t-icon').addClass('t-loading');
             }, this), 100);
         },
 
         hideBusy: function () {
             clearTimeout(this.busyTimeout);
-            this.$footer.find('.t-status .t-icon').removeClass('t-loading');
+            $('.t-pager-wrapper', this.element).find('.t-status .t-icon').removeClass('t-loading');
         },
 
         serverRequest: function () {
@@ -367,18 +392,20 @@
                 return new Function('data', 'var value = data.' + column.member +
                     '; if (!value) return null; return value instanceof Date? value : new Date(parseInt(value.replace(/\\/Date\\((.*?)\\)\\//, "$1")));');
 
-            return new Function('data', 'return data.' + column.member + ';');
+            return new Function('data', 'return data' + (column.member ? '.' + column.member : '') + ';');
         },
 
         displayFor: function (column) {
             if (!column.template) {
+                var result = column.value;
+
                 if (column.format || column.type == 'Date')
-                    return function (data) {
+                    result = function (data) {
                         var value = column.value(data);
                         return value == null ? '' : $t.formatString(column.format || '{0:G}', value);
-                    }
+                    };
 
-                return column.value;
+                return column.encoded === false ? result : function (data) { return encode(result(data)) };
             }
 
             return template(column.template);
@@ -386,7 +413,7 @@
 
         createColumnMappings: function () {
             $.each(this.columns, $.proxy(function (_, column) {
-                if (column.member) {
+                if (column.member !== undefined) {
                     column.value = this.valueFor(column);
                     column.display = this.displayFor(column);
                     column.edit = column.type != 'Date' ? column.value : column.display;
@@ -406,7 +433,7 @@
             var dataLength = Math.min(this.pageSize, data.length);
 
             dataLength = this.pageSize ? dataLength : data.length;
-            
+
             /* fix for ie8 hidden columns in ajax binding becoming ghosts */
             if ($.browser.msie)
                 $(this.element).find('.t-grid-content colgroup:first col').css('display', '');
@@ -431,7 +458,6 @@
                         .cat(column.attr)
                         .catIf(' class="t-last"', i == len - 1)
                         .cat('>');
-
                     var evaluate = column.display;
                     if (evaluate)
                         html.cat(evaluate(data[rowIndex]));
@@ -491,17 +517,24 @@
 
         bindTo: function (data) {
             var html = new $t.stringBuilder();
+            var colspan = this.groups.length + this.columns.length + (this.detail ? 1 : 0);
 
             if (data && data.length) {
-                var colspan = this.groups.length + this.columns.length + (this.detail ? 1 : 0);
-                this.normalizeColumns(colspan);
 
-                if ('HasSubgroups' in data[0])
+                this.normalizeColumns(colspan);
+                if (typeof data[0].HasSubgroups != 'undefined')
                     for (var i = 0, l = data.length; i < l; i++)
                         this.bindGroup(data[i], colspan, html, 0);
                 else
                     this.bindData(data, html);
             }
+            else
+                html.cat("<tr class='t-no-data'>")
+                    .cat("<td colspan='")
+                    .cat(colspan)
+                    .cat("'>")
+                    .cat(this.noRecordsTemplate ? this.noRecordsTemplate : this.localization.noRecords)
+                    .cat('</td></tr>');
 
             this.$tbody.html(html.string());
 
@@ -628,7 +661,7 @@
         sanitizePage: function (value) {
             var result = parseInt(value, 10);
             if (isNaN(result) || result < 1)
-                return 1
+                return this.currentPage;
             return Math.min(result, this.totalPages());
         },
 
@@ -717,6 +750,7 @@
             pageOf: 'of {0}',
             displayingItems: 'Displaying items {0} - {1} of {2}',
             edit: 'Edit',
+            noRecords: 'No records to display.',
             page: 'Page ',
             filter: 'Filter',
             filterClear: 'Clear Filter',

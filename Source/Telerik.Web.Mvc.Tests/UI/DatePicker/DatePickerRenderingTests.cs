@@ -31,7 +31,7 @@
             datePicker = DatePickerTestHelper.CreateDatePicker(tagBuilder.Object, viewContext);
             datePicker.Name = "DatePicker";
         }
-#if MVC2
+#if MVC2 || MVC3
         [Fact]
         public void If_Name_is_not_set_it_should_be_get_from_TemplateInfo()
         {
@@ -45,53 +45,13 @@
         }
 #endif
         [Fact]
-        public void Render_should_output_DatePicker_start() 
+        public void DatePicker_Render_should_call_HtmlBuilder_Build() 
         {
-            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
+            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object).Verifiable();
 
             datePicker.Render();
 
             tagBuilder.Verify();
-        }
-
-        [Fact]
-        public void Render_should_output_Input() 
-        {
-            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-
-            tagBuilder.Setup(r => r.InputTag()).Verifiable();
-
-            datePicker.Render();
-
-            tagBuilder.Verify();
-        }
-
-        [Fact]
-        public void Render_should_output_Image_if_it_is_allowed()
-        {
-            datePicker.EnableButton = true;
-
-            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-
-            tagBuilder.Setup(r => r.ButtonTag()).Verifiable();
-
-            datePicker.Render();
-
-            tagBuilder.Verify();
-        }
-
-        [Fact]
-        public void Render_should_not_output_Image_if_it_is_disabled()
-        {
-            datePicker.EnableButton = false;
-
-            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-
-            tagBuilder.Setup(r => r.ButtonTag()).Verifiable();
-
-            datePicker.Render();
-
-            tagBuilder.Verify(r => r.ButtonTag(), Times.Never());
         }
 
         [Fact]
@@ -181,11 +141,11 @@
 
             datePicker.Value = date;
 
-            DatePickerTestHelper.clientSideObjectWriter.Setup(w => w.AppendDateOnly("selectedDate", date)).Verifiable();
+            DatePickerTestHelper.clientSideObjectWriter.Setup(w => w.AppendDateOnly("selectedValue", date)).Verifiable();
 
             datePicker.WriteInitializationScript(textWriter.Object);
 
-            DatePickerTestHelper.clientSideObjectWriter.Verify(w => w.AppendDateOnly("selectedDate", date));
+            DatePickerTestHelper.clientSideObjectWriter.Verify(w => w.AppendDateOnly("selectedValue", date));
         }
 
         [Fact]
@@ -193,7 +153,7 @@
         {
             DateTime date = new DateTime(1900, 12, 20);
 
-            datePicker.MinDate = date;
+            datePicker.Min = date;
 
             DatePickerTestHelper.clientSideObjectWriter.Setup(w => w.AppendDateOnly("minDate", date)).Verifiable();
 
@@ -207,7 +167,7 @@
         {
             DateTime date = new DateTime(2100, 12, 20);
 
-            datePicker.MaxDate = date;
+            datePicker.Max = date;
 
             DatePickerTestHelper.clientSideObjectWriter.Setup(w => w.AppendDateOnly("maxDate", date)).Verifiable();
 
@@ -219,7 +179,7 @@
         [Fact]
         public void Render_should_throw_exception_if_selectedDate_is_out_of_limits() 
         {
-            datePicker.MinDate = DateTime.Now.AddMonths(1);
+            datePicker.Min = DateTime.Now.AddMonths(1);
             datePicker.Value = DateTime.Now;
 
             Assert.Throws(typeof(ArgumentOutOfRangeException), () => datePicker.Render());
@@ -229,8 +189,8 @@
         public void Render_should_throw_exception_if_minDate_is_bigger_than_maxDate()
         {
             DateTime date = DateTime.Now;
-            datePicker.MaxDate = date;
-            datePicker.MinDate = date.AddMonths(1);
+            datePicker.Max = date;
+            datePicker.Min = date.AddMonths(1);
 
             Assert.Throws(typeof(ArgumentException), () => datePicker.Render());
         }
@@ -240,7 +200,7 @@
         {
             DateTime date = DateTime.Today;
             datePicker.Value = date;
-            datePicker.MaxDate = date;
+            datePicker.Max = date;
 
             Assert.DoesNotThrow(() => datePicker.Render());
         }
@@ -250,7 +210,7 @@
         {
             DateTime date = DateTime.Today;
             datePicker.Value = date;
-            datePicker.MinDate = date;
+            datePicker.Min = date;
 
             Assert.DoesNotThrow(() => datePicker.Render());
         }
@@ -259,8 +219,8 @@
         public void MinDate_should_set_throw_exception_if_less_than_minDate()
         {
             DateTime date = DateTime.Now;
-            datePicker.MinDate = date;
-            datePicker.MaxDate = date.AddMonths(-1);
+            datePicker.Min = date;
+            datePicker.Max = date.AddMonths(-1);
 
             Assert.Throws(typeof(ArgumentException), () => datePicker.Render());
         }

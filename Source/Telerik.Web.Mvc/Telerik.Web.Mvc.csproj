@@ -40,9 +40,9 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Telerik.Web.Mvc.XML</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug MVC2 NET35\</OutputPath>
+    <OutputPath>bin\Debug MVC2\</OutputPath>
     <DefineConstants>TRACE;DEBUG;TELERIK_DATA;MVC2;</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
@@ -52,8 +52,8 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRules>-Microsoft.Design#CA1006;-Microsoft.Design#CA1004</CodeAnalysisRules>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU' ">
-    <OutputPath>bin\Release MVC2 NET35\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2|AnyCPU' ">
+    <OutputPath>bin\Release MVC2\</OutputPath>
     <DefineConstants>TRACE;CODE_ANALYSIS;TELERIK_DATA;MVC2</DefineConstants>
     <DocumentationFile>bin\Release\Telerik.Web.Mvc.XML</DocumentationFile>
     <Optimize>true</Optimize>
@@ -63,6 +63,32 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug MVC3\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TELERIK_DATA;MVC3;</DefineConstants>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRules>-Microsoft.Design#CA1006;-Microsoft.Design#CA1004</CodeAnalysisRules>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU' ">
+    <OutputPath>bin\Release MVC3\</OutputPath>
+    <DefineConstants>TRACE;CODE_ANALYSIS;TELERIK_DATA;MVC3;</DefineConstants>
+    <DocumentationFile>bin\Release\Telerik.Web.Mvc.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -90,12 +116,20 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
+  <ItemGroup Condition="$(TargetFrameworkVersion) == 'v4.0'">
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
   <Choose>
-    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU'">
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU'">
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC2|AnyCPU'">
       <ItemGroup>
         <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
       </ItemGroup>
-    </When>
+    </When>    
     <Otherwise>
       <ItemGroup>
         <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -110,21 +144,37 @@
     <Compile Include="Extensions\HttpRequestBaseExtensions.cs" />
     <Compile Include="Extensions\ListSortDirectionExtensions.cs" />
     <Compile Include="Extensions\QueryProviderExtensions.cs" />
+    <Compile Include="Extensions\RouteValueDictionaryExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
-    <Compile Include="Extensions\ContentContainerExtensions.cs" />
     <Compile Include="Extensions\ExpressionExtensions.cs" />
     <Compile Include="Extensions\HtmlTextWriterExtensions.cs" />
-    <Compile Include="Extensions\HtmlAttributesExtensions.cs" />
     <Compile Include="Infrastructure\DynamicTypeBuilder.cs" />
     <Compile Include="Infrastructure\FluentDictionary.cs" />
+    <Compile Include="Infrastructure\ICacheFactory.cs" />
+    <Compile Include="Infrastructure\ICacheProvider.cs" />
+    <Compile Include="Infrastructure\ILocalizationServiceFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\Cache.cs" />
+    <Compile Include="Infrastructure\Implementation\CacheFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\CacheProvider.cs" />
     <Compile Include="Infrastructure\Implementation\ClassFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\DependencyInjectionContainer.cs" />
+    <Compile Include="Infrastructure\DI.cs" />
     <Compile Include="Infrastructure\Implementation\DynamicClass.cs" />
     <Compile Include="Infrastructure\Implementation\DynamicProperty.cs" />
     <Compile Include="Infrastructure\Implementation\ExpressionConstants.cs" />
     <Compile Include="Infrastructure\ILocalizationService.cs" />
+    <Compile Include="Infrastructure\IDependencyInjectionContainer.cs" />
+    <Compile Include="Infrastructure\ICache.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\DynamicPropertyAccessExpressionBuilder.cs" />
     <Compile Include="Infrastructure\Implementation\LocalizationService.cs" />
+    <Compile Include="Infrastructure\Implementation\LocalizationServiceFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\NoCache.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\ReleaseWebAssetExtensions.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\DebugWebAssetExtensions.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetExtensions.cs" />
     <Compile Include="Infrastructure\ViewComponentLocalization.cs" />
     <Compile Include="Infrastructure\Implementation\Signature.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetLocator.cs" />
     <Compile Include="Resources\EditorLocalization.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -152,8 +202,14 @@
     <Compile Include="UI\ComboBox\IComboBoxRenderable.cs" />
     <Compile Include="UI\ComboBox\Settings\ComboBoxFilterSettings.cs" />
     <Compile Include="UI\ComponentBuilderBase.cs" />
+    <Compile Include="UI\DateTimePicker\DateTimePicker.cs" />
+    <Compile Include="UI\DateTimePicker\DateTimePickerClientEvents.cs" />
+    <Compile Include="UI\DateTimePicker\DateTimePickerHtmlBuilder.cs" />
+    <Compile Include="UI\DateTimePicker\Fluent\DateTimePickerBuilder.cs" />
+    <Compile Include="UI\DateTimePicker\Fluent\DateTimePickerClientEventsBuilder.cs" />
     <Compile Include="UI\DropDownList\Fluent\DropDownListBindingSettingsBuilder.cs" />
     <Compile Include="UI\DropDownList\Fluent\DropDownListWebServiceBindingSettingsBuilder.cs" />
+    <Compile Include="UI\DropDown\DropDownRenderableExtentions.cs" />
     <Compile Include="UI\DropDown\IDropDownRenderable.cs" />
     <Compile Include="UI\DropDown\IDataBoundDropDown.cs" />
     <Compile Include="UI\DropDown\IDropDownDataBindingConfiguration.cs" />
@@ -215,8 +271,15 @@
     <Compile Include="UI\Effects\EffectsBuilderFactory.cs" />
     <Compile Include="UI\Effects\IEffectsBuilderFactory.cs" />
     <Compile Include="UI\ExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\BindingHelper.cs" />
+    <Compile Include="UI\GridViewResultAdapterFactory.cs" />
     <Compile Include="UI\Grid\Commands\GridActionCommandBaseExtensions.cs" />
+    <Compile Include="UI\Grid\CustomGroupingWrapper.cs" />
+    <Compile Include="UI\Grid\Fluent\GridReorderingSettingsBuilder.cs" />
     <Compile Include="UI\Grid\GridButtonType.cs" />
+    <Compile Include="UI\Grid\GridDynamicDataKey.cs" />
+    <Compile Include="UI\Grid\GridRowViewDataKey.cs" />
+    <Compile Include="UI\Grid\GridDataTableWrapperEnumerable.cs" />
     <Compile Include="UI\Grid\GridDetailRow.cs" />
     <Compile Include="UI\Grid\GridDetailView.cs" />
     <Compile Include="UI\Grid\Columns\IGridActionColumn.cs" />
@@ -240,7 +303,10 @@
     <Compile Include="UI\Grid\Fluent\GridSortDescriptorFactory.cs" />
     <Compile Include="UI\Grid\GridDetailViewExtensions.cs" />
     <Compile Include="UI\Grid\GridEditMode.cs" />
+    <Compile Include="UI\Grid\GridJsonResultAdapter.cs" />
+    <Compile Include="UI\Grid\GroupDescriptorExtensions.cs" />
     <Compile Include="UI\Grid\Html\GridActionCellHtmlBuilder.cs" />
+    <Compile Include="UI\Grid\Html\GridColumnEditorBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridDataCellHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridColgroupHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridColHtmlBuilder.cs" />
@@ -249,6 +315,9 @@
     <Compile Include="UI\Grid\Html\GridDisplayForCellHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridEditorForCellHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridEmptyRowHtmlBuilder.cs" />
+    <Compile Include="UI\Grid\Html\GridFooterCellHtmlBuilder.cs" />
+    <Compile Include="UI\Grid\Html\GridFooterRowHtmlBuilder.cs" />
+    <Compile Include="UI\Grid\Html\GridFooterRowHtmlScrollingBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridFormEditRowHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridEditRowHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridFilterAdorner.cs" />
@@ -272,10 +341,14 @@
     <Compile Include="UI\Grid\Html\GridTagRepeatingAdorner.cs" />
     <Compile Include="UI\Grid\Html\GridTemplateCellHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridToggleDetailViewAdorner.cs" />
+    <Compile Include="UI\Grid\IGridActionResultAdapter.cs" />
     <Compile Include="UI\Grid\IGridRow.cs" />
+    <Compile Include="UI\Grid\IGridActionResultAdapterFactory.cs" />
+    <Compile Include="UI\Grid\Settings\GridReorderingSettings.cs" />
     <Compile Include="UI\Grid\Settings\GridColumnSettings.cs" />
     <Compile Include="UI\Grid\Settings\GridCommandColumnSettings.cs" />
     <Compile Include="UI\Grid\ToolBar\GridToolBarCommandBaseExtensions.cs" />
+    <Compile Include="UI\Grid\GridViewResultAdapter.cs" />
     <Compile Include="UI\HtmlBuilderBase.cs" />
     <Compile Include="UI\IHtmlBuilder.cs" />
     <Compile Include="UI\Grid\IGrid.cs" />
@@ -303,8 +376,6 @@
     </Compile>
     <Compile Include="UI\Grid\ToolBar\GridToolBarCommandFactory.cs" />
     <Compile Include="UI\Grid\GridControllerExtensions.cs" />
-    <Compile Include="Infrastructure\CacheBase.cs" />
-    <Compile Include="Infrastructure\DisposableBase.cs" />
     <Compile Include="Infrastructure\FilterDescriptorFactory.cs" />
     <Compile Include="Infrastructure\Implementation\Expressions\ExpressionBuilderOptions.cs" />
     <Compile Include="UI\HtmlTag.cs" />
@@ -384,7 +455,7 @@
     <Compile Include="UI\HtmlTemplate.cs" />
     <Compile Include="UI\INavigationComponentHtmlBuilder.cs" />
     <Compile Include="UI\LiteralNode.cs" />
-    <Compile Include="Infrastructure\PredicateFilterDescription.cs" />
+    <Compile Include="Infrastructure\Implementation\PredicateFilterDescription.cs" />
     <Compile Include="Infrastructure\Implementation\Grouping\AggregateFunctionsGroup.cs" />
     <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AggregateFunction.cs" />
     <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AggregateFunctionCollection.cs" />
@@ -422,7 +493,6 @@
     <Compile Include="UI\Grid\SortDescriptor.cs" />
     <Compile Include="Infrastructure\Implementation\Sorting\SortDescriptorCollectionExpressionBuilder.cs" />
     <Compile Include="Infrastructure\QueryableFactory.cs" />
-    <Compile Include="Infrastructure\ServiceLocator.cs" />
     <Compile Include="Infrastructure\IReflectedAuthorizeAttributeCache.cs" />
     <Compile Include="Infrastructure\IAuthorizeAttributeBuilder.cs" />
     <Compile Include="Infrastructure\IObjectCopier.cs" />
@@ -433,15 +503,12 @@
     </Compile>
     <Compile Include="Infrastructure\Implementation\PropertyCache.cs" />
     <Compile Include="Infrastructure\INavigationItemAuthorization.cs" />
-    <Compile Include="Infrastructure\IServiceLocator.cs" />
     <Compile Include="Infrastructure\IUrlAuthorization.cs" />
     <Compile Include="Infrastructure\Implementation\UrlAuthorization.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Infrastructure\IVirtualPathProvider.cs" />
     <Compile Include="Infrastructure\Implementation\VirtualPathProviderWrapper.cs" />
-    <Compile Include="Infrastructure\Implementation\ServiceLocatorImpl.cs" />
-    <Compile Include="Infrastructure\Implementation\UrlEncoder.cs" />
     <Compile Include="SiteMap\PopulateSiteMapAttribute.cs" />
     <Compile Include="SiteMap\SiteMapBase.cs" />
     <Compile Include="SiteMap\SiteMapBuilder.cs" />
@@ -502,6 +569,11 @@
     <Compile Include="UI\TextBox\ITextboxBaseHtmlBuilderFactory.cs" />
     <Compile Include="UI\NavigationHtmlBuilderBase.cs" />
     <Compile Include="UI\NavigationItemContainerExtensions.cs" />
+    <Compile Include="UI\TimePicker\TimePickerClientEvents.cs" />
+    <Compile Include="UI\TimePicker\Fluent\TimePickerClientEventsBuilder.cs" />
+    <Compile Include="UI\TimePicker\TimePickerHtmlBuilder.cs" />
+    <Compile Include="UI\TimePicker\Fluent\TimePickerBuilder.cs" />
+    <Compile Include="UI\TimePicker\TimePicker.cs" />
     <Compile Include="UI\TreeView\Fluent\TreeViewDragAndDropSettingsBuilder.cs" />
     <Compile Include="UI\TreeView\Fluent\TreeViewBindingSettingsBuilder.cs" />
     <Compile Include="UI\TreeView\Fluent\TreeViewBuilder.cs" />
@@ -524,9 +596,9 @@
     <Compile Include="UI\TreeView\TreeViewClientEvents.cs" />
     <Compile Include="UI\TreeView\TreeViewItem.cs" />
     <Compile Include="UI\DatePicker\DatePicker.cs" />
-    <Compile Include="UI\DatePicker\DatePickerBuilder.cs" />
+    <Compile Include="UI\DatePicker\Fluent\DatePickerBuilder.cs" />
     <Compile Include="UI\DatePicker\DatePickerClientEvents.cs" />
-    <Compile Include="UI\DatePicker\DatePickerClientEventsBuilder.cs" />
+    <Compile Include="UI\DatePicker\Fluent\DatePickerClientEventsBuilder.cs" />
     <Compile Include="UI\DatePicker\DatePickerHtmlBuilder.cs" />
     <Compile Include="UI\DatePicker\DatePickerHtmlBuilderFactory.cs" />
     <Compile Include="UI\DatePicker\IDatePickerHtmlBuilder.cs" />
@@ -612,7 +684,6 @@
     <Compile Include="UI\Menu\MenuItemBuilder.cs" />
     <Compile Include="UI\Menu\MenuItemFactory.cs" />
     <Compile Include="UI\Menu\MenuOrientation.cs" />
-    <Compile Include="Infrastructure\IUrlEncoder.cs" />
     <Compile Include="UI\Menu\MenuClientEvents.cs" />
     <Compile Include="UI\Menu\MenuClientEventsBuilder.cs" />
     <Compile Include="UI\NavigatableExtensions.cs" />
@@ -656,8 +727,24 @@
     </Compile>
     <Compile Include="UI\TabStrip\TabStripHtmlBuilder.cs" />
     <Compile Include="UI\UiPrimitives.cs" />
-    <Compile Include="UI\WebAsset\IWebAssetItemMerger.cs" />
+    <Compile Include="UI\ViewComponentFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\AbsoluteWebAssetResolver.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\CdnWebAssetResolver.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\CombinedWebAssetGroupResolver.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetContentFilter.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetChecker.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetGroupReader.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetGroupSerializer.cs" />
     <Compile Include="UI\Effects\ZoomAnimation.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetResolver.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetResolverFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\RebaseImagePathContentFilter.cs" />
+    <Compile Include="Infrastructure\WebAsset\ResolverContext.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetChecker.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupConverter.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupReader.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupResolver.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\LocalWebAssetResolver.cs" />
     <Compile Include="UI\Window\Fluent\WindowEffectsBuilder.cs" />
     <Compile Include="UI\Window\WindowButtons.cs" />
     <Compile Include="UI\Window\Fluent\WindowButtonsBuilder.cs" />
@@ -674,35 +761,31 @@
     <Compile Include="UI\Window\Fluent\WindowBuilder.cs" />
     <Compile Include="UI\Window\WindowHtmlBuilder.cs" />
     <Compile Include="UI\Window\WindowHtmlBuilderFactory.cs" />
-    <Compile Include="WebAsset\IWebAssetRegistry.cs" />
+    <Compile Include="Infrastructure\WebAsset\IWebAssetCollectionResolver.cs" />
     <Compile Include="WebAsset\SharedWebAssetGroupBuilder.cs" />
     <Compile Include="UrlGenerator.cs" />
     <Compile Include="WebAsset\SharedWebAssets.cs" />
     <Compile Include="WebAsset\Configuration\WebAssetConfigurationSection.cs" />
-    <Compile Include="WebAsset\Configuration\WebAssetItemConfigurationElement.cs" />
-    <Compile Include="WebAsset\Configuration\WebAssetItemConfigurationElementCollection.cs" />
-    <Compile Include="WebAsset\Configuration\WebAssetItemGroupConfigurationElement.cs" />
-    <Compile Include="WebAsset\Configuration\WebAssetItemGroupConfigurationElementCollection.cs" />
-    <Compile Include="WebAsset\WebAsset.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetConfigurationElement.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetConfigurationElementCollection.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetGroupConfigurationElement.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetGroupConfigurationElementCollection.cs" />
     <Compile Include="WebAsset\WebAssetHttpHandler.cs" />
-    <Compile Include="WebAsset\WebAssetLocator.cs" />
-    <Compile Include="WebAsset\WebAssetRegistry.cs" />
-    <Compile Include="UI\WebAsset\WebAssetDefaultSettings.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetCollectionResolver.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupSerializer.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetResolverFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetLocator.cs" />
+    <Compile Include="WebAsset\WebAssetDefaultSettings.cs" />
     <Compile Include="Infrastructure\IPathResolver.cs" />
     <Compile Include="Infrastructure\IHttpResponseCompressor.cs" />
     <Compile Include="Infrastructure\IHttpResponseCacher.cs" />
-    <Compile Include="Infrastructure\IFileSystem.cs" />
     <Compile Include="Infrastructure\IConfigurationManager.cs" />
-    <Compile Include="Infrastructure\ICacheManager.cs" />
-    <Compile Include="Extensions\ArrayExtensions.cs" />
-    <Compile Include="Infrastructure\Implementation\CacheManagerWrapper.cs" />
     <Compile Include="Infrastructure\PathHelper.cs" />
     <Compile Include="UI\ClientSideObjectWriterFactory.cs" />
     <Compile Include="UI\ClientSideEnumValueAttribute.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Infrastructure\Implementation\ConfigurationManagerWrapper.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
-    <Compile Include="Infrastructure\Implementation\FileSystemWrapper.cs" />
     <Compile Include="Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Infrastructure\HttpHandlerBase.cs" />
     <Compile Include="Infrastructure\Implementation\HttpResponseCacher.cs" />
@@ -717,28 +800,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TextResource.resx</DependentUpon>
     </Compile>
-    <Compile Include="UI\WebAsset\WebAssetItem.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemCollection.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemCollectionBuilder.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemGroup.cs" />
+    <Compile Include="WebAsset\WebAsset.cs" />
+    <Compile Include="WebAsset\WebAssetCollection.cs" />
+    <Compile Include="WebAsset\WebAssetCollectionBuilder.cs" />
+    <Compile Include="WebAsset\WebAssetGroup.cs" />
     <Compile Include="UI\ClientSideObjectWriter.cs" />
-    <Compile Include="UI\WebAsset\IWebAssetItem.cs" />
+    <Compile Include="WebAsset\IWebAsset.cs" />
     <Compile Include="Infrastructure\IUrlResolver.cs" />
     <Compile Include="UI\HtmlHelperExtension.cs" />
     <Compile Include="UI\IScriptableComponent.cs" />
     <Compile Include="UI\IScriptableComponentContainer.cs" />
-    <Compile Include="UI\ViewComponentFactory.cs" />
     <Compile Include="UI\ViewComponentBuilderBase.cs" />
     <Compile Include="UI\ViewComponentBase.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemMerger.cs" />
     <Compile Include="UI\ScriptRegistrar\ScriptWrapperBase.cs" />
     <Compile Include="UI\StyleSheetRegistrar\StyleSheetRegistrarBuilder.cs" />
     <Compile Include="UI\StyleSheetRegistrar\StyleSheetRegistrar.cs" />
     <Compile Include="Infrastructure\Implementation\UrlResolver.cs" />
     <Compile Include="UI\ScriptRegistrar\ScriptWrapper.cs" />
-    <Compile Include="Infrastructure\Culture.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemGroupBuilder.cs" />
+    <Compile Include="WebAsset\WebAssetGroupBuilder.cs" />
     <Compile Include="UI\ScriptRegistrar\ScriptRegistrar.cs" />
     <Compile Include="UI\ScriptRegistrar\ScriptRegistrarBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -752,6 +832,16 @@
       <Link>Telerik.Web.snk</Link>
     </None>
     <Content Include="Content\Black\editor.png" />
+    <Content Include="Content\Black\treeview-nodes-rtl.png" />
+    <Content Include="Content\Default\treeview-nodes-rtl.png" />
+    <Content Include="Content\Forest\treeview-nodes-rtl.png" />
+    <Content Include="Content\Hay\treeview-nodes-rtl.png" />
+    <Content Include="Content\Office2007\treeview-nodes-rtl.png" />
+    <Content Include="Content\Outlook\treeview-nodes-rtl.png" />
+    <Content Include="Content\Simple\treeview-nodes-rtl.png" />
+    <Content Include="Content\Sitefinity\treeview-nodes-rtl.png" />
+    <Content Include="Content\Sunset\treeview-nodes-rtl.png" />
+    <Content Include="Content\telerik.rtl.css" />
     <Content Include="Content\Default\editor.png" />
     <Content Include="Content\Forest\editor.png" />
     <Content Include="Content\Hay\editor.png" />
@@ -761,9 +851,16 @@
     <Content Include="Content\Sitefinity\editor.png" />
     <Content Include="Content\Sunset\editor.png" />
     <Content Include="Content\Telerik\editor.png" />
+    <Content Include="Content\Telerik\treeview-nodes-rtl.png" />
     <Content Include="Content\Web20\editor.png" />
+    <Content Include="Content\Web20\treeview-nodes-rtl.png" />
     <Content Include="Content\WebBlue\editor.png" />
+    <Content Include="Content\WebBlue\treeview-nodes-rtl.png" />
     <Content Include="Content\Windows7\editor.png" />
+    <Content Include="Scripts\telerik.datetimepicker.js" />
+    <Content Include="Scripts\jquery-1.4.3.min.js" />
+    <Content Include="Scripts\telerik.grid.reordering.js" />
+    <Content Include="Scripts\telerik.timepicker.js" />
     <Content Include="Scripts\Editor\formatblock.js" />
     <Content Include="Scripts\Editor\indent.js" />
     <Content Include="Scripts\Editor\components.js" />
@@ -789,6 +886,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\GridLocalization.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\TextResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -867,7 +965,6 @@
     <Content Include="Content\Vista\loading.gif" />
     <Content Include="Scripts\telerik.grid.resizing.js" />
     <Content Include="Scripts\telerik.window.js" />
-    <Content Include="Scripts\jquery-1.4.2.min.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\telerik.draganddrop.js" />
     <Content Include="Scripts\telerik.grid.editing.js" />
@@ -1010,7 +1107,7 @@
   </Target>
   <Target Name="AfterCompile">
     <Message Importance="high" Text="Processing JavaScript files..." />
-    <CallTarget Targets="AfterBuildDebug" Condition="'$(Configuration)' == 'Debug' Or $(Configuration) == 'Debug MVC2 NET35'" />
-    <CallTarget Targets="AfterBuildRelease" Condition="'$(Configuration)' == 'Release' Or $(Configuration) == 'Release MVC2 NET35'" />
+    <CallTarget Targets="AfterBuildDebug" Condition="'$(Configuration)' == 'Debug' Or $(Configuration) == 'Debug MVC2' Or $(Configuration) == 'Debug MVC3'" />
+    <CallTarget Targets="AfterBuildRelease" Condition="'$(Configuration)' == 'Release' Or $(Configuration) == 'Release MVC2' Or $(Configuration) == 'Release MVC3'" />
   </Target>
 </Project>

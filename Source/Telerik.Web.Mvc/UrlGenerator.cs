@@ -6,11 +6,11 @@
 namespace Telerik.Web.Mvc
 {
     using System;
+    using System.Linq;
     using System.Web.Mvc;
     using System.Web.Routing;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class UrlGenerator : IUrlGenerator
     {
@@ -33,7 +33,7 @@ namespace Telerik.Web.Mvc
             }
             else if (!string.IsNullOrEmpty(navigationItem.ControllerName) && !string.IsNullOrEmpty(navigationItem.ActionName))
             {
-                generatedUrl = urlHelper.Action(navigationItem.ActionName, navigationItem.ControllerName, routeValues);
+                generatedUrl = urlHelper.Action(navigationItem.ActionName, navigationItem.ControllerName, routeValues, null, null);
             }
             else if (!string.IsNullOrEmpty(navigationItem.Url))
             {
@@ -41,7 +41,7 @@ namespace Telerik.Web.Mvc
                                urlHelper.Content(navigationItem.Url) :
                                navigationItem.Url;
             }
-            else if (!routeValues.IsEmpty())
+            else if (routeValues.Any())
             {
                 generatedUrl = urlHelper.RouteUrl(routeValues);
             }
@@ -53,7 +53,7 @@ namespace Telerik.Web.Mvc
         {
             RouteValueDictionary routeValues = new RouteValueDictionary();
 
-            if (!navigationItem.RouteValues.IsNullOrEmpty())
+            if (navigationItem.RouteValues.Any())
             {
                 routeValues.Merge(navigationItem.RouteValues);
             }

@@ -287,32 +287,6 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
-        public void Should_be_able_to_append_integer_list()
-        {
-            _writer.Setup(w => w.Write(It.IsAny<string>())).Verifiable();
-
-            IList<int> list = new List<int>{ 1, 2, 3};
-
-            _objectWriter.Start()
-                         .Append("foo", list);
-
-            _writer.Verify(w => w.Write("foo:[1,2,3]"));
-        }
-
-        [Fact]
-        public void Should_be_able_to_append_string_list()
-        {
-            _writer.Setup(w => w.Write(It.IsAny<string>())).Verifiable();
-
-            IList<string> list = new List<string> { "foo", "bar" };
-
-            _objectWriter.Start()
-                         .Append("dummy", list);
-
-            _writer.Verify(w => w.Write("dummy:['foo','bar']"));
-        }
-
-        [Fact]
         public void Should_be_able_to_append_enum_with_default_value()
         {
             _writer.Setup(w => w.Write(It.IsAny<string>())).Verifiable();

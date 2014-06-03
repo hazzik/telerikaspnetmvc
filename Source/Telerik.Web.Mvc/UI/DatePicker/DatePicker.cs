@@ -7,15 +7,15 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Web.Mvc;
     using System.Web.Routing;
     using System.Web.UI;
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
-    
 
     public class DatePicker : ViewComponentBase, IEffectEnabled
     {
@@ -23,8 +23,8 @@ namespace Telerik.Web.Mvc.UI
 
         private readonly IDatePickerHtmlBuilderFactory rendererFactory;
 
-        internal DateTime defaultMinDate = new DateTime(1899, 12, 31);
-        internal DateTime defaultMaxDate = new DateTime(2100, 1, 1);
+        static internal DateTime defaultMinDate = new DateTime(1899, 12, 31);
+        static internal DateTime defaultMaxDate = new DateTime(2100, 1, 1);
 
         public DatePicker(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IDatePickerHtmlBuilderFactory rendererFactory)
             : base(viewContext, clientSideObjectWriterFactory)
@@ -38,24 +38,19 @@ namespace Telerik.Web.Mvc.UI
 
             defaultEffects.Each(el => Effects.Container.Add(el));
 
-            Format = Culture.Current.DateTimeFormat.ShortDatePattern;
+            Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
 
             this.rendererFactory = rendererFactory;
 
-            MinDate = defaultMinDate;
-            MaxDate = defaultMaxDate;
+            Min = defaultMinDate;
+            Max = defaultMaxDate;
             Value = null;
 
             EnableButton = true;
+            Enabled = true;
         }
 
         public IDictionary<string, object> InputHtmlAttributes
-        {
-            get;
-            set;
-        }
-
-        public string Theme
         {
             get;
             set;
@@ -73,10 +68,10 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public bool EnableButton 
-        { 
-            get; 
-            set; 
+        public bool EnableButton
+        {
+            get;
+            set;
         }
 
         public string ButtonTitle
@@ -84,7 +79,7 @@ namespace Telerik.Web.Mvc.UI
             get;
             set;
         }
-         
+
         public string Format
         {
             get;
@@ -97,13 +92,19 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public DateTime MinDate
+        public DateTime Min
         {
             get;
             set;
         }
 
-        public DateTime MaxDate
+        public DateTime Max
+        {
+            get;
+            set;
+        }
+
+        public bool Enabled
         {
             get;
             set;
@@ -114,17 +115,18 @@ namespace Telerik.Web.Mvc.UI
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tDatePicker", writer);
 
             objectWriter.Start();
-            
+
             if (!defaultEffects.SequenceEqual(Effects.Container))
             {
                 objectWriter.Serialize("effects", Effects);
             }
 
             objectWriter.Append("format", this.Format);
-            objectWriter.AppendDateOnly("selectedDate", this.Value);
-            objectWriter.AppendDateOnly("minDate", this.MinDate);
-            objectWriter.AppendDateOnly("maxDate", this.MaxDate);
-
+            objectWriter.AppendDateOnly("selectedValue", this.Value);
+            objectWriter.AppendDateOnly("minDate", this.Min);
+            objectWriter.AppendDateOnly("maxDate", this.Max);
+            objectWriter.Append("enabled", this.Enabled, true);
+             
             objectWriter.AppendClientEvent("onLoad", ClientEvents.OnLoad);
             objectWriter.AppendClientEvent("onChange", ClientEvents.OnChange);
             objectWriter.AppendClientEvent("onOpen", ClientEvents.OnOpen);
@@ -145,34 +147,26 @@ namespace Telerik.Web.Mvc.UI
 
             IHtmlNode rootTag = renderer.Build();
 
-            rootTag.Children.Add(renderer.InputTag());
-            
-            if (EnableButton) 
-            {
-                rootTag.Children.Add(renderer.ButtonTag());
-            }
-
             rootTag.WriteTo(writer);
             base.WriteHtml(writer);
         }
-#if MVC2
-        protected override void EnsureRequired()
+
+        public override void VerifySettings()
         {
-            this.Name = this.Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
-            base.EnsureRequired();
-        }
+#if MVC2 || MVC3
+            Name = Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
 #endif
-		private void VerifySettings()
-		{
-            if (MinDate > MaxDate)
+            base.VerifySettings();
+
+            if (Min > Max)
             {
                 throw new ArgumentException(TextResource.MinDateShouldBeLessThanMaxDate);
             }
 
-            if ((Value != null) && (MinDate > Value || Value > MaxDate))
+            if ((Value != null) && (Min > Value || Value > Max))
             {
                 throw new ArgumentOutOfRangeException(TextResource.DateOutOfRange);
             }
-		}
+        }
     }
 }

@@ -14,32 +14,24 @@ namespace Telerik.Web.Mvc.Tests
 
     public class XmlSiteMapTests
     {
-        private readonly Mock<IPathResolver> _pathResolver;
-        private readonly Mock<IFileSystem> _fileSystem;
-        private readonly Mock<ICacheManager> _cacheManager;
+        private readonly Mock<IPathResolver> pathResolver;
+        private readonly Mock<IVirtualPathProvider> fileSystem;
+        private readonly Mock<ICacheProvider> cacheProvider;
 
         private readonly XmlSiteMap _siteMap;
 
         public XmlSiteMapTests()
         {
-            _pathResolver = new Mock<IPathResolver>();
-            _fileSystem = new Mock<IFileSystem>();
-            _cacheManager = new Mock<ICacheManager>();
+            pathResolver = new Mock<IPathResolver>();
+            fileSystem = new Mock<IVirtualPathProvider>();
+            cacheProvider = new Mock<ICacheProvider>();
 
-            _siteMap = new XmlSiteMap(_pathResolver.Object, _fileSystem.Object, _cacheManager.Object);
+            _siteMap = new XmlSiteMap(pathResolver.Object, fileSystem.Object, cacheProvider.Object);
         }
 
         [Fact]
         public void Default_constructor_should_not_throw_exception()
         {
-            Mock<IServiceLocator> locator = new Mock<IServiceLocator>();
-
-            locator.Setup(l => l.Resolve<IPathResolver>()).Returns(_pathResolver.Object);
-            locator.Setup(l => l.Resolve<IFileSystem>()).Returns(_fileSystem.Object);
-            locator.Setup(l => l.Resolve<ICacheManager>()).Returns(_cacheManager.Object);
-
-            ServiceLocator.SetCurrent(() => locator.Object);
-
             Assert.DoesNotThrow(() => new XmlSiteMap());
         }
 
@@ -83,7 +75,7 @@ namespace Telerik.Web.Mvc.Tests
             SetupLoad();
             _siteMap.Load();
 
-            _pathResolver.Verify();
+            pathResolver.Verify();
         }
 
         [Fact]
@@ -92,7 +84,7 @@ namespace Telerik.Web.Mvc.Tests
             SetupLoad();
             _siteMap.Load();
 
-            _fileSystem.Verify();
+            fileSystem.Verify();
         }
 
         [Fact]
@@ -101,13 +93,13 @@ namespace Telerik.Web.Mvc.Tests
             SetupLoad();
             _siteMap.Load();
 
-            _cacheManager.Verify();
+            cacheProvider.Verify();
         }
 
         [Fact]
         public void Should_reload_when_xml_file_is_changed()
         {
-            Mock<XmlSiteMap> siteMap = new Mock<XmlSiteMap>(_pathResolver.Object, _fileSystem.Object, _cacheManager.Object);
+            Mock<XmlSiteMap> siteMap = new Mock<XmlSiteMap>(pathResolver.Object, fileSystem.Object, cacheProvider.Object);
 
             siteMap.Setup(sm => sm.InternalLoad(It.IsAny<string>())).Verifiable();
 
@@ -140,9 +132,9 @@ namespace Telerik.Web.Mvc.Tests
                                @"    </siteMapNode>" + "\r\n" +
                                @"</siteMap>";
 
-            _pathResolver.Setup(pathResolver => pathResolver.Resolve(It.IsAny<string>())).Returns("C:\\Web.sitemap").Verifiable();
-            _fileSystem.Setup(fileSystem => fileSystem.ReadAllText(It.IsAny<string>())).Returns(Xml).Verifiable();
-            _cacheManager.Setup(cache => cache.Insert(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CacheItemRemovedCallback>(), It.IsAny<string>())).Verifiable();
+            pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns("C:\\Web.sitemap").Verifiable();
+            fileSystem.Setup(f => f.ReadAllText(It.IsAny<string>())).Returns(Xml).Verifiable();
+            cacheProvider.Setup(cache => cache.Insert(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CacheItemRemovedCallback>(), It.IsAny<string>())).Verifiable();
         }
     }
 }

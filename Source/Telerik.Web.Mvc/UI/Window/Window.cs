@@ -200,6 +200,7 @@ namespace Telerik.Web.Mvc.UI
             objectWriter.AppendClientEvent("onLoad", ClientEvents.OnLoad);
             objectWriter.AppendClientEvent("onMove", ClientEvents.OnMove);
             objectWriter.AppendClientEvent("onOpen", ClientEvents.OnOpen);
+            objectWriter.AppendClientEvent("onActivate", ClientEvents.OnActivate);
             objectWriter.AppendClientEvent("onResize", ClientEvents.OnResize);
             objectWriter.AppendClientEvent("onRefresh", ClientEvents.OnRefresh);
 
@@ -233,8 +234,6 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            VerifySettings();
-
             IWindowHtmlBuilder builder = builderFactory.Create(this);
 
             IHtmlNode windowTag = builder.WindowTag();
@@ -257,9 +256,10 @@ namespace Telerik.Web.Mvc.UI
             base.WriteHtml(writer);
         }
 
-
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (ResizingSettings.MinWidth != int.MinValue && 
                 ResizingSettings.MaxWidth != int.MinValue &&
                 ResizingSettings.MinWidth > ResizingSettings.MaxWidth)

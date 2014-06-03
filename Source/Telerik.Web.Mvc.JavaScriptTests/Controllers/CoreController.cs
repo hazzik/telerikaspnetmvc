@@ -13,12 +13,22 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View("Suite");
         }
 
+        public ActionResult FormatString()
+        {
+            return View();
+        }
+        
         public ActionResult DateFormatting()
         {
             return View();
         }
 
         public ActionResult NumberFormatting()
+        {
+            return View();
+        }
+
+        public ActionResult TimeParsing() 
         {
             return View();
         }

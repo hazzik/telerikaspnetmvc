@@ -3,7 +3,7 @@
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
-#if MVC2
+#if MVC2 || MVC3
 namespace Telerik.Web.Mvc.UI.Html
 {
     using System;
@@ -34,7 +34,7 @@ namespace Telerik.Web.Mvc.UI.Html
             var html = new HtmlHelper<TModel>(viewContext, new GridViewDataContainer<TModel>(model, viewContext.ViewData));
 
             string content = html.DisplayFor(expression).ToHtmlString();
-            td.Html(content.IsNullOrEmpty() ? "&nbsp;" : content);
+            td.Html(content.HasValue() ? content : "&nbsp;");
 
             return td;
         }

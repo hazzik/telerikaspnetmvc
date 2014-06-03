@@ -7,29 +7,25 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Linq;
 
-    public static class DropDownExtentions
+    internal static class DropDownExtentions
     {
-        public static void PrepareItemsAndDefineSelectedIndex(this IDropDown instance)
+        internal static void PrepareItemsAndDefineSelectedIndex(this IDropDown instance)
         {
             var selectedItemIndex = instance.Items.IndexOf(instance.Items.LastOrDefault(item => item.Selected == true));
-
+            
             if (selectedItemIndex != -1)
             {
                 for (int i = 0, length = instance.Items.Count; i < length; i++)
                 {
                     instance.Items[i].Selected = false;
                 }
-                instance.SelectedIndex = -1;
-            }
 
-            if (instance.SelectedIndex != -1 && instance.SelectedIndex < instance.Items.Count)
-            {
-                instance.Items[instance.SelectedIndex].Selected = true;
-            }
-            else if (selectedItemIndex != -1)
-            {
                 instance.Items[selectedItemIndex].Selected = true;
                 instance.SelectedIndex = selectedItemIndex;
+            }
+            else if (instance.SelectedIndex != -1 && instance.SelectedIndex < instance.Items.Count)
+            {
+                instance.Items[instance.SelectedIndex].Selected = true;
             }
             else if (instance is DropDownList)
             {

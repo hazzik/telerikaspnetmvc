@@ -24,18 +24,14 @@ namespace Telerik.Web.Mvc.UI
             InputHtmlAttributes = new RouteValueDictionary();
 
             ClientEvents = new TextboxBaseClientEvents();
+
+            Enabled = true;
         }
 
         public IDictionary<string, object> InputHtmlAttributes
         {
             get;
-            set;
-        }
-
-        public string Theme
-        {
-            get;
-            set;
+            private set;
         }
 
         public T? Value
@@ -109,14 +105,20 @@ namespace Telerik.Web.Mvc.UI
             get;
             private set;
         }
-        
-#if MVC2
-        protected override void EnsureRequired()
+
+        public bool Enabled
         {
-            this.Name = this.Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
-            base.EnsureRequired();
+            get;
+            set;
+        }
+        
+#if MVC2 || MVC3
+        public override void VerifySettings()
+        {
+            Name = Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
+            
+            base.VerifySettings();
         }
 #endif
-
     }
 }

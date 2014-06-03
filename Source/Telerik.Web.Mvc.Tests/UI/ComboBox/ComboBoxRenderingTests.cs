@@ -1,8 +1,9 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using Moq;
-    using System.IO;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
     using Xunit;
 
     public class ComboBoxRenderingTests
@@ -33,6 +34,37 @@
             comboBox.Name = "comboBox";
 
             textWriter = new Mock<TextWriter>();
+        }
+#if MVC2 || MVC3
+        [Fact]
+        public void Render_method_should_set_selectedIndex_depending_on_ViewData_value()
+        {
+            comboBox.Name = "ComboBox1";
+            comboBox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            comboBox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            comboBox.SelectedIndex = 0;
+
+            ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
+
+            comboBox.Render();
+
+            Assert.Equal(1, comboBox.SelectedIndex);
+        }
+#endif
+        [Fact]
+        public void Render_method_should_set_selectedIndex_depending_on_returned_value_from_ValueProvider()
+        {
+            comboBox.Name = "DropDownList1";
+            comboBox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            comboBox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            comboBox.Items.Add(new DropDownItem { Text = "Item3", Value = "3" });
+            comboBox.SelectedIndex = 0;
+
+            comboBox.ViewContext.ViewData.Add("DropDownList1", "3");
+
+            comboBox.Render();
+
+            Assert.Equal(2, comboBox.SelectedIndex);
         }
 
         [Fact]

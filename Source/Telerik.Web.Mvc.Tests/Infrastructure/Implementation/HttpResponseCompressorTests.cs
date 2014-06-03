@@ -43,8 +43,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
             httpRequest.Setup(request => request.Browser.IsBrowser("IE")).Returns(true);
 
             Mock<HttpResponseBase> httpResponse = new Mock<HttpResponseBase>();
-            httpResponse.Setup(response => response.AppendHeader("Content-encoding", It.IsAny<string>())).Verifiable();
-            httpResponse.SetupSet(response => response.Filter).Verifiable();
+            httpResponse.Setup(response => response.AppendHeader("Content-encoding", It.IsAny<string>())).Verifiable();            
 
             Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
             httpContext.SetupGet(context => context.Request).Returns(httpRequest.Object);
@@ -52,8 +51,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
 
             _compressor.Compress(httpContext.Object);
 
-            httpResponse.Verify(response => response.AppendHeader("Content-encoding", It.IsAny<string>()), Times.Never());
-            httpResponse.VerifySet(response => response.Filter, Times.Never());
+            httpResponse.Verify(response => response.AppendHeader("Content-encoding", It.IsAny<string>()), Times.Never());            
         }
 
         [Fact]
@@ -64,8 +62,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
             httpRequest.SetupGet(request => request.Browser).Returns(new Mock<HttpBrowserCapabilitiesBase>().Object);
 
             Mock<HttpResponseBase> httpResponse = new Mock<HttpResponseBase>();
-            httpResponse.Setup(response => response.AppendHeader("Content-encoding", It.IsAny<string>())).Verifiable();
-            httpResponse.SetupSet(response => response.Filter).Verifiable();
+            httpResponse.Setup(response => response.AppendHeader("Content-encoding", It.IsAny<string>())).Verifiable();            
 
             Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
             httpContext.SetupGet(context => context.Request).Returns(httpRequest.Object);
@@ -73,8 +70,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
 
             _compressor.Compress(httpContext.Object);
 
-            httpResponse.Verify(response => response.AppendHeader("Content-encoding", It.IsAny<string>()), Times.Never());
-            httpResponse.VerifySet(response => response.Filter, Times.Never());
+            httpResponse.Verify(response => response.AppendHeader("Content-encoding", It.IsAny<string>()), Times.Never());            
         }
 
         private void Compress(string type)
@@ -88,8 +84,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
 
             Mock<HttpResponseBase> httpResponse = new Mock<HttpResponseBase>();
             httpResponse.Setup(response => response.AppendHeader("Content-encoding", type)).Verifiable();
-            httpResponse.SetupGet(response => response.Filter).Returns(filter);
-            httpResponse.SetupSet(response => response.Filter).Verifiable();
+            httpResponse.SetupGet(response => response.Filter).Returns(filter);            
 
             Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
             httpContext.SetupGet(context => context.Request).Returns(httpRequest.Object);

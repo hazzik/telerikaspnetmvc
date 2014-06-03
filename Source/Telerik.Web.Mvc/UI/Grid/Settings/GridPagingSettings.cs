@@ -5,9 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using System.Diagnostics;
-
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class GridPagingSettings : IClientSerializable
     {
@@ -20,6 +18,13 @@ namespace Telerik.Web.Mvc.UI
         {
             this.grid = grid;
             Style = GridPagerStyles.NextPreviousAndNumeric;
+            CurrentPage = 1;
+        }
+        
+        public int CurrentPage
+        {
+            get;
+            set;
         }
 
         public bool Enabled
@@ -30,13 +35,11 @@ namespace Telerik.Web.Mvc.UI
 
         public int PageSize 
         {
-            [DebuggerStepThrough]
             get
             {
                 return pageSize;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotZeroOrNegative(value, "value");
@@ -58,12 +61,10 @@ namespace Telerik.Web.Mvc.UI
 
         public int Total
         {
-            [DebuggerStepThrough]
             get
             {
                 return total;
             }
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNegative(value, "value");

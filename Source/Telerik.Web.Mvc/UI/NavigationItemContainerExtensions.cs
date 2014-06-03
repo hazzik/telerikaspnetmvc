@@ -8,17 +8,17 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Web.Mvc;
-    using Extensions;
-    using Infrastructure;
-    using Resources;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.UI;
 
     public static class NavigationItemContainerExtensions
     {
-        //where TComponent : ViewComponentBase, INavigationItemComponent<TItem>
-
         public static void WriteItem<TComponent, TItem>(this TItem item, TComponent component, IHtmlNode parentTag, INavigationComponentHtmlBuilder<TItem> builder)
             where TItem : NavigationItem<TItem>, IContentContainer, INavigationItemContainer<TItem>
             where TComponent : ViewComponentBase, INavigationItemComponent<TItem>
@@ -65,14 +65,14 @@ namespace Telerik.Web.Mvc.UI
         {
             IAsyncContentContainer asyncContentContainer = item as IAsyncContentContainer;
 
-            if (asyncContentContainer != null && !asyncContentContainer.ContentUrl.IsNullOrEmpty())
+            if (asyncContentContainer != null && asyncContentContainer.ContentUrl.HasValue())
             {
                 return component.IsSelfInitialized ? System.Web.HttpUtility.UrlDecode(asyncContentContainer.ContentUrl) : asyncContentContainer.ContentUrl;
             }
 
             if (item.Template.HasValue() &&
-                item.RouteName.IsNullOrEmpty() && item.Url.IsNullOrEmpty() &&
-                item.ActionName.IsNullOrEmpty() && item.ControllerName.IsNullOrEmpty())
+                !item.RouteName.HasValue() && !item.Url.HasValue() &&
+                !item.ActionName.HasValue() && !item.ControllerName.HasValue())
             {
                 return "#" + component.GetItemContentId(item);
             }
@@ -93,7 +93,7 @@ namespace Telerik.Web.Mvc.UI
         {
             return item.ContentHtmlAttributes.ContainsKey("id") ?
                    "{0}".FormatWith(item.ContentHtmlAttributes["id"].ToString()) :
-                   "{0}-{1}".FormatWith(component.Id, (component.Items.Where(i => i.Visible == true).IndexOf(item) + 1).ToString(Culture.Invariant));
+                   "{0}-{1}".FormatWith(component.Id, (component.Items.Where(i => i.Visible == true).IndexOf(item) + 1).ToString(CultureInfo.InvariantCulture));
         }
 
         public static string GetItemText<TComponent, TItem>(this TComponent component, TItem item, IActionMethodCache actionMethodCache)

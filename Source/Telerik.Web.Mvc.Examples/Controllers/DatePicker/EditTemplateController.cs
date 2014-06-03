@@ -2,30 +2,29 @@ namespace Telerik.Web.Mvc.Examples
 {
     using System;
     using System.Web.Mvc;
-    using System.Web.Script.Serialization;
     using Telerik.Web.Mvc.Examples.Models;
-
 
     public partial class DatePickerController : Controller
     {
+        [SourceCodeFile("Time.ascx", "~/Views/Shared/EditorTemplates/Date.ascx")]
         [SourceCodeFile("Date.ascx", "~/Views/Shared/EditorTemplates/Date.ascx")]
-        [SourceCodeFile("EditableProduct.cs", "~/Models/EditableProduct.cs")]
-        public ActionResult EditTemplate(EditableProduct product)
+        [SourceCodeFile("DateTime.ascx", "~/Views/Shared/EditorTemplates/DateTime.ascx")]
+        [SourceCodeFile("OrderInfo.cs", "~/Models/OrderInfo.cs")]
+        public ActionResult EditTemplate(OrderInfo orderInfo)
         {
-            if (product.ProductID == 0)
+            if (orderInfo.OrderInfoID == 0)
             {
-                product.ProductID = 1;
-                product.ProductName = "Chai";
-                product.UnitsInStock = 39;
-                product.UnitPrice = 18.00m;
-                product.LastSupply = DateTime.Today;
+                orderInfo.OrderInfoID = 1;
+                orderInfo.Delay = new DateTime(2010, 1, 1, 10, 0, 0);
+                orderInfo.DeliveryDate = new DateTime(2010, 1, 1);
+                orderInfo.OrderDateTime = new DateTime(2010, 1, 1, 10, 0, 0);
             }
-            else 
+            else
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                ViewData["ProductJson"] = serializer.Serialize(product).Replace(",", ",<br />");
+                ViewData["orderInfo"] = orderInfo;
             }
-            return View(product);
+
+            return View(orderInfo);
         }
     }
 }

@@ -119,7 +119,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            if (!Items.IsEmpty())
+            if (Items.Any())
             {
                 ITabStripHtmlBuilder builder = builderFactory.Create(this);
 
@@ -175,17 +175,10 @@ namespace Telerik.Web.Mvc.UI
 
         private void HighlightSelectedItem(TabStripItem item)
         {
-            string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
-            string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
-
-            if (string.Equals(controllerName, item.Text, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(controllerName, item.ControllerName, StringComparison.OrdinalIgnoreCase))
+            if (item.IsCurrent(ViewContext, UrlGenerator))
             {
-                if (string.Equals(actionName, item.ActionName, StringComparison.OrdinalIgnoreCase))
-                {
-                    isPathHighlighted = true;
-                    item.Selected = true;
-                }
+                isPathHighlighted = true;
+                item.Selected = true;
             }
         }
     }

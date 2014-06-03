@@ -140,7 +140,7 @@
                 value:"10"
             }];
             
-            assertEquals("startswith(Name,'10')", grid.filterExpr())
+            assertEquals("Name~startswith~'10'", grid.filterExpr())
         }
         
         function test_two_filters_for_one_column() {
@@ -155,7 +155,7 @@
                 value:"10"
             }];
             
-            assertEquals("startswith(Name,'10')~and~Name~eq~'10'", grid.filterExpr())
+            assertEquals("Name~startswith~'10'~and~Name~eq~'10'", grid.filterExpr())
         }
         
         function test_encode_number() {
@@ -252,7 +252,7 @@
             var grid = getGrid();
             $('th:eq(1) .t-filter', grid.element).click();
 
-            var datePicker = $('.t-filter-options:last input[id^=Grid1BirthDate]', grid.element).parent().data('tDatePicker');
+            var datePicker = $('.t-filter-options:last input[id^=Grid1BirthDate]', grid.element).closest('.t-datepicker').data('tDatePicker');
 
             assertEquals('d', datePicker.format);
         }

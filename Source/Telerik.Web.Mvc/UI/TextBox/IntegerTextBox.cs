@@ -6,26 +6,26 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Globalization;
     using System.Web.Mvc;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
 
     public class IntegerTextBox : TextBoxBase<int>
     {
         public IntegerTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<int> rendererFactory)
-		: base(viewContext, clientSideObjectWriterFactory, rendererFactory)
+            : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
 
-            MinValue = -100;
-            MaxValue = 100;
+            MinValue = int.MinValue;
+            MaxValue = int.MaxValue;
             IncrementStep = 1;
             EmptyMessage = "Enter value";
 
-            NumberGroupSize = Culture.Current.NumberFormat.NumberGroupSizes[0];
-            NegativePatternIndex = Culture.Current.NumberFormat.NumberNegativePattern;
+            NumberGroupSize = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSizes[0];
+            NegativePatternIndex = CultureInfo.CurrentCulture.NumberFormat.NumberNegativePattern;
         }
 
         public override void WriteInitializationScript(System.IO.TextWriter writer)
@@ -56,8 +56,6 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            VerifySettings();
-
             ITextBoxBaseHtmlBuilder renderer = rendererFactory.Create(this);
 
             IHtmlNode rootTag = renderer.Build("t-numerictextbox");
@@ -74,8 +72,10 @@ namespace Telerik.Web.Mvc.UI
             base.WriteHtml(writer);
         }
 
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (MinValue > MaxValue)
             {
                 throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);
@@ -86,7 +86,7 @@ namespace Telerik.Web.Mvc.UI
                 throw new ArgumentOutOfRangeException(TextResource.ValueOutOfRange);
             }
 
-            if (NegativePatternIndex < 0 || NegativePatternIndex > 4) 
+            if (NegativePatternIndex < 0 || NegativePatternIndex > 4)
             {
                 throw new IndexOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("NegativePatternIndex", 0, 4));
             }

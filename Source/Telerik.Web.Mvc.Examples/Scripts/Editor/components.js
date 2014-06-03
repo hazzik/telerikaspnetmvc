@@ -5,16 +5,8 @@ $t.selectbox = function (element, options) {
     var $element = $(element);
     var $text = $element.find('.t-input');
 
-    var dropdown = new $t.dropDown({
-        outerHeight: $element.outerHeight(),
-        outerWidth: $element.outerWidth(),
-        zIndex: $t.list.getZIndex($element),
+    var dropDown = this.dropDown = new $t.dropDown({
         effects: $t.fx.slide.defaults(),
-        onOpen: function () {
-            var offset = $element.offset();
-            dropdown.position(offset.top, offset.left);
-            return true;
-        },
         onItemCreate: options.onItemCreate,
         onClick: function (e) {
             select(options.data[$(e.item).index()].Value);
@@ -23,12 +15,12 @@ $t.selectbox = function (element, options) {
     });
 
     function fill() {
-        if (!dropdown.$items)
-            dropdown.dataBind(options.data);
+        if (!dropDown.$items)
+            dropDown.dataBind(options.data);
     }
 
     function text(value) {
-        $text.html(value);
+        $text.html(value ? value : '&nbsp;');
     }
 
     function select(item) {
@@ -44,11 +36,11 @@ $t.selectbox = function (element, options) {
 
         if (index != -1) {
 
-            dropdown.$items
+            dropDown.$items
                     .removeClass('t-state-selected')
                     .eq(index).addClass('t-state-selected');
 
-            text($(dropdown.$items[index]).text());
+            text($(dropDown.$items[index]).text());
             selectedValue = options.data[index].Value;
         }
     }
@@ -57,32 +49,38 @@ $t.selectbox = function (element, options) {
         select(value);
 
         if (selectedValue != value)
-            text(options.title);
+            text(options.title || value);
     }
 
     this.close = function () {
-        dropdown.close();
+        dropDown.close();
     }
 
-    text(options.title);
+    text(options.title || $text.text());
 
-    $element
-        .bind({
-            click: function (e) {
-                fill();
-                if (dropdown.isOpened())
-                    dropdown.close();
-                else
-                    dropdown.open();
-            }
-        });
+    $element.bind('click', function (e) {
+        fill();
+        if (dropDown.isOpened())
+            dropDown.close();
+        else
+            dropDown.open({
+                offset: $element.offset(),
+                outerHeight: $element.outerHeight(),
+                outerWidth: $element.outerWidth(),
+                zIndex: $t.getElementZIndex($element[0])
+            });
+    })
+            .find('*')
+            .attr('unselectable', 'on');
 
-    $(document).bind('mousedown', $.proxy(function (e) {
-        var $dropDown = dropdown.$element;
+    dropDown.$element.css('direction', $element.closest('.t-rtl').length > 0 ? 'rtl' : '');
+
+    $(document.documentElement).bind('mousedown', $.proxy(function (e) {
+        var $dropDown = dropDown.$element;
         var isDropDown = $dropDown && $dropDown.parent().length > 0;
 
         if (isDropDown && !$.contains(element, e.target) && !$.contains($dropDown.parent()[0], e.target)) {
-            dropdown.close();
+            dropDown.close();
         }
 
     }, this));
@@ -111,14 +109,17 @@ $t.colorpicker = function (element, options) {
     $.extend(this, options);
 
     $element.bind('click', $.proxy(this.click, this))
+            .find('*')
+            .attr('unselectable', 'on');
     
     if (this.selectedColor)
         $element.find('.t-selected-color').css('background-color', this.selectedColor);
 
-    $(element.ownerDocument).bind('mousedown', $.proxy(function (e) {
-        if (!$(e.target).closest('.t-colorpicker-popup').length)
-            this.close();
-    }, this));
+    $(element.ownerDocument.documentElement)
+        .bind('mousedown', $.proxy(function (e) {
+            if (!$(e.target).closest('.t-colorpicker-popup').length)
+                this.close();
+        }, this));
 
     $t.bind(this, {
         change: this.onChange,
@@ -144,6 +145,9 @@ $t.colorpicker.prototype = {
 
         var elementPosition = $element.offset();
         elementPosition.top += $element.outerHeight();
+
+        if ($element.closest('.t-rtl').length)
+            elementPosition.left -= $popup.outerWidth() - $element.outerWidth();
 
         var zIndex = 'auto';
 
@@ -207,10 +211,12 @@ $t.colorpicker.prototype = {
 
     popup: function() {
         if (!this.$popup)
-            this.$popup =
-                $($t.colorpicker.buildPopup(this))
+            this.$popup = $($t.colorpicker.buildPopup(this))
                     .hide()
-                    .appendTo(document.body);
+                    .appendTo(document.body)
+                    .find('*')
+                    .attr('unselectable', 'on')
+                    .end();
 
         return this.$popup;
     }

@@ -11,6 +11,7 @@ namespace Telerik.Web.Mvc.UI
 
     using Extensions;
     using Infrastructure;
+    using Telerik.Web.Mvc.UI;
 
     public class GridDataProcessor
     {
@@ -139,7 +140,7 @@ namespace Telerik.Web.Mvc.UI
         {
             get
             {
-                return bindingContext.GetGridParameter<int?>(GridUrlParameters.CurrentPage) ?? 1;
+                return bindingContext.GetGridParameter<int?>(GridUrlParameters.CurrentPage) ?? bindingContext.CurrentPage;
             }
         }
 
@@ -158,18 +159,37 @@ namespace Telerik.Web.Mvc.UI
 
             if (!bindingContext.EnableCustomBinding)
             {
-                IQueryable dataSource = bindingContext.DataSource.AsQueryable();
-                GridModel model = dataSource.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);
+                GridModel model;
+                var dataTableEnumerable = bindingContext.DataSource as GridDataTableWrapper;
+                if (dataTableEnumerable != null)
+                {
+                    model = dataTableEnumerable.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);                    
+                }
+                else
+                {
+                    IQueryable dataSource = bindingContext.DataSource.AsQueryable();
+                    model = dataSource.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);                    
+                }
                 totalCount = model.Total;
                 processedDataSource = model.Data.AsGenericEnumerable();
             }
             else
             {
-                processedDataSource = bindingContext.DataSource;
+                processedDataSource = GetCustomDataSource(bindingContext.DataSource);
                 totalCount = bindingContext.Total;
             }
 
             dataSourceIsProcessed = true;
+        }
+
+        private IEnumerable GetCustomDataSource(IEnumerable dataSource)
+        {
+            var customDataSourceWrapper = dataSource as IGridCustomGroupingWrapper;
+            if (customDataSourceWrapper != null)
+            {
+                return customDataSourceWrapper.GroupedEnumerable.AsGenericEnumerable().AsQueryable();
+            }
+            return dataSource;            
         }
     }
 }

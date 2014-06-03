@@ -12,6 +12,7 @@
     <div id="Window1"></div>
     <div id="Window2"></div>
     <div id="Window3"></div>
+    <div id="Window4"></div>
     
     <script type="text/javascript">
     
@@ -46,6 +47,30 @@
         window.refresh();
 
         assertEquals(false, isCalled);
+    }
+
+    function test_construction_triggers_open_and_activate_events() {
+        var isActivated = false, isOpened = false;
+
+        $('#Window4').tWindow({
+            onOpen: function () { isOpened = true; },
+            onActivate: function () {isActivated = true; }
+        }).data('tWindow');
+
+        assertEquals(true, isActivated);
+        assertEquals(true, isOpened);
+    }
+
+    function test_construction_does_not_trigger_open_and_activate_events_on_hidden_windows() {
+        var isActivated = false, isOpened = false;
+
+        $('<div />').hide().tWindow({
+            onOpen: function () { isOpened = true; },
+            onActivate: function () {isActivated = true; }
+        }).data('tWindow');
+
+        assertEquals(false, isActivated);
+        assertEquals(false, isOpened);
     }
 
     function drag(start, end, element) {

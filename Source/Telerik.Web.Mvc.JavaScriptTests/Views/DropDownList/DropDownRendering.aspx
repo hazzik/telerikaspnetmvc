@@ -53,55 +53,6 @@
             assertTrue(animatedContainer.css('left') == Math.round(elementPosition.left * 1000) / 1000 + 'px');
         }
 
-        function test_open_method_should_call_dropDown_position_with_correct_params_on_open_callback() {
-            var top = 0;
-            var left = 0;
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-            ddl.$element.offset({ top: 20, left: 30 })
-
-
-            var position = ddl.dropDown.position;
-            ddl.dropDown.position = function (t, l) { top = t; left = l; };
-
-            ddl.close();
-            ddl.open();
-
-            assertEquals(20, top);
-            assertEquals(30, left);
-
-            ddl.dropDown.position = position;
-        }
-
-        function test_open_should_dropDown_width_if_outerWidth_is_0() {
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            var expectedWidth = ddl.$element.outerWidth();
-
-            ddl.dropDown.outerWidth = 0;
-            ddl.dropDown.$element.css('width', 0);
-
-            ddl.close();
-            ddl.open();
-
-            assertEquals(expectedWidth, ddl.dropDown.outerWidth);
-        }
-
-        function test_open_should_dropDown_height_if_outerHeight_is_0() {
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            var expectedHeight = ddl.$element.outerHeight();
-
-            ddl.dropDown.outerHeight = 0;
-
-            ddl.close();
-            ddl.open();
-
-            assertEquals(expectedHeight, ddl.dropDown.outerHeight);
-        }
-
         function test_open_method_should_append_dropdown_list_to_body() {
 
             var ddl = getDropDownList();
@@ -210,10 +161,10 @@
             var isDataBindCalled = false;
 
             var close = ddl.close;
-            var dataBind = ddl.dataBind;
+            var dataBind = ddl.dropDown.dataBind;
 
             ddl.close = function () { isCloseCalled = true; };
-            ddl.dataBind = function () { isDataBindCalled = true; };
+            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
 
             ddl.highlight(2);
 
@@ -221,7 +172,7 @@
             assertTrue(isDataBindCalled);
 
             ddl.close = close;
-            ddl.dataBind = dataBind;
+            ddl.dropDown.dataBind = dataBind;
         }
 
         function test_highlight_should_higlight_item_found_by_predicate() {
@@ -254,10 +205,10 @@
             var isDataBindCalled = false;
 
             var close = ddl.close;
-            var dataBind = ddl.dataBind;
+            var dataBind = ddl.dropDown.dataBind;
 
             ddl.close = function () { isCloseCalled = true; };
-            ddl.dataBind = function () { isDataBindCalled = true; };
+            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
 
             ddl.highlight(function (dataItem) {
                 return dataItem.Value == 2;
@@ -267,9 +218,18 @@
             assertTrue(isDataBindCalled);
 
             ddl.close = close;
-            ddl.dataBind = dataBind;
+            ddl.dropDown.dataBind = dataBind;
         }
 
+        function test_highlight_method_should_return_negative_index_if_data_is_undefined() {
+
+            var ddl = $('#DropDownList2').data('tDropDownList');
+            
+            var index = ddl.highlight(0);
+
+            assertEquals(-1, index);
+        }
+        
         function test_text_method_should_set_html_of_text_span() {
 
             var item = { "Selected": false, "Text": "Item2", "Value": "2" };
@@ -445,20 +405,6 @@
 
             assertFalse(ddl.dropDown.isOpened());
         }
-        
-        function test_dataBind_method_should_select_second_item_when_selectedIndex_is_1() {
-            
-            var ddl2 = $('#DropDownList2').data('tDropDownList');
-            ddl2.index = 1;
-
-            ddl2.data = [{ "Selected": false, "Text": "Chai", "Value": "1" },
-                         { "Selected": false, "Text": "Chang", "Value": "2" },
-                         { "Selected": true, "Text": "Aniseed Syrup", "Value": "3"}];
-
-            ddl2.fill();
-
-            assertTrue($(ddl2.dropDown.$items[ddl2.selectedIndex]).text() == 'Chang');
-        }
 
         function test_scrollTo_method_should_return_if_item_is_undefined() {
             var ddl2 = getDropDownList();
@@ -473,7 +419,6 @@
             }
                         
             assertFalse("Thrown exception when item is undefined.", throwException);
-
         }
 
         function test_Fill_method_on_ajax_should_call_change_event_handler() {
@@ -487,6 +432,24 @@
             ddl.fill();
 
             assertTrue(isCalled);
+        }
+
+        function test_open_sets_dropdown_zindex() {
+            var ddl = getDropDownList();
+            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
+            
+            var $ddl = $(ddl.element)
+
+            var lastZIndex = $ddl.css('z-index');
+
+            $ddl.css('z-index', 42);
+
+            ddl.close();
+            ddl.open();
+
+            assertEquals('43', '' + ddl.dropDown.$element.parent().css('z-index'));
+
+            $ddl.css('z-index', lastZIndex);
         }
     </script>
 
@@ -516,6 +479,19 @@
             items.Add().Text("тtem20").Value("20");
         })
     %>
+
+    <div style="display:none">
+    <%= Html.Telerik().DropDownList()
+        .Name("DDLWithServerAttr")
+        .DropDownHtmlAttributes(new { style = "width:400px"})
+        .Items(items =>
+        {
+            items.Add().Text("Item1").Value("1");
+            items.Add().Text("Item2").Value("2");
+            items.Add().Text("Item3").Value("3");
+        })
+    %>
+    </div>
 
     <%= Html.Telerik().DropDownList()
         .Name("DropDownList2") %>

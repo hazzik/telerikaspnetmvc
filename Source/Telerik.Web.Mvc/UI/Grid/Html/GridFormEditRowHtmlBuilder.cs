@@ -1,12 +1,11 @@
-#if MVC2
+#if MVC2 || MVC3
 namespace Telerik.Web.Mvc.UI.Html
 {
     using System.Linq;
     using System.Web.Mvc;
-    using System.Web.Mvc.Html;
-    using Telerik.Web.Mvc.Extensions;
-    using Telerik.Web.Mvc.Infrastructure;
-    using Telerik.Web.Mvc.UI;
+    using Infrastructure;
+    using UI;
+    using Extensions;
 
     public class GridFormEditRowHtmlBuilder<T> : GridEditRowHtmlBuilder<T>
         where T : class
@@ -32,9 +31,19 @@ namespace Telerik.Web.Mvc.UI.Html
         
         public string CreateEditorHtml()
         {
+            var editorBuilder = new GridColumnEditorBuilder<T>(GetHelper());
+            var templateName = Row.Grid.Editing.TemplateName;
+            if (templateName.HasValue())
+            {
+                return editorBuilder.GetEditorForModel(templateName);
+            }
+            return editorBuilder.GetEditorForModel();
+        }
+
+        private HtmlHelper<T> GetHelper()
+        {
             ViewContext viewContext = Row.Grid.ViewContext;
-            var html = new HtmlHelper<T>(viewContext, new GridViewDataContainer<T>(Row.DataItem, viewContext.ViewData));
-            return html.EditorForModel().ToHtmlString();
+            return new HtmlHelper<T>(viewContext, new GridViewDataContainer<T>(Row.DataItem, viewContext.ViewData));
         }
 
         public IHtmlNode BuildForm()
@@ -47,24 +56,22 @@ namespace Telerik.Web.Mvc.UI.Html
             editor.AppendTo(form);
 
             editor.Html(CreateEditorHtml());
-
-            Row.Grid
-               .VisibleColumns
-               .OfType<GridActionColumn<T>>()
-               .Each(column => column
-                   .Commands
-                   .Each(command =>
-                   {
-                       if (Row.InInsertMode)
-                       {
-                           command.InsertModeHtml<T>(editor, Row);
-                       }
-                       else
-                       {
-                           command.EditModeHtml<T>(editor, Row);
-                       }
-                   })
-               );
+            var command = Row.Grid
+                             .Columns
+                             .OfType<GridActionColumn<T>>()
+                             .SelectMany(c => c.Commands, (c, cmd) => cmd)
+                             .OfType<GridEditActionCommand>()
+                             .FirstOrDefault() ?? new GridEditActionCommand();
+            
+            if (Row.InEditMode)
+            {
+                command.EditModeHtml<T>(editor, Row);
+            }
+            else if (Row.InInsertMode)
+            {
+                command.InsertModeHtml<T>(editor, Row);
+            }
+            
             return form;
         }
     }

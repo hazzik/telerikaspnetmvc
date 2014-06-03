@@ -35,7 +35,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             }
             else if (!string.IsNullOrEmpty(navigationItem.ControllerName) && !string.IsNullOrEmpty(navigationItem.ActionName))
             {
-                isAllowed = controllerAuthorization.IsAccessibleToUser(requestContext, navigationItem.ControllerName, navigationItem.ActionName);
+                isAllowed = controllerAuthorization.IsAccessibleToUser(requestContext, navigationItem.ControllerName, navigationItem.ActionName, navigationItem.RouteValues);
             }
 
             return isAllowed;

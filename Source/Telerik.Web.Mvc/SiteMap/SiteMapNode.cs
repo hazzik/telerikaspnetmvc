@@ -42,13 +42,11 @@ namespace Telerik.Web.Mvc
         /// <value>The title.</value>
         public string Title
         {
-            [DebuggerStepThrough]
             get
             {
                 return title;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -83,13 +81,11 @@ namespace Telerik.Web.Mvc
         /// <value>The name of the route.</value>
         public string RouteName
         {
-            [DebuggerStepThrough]
             get
             {
                 return routeName;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -105,13 +101,11 @@ namespace Telerik.Web.Mvc
         /// <value>The name of the controller.</value>
         public string ControllerName
         {
-            [DebuggerStepThrough]
             get
             {
                 return controllerName;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -128,13 +122,11 @@ namespace Telerik.Web.Mvc
         /// <value>The name of the action.</value>
         public string ActionName
         {
-            [DebuggerStepThrough]
             get
             {
                 return actionName;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -162,13 +154,11 @@ namespace Telerik.Web.Mvc
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Url might not be a valid uri.")]
         public string Url
         {
-            [DebuggerStepThrough]
             get
             {
                 return url;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");

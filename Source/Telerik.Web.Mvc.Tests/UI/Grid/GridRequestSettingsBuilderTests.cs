@@ -25,6 +25,21 @@
         }
 
         [Fact]
+        public void Action_should_be_able_to_set_controller_name_and_route_values_from_routeValues()
+        {
+            RouteValueDictionary routeValues = new RouteValueDictionary();
+            routeValues.Add("action", "Index");
+            routeValues.Add("controller", "Home");
+            routeValues.Add("test", "test");
+
+            builder.Action(routeValues);
+
+            Assert.Equal("Home", settings.ControllerName);
+            Assert.Equal("Index", settings.ActionName);
+            Assert.Equal("test", settings.RouteValues["test"]);
+        }
+
+        [Fact]
         public void Action_should_be_able_to_set_controller_name_and_route_values()
         {
             RouteValueDictionary routeValues = new RouteValueDictionary();

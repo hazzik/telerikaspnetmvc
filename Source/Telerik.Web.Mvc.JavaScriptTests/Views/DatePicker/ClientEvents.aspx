@@ -1,6 +1,16 @@
 <%@ Page Title="SingleExpandItem ClientAPI tests" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
+<style type="text/css">
+                
+        .t-state-focus
+        {
+            border-color: Red !important;
+            border-width: 2px !important;
+        }
+    </style>
+
+
     <h2>Client API Tests</h2>
     
    <script type="text/javascript">
@@ -15,9 +25,9 @@
        }
 
        function test_value_should_return_selected_date() {
-           getDatePicker().show();
+           getDatePicker().open();
 
-           var $calendar = getDatePicker().$calendar();
+           var $calendar = getDatePicker().dateView.$calendar;
 
            var today = new Date();
 
@@ -47,35 +57,24 @@
 
        var isChanged;
        var isRaised;
-       
-       function test_clicking_toggle_button_should_raise_onOpen_event() {
-
-           var button = $('#DatePicker > .t-icon');
-
-           isRaised = false;
-
-           button.trigger('click');
-
-           assertTrue(isRaised);
-       }
-       
+              
        function test_focusing_input_should_raise_onOpen_event() {
-
-           var input = $('#DatePicker > .t-input');
+           getDatePicker().close();
+           var input = $('#DatePicker .t-input');
 
            isRaised = false;
 
            input.focus();
 
            assertTrue(isRaised);
-       }       
+       }
 
        function test_clicking_tab_should_raise_onClose() {
 
-           getDatePicker().show();
+           getDatePicker().open();
 
            isRaised = false;
-           var input = $('#DatePicker > .t-input');
+           var input = $('#DatePicker .t-input');
            input.trigger({ type: "keydown", keyCode: 9});        
 
            assertTrue(isRaised);
@@ -83,43 +82,39 @@
 
        function test_clicking_escape_should_raise_onClose() {
 
-           getDatePicker().show();
+           getDatePicker().open();
 
            isRaised = false;
            
-           var input = $('#DatePicker > .t-input');
+           var input = $('#DatePicker .t-input');
            input.trigger({ type: "keydown", keyCode: 27 });
 
            assertTrue(isRaised);
        }
 
-
        function test_clicking_enter_should_raise_onClose() {
 
-           getDatePicker().show();
+           getDatePicker().open();
 
            isRaised = false;
 
-           var input = $('#DatePicker > .t-input');
+           var input = $('#DatePicker .t-input');
            input.trigger({ type: "keydown", keyCode: 13 });
 
            assertTrue(isRaised);
        }
 
        //handlers
-       function onLoad(sender, args) {
-           isRaised = true;
-       }
 
-       function onChange(sender, args) {
+       function onChange(e) {
            isChanged = true;
        }
 
-       function onClose(sender, args) {
+       function onClose() {
            isRaised = true;
        }
 
-       function onOpen(sender, args) {
+       function onOpen() {
            isRaised = true;
        }
 
@@ -131,6 +126,7 @@
    </script>
 
  <%= Html.Telerik().DatePicker().Name("DatePicker")
+                   .Effects(e => e.Toggle())
                    .MinDate(new DateTime(1600, 1,1))
                    .MaxDate(new DateTime(2400, 1, 1))
                    .ClientEvents(events => events.OnLoad("onLoad")
@@ -139,11 +135,5 @@
                                                  .OnOpen("onOpen"))
                                                  
  %>
-    
-    <% Html.Telerik().ScriptRegistrar()
-           .Scripts(scripts => scripts
-               .Add("telerik.common.js")
-               .Add("telerik.datepicker.js")
-               .Add("telerik.calendar.js")); %>
 
 </asp:Content>

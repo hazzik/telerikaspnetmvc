@@ -1,7 +1,7 @@
-﻿(function($) {
+﻿(function ($) {
     var $t = $.telerik;
 
-    $t.menu = function(element, options) {
+    $t.menu = function (element, options) {
         this.element = element;
         this.nextItemZIndex = 100;
 
@@ -43,31 +43,31 @@
 
     $t.menu.prototype = {
 
-        toggle: function(li, enable) {
-            $(li).each(function() {
+        toggle: function (li, enable) {
+            $(li).each(function () {
                 $(this)
                     .toggleClass('t-state-default', enable)
                     .toggleClass('t-state-disabled', !enable);
             });
         },
 
-        enable: function(li) {
+        enable: function (li) {
             this.toggle(li, true);
         },
 
-        disable: function(li) {
+        disable: function (li) {
             this.toggle(li, false);
         },
 
-        open: function($li) {
+        open: function ($li) {
             var menu = this;
 
-            $($li).each(function() {
+            $($li).each(function () {
                 var $item = $(this);
 
                 clearTimeout($item.data('timer'));
 
-                $item.data('timer', setTimeout(function() {
+                $item.data('timer', setTimeout(function () {
                     var $ul = $item.find('.t-group:first');
                     if ($ul.length) {
                         $t.fx.play(menu.effects, $ul, getEffectOptions($item));
@@ -77,18 +77,18 @@
             });
         },
 
-        close: function($li) {
+        close: function ($li) {
             var menu = this;
 
-            $($li).each(function(index, item) {
+            $($li).each(function (index, item) {
                 var $item = $(item);
 
                 clearTimeout($item.data('timer'));
 
-                $item.data('timer', setTimeout(function() {
+                $item.data('timer', setTimeout(function () {
                     var $ul = $item.find('.t-group:first');
                     if ($ul.length) {
-                        $t.fx.rewind(menu.effects, $ul, getEffectOptions($item), function() {
+                        $t.fx.rewind(menu.effects, $ul, getEffectOptions($item), function () {
                             $item.css('zIndex', '');
                             if ($(menu.element).find('.t-group:visible').length == 0)
                                 menu.nextItemZIndex = 100;
@@ -99,7 +99,7 @@
             });
         },
 
-        mouseenter: function(e, element) {
+        mouseenter: function (e, element) {
             var $li = $(element);
             if (!this.openOnClick || this.clicked) {
                 if (!contains(element, e.relatedTarget)) {
@@ -116,13 +116,13 @@
             if (this.openOnClick && this.clicked) {
                 this.triggerEvent('close', $li);
 
-                $li.siblings().each($.proxy(function(_, sibling) {
+                $li.siblings().each($.proxy(function (_, sibling) {
                     this.close($(sibling));
                 }, this));
             }
         },
 
-        mouseleave: function(e, element) {
+        mouseleave: function (e, element) {
             if (!this.openOnClick && !contains(element, e.relatedTarget)) {
                 var $li = $(element);
                 this.triggerEvent('close', $li);
@@ -136,8 +136,15 @@
             }
         },
 
-        click: function(e, element) {
+        click: function (e, element) {
+            e.stopPropagation();
+
             var $li = $(element);
+
+            if ($li.hasClass('t-state-disabled')) {
+                e.preventDefault();
+                return; 
+            }
 
             $t.trigger(this.element, 'select', { item: $li[0] });
 
@@ -153,32 +160,32 @@
             this.open($li);
         },
 
-        documentClick: function(e, element) {
+        documentClick: function (e, element) {
             if ($.contains(this.element, e.target))
                 return;
 
             if (this.clicked) {
                 this.clicked = false;
-                $(this.element).children('.t-item').each($.proxy(function(i, item) {
+                $(this.element).children('.t-item').each($.proxy(function (i, item) {
                     this.close($(item));
                 }, this));
             }
         },
 
-        hasChildren: function($li) {
+        hasChildren: function ($li) {
             return $li.find('.t-group:first').length;
         },
 
-        triggerEvent: function(eventName, $li) {
+        triggerEvent: function (eventName, $li) {
             if (this.hasChildren($li))
                 $t.trigger(this.element, eventName, { item: $li[0] });
         }
     }
 
-    $.fn.tMenu = function(options) {
+    $.fn.tMenu = function (options) {
         return $t.create(this, {
             name: 'tMenu',
-            init: function(element, options) { 
+            init: function (element, options) {
                 return new $t.menu(element, options);
             },
             options: options

@@ -7,14 +7,13 @@ namespace Telerik.Web.Mvc
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Web.Caching;
     using System.Web.Routing;
     using System.Xml;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure.Implementation;
 
     /// <summary>
     /// Xml file based sitemap.
@@ -37,33 +36,27 @@ namespace Telerik.Web.Mvc
 
         private static readonly string[] knownAttributes = CreateKnownAttributes();
 
-        private readonly ICacheManager cacheManager;
+        private readonly ICacheProvider cacheProvider;
         private readonly IPathResolver pathResolver;
-        private readonly IFileSystem fileSystem;
+        private readonly IVirtualPathProvider provider;
 
         private static string defaultPath = "~/Web.sitemap";
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XmlSiteMap"/> class.
-        /// </summary>
-        /// <param name="pathResolver">The path resolver.</param>
-        /// <param name="fileSystem">The file system.</param>
-        /// <param name="cacheManager">The cache manager.</param>
-        public XmlSiteMap(IPathResolver pathResolver, IFileSystem fileSystem, ICacheManager cacheManager)
+        public XmlSiteMap(IPathResolver pathResolver, IVirtualPathProvider provider, ICacheProvider cacheProvider)
         {
             Guard.IsNotNull(pathResolver, "pathResolver");
-            Guard.IsNotNull(fileSystem, "fileSystem");
-            Guard.IsNotNull(cacheManager, "cacheManager");
+            Guard.IsNotNull(provider, "fileSystem");
+            Guard.IsNotNull(cacheProvider, "cacheProvider");
 
             this.pathResolver = pathResolver;
-            this.fileSystem = fileSystem;
-            this.cacheManager = cacheManager;
+            this.provider = provider;
+            this.cacheProvider = cacheProvider;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlSiteMap"/> class.
         /// </summary>
-        public XmlSiteMap() : this(ServiceLocator.Current.Resolve<IPathResolver>(), ServiceLocator.Current.Resolve<IFileSystem>(), ServiceLocator.Current.Resolve<ICacheManager>())
+        public XmlSiteMap(): this(new PathResolver(), DI.Current.Resolve<IVirtualPathProvider>(), DI.Current.Resolve<ICacheProvider>())
         {
         }
 
@@ -73,13 +66,11 @@ namespace Telerik.Web.Mvc
         /// <value>The default path.</value>
         public static string DefaultPath
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultPath;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -104,11 +95,9 @@ namespace Telerik.Web.Mvc
         {
             Guard.IsNotNullOrEmpty(relativeVirtualPath, "relativeVirtualPath");
 
-            string physicalPath = pathResolver.Resolve(relativeVirtualPath);
-
-            if (!string.IsNullOrEmpty(physicalPath))
+            if (!string.IsNullOrEmpty(relativeVirtualPath))
             {
-                InternalLoad(physicalPath);
+                InternalLoad(relativeVirtualPath);
             }
         }
 
@@ -117,16 +106,16 @@ namespace Telerik.Web.Mvc
         {
             string cacheKey = GetType().AssemblyQualifiedName + ":" + filePath;
 
-            if (cacheManager.GetItem(cacheKey) == null)
+            if (cacheProvider.Get(cacheKey) == null)
             {
-                cacheManager.Insert(cacheKey, filePath, OnCacheItemRemoved, filePath);
+                cacheProvider.Insert(cacheKey, filePath, OnCacheItemRemoved, pathResolver.Resolve(filePath));
             }
         }
 
         // Marked as internal for unit test
         internal virtual void InternalLoad(string physicalPath)
         {
-            string content = fileSystem.ReadAllText(physicalPath);
+            string content = provider.ReadAllText(physicalPath);
 
             if (!string.IsNullOrEmpty(content))
             {

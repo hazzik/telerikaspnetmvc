@@ -83,11 +83,11 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual ScriptRegistrarBuilder DefaultGroup(Action<WebAssetItemGroupBuilder> configureAction)
+        public virtual ScriptRegistrarBuilder DefaultGroup(Action<WebAssetGroupBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemGroupBuilder builder = new WebAssetItemGroupBuilder(scriptRegistrar.DefaultGroup);
+            WebAssetGroupBuilder builder = new WebAssetGroupBuilder(scriptRegistrar.DefaultGroup);
             configureAction(builder);
 
             return this;
@@ -138,11 +138,11 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         /// <param name="configureAction">The configure action.</param>
         /// <returns></returns>
-        public virtual ScriptRegistrarBuilder Scripts(Action<WebAssetItemCollectionBuilder> configureAction)
+        public virtual ScriptRegistrarBuilder Scripts(Action<WebAssetCollectionBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemCollectionBuilder builder = new WebAssetItemCollectionBuilder(WebAssetType.JavaScript, scriptRegistrar.Scripts);
+            WebAssetCollectionBuilder builder = new WebAssetCollectionBuilder(WebAssetType.JavaScript, scriptRegistrar.Scripts);
 
             configureAction(builder);
 

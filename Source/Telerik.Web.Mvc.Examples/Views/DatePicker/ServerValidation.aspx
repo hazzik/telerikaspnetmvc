@@ -8,12 +8,27 @@
     <% using (Html.BeginForm("servervalidation", "datepicker")) { %>
 
         <div>
+            <label for="delay-input">Cake delay (required):</label>
+            <%= Html.Telerik().TimePicker()
+                    .Name("delay")
+            %>
+            <%= Html.ValidationMessage("delay", "*") %>
+        </div>
+
+        <div>
             <label for="deliveryDate-input">Cake delivery date (required):</label>
-            <%= Html.Telerik()
-                    .DatePicker()
+            <%= Html.Telerik().DatePicker()
                     .Name("deliveryDate")
             %>
-            <%= Html.ValidationMessage("deliveryDate", "*")%>
+            <%= Html.ValidationMessage("deliveryDate", "*") %>
+        </div>
+
+        <div>
+            <label for="orderDateTime-input">Cake order date time (required):</label>
+            <%= Html.Telerik().DateTimePicker()
+                    .Name("orderDateTime")
+            %>
+            <%= Html.ValidationMessage("orderDateTime", "*") %>
         </div>
 
         <p>
@@ -22,9 +37,19 @@
     
     <% } %>
     
+    <% if (ViewData["delay"] != null)
+       { %>
+             <p><strong>Posted value is : <%= Convert.ToDateTime(ViewData["delay"]).TimeOfDay %></strong></p>
+    <% } %>
+
     <% if (ViewData["deliveryDate"] != null)
        { %>
-             <p><strong>Posted value is : <%= ViewData["deliveryDate"]%></strong></p>
+             <p><strong>Posted value is : <%= ViewData["deliveryDate"] %></strong></p>
+    <% } %>
+
+    <% if (ViewData["orderDateTime"] != null)
+       { %>
+             <p><strong>Posted value is : <%= ViewData["orderDateTime"] %></strong></p>
     <% } %>
 </asp:content>
 

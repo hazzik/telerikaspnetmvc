@@ -66,7 +66,7 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
        
-#if MVC2
+#if MVC2 || MVC3
         public bool InEditMode
         {
             get;
@@ -83,7 +83,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var cell = new GridCell<T>(column, DataItem)
             {
-#if MVC2
+#if MVC2 || MVC3
                 InEditMode = InEditMode,
                 InInsertMode = InInsertMode,
 #endif

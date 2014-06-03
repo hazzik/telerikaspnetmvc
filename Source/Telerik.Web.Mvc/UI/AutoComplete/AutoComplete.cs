@@ -35,6 +35,7 @@ namespace Telerik.Web.Mvc.UI
 
             Effects = new Effects();
             defaultEffects.Each(el => Effects.Container.Add(el));
+            Enabled = true;
         }
 
         public IUrlGenerator UrlGenerator
@@ -95,6 +96,12 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
             set;
+        }
+
+        public bool Enabled 
+        { 
+            get; 
+            set; 
         }
 
         public override void WriteInitializationScript(System.IO.TextWriter writer)

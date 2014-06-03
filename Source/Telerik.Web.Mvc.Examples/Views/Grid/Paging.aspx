@@ -1,18 +1,28 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Order>>" %>
 <asp:content contentPlaceHolderID="MainContent" runat="server">
 
-<% using (Html.Configurator("The pager should contain...")
+<% using (Html.Configurator("The pager should ...")
               .PostTo("Paging", "Grid")
               .Begin())
    { %>
     <ul>
-        <li><%= Html.CheckBox("pageInput", false, "an <strong>input box</strong> for the page number")%></li>
-        <li><%= Html.CheckBox("nextPrevious", true, "<strong>next page / previous page</strong> buttons")%></li>
-        <li><%= Html.CheckBox("numeric", true, "a <strong>numeric pager</strong>")%></li>
+        <li><%= Html.CheckBox("pageInput", false, "have an <strong>input box</strong> for the page number")%></li>
+        <li><%= Html.CheckBox("nextPrevious", true, "have <strong>next page / previous page</strong> buttons")%></li>
+        <li><%= Html.CheckBox("numeric", true, "have a <strong>numeric pager</strong>")%></li>
     </ul>
-    
-    <label for="position">Pager position</label>
-    <%= Html.DropDownList("position", new SelectList(new[] { GridPagerPosition.Bottom, GridPagerPosition.Top, GridPagerPosition.Both }))%>
+    <div>
+        <label for="position">be located at</label>
+        <%= Html.DropDownList("position", new SelectList(new[] { GridPagerPosition.Bottom, GridPagerPosition.Top, GridPagerPosition.Both }))%>
+    </div>
+    <div>
+        <label>be at page</label>
+        <%= Html.Telerik().IntegerTextBox()
+                .Name("currentPage")
+                .MinValue(1)
+                .MaxValue(83)
+                .Value(1)
+         %>
+     </div>
     <button class="t-button t-state-default" type="submit">Apply</button>
 <% } %>
 
@@ -40,7 +50,11 @@
     }
 
     var position = (GridPagerPosition)ViewData["position"];
-
+    var currentPage = (int)ViewData["currentPage"];
+    
+    currentPage = Math.Max(currentPage, 1);
+    currentPage = Math.Min(currentPage, 83);
+    
     Html.Telerik().Grid(Model)
         .Name("Grid")
         .Columns(columns =>
@@ -51,7 +65,7 @@
             columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
         })
         .DataBinding(dataBinding => dataBinding.Ajax().Select("_Paging", "Grid"))
-        .Pageable(paging => paging.Style(pagerStyles).Position(position))
+        .Pageable(paging => paging.Style(pagerStyles).Position(position).PageTo(currentPage))
         .Scrollable()
         .Render();
         

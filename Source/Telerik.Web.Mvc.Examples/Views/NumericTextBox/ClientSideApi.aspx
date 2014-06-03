@@ -1,33 +1,50 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-<asp:content contentPlaceHolderID="MainContent" runat="server">
 
-<%= Html.Telerik().NumericTextBox()
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+    <%= Html.Telerik().NumericTextBox()
         .Name("NumericTextBox")
-%>
+    %>
+    <% using (Html.Configurator("Client API").Begin()) { %>
+    <ul>
+        <li>
+            <%= Html.TextBox("newValue", "", new { title = "newValue" }).ToHtmlString()%><br />
+        </li>
+        <li>
+            <button onclick="setValue()">Set Value</button> /
+            <button onclick="getValue()">Get Value</button>
+        </li>
+        <li>
+            <button onclick="enableNumericTextBox()">Enable</button> / 
+            <button onclick="disableNumericTextBox()">Disable</button>
+        </li>
+   </ul>
+   <% } %>
 
-<% using (Html.Configurator("Client API").Begin()) { %>
-    <%= Html.TextBox("newValue", "", new { title = "newValue" }).ToHtmlString()%><br />
-    <button onclick="setValue()">Set Value</button> / <button onclick="getValue()">Get Value</button>
-<% } %>
-        
-	<script type="text/javascript">
+        <script type="text/javascript">
 
-	    function setValue() {
-	        var input = $("#NumericTextBox").data("tTextBox");
+            function setValue() {
+                var input = $("#NumericTextBox").data("tTextBox");
 
-	        input.value($("#newValue").val());
-	    }
+                input.value($("#newValue").val());
+            }
 
-	    function getValue() {
-	        var input = $("#NumericTextBox").data("tTextBox");
+            function getValue() {
+                var input = $("#NumericTextBox").data("tTextBox");
 
-	        alert(input.value());
-	    }
-	</script>
-			
-</asp:content>
+                alert(input.value());
+            }
 
-<asp:Content contentPlaceHolderID="HeadContent" runat="server">
+            function enableNumericTextBox() {
+                $("#NumericTextBox").data("tTextBox").enable();
+            }
+
+            function disableNumericTextBox() {
+                $("#NumericTextBox").data("tTextBox").disable();
+            }
+
+        </script>
+</asp:Content>
+<asp:Content ContentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
 		
 	    .example .configurator

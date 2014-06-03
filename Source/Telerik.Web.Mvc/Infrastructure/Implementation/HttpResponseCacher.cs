@@ -8,21 +8,11 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System;
     using System.Web;
 
-    /// <summary>
-    /// Class used to cache the http response.
-    /// </summary>
-    public class HttpResponseCacher : IHttpResponseCacher
+    internal class HttpResponseCacher : IHttpResponseCacher
     {
-        /// <summary>
-        /// Set the caching policy.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="duration">The duration.</param>
         public void Cache(HttpContextBase context, TimeSpan duration)
         {
-            Guard.IsNotNull(context, "context");
-
-            if ((duration > TimeSpan.Zero) || !context.IsDebuggingEnabled) // Do not cache in debug mode.
+            if ((duration > TimeSpan.Zero) || !context.IsDebuggingEnabled)
             {
                 HttpCachePolicyBase cache = context.Response.Cache;
 

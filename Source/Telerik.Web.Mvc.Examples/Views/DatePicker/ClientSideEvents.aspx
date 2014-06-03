@@ -2,38 +2,110 @@
 <asp:content contentPlaceHolderID="MainContent" runat="server">
 
     <script type="text/javascript">
-        function onChange(e) {
-            $console.log('OnChange :: to ' + formatDate(e.date) + ' from ' + formatDate(e.previousDate));
+        //DatePicker client-side events.
+
+        function onChangeDatePicker(e) {
+            $console.log('OnChange :: to ' + formatDate(e.value) + ' from ' + formatDate(e.previousValue));
         }
 
-        function onLoad(e) {
+        function onLoadDatePicker(e) {
             $console.log('DatePicker loaded');
         }
 
-		function OnOpen(e) {
-		    $console.log('OnOpen :: pop-up calendar is opened.');
+        function OnOpenDatePicker(e) {
+		    $console.log('OnOpen :: date view drop-down opening');
 		}
 
-		function OnClose(e) {
-		    $console.log('OnClose :: pop-up calendar is closed.');
+		function OnCloseDatePicker(e) {
+		    $console.log('OnClose :: date view drop-down closing');
 		}
-	    
-	    function formatDate(date) {
-	        return $.telerik.formatString('{0:dd/MM/yyyy}', date);
-	    }
+
+	    //TimePicker client-side events.
+
+        function onChangeTimePicker(e)
+        {
+            $console.log('OnChange :: to ' + formatTime(e.value) + ' from ' + formatTime(e.previousValue));
+        }
+
+        function onLoadTimePicker(e)
+        {
+            $console.log('TimePicker loaded');
+        }
+
+        function OnOpenTimePicker(e)
+        {
+            $console.log('OnOpen :: time view drop-down opening');
+        }
+
+        function OnCloseTimePicker(e)
+        {
+            $console.log('OnClose :: time view drop-down closing');
+        }
+
+        //DateTimePicker client-side events.
+
+        function onChangeDateTimePicker(e) {
+            $console.log('OnChange :: to ' + formatDateTime(e.value) + ' from ' + formatDateTime(e.previousValue));
+        }
+
+        function onLoadDateTimePicker(e) {
+            $console.log('DateTimePicker loaded');
+        }
+
+        function OnOpenDateTimePicker(e) {            
+            $console.log('OnOpen :: ' + e.popup + ' view drop-down opening');
+        }
+
+        function OnCloseDateTimePicker(e) {
+            $console.log('OnClose :: ' + e.popup + ' view drop-down closing');
+        }
+
+        function formatDate(date)
+        {
+            return $.telerik.formatString('{0:dd/MM/yyyy}', date);
+        }
+
+        function formatTime(date) {
+            return $.telerik.formatString('{0:h:mm tt}', date);
+        }
+
+        function formatDateTime(date) {
+            return $.telerik.formatString('{0:dd/MM/yyyy/h:mm tt}', date);
+        }
     </script>
 
     <%= Html.Telerik().DatePicker()
             .Name("DatePicker")
             .ClientEvents(events => events
-                    .OnLoad("onLoad")
-                    .OnChange("onChange")
-                    .OnOpen("OnOpen")
-                    .OnClose("OnClose")
+                     .OnLoad("onLoadDatePicker")
+                     .OnChange("onChangeDatePicker")
+                     .OnOpen("OnOpenDatePicker")
+                     .OnClose("OnCloseDatePicker")
             )
             .HtmlAttributes(new { style = "margin-bottom: 1.3em" })
+    %>
+
+    <%= Html.Telerik().TimePicker()
+            .Name("TimePicker")
+            .ClientEvents(events => events
+                    .OnLoad("onLoadTimePicker")
+                    .OnChange("onChangeTimePicker")
+                    .OnOpen("OnOpenTimePicker")
+                    .OnClose("OnCloseTimePicker")
+            )
+            .HtmlAttributes(new { style = "margin-bottom: 1.3em" })
+    %>
+
+    <%= Html.Telerik().DateTimePicker()
+            .Name("DateTimePicker")
+            .ClientEvents(events => events
+                    .OnLoad("onLoadDateTimePicker")
+                    .OnChange("onChangeDateTimePicker")
+                    .OnOpen("OnOpenDateTimePicker")
+                    .OnClose("OnCloseDateTimePicker")
+            )
     %>
     	
     <% Html.RenderPartial("EventLog"); %>
 
-</asp:Content>
+</asp:content>

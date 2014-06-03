@@ -15,6 +15,7 @@
 		.EnableCustomBinding(true)
 		.Sortable()
         .Filterable()
+        .Groupable()
 %>
 	
 </asp:Content>

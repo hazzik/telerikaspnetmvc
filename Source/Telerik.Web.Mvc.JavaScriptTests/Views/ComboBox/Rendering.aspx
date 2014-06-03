@@ -10,9 +10,10 @@
         }
 
         function test_combobox_method_should_not_select_first_item_if_there_is_no_selectedItem_and_selectIndex_is_negative() {
-
+            
             var ddl = getComboBox();
-
+            ddl.index = -1;
+            ddl.$input.val('');
             ddl.dropDown.$items = null;
             ddl.fill();
 
@@ -43,7 +44,7 @@
 
             combo2.index = -1;
             combo2.highlightFirst = false;
-
+            combo2.$input.val('');
             combo2.data = [{ "Text": "Chai", "Value": "1" },
                            { "Text": "Chang", "Value": "2" },
                            { "Text": "Aniseed Syrup", "Value": "3"}];
@@ -61,6 +62,7 @@
             combo2.data = [{ "Text": "Chai", "Value": "1" },
                            { "Text": "Chang", "Value": "2" },
                            { "Text": "Aniseed Syrup", "Value": "3"}];
+            combo2.$input.val('');
             combo2.dropDown.$items = null;
             combo2.fill();
 
@@ -72,9 +74,11 @@
             combo2.index = -1;
             combo2.highlightFirst = true;
 
+            combo2.$input.val('');
             combo2.data[{ "Text": "Chai", "Value": "1" },
                            { "Text": "Chang", "Value": "2" },
                            { "Text": "Aniseed Syrup", "Value": "3"}];
+            
             combo2.dropDown.$items = null;
             combo2.fill();
 
@@ -95,40 +99,23 @@
 
             assertEquals("Calendar » Select Action", combo.text());
         }
-        
-        function test_open_should_dropDown_width_if_outerWidth_is_0() {
+
+        function test_open_sets_dropdown_zindex() {
             var combo = getComboBox();
             combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
-
-            var expectedWidth = combo.$element.outerWidth();
             
-            combo.dropDown.outerWidth = 0;
-            combo.dropDown.$element.css('width', 0);
+            var $combo = $(combo.element)
 
-            var old = combo.dropDown.isOpened;
+            var lastZIndex = $combo.css('z-index');
 
-            combo.dropDown.isOpened = function () { return false; }
-
-            combo.close();
-            combo.open();
-
-            assertEquals(expectedWidth, combo.dropDown.outerWidth);
-
-            combo.dropDown.isOpened = old;
-        }
-
-        function test_open_should_dropDown_height_if_outerHeight_is_0() {
-            var combo = getComboBox();
-            combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
-
-            var expectedHeight = combo.$element.outerHeight();
-
-            combo.dropDown.outerHeight = 0;
+            $combo.css('z-index', 42);
 
             combo.close();
             combo.open();
 
-            assertEquals(expectedHeight, combo.dropDown.outerHeight);
+            assertEquals('43', '' + combo.dropDown.$element.parent().css('z-index'));
+
+            $combo.css('z-index', lastZIndex);
         }
     </script>
 
@@ -157,9 +144,25 @@
                 items.Add().Text("Item19").Value("19");
                 items.Add().Text("тtem20").Value("20");
             })
+            .Effects(effect => effect.Toggle())
     %>
+
+    <div style="display:none">
+    <%= Html.Telerik().ComboBox()
+        .Name("ComboWithServerAttr")
+        .DropDownHtmlAttributes(new { style = "width:400px"})
+        .Effects(e => e.Toggle())
+        .Items(items =>
+        {
+            items.Add().Text("Item1").Value("1");
+            items.Add().Text("Item2").Value("2");
+            items.Add().Text("Item3").Value("3");
+        })
+    %>
+    </div>
 
     <%= Html.Telerik().ComboBox()
             .Name("ComboBox2")
+            .Effects(e => e.Toggle())
     %>
 </asp:Content>

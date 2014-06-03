@@ -3,87 +3,112 @@
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
-namespace Telerik.Web.Mvc.UI
+namespace Telerik.Web.Mvc.UI.Html
 {
     using System;
+    using System.Globalization;
     using System.Web.Mvc;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
-    using Infrastructure;
-    
     public class DatePickerHtmlBuilder : IDatePickerHtmlBuilder
     {
         public DatePickerHtmlBuilder(DatePicker datePicker)
         {
-            DatePicker = datePicker;
+            Component = datePicker;
         }
 
-        public DatePicker DatePicker 
-        { 
-            get; 
-            private set; 
+        public DatePicker Component
+        {
+            get;
+            private set;
         }
 
         public IHtmlNode Build()
         {
-            return new HtmlTag("div")
-                .Attribute("id", DatePicker.Id)
-                .Attributes(DatePicker.HtmlAttributes)
-                .PrependClass(UIPrimitives.Widget, "t-datepicker");
+            IHtmlNode wrapper = new HtmlTag("div")
+                                .Attribute("id", Component.Id)
+                                .Attributes(Component.HtmlAttributes)
+                                .PrependClass(UIPrimitives.Widget, "t-datepicker")
+                                .ToggleClass("t-state-disabled", !Component.Enabled);
+
+            IHtmlNode innerWrapper = new HtmlTag("div")
+                                    .AddClass("t-picker-wrap")
+                                    .AppendTo(wrapper);
+
+            InputTag().AppendTo(innerWrapper);
+
+            if (Component.EnableButton)
+                ButtonTag().AppendTo(innerWrapper);
+
+            return wrapper;
         }
 
         public IHtmlNode InputTag()
         {
             ModelState state;
             DateTime? date = null;
-            ViewDataDictionary viewData = DatePicker.ViewContext.ViewData;
+            ViewDataDictionary viewData = Component.ViewContext.ViewData;
 
-            if (DatePicker.Value != DateTime.MinValue)
+            if (Component.Value != null && Component.Value != DateTime.MinValue)
             {
-                date = DatePicker.Value;
+                date = Component.Value;
             }
-            else if (viewData.ModelState.TryGetValue(DatePicker.Id, out state))
+            else if (viewData.ModelState.TryGetValue(Component.Id, out state))
             {
                 if (state.Errors.Count == 0)
                 {
-                    date = state.Value.ConvertTo(typeof(DateTime), Culture.Current) as DateTime?;
+                    date = state.Value.ConvertTo(typeof(DateTime), CultureInfo.CurrentCulture) as DateTime?;
                 }
             }
 
-            object valueFromViewData = viewData.Eval(DatePicker.Name);
+            object valueFromViewData = viewData.Eval(Component.Name);
 
             if (valueFromViewData != null)
             {
-                date = Convert.ToDateTime(valueFromViewData);
+                DateTime parsedDate;
+                if (DateTime.TryParse(valueFromViewData.ToString(), CultureInfo.CurrentCulture.DateTimeFormat, System.Globalization.DateTimeStyles.None, out parsedDate))
+                {
+                    date = parsedDate;
+                }
             }
+
+            date = date != DateTime.MinValue ? date : null;
 
             string value = string.Empty;
 
             if (date != null)
             {
-                if (string.IsNullOrEmpty(DatePicker.Format))
+                if (string.IsNullOrEmpty(Component.Format))
                 {
                     value = date.Value.ToShortDateString();
                 }
                 else
                 {
-                    value = date.Value.ToString(DatePicker.Format);
+                    value = date.Value.ToString(Component.Format);
                 }
             }
 
             return new HtmlTag("input", TagRenderMode.SelfClosing)
-                .Attributes(new { name = DatePicker.Name, id = DatePicker.Id + "-input", value = value, title = DatePicker.Name })
-                .Attributes(DatePicker.InputHtmlAttributes)
-                .PrependClass(UIPrimitives.Input);
+                   .Attributes(new { name = Component.Name, id = Component.Id + "-input"})
+                   .Attributes(Component.InputHtmlAttributes)
+                   .PrependClass(UIPrimitives.Input)
+                   .ToggleAttribute("value", value, value.HasValue())
+                   .ToggleAttribute("disabled", "disabled", !Component.Enabled);
         }
 
         public IHtmlNode ButtonTag()
         {
-            string title = string.IsNullOrEmpty(DatePicker.ButtonTitle) ? "Open the calendar" : DatePicker.ButtonTitle;
+            IHtmlNode wrapper = new HtmlTag("span")
+                                .AddClass("t-select");
 
-            return new HtmlTag("a")
-                .Attributes(new { href = "#", title = title, tabindex = "-1" })
-                .AddClass(UIPrimitives.Link, UIPrimitives.Icon, "t-icon-calendar")
-                .Text("select date");
+            new HtmlTag("span")
+                .AddClass(UIPrimitives.Icon, "t-icon-calendar")
+                .Attribute("title", string.IsNullOrEmpty(Component.ButtonTitle) ? "Open the calendar" : Component.ButtonTitle)
+                .Html(Component.ButtonTitle)
+                .AppendTo(wrapper);
+
+            return wrapper;
         }
     }
 }

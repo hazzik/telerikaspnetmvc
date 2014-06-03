@@ -25,9 +25,6 @@ namespace Telerik.Web.Mvc.UI.Html
 
             IHtmlNode rootTag = builder.Build();
 
-            builder.InnerContentTag().AppendTo(rootTag);
-            builder.HiddenInputTag().AppendTo(rootTag);
-
             rootTag.AppendTo(li);
             
             return li;

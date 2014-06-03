@@ -10,7 +10,7 @@ namespace Telerik.Web.Mvc.UI
 
     public interface ITextbox<T> where T : struct
     {
-        IDictionary<string, object> InputHtmlAttributes { get; set; }
+        IDictionary<string, object> InputHtmlAttributes { get; }
 
         Nullable<T> Value { get; set; }
 

@@ -28,7 +28,11 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            if (!typeof(TModel).IsDataRow() && !(typeof(TModel).IsCompatibleWith(typeof(ICustomTypeDescriptor))) && !expression.IsBindable())
+            if (
+#if MVC3
+                !typeof(TModel).IsDynamicObject() && 
+#endif
+                !typeof(TModel).IsDataRow() && !(typeof(TModel).IsCompatibleWith(typeof(ICustomTypeDescriptor))) && !expression.IsBindable())
             {
                 throw new InvalidOperationException(TextResource.MemberExpressionRequired);
             }
@@ -38,8 +42,12 @@ namespace Telerik.Web.Mvc.UI
             MemberType = TypeFromMemberExpression(expression.ToMemberExpression());
             Value = expression.Compile();
 
-#if MVC2
-            if (!typeof(TModel).IsDataRow() && !(typeof(TModel).IsCompatibleWith(typeof(ICustomTypeDescriptor))))
+#if MVC2 || MVC3
+            if (
+#if MVC3
+                !typeof(TModel).IsDynamicObject() && 
+#endif 
+                !typeof(TModel).IsDataRow() && !(typeof(TModel).IsCompatibleWith(typeof(ICustomTypeDescriptor))))
             {
                 Metadata = ModelMetadata.FromLambdaExpression(expression, new ViewDataDictionary<TModel>());
                 MemberType = Metadata.ModelType;
@@ -96,7 +104,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
         
-        #if MVC2
+        #if MVC2 || MVC3
         
         public bool ReadOnly
         {
@@ -114,6 +122,12 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
             private set;
+        }
+
+        public string EditorTemplateName
+        {
+            get;
+            set;
         }
 
         #endif
@@ -238,7 +252,7 @@ namespace Telerik.Web.Mvc.UI
         
         protected override IHtmlBuilder CreateEditorHtmlBuilderCore(GridCell<TModel> cell)
         {
-#if MVC2
+#if MVC2 || MVC3
             if (!ReadOnly)
             {
                 return new GridEditorForCellHtmlBuilder<TModel, TValue>(cell);
@@ -253,8 +267,13 @@ namespace Telerik.Web.Mvc.UI
             {
                 return base.CreateDisplayHtmlBuilderCore(cell);
             }
-#if MVC2
-            if (!Format.HasValue() && Encoded && !typeof(TModel).IsDataRow())
+#if MVC2 || MVC3
+            if (!Format.HasValue() && Encoded && !typeof(TModel).IsDataRow() 
+#if MVC3
+
+                && !typeof(TModel).IsDynamicObject()
+#endif
+                )
             {
                 return new GridDisplayForCellHtmlBuilder<TModel, TValue>(cell, Expression);
             }

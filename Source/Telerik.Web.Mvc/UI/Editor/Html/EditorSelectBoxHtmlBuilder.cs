@@ -44,7 +44,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
             new HtmlTag("span")
                 .AddClass("t-input")
-                .Html("&nbsp;")
+                .Html(selectBox.Items.Count > 0 ? selectBox.Items[0].Text : "&nbsp;")
                 .AppendTo(root);
 
             IHtmlNode link = new HtmlTag("span").AddClass("t-select");

@@ -32,11 +32,22 @@
                 items.Add().Text("AjaxItem");
                 items.Add().Text("InputContent")
                      .Content("<input type='text' value='asdf'/>");
+                items.Add().Text("NavigatingItem")
+                     .Url("http://www.telerik.com");
             }
             ).ClientEvents(events =>
             {
                 events.OnSelect("Select");
                 events.OnLoad("Load");
+            })
+            .Render(); %>
+
+     <% Html.Telerik().TabStrip()
+            .Name("TabStrip1")
+            .Items(items =>
+            {
+                items.Add().Text("Item 1");
+                items.Add().Text("Item 2");
             })
             .Render(); %>
     
@@ -52,12 +63,27 @@
             return $("#TabStrip").data("tTabStrip");
         }
 
+        function test_clicking_item_with_url_should_navigate() {
+            
+            var tabstrip = getTabStrip();
+            var $item = $(getRootItem(9));
+
+            var e = new $.Event('click');
+                        
+            $item.find('.t-link').trigger(e);
+
+            assertFalse(e.isDefaultPrevented());
+
+            //stop navigation after assert
+            e.preventDefault();
+        }
+
         function test_trigger_input_select_should_not_bubble() {
 
             isRaised = false;
 
             var tabstrip = getTabStrip();
-            var content = tabstrip.getContentElement($(tabstrip.element).find('> .t-content'), 8)
+            var content = tabstrip.getContentElement(8)
 
             $(content).find('input').first().trigger('select');
 
@@ -91,7 +117,7 @@
         function test_clicking_first_item_should_select_it() {
             var item = getRootItem(0);
 
-            item.find('> .t-link').trigger('click');
+            item.find('.t-link').trigger('click');
 
             assertTrue(item.hasClass('t-state-active'));
         }
@@ -132,8 +158,43 @@
             var item = getRootItem(5);
             tabstrip.select(item);
 
-            var content = tabstrip.getContentElement($('#TabStrip').find('.t-content'), 5);
+            var content = $(tabstrip.getContentElement(5));
             assertTrue(content.hasClass('t-state-active'));
+        }
+
+        function test_getContentElement_should_return_content_of_seveth_tab() {
+            var tabstrip = getTabStrip();
+            
+            var expectedContent = $(tabstrip.element).find('> .t-content').eq(1); //second content under Tab-7
+            
+            assertEquals(expectedContent.index(), $(tabstrip.getContentElement(6)).index());
+        }
+
+        function test_getContentElement_should_not_return_tab_content_if_passed_argument_is_not_number() {
+            var tabstrip = getTabStrip();
+
+            assertEquals(undefined, tabstrip.getContentElement("a"));
+        }
+
+        function test_getContentElement_should_not_return_tab_content_if_passed_argument_is_not_in_range() {
+            var tabstrip = getTabStrip();
+
+            assertEquals(undefined, tabstrip.getContentElement(100));
+        }
+
+        function test_getSelectedTab_should_return_current_selected_tab() {
+            var tabstrip = getTabStrip();
+
+            var item = getRootItem(0);
+            tabstrip.select(item);
+
+            assertEquals($(item).index(), tabstrip.getSelectedTabIndex());
+        }
+
+        function test_getSelectedTab_should_return_negative_if_no_selected_tabs() {
+            var tabstrip = $("#TabStrip1").data("tTabStrip")
+            
+            assertEquals(-1, tabstrip.getSelectedTabIndex());
         }
 
         var argsCheck = false;

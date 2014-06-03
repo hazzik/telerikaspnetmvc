@@ -202,7 +202,7 @@
             assertEquals('<img src="foo" />', editor.value());
         }
         function test_script_src_is_not_made_absolute() {
-            editor.value('<script src="foo" ><\/script>');
+            editor.value('<script src="foo"><\/script>');
             assertEquals('<script src="foo"><\/script>', editor.value());
         }
 
@@ -364,6 +364,26 @@
         function test_complete_attribute_ignored() {
             editor.value('<img complete="complete" />');
             assertEquals('<img />', editor.value());
+        }
+
+        function test_image_discards_redundant_height() {
+            editor.value('<img height="2" style="height:2px;" />');
+            assertEquals('<img height="2" />', editor.value());
+        }
+
+        function test_image_migrates_height_from_style() {
+            editor.value('<img style="height:4px;" />');
+            assertEquals('<img height="4" />', editor.value());
+        }
+
+        function test_image_discards_redundant_width() {
+            editor.value('<img width="2" style="width:2px;" />');
+            assertEquals('<img width="2" />', editor.value());
+        }
+
+        function test_image_migrates_width_from_style() {
+            editor.value('<img style="width:4px;" />');
+            assertEquals('<img width="4" />', editor.value());
         }
         
         function test_nbsp() {

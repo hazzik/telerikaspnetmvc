@@ -5,9 +5,8 @@
     using System.Web.Mvc;
     using System.Web.UI;
 
-
     using Moq;
-    using UI;
+    using Telerik.Web.Mvc.UI.Html;
 
     public static class DatePickerTestHelper
     {

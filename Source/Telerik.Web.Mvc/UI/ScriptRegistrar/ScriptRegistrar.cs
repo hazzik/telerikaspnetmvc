@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -23,7 +22,7 @@ namespace Telerik.Web.Mvc.UI
     /// </summary>
     public class ScriptRegistrar : IScriptableComponentContainer
     {
-        internal const string jQuery = "jquery-1.4.2.js";
+        internal const string jQuery = "jquery-1.4.3.js";
         internal const string jQueryValidation = "jquery.validate.js";
 
         /// <summary>
@@ -38,6 +37,8 @@ namespace Telerik.Web.Mvc.UI
         private string assetHandlerPath;
         private bool hasRendered;
 
+        private readonly IWebAssetCollectionResolver resolver;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptRegistrar"/> class.
         /// </summary>
@@ -46,13 +47,9 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="viewContext">The view context.</param>
         /// <param name="assetItemMerger">The asset merger.</param>
         /// <param name="scriptWrapper">The script wrapper.</param>
-        public ScriptRegistrar(WebAssetItemCollection scripts, IList<IScriptableComponent> scriptableComponents, ViewContext viewContext, IWebAssetItemMerger assetItemMerger, ScriptWrapperBase scriptWrapper)
+        public ScriptRegistrar(WebAssetCollection scripts, IList<IScriptableComponent> scriptableComponents, ViewContext viewContext, IWebAssetCollectionResolver resolver, ScriptWrapperBase scriptWrapper)
         {
-            Guard.IsNotNull(scripts, "scripts");
-            Guard.IsNotNull(scriptableComponents, "scriptableComponents");
-            Guard.IsNotNull(viewContext, "viewContext");
-            Guard.IsNotNull(assetItemMerger, "assetItemMerger");
-            Guard.IsNotNull(scriptWrapper, "scriptWrapper");
+            this.resolver = resolver;
 
             if (viewContext.HttpContext.Items[Key] != null)
             {
@@ -61,13 +58,12 @@ namespace Telerik.Web.Mvc.UI
 
             viewContext.HttpContext.Items[Key] = this;
 
-            DefaultGroup = new WebAssetItemGroup("default", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
+            DefaultGroup = new WebAssetGroup("default", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
             Scripts = scripts;
             Scripts.Insert(0, DefaultGroup);
 
             this.scriptableComponents = scriptableComponents;
             ViewContext = viewContext;
-            AssetMerger = assetItemMerger;
             ScriptWrapper = scriptWrapper;
             AssetHandlerPath = WebAssetHttpHandler.DefaultPath;
 
@@ -91,7 +87,6 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The framework script file names.</value>
         public static IList<string> FrameworkScriptFileNames
         {
-            [DebuggerStepThrough]
             get
             {
                 return frameworkScriptFileNames;
@@ -116,13 +111,11 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The asset handler path.</value>
         public string AssetHandlerPath
         {
-            [DebuggerStepThrough]
             get
             {
                 return assetHandlerPath;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotVirtualPath(value, "value");
@@ -135,7 +128,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets the default script group.
         /// </summary>
         /// <value>The default group.</value>
-        public WebAssetItemGroup DefaultGroup
+        public WebAssetGroup DefaultGroup
         {
             get;
             private set;
@@ -155,7 +148,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets the scripts that will be rendered in the view.
         /// </summary>
         /// <value>The scripts.</value>
-        public WebAssetItemCollection Scripts
+        public WebAssetCollection Scripts
         {
             get;
             private set;
@@ -206,16 +199,6 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         /// <value>The view context.</value>
         protected ViewContext ViewContext
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the asset merger.
-        /// </summary>
-        /// <value>The asset merger.</value>
-        protected IWebAssetItemMerger AssetMerger
         {
             get;
             private set;
@@ -303,27 +286,21 @@ namespace Telerik.Web.Mvc.UI
 
             CopyScriptFilesFromComponents();
 
-            var scriptFiles = new List<string>();
-
-            if (!Scripts.IsEmpty())
+            return resolver.Resolve(new ResolverContext
             {
-                var result = AssetMerger.Merge("application/x-javascript", AssetHandlerPath, isSecured, canCompress, Scripts);
-
-                if (!result.IsNullOrEmpty())
-                {
-                    scriptFiles.AddRange(result);
-                }
-            }
-            
-            return scriptFiles.Distinct();
+                ContentType = "text/javascript",
+                HttpHandlerPath = AssetHandlerPath,
+                IsSecureConnection = isSecured,
+                SupportsCompression = canCompress
+            }, Scripts);
         }
 
         private void WriteScriptStatements(TextWriter writer)
         {
             string cleanUpScripts = WriteCleanUpScripts().ToString();
 
-            bool shouldWriteOnDocumentReady = !scriptableComponents.IsEmpty() || !OnDocumentReadyActions.IsEmpty() || !OnDocumentReadyStatements.IsEmpty();
-            bool shouldWriteOnWindowUnload = !OnWindowUnloadActions.IsEmpty() || !OnWindowUnloadStatements.IsEmpty() || cleanUpScripts.Trim().HasValue();
+            bool shouldWriteOnDocumentReady = scriptableComponents.Any() || OnDocumentReadyActions.Any() || OnDocumentReadyStatements.Any();
+            bool shouldWriteOnWindowUnload = OnWindowUnloadActions.Any() || OnWindowUnloadStatements.Any() || cleanUpScripts.Trim().HasValue();
 
             if (shouldWriteOnDocumentReady || shouldWriteOnWindowUnload)
             {
@@ -478,7 +455,7 @@ namespace Telerik.Web.Mvc.UI
         {
             if (!ExcludeFrameworkScripts)
             {
-                FrameworkScriptFileNames.Reverse().Each(source => DefaultGroup.Items.Insert(0, new WebAssetItem(PathHelper.CombinePath(DefaultGroup.DefaultPath, source))));
+                FrameworkScriptFileNames.Reverse().Each(source => DefaultGroup.Items.Insert(0, new WebAsset(PathHelper.CombinePath(DefaultGroup.DefaultPath, source))));
             }
         }
     }

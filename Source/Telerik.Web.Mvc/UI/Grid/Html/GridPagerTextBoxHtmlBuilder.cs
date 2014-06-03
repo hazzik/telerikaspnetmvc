@@ -1,5 +1,6 @@
 namespace Telerik.Web.Mvc.UI.Html
 {
+    using System.Web.Mvc;
     using Telerik.Web.Mvc.Infrastructure;
 
     public class GridPagerTextBoxHtmlBuilder : HtmlBuilderBase
@@ -32,7 +33,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
             page.AppendTo(div);
 
-            var input = new HtmlTag("input")
+            var input = new HtmlTag("input", TagRenderMode.SelfClosing)
                             .Attribute("type", "text")
                             .Attribute("value", Value);
             

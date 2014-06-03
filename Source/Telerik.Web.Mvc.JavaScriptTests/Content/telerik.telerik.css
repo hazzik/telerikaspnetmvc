@@ -16,14 +16,20 @@
     background: #f6f6f6 url('Telerik/sprite.png') repeat-x 0 -368px;
 }
 
+.t-panelbar .t-state-hover { background-image: none; }
+
 .t-icon { background-image: url('Telerik/sprite.png'); }
 .t-editor .t-tool-icon { background-image: url('Telerik/editor.png'); }
 
 .t-expand { background-position: 0 -160px; }
 .t-collapse { background-position: 0 -176px; }
+.t-rtl .t-expand { background-position: -64px -160px; }
 
 .t-plus, .t-plus-disabled { background-position: 0 -256px; }
 .t-minus, .t-minus-disabled { background-position: -16px -256px; }
+
+.t-rtl .t-plus, .t-rtl .t-plus-disabled { background-position: 0 -272px; }
+.t-rtl .t-minus, .t-rtl .t-minus-disabled { background-position: -16px -272px; }
 
 .t-arrow-up { background-position: -16px -160px; }
 .t-arrow-down { background-position: -16px -176px; }
@@ -60,6 +66,7 @@
 
 .t-refresh { background-position: -32px -240px; }
 .t-icon-calendar { background-position: -48px -240px; }
+.t-icon-clock { background-position: -64px -336px; }
 
 .t-edit { background-position: 0 -336px; }
 .t-delete { background-position: -16px -336px; }
@@ -147,6 +154,17 @@
     background-color: #ffc0cb;
 }
 
+.t-button
+{
+    background: #e8e8e8 url('Telerik/sprite.png') repeat-x 0 -96px;
+    color: #333;
+}
+
+.t-button-hover
+{
+    background-position: 0 -128px;
+}
+
 .t-state-disabled,
 .t-state-disabled .t-link
 {
@@ -163,17 +181,6 @@
     background-color: #eee;
 }
 
-.t-button
-{
-    background: #e8e8e8 url('Telerik/sprite.png') repeat-x 0 -96px;
-    color: #333;
-}
-
-.t-button-hover
-{
-    background-position: 0 -128px;
-}
-
 .t-tabstrip li.t-state-active
 {
     border-bottom-color: #fff;
@@ -188,6 +195,19 @@
 .t-grouping-row td
 {
     background: #fff url('Telerik/sprite.png') repeat-x 0 -48px;
+}
+
+.t-footer-template td
+{
+    background-color: #eee;
+    border-color: #828282 #eee #fff;
+}
+
+.t-footer-template-wrap,
+.t-footer-template-wrap table
+{
+    background-color: #eee;
+    border-color: #828282;
 }
 
 .t-grouping-header .t-group-indicator
@@ -225,11 +245,6 @@
     border-color: #aaa;
 }
 
-.t-panelbar .t-state-hover
-{
-    background-image: none;
-}
-
 .t-calendar th
 {
     border-color: #c5c5c5;
@@ -245,9 +260,13 @@
 .t-treeview-lines .t-bot
 {
     background-image: url('Telerik/treeview-nodes.png');
-    background-repeat: no-repeat;
-    margin-left: -16px;
-    padding-left: 16px;
+}
+
+.t-rtl .t-treeview-lines .t-top,
+.t-rtl .t-treeview-lines .t-mid,
+.t-rtl .t-treeview-lines .t-bot
+{
+    background-image: url('Telerik/treeview-nodes-rtl.png');
 }
 
 .t-treeview-lines .t-item { background-image: url('Telerik/treeview-line.png'); }

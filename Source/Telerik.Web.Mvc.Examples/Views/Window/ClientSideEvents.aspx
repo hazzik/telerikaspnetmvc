@@ -14,6 +14,10 @@
             $console.log('OnOpen');
         }
 
+        function onActivate(e) {
+            $console.log('OnActivate');
+        }
+
         function onRefresh(e) {
 	        $console.log('OnRefresh');
         }
@@ -28,6 +32,7 @@
                 events.OnLoad("onLoad")
                       .OnClose("onClose")
                       .OnOpen("onOpen")
+                      .OnActivate("onActivate")
                       .OnRefresh("onRefresh"))
             .LoadContentFrom("AjaxView", "Window")
             .Buttons(buttons => buttons.Refresh().Close())
@@ -57,6 +62,7 @@
          <script type="text/javascript">
 	        function maximizeWindow() { $("#Window").data("tWindow").maximize(); }
 	        function restoreWindow() { $("#Window").data("tWindow").restore(); }
+            function centerWindow() { $("#Window").data("tWindow").center(); }
          </script>
 		
 	</asp:content>

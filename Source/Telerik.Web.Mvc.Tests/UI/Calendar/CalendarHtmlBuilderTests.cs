@@ -54,134 +54,19 @@
         }
 
         [Fact]
-        public void NavigationTag_should_render_Div_tag()
+        public void Build_should_render_header_div()
         {
-            IHtmlNode tag = renderer.NavigationTag();
+            IHtmlNode tag = renderer.Build();
 
-            Assert.Equal("div", tag.TagName);
+            Assert.Equal("div", tag.Children[0].TagName);
         }
 
         [Fact]
         public void NavigationTag_should_render_class()
         {
-            IHtmlNode tag = renderer.NavigationTag();
+            IHtmlNode tag = renderer.Build();
 
-            Assert.Equal(UIPrimitives.Header, tag.Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_prev_link()
-        {
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("a", tag.Children[0].TagName);
-            Assert.Equal("#", tag.Children[0].Attribute("href"));
-            Assert.Equal("t-link t-nav-prev", tag.Children[0].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_disabled_prev_link_if_focused_date_is_not_in_range()
-        {
-            calendar.MinDate = DateTime.Today.AddMonths(1);
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("t-link t-nav-prev t-state-disabled", tag.Children[0].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_enabled_prev_link_if_the_difference_between_mindate_and_focused_date_is_less_then_month()
-        {
-            calendar.Value = new DateTime(2010, 6, 15);
-            calendar.MinDate = new DateTime(2010, 5, 16);
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("t-link t-nav-prev", tag.Children[0].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_disabled_prev_link_if_mindate_is_in_the_same_month_as_focused_date()
-        {
-            calendar.Value = new DateTime(2010, 6, 15);
-            calendar.MinDate = new DateTime(2010, 6, 2);
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("t-link t-nav-prev t-state-disabled", tag.Children[0].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_prev_link_with_span()
-        {
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("span", tag.Children[0].Children[0].TagName);
-            Assert.Equal("t-icon t-arrow-prev", tag.Children[0].Children[0].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_fast_link()
-        {
-            string focusedDate = calendar.DetermineFocusedDate().Value.ToString("MMMM yyyy");
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("a", tag.Children[1].TagName);
-            Assert.Equal("#", tag.Children[1].Attribute("href"));
-            Assert.Equal("t-link t-nav-fast", tag.Children[1].Attribute("class"));
-            Assert.Equal(focusedDate, tag.Children[1].InnerHtml);
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_next_link()
-        {
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("a", tag.Children[2].TagName);
-            Assert.Equal("#", tag.Children[2].Attribute("href"));
-            Assert.Equal("t-link t-nav-next", tag.Children[2].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_disabled_next_link_if_focused_date_is_not_in_range()
-        {
-            calendar.MaxDate = calendar.DetermineFocusedDate().Value;
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("t-link t-nav-next t-state-disabled", tag.Children[2].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_enabled_next_link_if_the_difference_between_maxdate_and_focused_date_is_less_then_month()
-        {
-            calendar.Value = new DateTime(2010, 6, 15);
-            calendar.MaxDate = new DateTime(2010, 7, 14);
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("t-link t-nav-next", tag.Children[2].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_disabled_next_link_if_maxdate_is_in_the_same_month_as_focused_date()
-        {
-            calendar.Value = new DateTime(2010, 6, 15);
-            calendar.MaxDate = new DateTime(2010, 6, 25);
-
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("t-link t-nav-next t-state-disabled", tag.Children[2].Attribute("class"));
-        }
-
-        [Fact]
-        public void NavigationTag_should_render_next_link_with_span()
-        {
-            IHtmlNode tag = renderer.NavigationTag();
-
-            Assert.Equal("span", tag.Children[2].Children[0].TagName);
-            Assert.Equal("t-icon t-arrow-next", tag.Children[2].Children[0].Attribute("class"));
+            Assert.Equal(UIPrimitives.Header, tag.Children[0].Attribute("class"));
         }
 
         [Fact]
@@ -276,6 +161,14 @@
             IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
 
             Assert.Equal(DateTime.Today.Day.ToString(), tag.Children[0].InnerHtml);
+        }
+
+        [Fact]
+        public void CellTag_should_render_title_attribute_with_today_Long_Date_String()
+        {
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+
+            Assert.Equal(DateTime.Today.ToLongDateString(), tag.Children[0].Attribute("title"));
         }
 
         [Fact]

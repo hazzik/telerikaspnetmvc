@@ -6,7 +6,6 @@
 namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System.Configuration;
-    using System.Diagnostics;
 
     /// <summary>
     /// Encapsulates the ConfigurationManager object that contains methods for accessing System.Web.HttpRuntime.Cache object.
@@ -20,7 +19,6 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         /// <param name="sectionName">Name of the section.</param>
         /// <returns></returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Generic seems the only solution. otherwise, it will be overloaded with different asp.net sections.")]
-        [DebuggerStepThrough]
         public T GetSection<T>(string sectionName) where T : ConfigurationSection
         {
             return ConfigurationManager.GetSection(sectionName) as T;

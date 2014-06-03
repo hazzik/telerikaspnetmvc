@@ -154,7 +154,7 @@
             new GridBoundColumn<User, User>(GridTestHelper.CreateGrid<User>(), u => u);
         }
 
-#if MVC2
+#if MVC2 || MVC3
         [Fact]
         public void Readonly_is_populated_from_metadata()
         {

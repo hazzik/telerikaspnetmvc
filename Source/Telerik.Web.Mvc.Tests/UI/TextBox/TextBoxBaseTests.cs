@@ -13,8 +13,8 @@
             viewContext = TestHelper.CreateViewContext();
             input = TextBoxBaseTestHelper.CreateInput<int>(null, viewContext);
         }
-       
-#if MVC2
+
+#if MVC2 || MVC3
         [Fact]
         public void If_Name_is_not_set_it_should_be_get_from_TemplateInfo() 
         {

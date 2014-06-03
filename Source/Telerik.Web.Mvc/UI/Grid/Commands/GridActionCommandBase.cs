@@ -40,7 +40,7 @@ namespace Telerik.Web.Mvc.UI
         public void Html<T>(IGridRenderingContext<T> context, IHtmlNode parent)
              where T : class
         {
-            #if MVC2
+            #if MVC2 || MVC3
 
             if (context.InInsertMode)
             {

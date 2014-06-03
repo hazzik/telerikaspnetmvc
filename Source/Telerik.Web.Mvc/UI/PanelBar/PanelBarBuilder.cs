@@ -51,18 +51,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Sets the theme of the panelbar
-        /// </summary>
-        public PanelBarBuilder Theme(string name)
-        {
-            Guard.IsNotNullOrEmpty(name, "name");
-
-            Component.Theme = name;
-
-            return this;
-        }
-
-        /// <summary>
         /// Configures the client-side events.
         /// </summary>
         /// <param name="clientEventsAction">The client events action.</param>

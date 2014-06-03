@@ -6,28 +6,28 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Globalization;
     using System.Web.Mvc;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
 
     public class PercentTextBox : TextBoxBase<double>
     {
         public PercentTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<double> rendererFactory)
-		: base(viewContext, clientSideObjectWriterFactory, rendererFactory)
+            : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
 
-            MinValue = 0;
-            MaxValue = 1000;
+            MinValue = double.MinValue;
+            MaxValue = double.MaxValue;
             IncrementStep = 1;
             EmptyMessage = "Enter value";
 
-            DecimalDigits = Culture.Current.NumberFormat.PercentDecimalDigits;
-            NumberGroupSize = Culture.Current.NumberFormat.PercentGroupSizes[0];
-            NegativePatternIndex = Culture.Current.NumberFormat.PercentNegativePattern;
-            PositivePatternIndex = Culture.Current.NumberFormat.PercentPositivePattern;
+            DecimalDigits = CultureInfo.CurrentCulture.NumberFormat.PercentDecimalDigits;
+            NumberGroupSize = CultureInfo.CurrentCulture.NumberFormat.PercentGroupSizes[0];
+            NegativePatternIndex = CultureInfo.CurrentCulture.NumberFormat.PercentNegativePattern;
+            PositivePatternIndex = CultureInfo.CurrentCulture.NumberFormat.PercentPositivePattern;
         }
 
         public int DecimalDigits
@@ -48,18 +48,18 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Start();
 
-            objectWriter.Append("val", this.Value);
-            objectWriter.Append("step", this.IncrementStep);
-            objectWriter.Append("minValue", this.MinValue);
-            objectWriter.Append("maxValue", this.MaxValue);
-            objectWriter.Append("symbol", this.PercentSymbol);
-            objectWriter.Append("digits", this.DecimalDigits);
-            objectWriter.Append("separator", this.DecimalSeparator);
-            objectWriter.AppendNullableString("groupSeparator", this.NumberGroupSeparator);
-            objectWriter.Append("groupSize", this.NumberGroupSize);
-            objectWriter.Append("positive", this.PositivePatternIndex);
-            objectWriter.Append("negative", this.NegativePatternIndex);
-            objectWriter.Append("text", this.EmptyMessage);
+            objectWriter.Append("val", Value);
+            objectWriter.Append("step", IncrementStep);
+            objectWriter.Append("minValue", MinValue);
+            objectWriter.Append("maxValue", MaxValue);
+            objectWriter.Append("symbol", PercentSymbol);
+            objectWriter.Append("digits", DecimalDigits);
+            objectWriter.Append("separator", DecimalSeparator);
+            objectWriter.AppendNullableString("groupSeparator", NumberGroupSeparator);
+            objectWriter.Append("groupSize", NumberGroupSize);
+            objectWriter.Append("positive", PositivePatternIndex);
+            objectWriter.Append("negative", NegativePatternIndex);
+            objectWriter.Append("text", EmptyMessage);
             objectWriter.Append("type", "percent");
 
             ClientEvents.SerializeTo(objectWriter);
@@ -78,8 +78,6 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            VerifySettings();
-
             ITextBoxBaseHtmlBuilder renderer = rendererFactory.Create(this);
 
             IHtmlNode rootTag = renderer.Build("t-numerictextbox");
@@ -96,8 +94,10 @@ namespace Telerik.Web.Mvc.UI
             base.WriteHtml(writer);
         }
 
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (MinValue > MaxValue)
             {
                 throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);

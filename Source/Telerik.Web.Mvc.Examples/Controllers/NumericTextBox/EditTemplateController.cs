@@ -2,7 +2,6 @@ namespace Telerik.Web.Mvc.Examples
 {
     using System;
     using System.Web.Mvc;
-    using System.Web.Script.Serialization;
     using Telerik.Web.Mvc.Examples.Models;
 
     public partial class NumericTextBoxController : Controller
@@ -22,9 +21,9 @@ namespace Telerik.Web.Mvc.Examples
             }
             else 
             {
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                ViewData["ProductJson"] = serializer.Serialize(product).Replace(",", ",<br />");
+                ViewData["product"] = product;
             }
+
             return View(product);
         }
     }

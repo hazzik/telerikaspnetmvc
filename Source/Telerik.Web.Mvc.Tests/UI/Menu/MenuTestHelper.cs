@@ -1,4 +1,4 @@
-﻿namespace Telerik.Web.Mvc.Tests.Menu
+﻿namespace Telerik.Web.Mvc.UI
 {
     using System.IO;
     using System.Web;
@@ -6,10 +6,14 @@
     using System.Web.UI;
     using Infrastructure;
     using Moq;
-    using Telerik.Web.Mvc.UI;
 
 	public static class MenuTestHelper
 	{
+        public static Menu CreateMenu()
+        {
+            return CreateMenu(new HtmlTextWriter(TextWriter.Null), new Mock<INavigationComponentHtmlBuilder<MenuItem>>().Object);
+        }
+
         public static Menu CreateMenu(HtmlTextWriter writer, INavigationComponentHtmlBuilder<MenuItem> renderer)
 		{
 			Mock<HttpContextBase> httpContext = TestHelper.CreateMockedHttpContext();

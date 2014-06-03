@@ -19,6 +19,13 @@
             var command = new UnlinkCommand({range:range});
             command.exec();
             assertEquals('foo', editor.value());
+        }        
+        
+        function test_exec_removes_link_with_mixed_selection() {
+            var range = createRangeFromText(editor, '|foo<a>bar</a>baz|');
+            var command = new UnlinkCommand({range:range});
+            command.exec();
+            assertEquals('foobarbaz', editor.value());
         }
 
         function test_exec_maintains_selection() {
@@ -53,6 +60,15 @@
         function test_unlink_tool_is_enabled_when_cursor_is_inside_a_link() {
             editor.focus();
             var range = createRangeFromText(editor, '<a>|foo|</a>');
+            editor.selectRange(range);
+            
+            $(editor.element).trigger('selectionChange');
+            assertFalse($('.t-unlink').hasClass('t-state-disabled'));
+        }
+        
+        function test_unlink_tool_is_enabled_when_there_is_a_link_in_the_selection() {
+            editor.focus();
+            var range = createRangeFromText(editor, '|foo<a>bar</a>baz|');
             editor.selectRange(range);
             
             $(editor.element).trigger('selectionChange');

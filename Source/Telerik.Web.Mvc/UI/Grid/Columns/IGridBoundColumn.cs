@@ -53,7 +53,7 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         string EditorHtml
         {
             get;
@@ -62,6 +62,12 @@ namespace Telerik.Web.Mvc.UI
         bool ReadOnly
         {
             get;
+            set;
+        }
+
+        string EditorTemplateName
+        {
+            get; 
             set;
         }
 #endif

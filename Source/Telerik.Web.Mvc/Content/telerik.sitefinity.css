@@ -28,9 +28,12 @@
 
 .t-expand { background-position: 0 -160px; }
 .t-collapse { background-position: 0 -176px; }
+.t-rtl .t-expand { background-position: -64px -160px; }
 
 .t-plus, .t-plus-disabled { background-position: -16px -272px; }
 .t-minus, .t-minus-disabled { background-position: 0 -272px; }
+.t-rtl .t-plus, .t-rtl .t-plus-disabled { background-position: -32px -272px; }
+.t-rtl .t-minus, .t-rtl .t-minus-disabled { background-position: -1px -272px; }
 
 .t-arrow-up { background-position: -16px -160px; }
 .t-arrow-down { background-position: -16px -176px; }
@@ -70,6 +73,7 @@
 
 .t-refresh { background-position: -32px -240px; }
 .t-icon-calendar { background-position: -48px -240px; }
+.t-icon-clock { background-position: -64px -336px; }
 
 .t-group-delete { background-position: 0 -288px; }
 .t-maximize { background-position: -16px -288px; }
@@ -158,6 +162,22 @@
     border-color: #e50000;
 }
 
+.t-button
+{
+    background: #f1f1f1;
+    border-width: 1px 2px 2px 1px;
+    color: #333;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border-color: #ccc #666 #666 #ccc;
+}
+
+.t-button-hover
+{
+    background: #fff;
+}
+
 .t-state-disabled,
 .t-state-disabled .t-link
 {
@@ -179,23 +199,6 @@
 {
     border: 0;
 }
-
-.t-button
-{
-    background: #f1f1f1;
-    border-width: 1px 2px 2px 1px;
-    color: #333;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    border-color: #ccc #666 #666 #ccc;
-}
-
-.t-button-hover
-{
-    background: #fff;
-}
-
 
 .t-autocomplete
 {
@@ -259,6 +262,12 @@
     border-color: #999;
 }
 
+.t-footer-template td,
+.t-footer-template-wrap table
+{
+    border-color: #eee #fff;
+}
+
 .t-pager-wrapper .t-state-hover
 {
     color: #002bb8;
@@ -270,7 +279,6 @@
 .t-tabstrip .t-state-hover
 {
     color: #002bb8;
-    background: none;
 }
 
 .t-tabstrip
@@ -306,15 +314,19 @@
 .t-treeview-lines .t-bot
 {
     background-image: url('Sitefinity/treeview-nodes.png');
-    background-repeat: no-repeat;
-    margin-left: -16px;
-    padding-left: 16px;
+}
+
+.t-rtl .t-treeview-lines .t-top,
+.t-rtl .t-treeview-lines .t-mid,
+.t-rtl .t-treeview-lines .t-bot
+{
+    background-image: url('Sitefinity/treeview-nodes-rtl.png');
 }
 
 .t-treeview-lines .t-item { background-image: url('Sitefinity/treeview-line.png'); }
 .t-treeview-lines .t-last { background-image: none; }
 
-.t-window-titlebar,
+.t-window,
 .t-drag-clue
 {
     background-color: #fff;

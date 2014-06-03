@@ -27,7 +27,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             set;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         /// <summary>
         /// Defines a edit command.
         /// </summary>

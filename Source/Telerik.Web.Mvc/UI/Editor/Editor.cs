@@ -6,21 +6,25 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Web.Mvc;
     using System.Web.UI;
     using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI.Fluent;
     using Telerik.Web.Mvc.UI.Html;
-    using System.Collections.Generic;
-    using Telerik.Web.Mvc.Infrastructure;
 
     public class Editor : ViewComponentBase
     {
-        public Editor(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory)
+        private readonly IWebAssetCollectionResolver resolver;
+
+        public Editor(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IWebAssetCollectionResolver resolver, ILocalizationService localizationService)
             : base(viewContext, clientSideObjectWriterFactory)
         {
+            this.resolver = resolver;
+
             ScriptFileNames.AddRange(new[] {
                 "telerik.common.js", 
                 "telerik.list.js", 
@@ -30,13 +34,13 @@ namespace Telerik.Web.Mvc.UI
                 "telerik.editor.js" 
             });
 
-            DefaultToolGroup = new EditorToolGroup();
+            DefaultToolGroup = new EditorToolGroup(this);
 
             ClientEvents = new EditorClientEvents();
 
-            StyleSheets = new WebAssetItemGroup("default", false) { DefaultPath = WebAssetDefaultSettings.StyleSheetFilesPath };
+            StyleSheets = new WebAssetGroup("default", false) { DefaultPath = WebAssetDefaultSettings.StyleSheetFilesPath };
 
-            Localization = new EditorLocalization();
+            Localization = new EditorLocalization(localizationService, CultureInfo.CurrentUICulture);
 
             Template = new HtmlTemplate();
 
@@ -72,7 +76,7 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public WebAssetItemGroup StyleSheets
+        public WebAssetGroup StyleSheets
         {
             get;
             private set;
@@ -147,9 +151,13 @@ namespace Telerik.Web.Mvc.UI
                 bool isSecured = ViewContext.HttpContext.Request.IsSecureConnection;
                 bool canCompress = ViewContext.HttpContext.Request.CanCompress();
 
-                IWebAssetItemMerger assetItemMerger = ServiceLocator.Current.Resolve<IWebAssetItemMerger>();
-
-                IList<string> mergedGroup = assetItemMerger.MergeGroup("text/css", WebAssetHttpHandler.DefaultPath, isSecured, canCompress, StyleSheets);
+                var mergedGroup = resolver.Resolve(new ResolverContext()
+                {
+                    ContentType = "text/css",
+                    HttpHandlerPath = WebAssetHttpHandler.DefaultPath,
+                    IsSecureConnection = isSecured,
+                    SupportsCompression = canCompress
+                }, new WebAssetCollection("~/Content") { StyleSheets });
 
                 objectWriter.AppendCollection("stylesheets", mergedGroup);
             }

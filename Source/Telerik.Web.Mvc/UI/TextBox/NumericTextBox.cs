@@ -7,26 +7,27 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Web.Mvc;
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
 
-    public class NumericTextBox<T> : TextBoxBase<T> where T: struct
+    public class NumericTextBox<T> : TextBoxBase<T> where T : struct
     {
         public NumericTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<T> rendererFactory)
-		: base(viewContext, clientSideObjectWriterFactory, rendererFactory)
+            : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
 
-            MinValue = (T)Convert.ChangeType(-100, typeof(T));
-            MaxValue = (T)Convert.ChangeType(100, typeof(T));
+            MinValue = (T)Convert.ChangeType(int.MinValue, typeof(T));
+            MaxValue = (T)Convert.ChangeType(int.MaxValue, typeof(T));
             IncrementStep = (T)Convert.ChangeType(1, typeof(T)); ;
             EmptyMessage = "Enter value";
 
-            DecimalDigits = Culture.Current.NumberFormat.NumberDecimalDigits;
-            NumberGroupSize = Culture.Current.NumberFormat.NumberGroupSizes[0];
-            NegativePatternIndex = Culture.Current.NumberFormat.NumberNegativePattern;
+            DecimalDigits = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalDigits;
+            NumberGroupSize = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSizes[0];
+            NegativePatternIndex = CultureInfo.CurrentCulture.NumberFormat.NumberNegativePattern;
         }
 
         public int DecimalDigits
@@ -40,7 +41,6 @@ namespace Telerik.Web.Mvc.UI
             get;
             set;
         }
-
 
         public override void WriteInitializationScript(System.IO.TextWriter writer)
         {
@@ -60,6 +60,10 @@ namespace Telerik.Web.Mvc.UI
             objectWriter.Append("text", this.EmptyMessage);
             objectWriter.Append("type", "numeric");
 
+            var inputAttributes = new Dictionary<string, string>();
+            this.InputHtmlAttributes.Each(x => inputAttributes.Add(x.Key, x.Value.ToString()));
+            objectWriter.AppendObject("inputAttributes", inputAttributes);
+
             ClientEvents.SerializeTo(objectWriter);
 
             objectWriter.Complete();
@@ -70,8 +74,6 @@ namespace Telerik.Web.Mvc.UI
         protected override void WriteHtml(System.Web.UI.HtmlTextWriter writer)
         {
             Guard.IsNotNull(writer, "writer");
-
-            VerifySettings();
 
             ITextBoxBaseHtmlBuilder renderer = rendererFactory.Create(this);
 
@@ -89,8 +91,10 @@ namespace Telerik.Web.Mvc.UI
             base.WriteHtml(writer);
         }
 
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (Nullable.Compare<T>(MinValue, MaxValue) == 1)
             {
                 throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);
@@ -101,7 +105,7 @@ namespace Telerik.Web.Mvc.UI
                 throw new ArgumentOutOfRangeException(TextResource.ValueOutOfRange);
             }
 
-            if (NegativePatternIndex < 0 || NegativePatternIndex > 4) 
+            if (NegativePatternIndex < 0 || NegativePatternIndex > 4)
             {
                 throw new IndexOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("NegativePatternIndex", 0, 4));
             }

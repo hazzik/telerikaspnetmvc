@@ -6,10 +6,10 @@
 namespace Telerik.Web.Mvc.Extensions
 {
     using System;
+    using System.Globalization;
     using System.Web.Mvc;
     using System.Web.Routing;
-    using Infrastructure;
-    using UI;
+    using Telerik.Web.Mvc.UI;
 
     public static class GridControllerExtensions
     {
@@ -39,13 +39,13 @@ namespace Telerik.Web.Mvc.Extensions
 #if MVC1
             found = controller.ValueProvider.TryGetValue(key, out result);
 #endif
-#if MVC2
+#if MVC2 || MVC3
             result = controller.ValueProvider.GetValue(key);
             found = result != null;
 #endif
             if (found)
             {
-                return (T)result.ConvertTo(typeof(T), Culture.Current);
+                return (T)result.ConvertTo(typeof(T), CultureInfo.CurrentCulture);
             }
 
             return default(T);

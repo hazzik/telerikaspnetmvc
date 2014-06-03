@@ -7,6 +7,7 @@
             this.element = element;
 
             var $element = $(element);
+            this.$contentElements = $element.find('> .t-content');
 
             $.extend(this, options);
 
@@ -27,8 +28,8 @@
             });
 
             var selectedItems = $element.find('li.t-state-active');
-            var content = this.getContentElement($element.find('> .t-content'), selectedItems.parent().children().index(selectedItems));
-            if (content && content.length > 0 && content.children().length == 0) {
+            var $content = $(this.getContentElement(selectedItems.parent().children().index(selectedItems)));
+            if ($content.length > 0 && $content.children().length == 0) {
                 this.activateTab(selectedItems.eq(0));
             }
         }
@@ -60,13 +61,11 @@
         reload: function (li) {
             var tabstrip = this;
 
-            var contentElements = $('> .t-content', this.element);
-
             $(li).each(function () {
                 var $item = $(this);
                 var contentUrl = $item.find('.t-link').data('ContentUrl');
                 if (contentUrl) {
-                    tabstrip.ajaxRequest($item, tabstrip.getContentElement(contentElements, $item.index()), null, contentUrl);
+                    tabstrip.ajaxRequest($item, $(tabstrip.getContentElement($item.index())), null, contentUrl);
                 }
             });
         },
@@ -77,7 +76,7 @@
             var $link = $item.find('.t-link');
             var href = $link.attr('href');
 
-            var $content = $(this.getContentElement($('> .t-content', this.element), $item.parent().children().index($item)));
+            var $content = $(this.getContentElement($item.parent().children().index($item)));
 
             if ($item.is('.t-state-disabled,.t-state-active')) {
                 e.preventDefault();
@@ -90,7 +89,7 @@
 
             var isAnchor = (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + this.element.id + '-') != -1));
 
-            if (isAnchor || ($content.length > 0 && $content.children().length == 0) || $content.length == 0)
+            if (!href || isAnchor || ($content.length > 0 && $content.children().length == 0))
                 e.preventDefault();
             else return;
 
@@ -110,42 +109,42 @@
             $item.removeClass('t-state-default').addClass('t-state-active');
 
             // handle content elements
-            var contentTabElements = $item.parent().parent().find('> .t-content');
-            if (contentTabElements.length > 0) {
+            var $contentElements = this.$contentElements;
+            if ($contentElements.length > 0) {
 
-                var visibleContentElements = contentTabElements.filter('.t-state-active');
+                var $visibleContentElements = $contentElements.filter('.t-state-active');
 
                 // find associated content element
-                var contentElement = this.getContentElement(contentTabElements, itemIndex);
+                var $content = $(this.getContentElement(itemIndex));
 
                 var tabstrip = this;
-                if (!contentElement) {
-                    visibleContentElements.removeClass('t-state-active');
+                if ($content.length == 0) {
+                    $visibleContentElements.removeClass('t-state-active');
 
-                    $t.fx.rewind(tabstrip.effects, visibleContentElements, {});
+                    $t.fx.rewind(tabstrip.effects, $visibleContentElements, {});
 
                     return false;
                 }
 
-                var isAjaxContent = $.trim(contentElement.html()).length == 0;
+                var isAjaxContent = $.trim($content.html()).length == 0;
 
                 var showContentElement = function () {
-                    contentElement.addClass('t-state-active');
+                    $content.addClass('t-state-active');
 
-                    $t.fx.play(tabstrip.effects, contentElement, {});
+                    $t.fx.play(tabstrip.effects, $content, {});
                 };
 
-                visibleContentElements.removeClass('t-state-active').stop(false, true);
+                $visibleContentElements.removeClass('t-state-active').stop(false, true);
 
                 $t.fx.rewind(
                     tabstrip.effects,
-			        visibleContentElements, {},
+			        $visibleContentElements, {},
 			        function () {
 			            if ($item.hasClass('t-state-active')) {
 			                if (!isAjaxContent) {
 			                    showContentElement();
 			                } else if (isAjaxContent) {
-			                    tabstrip.ajaxRequest($item, contentElement, function () {
+			                    tabstrip.ajaxRequest($item, $content, function () {
 			                        if ($item.hasClass('t-state-active')) {
 			                            showContentElement();
 			                        }
@@ -159,18 +158,26 @@
             return false;
         },
 
-        getContentElement: function (contentTabElements, itemIndex) {
+        getSelectedTabIndex: function () {
+            return $(this.element).find('li.t-state-active').index();
+        },
+
+        getContentElement: function (itemIndex) {
+            if (isNaN(itemIndex - 0)) return;
+
+            var $contentElements = this.$contentElements;
             var idTest = new RegExp('-' + (itemIndex + 1) + '$');
 
-            for (var i = 0, len = contentTabElements.length; i < len; i++) {
-                if (idTest.test($(contentTabElements[i]).attr('id'))) {
-                    return $(contentTabElements[i]);
+            for (var i = 0, len = $contentElements.length; i < len; i++) {
+                if (idTest.test($contentElements[i].id)) {
+                    return $contentElements[i];
                 }
             }
         },
 
-        ajaxRequest: function ($element, contentElement, complete, url) {
-            var me = this;
+        ajaxRequest: function ($element, $content, complete, url) {
+            if ($element.find('.t-loading').length)
+                return;
 
             var statusIcon = null;
             var loadingIconTimeout = setTimeout(function () {
@@ -197,7 +204,7 @@
                 },
 
                 success: $.proxy(function (data, textStatus) {
-                    contentElement.html(data);
+                    $content.html(data);
 
                     var $link = $element.find('.t-link');
                     var href = $link.attr('href');
@@ -206,7 +213,7 @@
                         $link.data('ContentUrl', href).attr('href', '#');
 
                     if (complete)
-                        complete.call(me, contentElement);
+                        complete.call(this, $content);
                 }, this)
             });
         }

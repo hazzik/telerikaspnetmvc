@@ -23,6 +23,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View();
         }
 
+        public ActionResult DateView()
+        {
+            return View();
+        }
+
         public ActionResult DatePicker() 
         {
             return View();

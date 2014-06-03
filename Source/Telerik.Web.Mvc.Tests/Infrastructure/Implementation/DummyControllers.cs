@@ -54,3 +54,32 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests.DummyNamespace
         }
     }
 }
+
+namespace Telerik.Web.Mvc.Infrastructure.Implementation.Areas.Test1
+{
+    using System;
+    using System.Web.Mvc;
+
+    public class AreaController : Controller
+    {
+        [Authorize(Users = "Mort, Elvis, Einstein")]
+        public ActionResult AMethod()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
+
+namespace Telerik.Web.Mvc.Infrastructure.Implementation.Areas.Test2
+{
+    using System;
+    using System.Web.Mvc;
+
+    public class AreaController : Controller
+    {
+        public ActionResult AMethod()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

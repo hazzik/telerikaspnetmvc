@@ -6,21 +6,29 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
-
-    using Extensions;
+    using System.Linq;
+    using Telerik.Web.Mvc.Extensions;
 
     public class GridToolBarSettings<T> where T : class
     {
-        public GridToolBarSettings()
+        public GridToolBarSettings(Grid<T> grid)
         {
             Commands = new List<GridToolBarCommandBase<T>>();
+            Grid = grid;
+            Template = new HtmlTemplate();
+        }
+
+        public Grid<T> Grid
+        {
+            get;
+            private set;
         }
 
         public bool Enabled
         {
             get
             {
-                return !Commands.IsEmpty();
+                return Commands.Any() || Template.HasValue();
             }
         }
 
@@ -28,6 +36,24 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
             private set;
+        }
+
+        public HtmlTemplate Template
+        {
+            get;
+            private set;
+        }
+
+        public void AppendTo(IHtmlNode parent)
+        {
+            if (Template.HasValue())
+            {
+                Template.Apply(parent);
+            }
+            else
+            {
+                Commands.Each(command => command.Html(Grid, parent));
+            }
         }
     }
 }

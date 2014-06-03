@@ -29,6 +29,15 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             return ValueField;
         }
 
+        private static TElem? NullableField<TElem>(object value) where TElem : struct
+        {
+            if (DBNull.Value == value)
+            {
+                return null;
+            }
+            return (TElem?)value;
+        }
+
         private static T ReferenceField(object value)
         {
             if (DBNull.Value != value)

@@ -1,25 +1,24 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<OrderDto>" %>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<OrderInfoDto>" %>
 <asp:content contentPlaceHolderId="MainContent" runat="server">
-
     <% Html.EnableClientValidation(); %>
     
     <% using (Html.BeginForm())
-    { %>
+       { %>
         <ul id="field-list">
             <li>
-                <%= Html.LabelFor(x => x.ContactName)%>
-                <%= Html.TextBoxFor(x => x.ContactName) %>
-                <%= Html.ValidationMessageFor(x => x.ContactName)%>
+                <%= Html.LabelFor(o => o.Delay) %>
+                <%= Html.Telerik().TimePickerFor(o => o.Delay) %>
+                <%= Html.ValidationMessageFor(x => x.Delay) %>
             </li>
             <li>
-                <%= Html.LabelFor(x => x.OrderDate)%>
-                <%= Html.Telerik().DatePicker().Name("OrderDate").Value(Model.OrderDate)%>
-                <%= Html.ValidationMessageFor(x => x.OrderDate)%>
+                <%= Html.LabelFor(o => o.DeliveryDate) %>
+                <%= Html.Telerik().DatePickerFor(o => o.DeliveryDate) %>
+                <%= Html.ValidationMessageFor(o => o.DeliveryDate) %>
             </li>
             <li>
-                <%= Html.LabelFor(x => x.ShipAddress)%>
-                <%= Html.TextAreaFor(x => x.ShipAddress) %>
-                <%= Html.ValidationMessageFor(x => x.ShipAddress)%>
+                <%= Html.LabelFor(o => o.OrderDateTime) %>
+                <%= Html.Telerik().DateTimePickerFor(o => o.OrderDateTime) %>
+                <%= Html.ValidationMessageFor(o => o.OrderDateTime) %>
             </li>
             <li>
                 <button class="t-button t-state-default" type="submit">Save</button>
@@ -58,17 +57,28 @@
             padding-top: 2px;
         }
         
-        #field-list input,
+        #field-list .text-box,
+        #field-list .t-datepicker,
         #field-list textarea
         {
             font: normal 12px Tahoma;
-            width: 130px;
+        }
+        
+        #field-list #OrderDate
+        {
+            width: 12.1em;
+        }
+        
+        #field-list .text-box,
+        #field-list textarea
+        {
+            width: 10em;
         }
         
         #field-list button
         {
-            margin: 19px 0 0 205px;
-            width: 60px;
+            margin: 1em 0 0 16.3em;
+            width: 5em;
         }
     </style>
 </asp:content>

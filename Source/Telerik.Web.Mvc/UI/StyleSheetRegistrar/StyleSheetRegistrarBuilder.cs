@@ -83,11 +83,11 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual StyleSheetRegistrarBuilder DefaultGroup(Action<WebAssetItemGroupBuilder> configureAction)
+        public virtual StyleSheetRegistrarBuilder DefaultGroup(Action<WebAssetGroupBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemGroupBuilder builder = new WebAssetItemGroupBuilder(styleSheetRegistrar.DefaultGroup);
+            WebAssetGroupBuilder builder = new WebAssetGroupBuilder(styleSheetRegistrar.DefaultGroup);
             configureAction(builder);
 
             return this;
@@ -98,11 +98,11 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         /// <param name="configureAction">The configure action.</param>
         /// <returns></returns>
-        public virtual StyleSheetRegistrarBuilder StyleSheets(Action<WebAssetItemCollectionBuilder> configureAction)
+        public virtual StyleSheetRegistrarBuilder StyleSheets(Action<WebAssetCollectionBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemCollectionBuilder builder = new WebAssetItemCollectionBuilder(WebAssetType.StyleSheet, styleSheetRegistrar.StyleSheets);
+            WebAssetCollectionBuilder builder = new WebAssetCollectionBuilder(WebAssetType.StyleSheet, styleSheetRegistrar.StyleSheets);
 
             configureAction(builder);
 

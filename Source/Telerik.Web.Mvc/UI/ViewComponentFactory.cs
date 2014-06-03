@@ -8,13 +8,14 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
-    using System.Diagnostics;
+    using System.Data;
+    using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Web.Mvc;
-    using Extensions;
-    using Fluent;
-    using Infrastructure;
+    using Telerik.Web.Mvc;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.UI.Fluent;
 
     /// <summary>
     /// Provides the factory methods for creating Telerik View Components.
@@ -54,7 +55,6 @@ namespace Telerik.Web.Mvc.UI
 
         private ViewContext ViewContext
         {
-            [DebuggerStepThrough]
             get
             {
                 return HtmlHelper.ViewContext;
@@ -76,7 +76,6 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public StyleSheetRegistrarBuilder StyleSheetRegistrar()
         {
             return styleSheetRegistrarBuilder;
@@ -91,7 +90,6 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public ScriptRegistrarBuilder ScriptRegistrar()
         {
             return scriptRegistrarBuilder;
@@ -108,10 +106,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual MenuBuilder Menu()
         {
-            return MenuBuilder.Create(Create(() => new Menu(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<INavigationComponentHtmlBuilderFactory<Menu, MenuItem>>())));
+            return MenuBuilder.Create(Register(() => new Menu(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(), DI.Current.Resolve<INavigationItemAuthorization>(), DI.Current.Resolve<INavigationComponentHtmlBuilderFactory<Menu, MenuItem>>())));
         }
 
         /// <summary>
@@ -124,10 +121,10 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual EditorBuilder Editor()
         {
-            return EditorBuilder.Create(Create(() => new Editor(ViewContext, ClientSideObjectWriterFactory)));
+            return EditorBuilder.Create(Register(() => new Editor(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IWebAssetCollectionResolver>(),
+                DI.Current.Resolve<ILocalizationServiceFactory>().Create("EditorLocalization", CultureInfo.CurrentUICulture))));
         }
 
         /// <summary>
@@ -145,10 +142,10 @@ namespace Telerik.Web.Mvc.UI
         /// <remarks>
         /// Do not forget to bind the grid using the <see cref="GridBuilder{T}.BindTo(System.String)" /> method when using this overload.
         /// </remarks>
-        [DebuggerStepThrough]
         public virtual GridBuilder<T> Grid<T>() where T : class
         {
-            return GridBuilder<T>.Create(Create(() => new Grid<T>(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())));
+            return GridBuilder<T>.Create(Register(() => new Grid<T>(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(),
+                DI.Current.Resolve<ILocalizationServiceFactory>().Create("GridLocalization", CultureInfo.CurrentUICulture))));
         }
 
         /// <summary>
@@ -171,6 +168,34 @@ namespace Telerik.Web.Mvc.UI
 
             return builder;
         }
+
+        /// <summary>
+        /// Creates a new <see cref="Telerik.Web.UI.Grid&lt;T&gt;"/> bound to a DataTable.
+        /// </summary>
+        /// <param name="dataSource">DataTable from which the grid instance will be bound</param>
+        public virtual GridBuilder<DataRowView> Grid(DataTable dataSource)
+        {
+            GridBuilder<DataRowView> builder = Grid<DataRowView>();
+            
+            builder.Component.DataSource = dataSource.WrapAsEnumerable();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Telerik.Web.UI.Grid&lt;T&gt;"/> bound to a DataView.
+        /// </summary>
+        /// <param name="dataSource">DataView from which the grid instance will be bound</param>
+        public virtual GridBuilder<DataRowView> Grid(DataView dataSource)
+        {
+            Guard.IsNotNull(dataSource, "dataSource");
+
+            GridBuilder<DataRowView> builder = Grid<DataRowView>();
+
+            builder.Component.DataSource = dataSource.Table.WrapAsEnumerable();
+
+            return builder;
+        }   
 
         /// <summary>
         /// Creates a new <see cref="Telerik.Web.UI.Grid&lt;T&gt;"/> bound an item in ViewData.
@@ -208,11 +233,26 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual TabStripBuilder TabStrip()
         {
-            return TabStripBuilder.Create(Create(() => new TabStrip(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<ITabStripHtmlBuilderFactory>())));
+            return TabStripBuilder.Create(Register(() => new TabStrip(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(), DI.Current.Resolve<INavigationItemAuthorization>(), DI.Current.Resolve<ITabStripHtmlBuilderFactory>())));
         }
+
+        /// <summary>
+        /// Creates a new <see cref="DateTimePicker"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DateTimePicker()
+        ///             .Name("DateTimePicker")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual DateTimePickerBuilder DateTimePicker()
+        {
+            return DateTimePickerBuilder.Create(Register(() => new DateTimePicker(ViewContext, ClientSideObjectWriterFactory)));
+        }
+
 
         /// <summary>
         /// Creates a new <see cref="DatePicker"/>.
@@ -224,10 +264,24 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual DatePickerBuilder DatePicker()
         {
-            return DatePickerBuilder.Create(Create(() => new DatePicker(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IDatePickerHtmlBuilderFactory>())));
+            return DatePickerBuilder.Create(Register(() => new DatePicker(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IDatePickerHtmlBuilderFactory>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="TimePicker"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TimePicker()
+        ///             .Name("TimePicker")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual TimePickerBuilder TimePicker()
+        {
+            return TimePickerBuilder.Create(Register(() => new TimePicker(ViewContext, ClientSideObjectWriterFactory)));
         }
 
         /// <summary>
@@ -240,12 +294,11 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual CalendarBuilder Calendar()
         {
-            return CalendarBuilder.Create(Create(() => new Calendar(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<ICalendarHtmlBuilderFactory>())));
+            return CalendarBuilder.Create(Register(() => new Calendar(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(), DI.Current.Resolve<ICalendarHtmlBuilderFactory>())));
         }
-        
+
         /// <summary>
         /// Creates a new <see cref="PanelBar"/>.
         /// </summary>
@@ -261,10 +314,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual PanelBarBuilder PanelBar()
         {
-            return PanelBarBuilder.Create(Create(() => new PanelBar(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<INavigationComponentHtmlBuilderFactory<PanelBar, PanelBarItem>>())));
+            return PanelBarBuilder.Create(Register(() => new PanelBar(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(), DI.Current.Resolve<INavigationItemAuthorization>(), DI.Current.Resolve<INavigationComponentHtmlBuilderFactory<PanelBar, PanelBarItem>>())));
         }
 
         /// <summary>
@@ -278,10 +330,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual TreeViewBuilder TreeView()
         {
-            return TreeViewBuilder.Create(Create(() => new TreeView(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<ITreeViewHtmlBuilderFactory>())));
+            return TreeViewBuilder.Create(Register(() => new TreeView(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(), DI.Current.Resolve<INavigationItemAuthorization>(), DI.Current.Resolve<ITreeViewHtmlBuilderFactory>())));
         }
 
         /// <summary>
@@ -295,10 +346,9 @@ namespace Telerik.Web.Mvc.UI
         /// </code>
         /// </example>
         /// <returns>Returns <see cref="NumericTextBoxBuilder{double}"/>.</returns>
-        [DebuggerStepThrough]
         public virtual NumericTextBoxBuilder<double> NumericTextBox()
         {
-            return NumericTextBoxBuilder<double>.Create(Create(() => new NumericTextBox<double>(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<double>>())));
+            return NumericTextBoxBuilder<double>.Create(Register(() => new NumericTextBox<double>(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<double>())));
         }
 
         /// <summary>
@@ -311,10 +361,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual NumericTextBoxBuilder<T> NumericTextBox<T>() where T: struct
         {
-            return NumericTextBoxBuilder<T>.Create(Create(() => new NumericTextBox<T>(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<T>>())));
+            return NumericTextBoxBuilder<T>.Create(Register(() => new NumericTextBox<T>(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<T>())));
         }
 
         /// <summary>
@@ -327,10 +376,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual CurrencyTextBoxBuilder CurrencyTextBox()
         {
-            return CurrencyTextBoxBuilder.Create(Create(() => new CurrencyTextBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<decimal>>())));
+            return CurrencyTextBoxBuilder.Create(Register(() => new CurrencyTextBox(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<decimal>())));
         }
 
         /// <summary>
@@ -343,10 +391,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual PercentTextBoxBuilder PercentTextBox()
         {
-            return PercentTextBoxBuilder.Create(Create(() => new PercentTextBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<double>>())));
+            return PercentTextBoxBuilder.Create(Register(() => new PercentTextBox(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<double>())));
         }
 
         /// <summary>
@@ -359,10 +406,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual IntegerTextBoxBuilder IntegerTextBox()
         {
-            return IntegerTextBoxBuilder.Create(Create(() => new IntegerTextBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<int>>())));
+            return IntegerTextBoxBuilder.Create(Register(() => new IntegerTextBox(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<int>())));
         }
 
         /// <summary>
@@ -375,10 +421,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual WindowBuilder Window()
         {
-            return WindowBuilder.Create(Create(() => new Window(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IWindowHtmlBuilderFactory>())));
+            return WindowBuilder.Create(Register(() => new Window(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IWindowHtmlBuilderFactory>())));
         }
 
         /// <summary>
@@ -396,10 +441,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual DropDownListBuilder DropDownList()
         {
-            return DropDownListBuilder.Create(Create(() => new DropDownList(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())));
+            return DropDownListBuilder.Create(Register(() => new DropDownList(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>())));
         }
 
         /// <summary>
@@ -417,10 +461,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual ComboBoxBuilder ComboBox()
         {
-            return ComboBoxBuilder.Create(Create(() => new ComboBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())));
+            return ComboBoxBuilder.Create(Register(() => new ComboBox(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>())));
         }
 
         /// <summary>
@@ -438,14 +481,13 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        [DebuggerStepThrough]
         public virtual AutoCompleteBuilder AutoComplete()
         {
-            return AutoCompleteBuilder.Create(Create(() => new AutoComplete(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())));
+            return AutoCompleteBuilder.Create(Register(() => new AutoComplete(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>())));
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public TViewComponent Create<TViewComponent>(Func<TViewComponent> factory) where TViewComponent : ViewComponentBase
+        public TViewComponent Register<TViewComponent>(Func<TViewComponent> factory) where TViewComponent : ViewComponentBase
         {
             TViewComponent component = factory();
 
@@ -453,17 +495,28 @@ namespace Telerik.Web.Mvc.UI
             {
                 scriptRegistrarBuilder.ToRegistrar().Register(component);
             }
-
             return component;
         }
     }
-#if MVC2
+#if MVC2 || MVC3
     public class ViewComponentFactory<TModel> : ViewComponentFactory
     {
+        private string minimumValidator;
+        private string maximumValidator;
+
         public ViewComponentFactory(HtmlHelper<TModel> htmlHelper, IClientSideObjectWriterFactory clientSideObjectWriterFactory, StyleSheetRegistrarBuilder styleSheetRegistrar, ScriptRegistrarBuilder scriptRegistrar)
             : base(htmlHelper, clientSideObjectWriterFactory, styleSheetRegistrar, scriptRegistrar)
         {
             this.HtmlHelper = htmlHelper;
+
+
+#if MVC3
+            minimumValidator = "min";
+            maximumValidator = "max";
+#else
+            minimumValidator = "minimum";
+            maximumValidator = "maximum";
+#endif
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -480,8 +533,8 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
             return Editor()
-                .Name(GetName(expression))
-                .Value(expression.Compile()(HtmlHelper.ViewData.Model));
+                    .Name(GetName(expression))
+                    .Value((string)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model);
         }
         /// <summary>
         /// Creates a new <see cref="NumericTextBox{TValue}"/>.
@@ -497,12 +550,24 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(expression, "expression");
 
             var validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+            
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
 
-            NumericTextBoxBuilder<TValue> builder = new NumericTextBoxBuilder<TValue>(Create(() => new NumericTextBox<TValue>(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<TValue>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<TValue>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<TValue>(validators, "maximum"));
+            var builder = NumericTextBox<TValue>()
+                        .Name(GetName(expression))
+                        .Value(value == null ? default(TValue) : (TValue)value);
+
+            var min = GetRangeValidationParameter<TValue>(validators, minimumValidator);
+            var max = GetRangeValidationParameter<TValue>(validators, maximumValidator);
+
+            if(min != null)
+                builder.MinValue(min);
+            
+            if(max != null)
+                builder.MaxValue(max);
+
+            return builder;
+                
         }
 
         /// <summary>
@@ -519,12 +584,21 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(expression, "expression");
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
-                        
-            NumericTextBoxBuilder<TValue> builder = new NumericTextBoxBuilder<TValue>(Create(() => new NumericTextBox<TValue>(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<TValue>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<TValue>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<TValue>(validators, "maximum"));
+
+            var builder = NumericTextBox<TValue>()
+                        .Name(GetName(expression))
+                        .Value((Nullable<TValue>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model);
+
+            var min = GetRangeValidationParameter<TValue>(validators, minimumValidator);
+            var max = GetRangeValidationParameter<TValue>(validators, maximumValidator);
+
+            if (min != null)
+                builder.MinValue(min);
+
+            if (max != null)
+                builder.MaxValue(max);
+
+            return builder;
         }
 
         /// <summary>
@@ -541,11 +615,11 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            IntegerTextBoxBuilder builder = new IntegerTextBoxBuilder(Create(() => new IntegerTextBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<int>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<int>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<int>(validators, "maximum"));
+            return IntegerTextBox()
+                    .Name(GetName(expression))
+                    .Value((Nullable<int>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .MinValue(GetRangeValidationParameter<int>(validators, minimumValidator) ?? int.MinValue)
+                    .MaxValue(GetRangeValidationParameter<int>(validators, maximumValidator) ?? int.MaxValue);
         }
 
         /// <summary>
@@ -562,11 +636,13 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            IntegerTextBoxBuilder builder = new IntegerTextBoxBuilder(Create(() => new IntegerTextBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<int>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<int>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<int>(validators, "maximum"));
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return IntegerTextBox()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(int) : (int)value)
+                    .MinValue(GetRangeValidationParameter<int>(validators, minimumValidator) ?? int.MinValue)
+                    .MaxValue(GetRangeValidationParameter<int>(validators, maximumValidator) ?? int.MaxValue);
         }
 
         /// <summary>
@@ -583,11 +659,11 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            CurrencyTextBoxBuilder builder = new CurrencyTextBoxBuilder(Create(() => new CurrencyTextBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<decimal>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<decimal>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<decimal>(validators, "maximum"));
+            return CurrencyTextBox()
+                    .Name(GetName(expression))
+                    .Value((Nullable<decimal>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .MinValue(GetRangeValidationParameter<decimal>(validators, minimumValidator) ?? decimal.MinValue)
+                    .MaxValue(GetRangeValidationParameter<decimal>(validators, maximumValidator) ?? decimal.MaxValue);
         }
 
         /// <summary>
@@ -604,11 +680,13 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            CurrencyTextBoxBuilder builder = new CurrencyTextBoxBuilder(Create(() => new CurrencyTextBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<decimal>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<decimal>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<decimal>(validators, "maximum"));
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return CurrencyTextBox()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(decimal) : (decimal)value)
+                    .MinValue(GetRangeValidationParameter<decimal>(validators, minimumValidator) ?? decimal.MinValue)
+                    .MaxValue(GetRangeValidationParameter<decimal>(validators, maximumValidator) ?? decimal.MaxValue);
         }
 
         /// <summary>
@@ -625,11 +703,11 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            PercentTextBoxBuilder builder = new PercentTextBoxBuilder(Create(() => new PercentTextBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<double>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<double>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<double>(validators, "maximum"));
+            return PercentTextBox()
+                    .Name(GetName(expression))
+                    .Value((Nullable<double>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .MinValue(GetRangeValidationParameter<double>(validators, minimumValidator) ?? double.MinValue)
+                    .MaxValue(GetRangeValidationParameter<double>(validators, maximumValidator) ?? double.MaxValue);
         }
 
         /// <summary>
@@ -646,11 +724,57 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            PercentTextBoxBuilder builder = new PercentTextBoxBuilder(Create(() => new PercentTextBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<double>>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinValue(GetRangeValidationParameter<double>(validators, "minimum"))
-                          .MaxValue(GetRangeValidationParameter<double>(validators, "maximum"));
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return PercentTextBox()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(double) : (double)value)
+                    .MinValue(GetRangeValidationParameter<double>(validators, minimumValidator) ?? double.MinValue)
+                    .MaxValue(GetRangeValidationParameter<double>(validators, maximumValidator) ?? double.MaxValue);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="DateTimePicker{Nullable{DateTime}}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DateTimePickerFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual DateTimePickerBuilder DateTimePickerFor(Expression<Func<TModel, Nullable<DateTime>>> expression)
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            return DateTimePicker()
+                    .Name(GetName(expression))
+                    .Value((Nullable<DateTime>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .Min(GetRangeValidationParameter<DateTime>(validators, minimumValidator) ?? Telerik.Web.Mvc.UI.DateTimePicker.defaultMinDate)
+                    .Max(GetRangeValidationParameter<DateTime>(validators, maximumValidator) ?? Telerik.Web.Mvc.UI.DateTimePicker.defaultMaxDate);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="DateTimePicker{DateTime}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DateTimePickerFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual DateTimePickerBuilder DateTimePickerFor(Expression<Func<TModel, DateTime>> expression)
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return DateTimePicker()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(DateTime) : (DateTime)value)
+                    .Min(GetRangeValidationParameter<DateTime>(validators, minimumValidator) ?? Telerik.Web.Mvc.UI.DateTimePicker.defaultMinDate)
+                    .Max(GetRangeValidationParameter<DateTime>(validators, maximumValidator) ?? Telerik.Web.Mvc.UI.DateTimePicker.defaultMaxDate);
         }
 
         /// <summary>
@@ -667,11 +791,11 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            DatePickerBuilder builder = new DatePickerBuilder(Create(() => new DatePicker(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IDatePickerHtmlBuilderFactory>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinDate(GetRangeValidationParameter<DateTime>(validators, "minimum") ?? builder.ToComponent().defaultMinDate)
-                          .MaxDate(GetRangeValidationParameter<DateTime>(validators, "maximum") ?? builder.ToComponent().defaultMaxDate);
+            return DatePicker()
+                    .Name(GetName(expression))
+                    .Value((Nullable<DateTime>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .Min(GetRangeValidationParameter<DateTime>(validators, minimumValidator) ?? Telerik.Web.Mvc.UI.DatePicker.defaultMinDate)
+                    .Max(GetRangeValidationParameter<DateTime>(validators, maximumValidator) ?? Telerik.Web.Mvc.UI.DatePicker.defaultMaxDate);
         }
 
         /// <summary>
@@ -688,11 +812,107 @@ namespace Telerik.Web.Mvc.UI
 
             IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
 
-            DatePickerBuilder builder = new DatePickerBuilder(Create(() => new DatePicker(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IDatePickerHtmlBuilderFactory>())));
-            return builder.Name(GetName(expression))
-                          .Value(expression.Compile()(HtmlHelper.ViewData.Model))
-                          .MinDate(GetRangeValidationParameter<DateTime>(validators, "minimum") ?? builder.ToComponent().defaultMinDate)
-                          .MaxDate(GetRangeValidationParameter<DateTime>(validators, "maximum") ?? builder.ToComponent().defaultMaxDate);
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return DatePicker()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(DateTime) : (DateTime)value)
+                    .Min(GetRangeValidationParameter<DateTime>(validators, minimumValidator) ?? Telerik.Web.Mvc.UI.DatePicker.defaultMinDate)
+                    .Max(GetRangeValidationParameter<DateTime>(validators, maximumValidator) ?? Telerik.Web.Mvc.UI.DatePicker.defaultMaxDate);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="TimePicker{Nullable{DateTime}}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TimePickerFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual TimePickerBuilder TimePickerFor(Expression<Func<TModel, Nullable<DateTime>>> expression)
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            return TimePicker()
+                    .Name(GetName(expression))
+                    .Value((Nullable<DateTime>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .Min(GetRangeValidationParameter<DateTime>(validators, minimumValidator) ?? DateTime.Today)
+                    .Max(GetRangeValidationParameter<DateTime>(validators, maximumValidator) ?? DateTime.Today);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="TimePicker{DateTime}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TimePickerFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual TimePickerBuilder TimePickerFor(Expression<Func<TModel, DateTime>> expression)
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return TimePicker()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(DateTime) : (DateTime)value)
+                    .Min(GetRangeValidationParameter<DateTime>(validators, minimumValidator) ?? DateTime.Today)
+                    .Max(GetRangeValidationParameter<DateTime>(validators, maximumValidator) ?? DateTime.Today);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="TimePicker{Nullable{TimeSpan}}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TimePickerFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual TimePickerBuilder TimePickerFor(Expression<Func<TModel, Nullable<TimeSpan>>> expression)
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            TimeSpan? minimum = GetRangeValidationParameter<TimeSpan>(validators, minimumValidator);
+            TimeSpan? maximum = GetRangeValidationParameter<TimeSpan>(validators, maximumValidator);
+
+            return TimePicker()
+                    .Name(GetName(expression))
+                    .Value((Nullable<TimeSpan>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .Min(minimum.HasValue ? new DateTime(minimum.Value.Ticks) : DateTime.Today)
+                    .Max(maximum.HasValue ? new DateTime(maximum.Value.Ticks) : DateTime.Today);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="TimePicker{TimeSpan}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TimePickerFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual TimePickerBuilder TimePickerFor(Expression<Func<TModel, TimeSpan>> expression)
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            TimeSpan? minimum = GetRangeValidationParameter<TimeSpan>(validators, minimumValidator);
+            TimeSpan? maximum = GetRangeValidationParameter<TimeSpan>(validators, maximumValidator);
+
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            return TimePicker()
+                    .Name(GetName(expression))
+                    .Value(value == null ? default(TimeSpan) : (TimeSpan)value)
+                    .Min(minimum.HasValue ? new DateTime(minimum.Value.Ticks) : DateTime.Today)
+                    .Max(maximum.HasValue ? new DateTime(maximum.Value.Ticks) : DateTime.Today);
         }
 
         /// <summary>
@@ -707,8 +927,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            return DropDownListBuilder.Create(Create(() => new DropDownList(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())))
-                                      .Name(GetName(expression));
+            return DropDownList().Name(GetName(expression));
         }
 
         /// <summary>
@@ -723,8 +942,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            return ComboBoxBuilder.Create(Create(() => new ComboBox(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())))
-                                  .Name(GetName(expression));
+            return ComboBox().Name(GetName(expression));
         }
 
         /// <summary>
@@ -739,8 +957,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            return AutoCompleteBuilder.Create(Create(() => new AutoComplete(HtmlHelper.ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>())))
-                                      .Name(GetName(expression));
+            return AutoComplete().Name(GetName(expression));
         }
 
         private string GetName(LambdaExpression expression)
@@ -755,14 +972,14 @@ namespace Telerik.Web.Mvc.UI
 
             object value = null;
 
-            if (rangeValidators.Any()) 
+            if (rangeValidators.Any())
             {
                 var clientValidationsRules = rangeValidators.First()
                                                             .GetClientValidationRules()
                                                             .OfType<ModelClientValidationRangeRule>()
                                                             .Cast<ModelClientValidationRangeRule>();
 
-                if(clientValidationsRules.Any() && clientValidationsRules.First().ValidationParameters.TryGetValue(parameter, out value))
+                if (clientValidationsRules.Any() && clientValidationsRules.First().ValidationParameters.TryGetValue(parameter, out value))
                     return (TValue)Convert.ChangeType(value, typeof(TValue));
             }
             return null;

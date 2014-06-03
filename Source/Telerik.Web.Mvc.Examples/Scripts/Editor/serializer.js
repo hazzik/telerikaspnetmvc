@@ -46,6 +46,22 @@ function domToXhtml(root) {
             attributes = node.attributes,
             trim = $.trim;
 
+        if (dom.is(node, 'img')) {
+            var width = node.style.width,
+                height = node.style.height,
+                $node = $(node);
+
+            if (width) {
+                $node.attr('width', parseInt(width));
+                dom.unstyle(node, { width: undefined });
+            }
+
+            if (height) {
+                $node.attr('height', parseInt(height));
+                dom.unstyle(node, { height: undefined });
+            }
+        }
+
         for (var i = 0, l = attributes.length; i < l; i++) {
             var attribute = attributes[i];
             var name = attribute.nodeName;

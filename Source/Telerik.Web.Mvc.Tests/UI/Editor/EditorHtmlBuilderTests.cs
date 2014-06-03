@@ -66,5 +66,15 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
 
             Assert.Equal("textarea", tag.TagName);
         }
+
+        [Fact]
+        public void TextareaTag_should_set_the_name()
+        {
+            editor.Name = "Foo.bar";
+            IHtmlNode tag = renderer.CreateTextArea();
+
+            Assert.Equal("Foo.bar", tag.Attribute("name"));
+        }
+
     }
 }

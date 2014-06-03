@@ -7,48 +7,45 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Text;
     using System.Web.Compilation;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Resources;
 
-    using Extensions;
-    using Resources;
-
-    public class ControllerTypeCache : IControllerTypeCache
+    internal class ControllerTypeCache : IControllerTypeCache
     {
-        private readonly object syncLock = new object();
-        private IDictionary<string, ILookup<string, Type>> cache;
+        private IDictionary<string, ILookup<string, Type>> controllerNames;
+        private readonly ICache cache;
 
         private Func<IEnumerable<Assembly>> referencedAssemblies = () => BuildManager.GetReferencedAssemblies().Cast<Assembly>().Where(assembly => !assembly.GlobalAssemblyCache);
 
+        public ControllerTypeCache(ICache cache)
+        {
+            this.cache = cache;
+        }
+
         public Func<IEnumerable<Assembly>> ReferencedAssemblies
         {
-            [DebuggerStepThrough]
             get
             {
                 return referencedAssemblies;
             }
 
-            [DebuggerStepThrough]
             set
             {
-                Guard.IsNotNull(value, "value");
-
                 referencedAssemblies = value;
             }
         }
 
-        public Type GetControllerType(RequestContext requestContext, string controllerName)
+        public IList<Type> GetControllerTypes(RequestContext requestContext, string controllerName)
         {
-            Guard.IsNotNull(requestContext, "requestContext");
-            Guard.IsNotNullOrEmpty(controllerName, "controllerName");
-
             object routeNamespacesAsObject;
-            Type match;
+            IList<Type> matches = new List<Type>();
 
             if (requestContext != null && requestContext.RouteData.DataTokens.TryGetValue("Namespaces", out routeNamespacesAsObject))
             {
@@ -58,11 +55,11 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 {
                     HashSet<string> routeNamespaces = new HashSet<string>(routeNamespacesAsStrings, StringComparer.OrdinalIgnoreCase);
 
-                    match = GetControllerTypeWithinNamespaces(requestContext.RouteData.Route,controllerName, routeNamespaces);
+                    matches = GetControllerTypesWithinNamespaces(controllerName, routeNamespaces);
 
-                    if (match != null)
+                    if (matches.Count > 0)
                     {
-                        return match;
+                        return matches;
                     }
                 }
             }
@@ -72,91 +69,33 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             {
                 HashSet<string> nsDefaults = new HashSet<string>(ControllerBuilder.Current.DefaultNamespaces, StringComparer.OrdinalIgnoreCase);
 
-                match = GetControllerTypeWithinNamespaces(requestContext.RouteData.Route, controllerName, nsDefaults);
+                matches = GetControllerTypesWithinNamespaces(controllerName, nsDefaults);
 
-                if (match != null)
+                if (matches.Count > 0)
                 {
-                    return match;
+                    return matches;
                 }
             }
 
-            return (requestContext != null) ? GetControllerTypeWithinNamespaces(requestContext.RouteData.Route, controllerName, null /* namespaces */) : null;
+            return (requestContext != null) ? GetControllerTypesWithinNamespaces(controllerName, null /* namespaces */) : null;
         }
 
-        private Type GetControllerTypeWithinNamespaces(RouteBase route, string controllerName, IEnumerable<string> namespaces)
+        private IList<Type> GetControllerTypesWithinNamespaces(string controllerName, IEnumerable<string> namespaces)
         {
-            EnsureInitialized();
-
-            ICollection<Type> matchingTypes = GetControllerTypes(controllerName, namespaces);
-
-            switch (matchingTypes.Count)
+            controllerNames = cache.Get("controllerNames", () =>
             {
-                case 1:
-                    {
-                        return matchingTypes.First();
-                    }
+                var controllerTypes = GetAllControllerTypes();
 
-                case 0:
-                    {
-                        return null;
-                    }
+                var groupedByName = controllerTypes.GroupBy(t => t.Name.Substring(0, t.Name.Length - "Controller".Length), StringComparer.OrdinalIgnoreCase);
 
-                default:
-                    {
-                        // we need to generate an exception containing all the controller types
-                        StringBuilder typeList = new StringBuilder();
-                        foreach (Type matchedType in matchingTypes)
-                        {
-                            typeList.AppendLine();
-                            typeList.Append(matchedType.FullName);
-                        }
+                return groupedByName.ToDictionary(g => g.Key, g => g.ToLookup(t => t.Namespace ?? string.Empty, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
+            });
 
-                        Route castRoute = route as Route;
-
-                        string errorText = castRoute != null ?
-                                           String.Format(Culture.CurrentUI, TextResource.ControllerNameAmbiguousWithRouteUrl, controllerName, castRoute.Url, typeList) :
-                                           String.Format(Culture.CurrentUI, TextResource.ControllerNameAmbiguousWithoutRouteUrl, controllerName, typeList);
-
-                        throw new InvalidOperationException(errorText);
-
-                        //StringBuilder controllerTypes = new StringBuilder();
-
-                        //foreach (Type matchedType in matchingTypes)
-                        //{
-                        //    controllerTypes.AppendLine();
-                        //    controllerTypes.Append(matchedType.FullName);
-                        //}
-
-                        //throw new InvalidOperationException("The controller name '{0}' is ambiguous between the following types:{1}".FormatWith(controllerName, controllerTypes.ToString()));
-                    }
-            }
-        }
-
-        private void EnsureInitialized()
-        {
-            if (cache == null)
-            {
-                lock (syncLock)
-                {
-                    if (cache == null)
-                    {
-                        IList<Type> controllerTypes = GetAllControllerTypes();
-
-                        IEnumerable<IGrouping<string, Type>> groupedByName = controllerTypes.GroupBy(t => t.Name.Substring(0, t.Name.Length - "Controller".Length), StringComparer.OrdinalIgnoreCase);
-
-                        cache = groupedByName.ToDictionary(g => g.Key, g => g.ToLookup(t => t.Namespace ?? string.Empty, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
-                    }
-                }
-            }
-        }
-
-        private ICollection<Type> GetControllerTypes(string controllerName, IEnumerable<string> namespaces)
-        {
             var matchingTypes = new HashSet<Type>();
 
             ILookup<string, Type> nsLookup;
 
-            if (cache.TryGetValue(controllerName, out nsLookup))
+            if (controllerNames.TryGetValue(controllerName, out nsLookup))
             {
                 // this friendly name was located in the cache, now cycle through namespaces
                 if (namespaces != null)
@@ -182,9 +121,9 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 }
             }
 
-            return matchingTypes;
+            return matchingTypes.ToList();
         }
-
+        
         private IList<Type> GetAllControllerTypes()
         {
             IList<Type> controllerTypes = new List<Type>();

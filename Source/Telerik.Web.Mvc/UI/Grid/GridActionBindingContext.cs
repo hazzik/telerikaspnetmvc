@@ -20,6 +20,7 @@ namespace Telerik.Web.Mvc.UI
             SortDescriptors = new List<SortDescriptor>();
             GroupDescriptors = new List<GroupDescriptor>();
             FilterDescriptors = new List<CompositeFilterDescriptor>();
+            CurrentPage = 1;
         }
 
         public bool EnableCustomBinding
@@ -35,6 +36,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public IList<SortDescriptor> SortDescriptors
+        {
+            get;
+            private set;
+        }
+
+        public int CurrentPage
         {
             get;
             private set;

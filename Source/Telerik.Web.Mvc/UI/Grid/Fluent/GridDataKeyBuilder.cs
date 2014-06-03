@@ -10,17 +10,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
     /// Defines the fluent interface for configuring the data key.
     /// </summary>
     /// <typeparam name="TModel">The type of the model</typeparam>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    public class GridDataKeyBuilder<TModel, TValue> : IHideObjectMembers
+    public class GridDataKeyBuilder<TModel> : IHideObjectMembers
         where TModel : class
     {
-        private readonly GridDataKey<TModel, TValue> dataKey;
+        private readonly IGridDataKey<TModel> dataKey;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GridDataKeyBuilder&lt;TModel, TValue&gt;"/> class.
+        /// Initializes a new instance of the <see cref="GridDataKeyBuilder&lt;TModel&gt;"/> class.
         /// </summary>
         /// <param name="dataKey">The dataKey.</param>
-        public GridDataKeyBuilder(GridDataKey<TModel, TValue> dataKey)
+        public GridDataKeyBuilder(IGridDataKey<TModel> dataKey)
         {
             this.dataKey = dataKey;
         }

@@ -48,6 +48,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
+        /// Sets the action, controller and route values
+        /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .DataBinding(dataBinding => 
+        ///             {
+        ///                 dataBinding.Ajax().Select(MVC.Home.Index(1).GetRouteValueDictionary());
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewBindingSettingsBuilder Select(RouteValueDictionary routeValues)
+        {
+            settings.Select.Action(routeValues);
+
+            return this;
+        }
+
+        /// <summary>
         /// Sets the action, controller and route values for the select operation
         /// </summary>
         /// <param name="actionName">Name of the action.</param>

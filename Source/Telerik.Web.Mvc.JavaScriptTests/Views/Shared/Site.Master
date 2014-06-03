@@ -48,7 +48,9 @@
     </div>
     
     <% Html.Telerik().ScriptRegistrar()
-                    .DefaultGroup(defaultGroup => defaultGroup.Add("jquery.simulate.js"))
+                    .DefaultGroup(defaultGroup => defaultGroup
+                        .DefaultPath(string.IsNullOrEmpty(Request.QueryString.Get("coverage")) ? "~/Scripts" : "~/InstrumentedScripts")
+                        .Add("jquery.simulate.js"))
                     .OnDocumentReady(() => { %> window.setUpPageStatus = "complete"; <% })
                     .Render(); %>
 

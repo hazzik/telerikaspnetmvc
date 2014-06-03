@@ -1,6 +1,13 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Examples.Master" Inherits="System.Web.Mvc.ViewPage" %>
 <asp:content contentPlaceHolderID="MainContent" runat="server">
     <script type="text/javascript">
+
+    function dump(obj) {
+       var result = [];
+       $.each(obj, function(key, value) { result.push('"' + key + '":"' + value + '"');});
+       return '{' + result.join(',') + '}';
+    }
+    
     function onLoad(e) {
         $console.log("Grid loaded");
     }
@@ -31,12 +38,6 @@
         $console.log("OnDetailViewCollapse :: " + e.masterRow.cells[1].innerHTML);
     }
 
-    function dump(obj) {
-       var result = [];
-       $.each(obj, function(key, value) { result.push('"' + key + '":"' + value + '"');});
-       return '{' + result.join(',') + '}';
-    }
-
     function onEdit(e) {
         $console.log("OnEdit :: " + dump(e.dataItem));
     }
@@ -55,6 +56,14 @@
         var newWidth = e.newWidth;
         
         $console.log("OnColumnResize :: '" + column.title + "' from " + oldWidth + "px to " + newWidth + "px");
+    }    
+    
+    function onColumnReorder(e) {
+        var column = e.column;
+        var oldIndex = e.oldIndex;
+        var newIndex = e.newIndex;
+        
+        $console.log("OnColumnReorder :: '" + column.title + "' from " + oldIndex + " to " + newIndex);
     }
     </script>
 
@@ -107,9 +116,11 @@
                 .OnRowDataBound("onRowDataBound")
                 .OnRowSelect("onRowSelect")
                 .OnDataBound("onDataBound")
-                .OnColumnResize("onColumnResize"))        
+                .OnColumnResize("onColumnResize")
+                .OnColumnReorder("onColumnReorder"))
         .Pageable(paging => paging.PageSize(4))
         .Resizable(resize => resize.Columns(true))
+        .Reorderable(reorder => reorder.Columns(true))
         .Sortable()
         .Selectable()
         .Scrollable()

@@ -16,14 +16,20 @@
     background: #f1f5fb;
 }
 
+.t-panelbar .t-state-hover { background-image: none; }
+
 .t-icon { background-image: url('Windows7/sprite.png'); }
 .t-editor .t-tool-icon { background-image: url('Windows7/editor.png'); }
 
 .t-expand { background-position: 0 -160px; }
 .t-collapse { background-position: 0 -176px; }
+.t-rtl .t-expand { background-position: -64px -160px; }
 
 .t-plus, .t-plus-disabled { background-position: 0 -256px; }
 .t-minus, .t-minus-disabled { background-position: -16px -256px; }
+
+.t-rtl .t-plus, .t-rtl .t-plus-disabled { background-position: 0 -272px; }
+.t-rtl .t-minus, .t-rtl .t-minus-disabled { background-position: -16px -272px; }
 
 .t-arrow-up { background-position: -16px -160px; }
 .t-arrow-down { background-position: -16px -176px; }
@@ -66,6 +72,7 @@
 
 .t-refresh { background-position: -32px -240px; }
 .t-icon-calendar { background-position: -48px -240px; }
+.t-icon-clock { background-position: -64px -336px; }
 
 .t-edit { background-position: 0 -336px; }
 .t-delete { background-position: -16px -336px; }
@@ -170,6 +177,20 @@
     background-color: #ffc0cb;
 }
 
+.t-button
+{
+    background: #e8e8e8 url('Windows7/sprite.png') repeat-x 0 -96px;
+    color: #0d202b;
+    border-color: #c2cedb;
+}
+
+.t-button-hover
+{
+    background-position: 0 -128px;
+    color: #0e3d4f;
+    border-color: #9bc9ff;
+}
+
 .t-state-disabled,
 .t-state-disabled .t-link
 {
@@ -184,20 +205,6 @@
 {
     border-color: #aec5d1;
     background-color: #f1f5fb;
-}
-
-.t-button
-{
-    background: #e8e8e8 url('Windows7/sprite.png') repeat-x 0 -96px;
-    color: #0d202b;
-    border-color: #c2cedb;
-}
-
-.t-button-hover
-{
-    background-position: 0 -128px;
-    color: #0e3d4f;
-    border-color: #9bc9ff;
 }
 
 .t-panelbar .t-link
@@ -223,6 +230,19 @@
 .t-grouping-row td
 {
     background: #fff url('Windows7/sprite.png') repeat-x 0 -48px;
+}
+
+.t-footer-template td
+{
+    background-color: #e2eaf4;
+    border-color: #e2eaf4;
+}
+
+.t-footer-template-wrap,
+.t-footer-template-wrap table
+{
+    background-color: #e2eaf4;
+    border-color: #aec5d1;
 }
 
 .t-grouping-header .t-group-indicator
@@ -251,11 +271,6 @@
 .t-treeview .t-state-selected
 {
     border-color: #8fb0d6;
-}
-
-.t-panelbar .t-state-hover
-{
-    background-image: none;
 }
 
 .t-calendar th

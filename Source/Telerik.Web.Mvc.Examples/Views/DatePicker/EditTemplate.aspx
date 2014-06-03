@@ -1,42 +1,42 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<EditableProduct>" %>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<OrderInfo>" %>
 <asp:content contentPlaceHolderID="MainContent" runat="server">
     
     <% using (Html.BeginForm())
        { %>
         <div id="field-list" class="t-group">
-            <h3>Product Details</h3>
+            <h3>Order information</h3>
             <ul>
                 <li>
-                    <span class="label">Product ID:</span><%= Html.DisplayFor(m => m.ProductID) %>
-                    <%= Html.HiddenFor(m => m.ProductID) %>
+                    <%= Html.LabelFor(m => m.OrderInfoID)%>
+                    <%= Html.EditorFor(m => m.OrderInfoID)%>
+                    <%= Html.HiddenFor(m => m.OrderInfoID)%>
                 </li>
                 <li>
-                    <%= Html.LabelFor(m => m.ProductName)%><%= Html.EditorFor(m => m.ProductName) %>
+                    <%= Html.LabelFor(m => m.Delay) %>
+                    <%= Html.EditorFor(m => m.Delay)%>
                 </li>
                 <li>
-                    <%= Html.LabelFor(m => m.LastSupply) %><%= Html.EditorFor(m => m.LastSupply) %>
+                    <%= Html.LabelFor(m => m.DeliveryDate) %>
+                    <%= Html.EditorFor(m => m.DeliveryDate)%>
+                </li>
+                <li>
+                    <%= Html.LabelFor(m => m.OrderDateTime) %>
+                    <%= Html.EditorFor(m => m.OrderDateTime)%>
                 </li>
             </ul>
             <button type="submit" class="t-button t-state-default">Save</button>
-            <% if (ViewData["ProductJson"] != null)
-           { %>
-                <ul>
-                    <li>
-                         <h4>Product saved</h4>
-                    </li>
-                    <li>
-                        <div id="jsonResult" class="prettyprint">
-                            <strong>JSON</strong><br /><%= ViewData["ProductJson"] %>
-                        </div>
-                    </li>
-                </ul>
-           <% } %>
         </div>
     <% } %>
+
+    <% if (ViewData["orderInfo"] != null) 
+       { %>
+            <h4>OrderInfo saved</h4>
+            <%= Html.DisplayForModel(ViewData["orderInfo"])%>
+    <% } %>
+
 </asp:content>
 
 <asp:content contentPlaceHolderId="HeadContent" runat="server">
-
     <style type="text/css">        
         #field-list
         {
@@ -71,27 +71,31 @@
             padding-top: 2px;
         }
         
-        #field-list label
-        {
-            vertical-align: top;
-        }
-        
-        #field-list input,
-        #field-list textarea
+        #field-list .text-box
         {
             font: normal 12px Tahoma;
-            width: 130px;
+            width: 112px;
         }
         
         #field-list button
         {
-            margin: 19px 0 0 180px;
-            width: 60px;
+            margin: 1em 0 0 14em;
+            width: 5em;
+        }
+        
+        #Delay, #DeliveryDate
+        {
+            width: 137px;
+        }
+        
+        #OrderDateTime
+        {
+            width: 156px;
         }
         
         #jsonResult
         {
-            width:230px;    
+            width: 230px;    
         }
     </style>
 </asp:content>

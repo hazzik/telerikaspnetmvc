@@ -24,35 +24,29 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            return new HtmlTag("div")
-                   .Attributes(Calendar.HtmlAttributes)
-                   .Attribute("id", Calendar.Id)
-                   .PrependClass(UIPrimitives.Widget, "t-calendar");
-        }
+            IHtmlNode div = new HtmlTag("div")
+                            .Attributes(Calendar.HtmlAttributes)
+                            .Attribute("id", Calendar.Id)
+                            .PrependClass(UIPrimitives.Widget, "t-calendar");
 
-        public IHtmlNode NavigationTag()
-        {
-            IHtmlNode tag = new HtmlTag("div")
-                            .AddClass(UIPrimitives.Header);
+            IHtmlNode headerDiv = new HtmlTag("div")
+                                  .AddClass(UIPrimitives.Header);
 
-            DateTime? focusedDate = Calendar.DetermineFocusedDate();
+            IHtmlNode span = new HtmlTag("span")
+                             .Text(Calendar.DetermineFocusedDate().Value.ToString("MMMM yyyy"));
 
-            tag.Children.Add(NavigationLink(CalendarNavigation.Prev, focusedDate,
-                CompareDates(focusedDate, Calendar.MinDate, true) <= 0 ? true : false));
+            headerDiv.Children.Add(span);
 
-            tag.Children.Add(NavigationLink(CalendarNavigation.Fast, focusedDate, false));
+            div.Children.Add(headerDiv);
 
-            tag.Children.Add(NavigationLink(CalendarNavigation.Next, focusedDate,
-                CompareDates(focusedDate, Calendar.MaxDate, false) >= 0 ? true : false));
-
-            return tag;
+            return div;
         }
 
         public IHtmlNode ContentTag()
         {
             return new HtmlTag("table")
-                       .AddClass(UIPrimitives.Content)
-                       .Attributes(new { summary = "calendar widget", cellspacing = "0" });
+                   .AddClass(UIPrimitives.Content)
+                   .Attributes(new { summary = "calendar widget", cellspacing = "0" });
         }
 
         public IHtmlNode HeaderTag()
@@ -104,6 +98,7 @@ namespace Telerik.Web.Mvc.UI
                 IHtmlNode link = new HtmlTag("a")
                                  .AddClass(UIPrimitives.Link + (href != "#" ? " t-action-link" : string.Empty))
                                  .Attribute("href", href)
+                                 .Attribute("title", day.ToLongDateString())
                                  .Text(day.Day.ToString());
 
                 cell.Children.Add(link);
@@ -116,32 +111,10 @@ namespace Telerik.Web.Mvc.UI
             return cell;
         }
 
-        private IHtmlNode NavigationLink(string direction, DateTime? focusedDate, bool isDisabled)
-        {
-            IHtmlNode link = new HtmlTag("a")
-                            .Attribute("href", "#")
-                            .AddClass(UIPrimitives.Link, "t-nav-" + direction);
-
-            if (isDisabled)
-                link.AddClass("t-state-disabled");
-
-            if (direction == CalendarNavigation.Fast)
-            {
-                link.Text(focusedDate.Value.ToString("MMMM yyyy"));
-            }
-            else
-            {
-                link.Children.Add(new HtmlTag("span")
-                                  .AddClass(UIPrimitives.Icon, "t-arrow-" + direction));
-            }
-
-            return link;
-        }
-
         private string GetUrl(DateTime day, string urlFormat)
         {
             string url = "#";
-            if (!urlFormat.IsNullOrEmpty())
+            if (urlFormat.HasValue())
             {
                 if (Calendar.SelectionSettings.Dates.Count > 0)
                 {
@@ -160,33 +133,6 @@ namespace Telerik.Web.Mvc.UI
                 }
             }
             return url;
-        }
-
-        private int CompareDates(DateTime? focusedDate, DateTime? boundaryDate, bool isPrev)
-        {
-            if (!focusedDate.HasValue || !boundaryDate.HasValue)
-                return isPrev ? 1 : -1;
-
-            DateTime focusedDateValue = focusedDate.Value;
-            DateTime boundaryDateValue = boundaryDate.Value;
-
-            int result;
-            if (focusedDateValue.Year > boundaryDateValue.Year)
-            {
-                result = 1;
-            }
-            else if (focusedDateValue.Year < boundaryDateValue.Year)
-            {
-                result = -1;
-            }
-            else
-            {
-                result = focusedDateValue.Month == boundaryDateValue.Month ? 0
-                       : focusedDateValue.Month > boundaryDateValue.Month ? 1
-                       : -1;
-            }
-
-            return result;
         }
     }
 }

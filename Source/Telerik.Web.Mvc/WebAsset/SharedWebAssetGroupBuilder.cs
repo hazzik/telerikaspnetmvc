@@ -7,11 +7,10 @@ namespace Telerik.Web.Mvc
 {
     using System;
     using System.Collections.Generic;
-
-    using Extensions;
-    using Infrastructure;
-    using Resources;
-    using UI;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.UI;
 
     /// <summary>
     /// Builder class for fluently configuring the shared group.
@@ -19,14 +18,14 @@ namespace Telerik.Web.Mvc
     public class SharedWebAssetGroupBuilder : IHideObjectMembers
     {
         private readonly string defaultPath;
-        private readonly IDictionary<string, WebAssetItemGroup> assets;
+        private readonly IDictionary<string, WebAssetGroup> assets;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SharedWebAssetGroupBuilder"/> class.
         /// </summary>
         /// <param name="defaultPath">The default path.</param>
         /// <param name="assets">The assets.</param>
-        public SharedWebAssetGroupBuilder(string defaultPath, IDictionary<string, WebAssetItemGroup> assets)
+        public SharedWebAssetGroupBuilder(string defaultPath, IDictionary<string, WebAssetGroup> assets)
         {
             Guard.IsNotVirtualPath(defaultPath, "defaultPath");
             Guard.IsNotNull(assets, "assets");
@@ -41,22 +40,22 @@ namespace Telerik.Web.Mvc
         /// <param name="name">The name.</param>
         /// <param name="configureAction">The configure action.</param>
         /// <returns></returns>
-        public virtual SharedWebAssetGroupBuilder AddGroup(string name, Action<WebAssetItemGroupBuilder> configureAction)
+        public virtual SharedWebAssetGroupBuilder AddGroup(string name, Action<WebAssetGroupBuilder> configureAction)
         {
             Guard.IsNotNullOrEmpty(name, "name");
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemGroup group;
+            WebAssetGroup group;
 
             if (assets.TryGetValue(name, out group))
             {
                 throw new ArgumentException(TextResource.GroupWithSpecifiedNameAlreadyExistsPleaseSpecifyADifferentName.FormatWith(name));
             }
 
-            group = new WebAssetItemGroup(name, true) { DefaultPath = defaultPath };
+            group = new WebAssetGroup(name, true) { DefaultPath = defaultPath };
             assets.Add(name, group);
 
-            WebAssetItemGroupBuilder builder = new WebAssetItemGroupBuilder(group);
+            WebAssetGroupBuilder builder = new WebAssetGroupBuilder(group);
             configureAction(builder);
 
             return this;
@@ -68,19 +67,19 @@ namespace Telerik.Web.Mvc
         /// <param name="name">The name.</param>
         /// <param name="configureAction">The configure action.</param>
         /// <returns></returns>
-        public virtual SharedWebAssetGroupBuilder GetGroup(string name, Action<WebAssetItemGroupBuilder> configureAction)
+        public virtual SharedWebAssetGroupBuilder GetGroup(string name, Action<WebAssetGroupBuilder> configureAction)
         {
             Guard.IsNotNullOrEmpty(name, "name");
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemGroup group;
+            WebAssetGroup group;
 
             if (!assets.TryGetValue(name, out group))
             {
                 throw new ArgumentException(TextResource.GroupWithSpecifiedNameDoesNotExistPleaseMakeSureYouHaveSpecifiedACorrectName.FormatWith(name));
             }
 
-            WebAssetItemGroupBuilder builder = new WebAssetItemGroupBuilder(group);
+            WebAssetGroupBuilder builder = new WebAssetGroupBuilder(group);
 
             configureAction(builder);
 

@@ -75,8 +75,8 @@ function LinkCommand(options) {
                 if (text !== initialText)
                     attributes.innerHTML = text;
 
-                var target = $('#t-editor-link-target', dialog.element).val();
-                if (target != 'false')
+                var target = $('#t-editor-link-target', dialog.element).is(':checked');
+                if (target)
                     attributes.target = '_blank';
 
                 formatter.apply(range, attributes);
@@ -133,7 +133,7 @@ function LinkCommand(options) {
             .find('#t-editor-link-url').val(a ? a.getAttribute('href', 2) : 'http://').end()
             .find('#t-editor-link-text').val(nodes.length > 0 ? (nodes.length == 1 ? nodes[0].nodeValue : nodes[0].nodeValue + nodes[1].nodeValue) : '').end()
             .find('#t-editor-link-title').val(a ? a.title : '').end()
-            .find('#t-editor-link-target').val(a ? a.target == '_blank' : 'false').end()
+            .find('#t-editor-link-target').attr('checked', a ? a.target == '_blank' : false).end()
             .show()
             .data('tWindow')
             .center();
@@ -154,7 +154,7 @@ function LinkCommand(options) {
 function UnlinkTool(options){
     Tool.call(this, $.extend(options, {command:UnlinkCommand}));
     
-    var finder = new LinkFormatFinder();
+    var finder = new InlineFormatFinder([{tags:['a']}]);
 
     this.init = function($ui) {
         $ui.attr('unselectable', 'on')
@@ -162,7 +162,7 @@ function UnlinkTool(options){
     }
     
     this.update = function ($ui, nodes) {
-        $ui.toggleClass('t-state-disabled', !finder.findSuitable(nodes[0]))
+        $ui.toggleClass('t-state-disabled', !finder.isFormatted(nodes))
             .removeClass('t-state-hover');
     }
 }

@@ -11,6 +11,7 @@ namespace Telerik.Web.Mvc.UI
     
     using Extensions;
     using Infrastructure;
+    using Infrastructure.Implementation;
 
     class GridBoundColumnSerializer : GridColumnSerializer
     {
@@ -31,11 +32,20 @@ namespace Telerik.Web.Mvc.UI
                 .Add("member", column.Member)
                 .Add("type", column.MemberType.ToJavaScriptType())
                 .Add("format", column.Format, () => column.Format.HasValue())
-                .Add("groupable", column.Groupable, true);
-#if MVC2
+                .Add("groupable", column.Groupable, true)
+                .Add("encoded", column.Encoded, true);
+
+#if MVC2 || MVC3
+            string editorHtml = column.EditorHtml;
+
+            if (column.Grid.IsSelfInitialized && editorHtml != null)
+            {
+                editorHtml = editorHtml.Replace("<", "%3c").Replace(">", "%3e");
+            }
+
             FluentDictionary.For(result)
                 .Add("readonly", column.ReadOnly, false)
-                .Add("editor", column.EditorHtml, () => column.Grid.Editing.Enabled && column.Grid.IsClientBinding && !column.ReadOnly);
+                .Add("editor", editorHtml, () => column.Grid.Editing.Enabled && column.Grid.IsClientBinding && !column.ReadOnly);
 #endif
             SerializeFilters(result);
 
@@ -76,13 +86,9 @@ namespace Telerik.Web.Mvc.UI
 
         private void SerializeFilters(IDictionary<string, object> result)
         {
-            var filtersForTheColumn = column.Grid.DataProcessor.FilterDescriptors.SelectRecursive(descriptor =>
-            {
-                var compositeDescriptor = descriptor as CompositeFilterDescriptor;
-                return compositeDescriptor != null ? compositeDescriptor.FilterDescriptors : null;
-            })
-           .OfType<FilterDescriptor>()
-           .Where(descriptor => descriptor.Member == column.Member);
+            var filtersForTheColumn = column.Grid.DataProcessor.FilterDescriptors
+                .SelectMemberDescriptors()
+                .Where(descriptor => descriptor.Member == column.Member);
 
             if (filtersForTheColumn.Any())
             {

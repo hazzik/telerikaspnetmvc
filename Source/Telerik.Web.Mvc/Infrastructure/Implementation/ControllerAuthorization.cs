@@ -50,11 +50,17 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We will not allow if there is any exception.")]
         public bool IsAccessibleToUser(RequestContext requestContext, string controllerName, string actionName)
         {
+            return IsAccessibleToUser(requestContext, controllerName, actionName, null);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We will not allow if there is any exception.")]
+        public bool IsAccessibleToUser(RequestContext requestContext, string controllerName, string actionName, RouteValueDictionary routeValues)
+        {
             Guard.IsNotNull(requestContext, "requestContext");
             Guard.IsNotNullOrEmpty(controllerName, "controllerName");
             Guard.IsNotNullOrEmpty(actionName, "actionName");
 
-            IEnumerable<AuthorizeAttribute> authorizeAttributes = authorizeAttributeCache.GetAuthorizeAttributes(requestContext, controllerName, actionName);
+            IEnumerable<AuthorizeAttribute> authorizeAttributes = authorizeAttributeCache.GetAuthorizeAttributes(requestContext, controllerName, actionName, routeValues);
             bool allowed = true;
 
             foreach (AuthorizeAttribute authorizeAttribute in authorizeAttributes)

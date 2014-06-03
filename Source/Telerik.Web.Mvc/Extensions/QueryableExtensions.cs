@@ -15,6 +15,7 @@ namespace Telerik.Web.Mvc.Extensions
     using Telerik.Web.Mvc;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Infrastructure.Implementation;
+    using Telerik.Web.Mvc.UI;
 
     public static class QueryableExtensions
     {
@@ -30,10 +31,53 @@ namespace Telerik.Web.Mvc.Extensions
             return queryable.ToGridModel(state.Page, state.Size, state.OrderBy, state.GroupBy, state.Filter);
         }
 
+        internal static GridModel ToGridModel(this GridDataTableWrapper enumerable, int page, int pageSize, IList<SortDescriptor> sortDescriptors, IEnumerable<IFilterDescriptor> filterDescriptors,
+            IEnumerable<GroupDescriptor> groupDescriptors)
+        {
+            if (filterDescriptors.Any())
+            {
+                var dataTable = enumerable.Table;
+                filterDescriptors.SelectMemberDescriptors()
+                    .Each(f => f.MemberType = GetFieldByTypeFromDataColumn(dataTable, f.Member));
+            }
+
+            if (groupDescriptors.Any())
+            {
+                var dataTable = enumerable.Table;
+                groupDescriptors.Each(g => g.MemberType = GetFieldByTypeFromDataColumn(dataTable, g.Member));
+            }
+
+            return enumerable.AsQueryable().ToGridModel(page, pageSize, sortDescriptors, filterDescriptors, groupDescriptors);
+        }
+
+        private static Type GetFieldByTypeFromDataColumn(System.Data.DataTable dataTable, string memberName)
+        {
+            return dataTable.Columns.Contains(memberName) ? dataTable.Columns[memberName].DataType : null;
+        }
+
         public static GridModel ToGridModel(this IQueryable queryable, int page, int pageSize, IList<SortDescriptor> sortDescriptors, IEnumerable<IFilterDescriptor> filterDescriptors,
             IEnumerable<GroupDescriptor> groupDescriptors)
         {
             IQueryable data = queryable;
+
+#if MVC3
+            if (queryable.ElementType.IsDynamicObject())
+            {
+                var firstItem = queryable.Cast<object>().FirstOrDefault();
+                if (firstItem != null)
+                {
+                    if (filterDescriptors.Any())
+                    {
+                        filterDescriptors.SetMemberTypeFrom(firstItem);
+                    }
+
+                    if (groupDescriptors.Any())
+                    {
+                        groupDescriptors.SetMemberTypeFrom(firstItem);
+                    }
+                }
+            }
+#endif
 
             if (filterDescriptors.Any())
             {
@@ -396,7 +440,7 @@ namespace Telerik.Web.Mvc.Extensions
         public static int Count(this IQueryable source)
         {
             if (source == null) throw new ArgumentNullException("source");
-            return (int)source.Provider.Execute(
+            return source.Provider.Execute<int>(
                 Expression.Call(
                     typeof(Queryable), "Count",
                     new Type[] { source.ElementType }, source.Expression));

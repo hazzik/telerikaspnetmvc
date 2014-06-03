@@ -6,6 +6,7 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Web.Routing;
     using Infrastructure;
 
     public class GridEditingSettings : IClientSerializable
@@ -17,6 +18,7 @@ namespace Telerik.Web.Mvc.UI
             this.grid = grid;
 
             DisplayDeleteConfirmation = true;
+            FormHtmlAttributes = new RouteValueDictionary();
         }
 
         public Window PopUp
@@ -43,14 +45,39 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
+#if MVC2 || MVC3
+        public string TemplateName
+        {
+            get; 
+            set;
+        }
+#endif
+        /// <summary>
+        /// Gets the HTML attributes of the form rendered during editing
+        /// </summary>
+        /// <value>The HTML attributes.</value>
+        public IDictionary<string, object> FormHtmlAttributes
+        {
+            get; 
+            private set; 
+        }
+
         public IDictionary<string, object> Serialize()
         {
             var result = new Dictionary<string, object>();
+#if MVC2 || MVC3
+            string editorHtml = grid.EditorHtml;
+
+            if (grid.IsSelfInitialized && editorHtml != null)
+            {
+                editorHtml = editorHtml.Replace("<", "%3c").Replace(">", "%3e");
+            }
+#endif            
             FluentDictionary.For(result)
                 .Add("confirmDelete", DisplayDeleteConfirmation, true)
                 .Add("mode", Mode.ToString())
-#if MVC2
-                .Add("editor", grid.EditorHtml, () => Mode != GridEditMode.InLine)
+#if MVC2 || MVC3
+                .Add("editor", editorHtml, () => Mode != GridEditMode.InLine)
 #endif
                 .Add("popup", SerializePopUp(), () => Mode == GridEditMode.PopUp && grid.IsClientBinding);
 
@@ -89,7 +116,15 @@ namespace Telerik.Web.Mvc.UI
 
                 if (!grid.IsEmpty)
                 {
-                    if (grid.DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup>)
+                    var dataTableEnumerable = grid.DataSource as GridDataTableWrapper;
+                    if (dataTableEnumerable != null && dataTableEnumerable.Table != null)
+                    {
+                        writer.AppendCollection("data",
+                                                grid.DataProcessor.ProcessedDataSource.SerializeToDictionary(
+                                                    dataTableEnumerable.Table));
+
+                    }
+                    else if (grid.DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup>)
                     {
                         IEnumerable<IGroup> grouppedDataSource = grid.DataProcessor.ProcessedDataSource.Cast<IGroup>();
                         writer.AppendCollection("data", grouppedDataSource.Leaves());

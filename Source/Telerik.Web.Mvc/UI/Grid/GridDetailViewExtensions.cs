@@ -18,8 +18,8 @@ namespace Telerik.Web.Mvc.UI
             {
                 var json = new Dictionary<string, object>();
                 json["template"] = detailView.ClientTemplate
-                                             .Replace("\\u003c/script", "\\u003c\\\\/script")
                                              .Replace("%", "%25")
+                                             .Replace("\\\\\\\"", "%5c%5c%22")
                                              .Replace("\\\"", "%5c%5c%22")
                                              .Replace("\"", "%22")
                                              .Replace("'", "%27")

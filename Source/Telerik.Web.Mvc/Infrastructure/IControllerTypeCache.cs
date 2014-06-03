@@ -12,13 +12,12 @@ namespace Telerik.Web.Mvc.Infrastructure
 
     public interface IControllerTypeCache
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Needs a factory method for unit test, otherwise we have to come with the new interface and class")]
         Func<IEnumerable<Assembly>> ReferencedAssemblies
         {
             get;
             set;
         }
 
-        Type GetControllerType(RequestContext requestContext, string controllerName);
+        IList<Type> GetControllerTypes(RequestContext requestContext, string controllerName);
     }
 }

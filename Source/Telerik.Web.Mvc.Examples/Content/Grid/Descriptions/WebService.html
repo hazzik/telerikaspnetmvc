@@ -28,6 +28,7 @@
 <p>    
     The web service method may return the <code>GridModel</code> object or any other object which has a <code>Data</code> and <code>Total</code>
     properties. To benefit from the built-in Linq expression engine you can use the <code>ToGridModel</code> extension method:
+</p>
 <pre class="prettyprint">
 [WebMethod]
 public <em>GridModel</em> GetOrders(<em>GridState</em> state)
@@ -37,4 +38,3 @@ public <em>GridModel</em> GetOrders(<em>GridState</em> state)
     return northwind.Orders.<em>ToGridModel</em>(state);
 }
 </pre>
-</p>

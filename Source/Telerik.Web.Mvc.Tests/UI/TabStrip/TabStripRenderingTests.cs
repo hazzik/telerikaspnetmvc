@@ -1,8 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Moq;
     using System.IO;
     using System.Web.UI;
-    using Moq;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI;
     using Xunit;
@@ -160,21 +160,6 @@
             tabStrip.Render();
 
             Assert.Equal(value, tabStrip.Items[0].SpriteCssClasses);
-        }
-
-        [Fact]
-        public void Render_should_select_first_item()
-        {
-            tabStrip.HighlightPath = true;
-
-            tabStrip.ViewContext.RouteData.Values["controller"] = "Grid";
-            tabStrip.ViewContext.RouteData.Values["action"] = "Basic";
-
-            tabStrip.Items[0].ActionName = "Basic";
-            tabStrip.Items[0].ControllerName = "Grid";
-            tabStrip.Render();
-
-            Assert.True(tabStrip.Items[0].Selected);
         }
 
         [Fact]

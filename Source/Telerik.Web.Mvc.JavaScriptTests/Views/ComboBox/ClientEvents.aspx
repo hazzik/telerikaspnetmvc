@@ -201,6 +201,17 @@
             assertEquals('2', comboBox.value());
         }
 
+        function test_trigger_change_method_should_set_hidden_value_to_text_if_item_value_is_null() {
+            var ddl = $('#ComboWithNoValue').data('tComboBox');
+            ddl.select(2);
+            ddl.trigger.change();
+
+            var item = ddl.data[2];
+
+            assertEquals(null, item.Value);
+            assertEquals(item.Text, ddl.value());
+        }
+
         function test_Fill_method_on_ajax_should_call_change_event_handler() {
             var isCalled = false;
             var combo = $('#FakeAjaxComboBox').data('tComboBox');
@@ -236,6 +247,19 @@
             isDataBound = true;
         }
     </script>
+
+    <%= Html.Telerik().ComboBox()
+            .Name("ComboWithNoValue")
+            .Items(items =>
+            {
+                items.Add().Text("Item1");
+                items.Add().Text("Item2").Value("2");
+                items.Add().Text("Item3");
+                items.Add().Text("Item4").Value("4");
+                items.Add().Text("Item5");
+            })
+            .Effects(effects => effects.Toggle())
+    %>
 
     <%= Html.Telerik().ComboBox()
             .Name("ComboBox")

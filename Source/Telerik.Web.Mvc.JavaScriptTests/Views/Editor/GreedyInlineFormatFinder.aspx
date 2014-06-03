@@ -28,7 +28,7 @@
     }
 
     function test_getFormat_returns_correct_font_when_in_format_node() {
-        editor.value('foo<span style="font-family:Courier,monospace;">bar</span>baz');
+        editor.value('foo<span style="font-family:Courier, monospace;">bar</span>baz');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-family');
 
@@ -37,7 +37,7 @@
     }
 
     function test_getFormat_returns_correct_font_when_deep_in_format_node() {
-        editor.value('foo<span style="font-family:Courier,monospace;"><del>bar</del></span>baz');
+        editor.value('foo<span style="font-family:Courier, monospace;"><del>bar</del></span>baz');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-family');
 

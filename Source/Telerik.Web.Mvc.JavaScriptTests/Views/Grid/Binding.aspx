@@ -54,6 +54,19 @@
             })
             .Ajax(settings => { })
             .Pageable(pager => pager.PageSize(10))
+    %>    
+    
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid7")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Address);
+                columns.Bound(c => c.Name).Encoded(false);
+                columns.Bound(c => c.IntegerValue);
+                columns.Bound(c => c.Name).Format("<strong>{0}</strong>");
+            })
+            .Ajax(settings => { })
+            .Pageable(pager => pager.PageSize(10))
     %>
     <script type="text/javascript">
         
@@ -92,7 +105,6 @@
             assertEquals("Test", $("tbody tr:last td:first", grid.element).html());
         }
         
-        
         function test_should_apply_alt_style() {
             var grid = getGrid();
             $("tbody tr", grid.element).remove();
@@ -124,13 +136,25 @@
         function test_binding_to_empty_result_clears_the_grid() {
             var grid = getGrid('#Grid3');
             grid.dataBind([]);
-            assertEquals(0, $('tbody tr', grid.element).length);
+            assertEquals(1, $('tbody tr', grid.element).length);
+        }
+
+        function test_binding_to_empty_result_should_return_noRecords_form_localization() {
+            var grid = getGrid('#Grid3');
+            grid.dataBind([]);
+            assertEquals(grid.localization.noRecords, $('tbody td', grid.element).text());
+        }
+
+        function test_binding_to_empty_result_should_serialize_noRecords() {
+            var grid = getGrid('#Grid3');
+            grid.dataBind([]);
+            assertTrue(grid.localization.noRecords != null);
         }
 
         function test_binding_to_null_result_clears_the_grid() {
             var grid = getGrid('#Grid4');
             grid.dataBind(null);
-            assertEquals(0, $('tbody tr', grid.element).length);
+            assertEquals(1, $('tbody tr', grid.element).length);
         }
 
         function test_date_time_null_binding() {
@@ -145,6 +169,49 @@
             grid.dataBind([{ BirthDate: null}]);
             assertEquals('', $('tbody tr:first td:first', grid.element).html());
         }
+
+        function test_encoded_is_serialized() {
+            var grid = getGrid('#Grid7');
+
+            assertUndefined(grid.columns[0].encoded);
+            assertFalse(grid.columns[1].encoded);
+        }        
+        
+        function test_should_encode_html_when_binding() {
+            var grid = getGrid('#Grid7');
+            assertEquals('&lt;strong&gt;foo&lt;/strong&gt;', grid.displayFor(grid.columns[0])({Address:'<strong>foo</strong>'}));
+        }        
+
+        function test_should_not_encode_html_when_column_is_not_encoded() {
+            var grid = getGrid('#Grid7');
+            assertEquals('<strong>foo</strong>', grid.displayFor(grid.columns[1])({Name:'<strong>foo</strong>'}));
+        }
+        
+        function test_encoding_and_numeric_columns() {
+            var grid = getGrid('#Grid7');
+            assertEquals('1', grid.displayFor(grid.columns[2])({IntegerValue:1}));
+        }        
+        
+        function test_encoding_and_zero() {
+            var grid = getGrid('#Grid7');
+            assertEquals('0', grid.displayFor(grid.columns[2])({IntegerValue:0}));
+        }        
+        
+        function test_encoding_and_null() {
+            var grid = getGrid('#Grid7');
+            assertEquals('', grid.displayFor(grid.columns[0])({Address:null}));
+        }        
+        
+        function test_encoding_and_undefined() {
+            var grid = getGrid('#Grid7');
+            assertEquals('', grid.displayFor(grid.columns[0])({}));
+        }
+
+        function test_should_encode_html_when_format_is_set() {
+            var grid = getGrid('#Grid7');
+            assertEquals('&lt;strong&gt;foo&lt;/strong&gt;', grid.displayFor(grid.columns[3])({Name:'foo'}));
+        }        
+
     </script>
 
 </asp:Content>

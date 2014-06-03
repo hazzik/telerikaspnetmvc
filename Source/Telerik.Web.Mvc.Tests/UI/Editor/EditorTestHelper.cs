@@ -1,10 +1,14 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Moq;
+    using System.Collections.Generic;
     using System.IO;
     using System.Web;
     using System.Web.Mvc;
     using System.Web.UI;
-    using Moq;
+    using Telerik.Web.Mvc;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure.Implementation;
 
     public static class EditorTestHelper
     {
@@ -34,10 +38,27 @@
             viewContext = TestHelper.CreateViewContext();
             viewContext.ViewData = new ViewDataDictionary();
 
-            return new Editor(viewContext, clientSideObjectWriterFactory.Object)
+            return new Editor(viewContext, clientSideObjectWriterFactory.Object, new Mock<IWebAssetCollectionResolver>().Object, CreateLocalizationService())
             {
                 Name = "Editor"
             };
+        }
+
+        public static ILocalizationService CreateLocalizationService()
+        {
+            var localizationService = new Mock<ILocalizationService>();
+
+            EmbeddedResource resource = new EmbeddedResource("EditorLocalization", null);
+
+            localizationService.Setup(l => l.One(It.IsAny<string>())).Returns((string key) => resource.GetByKey(key));
+            localizationService.Setup(l => l.All()).Returns(() => new Dictionary<string, string>());
+
+            return localizationService.Object;
+        }
+
+        public static GridLocalization CreateLocalization()
+        {
+            return new GridLocalization(CreateLocalizationService(), null);
         }
     }
 }

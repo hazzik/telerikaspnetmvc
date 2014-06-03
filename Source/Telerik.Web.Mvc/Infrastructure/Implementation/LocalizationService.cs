@@ -14,20 +14,122 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
     using Extensions;
 
-    public class LocalizationService : ILocalizationService
+    abstract class ResourceBase
+    {
+        private bool isLoaded;
+
+        protected ResourceBase()
+        {
+            CurrentResources = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        protected IDictionary<string, string> CurrentResources { get; private set; }
+
+        public string GetByKey(string key)
+        {
+            LoadResources();
+
+            return CurrentResources[key];
+        }
+
+        public IDictionary<string, string> GetAll()
+        {
+            LoadResources();
+
+            return CurrentResources;
+        }
+
+        protected abstract void Load();
+
+        private void LoadResources()
+        {
+            if (isLoaded)
+            {
+                return;
+            }
+
+            Load();
+
+            isLoaded = true;
+        }
+    }
+
+    class EmbeddedResource : ResourceBase
+    {
+        private readonly string resourceName;
+        private readonly CultureInfo culture;
+
+        public EmbeddedResource(string resourceName, CultureInfo culture)
+        {
+            this.resourceName = resourceName;
+            this.culture = culture;
+        }
+
+        protected override void Load()
+        {
+            ResourceManager rm = new ResourceManager("Telerik.Web.Mvc.Resources." + resourceName, GetType().Assembly);
+
+            using (ResourceSet set = rm.GetResourceSet(culture ?? CultureInfo.CurrentCulture, true, true))
+            {
+                var iterator = set.GetEnumerator();
+
+                while (iterator.MoveNext())
+                {
+                    CurrentResources.Add(iterator.Key.ToString(), iterator.Value.ToString());
+                }
+            }
+        }
+    }
+
+    class ResXResource : ResourceBase
+    {
+        private static readonly XmlReaderSettings readerSettings = new XmlReaderSettings
+        {
+            IgnoreComments = true,
+            IgnoreWhitespace = true,
+            IgnoreProcessingInstructions = true,
+            CloseInput = true
+        };
+        private readonly string resourceLocation;
+
+        public ResXResource(string resourceLocation)
+        {
+            this.resourceLocation = resourceLocation;
+        }
+
+        protected override void Load()
+        {
+            using (XmlReader reader = XmlReader.Create(resourceLocation, readerSettings))
+            {
+                while (reader.Read())
+                {
+                    if (reader.LocalName.Equals("data", StringComparison.OrdinalIgnoreCase) && reader.HasAttributes)
+                    {
+                        string name = reader.GetAttribute("name");
+
+                        if (!string.IsNullOrEmpty(name) && reader.ReadToDescendant("value"))
+                        {
+                            CurrentResources.Add(name, reader.ReadElementContentAsString());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    internal class LocalizationService : ILocalizationService
     {
         private static readonly IDictionary<string, ResourceBase> cache = new Dictionary<string, ResourceBase>(StringComparer.OrdinalIgnoreCase);
         private static readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim();
 
         private readonly ResourceBase resource;
 
-        public LocalizationService(string resourceLocation, string resourceName, CultureInfo culture)
+        public LocalizationService(string resourceName, CultureInfo culture)
         {
-            Guard.IsNotNullOrEmpty(resourceLocation, "resourceLocation");
             Guard.IsNotNullOrEmpty(resourceName, "resourceName");
             Guard.IsNotNull(culture, "culture");
 
-            resource = DetectResource(resourceLocation, resourceName, culture);
+            resource = DetectResource("~/App_GlobalResources", resourceName, culture);
         }
 
         public string One(string key)
@@ -77,7 +179,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         {
             Func<string, string> fixResourceName = c => resourceName + ((c != null) ? "." + c : string.Empty) + ".resx";
 
-            IVirtualPathProvider vpp = ServiceLocator.Current.Resolve<IVirtualPathProvider>();
+            IVirtualPathProvider vpp = DI.Current.Resolve<IVirtualPathProvider>();
 
             // First try the file path Resource.fr-CA.resx
             string fullResourcePath = vpp.CombinePaths(resourceLocation, fixResourceName(culture.ToString()));
@@ -98,113 +200,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             }
 
             ResourceBase resource = exists ?
-                                    new ResXResource(ServiceLocator.Current.Resolve<IPathResolver>().Resolve(fullResourcePath)) :
+                                    new ResXResource(DI.Current.Resolve<IPathResolver>().Resolve(fullResourcePath)) :
                                     new EmbeddedResource(resourceName, culture) as ResourceBase;
 
             return resource;
-        }
-
-        private abstract class ResourceBase
-        {
-            private bool isLoaded;
-
-            protected ResourceBase()
-            {
-                CurrentResources = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            }
-
-            protected IDictionary<string, string> CurrentResources { get; private set; }
-
-            public string GetByKey(string key)
-            {
-                LoadResources();
-
-                return CurrentResources[key];
-            }
-
-            public IDictionary<string, string> GetAll()
-            {
-                LoadResources();
-
-                return CurrentResources;
-            }
-
-            protected abstract void Load();
-
-            private void LoadResources()
-            {
-                if (isLoaded)
-                {
-                    return;
-                }
-
-                Load();
-
-                isLoaded = true;
-            }
-        }
-
-        private sealed class EmbeddedResource : ResourceBase
-        {
-            private readonly string resourceName;
-            private readonly CultureInfo culture;
-
-            public EmbeddedResource(string resourceName, CultureInfo culture)
-            {
-                this.resourceName = resourceName;
-                this.culture = culture;
-            }
-
-            protected override void Load()
-            {
-                ResourceManager rm = new ResourceManager("Telerik.Web.Mvc.Resources." + resourceName, GetType().Assembly);
-
-                using (ResourceSet set = rm.GetResourceSet(culture ?? Culture.Current, true, true))
-                {
-                    var iterator = set.GetEnumerator();
-
-                    while (iterator.MoveNext())
-                    {
-                        CurrentResources.Add(iterator.Key.ToString(), iterator.Value.ToString());
-                    }
-                }
-            }
-        }
-
-        private sealed class ResXResource : ResourceBase
-        {
-            private static readonly XmlReaderSettings readerSettings = new XmlReaderSettings
-                                                                           {
-                                                                               IgnoreComments = true,
-                                                                               IgnoreWhitespace = true,
-                                                                               IgnoreProcessingInstructions = true,
-                                                                               CloseInput = true
-                                                                           };
-            private readonly string resourceLocation;
-
-            public ResXResource(string resourceLocation)
-            {
-                this.resourceLocation = resourceLocation;
-            }
-
-            protected override void Load()
-            {
-                using (XmlReader reader = XmlReader.Create(resourceLocation, readerSettings))
-                {
-                    while (reader.Read())
-                    {
-                        if (reader.LocalName.Equals("data", StringComparison.OrdinalIgnoreCase) && reader.HasAttributes)
-                        {
-                            string name = reader.GetAttribute("name");
-
-                            if (!string.IsNullOrEmpty(name) && reader.ReadToDescendant("value"))
-                            {
-                                CurrentResources.Add(name, reader.ReadElementContentAsString());
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

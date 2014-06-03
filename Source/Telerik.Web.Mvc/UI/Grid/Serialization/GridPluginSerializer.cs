@@ -39,6 +39,11 @@ namespace Telerik.Web.Mvc.UI
             if (grid.Resizing.Enabled)
             {
                 result.Add("resizing");
+            }            
+            
+            if (grid.Reordering.Enabled)
+            {
+                result.Add("reordering");
             }
             
             return result;

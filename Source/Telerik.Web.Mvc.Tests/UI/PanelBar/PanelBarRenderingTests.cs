@@ -1,19 +1,22 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
 
+    using Moq;
     using System;
     using System.IO;
+    using System.Web;
     using System.Web.Routing;
     using System.Web.UI;
-    using Moq;
     using Telerik.Web.Mvc.Infrastructure;
-    using UI;
+    using Telerik.Web.Mvc.UI;
     using Xunit;
 
     public class PanelBarRenderingTest
     {
         private readonly PanelBar panelBar;
         private readonly Mock<INavigationComponentHtmlBuilder<PanelBarItem>> builder;
+        private readonly Mock<HttpContextBase> httpContext = new Mock<HttpContextBase>();
+        private Uri currentUri;
 
         public PanelBarRenderingTest()
         {
@@ -33,6 +36,13 @@
             panelBar.Items.Add(new PanelBarItem { Text = "PanelBarItem1", RouteName = "ProductList" });
             panelBar.Items.Add(new PanelBarItem { Text = "PanelBarItem2", RouteName = "ProductList" });
             panelBar.Items.Add(new PanelBarItem { Text = "PanelBarItem3", RouteName = "ProductList" });
+
+            var httpContext = new Mock<HttpContextBase>();
+
+            panelBar.ViewContext.HttpContext = httpContext.Object;
+            httpContext.Setup(h => h.Response.Output).Returns(TextWriter.Null);
+            currentUri = new Uri("http://localhost/$(SESSION)/app/Grid/Basic");
+            httpContext.Setup(h => h.Request.Url).Returns(() => currentUri);
         }
 
         [Fact]
@@ -283,10 +293,7 @@
         public void Render_should_select_only_first_child_item_because_of_diff_route_values()
         {
             panelBar.HighlightPath = true;
-
-            panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
-            panelBar.ViewContext.RouteData.Values["action"] = "Basic";
-            panelBar.ViewContext.RouteData.Values["id"] = "10";
+            currentUri = new Uri("http://localhost/$(SESSION)/app/Grid/Basic/10");
             panelBar.Items[0].Text = "Grid";
             panelBar.Items[0].Items.Add(new PanelBarItem
             {
@@ -350,8 +357,7 @@
         {
             panelBar.HighlightPath = true;
 
-            panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
-            panelBar.ViewContext.RouteData.Values["action"] = "FirstBasic";
+            currentUri = new Uri("http://localhost/$(SESSION)/app/Grid/FirstBasic");
             panelBar.Items[0].Text = "Grid";
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", ControllerName = "Grid", ActionName = "Basic", Enabled = true });
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", ControllerName = "Grid", ActionName = "InMemory", Enabled = true });
@@ -367,9 +373,6 @@
         [Fact]
         public void Render_should_not_expand_first_item_if_HighlightPath_is_false()
         {
-            panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
-            panelBar.ViewContext.RouteData.Values["action"] = "Basic";
-
             panelBar.HighlightPath = false;
 
             panelBar.Items[0].Text = "Grid";
@@ -495,6 +498,8 @@
         {
             panelBar.HighlightPath = true;
             panelBar.ExpandMode = PanelBarExpandMode.Single;
+            
+            currentUri = new Uri("http://localhost/$(SESSION)/app/Grid/FirstBasic");
 
             panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
             panelBar.ViewContext.RouteData.Values["action"] = "FirstBasic";

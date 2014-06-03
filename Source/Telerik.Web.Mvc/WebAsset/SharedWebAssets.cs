@@ -7,23 +7,21 @@ namespace Telerik.Web.Mvc
 {
     using System;
     using System.Collections.Generic;
-
-    using Configuration;
-    using Infrastructure;
-    using UI;
+    using Telerik.Web.Mvc.Configuration;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// 
     /// </summary>
     public static class SharedWebAssets
     {
-        private static readonly IDictionary<string, WebAssetItemGroup> styleSheets = new Dictionary<string, WebAssetItemGroup>(StringComparer.OrdinalIgnoreCase);
-        private static readonly IDictionary<string, WebAssetItemGroup> scripts = new Dictionary<string, WebAssetItemGroup>(StringComparer.OrdinalIgnoreCase);
+        private static readonly IDictionary<string, WebAssetGroup> styleSheets = new Dictionary<string, WebAssetGroup>(StringComparer.OrdinalIgnoreCase);
+        private static readonly IDictionary<string, WebAssetGroup> scripts = new Dictionary<string, WebAssetGroup>(StringComparer.OrdinalIgnoreCase);
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Ignore this issue since we want the configured assets available when the class is loaded.")]
         static SharedWebAssets()
         {
-            LoadFromConfiguration(ServiceLocator.Current.Resolve<IConfigurationManager>());
+            LoadFromConfiguration(DI.Current.Resolve<IConfigurationManager>());
         }
 
         /// <summary>
@@ -44,24 +42,24 @@ namespace Telerik.Web.Mvc
             Configure(WebAssetDefaultSettings.ScriptFilesPath, scripts, configureAction);
         }
 
-        internal static WebAssetItemGroup FindStyleSheetGroup(string name)
+        internal static WebAssetGroup FindStyleSheetGroup(string name)
         {
             return FindInternal(styleSheets, name);
         }
 
-        internal static WebAssetItemGroup FindScriptGroup(string name)
+        internal static WebAssetGroup FindScriptGroup(string name)
         {
             return FindInternal(scripts, name);
         }
 
-        private static WebAssetItemGroup FindInternal(IDictionary<string, WebAssetItemGroup> lookup, string name)
+        private static WebAssetGroup FindInternal(IDictionary<string, WebAssetGroup> lookup, string name)
         {
-            WebAssetItemGroup group;
+            WebAssetGroup group;
 
             return lookup.TryGetValue(name, out group) ? group : null;
         }
 
-        private static void Configure(string defaultPath, IDictionary<string, WebAssetItemGroup> target, Action<SharedWebAssetGroupBuilder> configureAction)
+        private static void Configure(string defaultPath, IDictionary<string, WebAssetGroup> target, Action<SharedWebAssetGroupBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
@@ -81,11 +79,11 @@ namespace Telerik.Web.Mvc
             }
         }
 
-        private static void LoadGroups(WebAssetItemGroupConfigurationElementCollection source, IDictionary<string, WebAssetItemGroup> destination, string defaultPath, string defaultVersion)
+        private static void LoadGroups(WebAssetGroupConfigurationElementCollection source, IDictionary<string, WebAssetGroup> destination, string defaultPath, string defaultVersion)
         {
-            foreach (WebAssetItemGroupConfigurationElement configurationGroup in source)
+            foreach (WebAssetGroupConfigurationElement configurationGroup in source)
             {
-                WebAssetItemGroup group = new WebAssetItemGroup(configurationGroup.Name, true)
+                WebAssetGroup group = new WebAssetGroup(configurationGroup.Name, true)
                                               {
                                                   DefaultPath = !string.IsNullOrEmpty(configurationGroup.DefaultPath) ? configurationGroup.DefaultPath : defaultPath,
                                                   ContentDeliveryNetworkUrl = configurationGroup.ContentDeliveryNetworkUrl,
@@ -102,13 +100,13 @@ namespace Telerik.Web.Mvc
                     group.UseTelerikContentDeliveryNetwork = configurationGroup.UseTelerikContentDeliveryNetwork.Value;
                 }
 
-                foreach (WebAssetItemConfigurationElement configurationItem in configurationGroup.Items)
+                foreach (WebAssetConfigurationElement configurationItem in configurationGroup.Items)
                 {
                     string itemSource = configurationItem.Source.StartsWith("~/", StringComparison.OrdinalIgnoreCase) ?
                                         configurationItem.Source :
                                         PathHelper.CombinePath(group.DefaultPath, configurationItem.Source);
 
-                    group.Items.Add(new WebAssetItem(itemSource));
+                    group.Items.Add(new WebAsset(itemSource));
                 }
 
                 destination.Add(group.Name, group);

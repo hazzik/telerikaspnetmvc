@@ -24,13 +24,18 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         string EditorHtml 
         { 
             get; 
         }
 #endif
         GridResizingSettings Resizing
+        {
+            get;
+        }        
+        
+        GridReorderingSettings Reordering
         {
             get;
         }

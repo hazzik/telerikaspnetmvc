@@ -1,22 +1,28 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
 <asp:content contentPlaceHolderID="MainContent" runat="server">
-
+    
+    <h3>DatePicker</h3>
     <%= Html.Telerik().DatePicker()
-            .Name("DatePicker") %>
+            .Name("DatePicker") 
+    %>
 
 	<script type="text/javascript">
+	    function getDatePicker() {
+	        var datePicker = $('#DatePicker').data("tDatePicker");
+	        return datePicker;
+        }
 
         function updateValue() {
-            var value = $('#valuePicker').data("tDatePicker").value();
-	        $("#DatePicker").data("tDatePicker").value(value);
+            var value = $('#DatePickerValue').data("tDatePicker").value();
+            getDatePicker().value(value);
 	    }
 
 	    function getValue() {
-	        alert($("#DatePicker").data("tDatePicker").value());
+	        alert(getDatePicker().value());
 	    }
 
 	    function showCalendar(e) {
-	        $("#DatePicker").data("tDatePicker").showPopup();
+	        getDatePicker().showPopup();
 	        
 	        // prevent the click from bubbling, thus, closing the popup
 	        if (e.stopPropagation) e.stopPropagation();
@@ -24,16 +30,39 @@
 	    }
 
 	    function hideCalendar() {
-	        $("#DatePicker").data("tDatePicker").hidePopup();
+	        getDatePicker().hidePopup();
+	    }
+
+	    function enableDatePicker() {
+	        getDatePicker().enable();
+	        $('#ShowCalendar').removeClass('t-state-disabled').removeAttr('disabled');
+	        $('#HideCalendar').removeClass('t-state-disabled').removeAttr('disabled');
+	    }
+
+	    function disableDatePicker() {
+	        getDatePicker().disable();
+	        $('#ShowCalendar').addClass('t-state-disabled').attr('disabled', 'disabled');
+	        $('#HideCalendar').addClass('t-state-disabled').attr('disabled', 'disabled');
+	    }
+
+        function minDatePicker() {
+            var value = $('#DatePickerMinOrMax').data("tDatePicker").value();
+	        getDatePicker().min(value);
+	    }
+
+	    function maxDatePicker() {
+            var value = $('#DatePickerMinOrMax').data("tDatePicker").value();
+	        getDatePicker().max(value);
 	    }
 	</script>
 
-    <% using (Html.Configurator("Client API").Begin()) { %>
+    <% using (Html.Configurator("Client API").Begin()) 
+       { %>
         <ul>
             <li>
                 <%= Html.Telerik().DatePicker()
-                        .Name("valuePicker")
-                        .Value(DateTime.Today) 
+                        .Name("DatePickerValue")
+                        .Value(new DateTime(2010, 1, 1)) 
                 %>
                 <button class="t-button t-state-default" onclick="updateValue()">Select</button>
             </li>
@@ -42,8 +71,211 @@
                 <button class="t-button t-state-default" onclick="getValue()" style="width: 100px;">Get Value</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="showCalendar(event)">Open</button> /
-                <button class="t-button t-state-default" onclick="hideCalendar()">Close</button>
+                <button id="ShowCalendar" class="t-button t-state-default" onclick="showCalendar(event)">Open</button> /
+                <button id="HideCalendar" class="t-button t-state-default" onclick="hideCalendar()">Close</button>
+            </li>
+            <li>
+                <button class="t-button t-state-default" onclick="enableDatePicker()">Enable</button> /
+                <button class="t-button t-state-default" onclick="disableDatePicker()">Disable</button>
+            </li>
+            <li>
+                <%= Html.Telerik().DatePicker()
+                        .Name("DatePickerMinOrMax") 
+                %>
+                <button id="SetMinDate" class="t-button t-state-default" onclick="minDatePicker()">Set Min date</button> /
+                <button id="SetMaxDate" class="t-button t-state-default" onclick="maxDatePicker()">Set Max date</button>
+            </li>
+        </ul>
+    <% } %>
+
+    <h3>TimePicker</h3>
+    <%= Html.Telerik().TimePicker()
+            .Name("TimePicker") 
+    %>
+
+	<script type="text/javascript">
+	    function getTimePicker() {
+	        var timePicker = $('#TimePicker').data("tTimePicker");
+	        return timePicker;
+        }
+
+        function updateTimePickerValue() {
+            var value = $('#TimePickerValue').data("tTimePicker").value();
+            getTimePicker().value(value);
+	    }
+
+	    function getTimePickerValue() {
+	        alert(getTimePicker().value());
+	    }
+
+	    function openTimePicker(e) {
+	        getTimePicker().open();
+
+	        // prevent the click from bubbling, thus, closing the suggestion list
+	        if (e.stopPropagation) e.stopPropagation();
+	        e.cancelBubble = true;
+	    }
+
+	    function closeTimePicker() {
+	        getTimePicker().close();
+	    }
+
+	    function enableTimePicker() {
+	        getTimePicker().enable();
+	        $('#OpenTimePicker').removeClass('t-state-disabled').removeAttr('disabled');
+	        $('#CloseTimePicker').removeClass('t-state-disabled').removeAttr('disabled');
+	    }
+
+	    function disableTimePicker() {
+	        getTimePicker().disable();
+	        $('#OpenTimePicker').addClass('t-state-disabled').attr('disabled', 'disabled');
+	        $('#CloseTimePicker').addClass('t-state-disabled').attr('disabled', 'disabled');
+	    }
+
+        function minTimePicker() {
+            var value = $('#TimePickerMinOrMax').data("tTimePicker").value();
+	        getTimePicker().min(value);
+	    }
+
+	    function maxTimePicker() {
+            var value = $('#TimePickerMinOrMax').data("tTimePicker").value();
+	        getTimePicker().max(value);
+	    }
+	</script>
+
+    <% using (Html.Configurator("Client API").Begin()) 
+       { %>
+        <ul>
+            <li>
+                <%= Html.Telerik().TimePicker()
+                        .Name("TimePickerValue")
+                        .Value(DateTime.Now)
+                %>
+                <button class="t-button t-state-default" onclick="updateTimePickerValue()">Select</button>
+            </li>
+            
+            <li>
+                <button class="t-button t-state-default" onclick="getTimePickerValue()" style="width: 100px;">Get Value</button>
+            </li>
+            <li>
+                <button id="OpenTimePicker" class="t-button t-state-default" onmousedown="openTimePicker(event)">Open</button> /
+                <button id="CloseTimePicker" class="t-button t-state-default" onclick="closeTimePicker()">Close</button>
+            </li>
+            <li>
+                <button class="t-button t-state-default" onclick="enableTimePicker()">Enable</button> /
+                <button class="t-button t-state-default" onclick="disableTimePicker()">Disable</button>
+            </li>
+            <li>
+                <%= Html.Telerik().TimePicker()
+                        .Name("TimePickerMinOrMax") 
+                %>
+                <button id="SetMinTime" class="t-button t-state-default" onclick="minTimePicker()">Set Min time</button> /
+                <button id="SetMaxTime" class="t-button t-state-default" onclick="maxTimePicker()">Set Max time</button>
+            </li>
+        </ul>
+    <% } %>
+
+    <h3>DateTimePicker</h3>
+    <%= Html.Telerik().DateTimePicker()
+            .Name("DateTimePicker") 
+    %>
+
+	<script type="text/javascript">
+	    function getDateTimePicker() {
+	        var dateTimePicker = $('#DateTimePicker').data("tDateTimePicker");
+	        return dateTimePicker;
+	    }
+
+	    function updateDateTimePickerValue() {
+	        var value = $('#DateTimePickerValue').data("tDateTimePicker").value();
+	        getDateTimePicker().value(value);
+	    }
+
+	    function getDateTimePickerValue() {
+	        alert(getDateTimePicker().value());
+	    }
+
+	    function openDateTimePicker(e, popup) {
+	        getDateTimePicker().open(popup);
+
+	        // prevent the click from bubbling, thus, closing the suggestion list
+	        if (e.stopPropagation) e.stopPropagation();
+	        e.cancelBubble = true;
+	    }
+
+	    function closeDateTimePicker() {
+	        getDateTimePicker().close();
+	    }
+
+	    function enableDateTimePicker() {
+	        getDateTimePicker().enable();
+	        $('#OpenDateTimeCalendarPicker,#OpenDateTimeTimePicker,#CloseDateTimePicker')
+                .removeClass('t-state-disabled').removeAttr('disabled');
+	    }
+
+	    function disableDateTimePicker() {
+	        getDateTimePicker().disable();
+	        $('#OpenDateTimeCalendarPicker,#OpenDateTimeTimePicker,#CloseDateTimePicker')
+                .addClass('t-state-disabled').attr('disabled', 'disabled');
+	    }
+
+	    function minDateTimePicker() {
+	        var value = $('#DatePickerMinOrMaxValue').data("tDatePicker").value();
+	        getDateTimePicker().min(value);
+	    }
+
+	    function maxDateTimePicker() {
+	        var value = $('#DatePickerMinOrMaxValue').data("tDatePicker").value();
+	        getDateTimePicker().max(value);
+	    }
+
+        function startTimeDateTimePicker() {
+	        var value = $('#TimePickerMinOrMaxValue').data("tTimePicker").value();
+	        getDateTimePicker().startTime(value);
+	    }
+
+	    function endTimeDateTimePicker() {
+	        var value = $('#TimePickerMinOrMaxValue').data("tTimePicker").value();
+	        getDateTimePicker().endTime(value);
+	    }
+	</script>
+
+    <% using (Html.Configurator("Client API").Begin()) 
+       { %>
+        <ul>
+            <li>
+                <%= Html.Telerik().DateTimePicker()
+                        .Name("DateTimePickerValue")
+                        .Value(new DateTime(2010, 1, 1, 10, 0, 0))
+                %>
+                <button class="t-button t-state-default" onclick="updateDateTimePickerValue()">Select</button>
+            </li>
+            
+            <li>
+                <button class="t-button t-state-default" onclick="getDateTimePickerValue()" style="width: 100px;">Get Value</button>
+            </li>
+            <li>
+                <button id="OpenDateTimeCalendarPicker" class="t-button t-state-default" onmousedown="openDateTimePicker(event, 'date')">Open Calendar</button> /
+                <button id="OpenDateTimeTimePicker" class="t-button t-state-default" onmousedown="openDateTimePicker(event, 'time')">Open TimePicker</button> /
+                <button id="CloseDateTimePicker" class="t-button t-state-default" onclick="closeDateTimePicker()">Close</button>
+            </li>
+            <li>
+                <button class="t-button t-state-default" onclick="enableDateTimePicker()">Enable</button> /
+                <button class="t-button t-state-default" onclick="disableDateTimePicker()">Disable</button>
+            </li>
+            <li>
+                <%= Html.Telerik().DatePicker()
+                        .Name("DatePickerMinOrMaxValue")
+                %>
+                <button id="SetMinDateTime" class="t-button t-state-default" onclick="minDateTimePicker()">Set Min date</button> /
+                <button id="SetMaxDateTime" class="t-button t-state-default" onclick="maxDateTimePicker()">Set Max date</button>
+            </li>
+            <li>
+                <%= Html.Telerik().TimePicker()
+                        .Name("TimePickerMinOrMaxValue")
+                %>
+                <button id="SetStartTime" class="t-button t-state-default" onclick="startTimeDateTimePicker()">Set Start time</button> /
+                <button id="SetEndTime" class="t-button t-state-default" onclick="endTimeDateTimePicker()">Set End time</button>
             </li>
         </ul>
     <% } %>
@@ -52,12 +284,10 @@
 
 <asp:Content contentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
-		
 	    .example .configurator
 	    {
-	        width: 300px;
+	        width: 330px;
 	        float: left;
-	        margin: 0 0 0 10em;
 	        display: inline;
 	    }
 	    
@@ -75,11 +305,41 @@
 	        zoom: 1;
 	    }
 	    
-	    #DatePicker
+        #DatePicker, #TimePicker, #DateTimePicker
+        {
+            margin: 0 250px 230px 0;
+            float: left;
+            width: 100px;
+        }
+		
+		#TimePicker,
+		#DateTimePicker
+        {
+            clear: both;
+        }
+		
+		#DateTimePicker
+        {
+            margin-right: 200px;
+            width: 150px;
+        }
+	    
+	    #timePickerValue
 	    {
-	        float: left;
-	        margin-bottom: 160px;
+	        width: 100px;
 	    }
 	    
+	    #OpenDateTimeCalendarPicker, #OpenDateTimeTimePicker
+	    {
+	        width: 120px;
+	    }
+	    
+	    #SetMinDateTime, #SetMaxDateTime,
+	    #SetStartTime, #SetEndTime,
+	    #SetMinTime, #SetMaxTime,
+	    #SetMinDate, #SetMaxDate
+	    {
+	        width: 100px;
+	    }
     </style>
 </asp:Content>

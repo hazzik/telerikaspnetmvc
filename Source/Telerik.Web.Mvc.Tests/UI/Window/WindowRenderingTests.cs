@@ -1,13 +1,10 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
-    using Infrastructure;
-
     using Moq;
-    using Xunit;
-
-    using System.IO;
-    using System.Collections.Generic;
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using Xunit;
 
     public class WindowRenderingTests
     {
@@ -175,12 +172,12 @@
         }
 
         [Fact]
-        public void Render_should_throw_exceptio_if_minwidth_is_bigger_than_maxwidth() 
+        public void Render_should_throw_exception_if_minwidth_is_bigger_than_maxwidth() 
         {
             window.ResizingSettings.MinWidth = 200;
             window.ResizingSettings.MaxWidth = 100;
 
-            Assert.Throws(typeof(ArgumentException), () => window.Render());
+            Assert.Throws<ArgumentException>(() => window.VerifySettings());
         }
 
         [Fact]
@@ -189,7 +186,7 @@
             window.ResizingSettings.MinHeight = 200;
             window.ResizingSettings.MaxHeight = 100;
 
-            Assert.Throws(typeof(ArgumentException), () => window.Render());
+            Assert.Throws<ArgumentException>(() => window.VerifySettings());
         }
 
         [Fact]

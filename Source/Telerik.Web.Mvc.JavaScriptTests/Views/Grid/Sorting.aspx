@@ -23,6 +23,20 @@
             .Pageable(pager => pager.PageSize(1))
     %>
 
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid3")
+            .Columns(columns => {
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate.Day);
+            })
+            .Sortable(sorting => sorting.OrderBy(columns => columns
+                .Add(c => c.Name)))
+            .Pageable(pager => pager.PageSize(1))
+            .DataBinding(dataBinding => dataBinding.Ajax()
+                .Select("foo", "bar"))
+    %>
+
     <script type="text/javascript">
         var gridElement;
 
@@ -112,6 +126,15 @@
         function test_order_serialized_for_sorted_columns() {
             var grid = getGrid("#Grid2");
             assertEquals("asc", grid.columns[0].order);
+        }
+
+        function test_duplicate_column_icon_cleared() {
+//            var grid = getGrid("#Grid3");
+//            grid.ajaxRequest = function() {
+//            }
+//            grid.sort('BirthDate.Day-asc');
+//            grid.updateSorting();
+//            assertEquals(1, $('#Grid3 .t-arrow-up').length);
         }
     </script>
 

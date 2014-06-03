@@ -5,8 +5,6 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// Wrap the script for the jQuery ready/unload events.
     /// </summary>
@@ -18,7 +16,6 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The on page load start.</value>
         public override string OnPageLoadStart
         {
-            [DebuggerStepThrough]
             get
             {
                 return "jQuery(document).ready(function(){";
@@ -31,7 +28,6 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The on page load end.</value>
         public override string OnPageLoadEnd
         {
-            [DebuggerStepThrough]
             get
             {
                 return "});";
@@ -44,7 +40,6 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The on page unload start.</value>
         public override string OnPageUnloadStart
         {
-            [DebuggerStepThrough]
             get
             {
                 return "jQuery(window).unload(function(){";
@@ -57,7 +52,6 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The on page unload end.</value>
         public override string OnPageUnloadEnd
         {
-            [DebuggerStepThrough]
             get
             {
                 return "});";

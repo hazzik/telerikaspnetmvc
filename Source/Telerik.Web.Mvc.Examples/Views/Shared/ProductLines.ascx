@@ -1,8 +1,7 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 
 <% Html.Telerik().Menu()
-    .Name("product-lines")
-    .Theme("demos")
+       .Name("product-lines")
     .Items(menu =>
     {
         menu.Add()
@@ -43,6 +42,7 @@
         <li><a href="http://www.telerik.com/products/silverlight.aspx"><span class="silverlight"></span>Silverlight</a></li>
         <li><a href="http://www.telerik.com/products/winforms.aspx"><span class="winforms"></span>WinForms</a></li>
         <li><a href="http://www.telerik.com/products/wpf.aspx"><span class="wpf"></span>WPF</a></li>
+        <li><a href="http://www.telerik.com/products/windows-phone.aspx"><span class="winphone"></span>Windows Phone</a></li>
     </ul>
     <strong class="not-first-of-type linked"><a href="http://www.telerik.com/automated-testing-tools.aspx">Automated Testing Tools</a></strong>
     <ul>
@@ -68,9 +68,9 @@
         <li><a href="http://www.telerik.com/products/tfsmanager-and-tfsdashboard.aspx"><span class="tfs"></span>Work Item Manager</a></li>
         <li><a href="http://www.telerik.com/products/tfsmanager-and-tfsdashboard.aspx"><span class="tfs"></span>Project Dashboard</a></li>
     </ul>
-    <strong class="not-first-of-type linked"><a href="http://www.telerik.com/team-productivity-tools.aspx">Content Management</a></strong>
+    <strong class="not-first-of-type linked"><a href="http://www.sitefinity.com/">Content Management</a></strong>
     <ul>
-        <li><a href="http://www.telerik.com/products/sitefinity.aspx"><span class="sitefinity"></span>Sitefinity .NET CMS</a></li>
+        <li><a href="http://www.sitefinity.com/asp-net-cms-features.aspx"><span class="sitefinity"></span>Sitefinity .NET CMS</a></li>
     </ul>
 </div>
             <%});

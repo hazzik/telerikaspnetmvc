@@ -88,15 +88,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Gets or sets the theme.
-        /// </summary>
-        public string Theme
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets the items of the treeview.
         /// </summary>
         public IList<TreeViewItem> Items
@@ -269,8 +260,6 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            VerifySettings();
-
             if (DragAndDrop.Enabled)
             {
                 ScriptFileNames.Insert(1, "telerik.draganddrop.js");
@@ -280,7 +269,7 @@ namespace Telerik.Web.Mvc.UI
 
             IHtmlNode treeViewTag = builder.TreeViewTag();
 
-            if (!Items.IsEmpty())
+            if (Items.Any())
             {
                 if (SelectedIndex != -1 && Items.Count < SelectedIndex)
                 {
@@ -301,7 +290,7 @@ namespace Telerik.Web.Mvc.UI
                         {
                             item.Selected = true;
 
-                            if (!item.Items.IsEmpty() || item.Template.HasValue())
+                            if (item.Items.Any() || item.Template.HasValue())
                             {
                                 item.Expanded = true;
                             }
@@ -349,7 +338,7 @@ namespace Telerik.Web.Mvc.UI
 
                     builder.ItemInnerContent(item).AppendTo(itemTag.Children[0]);
 
-                    if (item.LoadOnDemand || ShowCheckBox || !item.Value.IsNullOrEmpty())
+                    if (item.LoadOnDemand || ShowCheckBox || item.Value.HasValue())
                     {
                         builder.ItemHiddenInputValue(item).AppendTo(itemTag.Children[0]);   
                     }
@@ -370,14 +359,7 @@ namespace Telerik.Web.Mvc.UI
 
         private void HighlightSelectedItem(TreeViewItem item)
         {
-            string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
-            string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
-
-            var urlHelper = new UrlHelper(ViewContext.RequestContext);
-            var treeviewItemUrl = item.GenerateUrl(ViewContext, UrlGenerator);
-            var currentUrl = urlHelper.Action(actionName, controllerName);
-
-            if (!currentUrl.IsNullOrEmpty() && treeviewItemUrl.IsCaseInsensitiveEqual(currentUrl))
+            if (item.IsCurrent(ViewContext, UrlGenerator))
             {
                 item.Selected = true;
                 isPathHighlighted = true;
@@ -394,8 +376,10 @@ namespace Telerik.Web.Mvc.UI
             item.Items.Each(HighlightSelectedItem);
         }
 
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (Ajax.Enabled && WebService.Enabled)
             {
                 throw new NotSupportedException(TextResource.CannotUseAjaxAndWebServiceAtTheSameTime);

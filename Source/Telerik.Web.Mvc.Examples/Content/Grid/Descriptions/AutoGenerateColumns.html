@@ -4,10 +4,10 @@ property of simple type (integer, string, date, enum and boolean).
 </p>
 <p>
 Column titles are inferred from the property name using pascal-case splitting - for example if the property name 
-is <strong>OrderID</strong> the inferred column title will be <strong>"Order ID"</strong>.
+is <strong>CustomerID</strong> the inferred column title will be <strong>"Customer ID"</strong>.
 </p>
 <p>
-This is the definition of the Grid from the example:
+The following is an example of simple definition of the Grid:
 </p>
 <pre class="prettyprint">
 &lt;%= Html.Telerik().Grid(Model)
@@ -15,5 +15,22 @@ This is the definition of the Grid from the example:
         .Sortable()
         .Scrollable()
         .Pageable()
+ %&gt;
+</pre>
+<p>
+The <strong>AutoGenerate</strong> method can be used to further customize the generated columns' settings:
+</p>
+<pre class="prettyprint">
+&lt;%= Html.Telerik().Grid(Model)
+        .Name("Grid")
+        .Columns(columns =>
+                {   
+                    columns.<strong>AutoGenerate(column =>
+                        {                            
+                            column.Width = "150px";
+                            if (column.Member == "CustomerID")
+                                column.Visible = false;
+                        })</strong>;                        
+                })
  %&gt;
 </pre>

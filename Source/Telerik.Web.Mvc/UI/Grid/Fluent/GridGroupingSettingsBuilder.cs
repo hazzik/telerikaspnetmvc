@@ -24,6 +24,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
+        /// <summary>
+        /// Determines if group header should be shown.
+        /// </summary>
+        /// <param name="value">true if visible, otherwise false.</param>
+        public GridGroupingSettingsBuilder<T> Visible(bool value)
+        {
+            settings.Visible = value;
+            return this;
+        }
+
         public GridGroupingSettingsBuilder<T> Groups(Action<GridGroupDescriptorFactory<T>> configurator)
         {
             Guard.IsNotNull(configurator, "configurator");

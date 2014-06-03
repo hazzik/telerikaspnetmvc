@@ -51,7 +51,7 @@ namespace Telerik.Web.Mvc.UI
         {
             return ContentTag(item)
                 .ToggleClass(UIPrimitives.ActiveState, item.Selected)
-                .ToggleAttribute("style", "display:block", item.Selected);
+                .ToggleCss("display", "block", item.Selected);
         }
     }
 }

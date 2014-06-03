@@ -10,15 +10,8 @@ namespace Telerik.Web.Mvc.UI
 
     public class GridLocalization : ViewComponentLocalization, IClientSerializable
     {
-        public GridLocalization() : this(null)
-        {
-        }
-
-        public GridLocalization(CultureInfo culture) : this(null, culture)
-        {
-        }
-
-        public GridLocalization(string resourceLocation, CultureInfo culture) : base(resourceLocation, "GridLocalization", culture)
+        public GridLocalization(ILocalizationService localizationService, CultureInfo culture) 
+            : base(localizationService, null, "GridLocalization", culture)
         {
         }
 
@@ -47,6 +40,11 @@ namespace Telerik.Web.Mvc.UI
             get { return GetValue("Edit"); }
         }
 
+        public string NoRecords
+        {
+            get { return GetValue("NoRecords"); }
+        }
+
         public string Cancel
         {
             get { return GetValue("Cancel"); }
@@ -57,12 +55,9 @@ namespace Telerik.Web.Mvc.UI
             get { return GetValue("Delete"); }
         }
 
-        public string PageOf
-        {
-            get
-            {
-                return GetValue("PageOf");
-            }
+        public string PageOf 
+        { 
+            get { return GetValue("PageOf"); } 
         }
 
         public string Page
@@ -75,12 +70,9 @@ namespace Telerik.Web.Mvc.UI
             get { return GetValue("DisplayingItems"); }
         }
 
-        public string GroupHint
-        {
-            get
-            {
-                return GetValue("GroupHint");
-            }
+        public string GroupHint 
+        { 
+            get { return GetValue("GroupHint"); } 
         }
         
         public void SerializeTo(string key, IClientSideObjectWriter writer)

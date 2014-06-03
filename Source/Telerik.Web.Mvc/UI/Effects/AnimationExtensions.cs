@@ -7,9 +7,8 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
-
-    using Extensions;
-    using Infrastructure;
+    using System.Globalization;
+    using Telerik.Web.Mvc.Extensions;
 
     public static class AnimationExtensions
     {
@@ -39,7 +38,7 @@ namespace Telerik.Web.Mvc.UI
 
                 propertyAnimations.Each(e =>
                     animatedProperties.Add(
-                        e.AnimationType.ToString().ToLower(Culture.Invariant)));
+                        e.AnimationType.ToString().ToLower(CultureInfo.InvariantCulture)));
 
                 effectSerialization.Add(
                     String.Format("{{name:'property',properties:['{0}']}}",

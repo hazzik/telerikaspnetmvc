@@ -37,18 +37,18 @@
             <label for="toggle"><strong>toggle</strong> animation</label>
             <br />
             <%= Html.RadioButton("animation", "slide", new { id = "slide", title = "slide" })%>
-            <label for="toggle"><strong>slide</strong> animation</label>
+            <label for="slide"><strong>slide</strong> animation</label>
             <br />
             <%= Html.RadioButton("animation", "expand", new { id = "expand", title = "expand" })%>
-            <label for="toggle"><strong>expand</strong> animation</label>
+            <label for="expand"><strong>expand</strong> animation</label>
             <br />
             <%= Html.CheckBox("enableOpacityAnimation", ( bool )ViewData[ "enableOpacityAnimation" ], new { title = "enableOpacityAnimation" })%>
-            <label for="toggle"><strong>opacity</strong> animation</label>
+            <label for="enableOpacityAnimation"><strong>opacity</strong> animation</label>
         </li>
         <li>
             <ul>
                 <li>
-                    <label for="openDuration">open for</label>
+                    <label for="openDuration-input-text">open for</label>
                     <%= Html.Telerik().NumericTextBox()
                             .Name("openDuration")
                             .DecimalDigits(0)
@@ -58,7 +58,7 @@
                     %> ms
                 </li>
                 <li>
-                    <label for="closeDuration">close for</label>
+                    <label for="closeDuration-input-text">close for</label>
                     <%= Html.Telerik().NumericTextBox()
                             .Name("closeDuration")
                             .DecimalDigits(0)

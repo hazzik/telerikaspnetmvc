@@ -9,9 +9,16 @@ namespace Telerik.Web.Mvc.UI
     
     public class EditorToolGroup
     {
-        public EditorToolGroup()
+        public EditorToolGroup(Editor editor)
         {
             Tools = new List<IEditorTool>();
+            Editor = editor;
+        }
+
+        public Editor Editor
+        {
+            get;
+            private set;
         }
 
         public EditorToolGroup(IEnumerable<IEditorTool> tools)

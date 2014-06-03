@@ -5,6 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI.Fluent
 {
+    using System;
     using System.ComponentModel;
 
     using Infrastructure;
@@ -26,15 +27,18 @@ namespace Telerik.Web.Mvc.UI.Fluent
             private set;
         }
 
+#if MVC2 || MVC3
         public virtual GridToolBarInsertCommandBuilder<T> Insert()
         {
             GridToolBarInsertCommand<T> command = new GridToolBarInsertCommand<T>();
 
             Settings.Commands.Add(command);
+            
+            Settings.Grid.Editing.Enabled = true;
 
             return new GridToolBarInsertCommandBuilder<T>(command);
         }
-
+#endif
         public virtual GridToolBarCustomCommandBuilder<T> Custom()
         {
             GridToolBarCustomCommand<T> command = new GridToolBarCustomCommand<T>();
@@ -42,6 +46,27 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Settings.Commands.Add(command);
 
             return new GridToolBarCustomCommandBuilder<T>(command);
+        }
+
+        public void Template(Func<object, object> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Settings.Template.InlineTemplate = template;
+        }
+
+        public void Template(Action template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Settings.Template.Content = template;
+        }
+
+        public void Template(string template)
+        {
+            Guard.IsNotNullOrEmpty(template, "template");
+
+            Settings.Template.Html = template;
         }
     }
 }

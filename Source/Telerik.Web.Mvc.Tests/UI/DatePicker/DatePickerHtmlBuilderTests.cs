@@ -1,7 +1,9 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using System;
+    using System.Globalization;
     using Xunit;
+    using Telerik.Web.Mvc.UI.Html;
 
     public class DatePickerHtmlBuilderTests
     {
@@ -43,14 +45,6 @@
         }
 
         [Fact]
-        public void DatePickerStart_should_render_title_with_name_for_value()
-        {
-            IHtmlNode tag = renderer.InputTag();
-
-            Assert.Equal(datePicker.Name, tag.Attribute("title"));
-        }
-
-        [Fact]
         public void Input_should_render_input_control()
         {
             IHtmlNode tag = renderer.InputTag();
@@ -86,8 +80,28 @@
 
             IHtmlNode tag = renderer.InputTag();
 
-            Assert.Equal(Convert.ToDateTime(now.ToShortDateString(), Telerik.Web.Mvc.Infrastructure.Culture.Current).ToShortDateString(),
+            Assert.Equal(Convert.ToDateTime(now.ToShortDateString(), CultureInfo.CurrentCulture).ToShortDateString(),
                 tag.Attribute("value"));
+        }
+
+        [Fact]
+        public void Input_should_not_render_value_if_ViewData_value_is_not_DateTime()
+        {
+            datePicker.ViewContext.ViewData["DatePicker"] = "not date";
+
+            IHtmlNode tag = renderer.InputTag();
+
+            Assert.Throws(typeof(System.Collections.Generic.KeyNotFoundException), () => tag.Attribute("value"));
+        }
+
+        [Fact]
+        public void Input_should_not_render_value_if_ViewData_value_is_DateTime_MinValue()
+        {
+            datePicker.ViewContext.ViewData["DatePicker"] = "1/1/0001";
+
+            IHtmlNode tag = renderer.InputTag();
+
+            Assert.Throws(typeof(System.Collections.Generic.KeyNotFoundException), () => tag.Attribute("value"));
         }
 
         [Fact]
@@ -100,15 +114,7 @@
 
             Assert.Equal(now.ToString(datePicker.Format), tag.Attribute("value"));
         }
-
-        [Fact]
-        public void Input_should_render_empty_string_if_no_viewdata_or_selectedDate()
-        {
-            IHtmlNode tag = renderer.InputTag();
-
-            Assert.Equal("", tag.Attribute("value"));
-        }
-
+        
         [Fact]
         public void Input_should_render_viewdata_value_even_when_selectedDate_is_set()
         {
@@ -118,23 +124,19 @@
 
             IHtmlNode tag = renderer.InputTag();
 
-            Assert.Equal(Convert.ToDateTime(now.ToShortDateString(), Telerik.Web.Mvc.Infrastructure.Culture.Current).ToShortDateString(),
+            Assert.Equal(Convert.ToDateTime(now.ToShortDateString(), CultureInfo.CurrentCulture).ToShortDateString(),
                 tag.Attribute("value"));
         }
 
-        //should mock ModelState and check whether there is error.
-
         [Fact]
-        public void Button_should_render_link_with_class_with_default_title()
+        public void Button_should_render_icon_with_default_title_and_class()
         {
             datePicker.ButtonTitle = string.Empty;
 
-            IHtmlNode tag = renderer.ButtonTag();
+            IHtmlNode tag = renderer.ButtonTag().Children[0];
 
-            Assert.Equal("#", tag.Attribute("href"));
             Assert.Equal("Open the calendar", tag.Attribute("title"));
-            Assert.Equal(UIPrimitives.Link + " " + UIPrimitives.Icon + " t-icon-calendar", tag.Attribute("class"));
-            Assert.Equal("a", tag.TagName);
+            Assert.Equal(UIPrimitives.Icon + " t-icon-calendar", tag.Attribute("class"));
        }
 
         [Fact]
@@ -144,7 +146,19 @@
 
             IHtmlNode tag = renderer.ButtonTag();
             
-            Assert.Equal("test", tag.Attribute("title"));
+            Assert.Equal("test", tag.Children[0].Attribute("title"));
+        }
+
+        [Fact]
+        public void DatePicker_should_be_disabled()
+        {
+            datePicker.Enabled = false;
+
+            IHtmlNode div = renderer.Build();
+            IHtmlNode tag = renderer.InputTag();
+            
+            Assert.Equal("disabled", tag.Attribute("disabled"));
+            Assert.Contains("t-state-disabled", div.Attribute("class"));
         }
     }
 }

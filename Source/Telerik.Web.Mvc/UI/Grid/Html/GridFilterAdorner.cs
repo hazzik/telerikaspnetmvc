@@ -4,6 +4,7 @@ namespace Telerik.Web.Mvc.UI
     using Telerik.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure.Implementation;
 
     public class GridFilterAdorner : IHtmlAdorner
     {
@@ -16,20 +17,9 @@ namespace Telerik.Web.Mvc.UI
 
         public void ApplyTo(IHtmlNode target)
         {
-            var filtered = column.Grid.DataProcessor.FilterDescriptors.SelectRecursive(filter =>
-            {
-                CompositeFilterDescriptor compositeDescriptor = filter as CompositeFilterDescriptor;
-
-                if (compositeDescriptor != null)
-                {
-                    return compositeDescriptor.FilterDescriptors;
-                }
-
-                return null;
-            })
-            .Where(filter => filter is FilterDescriptor)
-            .OfType<FilterDescriptor>()
-            .Any(filter => filter.Member.IsCaseInsensitiveEqual(column.Member));
+            var filtered = column.Grid.DataProcessor.FilterDescriptors
+                .SelectMemberDescriptors()
+                .Any(filter => filter.Member.IsCaseInsensitiveEqual(column.Member));
 
             var wrapper = new HtmlTag("div")
                 .AddClass("t-grid-filter", "t-state-default")

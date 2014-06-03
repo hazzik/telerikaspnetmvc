@@ -10,18 +10,17 @@ namespace Telerik.Web.Mvc.UI
 
     public static class GridToolBarCommandBaseExtensions
     {
-#if MVC2
         public static string ButtonContent<T>(this GridToolBarCommandBase<T> command, string localizedText, string cssClass) where T : class
         {
             switch (command.ButtonType)
             {
                 case GridButtonType.Image:
                     {
-                        return getImageOrSprite(command, cssClass);
+                        return GetImageOrSprite(command, cssClass);
                     }
                 case GridButtonType.ImageAndText:
                     {
-                        return getImageOrSprite(command, cssClass) + localizedText;
+                        return GetImageOrSprite(command, cssClass) + localizedText;
                     }
                 default:
                     {
@@ -30,7 +29,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        private static string getImageOrSprite<T>(GridToolBarCommandBase<T> command, string cssClass) where T : class
+        private static string GetImageOrSprite<T>(GridToolBarCommandBase<T> command, string cssClass) where T : class
         {
             IHtmlNode span = new HtmlTag("span")
                                 .Attributes(command.ImageHtmlAttributes)
@@ -40,6 +39,5 @@ namespace Telerik.Web.Mvc.UI
 
             return span.ToString();
         }
-#endif
     }
 }

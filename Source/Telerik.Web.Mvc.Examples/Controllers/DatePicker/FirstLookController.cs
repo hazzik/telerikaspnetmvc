@@ -7,10 +7,21 @@ namespace Telerik.Web.Mvc.Examples
     {
         public ActionResult FirstLook(FirstLookModelView viewModel)
         {
-            viewModel.SelectedDate = viewModel.SelectedDate ?? DateTime.Today;
-            viewModel.MinDate = viewModel.MinDate ?? new DateTime(1900, 1, 1);
-            viewModel.MaxDate = viewModel.MaxDate ?? new DateTime(2099, 12, 31);
-            viewModel.ShowButton = viewModel.ShowButton ?? true;
+            viewModel.DatePickerAttributes.SelectedDate = viewModel.DatePickerAttributes.SelectedDate ?? DateTime.Today;
+            viewModel.DatePickerAttributes.MinDate = viewModel.DatePickerAttributes.MinDate ?? new DateTime(1900, 1, 1);
+            viewModel.DatePickerAttributes.MaxDate = viewModel.DatePickerAttributes.MaxDate ?? new DateTime(2099, 12, 31);
+            viewModel.DatePickerAttributes.ShowButton = viewModel.DatePickerAttributes.ShowButton ?? true;
+
+            viewModel.TimePickerAttributes.SelectedDate = viewModel.TimePickerAttributes.SelectedDate ?? new DateTime(2010, 1, 1, 10, 0, 0);
+            viewModel.TimePickerAttributes.MinTime = viewModel.TimePickerAttributes.MinTime ?? new DateTime(2010, 1, 1, 8, 0, 0);
+            viewModel.TimePickerAttributes.MaxTime = viewModel.TimePickerAttributes.MaxTime ?? new DateTime(2010, 1, 1, 18, 0, 0);
+            viewModel.TimePickerAttributes.ShowButton = viewModel.TimePickerAttributes.ShowButton ?? true;
+            viewModel.TimePickerAttributes.Interval = viewModel.TimePickerAttributes.Interval ?? 30;
+
+            viewModel.DateTimePickerAttributes.SelectedDate = viewModel.DateTimePickerAttributes.SelectedDate ?? new DateTime(2010, 1, 1, 10, 0, 0);
+            viewModel.DateTimePickerAttributes.MinDate = viewModel.DateTimePickerAttributes.MinDate ?? new DateTime(1900, 1, 1, 8, 0, 0);
+            viewModel.DateTimePickerAttributes.MaxDate = viewModel.DateTimePickerAttributes.MaxDate ?? new DateTime(2099, 12, 31, 18, 0, 0);
+            viewModel.DateTimePickerAttributes.Interval = viewModel.DateTimePickerAttributes.Interval ?? 30;
 
             return View(viewModel);
         }
@@ -18,9 +29,15 @@ namespace Telerik.Web.Mvc.Examples
 
     public class FirstLookModelView
     {
-        public DateTime? SelectedDate { get; set; }
-        public DateTime? MinDate { get; set; }
-        public DateTime? MaxDate { get; set; }
-        public bool? ShowButton { get; set; }
+        public FirstLookModelView()
+        {
+            DatePickerAttributes = new DatePickerAttributes();
+            TimePickerAttributes = new TimePickerAttributes();
+            DateTimePickerAttributes = new DateTimePickerAttributes();
+        }
+
+        public DatePickerAttributes DatePickerAttributes { get; set; }
+        public TimePickerAttributes TimePickerAttributes { get; set; }
+        public DateTimePickerAttributes DateTimePickerAttributes { get; set; }
     }
 }

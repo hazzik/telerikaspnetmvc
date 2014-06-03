@@ -8,8 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     using System.Web;
     using System.Web.Mvc;
-
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// HTMLHelper extension for providing access to <see cref="ViewComponentFactory"/>.
@@ -33,14 +32,12 @@ namespace Telerik.Web.Mvc.UI
 
             if (factory == null)
             {
-                IServiceLocator locator = ServiceLocator.Current;
+                ScriptWrapperBase scriptWrapper = DI.Current.Resolve<ScriptWrapperBase>();
+                IClientSideObjectWriterFactory clientSideObjectWriterFactory = DI.Current.Resolve<IClientSideObjectWriterFactory>();
 
-                IWebAssetItemMerger assetItemMerger = locator.Resolve<IWebAssetItemMerger>();
-                ScriptWrapperBase scriptWrapper = locator.Resolve<ScriptWrapperBase>();
-                IClientSideObjectWriterFactory clientSideObjectWriterFactory = locator.Resolve<IClientSideObjectWriterFactory>();
-
-                StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, assetItemMerger);
-                ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, assetItemMerger, scriptWrapper);
+                StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>());
+                ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), 
+                    new List<IScriptableComponent>(), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>(), scriptWrapper);
 
                 StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = StyleSheetRegistrarBuilder.Create(styleSheetRegistrar);
                 ScriptRegistrarBuilder scriptRegistrarBuilder = ScriptRegistrarBuilder.Create(scriptRegistrar);
@@ -57,7 +54,7 @@ namespace Telerik.Web.Mvc.UI
             return factory;
         }
 
-#if MVC2
+#if MVC2 || MVC3
         /// <summary>
         /// Gets the Telerik View Component Factory
         /// </summary>
@@ -74,16 +71,13 @@ namespace Telerik.Web.Mvc.UI
 
             if (factory == null)
             {
-                IServiceLocator locator = ServiceLocator.Current;
-
-                IWebAssetItemMerger assetItemMerger = locator.Resolve<IWebAssetItemMerger>();
-                ScriptWrapperBase scriptWrapper = locator.Resolve<ScriptWrapperBase>();
-                IClientSideObjectWriterFactory clientSideObjectWriterFactory = locator.Resolve<IClientSideObjectWriterFactory>();
+                ScriptWrapperBase scriptWrapper = DI.Current.Resolve<ScriptWrapperBase>();
+                IClientSideObjectWriterFactory clientSideObjectWriterFactory = DI.Current.Resolve<IClientSideObjectWriterFactory>();
 
                 StyleSheetRegistrar styleSheetRegistrar = httpContext.Items[StyleSheetRegistrar.Key] as StyleSheetRegistrar ??
-                                                          new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, assetItemMerger);
+                                                          new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>());
                 ScriptRegistrar scriptRegistrar = httpContext.Items[ScriptRegistrar.Key] as ScriptRegistrar ??
-                                                          new ScriptRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, assetItemMerger, scriptWrapper);
+                                                          new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>(), scriptWrapper);
 
                 StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = StyleSheetRegistrarBuilder.Create(styleSheetRegistrar);
                 ScriptRegistrarBuilder scriptRegistrarBuilder = ScriptRegistrarBuilder.Create(scriptRegistrar);

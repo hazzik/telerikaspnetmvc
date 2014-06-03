@@ -5,6 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI.Fluent
 {
+    using System;
     using System.Collections.Generic;
 
     using Extensions;
@@ -74,6 +75,25 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public virtual TColumnBuilder HeaderHtmlAttributes(object attributes)
         {
             MergeAttributes(Column.HeaderHtmlAttributes, attributes);
+
+            return this as TColumnBuilder;
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes applied to the footer cell of the column.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Columns(columns => columns.Bound(o => o.OrderID).FooterHtmlAttributes(new {@class="order-footer"}))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual TColumnBuilder FooterHtmlAttributes(object attributes)
+        {
+            MergeAttributes(Column.FooterHtmlAttributes, attributes);
 
             return this as TColumnBuilder;
         }
@@ -200,6 +220,80 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this as TColumnBuilder;
         }
+
+        /// <summary>
+        /// Sets the header template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public virtual TColumnBuilder HeaderTemplate(Action template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.HeaderTemplate.Content = template;
+            return this as TColumnBuilder;
+        }
+
+        /// <summary>
+        /// Sets the header template for the column.
+        /// </summary>
+        /// <param name="template">The string defining the template.</param>
+        public virtual TColumnBuilder HeaderTemplate(string template)
+        {
+            Guard.IsNotNullOrEmpty(template, "template");
+
+            Column.HeaderTemplate.Html = template;
+            return this as TColumnBuilder;
+        }
+
+        /// <summary>
+        /// Sets the header template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public virtual TColumnBuilder HeaderTemplate(Func<object, object> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.HeaderTemplate.InlineTemplate = template;
+            return this as TColumnBuilder;
+        }
+
+
+        /// <summary>
+        /// Sets the footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public virtual TColumnBuilder FooterTemplate(Action template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.FooterTemplate.Content = template;
+            return this as TColumnBuilder;
+        }
+
+        /// <summary>
+        /// Sets the footer template for the column.
+        /// </summary>
+        /// <param name="template">The string defining the template.</param>
+        public virtual TColumnBuilder FooterTemplate(string template)
+        {
+            Guard.IsNotNullOrEmpty(template, "template");
+
+            Column.FooterTemplate.Html = template;
+            return this as TColumnBuilder;
+        }
+
+        /// <summary>
+        /// Sets the footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public virtual TColumnBuilder FooterTemplate(Func<object, object> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.FooterTemplate.InlineTemplate = template;
+            return this as TColumnBuilder;
+        }
+
         private static void MergeAttributes(IDictionary<string, object> target, object attributes)
         {
             Guard.IsNotNull(attributes, "attributes");

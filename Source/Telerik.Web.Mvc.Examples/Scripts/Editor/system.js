@@ -313,20 +313,19 @@ function Clipboard (editor) {
         var range = editor.getRange();
         var startRestorePoint = new RestorePoint(range);
             
-        var clipboardNode = dom.create(editor.document, 'div', {innerHTML: '\ufeff'});
-            
-        // WebKit cannot paste in display:none element
-        if (!$.browser.webkit)
-            clipboardNode.style.display = 'none';
+        var clipboardNode = dom.create(editor.document, 'div', {className:'t-paste-container', innerHTML: '\ufeff'});
 
         editor.body.appendChild(clipboardNode);
             
         if (editor.body.createTextRange) {
             e.preventDefault();
+            var r = editor.createRange();
+            r.selectNodeContents(clipboardNode);
+            editor.selectRange(r);
             var textRange = editor.body.createTextRange();
             textRange.moveToElementText(clipboardNode);
             $(editor.body).unbind('paste');
-            textRange.execCommand('paste');
+            textRange.execCommand('Paste');
             $(editor.body).bind('paste', arguments.callee);
         } else {
             var clipboardRange = editor.createRange();
@@ -338,7 +337,7 @@ function Clipboard (editor) {
             selectRange(range);
             dom.remove(clipboardNode);
                 
-            if (dom.is(clipboardNode.lastChild, 'br'))
+            if (clipboardNode.lastChild && dom.is(clipboardNode.lastChild, 'br'))
                 dom.remove(clipboardNode.lastChild);
                 
             editor.clipboard.paste(clipboardNode.innerHTML);

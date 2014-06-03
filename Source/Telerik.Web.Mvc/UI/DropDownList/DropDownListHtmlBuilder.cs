@@ -1,13 +1,12 @@
 ﻿namespace Telerik.Web.Mvc.UI
 {
     using System.Linq;
-
-    using Infrastructure;
-    using Extensions;
+    using System.Web.Mvc;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class DropDownListHtmlBuilder : IDropDownHtmlBuilder
     {
-
         public DropDownListHtmlBuilder(IDropDownRenderable component)
         {
             this.Component = component;
@@ -20,11 +19,19 @@
         }
 
         public IHtmlNode Build()
-        {
-            return new HtmlTag("div")
-                    .Attribute("id", Component.Id)
-                    .Attributes(Component.HtmlAttributes)
-                    .PrependClass(UIPrimitives.Widget, "t-dropdown", UIPrimitives.Header);
+        {           
+            IHtmlNode root = new HtmlTag("div")
+                                .Attribute("id", Component.Id)
+                                .Attributes(Component.HtmlAttributes)
+                                .PrependClass(UIPrimitives.Widget, "t-dropdown", UIPrimitives.Header)
+                                .ToggleClass("t-state-disabled", !Component.Enabled)
+                                .ToggleAttribute("disabled", "disabled", !Component.Enabled);
+
+            this.InnerContentTag().AppendTo(root);
+            
+            this.HiddenInputTag().AppendTo(root);
+
+            return root;
         }
 
         public IHtmlNode InnerContentTag()
@@ -50,7 +57,7 @@
 
         public IHtmlNode HiddenInputTag()
         {
-            IHtmlNode input = new HtmlTag("input")
+            IHtmlNode input = new HtmlTag("input", TagRenderMode.SelfClosing)
                     .Attributes(new
                     {
                         type = "text",
@@ -64,9 +71,12 @@
                     id = Component.Id + "-value"
                 });
 
-            if(Component.Items.Any())
-                input.Attribute("value", Component.Items[Component.SelectedIndex].Value);
-
+            if (Component.Items.Any())
+            {
+                DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
+                input.Attribute("value", selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text);
+            }
+           
             return input;
         }
     }

@@ -53,6 +53,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the action, controller and route values for the select operation
         /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .DataBinding(dataBinding => 
+        ///             {
+        ///                 dataBinding.Ajax().Select(MVC.Home.Index().GetRouteValueDictionary());
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBindingSettingsBuilder Select(RouteValueDictionary routeValues)
+        {
+            settings.Select.Action(routeValues);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action, controller and route values for the select operation
+        /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="routeValues">The route values.</param>
@@ -204,6 +226,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public GridBindingSettingsBuilder Select<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             settings.Select.Action(controllerAction);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action, controller and route values for the insert operation
+        /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .DataBinding(dataBinding => 
+        ///             {
+        ///                 dataBinding.Ajax().Insert(MVC.Home.Index(1).GetRouteValueDictionary());
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBindingSettingsBuilder Insert(RouteValueDictionary routeValues)
+        {
+            settings.Insert.Action(routeValues);
 
             return this;
         }
@@ -367,7 +411,29 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets the action, controller and route values for delete operation
+        /// Sets the action, controller and route values for the update operation
+        /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .DataBinding(dataBinding => 
+        ///             {
+        ///                 dataBinding.Ajax().Update(MVC.Home.Index(1).GetRouteValueDictionary());
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBindingSettingsBuilder Update(RouteValueDictionary routeValues)
+        {
+            settings.Update.Action(routeValues);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action, controller and route values for update operation
         /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
@@ -378,7 +444,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Grid")
         ///             .DataBinding(dataBinding => 
         ///             {
-        ///                 dataBinding.Ajax().Insert("Index", "Home", new RouteValueDictionary{ {"id", 1} });
+        ///                 dataBinding.Ajax().Update(MVC.Home.Index(1).GetRouteValueDictionary());
         ///             })
         /// %&gt;
         /// </code>
@@ -520,6 +586,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public GridBindingSettingsBuilder Update<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             settings.Update.Action(controllerAction);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action, controller and route values for the delete operation
+        /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .DataBinding(dataBinding => 
+        ///             {
+        ///                 dataBinding.Ajax().Delete(MVC.Home.Index(1).GetRouteValueDictionary());
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBindingSettingsBuilder Delete(RouteValueDictionary routeValues)
+        {
+            settings.Delete.Action(routeValues);
 
             return this;
         }

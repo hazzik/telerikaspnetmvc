@@ -11,8 +11,6 @@ namespace Telerik.Web.Mvc.UI
     {
         IHtmlNode Build();
 
-        IHtmlNode NavigationTag();
-
         IHtmlNode ContentTag();
 
         IHtmlNode HeaderTag();

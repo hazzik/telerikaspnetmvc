@@ -2,11 +2,13 @@
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
-using System;
-using Telerik.Web.Mvc.Infrastructure;
-
 namespace Telerik.Web.Mvc.UI.Fluent
 {
+    using System;
+    using System.Collections.Generic;
+    using Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+
     /// <summary>
     /// Defines the fluent interface for configuring grid editing.
     /// </summary>
@@ -60,7 +62,21 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
+#if MVC2 || MVC3
+        /// <summary>
+        /// Specify an editor template which to be used for InForm or PopUp modes
+        /// </summary>
+        /// <param name="templateName">name of the editor template</param>
+        /// <remarks>This settings is applicable only when Mode is <see cref="GridEditMode.InForm"/> 
+        /// or <see cref="GridEditMode.PopUp"/></remarks>
+        public GridEditingSettingsBuilder TemplateName(string templateName)
+        {
+            Guard.IsNotNullOrEmpty(templateName, "templateName");
 
+            settings.TemplateName = templateName;
+            return this;
+        }
+#endif
         /// <summary>
         /// Enables or disables delete confirmation.
         /// </summary>
@@ -72,14 +88,30 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        /// <remarks>
-        /// The Enabled method is useful when you need to enable grid editing on certain conditions.
-        /// </remarks>
         public GridEditingSettingsBuilder DisplayDeleteConfirmation(bool value)
         {
             settings.DisplayDeleteConfirmation = value;
             
             return this;
+        }
+
+        /// <summary>
+        /// Gets the HTML attributes of the form rendered during editing
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        public GridEditingSettingsBuilder FormHtmlAttributes(object attributes)
+        {
+            MergeAttributes(settings.FormHtmlAttributes, attributes);
+
+            return this;
+        }
+
+        private static void MergeAttributes(IDictionary<string, object> target, object attributes)
+        {
+            Guard.IsNotNull(attributes, "attributes");
+
+            target.Clear();
+            target.Merge(attributes);
         }
     }
 }

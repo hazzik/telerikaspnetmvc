@@ -44,9 +44,12 @@
                                      {
                                      %>
                                          function(e) {
-                                             var textbox = $('#ComboBoxAttributes_MinimumChars').data('tTextBox');
-                                             if(e.value == 0) textbox.disable();
-                                             else textbox.enable();
+                                             var $textboxes = $('#ComboBoxAttributes_MinimumChars, #ComboBoxAttributes_Delay');
+                                             $textboxes.each(function(){
+                                                 var textbox = $(this).data('tTextBox');
+                                                 if(e.value == 0) textbox.disable();
+                                                 else textbox.enable();
+                                             });
                                          }
                                      <%
                                      })

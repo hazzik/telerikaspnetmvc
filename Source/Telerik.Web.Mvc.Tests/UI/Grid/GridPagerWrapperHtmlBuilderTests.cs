@@ -1,7 +1,5 @@
 ﻿namespace Telerik.Web.Mvc.UI.Html.Tests
 {
-    using Moq;
-    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
     
@@ -12,14 +10,6 @@
         public GridPagerWrapperHtmlBuilderTests()
         {
             grid = GridTestHelper.CreateGrid<Customer>();
-
-            var virtualPathProvider = new Mock<IVirtualPathProvider>();
-            virtualPathProvider.Setup(vpp => vpp.FileExists(It.IsAny<string>())).Returns(false);
-
-            var serviceLocator = new Mock<IServiceLocator>();
-            serviceLocator.Setup(sl => sl.Resolve<IVirtualPathProvider>()).Returns(virtualPathProvider.Object);
-
-            ServiceLocator.SetCurrent(() => serviceLocator.Object);
         }
 
         [Fact]

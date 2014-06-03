@@ -69,4 +69,16 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
     }
+
+    public class ContentNavigationItemTestDouble : NavigationItem<ContentNavigationItemTestDouble>, IAsyncContentContainer
+    {
+        public ContentNavigationItemTestDouble() { }
+
+        public string  ContentUrl
+        {
+	          get;
+	          set;
+        }
+
+    }
 }

@@ -385,6 +385,22 @@ function domToXhtml(root) {
             attributes = node.attributes,
             trim = $.trim;
 
+        if (dom.is(node, 'img')) {
+            var width = node.style.width,
+                height = node.style.height,
+                $node = $(node);
+
+            if (width) {
+                $node.attr('width', parseInt(width));
+                dom.unstyle(node, { width: undefined });
+            }
+
+            if (height) {
+                $node.attr('height', parseInt(height));
+                dom.unstyle(node, { height: undefined });
+            }
+        }
+
         for (var i = 0, l = attributes.length; i < l; i++) {
             var attribute = attributes[i];
             var name = attribute.nodeName;
@@ -1232,6 +1248,12 @@ function Marker() {
         dom.remove(this.start);
         dom.remove(this.end);
 
+        if (start == null || end == null) {
+            range.selectNodeContents(range.commonAncestorContainer);
+            range.collapse(true);
+            return;
+        }
+
         var startOffset = collapsed ? isDataNode(start) ? start.nodeValue.length : start.childNodes.length : 0;
         var endOffset = isDataNode(end) ? end.nodeValue.length : end.childNodes.length;
 
@@ -1685,20 +1707,19 @@ function Clipboard (editor) {
         var range = editor.getRange();
         var startRestorePoint = new RestorePoint(range);
             
-        var clipboardNode = dom.create(editor.document, 'div', {innerHTML: '\ufeff'});
-            
-        // WebKit cannot paste in display:none element
-        if (!$.browser.webkit)
-            clipboardNode.style.display = 'none';
+        var clipboardNode = dom.create(editor.document, 'div', {className:'t-paste-container', innerHTML: '\ufeff'});
 
         editor.body.appendChild(clipboardNode);
             
         if (editor.body.createTextRange) {
             e.preventDefault();
+            var r = editor.createRange();
+            r.selectNodeContents(clipboardNode);
+            editor.selectRange(r);
             var textRange = editor.body.createTextRange();
             textRange.moveToElementText(clipboardNode);
             $(editor.body).unbind('paste');
-            textRange.execCommand('paste');
+            textRange.execCommand('Paste');
             $(editor.body).bind('paste', arguments.callee);
         } else {
             var clipboardRange = editor.createRange();
@@ -1710,7 +1731,7 @@ function Clipboard (editor) {
             selectRange(range);
             dom.remove(clipboardNode);
                 
-            if (dom.is(clipboardNode.lastChild, 'br'))
+            if (clipboardNode.lastChild && dom.is(clipboardNode.lastChild, 'br'))
                 dom.remove(clipboardNode.lastChild);
                 
             editor.clipboard.paste(clipboardNode.innerHTML);
@@ -2099,6 +2120,9 @@ function InlineFormatTool(options) {
 
 function FontTool(options){
     Tool.call(this, options);
+    
+    // IE has single selection hence we are using select box instead of combobox
+    var type = $.browser.msie ? 'tSelectBox' : 'tComboBox';
 
     var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], options.cssAttr);
 
@@ -2114,7 +2138,7 @@ function FontTool(options){
     }
 
     this.update = function ($ui, nodes) {
-        var list = $ui.data('tComboBox');
+        var list = $ui.data(type);
         list.close();
         list.value(finder.getFormat(nodes));
     } 
@@ -2122,7 +2146,7 @@ function FontTool(options){
     this.init = function($ui, initOptions) {
         var editor = initOptions.editor;
         
-        $ui.tComboBox({
+        $ui[type]({
             data: editor[options.name],
             onChange: function (e) {
                 Tool.exec(editor, options.name, e.value);
@@ -2130,7 +2154,7 @@ function FontTool(options){
             highlightFirst: false
         });
 
-        $ui.data('tComboBox').dropDown.onItemCreate =
+        $ui.data(type).dropDown.onItemCreate =
             function (e) {
                 e.html = '<span unselectable="on" style="' + options.cssAttr +  ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
             };
@@ -2796,8 +2820,8 @@ function LinkCommand(options) {
                 if (text !== initialText)
                     attributes.innerHTML = text;
 
-                var target = $('#t-editor-link-target', dialog.element).val();
-                if (target != 'false')
+                var target = $('#t-editor-link-target', dialog.element).is(':checked');
+                if (target)
                     attributes.target = '_blank';
 
                 formatter.apply(range, attributes);
@@ -2854,7 +2878,7 @@ function LinkCommand(options) {
             .find('#t-editor-link-url').val(a ? a.getAttribute('href', 2) : 'http://').end()
             .find('#t-editor-link-text').val(nodes.length > 0 ? (nodes.length == 1 ? nodes[0].nodeValue : nodes[0].nodeValue + nodes[1].nodeValue) : '').end()
             .find('#t-editor-link-title').val(a ? a.title : '').end()
-            .find('#t-editor-link-target').val(a ? a.target == '_blank' : 'false').end()
+            .find('#t-editor-link-target').attr('checked', a ? a.target == '_blank' : false).end()
             .show()
             .data('tWindow')
             .center();
@@ -2875,7 +2899,7 @@ function LinkCommand(options) {
 function UnlinkTool(options){
     Tool.call(this, $.extend(options, {command:UnlinkCommand}));
     
-    var finder = new LinkFormatFinder();
+    var finder = new InlineFormatFinder([{tags:['a']}]);
 
     this.init = function($ui) {
         $ui.attr('unselectable', 'on')
@@ -2883,7 +2907,7 @@ function UnlinkTool(options){
     }
     
     this.update = function ($ui, nodes) {
-        $ui.toggleClass('t-state-disabled', !finder.findSuitable(nodes[0]))
+        $ui.toggleClass('t-state-disabled', !finder.isFormatted(nodes))
             .removeClass('t-state-hover');
     }
 }
@@ -2995,16 +3019,8 @@ $t.selectbox = function (element, options) {
     var $element = $(element);
     var $text = $element.find('.t-input');
 
-    var dropdown = new $t.dropDown({
-        outerHeight: $element.outerHeight(),
-        outerWidth: $element.outerWidth(),
-        zIndex: $t.list.getZIndex($element),
+    var dropDown = this.dropDown = new $t.dropDown({
         effects: $t.fx.slide.defaults(),
-        onOpen: function () {
-            var offset = $element.offset();
-            dropdown.position(offset.top, offset.left);
-            return true;
-        },
         onItemCreate: options.onItemCreate,
         onClick: function (e) {
             select(options.data[$(e.item).index()].Value);
@@ -3013,12 +3029,12 @@ $t.selectbox = function (element, options) {
     });
 
     function fill() {
-        if (!dropdown.$items)
-            dropdown.dataBind(options.data);
+        if (!dropDown.$items)
+            dropDown.dataBind(options.data);
     }
 
     function text(value) {
-        $text.html(value);
+        $text.html(value ? value : '&nbsp;');
     }
 
     function select(item) {
@@ -3034,11 +3050,11 @@ $t.selectbox = function (element, options) {
 
         if (index != -1) {
 
-            dropdown.$items
+            dropDown.$items
                     .removeClass('t-state-selected')
                     .eq(index).addClass('t-state-selected');
 
-            text($(dropdown.$items[index]).text());
+            text($(dropDown.$items[index]).text());
             selectedValue = options.data[index].Value;
         }
     }
@@ -3047,32 +3063,38 @@ $t.selectbox = function (element, options) {
         select(value);
 
         if (selectedValue != value)
-            text(options.title);
+            text(options.title || value);
     }
 
     this.close = function () {
-        dropdown.close();
+        dropDown.close();
     }
 
-    text(options.title);
+    text(options.title || $text.text());
 
-    $element
-        .bind({
-            click: function (e) {
-                fill();
-                if (dropdown.isOpened())
-                    dropdown.close();
-                else
-                    dropdown.open();
-            }
-        });
+    $element.bind('click', function (e) {
+        fill();
+        if (dropDown.isOpened())
+            dropDown.close();
+        else
+            dropDown.open({
+                offset: $element.offset(),
+                outerHeight: $element.outerHeight(),
+                outerWidth: $element.outerWidth(),
+                zIndex: $t.getElementZIndex($element[0])
+            });
+    })
+            .find('*')
+            .attr('unselectable', 'on');
 
-    $(document).bind('mousedown', $.proxy(function (e) {
-        var $dropDown = dropdown.$element;
+    dropDown.$element.css('direction', $element.closest('.t-rtl').length > 0 ? 'rtl' : '');
+
+    $(document.documentElement).bind('mousedown', $.proxy(function (e) {
+        var $dropDown = dropDown.$element;
         var isDropDown = $dropDown && $dropDown.parent().length > 0;
 
         if (isDropDown && !$.contains(element, e.target) && !$.contains($dropDown.parent()[0], e.target)) {
-            dropdown.close();
+            dropDown.close();
         }
 
     }, this));
@@ -3101,14 +3123,17 @@ $t.colorpicker = function (element, options) {
     $.extend(this, options);
 
     $element.bind('click', $.proxy(this.click, this))
+            .find('*')
+            .attr('unselectable', 'on');
     
     if (this.selectedColor)
         $element.find('.t-selected-color').css('background-color', this.selectedColor);
 
-    $(element.ownerDocument).bind('mousedown', $.proxy(function (e) {
-        if (!$(e.target).closest('.t-colorpicker-popup').length)
-            this.close();
-    }, this));
+    $(element.ownerDocument.documentElement)
+        .bind('mousedown', $.proxy(function (e) {
+            if (!$(e.target).closest('.t-colorpicker-popup').length)
+                this.close();
+        }, this));
 
     $t.bind(this, {
         change: this.onChange,
@@ -3134,6 +3159,9 @@ $t.colorpicker.prototype = {
 
         var elementPosition = $element.offset();
         elementPosition.top += $element.outerHeight();
+
+        if ($element.closest('.t-rtl').length)
+            elementPosition.left -= $popup.outerWidth() - $element.outerWidth();
 
         var zIndex = 'auto';
 
@@ -3197,10 +3225,12 @@ $t.colorpicker.prototype = {
 
     popup: function() {
         if (!this.$popup)
-            this.$popup =
-                $($t.colorpicker.buildPopup(this))
+            this.$popup = $($t.colorpicker.buildPopup(this))
                     .hide()
-                    .appendTo(document.body);
+                    .appendTo(document.body)
+                    .find('*')
+                    .attr('unselectable', 'on')
+                    .end();
 
         return this.$popup;
     }
@@ -3375,17 +3405,22 @@ function OutdentTool() {
     // <img>\s+\w+ creates invalid nodes after cut in IE
     var html = $textarea.val().replace(/(<\/?img[^>]*>)[\r\n\v\f\t ]+/ig, '$1');
 
+    if (!html.length && $.browser.mozilla)
+        html = '<br _moz_dirty="true" />';
+
     document.designMode = 'On';
     document.open();
     document.write(
         new $t.stringBuilder()
-            .cat('<!DOCTYPE><html><head xmlns="http://www.w3.org/1999/xhtml">')
+            .cat('<!DOCTYPE html><html><head>')
             .cat('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />')
             .cat('<style type="text/css">')
                 .cat('html,body{padding:0;margin:0;font-family:Verdana,Geneva,sans-serif;background:#fff;}')
-                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5em;padding-top:1px;margin-top:-1px;}')
+                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5em;padding-top:1px;margin-top:-1px;')
+                    .catIf('direction:rtl;', $textarea.closest('.t-rtl').length)
+                .cat('}')
                 .cat('h1{font-size:2em;margin:.67em 0}h2{font-size:1.5em}h3{font-size:1.16em}h4{font-size:1em}h5{font-size:.83em}h6{font-size:.7em}')
-                .cat('p{margin:1em 0;padding:0 .2em}.t-marker{display:none;}')
+                .cat('p{margin:1em 0;padding:0 .2em}.t-marker{display:none;}.t-paste-container{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}')
                 .cat('ul,ol{padding-left:2.5em}')
                 .cat('a{color:#00a}')
                 .cat('code{font-size:1.23em}')
@@ -3503,15 +3538,25 @@ $t.editor = function (element, options) {
         }))
         .find(toolbarItems)
             .each(function () {
-                var toolName = toolFromClassName(this);
-                var tool = self.tools[toolName];
+                var toolName = toolFromClassName(this),
+                    tool = self.tools[toolName],
+                    description = self.localization[toolName],
+                    $this = $(this);
 
                 if (!tool)
                     return;
+                    
+                if (toolName == 'fontSize' || toolName == 'fontName') {
+                    var inheritText = self.localization[toolName + 'Inherit'] || localization[toolName + 'Inherit']
+                    self[toolName][0].Text = inheritText;
+                    $this.find('input').val(inheritText).end()
+                         .find('span.t-input').text(inheritText).end();
+                }
 
-                var description = appendShortcutSequence(self.localization[toolName], tool);
-
-                tool.init($(this), {title:description, editor:self});
+                tool.init($this, {
+                    title: appendShortcutSequence(description, tool),
+                    editor: self
+                });
 
             }).end()
         .bind('selectionChange', function() {
@@ -3528,30 +3573,44 @@ $t.editor = function (element, options) {
                 });
         });
 
+    $(document).bind('mousedown', function() {
+                if (self.keyboard.typingInProgress())
+                    self.keyboard.endTyping(true);
+               })
+               .bind('DOMNodeInserted', function(e) {
+                    if ($.contains(e.target, self.element) || self.element == e.target) {
+                        $(self.element).find('iframe').remove();
+                        self.window = createContentElement($(self.textarea), self.stylesheets);
+                        self.document = self.window.contentDocument || self.window.document;
+                        self.body = self.document.body;
+                    }
+               });
+
     $(this.document)
-        .bind('keyup', function (e) {
-            var selectionCodes = [8, 9, 13, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+        .bind({
+            keydown: function (e) {
+                var toolName = self.keyboard.toolFromShortcut(self.tools, e);
+                if (toolName) {
+                    e.preventDefault();
+                    self.exec(toolName);
+                    return false;
+                }
 
-            if ($.inArray(e.keyCode, selectionCodes) > -1)
+                self.keyboard.clearTimeout();
+
+                self.keyboard.keydown(e);
+            },
+            keyup: function (e) {
+                var selectionCodes = [8, 9, 13, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+
+                if ($.inArray(e.keyCode, selectionCodes) > -1)
+                    selectionChanged(self);
+
+                self.keyboard.keyup(e);
+            },
+            mouseup: function () {
                 selectionChanged(self);
-        })
-        .keydown(function (e) {
-            var toolName = self.keyboard.toolFromShortcut(self.tools, e);
-            if (toolName) {
-                e.preventDefault();
-                self.exec(toolName);
-                return false;
             }
-
-            self.keyboard.clearTimeout();
-
-            self.keyboard.keydown(e);
-        })
-        .keyup(function (e) {
-            self.keyboard.keyup(e);
-        })
-        .mouseup(function () {
-            selectionChanged(self);
         });
     
     $(this.body)
@@ -3599,7 +3658,8 @@ $.extend($t.editor, {
 // public api
 $t.editor.prototype = {
     value: function (html) {
-        if (html === undefined) return domToXhtml(this.body);
+        var body = this.body;
+        if (html === undefined) return domToXhtml(body);
 
         // Some browsers do not allow setting CDATA sections through innerHTML so we encode them as comments
         html = html.replace(/<!\[CDATA\[(.*)?\]\]>/g, '<!--[CDATA[$1]]-->');
@@ -3611,25 +3671,29 @@ $t.editor.prototype = {
             // Internet Explorer removes comments from the beginning of the html
             html = '<br/>' + html;
 
+            var originalSrc = 'originalsrc',
+                originalHref = 'originalhref';
+
             // IE < 8 makes href and src attributes absolute
-            html = html.replace(/href\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, 'originalhref="$1"');
-            html = html.replace(/src\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, 'originalsrc="$1"');
+            html = html.replace(/href\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, originalHref + '="$1"');
+            html = html.replace(/src\s*=\s*(?:'|")?([^'">\s]*)(?:'|")?/, originalSrc + '="$1"');
 
-            this.body.innerHTML = html;
-            dom.remove(this.body.firstChild);
+            body.innerHTML = html;
+            dom.remove(body.firstChild);
 
-            $('script,link,img,a', this.body).each(function () {
-                if (this['originalhref']) {
-                    this.setAttribute('href', this['originalhref']);
-                    this.removeAttribute('originalhref');
+            $(body).find('telerik\\:script,script,link,img,a').each(function () {
+                var node = this;
+                if (node[originalHref]) {
+                    node.setAttribute('href', node[originalHref]);
+                    node.removeAttribute(originalHref);
                 }
-                if (this['originalsrc']) {
-                    this.setAttribute('src', this['originalsrc']);
-                    this.removeAttribute('originalsrc');
+                if (node[originalSrc]) {
+                    node.setAttribute('src', node[originalSrc]);
+                    node.removeAttribute(originalSrc);
                 }
-            })
+            });
         } else {
-            this.body.innerHTML = html;
+            body.innerHTML = html;
         }
 
         this.update();
@@ -3804,29 +3868,33 @@ function FormatTool(options) {
 
 var emptyFinder = function () { return { isFormatted: function () { return false } } };
 
+var localization = {
+    bold: 'Bold',
+    italic: 'Italic',
+    underline: 'Underline',
+    strikethrough: 'Strikethrough',
+    justifyCenter: 'Center text',
+    justifyLeft: 'Align text left',
+    justifyRight: 'Align text right',
+    justifyFull: 'Justify',
+    insertUnorderedList: 'Insert unordered list',
+    insertOrderedList: 'Insert ordered list',
+    indent: 'Indent',
+    outdent: 'Outdent',
+    createLink: 'Insert hyperlink',
+    unlink: 'Remove hyperlink',
+    insertImage: 'Insert image',
+    insertHtml: 'Insert HTML',
+    fontName: 'Select font family',
+    fontNameInherit: '(inherited font)',
+    fontSize: 'Select font size',
+    fontSizeInherit: '(inherited size)',
+    formatBlock: 'Format',
+    style: 'Styles'
+};
+
 $.fn.tEditor.defaults = {
-    localization: {
-        bold: 'Bold',
-        italic: 'Italic',
-        underline: 'Underline',
-        strikethrough: 'Strikethrough',
-        justifyCenter: 'Center text',
-        justifyLeft: 'Align text left',
-        justifyRight: 'Align text right',
-        justifyFull: 'Justify',
-        insertUnorderedList: 'Insert unordered list',
-        insertOrderedList: 'Insert ordered list',
-        indent: 'Indent',
-        outdent: 'Outdent',
-        createLink: 'Insert hyperlink',
-        unlink: 'Remove hyperlink',
-        insertImage: 'Insert image',
-        insertHtml: 'Insert HTML',
-        fontName: 'Select font family',
-        fontSize: 'Select font size',
-        formatBlock: 'Format',
-        style: 'Styles'
-    },
+    localization: localization,
     formats: formats,
     encoded: true,
     stylesheets: [],
@@ -3835,7 +3903,7 @@ $.fn.tEditor.defaults = {
         effects: {list:[{name:'toggle'}]}
     },
     fontName: [
-        { Text: 'inherit',  Value: 'inherit' },
+        { Text: localization.fontNameInherit,  Value: 'inherit' },
         { Text: 'Arial', Value: "Arial,Helvetica,sans-serif" },
         { Text: 'Courier New', Value: "'Courier New',Courier,monospace" },
         { Text: 'Georgia', Value: "Georgia,serif" },
@@ -3847,7 +3915,7 @@ $.fn.tEditor.defaults = {
         { Text: 'Verdana', Value: "Verdana,Geneva,sans-serif" }
     ],
     fontSize: [
-        { Text: 'inherit',  Value: 'inherit' },
+        { Text: localization.fontSizeInherit,  Value: 'inherit' },
         { Text: '1 (8pt)',  Value: 'xx-small' },
         { Text: '2 (10pt)', Value: 'x-small' },
         { Text: '3 (12pt)', Value: 'small' },

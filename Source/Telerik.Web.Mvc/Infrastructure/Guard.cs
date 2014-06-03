@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.Infrastructure
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
 
     using Extensions;
 
@@ -21,7 +20,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotNull(object parameter, string parameterName)
         {
             if (parameter == null)
@@ -35,7 +33,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotNullOrEmpty(string parameter, string parameterName)
         {
             if (string.IsNullOrEmpty((parameter ?? string.Empty)))
@@ -50,7 +47,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// <typeparam name="T"></typeparam>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotNullOrEmpty<T>(T[] parameter, string parameterName)
         {
             IsNotNull(parameter, parameterName);
@@ -67,7 +63,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// <typeparam name="T"></typeparam>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotNullOrEmpty<T>(ICollection<T> parameter, string parameterName)
         {
             IsNotNull(parameter, parameterName);
@@ -83,7 +78,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotZeroOrNegative(int parameter, string parameterName)
         {
             if (parameter <= 0)
@@ -97,7 +91,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotNegative(int parameter, string parameterName)
         {
             if (parameter < 0)
@@ -111,7 +104,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotNegative(float parameter, string parameterName)
         {
             if (parameter < 0)
@@ -125,7 +117,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
-        [DebuggerStepThrough]
         public static void IsNotVirtualPath(string parameter, string parameterName)
         {
             IsNotNullOrEmpty(parameter, parameterName);

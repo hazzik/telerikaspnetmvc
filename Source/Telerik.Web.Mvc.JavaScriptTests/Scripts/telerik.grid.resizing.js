@@ -16,7 +16,7 @@
 
         function heightAboveHeader(context) {
             var top = 0;
-            $('.t-grouping-header, .t-grid-toolbar', context).each(function() {
+            $('.t-grouping-header, .t-grid-toolbar,  > .t-pager-wrapper', context).each(function() {
                 top += this.offsetHeight;
             });
             return top;
@@ -54,12 +54,8 @@
             }
         }
 
-        function shouldDrag($element) {
-            return true;
-        }
-
-        function onDragStart(e, $draggedElement) {
-            var $th = $draggedElement.data('th');
+        function start(e) {
+            var $th = e.$draggable.data('th');
 
             $col = $('colgroup', grid.element).find('col:eq(' + $th.index() + ')');
 
@@ -68,27 +64,26 @@
             gridWidth = grid.$tbody.outerWidth();
         }
 
-        function onDragMove(e, $draggedElement) {
+        function drag(e) {
             var width = columnWidth + e.pageX - columnStart;
             if (width > 10) {
                 $col.css('width', width);
                 if (grid.scrollable)
                     grid.$tbody.parent()
                         .add(grid.$headerWrap.find('table'))
+                        .add(grid.$footerWrap.find('table'))
                         .css('width', gridWidth + e.pageX - columnStart);
 
-                positionResizeHandle($draggedElement.data('th'));
+                positionResizeHandle(e.$draggable.data('th'));
             }
         }
 
-        function onDragCancelled(e, $draggedElement) {
+        function stop(e) {
             $indicator.remove();
             cursor(grid.element, '');
-        }
 
-        function onDrop(e, $draggedElement, $dragClue) {
-            onDragCancelled();
-            var $th = $draggedElement.data('th');
+            var $th = e.$draggable.data('th');
+            
             var newWidth = $th.outerWidth();
 
             if (grid.onColumnResize && newWidth != columnWidth)
@@ -97,42 +92,47 @@
                     oldWidth: columnWidth,
                     newWidth: newWidth
                 });
-
-            return true;
+        
+            return false;
         }
 
         var left = 0;
+        
+       $(grid.element).bind('mouseenter', function() {
+            $(this)
+                .unbind('mouseenter', arguments.callee)
+                .find('.t-header')
+                .each(function() {
+                    left += this.offsetWidth;
+                    var $th = $(this);
+                    if (!$th.hasClass('t-group-cell')) {
+                        $('<div class="t-resize-handle" />')
+                        .css({
+                            left: left - indicatorWidth,
+                            top: grid.scrollable ? 0 : heightAboveHeader(grid.element),
+                            width: indicatorWidth * 2
+                        })
+                        .appendTo(grid.scrollable ? grid.$headerWrap : grid.element)
+                        .data('th', $th)
+                        .mousedown(function() {
+                            positionResizeHandle($th);
+                            cursor(grid.element, $(this).css('cursor'));
+                        })
+                        .mouseup(function() {
+                            cursor(grid.element, '');
+                        });
+                    }
+               });
 
-        $('.t-header', grid.element).each(function() {
-            left += this.offsetWidth;
-            var $th = $(this);
-            if (!$th.hasClass('t-group-cell')) {
-                $('<div class="t-resize-handle" />')
-                .css({
-                    left: left - indicatorWidth,
-                    top: grid.scrollable ? 0 : heightAboveHeader(grid.element),
-                    width: indicatorWidth * 2
-                })
-                .appendTo(grid.scrollable ? grid.$headerWrap : grid.element)
-                .data('th', $th)
-                .mousedown(function() {
-                    positionResizeHandle($th);
-                    cursor(grid.element, $(this).css('cursor'));
-                })
-                .mouseup(function() {
-                    cursor(grid.element, '');
-                });
-            }
-        });
-
-        $t.draganddrop(grid.element.id + 'Resize', {
-            draggables: $('.t-resize-handle', grid.element),
-            hitTestOffset: 0,
-            shouldDrag: shouldDrag,
-            onDragStart: onDragStart,
-            onDragMove: onDragMove,
-            onDragCancelled: onDragCancelled,
-            onDrop: onDrop
+            new $t.draggable({
+                owner: grid.element,
+                selector: '.t-resize-handle',
+                scope: grid.element.id + '-column-resizing',
+                distance: 0,
+                start: start,
+                drag: drag,
+                stop: stop
+            });
         });
     }
 })(jQuery);

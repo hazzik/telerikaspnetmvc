@@ -19,7 +19,23 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View();
         }
 
+        public ActionResult ClientApi()
+        {
+            return View();
+        }
+
+
+        public ActionResult ClientEvents()
+        {
+            return View();
+        }
+
         public ActionResult KeyboardSupport()
+        {
+            return View();
+        }
+
+        public ActionResult Rendering()
         {
             return View();
         }

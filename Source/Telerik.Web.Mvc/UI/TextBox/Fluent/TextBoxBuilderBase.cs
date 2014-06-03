@@ -27,15 +27,6 @@ namespace Telerik.Web.Mvc.UI
         {
         }
 
-        public TBuilder Theme(string name)
-        {
-            Guard.IsNotNullOrEmpty(name, "name");
-
-            Component.Theme = name;
-
-            return this as TBuilder;
-        }
-
         /// <summary>
         /// Sets the initial value of the textbox.
         /// </summary>
@@ -131,8 +122,6 @@ namespace Telerik.Web.Mvc.UI
         /// <returns></returns>
         public TBuilder Spinners(bool allowSpinner)
         {
-            Guard.IsNotNull(allowSpinner, "allowSpinner");
-
             Component.Spinners = allowSpinner;
 
             return this as TBuilder;
@@ -195,6 +184,18 @@ namespace Telerik.Web.Mvc.UI
 
             Component.InputHtmlAttributes.Clear();
             Component.InputHtmlAttributes.Merge(attributes);
+
+            return this as TBuilder;
+        }
+
+        /// <summary>
+        /// Enables or disables the textbox.
+        /// </summary>
+        /// <param name="allowSpinner"></param>
+        /// <returns></returns>
+        public TBuilder Enable(bool value)
+        {
+            Component.Enabled = value;
 
             return this as TBuilder;
         }

@@ -6,6 +6,7 @@
 namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Globalization;
@@ -68,6 +69,26 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+        /// <summary>
+        /// Configures the grid reordering settings
+        /// </summary>
+        /// <param name="configurator">Resizing settings configurator method</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Reorderable(reordering => reordering.Columns(true))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBuilder<T> Reorderable(Action<GridReorderingSettingsBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            configurator(new GridReorderingSettingsBuilder(Component.Reordering));
+
+            return this;
+        }
 
         /// <summary>
         /// Sets the localization culture of the grid.
@@ -83,11 +104,15 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </example>
         public GridBuilder<T> Localizable(string culture)
         {
-            Component.Localization = new GridLocalization(new CultureInfo(culture));
+            var localizationServiceFactory = DI.Current.Resolve<ILocalizationServiceFactory>();
+            var cultureInfo = new CultureInfo(culture);
+
+            Component.Localization = new GridLocalization(localizationServiceFactory.Create("GridLocalization", cultureInfo), cultureInfo);
 
             return this;
         }
 
+#if MVC2 || MVC3
         /// <summary>
         /// Configures the grid editing settings.
         /// </summary>
@@ -108,6 +133,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+#endif
 
         /// <summary>
         /// Configures the toolbar of the grid.
@@ -157,7 +183,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Configure when to show footer of the grid.
         /// </summary>
-        /// <param name="visible">If it is true, the future is visible.</param>
+        /// <param name="visible">If it is true, the feature is visible.</param>
         public GridBuilder<T> Footer(bool visible)
         {
             Component.Footer = visible;
@@ -191,6 +217,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        public GridBuilder<T> BindTo(IEnumerable dataSource)
+        {           
+            Component.DataSource = new GridCustomGroupingWrapper<T>(dataSource);
+            return this;
+        }        
 
         /// <summary>
         /// Callback for each row.
@@ -772,6 +804,72 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Component.WebService.Enabled = true;
 
             configurator(new GridWebServiceSettingsBuilder(Component.WebService));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the HTML content which the grid should display.
+        /// </summary>
+        /// <param name="value">The action which renders the message when grid has no data.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Grid()
+        ///            .Name("Grid")
+        ///            .NoRecordsTemplate(() => 
+        ///            { 
+        ///               %&gt;
+        ///                     &lt;strong&gt; Hello World!!!;/strong&gt;
+        ///               &lt;% 
+        ///            })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBuilder<T> NoRecordsTemplate(Action value)
+        {
+            Guard.IsNotNull(value, "value");
+
+            Component.NoRecordsTemplate.Content = value;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the empty message template which will be display if the grid has no data.
+        /// </summary>
+        /// <param name="value">The Razor inline message.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  @(Html.Telerik().Grid()
+        ///            .Name("Grid")
+        ///            .NoRecordsTemplate(@&lt;strong&gt; Hello World!!!&lt;/strong&gt;))
+        /// </code>        
+        /// </example>
+        /// <returns></returns>
+        public GridBuilder<T> NoRecordsTemplate(Func<object, object> value)
+        {
+            Guard.IsNotNull(value, "value");
+
+            Component.NoRecordsTemplate.InlineTemplate = value;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the empty message template which will be display if the grid has no data.
+        /// </summary>
+        /// <param name="value">The action which renders the message when grid has no data.</param>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid()
+        ///             .Name("Grid")
+        ///             .NoRecordsTemplate("&lt;strong&gt; Hello World!!!&lt;/strong&gt;")
+        /// %&gt;
+        /// </code>        
+        public GridBuilder<T> NoRecordsTemplate(string value)
+        {
+            Guard.IsNotNull(value, "value");
+
+            Component.NoRecordsTemplate.Html = value;
 
             return this;
         }

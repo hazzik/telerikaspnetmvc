@@ -17,7 +17,7 @@ namespace Telerik.Web.Mvc.Examples
                 new GridColumnSettings
                 {
                     Member = "ProductName",
-                    Width = "130px"
+                    Width = "200px"
                 },
                 new GridColumnSettings
                 {
@@ -30,19 +30,17 @@ namespace Telerik.Web.Mvc.Examples
                     Member = "UnitsInStock",
                     Width = "130px"
                 },
-
-                new GridColumnSettings
-                {
-                    Member = "Discontinued",
-                    Width = "100px"
-                },
-
                 new GridColumnSettings
                 {
                     Member = "LastSupply",
                     Width = "130px",
                     Format = "{0:d}"
                 },
+                new GridColumnSettings
+                {
+                    Member = "Discontinued"
+                },
+
                 new GridCommandColumnSettings
                 {
                     Commands = 

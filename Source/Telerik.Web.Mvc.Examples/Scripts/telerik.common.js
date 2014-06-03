@@ -5,6 +5,11 @@
             document.execCommand('BackgroundImageCache', false, true);
     } catch (e) { }
 
+    var dateCheck = /\d/;
+    var version = parseInt($.browser.version.substring(0, 5).replace('.', ''));
+    var geckoFlicker = $.browser.mozilla && version >= 180 && version <= 191;
+    var dateFormatTokenRegExp = /d{1,4}|M{1,4}|yy(?:yy)?|([Hhmstf])\1*|"[^"]*"|'[^']*'/g;
+
     var $t = $.telerik = {
 
         create: function (query, settings) {
@@ -104,6 +109,8 @@
                 if (status == 'timeout')
                     alert('Error! Server timeout.');
             }
+
+            return prevented;
         },
 
         trigger: function (element, eventName, e) {
@@ -133,14 +140,28 @@
                 var formatter = this.formatters[this.getType(argument)];
                 if (formatter) {
                     var match = reg.exec(s);
-                    argument = formatter(argument, match[2]);
+                    if (match)
+                        argument = formatter(argument, match[2]);
                 }
 
-                s = s.replace(reg, function (m) {
+                s = s.replace(reg, function () {
                     return argument;
                 });
             }
             return s;
+        },
+
+        getElementZIndex: function (element) {
+            var zIndex = 'auto';
+            $(element).parents().andSelf().each(function () {
+                zIndex = $(this).css('zIndex');
+                if (Number(zIndex)) {
+                    zIndex = Number(zIndex) + 1;
+                    return false;
+                }
+            });
+
+            return zIndex;
         },
 
         lastIndexOf: function (value, character) {
@@ -165,8 +186,178 @@
 
         fx: {},
 
-        cultureInfo: {}
+        cultureInfo: {
+            days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+            abbrDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            abbrMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            longTime: 'h:mm:ss tt',
+            longDate: 'dddd, MMMM dd, yyyy',
+            shortDate: 'M/d/yyyy',
+            shortTime: 'h:mm tt',
+            fullDateTime: 'dddd, MMMM dd, yyyy h:mm:ss tt',
+            generalDateShortTime: 'M/d/yyyy h:mm tt',
+            generalDateTime: 'M/d/yyyy h:mm:ss tt',
+            sortableDateTime: "yyyy'-'MM'-'ddTHH':'mm':'ss",
+            universalSortableDateTime: "yyyy'-'MM'-'dd HH':'mm':'ss'Z'",
+            monthYear: 'MMMM, yyyy',
+            monthDay: 'MMMM dd',
+            today: 'today',
+            tomorrow: 'tomorrow',
+            yesterday: 'yesterday',
+            next: 'next',
+            last: 'last',
+            year: 'year',
+            month: 'month',
+            week: 'week',
+            day: 'day',
+            am: 'AM',
+            pm: 'PM',
+            dateSeparator: '/',
+            timeSeparator: ':'
+        }
     };
+
+    /*
+    options = {
+    attr: component.dropDownAttr,
+    effects: component.effects,
+    onClick: function,
+    onItemCreate: function
+    }
+    */
+
+    $t.dropDown = function (options) {
+        $.extend(this, options);
+
+        this.$element = $(new $t.stringBuilder().cat('<div ')
+                                 .catIf(options.attr, options.attr)
+                                 .cat('><ul class="t-reset"></ul></div>')
+                                 .string())
+                                 .addClass("t-popup t-group")
+                                 .hide();
+    }
+
+    $t.dropDown.prototype = {
+        _html: function (data) {
+            var html = new $t.stringBuilder();
+            if (data) {
+                for (var i = 0, length = data.length; i < length; i++) {
+
+                    var dataItem = data[i];
+
+                    var e = {
+                        html: dataItem.Text || dataItem,
+                        dataItem: dataItem
+                    };
+
+                    if (this.onItemCreate) this.onItemCreate(e);
+
+                    html.cat('<li class="t-item">').cat(e.html).cat('</li>');
+                }
+            }
+            return html.string();
+        },
+
+        open: function (position) {
+            if (this.onOpen) this.onOpen();
+
+            if (this.isOpened() || !this.$items) return;
+
+            var $element = this.$element;
+            var selector = '.t-reset > .t-item';
+
+            $element.css('overflowY', 'auto');
+            $element.css('width', position.outerWidth ? position.outerWidth - 2 : 0);
+
+            $element.delegate(selector, 'mouseenter', $t.hover)
+                    .delegate(selector, 'mouseleave', $t.leave)
+                    .delegate(selector, 'click',
+                        $.proxy(function (e) {
+                            if (this.onClick)
+                                this.onClick($.extend(e, { item: $(e.target).closest('.t-item')[0] }));
+                        }, this))
+                        .appendTo(document.body);
+
+            var elementPosition = position.offset;
+            elementPosition.top += position.outerHeight;
+
+            $t.fx._wrap($element).css($.extend({
+                position: 'absolute',
+                zIndex: position.zIndex
+            }, elementPosition));
+
+            if (geckoFlicker)
+                $element.css('overflow', 'hidden');
+
+            $t.fx.play(this.effects, $element, { direction: 'bottom' }, $.proxy(function () {
+                if (geckoFlicker)
+                    $element.css('overflow', 'auto');
+
+                var $selectedItems = this.$items.filter('.t-state-selected')
+                if ($selectedItems.length) this.scrollTo($selectedItems[0]);
+            }, this));
+        },
+
+        close: function () {
+            if (!this.isOpened()) return;
+
+            var $element = this.$element;
+
+            if (geckoFlicker)
+                $element.css('overflow', 'hidden');
+
+            $t.fx.rewind(this.effects, $element, { direction: 'bottom' }, function () {
+                if (geckoFlicker)
+                    $element.css('overflow', 'auto')
+
+                $element.parent().remove();
+            });
+        },
+
+        dataBind: function (data) {
+            data = data || [];
+
+            var $element = this.$element;
+            var elementHeight = $element[0].style.height;
+            var height = elementHeight && elementHeight != 'auto' ? $element[0].style.height : '200px';
+
+            var $items = this.$items = $(this._html(data));
+            $element.find('> ul').html($items);
+            $element.css('height', $items.length > 10 ? height : 'auto');
+        },
+
+        highlight: function (li) {
+            return $(li).addClass('t-state-selected')
+                        .siblings()
+                        .removeClass('t-state-selected')
+                        .end()
+                        .index();
+        },
+
+        isOpened: function () {
+            return this.$element.is(':visible');
+        },
+
+        scrollTo: function (item) {
+
+            if (!item) return;
+
+            var itemOffsetTop = item.offsetTop;
+            var itemOffsetHeight = item.offsetHeight;
+
+            var dropDown = this.$element[0];
+            var dropDownScrollTop = dropDown.scrollTop;
+            var dropDownOffsetHeight = dropDown.clientHeight;
+            var bottomDistance = itemOffsetTop + itemOffsetHeight;
+
+            dropDown.scrollTop = dropDownScrollTop > itemOffsetTop
+                                    ? itemOffsetTop
+                                    : bottomDistance > (dropDownScrollTop + dropDownOffsetHeight)
+                                    ? bottomDistance - dropDownOffsetHeight
+                                    : dropDownScrollTop;
+        }
+    }
 
     $t.datetime = function () {
         if (arguments.length == 0)
@@ -202,13 +393,15 @@
 
         firstDayOfMonth: function (date) {
             return new $t.datetime(0)
-                        .hours(0)
-                        .minutes(0)
+                        .hours(date.hours())
+                        .minutes(date.minutes())
+                        .seconds(date.seconds())
+                        .milliseconds(date.milliseconds())
                         .year(date.year(), date.month(), 1);
         },
 
         firstVisibleDay: function (date) {
-            var firstVisibleDay = new $t.datetime(date.year(), date.month(), 0);
+            var firstVisibleDay = new $t.datetime(date.year(), date.month(), 0, date.hours(), date.minutes(), date.seconds(), date.milliseconds());
             while (firstVisibleDay.day() != 0) {
                 $t.datetime.modify(firstVisibleDay, -1 * $t.datetime.msPerDay)
             }
@@ -220,6 +413,284 @@
             var resultDate = new $t.datetime(date.time() + value);
             var tzOffsetDiff = resultDate.timeOffset() - tzOffsetBefore;
             date.time(resultDate.time() + tzOffsetDiff * $t.datetime.msPerMinute);
+        },
+
+        pad: function (value) {
+            if (value < 10)
+                return '0' + value;
+            return value;
+        },
+
+        standardFormat: function (format) {
+            var l = $t.cultureInfo;
+
+            var standardFormats = {
+                d: l.shortDate,
+                D: l.longDate,
+                F: l.fullDateTime,
+                g: l.generalDateShortTime,
+                G: l.generalDateTime,
+                m: l.monthDay,
+                M: l.monthDay,
+                s: l.sortableDateTime,
+                t: l.shortTime,
+                T: l.longTime,
+                u: l.universalSortableDateTime,
+                y: l.monthYear,
+                Y: l.monthYear
+            };
+
+            return standardFormats[format];
+        },
+
+        format: function (date, format) {
+            var l = $t.cultureInfo;
+
+            var d = date.getDate();
+            var day = date.getDay();
+            var M = date.getMonth();
+            var y = date.getFullYear();
+            var h = date.getHours();
+            var m = date.getMinutes();
+            var s = date.getSeconds();
+            var f = date.getMilliseconds();
+            var pad = $t.datetime.pad;
+
+            var dateFormatters = {
+                d: d,
+                dd: pad(d),
+                ddd: l.abbrDays[day],
+                dddd: l.days[day],
+
+                M: M + 1,
+                MM: pad(M + 1),
+                MMM: l.abbrMonths[M],
+                MMMM: l.months[M],
+
+                yy: pad(y % 100),
+                yyyy: y,
+
+                h: h % 12 || 12,
+                hh: pad(h % 12 || 12),
+                H: h,
+                HH: pad(h),
+
+                m: m,
+                mm: pad(m),
+
+                s: s,
+                ss: pad(s),
+
+                f: Math.floor(f / 100),
+                ff: Math.floor(f / 10),
+                fff: f,
+
+                tt: h < 12 ? l.am : l.pm
+            };
+
+            format = format || 'G';
+            format = $t.datetime.standardFormat(format) ? $t.datetime.standardFormat(format) : format;
+
+            return format.replace(dateFormatTokenRegExp, function (match) {
+                return match in dateFormatters ? dateFormatters[match] : match.slice(1, match.length - 1);
+            });
+        },
+
+        parse: function (options) {
+            var value = options.value;
+            var format = options.format;
+
+
+            format = $t.datetime.standardFormat(format) ? $t.datetime.standardFormat(format) : format;
+            if (dateCheck.test(value))
+                return $t.datetime.parseMachineDate({
+                    value: value,
+                    format: format,
+                    shortYearCutOff: options.shortYearCutOff,
+                    baseDate: options.baseDate,
+                    AM: $t.cultureInfo.am,
+                    PM: $t.cultureInfo.pm
+                });
+
+            return $t.datetime.parseByToken ? $t.datetime.parseByToken(value, options.today) : null;
+        },
+
+        parseMachineDate: function (options) {
+
+            var AM = options.AM;
+            var PM = options.PM;
+            var value = options.value;
+            var format = options.format;
+            var baseDate = options.baseDate;
+            var shortYearCutOff = options.shortYearCutOff || 30;
+
+            var year = -1;
+            var month = -1;
+            var day = -1;
+            var hours = 0;
+            var minutes = 0;
+            var seconds = 0;
+            var milliseconds = 0;
+            var isAM;
+            var isPM;
+            var literal = false;
+
+            // Returns count of the format character in the date format string
+            var lookAhead = function (match) {
+                var index = 0;
+                while (Matches(match)) {
+                    index++;
+                    formatPosition++
+                }
+                return index;
+            };
+            var lookForLiteral = function () {
+                var matches = Matches("'");
+                if (matches)
+                    formatPosition++;
+                return matches;
+            };
+            var Matches = function (match) {
+                return (formatPosition + 1 < format.length && format.charAt(formatPosition + 1) == match);
+            }
+            // Extract a number from the string value
+            var getNumber = function (size) {
+                var digits = new RegExp('^\\d{1,' + size + '}');
+                var num = value.substr(currentTokenIndex).match(digits);
+                if (num) {
+                    currentTokenIndex += num[0].length;
+                    return parseInt(num[0], 10);
+                } else {
+                    return -1;
+                }
+            };
+            // Extract a name from the string value and convert to an index
+            var getName = function (names) {
+                for (var i = 0; i < names.length; i++) {
+                    if (value.substr(currentTokenIndex, names[i].length) == names[i]) {
+                        currentTokenIndex += names[i].length;
+                        return i + 1;
+                    }
+                }
+                return -1;
+            };
+
+            var checkLiteral = function () {
+                if (value.charAt(currentTokenIndex) == format.charAt(formatPosition)) {
+                    currentTokenIndex++;
+                }
+            };
+
+            var normalizeTime = function (value) {
+                return value === -1 ? 0 : value;
+            }
+
+            var count = 0;
+            var currentTokenIndex = 0;
+            var valueLength = value.length;
+
+            for (var formatPosition = 0, flength = format.length; formatPosition < flength; formatPosition++) {
+                if (currentTokenIndex == valueLength) break;
+                if (literal) {
+                    checkLiteral();
+                    if (format.charAt(formatPosition) == "'")
+                        literal = false;
+                } else {
+                    switch (format.charAt(formatPosition)) {
+                        case 'd':
+                            count = lookAhead('d');
+                            day = count <= 1 ? getNumber(2) : getName($t.cultureInfo[count == 3 ? 'days' : 'abbrDays']);
+                            break;
+                        case 'M':
+                            count = lookAhead('M');
+                            month = count <= 1 ? getNumber(2) : getName($t.cultureInfo[count == 3 ? 'months' : 'abbrMonths']);
+                            break;
+                        case 'y':
+                            count = lookAhead('y');
+                            year = getNumber(count <= 1 ? 2 : 4);
+                            break;
+                        case 'H': // 0-24 hours
+                            count = lookAhead('H');
+                            hours = normalizeTime(getNumber(2));
+                            break;
+                        case 'h': // 0-12 hours
+                            lookAhead('h')
+                            hours = normalizeTime(getNumber(2));
+                            break;
+                        case 'm':
+                            lookAhead('m');
+                            minutes = normalizeTime(getNumber(2));
+                            break;
+                        case 's':
+                            lookAhead('s');
+                            seconds = normalizeTime(getNumber(2));
+                            break;
+                        case 'f':
+                            count = lookAhead('f');
+                            milliseconds = normalizeTime(getNumber(count <= 0 ? 1 : count + 1));
+                            break;
+                        case 't': // AM/PM or A/P
+                            count = lookAhead('t');
+                            AM = count > 0 ? AM : 'a';
+                            PM = count > 0 ? PM : 'p';
+
+                            var subValue = value.substr(currentTokenIndex).toLowerCase();
+                            isAM = subValue.indexOf(AM.toLowerCase()) != -1;
+                            isPM = subValue.indexOf(PM.toLowerCase()) != -1;
+
+                            currentTokenIndex += isPM ? PM.length : isAM ? AM.length : 0;
+                            break;
+                        case "'":
+                            checkLiteral();
+                            literal = true;
+                            break;
+                        default:
+                            checkLiteral();
+                    }
+                }
+            }
+
+            var date = new $t.datetime();
+
+            if (year != -1 && year < 100)
+                year += date.year() - date.year() % 100 +
+                                (year <= shortYearCutOff ? 0 : -100);
+
+            hours = (isPM && hours < 12)
+                  ? hours + 12
+                  : hours == 12 && isAM
+                  ? 0
+                  : hours;
+
+            if (baseDate == undefined) {
+                if (year == -1) year = date.year();
+
+                date = new $t.datetime(year, month - 1, day, hours, minutes, seconds, milliseconds);
+
+                if (date.year() != year || date.month() != (month - 1) || date.date() != day)
+                    return null;
+
+            } else {
+                date = baseDate.year(year != -1 ? year : baseDate.year())
+                               .month(month != -1 ? month - 1 : baseDate.month())
+                               .date(day != -1 ? day : baseDate.date())
+                               .hours(hours)
+                               .minutes(minutes)
+                               .seconds(seconds)
+                               .milliseconds(milliseconds);
+
+
+
+                if ((year != -1 && date.year() != year)
+                 || (month != -1 && date.month() != (month - 1))
+                 || (day != -1 && date.date() != day)
+                 || (hours != -1 && date.hours() != hours)
+                 || (minutes != -1 && date.minutes() != minutes)
+                 || (seconds != -1 && date.seconds() != seconds)
+                 || (milliseconds != -1 && date.milliseconds() != milliseconds))
+                    return null;
+            }
+            return date;
         }
     });
 
@@ -546,11 +1017,15 @@
 
     // fix the MVC validation code for IE (document.getElementsByName matches `id` and `name` instead of just `name`). http://www.w3.org/TR/REC-DOM-Level-1/level-one-html.html#ID-71555259
     $(document).ready(function () {
-        if ($.browser.msie && typeof (Sys) != 'undefined' && typeof (Sys.Mvc) != 'undefined' && typeof (Sys.Mvc.FormContext) != 'undefined')
-            Sys.Mvc.FormContext._getFormElementsWithName = function (formElement, name) {
-                return $.grep(formElement.getElementsByTagName('*'), function(element) {
+        if ($.browser.msie && typeof (Sys) != 'undefined' && typeof (Sys.Mvc) != 'undefined' && typeof (Sys.Mvc.FormContext) != 'undefined') {
+            var patch = function (formElement, name) {
+                return $.grep(formElement.getElementsByTagName('*'), function (element) {
                     return element.name == name;
                 });
-            }
+            };
+
+            Sys.Mvc.FormContext.$F = Sys.Mvc.FormContext._getFormElementsWithName = patch;
+        }
+
     });
 })(jQuery);

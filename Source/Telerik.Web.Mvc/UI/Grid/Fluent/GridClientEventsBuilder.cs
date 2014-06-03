@@ -329,7 +329,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Defines the inline handler of the OnColumnResize client-side event.
         /// </summary>
-        /// <param name="onLoadInlineCode">The action defining the inline handler.</param>
+        /// <param name="onColumnResizeInlineCode">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().Grid(Model)
@@ -358,7 +358,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         ///  Defines the name of the JavaScript function that will handle the the OnColumnResize client-side event.
         /// </summary>
-        /// <param name="onLoadHandlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <param name="onColumnResizeHandlerName">The name of the JavaScript function that will handle the event.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;%= Html.Telerik().Grid(Model)
@@ -372,6 +372,56 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Guard.IsNotNullOrEmpty(onColumnResizeHandlerName, "onColumnResizeHandlerName");
 
             events.OnColumnResize.HandlerName = onColumnResizeHandlerName;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnColumnReorder client-side event.
+        /// </summary>
+        /// <param name="onColumnReorderInlineCode">The action defining the inline handler.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Grid(Model)
+        ///            .Name("Grid")
+        ///            .ClientEvents(events => events.OnColumnReorder(() =>
+        ///            {
+        ///                 %&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;%
+        ///            }))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridClientEventsBuilder OnColumnReorder(Action onColumnReorderInlineCode)
+        {
+            Guard.IsNotNull(onColumnReorderInlineCode, "onColumnReorderInlineCode");
+
+            events.OnColumnReorder.InlineCode = onColumnReorderInlineCode;
+
+            return this;
+        }
+
+        /// <summary>
+        ///  Defines the name of the JavaScript function that will handle the the OnColumnResize client-side event.
+        /// </summary>
+        /// <param name="onColumnReorderHandlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .ClientEvents(events => events.OnColumnReorder("onColumnReorder"))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridClientEventsBuilder OnColumnReorder(string onColumnReorderHandlerName)
+        {
+            Guard.IsNotNullOrEmpty(onColumnReorderHandlerName, "onColumnReorderHandlerName");
+
+            events.OnColumnReorder.HandlerName = onColumnReorderHandlerName;
 
             return this;
         }
@@ -435,7 +485,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         [Obsolete("Use OnRowSelect instead")]
         public GridClientEventsBuilder OnRowSelected(Action onRowSelectedInlineCode)
         {
-            return OnRowSelected(onRowSelectedInlineCode);
+            return OnRowSelect(onRowSelectedInlineCode);
         }
 
         /// <summary>

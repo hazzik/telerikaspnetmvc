@@ -10,7 +10,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Reflection.Emit;
     using System.Web;
 
-    public class AuthorizeAttributeBuilder : IAuthorizeAttributeBuilder
+    internal class AuthorizeAttributeBuilder : IAuthorizeAttributeBuilder
     {
         private static readonly Type authorizeAttributeType = typeof(IAuthorizeAttribute);
         private static readonly ModuleBuilder module = CreateModuleBuilder();
@@ -21,16 +21,20 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
             string typeName = "$" + parentType.FullName.Replace(".", string.Empty);
 
-            TypeBuilder typeBuilder = module.DefineType(typeName, TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, parentType, new[] { authorizeAttributeType });
-            typeBuilder.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
-            typeBuilder.AddInterfaceImplementation(authorizeAttributeType);
+            Type type = module.GetType(typeName);
 
-            WriteProperty(parentType, typeBuilder, "Order", typeof(int));
-            WriteProperty(parentType, typeBuilder, "Roles", typeof(string));
-            WriteProperty(parentType, typeBuilder, "Users", typeof(string));
-            WriteIsAuthorized(parentType, typeBuilder);
+            if (type == null)
+            { 
+                TypeBuilder typeBuilder = module.DefineType(typeName, TypeAttributes.Class | TypeAttributes.Public | TypeAttributes.AutoClass | TypeAttributes.AnsiClass | TypeAttributes.BeforeFieldInit, parentType, new[] { authorizeAttributeType });
+                typeBuilder.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
+                typeBuilder.AddInterfaceImplementation(authorizeAttributeType);
 
-            Type type = typeBuilder.CreateType();
+                WriteProperty(parentType, typeBuilder, "Order", typeof(int));
+                WriteProperty(parentType, typeBuilder, "Roles", typeof(string));
+                WriteProperty(parentType, typeBuilder, "Users", typeof(string));
+                WriteIsAuthorized(parentType, typeBuilder);
+                type = typeBuilder.CreateType();
+            }
 
             return type.GetConstructor(Type.EmptyTypes);
         }
@@ -38,7 +42,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         private static void WriteProperty(Type parentType, TypeBuilder builder, string name, Type type)
         {
             const BindingFlags BindingFlag = BindingFlags.Public | BindingFlags.Instance;
-            const MethodAttributes MethodAttribute = MethodAttributes.Public | MethodAttributes.Virtual;
+            const MethodAttributes MethodAttribute = MethodAttributes.Public | MethodAttributes.Virtual | MethodAttributes.NewSlot;
 
             string getName = "get_" + name;
             string setName = "set_" + name;

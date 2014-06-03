@@ -16,7 +16,8 @@ namespace Telerik.Web.Mvc.UI
 
         string RouteKey
         {
-            get;
+            get; 
+            set;
         }
     }
     
@@ -25,7 +26,7 @@ namespace Telerik.Web.Mvc.UI
     {
 
         object GetValue(T dataItem);
-#if MVC2
+#if MVC2 || MVC3
         string HiddenFieldHtml(HtmlHelper<T> htmlHelper);
 #endif
     }

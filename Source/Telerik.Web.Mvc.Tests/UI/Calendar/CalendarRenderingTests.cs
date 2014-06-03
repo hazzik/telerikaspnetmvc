@@ -12,12 +12,9 @@
         private readonly Calendar calendar;
         private readonly Mock<ICalendarHtmlBuilder> tagBuilder;
         private readonly Mock<IHtmlNode> rootTag;
-        Mock<TextWriter> textWriter;
-
+        
         public CalendarRenderingTests()
         {
-            textWriter = new Mock<TextWriter>();
-
             tagBuilder = new Mock<ICalendarHtmlBuilder>();
             rootTag = new Mock<IHtmlNode>();
             rootTag.SetupGet(t => t.Children).Returns(() => new List<IHtmlNode>());
@@ -35,23 +32,6 @@
             tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
             tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
             tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
-
-            calendar.Render();
-
-            tagBuilder.Verify();
-        }
-
-        [Fact]
-        public void Render_should_output_Navigation_header_if_date_is_range()
-        {
-            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
-
-            tagBuilder.Setup(r => r.NavigationTag()).Verifiable();
 
             calendar.Render();
 
@@ -292,7 +272,7 @@
             calendar.MinDate = DateTime.Now.AddMonths(1);
             calendar.Value = DateTime.Now;
 
-            Assert.Throws(typeof(ArgumentOutOfRangeException), () => calendar.Render());
+            Assert.Throws<ArgumentOutOfRangeException>(() => calendar.VerifySettings());
         }
 
         [Fact]
@@ -318,7 +298,7 @@
             calendar.MaxDate = date;
             calendar.MinDate = date.AddMonths(1);
 
-            Assert.Throws(typeof(ArgumentException), () => calendar.Render());
+            Assert.Throws<ArgumentException>(() => calendar.VerifySettings());
         }
 
         [Fact]
@@ -328,7 +308,7 @@
             calendar.MinDate = date;
             calendar.MaxDate = date.AddMonths(-1);
 
-            Assert.Throws(typeof(ArgumentException), () => calendar.Render());
+            Assert.Throws <ArgumentException>(() => calendar.VerifySettings());
         }
 
 

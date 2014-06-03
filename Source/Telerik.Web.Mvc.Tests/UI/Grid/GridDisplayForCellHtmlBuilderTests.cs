@@ -1,4 +1,4 @@
-﻿#if MVC2
+﻿#if MVC2 || MVC3
 namespace Telerik.Web.Mvc.UI.Html.Tests
 {
     using Telerik.Web.Mvc.UI.Tests;

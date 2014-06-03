@@ -24,7 +24,7 @@
 
         grid.filterBy = grid.filterExpr();
 
-        $('> .t-grid-content', grid.element).bind('scroll', function() {
+        $('> .t-grid-content', grid.element).bind('scroll', function () {
             grid.hideFilter();
         });
 
@@ -33,7 +33,7 @@
         });
 
         grid.$header.find('.t-grid-filter').click($.proxy(grid.showFilter, grid))
-            .hover(function() {
+            .hover(function () {
                 $(this).toggleClass('t-state-hover');
             });
     }
@@ -65,11 +65,11 @@
 
         createTypeSpecificInput: function (html, column, fieldId, value) {
             if (column.type == 'Date') {
-                html.cat('<div class="t-widget t-datepicker">')
+                html.cat('<div class="t-widget t-datepicker"><div class="t-picker-wrap">')
 	                .cat('<input class="t-input" id="').cat(fieldId).cat('" type="text" value="" />')
-	                .cat('<label class="t-icon t-icon-calendar" for="')
+	                .cat('<span class="t-select"><label class="t-icon t-icon-calendar" for="')
 	                .cat(fieldId)
-	                .cat('" title="').cat(this.localization.filterOpenPopupHint).cat('" /></div>');
+	                .cat('" title="').cat(this.localization.filterOpenPopupHint).cat('" /></span></div></div>');
             } else if (column.type == 'Boolean') {
                 html.cat('<div><input type="radio" style="width:auto;display:inline" id="').cat(fieldId + value)
 				    .cat('" name="').cat(fieldId)
@@ -152,19 +152,19 @@
                         })
                         .end()
                         .find('.t-numerictextbox')
-                        .each(function() {
+                        .each(function () {
                             $(this).tTextBox({ type: 'numeric', minValue: null, maxValue: null, numFormat: '', groupSeparator: '' });
                         })
                         .end()
                         .appendTo(this.element);
         },
 
-        showFilter: function(e) {
+        showFilter: function (e) {
             e.stopPropagation();
 
             var $element = $(e.target).closest('.t-grid-filter');
-            
-            this.hideFilter(function() {
+
+            this.hideFilter(function () {
                 return this.parentNode != $element[0];
             });
 
@@ -188,7 +188,7 @@
                         })
                         .find('.t-filter-button').click($.proxy(this.filterClick, this)).end()
                         .find('.t-clear-button').click($.proxy(this.clearClick, this)).end()
-                        .find('input[type=text]').keyup($.proxy(function(e) {
+                        .find('input[type=text]').keyup($.proxy(function (e) {
                             if (e.keyCode == 13) this.filterClick(e);
                         }, this)).end();
 
@@ -197,16 +197,16 @@
 
             // position filtering menu
             var top = 0;
-            
-            $(this.element).find('> .t-grouping-header, > .t-grid-toolbar').add(this.$header).each(function() {
+
+            $(this.element).find('> .t-grouping-header, > .t-grid-toolbar').add(this.$header).each(function () {
                 top += this.offsetHeight;
             });
-            
+
             var position = { top: top };
-            
+
             var width = -this.$headerWrap.scrollLeft() - 1;
 
-            $element.parent().add($element.parent().prevAll('th')).each(function() {
+            $element.parent().add($element.parent().prevAll('th')).each(function () {
                 if ($(this).css('display') != 'none')
                     width += this.offsetWidth;
             });
@@ -219,7 +219,7 @@
             if (left + outerWidth > this.$header.outerWidth())
                 left = width - outerWidth + 1;
 
-            if ($(this.element).hasClass('t-grid-rtl'))
+            if ($(this.element).closest('.t-rtl').length)
                 position['right'] = left + ($.browser.mozilla || $.browser.safari ? 18 : 0);
             else
                 position['left'] = left;
@@ -234,7 +234,7 @@
 
             $('.t-grid .t-animation-container')
                 .find('.t-datepicker')
-                .each(function() { $(this).data('tDatePicker').hidePopup(); })
+                .each(function () { $(this).data('tDatePicker').hidePopup(); })
                 .end()
                 .find('.t-filter-options')
                 .filter(filterCallback)
@@ -243,23 +243,29 @@
                 });
         },
 
-        clearClick: function(e) {
+        clearClick: function (e) {
             e.preventDefault();
             var $element = $(e.target);
             var column = $element.closest('.t-animation-container').data('column');
             column.filters = null;
 
             $element.parent()
-                    .find('input, select')
-                    .removeAttr('checked')
-                    .removeClass('t-state-error')
-                    .not(':radio')
-                    .val('');
+                .find('input')
+                .removeAttr('checked')
+                .removeClass('t-state-error')
+                .not(':radio')
+                .val('')
+                .end()
+                .end()
+                .find('select')
+                .removeClass('t-state-error')
+                .find('option:first')
+                .attr('selected', 'selected');
 
             this.filter(this.filterExpr());
         },
 
-        filterClick: function(e) {
+        filterClick: function (e) {
             e.preventDefault();
             var $element = $(e.target);
             var column = $element.closest('.t-animation-container').data('column');
@@ -284,7 +290,7 @@
                     return true;
                 }
 
-                var operator = $input.prev('select').val() || $input.parent().prev('select').val();
+                var operator = $input.prev('select').val() || $input.parent().prev('select').val() || $input.parent().parent().prev('select').val();
                 if (value != this.localization.filterSelectValue)
                     column.filters.push({ operator: operator, value: value });
             }, this));
@@ -319,7 +325,7 @@
                     if (value.indexOf('Date(') > -1)
                         date = new Date(parseInt(value.replace(/^\/Date\((.*?)\)\/$/, '$1')));
                     else
-                        date = $t.datetime.parse(value, getFormat(column)).toDate();
+                        date = $t.datetime.parse({ value: value, format: getFormat(column) }).toDate();
 
                     return "datetime'" + $t.formatString('{0:yyyy-MM-ddTHH-mm-ss}', date) + "'";
             }
@@ -329,28 +335,20 @@
 
         filterExpr: function () {
             var result = [];
-            $.each(this.columns, $.proxy(function (_, column) {
+
+            for (var columnIndex = 0; columnIndex < this.columns.length; columnIndex++) {
+                var column = this.columns[columnIndex];
                 if (column.filters)
-                    $.each(column.filters, $.proxy(function (_, filter) {
-                        var expr = new $t.stringBuilder();
-                        var value = this.encodeFilterValue(column, filter.value);
-                        if (/startswith|substringof|endswith/.test(filter.operator)) {
-                            expr.cat(filter.operator)
-                                .cat('(')
-                                .cat(column.member)
-                                .cat(',')
-                                .cat(value)
-                                .cat(')');
-                        } else {
-                            expr.cat(column.member)
+                    for (var filterIndex = 0; filterIndex < column.filters.length; filterIndex++) {
+                        var filter = column.filters[filterIndex];
+                        result.push(new $t.stringBuilder()
+                            .cat(column.member)
                             .cat('~')
                             .cat(filter.operator)
                             .cat('~')
-                            .cat(value);
-                        }
-                        result.push(expr.string());
-                    }, this));
-            }, this));
+                            .cat(this.encodeFilterValue(column, filter.value)).string());
+                    }
+            }
 
             return result.join('~and~');
         },
@@ -360,7 +358,7 @@
             this.filterBy = filterBy;
 
             if (this.isAjax()) {
-                this.$columns().each($.proxy(function(index, element) {
+                this.$columns().each($.proxy(function (index, element) {
                     $('.t-grid-filter', element).toggleClass('t-active-filter', !!this.columns[index].filters);
                 }, this));
 

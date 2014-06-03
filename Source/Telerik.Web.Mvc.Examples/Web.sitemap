@@ -8,6 +8,8 @@
       <siteMapNode controller="Calendar" action="Globalization" title="Globalization" />
       <siteMapNode controller="Calendar" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="Calendar" action="ClientSideApi" title="Client-side Api" />
+      <siteMapNode controller="Calendar" action="Accessibility" title="Accessibility" />
+      <siteMapNode controller="Calendar" action="RtlSupport" title="RTL support" />
     </siteMapNode>
     <siteMapNode title="ComboBox">
       <siteMapNode controller="ComboBox" action="FirstLook" title="First Look" />
@@ -22,6 +24,8 @@
       <siteMapNode controller="ComboBox" action="ClientSideApi" title="Client-side API" />
       <siteMapNode controller="ComboBox" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="ComboBox" action="ClientSideBinding" title="Client-side Binding" />
+      <siteMapNode controller="ComboBox" action="Accessibility" title="Accessibility" />
+      <siteMapNode controller="ComboBox" action="RtlSupport" title="RTL support" />
     </siteMapNode>
     <siteMapNode title="DatePicker">
       <siteMapNode controller="DatePicker" action="FirstLook" title="First Look" />
@@ -33,6 +37,8 @@
       <siteMapNode controller="DatePicker" action="AnimationEffects" title="Animation Effects" />
       <siteMapNode controller="DatePicker" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="DatePicker" action="ClientSideApi" title="Client-side Api" />
+      <siteMapNode controller="DatePicker" action="Accessibility" title="Accessibility" />
+      <siteMapNode controller="DatePicker" action="RtlSupport" title="RTL support" />
     </siteMapNode>
     <siteMapNode title="Editor">
       <siteMapNode controller="Editor" action="FirstLook" title="First Look" />
@@ -44,6 +50,8 @@
       <siteMapNode controller="Editor" action="Snippets" title="Snippets" />
       <siteMapNode controller="Editor" action="CustomTools" title="Custom Tools" />
       <siteMapNode controller="Editor" action="Localization" title="Localization" />
+      <siteMapNode controller="Editor" action="Accessibility" title="Accessibility" />
+      <siteMapNode controller="Editor" action="RtlSupport" title="RTL support" />
       <siteMapNode controller="Editor" action="EditorInGrid" title="Editor In Grid" />
     </siteMapNode>
     <siteMapNode title="Grid">
@@ -52,7 +60,8 @@
         <siteMapNode controller="Grid" action="ServerBinding" title="Server Binding" />
         <siteMapNode controller="Grid" action="AjaxBinding" title="Ajax Binding" />
         <siteMapNode controller="Grid" action="WebService" title="Web Service Binding" />
-        <siteMapNode controller="Grid" action="CustomBinding" title="Custom Binding" />
+        <siteMapNode controller="Grid" action="CustomBinding" title="Custom Ajax Binding" />
+        <siteMapNode controller="Grid" action="CustomServerBinding" title="Custom Server Binding" />
         <siteMapNode controller="Grid" action="ExternalServiceTwitter" title="Twitter Binding" />
         <siteMapNode controller="Grid" action="ExternalServiceFacebook" title="Facebook Binding" />
       </siteMapNode>
@@ -76,6 +85,8 @@
         <siteMapNode controller="Grid" action="TemplatesClientSide" title="Client Templates" />
         <siteMapNode controller="Grid" action="ServerEditTemplates" title="Server Edit Templates" />
         <siteMapNode controller="Grid" action="ClientEditTemplates" title="Client Edit Templates" />
+        <siteMapNode controller="Grid" action="CustomToolBar" title="Custom ToolBar Template" />
+        <siteMapNode controller="Grid" action="HeaderFooterTemplates" title="Header &#38; Footer Templates" />
       </siteMapNode>
       <siteMapNode title="Selection">
         <siteMapNode controller="Grid" action="SelectionServerSide" title="Server Selection" />
@@ -86,13 +97,15 @@
         <siteMapNode controller="Grid" action="CheckBoxesAjax" title="Ajax CheckBoxes" />
       </siteMapNode>
       <siteMapNode controller="Grid" action="ColumnResizing" title="Column Resizing" />
+      <siteMapNode controller="Grid" action="ColumnReordering" title="Column Reordering" />
       <siteMapNode controller="Grid" action="ColumnSettings" title="Column Settings" />
       <siteMapNode controller="Grid" action="AutoGenerateColumns" title="Auto Generated Columns" />
-      <siteMapNode controller="Grid" action="CustomRoute" title="Custom Route" />
+      <siteMapNode controller="Grid" action="CustomRoute" title="Custom Route" />      
       <siteMapNode controller="Grid" action="CustomCommand" title="Custom Command (CSV Export)" />
       <siteMapNode controller="Grid" action="Localization" title="Localization" />
       <siteMapNode controller="Grid" action="CustomFormatting" title="Custom Formatting" />
       <siteMapNode controller="Grid" action="ClientSideEvents" title="Client-side Events" />
+      <siteMapNode controller="Grid" action="Accessibility" title="Accessibility" />
       <siteMapNode controller="Grid" action="RtlSupport" title="RTL support" />
     </siteMapNode>
     <siteMapNode title="Menu">
@@ -104,6 +117,7 @@
       <siteMapNode controller="Menu" action="AnimationEffects" title="Animation Effects" />
       <siteMapNode controller="Menu" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="Menu" action="ClientSideApi" title="Client-side API" />
+      <siteMapNode controller="Menu" action="Accessibility" title="Accessibility" />
       <siteMapNode controller="Menu" action="Rtlsupport" title="RTL support" />
       <siteMapNode controller="Menu" action="Sprites" title="Sprites" />
     </siteMapNode>
@@ -115,6 +129,8 @@
       <siteMapNode controller="NumericTextBox" action="Globalization" title="Globalization" />
       <siteMapNode controller="NumericTextBox" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="NumericTextBox" action="ClientSideApi" title="Client-side Api" />
+      <siteMapNode controller="NumericTextBox" action="Accessibility" title="Accessibility" />
+      <siteMapNode controller="NumericTextBox" action="RtlSupport" title="RTL support" />
     </siteMapNode>
     <siteMapNode title="PanelBar">
       <siteMapNode controller="PanelBar" action="FirstLook" title="First Look"/>
@@ -125,6 +141,7 @@
       <siteMapNode controller="PanelBar" action="AnimationEffects" title="Animation Effects" />
       <siteMapNode controller="PanelBar" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="PanelBar" action="ClientSideApi" title="Client-side API" />
+      <siteMapNode controller="PanelBar" action="Accessibility" title="Accessibility" />
       <siteMapNode controller="PanelBar" action="RtlSupport" title="RTL support" />
       <siteMapNode controller="PanelBar" action="Sprites" title="Sprites" />
     </siteMapNode>
@@ -136,6 +153,7 @@
       <siteMapNode controller="TabStrip" action="AnimationEffects" title="Animation Effects" />
       <siteMapNode controller="TabStrip" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="TabStrip" action="ClientSideApi" title="Client-side API" />
+      <siteMapNode controller="TabStrip" action="Accessibility" title="Accessibility" />
       <siteMapNode controller="TabStrip" action="RtlSupport" title="RTL support" />
       <siteMapNode controller="TabStrip" action="Sprites" title="Sprites" />
     </siteMapNode>
@@ -151,6 +169,8 @@
       <siteMapNode controller="TreeView" action="ClientSideEvents" title="Client-side Events" />
       <siteMapNode controller="TreeView" action="ClientSideApi" title="Client-side API" />
       <siteMapNode controller="TreeView" action="ClientSideBinding" title="Client-side Binding" />
+      <siteMapNode controller="TreeView" action="Accessibility" title="Accessibility" />
+      <siteMapNode controller="TreeView" action="RtlSupport" title="RTL support" />
     </siteMapNode>
     <siteMapNode title="Window">
       <siteMapNode controller="Window" action="FirstLook" title="First Look"/>
@@ -158,6 +178,8 @@
       <siteMapNode controller="Window" action="ClientSideEvents" title="Client-side Events"/>
       <siteMapNode controller="Window" action="ClientSideApi" title="Client-side API"/>
       <siteMapNode controller="Window" action="LoadingExternalPage" title="Loading External Page"/>
+      <siteMapNode controller="Window" action="Accessibility" title="Accessibility"/>
+      <siteMapNode controller="Window" action="RtlSupport" title="RTL support"/>
     </siteMapNode>
   </siteMapNode>
 </siteMap>

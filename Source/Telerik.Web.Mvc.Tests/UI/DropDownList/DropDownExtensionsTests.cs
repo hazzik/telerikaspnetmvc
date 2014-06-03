@@ -20,14 +20,17 @@
         }
 
         [Fact]
-        public void PrepareItemsAndDefineSelectedIndex_should_preserve_last_selected_item()
+        public void PrepareItemsAndDefineSelectedIndex_should_preserve_last_selected_item_even_selectedIndex_is_set()
         {
+            dropdownlist.SelectedIndex = 3;
+
             dropdownlist.Items[0].Selected = true;
             dropdownlist.Items[2].Selected = true;
 
             dropdownlist.PrepareItemsAndDefineSelectedIndex();
 
             Assert.Equal(true, dropdownlist.Items[2].Selected);
+            Assert.Equal(2, dropdownlist.SelectedIndex);
         }
 
         [Fact]

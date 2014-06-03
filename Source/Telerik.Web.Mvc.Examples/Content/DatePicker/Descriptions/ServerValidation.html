@@ -5,8 +5,7 @@
 
 &lt%= Html.ValidationSummary() %&gt;
 &lt% using (Html.BeginForm("Action", "Controller")) { %&gt
-    &lt%= Html.Telerik()
-            .DatePicker()
+    &lt%= Html.Telerik().DatePicker()
             .Name("deliveryDate")
     %>
     &lt%= Html.ValidationMessage("deliveryDate", "*") %&gt

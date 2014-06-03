@@ -46,7 +46,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
                                                            decoratedControllerAttribute.Object
                                                        };
 
-            _authorizeAttributeCache.Setup(c => c.GetAuthorizeAttributes(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>())).Returns(attributes);
+            _authorizeAttributeCache.Setup(c => c.GetAuthorizeAttributes(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>(), null)).Returns(attributes);
 
             Mock<IAuthorizeAttribute> reflectedAttribute = new Mock<IAuthorizeAttribute>();
             reflectedAttribute.Setup(a => a.IsAuthorized(It.IsAny<HttpContextBase>())).Returns(true);
@@ -65,7 +65,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
                                                            new AuthorizeAttribute { Roles = "Admin"}
                                                        };
 
-            _authorizeAttributeCache.Setup(c => c.GetAuthorizeAttributes(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>())).Returns(attributes);
+            _authorizeAttributeCache.Setup(c => c.GetAuthorizeAttributes(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>(), null)).Returns(attributes);
 
             Mock<IIdentity> identity = new Mock<IIdentity>();
             identity.SetupGet(i => i.IsAuthenticated).Returns(true);
@@ -82,7 +82,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         {
             Mock<AuthorizeAttribute> decoratedAttribute = new Mock<AuthorizeAttribute>();
 
-            _authorizeAttributeCache.Setup(c => c.GetAuthorizeAttributes(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>())).Returns(new[] {decoratedAttribute.Object});
+            _authorizeAttributeCache.Setup(c => c.GetAuthorizeAttributes(It.IsAny<RequestContext>(), It.IsAny<string>(), It.IsAny<string>(), null)).Returns(new[] { decoratedAttribute.Object });
 
             Mock<IAuthorizeAttribute> reflectedAttribute = new Mock<IAuthorizeAttribute>();
             reflectedAttribute.Setup(a => a.IsAuthorized(It.IsAny<HttpContextBase>())).Throws<Exception>();

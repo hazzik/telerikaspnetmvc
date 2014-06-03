@@ -123,15 +123,6 @@ namespace Telerik.Web.Mvc.UI
             return this;
         }
 
-        public CalendarBuilder Theme(string theme) 
-        {
-            Guard.IsNotNullOrEmpty(theme, "theme");
-
-            Component.Theme = theme;
-
-            return this;
-        }
-
         /// <summary>
         /// Configures the client-side events.
         /// </summary>

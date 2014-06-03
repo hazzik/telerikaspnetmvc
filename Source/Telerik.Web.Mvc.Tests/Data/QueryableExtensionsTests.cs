@@ -8,6 +8,7 @@
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Infrastructure.Implementation;
+    using UI.Tests;
     using Xunit;
 
     public class QueryableExtensionsTests
@@ -157,6 +158,47 @@
             Assert.Equal(grouppedPeople.Count(), CreateTestData().Count());
         }
 
+#if MVC3
+
+        [Fact]
+        public void Should_filter_a_list_of_dynamic_types()
+        {            
+            dynamic expando = new System.Dynamic.ExpandoObject();
+            expando.Foo = "Bar";
+            var enumerable = 
+                new System.Dynamic.IDynamicMetaObjectProvider[] { expando };
+
+            var data = QueryableFactory.CreateQueryable(enumerable)
+                                       .Where(new[] { new FilterDescriptor
+                                                        {
+                                                            Member = "Foo",
+                                                            Operator = FilterOperator.IsEqualTo,
+                                                            Value = "Bar"                
+                                                        }
+                                                    }
+                                             );
+
+            Assert.NotNull(data.ElementAt(0));
+        }
+
+        [Fact]
+        public void Should_filter_a_list_of_dynamic_types_on_complex_property()
+        {
+            dynamic expando = new System.Dynamic.ExpandoObject();
+            expando.Foo = new Customer { Name = "Name1"};
+            IEnumerable<object> enumerable = new[] { expando };
+            
+            var data = QueryableFactory.CreateQueryable(enumerable).Where(new[] { new FilterDescriptor
+            {
+                Member = "Foo.Name",
+                Operator = FilterOperator.IsEqualTo,
+                Value = "Name1",                    
+            }});
+
+            Assert.NotNull(data.ElementAt(0));
+        }
+
+#endif
         private IQueryable CreateTestData()
         {
             IList<Person> people = new List<Person>();

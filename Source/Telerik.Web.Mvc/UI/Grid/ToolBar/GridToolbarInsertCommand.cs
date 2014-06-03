@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     {
         public override void Html(Grid<T> context, IHtmlNode parent)
         {
-            #if MVC2
+            #if MVC2 || MVC3
             GridUrlBuilder urlBuilder = new GridUrlBuilder(context);
 
             new HtmlTag("a")

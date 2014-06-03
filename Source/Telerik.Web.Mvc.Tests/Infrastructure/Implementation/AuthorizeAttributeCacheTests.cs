@@ -18,10 +18,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
 
     public class AuthorizeAttributeCacheTests
     {
-        private readonly Mock<IControllerTypeCache> _controllerTypeCache;
-        private readonly Mock<IActionMethodCache> _actionMethodCache;
+        private readonly Mock<IControllerTypeCache> controllerTypeCache;
+        private readonly Mock<IActionMethodCache> actionMethodCache;
 
-        private readonly AuthorizeAttributeCache _authorizeAttributeCache;
+        private readonly AuthorizeAttributeCache authorizeAttributeCache;
 
         public AuthorizeAttributeCacheTests()
         {
@@ -32,19 +32,21 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
                                              return t;
                                          };
 
-            _controllerTypeCache = new Mock<IControllerTypeCache>();
-            _controllerTypeCache.Setup(c => c.GetControllerType(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => getType(t));
+            controllerTypeCache = new Mock<IControllerTypeCache>();
+            controllerTypeCache.Setup(c => c.GetControllerTypes(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => new List<Type>{ getType(t)});
 
-            _actionMethodCache = new Mock<IActionMethodCache>();
-            _actionMethodCache.Setup(c => c.GetAllActionMethods(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string c) => getType(c).GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).ToDictionary(m => m.Name, m => new List<MethodInfo>{ m } as IList<MethodInfo>));
+            actionMethodCache = new Mock<IActionMethodCache>();
+            actionMethodCache.Setup(c => c.GetAllActionMethods(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string c) => getType(c).GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).ToDictionary(m => m.Name, m => new List<MethodInfo>{ m } as IList<MethodInfo>));
 
-            _authorizeAttributeCache = new AuthorizeAttributeCache(_controllerTypeCache.Object, _actionMethodCache.Object);
+            actionMethodCache.Setup(c => c.GetAllActionMethods(It.IsAny<Type>())).Returns((Type t) => t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).ToDictionary(m => m.Name, m => new List<MethodInfo> { m } as IList<MethodInfo>));
+
+            authorizeAttributeCache = new AuthorizeAttributeCache(new NoCache(), controllerTypeCache.Object, actionMethodCache.Object);
         }
 
         [Fact]
         public void GetAuthorizeAttributes_should_return_correct_attribute_from_action_method()
         {
-            AuthorizeAttribute attribute = _authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "Product", "Detail").ElementAt(0);
+            AuthorizeAttribute attribute = authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "Product", "Detail", null).ElementAt(0);
 
             Assert.Equal("Mort, Elvis, Einstein", attribute.Users);
         }
@@ -52,7 +54,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         [Fact]
         public void GetAuthorizeAttributes_should_return_correct_users_from_controller()
         {
-            AuthorizeAttribute attribute = _authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "Home", "Index").ElementAt(0);
+            AuthorizeAttribute attribute = authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "Home", "Index", null).ElementAt(0);
 
             Assert.Equal("Mort, Elvis, Einstein", attribute.Users);
         }
@@ -60,14 +62,58 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         [Fact]
         public void GetAuthorizeAttributes_should_return_correct_roles_from_namespaced_controller()
         {
-            _controllerTypeCache.Setup(c => c.GetControllerType(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => Type.GetType("Telerik.Web.Mvc.Infrastructure.Implementation.Tests.DummyNamespace." + t + "Controller", false, true));
+            controllerTypeCache.Setup(c => c.GetControllerTypes(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => new List<Type>{ Type.GetType("Telerik.Web.Mvc.Infrastructure.Implementation.Tests.DummyNamespace." + t + "Controller", false, true) });
 
             RequestContext context = TestHelper.CreateRequestContext();
             context.RouteData.DataTokens.Add("Namespaces", new[] { "Telerik.Web.Mvc.Infrastructure.Implementation.Tests.DummyNamespace" });
 
-            AuthorizeAttribute attribute = _authorizeAttributeCache.GetAuthorizeAttributes(context, "DuplicateName", "AMethod").ElementAt(0);
+            AuthorizeAttribute attribute = authorizeAttributeCache.GetAuthorizeAttributes(context, "DuplicateName", "AMethod", null).ElementAt(0);
 
             Assert.Equal("User, Power User, Admin", attribute.Roles);
+        }
+
+        [Fact]
+        public void GetAuthorizeAttributes_should_not_throw_exception_if_controller()
+        {
+            controllerTypeCache.Setup(c => c.GetControllerTypes(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => null);
+
+            Assert.DoesNotThrow(() => authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "NotExistingController", "Detail", null));
+        }
+
+        [Fact]
+        public void GetAuthorizeAttributes_should_return_correct_action_attribute_from_area_controller()
+        {
+            List<Type> list = new List<Type> { 
+                typeof(Telerik.Web.Mvc.Infrastructure.Implementation.Areas.Test1.AreaController),
+                typeof(Telerik.Web.Mvc.Infrastructure.Implementation.Areas.Test1.AreaController)
+            };
+
+            controllerTypeCache.Setup(c => c.GetControllerTypes(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => list);
+
+            RouteValueDictionary routeValues = new RouteValueDictionary();
+            routeValues.Add("Area", "Test1");
+
+            AuthorizeAttribute attribute = authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "Area", "AMethod", routeValues).ElementAt(0);
+
+            Assert.Equal("Mort, Elvis, Einstein", attribute.Users);
+        }
+
+        [Fact]
+        public void GetAuthorizeAttributes_should_return_null_if_there_are_duplicated_methods_in_different_areas_and_the_second_method_does_not_have_attribute()
+        {
+            List<Type> list = new List<Type> { 
+                typeof(Telerik.Web.Mvc.Infrastructure.Implementation.Areas.Test1.AreaController),
+                typeof(Telerik.Web.Mvc.Infrastructure.Implementation.Areas.Test1.AreaController)
+            };
+
+            controllerTypeCache.Setup(c => c.GetControllerTypes(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns((RequestContext r, string t) => list);
+
+            RouteValueDictionary routeValues = new RouteValueDictionary();
+            routeValues.Add("Area", "Test2");
+
+            List<AuthorizeAttribute> attributes = authorizeAttributeCache.GetAuthorizeAttributes(TestHelper.CreateRequestContext(), "Area", "AMethod", routeValues).ToList();
+
+            Assert.Equal(0, attributes.Count);
         }
     }
 }

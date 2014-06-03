@@ -17,6 +17,7 @@ namespace Telerik.Web.Mvc.UI
             Items = items;
             Identifier = identifier.ToCamelCase();
             HtmlAttributes = new Dictionary<string, object>() { { "class", "t-" + Identifier } };
+            Enabled = true;
         }
 
         public string Identifier { get; set; }
@@ -34,6 +35,7 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public int SelectedIndex { get; set; }
+        public bool Enabled { get; set; }
 
         public IHtmlBuilder CreateHtmlBuilder()
         {

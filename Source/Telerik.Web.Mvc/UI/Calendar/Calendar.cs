@@ -7,13 +7,13 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Web;
     using System.Web.Mvc;
-    
-    using Extensions;
-    using Infrastructure;
-    using Resources;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.UI;
     
     public class Calendar : ViewComponentBase
     {
@@ -63,12 +63,6 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public string Theme 
-        { 
-            get; 
-            set; 
-        }
-
         public CalendarClientEvents ClientEvents 
         {
             get;
@@ -107,11 +101,8 @@ namespace Telerik.Web.Mvc.UI
             ICalendarHtmlBuilder renderer = rendererFactory.Create(this);
 
             DefineUrlFormat();
-            VerifySettings();
 
             IHtmlNode rootTag = renderer.Build();
-
-            rootTag.Children.Add(renderer.NavigationTag());
 
             IHtmlNode contentTag = renderer.ContentTag();
             contentTag.Children.Add(BuildWeekHeader(renderer));
@@ -127,7 +118,7 @@ namespace Telerik.Web.Mvc.UI
             IHtmlNode headerTag = renderer.HeaderTag();
             IHtmlNode row = renderer.RowTag();
 
-            foreach (string day in Culture.Current.DateTimeFormat.DayNames)
+            foreach (string day in CultureInfo.CurrentCulture.DateTimeFormat.DayNames)
             {
                 row.Children.Add(renderer.HeaderCellTag(day));
             }
@@ -161,8 +152,10 @@ namespace Telerik.Web.Mvc.UI
             return monthTag;
         }
 
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (MinDate > MaxDate)
             {
                 throw new ArgumentException(TextResource.MinDateShouldBeLessThanMaxDate);

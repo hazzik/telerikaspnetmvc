@@ -200,6 +200,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DataTable InLine editing and custom EditorTemplate per column is not supported.
+        /// </summary>
+        internal static string DataTableInLineEditingWithCustomEditorTemplates {
+            get {
+                return ResourceManager.GetString("DataTableInLineEditingWithCustomEditorTemplates", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Date should be bigger than MinDate and less than MaxDate..
         /// </summary>
         internal static string DateOutOfRange {
@@ -295,6 +304,15 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string LocalGroupWithSpecifiedNameAlreadyExists {
             get {
                 return ResourceManager.GetString("LocalGroupWithSpecifiedNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The key with the following name &quot;{0}&quot; was not found. Please update all localization files..
+        /// </summary>
+        internal static string LocalizationKeyNotFound {
+            get {
+                return ResourceManager.GetString("LocalizationKeyNotFound", resourceCulture);
             }
         }
         
@@ -398,6 +416,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &quot;{0}&quot; class is no longer supported. To enable RTL support you must include telerik.rtl.css and apply the &quot;t-rtl&quot; class to a parent HTML element or the &lt;body&gt;..
+        /// </summary>
+        internal static string Rtl {
+            get {
+                return ResourceManager.GetString("Rtl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must have SiteMap defined with key &quot;{0}&quot; in ViewData dictionary..
         /// </summary>
         internal static string SiteMapShouldBeDefinedInViewData {
@@ -434,6 +461,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Passed string cannot be parsed to TimeSpan object..
+        /// </summary>
+        internal static string StringNotCorrectTimeSpan {
+            get {
+                return ResourceManager.GetString("StringNotCorrectTimeSpan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The specified method is not an action method..
         /// </summary>
         internal static string TheSpecifiedMethodIsNotAnActionMethod {
@@ -443,11 +479,29 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Time should be bigger than MinTime and less than MaxTime..
+        /// </summary>
+        internal static string TimeOutOfRange {
+            get {
+                return ResourceManager.GetString("TimeOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You cannot set Url and ContentUrl at the same time..
         /// </summary>
         internal static string UrlAndContentUrlCannotBeSet {
             get {
                 return ResourceManager.GetString("UrlAndContentUrlCannotBeSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string ValueNotValidForProperty {
+            get {
+                return ResourceManager.GetString("ValueNotValidForProperty", resourceCulture);
             }
         }
         
@@ -475,6 +529,15 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string YouCannotAddMoreThanOnceColumnWhenSortModeIsSetToSingle {
             get {
                 return ResourceManager.GetString("YouCannotAddMoreThanOnceColumnWhenSortModeIsSetToSingle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot use non generic BindTo overload without EnableCustomBinding set to true.
+        /// </summary>
+        internal static string YouCannotCallBindToWithoutCustomBinding {
+            get {
+                return ResourceManager.GetString("YouCannotCallBindToWithoutCustomBinding", resourceCulture);
             }
         }
         

@@ -16,6 +16,11 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
+        int CurrentPage
+        {
+            get;
+        }
+
         int PageSize
         {
             get;

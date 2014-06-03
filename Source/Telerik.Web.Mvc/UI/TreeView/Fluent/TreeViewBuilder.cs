@@ -75,18 +75,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        
-        /// <summary>
-        /// Sets the theme of the TreeView
-        /// </summary>
-        public TreeViewBuilder Theme(string name)
-        {
-            Guard.IsNotNullOrEmpty(name, "name");
-
-            Component.Theme = name;
-
-            return this;
-        }
 
         /// <summary>
         /// Binds the TreeView to a sitemap

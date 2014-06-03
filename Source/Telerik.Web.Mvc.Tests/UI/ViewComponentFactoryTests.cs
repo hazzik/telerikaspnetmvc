@@ -5,11 +5,10 @@
 
 namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Moq;
     using System.Collections.Generic;
     using System.Web.Mvc;
-    using Fluent;
-    using Infrastructure;
-    using Moq;
+    using Telerik.Web.Mvc.Infrastructure;
     using Xunit;
 
     public class ViewComponentFactoryTests
@@ -19,26 +18,16 @@ namespace Telerik.Web.Mvc.UI.Tests
 
         public ViewComponentFactoryTests()
         {
-            Mock<IServiceLocator> locator = new Mock<IServiceLocator>();
-
-            locator.Setup(l => l.Resolve<IUrlGenerator>()).Returns(new Mock<IUrlGenerator>().Object);
-            locator.Setup(l => l.Resolve<IConfigurationManager>()).Returns(new Mock<IConfigurationManager>().Object);
-            locator.Setup(l => l.Resolve<INavigationItemAuthorization>()).Returns(new Mock<INavigationItemAuthorization>().Object);
-            locator.Setup(l => l.Resolve<INavigationComponentHtmlBuilderFactory<Menu, MenuItem>>()).Returns(new Mock<INavigationComponentHtmlBuilderFactory<Menu, MenuItem>>().Object);
-            locator.Setup(l => l.Resolve<ITabStripHtmlBuilderFactory>()).Returns(new Mock<ITabStripHtmlBuilderFactory>().Object);
-
-            ServiceLocator.SetCurrent(() => locator.Object);
-
             ViewContext viewContext = new ViewContext
                                           {
                                               HttpContext = TestHelper.CreateMockedHttpContext().Object,
                                               ViewData = new ViewDataDictionary()
                                           };
 
-            StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, new Mock<IWebAssetItemMerger>().Object);
+            StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, new Mock<IWebAssetCollectionResolver>().Object);
             StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = new StyleSheetRegistrarBuilder(styleSheetRegistrar);
 
-            ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, new Mock<IWebAssetItemMerger>().Object, new Mock<ScriptWrapperBase>().Object);
+            ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, new Mock<IWebAssetCollectionResolver>().Object, new Mock<ScriptWrapperBase>().Object);
             ScriptRegistrarBuilder scriptRegistrarBuilder = new ScriptRegistrarBuilder(scriptRegistrar);
             htmlHelper = TestHelper.CreateHtmlHelper();
             _factory = new ViewComponentFactory(htmlHelper, new Mock<IClientSideObjectWriterFactory>().Object, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
@@ -63,53 +52,15 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
-        public void Menu_should_return_new_instance()
-        {
-            Menu m1 = _factory.Menu();
-            Menu m2 = _factory.Menu();
-
-            Assert.NotSame(m1, m2);
-        }
-
-        [Fact]
-        public void TabStrip_should_return_new_instance()
-        {
-            Assert.NotNull(_factory.TabStrip());
-        }
-
-        [Fact]
-        public void Grid_should_return_new_instance()
-        {
-            Assert.NotNull(_factory.Grid<Customer>());
-        }
-
-        [Fact]
-        public void Grid_should_set_data_source()
-        {
-            IEnumerable<Customer> dataSource = new[] { new Customer() };
-            GridBuilder<Customer> builder = _factory.Grid(dataSource);
-            Assert.Same(dataSource, builder.Component.DataSource);
-        }
-
-        [Fact]
-        public void Grid_should_set_data_source_from_view_data()
-        {
-            IEnumerable<Customer> dataSource = new[] { new Customer() };
-            htmlHelper.ViewContext.ViewData["dataSource"] = dataSource;
-            GridBuilder<Customer> builder = _factory.Grid<Customer>("dataSource");
-            Assert.Same(dataSource, builder.Component.DataSource);
-        }
-
-        [Fact]
-        public void PanelBar_should_return_new_instance()
-        {
-            Assert.NotNull(_factory.PanelBar());
-        }
-
-        [Fact]
         public void DatePicker_should_return_new_instance()
         {
             Assert.NotNull(_factory.DatePicker());
+        }
+
+        [Fact]
+        public void TimePicker_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.TimePicker());
         }
 
         [Fact]

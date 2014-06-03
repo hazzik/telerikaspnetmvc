@@ -10,15 +10,20 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Linq;
     using System.Reflection;
 
-    public class FieldCache : CacheBase<RuntimeTypeHandle, IEnumerable<FieldInfo>>, IFieldCache
+    internal class FieldCache : IFieldCache
     {
         private const BindingFlags Flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetField | BindingFlags.SetField;
 
+        private readonly ICache cache;
+        
+        public FieldCache(ICache cache)
+        {
+            this.cache = cache;
+        }
+
         public IEnumerable<FieldInfo> GetFields(Type type)
         {
-            Guard.IsNotNull(type, "type");
-
-            return GetOrCreate(type.TypeHandle, () => type.GetFields(Flags).Where(field => !field.IsInitOnly));
+            return cache.Get(type.AssemblyQualifiedName, () => type.GetFields(Flags).Where(field => !field.IsInitOnly));
         }
     }
 }

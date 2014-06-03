@@ -5,8 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI.Html
 {
-    using Telerik.Web.Mvc.Extensions;
-    using Telerik.Web.Mvc.Infrastructure;
+    using Extensions;
+    using Infrastructure;
 
     public class GridHeaderCellHtmlBuilder : HtmlBuilderBase
     {
@@ -21,14 +21,28 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            var title = column.Title.HasValue() ? column.Title : "&nbsp;";
-
-            return new HtmlTag("th")
+            var node = new HtmlTag("th")
                 .Attributes(column.HeaderHtmlAttributes)
                 .ToggleClass(UIPrimitives.LastHeader, column.IsLast)
                 .AddClass(UIPrimitives.Header)
-                .Attribute("scope", "col")
-                .Html(title);
+                .Attribute("scope", "col");
+
+            AppendContent(node);
+
+            return node;
+        }
+
+        private void AppendContent(IHtmlNode node)
+        {
+            var headerTemplate = column.HeaderTemplate;
+            if (headerTemplate != null && headerTemplate.HasValue())
+            {
+                headerTemplate.Apply(node);
+            }
+            else
+            {
+                node.Html(column.Title.HasValue() ? column.Title : "&nbsp;");
+            }
         }
     }
 }

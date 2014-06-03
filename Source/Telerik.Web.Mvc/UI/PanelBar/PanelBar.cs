@@ -69,11 +69,6 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public string Theme
-        {
-            get;
-            set;
-        }
 
         public Action<PanelBarItem> ItemAction
         {
@@ -140,12 +135,12 @@ namespace Telerik.Web.Mvc.UI
 
             base.WriteInitializationScript(writer);
         }
-
+        
         protected override void WriteHtml(HtmlTextWriter writer)
         {
             Guard.IsNotNull(writer, "writer");
 
-            if (!Items.IsEmpty())
+            if (Items.Any())
             {
                 if (SelectedIndex != -1 && Items.Count < SelectedIndex)
                 {
@@ -185,14 +180,7 @@ namespace Telerik.Web.Mvc.UI
         {
             if (item.Enabled)
             {
-                string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
-                string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
-
-                var urlHelper = new UrlHelper(ViewContext.RequestContext);
-                var panelBarItemUrl = item.GenerateUrl(ViewContext, UrlGenerator);
-                var currentUrl = urlHelper.Action(actionName, controllerName);
-
-                if (!currentUrl.IsNullOrEmpty() && panelBarItemUrl.IsCaseInsensitiveEqual(currentUrl))
+                if (item.IsCurrent(ViewContext, UrlGenerator))
                 {
                     item.Selected = true;
                     isPathHighlighted = true;
@@ -216,7 +204,7 @@ namespace Telerik.Web.Mvc.UI
                 {
                     item.Selected = true;
 
-                    if (!item.Items.IsEmpty() || item.Template.HasValue() || !string.IsNullOrEmpty(item.ContentUrl))
+                    if (item.Items.Any() || item.Template.HasValue() || !string.IsNullOrEmpty(item.ContentUrl))
                         item.Expanded = true;
                 }
             }

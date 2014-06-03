@@ -6,11 +6,13 @@
 namespace Telerik.Web.Mvc
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Web.Mvc;
-
-    using Extensions;
-    using Infrastructure;
-    using UI;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.UI;
 
     /// <summary>
     /// Used for action methods when using Ajax or Custom binding
@@ -18,12 +20,14 @@ namespace Telerik.Web.Mvc
     [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
     public class GridActionAttribute : FilterAttribute, IActionFilter
     {
+        private readonly IGridActionResultAdapterFactory adapterFactory;
         /// <summary>
         /// Initializes a new instance of the <see cref="GridActionAttribute"/> class.
         /// </summary>
         public GridActionAttribute()
         {
             ActionParameterName = "command";
+            adapterFactory = DI.Current.Resolve<IGridActionResultAdapterFactory>();
         }
 
         /// <summary>
@@ -103,7 +107,7 @@ namespace Telerik.Web.Mvc
                 string orderBy = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.OrderBy));
 
                 command.SortDescriptors.AddRange(GridDescriptorSerializer.Deserialize<SortDescriptor>(orderBy));
-                
+
                 string filter = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.Filter));
 
                 command.FilterDescriptors.AddRange(FilterDescriptorFactory.Create(filter));
@@ -118,30 +122,83 @@ namespace Telerik.Web.Mvc
 
         public void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            if (filterContext.HttpContext.Request.IsAjaxRequest() &&
-                (filterContext.Result is ViewResultBase))
+            if (!filterContext.HttpContext.Request.IsAjaxRequest())
             {
-                ViewResultBase actionResult = filterContext.Result as ViewResultBase;
+                return;
+            }
 
-                IGridModel model = actionResult.ViewData.Model as IGridModel;
+            var actionResultAdapter = adapterFactory.Create(filterContext.Result);
 
-                if (model == null)
+            if (actionResultAdapter == null)
+            {
+                return;
+            }
+
+            var dataSource = actionResultAdapter.GetDataSource();
+
+            if (dataSource == null)
+            {
+                return;
+            }
+
+            var total = actionResultAdapter.GetTotal();
+
+            var dataProcessor = new GridDataProcessor(new GridActionBindingContext(EnableCustomBinding, filterContext.Controller, dataSource, total));
+
+            var result = new Dictionary<string, object>();
+            var dataTableEnumerable = dataSource as GridDataTableWrapper;
+            if (dataTableEnumerable != null && dataTableEnumerable.Table != null)
+            {
+                result["data"] = dataProcessor.ProcessedDataSource.SerializeToDictionary(dataTableEnumerable.Table);
+            }
+            else
+            {
+                result["data"] = dataProcessor.ProcessedDataSource;
+            }
+                
+            result["total"] = dataProcessor.Total;
+
+            var modelState = actionResultAdapter.GetModelState();
+
+            if (modelState != null && !modelState.IsValid)
+            {
+                result["modelState"] = SerializeErrors(modelState);
+            }
+
+            filterContext.Result = new JsonResult
+            {
+                Data = result
+            };
+        }       
+        
+        private object SerializeErrors(ModelStateDictionary modelState)
+        {
+            return modelState.Where(entry => entry.Value.Errors.Any())
+                             .ToDictionary(entry => entry.Key, entry => SerializeModelState(entry.Value));
+        }
+
+        private static Dictionary<string, object> SerializeModelState(ModelState modelState)
+        {
+            var result = new Dictionary<string, object>();
+            result["errors"] = modelState.Errors
+                                         .Select(error => GetErrorMessage(error, modelState))
+                                         .ToArray();
+            return result;
+        }
+        
+        private static string GetErrorMessage(ModelError error, ModelState modelState)
+        {
+            if (!error.ErrorMessage.HasValue())
+            {
+                if (modelState.Value == null)
                 {
-                    return;
+                    return error.ErrorMessage;
                 }
 
-                GridActionBindingContext context = new GridActionBindingContext(EnableCustomBinding, filterContext.Controller, model.Data, model.Total);
-                GridDataProcessor dataProcessor = new GridDataProcessor(context);
-
-                filterContext.Result = new JsonResult 
-                { 
-                    Data = new
-                    {
-                        data = dataProcessor.ProcessedDataSource,
-                        total = dataProcessor.Total
-                    } 
-                };
+                return TextResource.ValueNotValidForProperty.FormatWith(modelState.Value.AttemptedValue);
             }
+
+            return error.ErrorMessage;
         }
     }
 }

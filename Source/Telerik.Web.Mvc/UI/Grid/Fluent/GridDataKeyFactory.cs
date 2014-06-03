@@ -6,6 +6,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
     using System.Linq.Expressions;
+    using Infrastructure;
+    using Extensions;
 
     /// <summary>
     /// Creates data key for the <see cref="Grid{T}" />.
@@ -31,13 +33,58 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <typeparam name="TValue"></typeparam>
         /// <param name="expression"></param>
         /// <returns></returns>
-        public GridDataKeyBuilder<TModel, TValue> Add<TValue>(Expression<Func<TModel, TValue>> expression)
+        public GridDataKeyBuilder<TModel> Add<TValue>(Expression<Func<TModel, TValue>> expression)
         {
-            GridDataKey<TModel, TValue> dataKey = new GridDataKey<TModel, TValue>(expression);
-            
+            var dataKey = new GridDataKey<TModel, TValue>(expression);
             grid.DataKeys.Add(dataKey);
 
-            return new GridDataKeyBuilder<TModel, TValue>(dataKey);
+            return new GridDataKeyBuilder<TModel>(dataKey);
+        }
+
+        public GridDataKeyBuilder<TModel> Add(string fieldName)
+        {
+            Guard.IsNotNullOrEmpty(fieldName, "fieldName");
+
+            IGridDataKey<TModel> dataKey;
+            if (typeof(TModel) == typeof(System.Data.DataRowView))
+            {
+                dataKey = (IGridDataKey<TModel>)new GridRowViewDataKey(fieldName);
+            }
+#if MVC3
+            else if (typeof(TModel).IsDynamicObject())
+            {
+                var lambdaExpression = ExpressionBuilder.Expression<dynamic,object>(fieldName);
+                dataKey = (IGridDataKey<TModel>)new GridDynamicDataKey(fieldName, lambdaExpression);
+            }
+#endif
+            else
+            {
+                dataKey = GetDataKeyForField(fieldName);
+            }
+
+            grid.DataKeys.Add(dataKey);
+            return new GridDataKeyBuilder<TModel>(dataKey);
+
+        }
+
+#if MVC3
+        private IGridDataKey<TModel> GetDynamicDataKeyForField(string fieldName)
+        {
+            var lambdaExpression = ExpressionBuilder.Lambda<TModel>(fieldName);
+            var columnType = typeof(GridDataKey<,>).MakeGenericType(new[] { typeof(TModel), lambdaExpression.Body.Type });
+            var constructor = columnType.GetConstructor(new[] { lambdaExpression.GetType() });
+
+            return (IGridDataKey<TModel>)constructor.Invoke(new object[] { lambdaExpression });
+        }
+#endif
+
+        private IGridDataKey<TModel> GetDataKeyForField(string fieldName)
+        {
+            var lambdaExpression = ExpressionBuilder.Lambda<TModel>(fieldName);
+            var columnType = typeof(GridDataKey<,>).MakeGenericType(new[] { typeof(TModel), lambdaExpression.Body.Type });
+            var constructor = columnType.GetConstructor(new[] {lambdaExpression.GetType()});
+
+            return (IGridDataKey<TModel>) constructor.Invoke(new object[] {lambdaExpression});
         }
     }
 }

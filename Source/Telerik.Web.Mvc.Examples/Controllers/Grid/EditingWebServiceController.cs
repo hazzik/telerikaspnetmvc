@@ -7,7 +7,6 @@
     {
         [SourceCodeFile("EditableProduct (model)", "~/Models/EditableProduct.cs")]
         [SourceCodeFile("Date.ascx (editor)", "~/Views/Shared/EditorTemplates/Date.ascx")]
-        [SourceCodeFile("ASMX", "~/Models/Products.asmx.cs")]
         [SourceCodeFile("WCF", "~/Models/Products.svc.cs")]
         public ActionResult EditingWebService(GridEditMode? mode, GridButtonType? type)
         {

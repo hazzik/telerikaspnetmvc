@@ -21,7 +21,7 @@ namespace Telerik.Web.Mvc.UI
             };
 
         public static readonly IList<DropDownItem> FontName = new List<DropDownItem> {
-                new DropDownItem { Text = "inherit",  Value = "inherit" },
+                new DropDownItem { Text = "(inherited font)",  Value = "inherit" },
                 new DropDownItem { Text = "Arial", Value = "Arial,Helvetica,sans-serif" },
                 new DropDownItem { Text = "Courier New", Value = "'Courier New',Courier,monospace" },
                 new DropDownItem { Text = "Georgia", Value = "Georgia,serif" },
@@ -34,7 +34,7 @@ namespace Telerik.Web.Mvc.UI
             };
 
         public static readonly IList<DropDownItem> FontSize = new List<DropDownItem> {
-                new DropDownItem { Text = "inherit",  Value = "inherit" },
+                new DropDownItem { Text = "(inherited size)",  Value = "inherit" },
                 new DropDownItem { Text = "1 (8pt)",  Value = "xx-small" },
                 new DropDownItem { Text = "2 (10pt)", Value = "x-small" },
                 new DropDownItem { Text = "3 (12pt)", Value = "small" },

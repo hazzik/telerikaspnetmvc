@@ -377,7 +377,12 @@ namespace Telerik.Web.Mvc.Extensions
         {
             return type.IsCompatibleWith(typeof(DataRow)) || type.IsCompatibleWith(typeof(DataRowView));
         }
-
+#if MVC3
+        internal static bool IsDynamicObject(this Type type)
+        {
+            return type == typeof(object) || type.IsCompatibleWith(typeof(System.Dynamic.IDynamicMetaObjectProvider));
+        }
+#endif
         internal static bool IsDateTime(this Type type)
         {
             return type == typeof(DateTime) || type == typeof(DateTime?);

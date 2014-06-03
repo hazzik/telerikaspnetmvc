@@ -6,9 +6,7 @@
 namespace Telerik.Web.Mvc.Configuration
 {
     using System.Configuration;
-    using System.Diagnostics;
-
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /*
     <configSections>
@@ -53,13 +51,11 @@ namespace Telerik.Web.Mvc.Configuration
         /// <value>The name of the section.</value>
         public static string SectionName
         {
-            [DebuggerStepThrough]
             get
             {
                 return sectionName;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -77,13 +73,11 @@ namespace Telerik.Web.Mvc.Configuration
         [ConfigurationProperty("useTelerikContentDeliveryNetwork")]
         public bool UseTelerikContentDeliveryNetwork
         {
-            [DebuggerStepThrough]
             get
             {
                 return (bool)this["useTelerikContentDeliveryNetwork"];
             }
 
-            [DebuggerStepThrough]
             set
             {
                 this["useTelerikContentDeliveryNetwork"] = value;
@@ -95,12 +89,11 @@ namespace Telerik.Web.Mvc.Configuration
         /// </summary>
         /// <value>The style sheets.</value>
         [ConfigurationProperty("styleSheets")]
-        public WebAssetItemGroupConfigurationElementCollection StyleSheets
+        public WebAssetGroupConfigurationElementCollection StyleSheets
         {
-            [DebuggerStepThrough]
             get
             {
-                return (WebAssetItemGroupConfigurationElementCollection) base["styleSheets"] ?? new WebAssetItemGroupConfigurationElementCollection();
+                return (WebAssetGroupConfigurationElementCollection) base["styleSheets"] ?? new WebAssetGroupConfigurationElementCollection();
             }
         }
 
@@ -109,12 +102,11 @@ namespace Telerik.Web.Mvc.Configuration
         /// </summary>
         /// <value>The scripts.</value>
         [ConfigurationProperty("scripts")]
-        public WebAssetItemGroupConfigurationElementCollection Scripts
+        public WebAssetGroupConfigurationElementCollection Scripts
         {
-            [DebuggerStepThrough]
             get
             {
-                return (WebAssetItemGroupConfigurationElementCollection) base["scripts"] ?? new WebAssetItemGroupConfigurationElementCollection();
+                return (WebAssetGroupConfigurationElementCollection) base["scripts"] ?? new WebAssetGroupConfigurationElementCollection();
             }
         }
     }

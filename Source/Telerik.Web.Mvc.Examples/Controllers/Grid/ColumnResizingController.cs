@@ -18,7 +18,7 @@ namespace Telerik.Web.Mvc.Examples
                     {"OrderIDWidth", 100},
                     {"ContactNameWidth", 200},
                     {"ShipAddressWidth",450},
-                    {"OrderDateWidth", 120}
+                    {"OrderDateWidth", 117}
                 };
             }
 

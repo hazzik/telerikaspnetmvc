@@ -247,5 +247,10 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         {
             return View();
         }
+
+        public ActionResult RtlSupport()
+        {
+            return View();
+        }
     }
 }

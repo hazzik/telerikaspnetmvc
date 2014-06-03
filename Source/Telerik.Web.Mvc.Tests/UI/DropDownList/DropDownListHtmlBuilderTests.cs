@@ -6,6 +6,7 @@
     using System.IO;
     using System.Web.UI;
 using System.Collections.Generic;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class DropDownListHtmlBuilderTests
     {
@@ -17,6 +18,7 @@ using System.Collections.Generic;
         {
             dropDownList = DropDownListTestHelper.CreateDropDownList();
             renderer = new DropDownListHtmlBuilder(dropDownList);
+            dropDownList.Name = "DropDownList1";
         }
 
         [Fact]
@@ -59,6 +61,23 @@ using System.Collections.Generic;
         }
 
         [Fact]
+        public void Build_should_call_InnerContentMethod_and_append_to_wrapper() 
+        {
+            IHtmlNode tag = renderer.Build().Children[0];
+            
+            Assert.Equal("div", tag.TagName);
+            Assert.True(tag.Attribute("class").Contains("t-dropdown-wrap"));
+        }
+
+        [Fact]
+        public void Build_should_call_HiddenInputTag_and_append_to_wrapper()
+        {
+            IHtmlNode tag = renderer.Build().Children[1];
+
+            Assert.Equal("input", tag.TagName);
+        }
+
+        [Fact]
         public void DropDownListInnerContentTag_should_output_wrapping_span_tag()
         {
             IHtmlNode tag = renderer.InnerContentTag();
@@ -72,16 +91,6 @@ using System.Collections.Generic;
             IHtmlNode tag = renderer.InnerContentTag();
 
             Assert.Equal("t-dropdown-wrap t-state-default", tag.Attribute("class"));
-        }
-
-        [Fact]
-        public void DropDownListInnerContentTag_should_output_child_text_span()
-        {
-            IHtmlNode tag = renderer.InnerContentTag();
-
-            IHtmlNode textSpan = tag.Children[0];
-
-            Assert.Equal("span", textSpan.TagName);
         }
 
         [Fact]
@@ -197,6 +206,20 @@ using System.Collections.Generic;
             Assert.Equal("1", tag.Attribute("value"));
         }
 
+
+        [Fact]
+        public void HiddenInputTag_should_add_attr_value_with_selected_item_text_if_value_is_not_set()
+        {
+            dropDownList.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            dropDownList.Items.Add(new DropDownItem { Text = "Item2" });
+
+            dropDownList.SelectedIndex = 1;
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            Assert.Equal("Item2", tag.Attribute("value"));
+        }
+
         [Fact]
         public void HiddenInputTag_does_not_output_name_attribute_for_unnamed_components()
         {
@@ -205,6 +228,17 @@ using System.Collections.Generic;
             IHtmlNode tag = renderer.HiddenInputTag();
 
             Assert.False(tag.Attributes().ContainsKey("name"));
+        }
+
+        [Fact]
+        public void ComboBox_should_should_be_disabled()
+        {
+            dropDownList.Enabled = false;
+
+            IHtmlNode div = renderer.Build();
+
+            Assert.Equal("disabled", div.Attribute("disabled"));
+            Assert.Contains("t-state-disabled", div.Attribute("class"));
         }
     }
 }

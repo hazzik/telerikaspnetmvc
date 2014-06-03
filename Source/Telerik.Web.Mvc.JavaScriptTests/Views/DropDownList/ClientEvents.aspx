@@ -7,7 +7,6 @@
     <script type="text/javascript">
         var isChanged;
         var isRaised;
-        var isItemDataBound;
         var isDataBinding;
         var isDataBound;
 
@@ -193,7 +192,18 @@
 
             assertFalse(isChangeRaised);
         }
-        
+
+        function test_trigger_change_method_should_set_hidden_value_to_text_if_item_value_is_null() {
+            var ddl = $('#DDLWithNoValue').data('tDropDownList');
+            ddl.select(2);
+            ddl.trigger.change();
+
+            var item = ddl.data[2];
+
+            assertEquals(null, item.Value);
+            assertEquals(item.Text, ddl.value());
+        }
+
         //handlers
         function onLoad(sender, args) {
             isRaised = true;
@@ -209,15 +219,6 @@
 
         function onOpen(sender, args) {
             isRaised = true;
-        }
-
-        function onItemDataBound(e) {
-
-            isItemDataBound = true;
-
-            itemText = e.text;
-
-            e.text = "modified";
         }
 
         function onDataBinding(sender, args) {
@@ -253,11 +254,25 @@
                 items.Add().Text("Item14").Value("14");
             })
             .Effects(effects => effects.Toggle())
-                    .ClientEvents(events => events.OnLoad("onLoad")
-                                                  .OnOpen("onOpen")
-                                                  .OnClose("onClose")
-                                                  .OnChange("onChange"))
+            .ClientEvents(events => events.OnLoad("onLoad")
+                                          .OnOpen("onOpen")
+                                          .OnClose("onClose")
+                                          .OnChange("onChange"))
     %>
+
+    <%= Html.Telerik().DropDownList()
+            .Name("DDLWithNoValue")
+            .Items(items =>
+            {
+                items.Add().Text("Item1");
+                items.Add().Text("Item2").Value("2");
+                items.Add().Text("Item3");
+                items.Add().Text("Item4").Value("4");
+                items.Add().Text("Item5");
+            })
+            .Effects(effects => effects.Toggle())
+    %>
+
 
      <%= Html.Telerik().DropDownList()
             .Name("AjaxDropDownList")
@@ -265,11 +280,6 @@
             .DataBinding( binding => binding.Ajax().Select("_AjaxDropDownList","DropDownList"))
             .ClientEvents(events => events.OnDataBinding("onDataBinding")
                                           .OnDataBound("onDataBound"))
-    %>
-
-    <%= Html.Telerik().DropDownList()
-            .Name("ItemDataBoundDropDownList")
-            .Effects(effects => effects.Toggle())
     %>
 
     <% Html.Telerik().ScriptRegistrar()

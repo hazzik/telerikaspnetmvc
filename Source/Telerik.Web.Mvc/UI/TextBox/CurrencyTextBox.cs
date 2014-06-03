@@ -6,28 +6,28 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Globalization;
     using System.Web.Mvc;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
 
     public class CurrencyTextBox : TextBoxBase<decimal>
     {
         public CurrencyTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<decimal> rendererFactory)
-		: base(viewContext, clientSideObjectWriterFactory, rendererFactory)
+            : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
 
             MinValue = 0;
-            MaxValue = 1000;
+            MaxValue = decimal.MaxValue;
             IncrementStep = 1;
             EmptyMessage = "Enter value";
 
-            DecimalDigits = Culture.Current.NumberFormat.CurrencyDecimalDigits;
-            NumberGroupSize = Culture.Current.NumberFormat.CurrencyGroupSizes[0];
-            NegativePatternIndex = Culture.Current.NumberFormat.CurrencyNegativePattern;
-            PositivePatternIndex = Culture.Current.NumberFormat.CurrencyPositivePattern;
+            DecimalDigits = CultureInfo.CurrentCulture.NumberFormat.CurrencyDecimalDigits;
+            NumberGroupSize = CultureInfo.CurrentCulture.NumberFormat.CurrencyGroupSizes[0];
+            NegativePatternIndex = CultureInfo.CurrentCulture.NumberFormat.CurrencyNegativePattern;
+            PositivePatternIndex = CultureInfo.CurrentCulture.NumberFormat.CurrencyPositivePattern;
         }
 
         public int DecimalDigits
@@ -78,8 +78,6 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            VerifySettings();
-
             ITextBoxBaseHtmlBuilder renderer = rendererFactory.Create(this);
 
             IHtmlNode rootTag = renderer.Build("t-numerictextbox");
@@ -96,8 +94,10 @@ namespace Telerik.Web.Mvc.UI
             base.WriteHtml(writer);
         }
 
-        private void VerifySettings()
+        public override void VerifySettings()
         {
+            base.VerifySettings();
+
             if (MinValue > MaxValue)
             {
                 throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);

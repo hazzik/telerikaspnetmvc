@@ -30,7 +30,6 @@ namespace Telerik.Web.Mvc.UI
 
         public override void Html(Grid<T> context, IHtmlNode parent)
         {
-            #if MVC2
             GridUrlBuilder urlBuilder = new GridUrlBuilder(context);
 
             new HtmlTag("a")
@@ -39,7 +38,6 @@ namespace Telerik.Web.Mvc.UI
                 .Attribute("href", urlBuilder.Url(this))
                 .Html(this.ButtonContent<T>(Text, null))
                 .AppendTo(parent);
-            #endif
         }
     }
 }

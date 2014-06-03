@@ -29,40 +29,6 @@
 <% 
    }
 %>
-<h3>Bound to ASMX Web Service</h3>
-<%= Html.Telerik().Grid<EditableProduct>()
-        .Name("AsmxGrid")
-        .ToolBar(commands => commands.Insert().ButtonType(type))
-        .DataKeys(keys => 
-        {
-            keys.Add(p => p.ProductID);
-        })
-        .DataBinding(dataBinding => dataBinding
-            .WebService()
-                .Select("~/Models/Products.asmx/Select")
-                .Update("~/Models/Products.asmx/Update")
-                .Insert("~/Models/Products.asmx/Insert")
-                .Delete("~/Models/Products.asmx/Delete")
-        )
-        .Columns(columns =>
-        {
-            columns.Bound(p => p.ProductName).Width(210);
-            columns.Bound(p => p.UnitPrice).Width(130);
-            columns.Bound(p => p.UnitsInStock).Width(130);
-            columns.Bound(p => p.LastSupply).Width(130).Format("{0:d}");
-            columns.Bound(p => p.Discontinued)
-                   .ClientTemplate("<input type='checkbox' disabled='disabled' name='Discontinued' <#= Discontinued? \"checked='checked'\" : \"\" #> />");
-            columns.Command(commands =>
-            {
-                commands.Edit().ButtonType(type);
-                commands.Delete().ButtonType(type);
-            }).Width(180).Title("Commands");
-        })
-        .Editable(editing => editing.Mode(mode))
-        .Scrollable()
-        .Pageable()
-        .Sortable()
-%>
 
 <h3>Bound to WCF Web Service</h3>
 <%= Html.Telerik().Grid<EditableProduct>()
@@ -140,6 +106,7 @@
         width: 30%;
         text-align: right;
         padding-right: 3%;
+        clear: left;
     }
     
     .t-edit-form-container .editor-field

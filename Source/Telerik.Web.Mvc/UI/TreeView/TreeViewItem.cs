@@ -6,6 +6,7 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
+    using System.Web.Script.Serialization;
 
     public class TreeViewItem : NavigationItem<TreeViewItem>, INavigationItemContainer<TreeViewItem>, ITreeViewItem
     {

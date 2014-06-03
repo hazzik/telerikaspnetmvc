@@ -126,8 +126,14 @@
   <data name="FontName" xml:space="preserve">
     <value>Select font family</value>
   </data>
+  <data name="FontNameInherit" xml:space="preserve">
+    <value>(inherited font)</value>
+  </data>
   <data name="FontSize" xml:space="preserve">
     <value>Select font size</value>
+  </data>
+  <data name="FontSizeInherit" xml:space="preserve">
+    <value>(inherited size)</value>
   </data>
   <data name="FormatBlock" xml:space="preserve">
     <value>Select block type</value>

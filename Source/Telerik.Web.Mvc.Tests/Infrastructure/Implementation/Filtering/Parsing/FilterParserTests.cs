@@ -96,6 +96,16 @@
         }
 
         [Fact]
+        public void Should_parse_function_as_infix_expression()
+        {
+            FunctionNode function = (FunctionNode)Parse("name~startswith~1");
+
+            Assert.Equal(FilterOperator.StartsWith, function.FilterOperator);
+            Assert.Equal("name", ((PropertyNode)function.Arguments[0]).Name);
+            Assert.Equal(1, Convert.ToInt32(((NumberNode)function.Arguments[1]).Value));
+        }
+
+        [Fact]
         public void Should_parse_and_expression()
         {
             AndNode or = (AndNode)Parse("1~and~2");

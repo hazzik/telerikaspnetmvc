@@ -254,7 +254,7 @@ namespace Telerik.Web.Mvc.UI.Tests
 
             IHtmlNode tag = renderer.ItemInnerContent(item);
 
-            Assert.Equal("t-link custom", tag.Attribute("class"));
+            Assert.Equal("t-link t-in custom", tag.Attribute("class"));
             Assert.Equal("overriden", tag.Attribute("href"));
         }
         
@@ -293,6 +293,20 @@ namespace Telerik.Web.Mvc.UI.Tests
             Assert.Equal("hidden", tag.Attribute("type"));
             Assert.Equal("itemValue", tag.Attribute("name"));
             Assert.Equal(value, tag.Attribute("value"));
+        }
+
+        public void ItemTag_should_render_disabled_checkbox_if_item_is_disabled() 
+        {
+            treeView.ShowCheckBox = true;
+            item.Checkable = true;
+            item.Enabled = false;
+            
+            IHtmlNode tag = renderer.ItemTag(item, false);
+            IHtmlNode checkbox = tag.Children[0].Children[0].Children[1];
+
+            Assert.Equal("input", checkbox.TagName);
+            Assert.Equal("checkbox", checkbox.Attribute("type"));
+            Assert.Equal("disabled", checkbox.Attribute("disabled"));
         }
     }
 }

@@ -12,18 +12,18 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Web.Mvc;
     using System.Web.Routing;
 
-    public class ActionMethodCache : CacheBase<RuntimeTypeHandle, IDictionary<string, IList<MethodInfo>>>, IActionMethodCache
+    internal class ActionMethodCache : IActionMethodCache
     {
         private static readonly Type actionResultType = typeof(ActionResult);
         private static readonly Type nonActionAttributeType = typeof(NonActionAttribute);
         private static readonly Type actionNaneAttributeType = typeof(ActionNameAttribute);
 
         private readonly IControllerTypeCache controllerTypeCache;
-
-        public ActionMethodCache(IControllerTypeCache controllerTypeCache)
+        private readonly ICache cache;
+        
+        public ActionMethodCache(ICache cache, IControllerTypeCache controllerTypeCache)
         {
-            Guard.IsNotNull(controllerTypeCache, "controllerTypeCache");
-
+            this.cache = cache;
             this.controllerTypeCache = controllerTypeCache;
         }
 
@@ -44,9 +44,16 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             Guard.IsNotNull(requestContext, "requestContext");
             Guard.IsNotNullOrEmpty(controllerName, "controllerName");
 
-            Type controllerType = controllerTypeCache.GetControllerType(requestContext, controllerName);
+            Type controllerType = controllerTypeCache.GetControllerTypes(requestContext, controllerName).FirstOrDefault();
 
-            return GetOrCreate(controllerType.TypeHandle, () => GetInternal(controllerType));
+            return cache.Get(controllerType.AssemblyQualifiedName, () => GetInternal(controllerType));
+        }
+
+        public IDictionary<string, IList<MethodInfo>> GetAllActionMethods(Type controllerType)
+        {
+            Guard.IsNotNull(controllerType, "controllerType");
+
+            return cache.Get(controllerType.AssemblyQualifiedName, () => GetInternal(controllerType));
         }
 
         private static IDictionary<string, IList<MethodInfo>> GetInternal(Type controllerType)

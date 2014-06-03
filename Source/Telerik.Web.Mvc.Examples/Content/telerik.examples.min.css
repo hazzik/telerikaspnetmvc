@@ -265,7 +265,7 @@ body, input, select, textarea, button
     background-color: #1D1F23;
     
     width: 506px;
-    height: 234px;
+    height: 256px;
     
     -moz-box-shadow: 2px 2px 2px #333;
     -webkit-box-shadow: 2px 2px 2px #333;
@@ -282,7 +282,7 @@ body, input, select, textarea, button
 {
     float: left;
     width: 168px;
-    height: 196px;
+    height: 218px;
     margin-top: 19px;
     border-right: 1px solid #3B3E43;
 }
@@ -369,6 +369,7 @@ body, input, select, textarea, button
 .sitefinity { background-position: -45px -160px; }
 .jc { background-position: -50px -160px; }
 .jm { background-position: -55px -160px; }
+.winphone { background-position: -60px -160px; }
 
 .resources-menu
 {
@@ -438,7 +439,7 @@ body, input, select, textarea, button
     background: transparent url('Images/sprite.png') no-repeat 0 -165px;
 }
 
-#examples-search,
+#examples-search .t-widget,
 #examples-search .t-select,
 #examples-search .t-input
 {
@@ -458,12 +459,6 @@ body, input, select, textarea, button
     font: 0.92em Arial, sans-serif;
 }
 
-#examples-search .watermark 
-{
-    font-style: italic;
-    color: #d5dbc3;
-}
-
 #examples-search-popup
 {
     border-color: #111f11;
@@ -480,6 +475,19 @@ body, input, select, textarea, button
 {
     background-color: #0f1a0f;
     color: #fff;
+}
+
+#examples-search label
+{
+    left: 3px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 4px;
+    font-style: italic;
+    color: #d5dbc3;
+    z-index: 1000;
+    cursor: text;
 }
 
 #telerik-logo
@@ -639,14 +647,30 @@ body, input, select, textarea, button
     color: #000;
 }
 
+#wave-validate 
+{
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    
+    margin-bottom: 1em;
+}
+
+    
+span.wave-logo 
+{
+    background-image: url('Common/Icons/wave.png');
+}
+
 .configurator,
-.configurator-legend
+.legend
 {
     border: 0;
     padding: 0;
 }
 
-.configurator
+.configurator,
+.accessibility-validation
 {
     zoom: 1;
     overflow: hidden;
@@ -655,23 +679,47 @@ body, input, select, textarea, button
     border: 1px solid #aaa;
 }
 
-.t-black .configurator
+.accessibility-validation
+{
+    clear: both;
+    margin-top: 1.3em;
+}
+
+.t-black .configurator,
+.t-black .accessibility-validation
 {
     background-color: #4f4f4f;
     border-color: #222;
 }
 
-.t-forest .configurator
+.t-black .accessibility-validation .t-link,
+.t-black .configurator .t-link
+{
+    color: #9eda29;
+}
+
+.t-forest .configurator,
+.t-forest .accessibility-validation
 {
     background-color: #d1deb6;
     border-color: #5a8533;
 }
 
-h3, .configurator-legend
+h3, .legend
 {
     margin: 0;
     clear: both;
     font: normal 1.3em "Segoe UI", Tahoma, sans-serif;
+}
+
+.culture-picker .legend
+{
+    clear: none;
+}
+
+.accessibility-validation .legend
+{
+    margin-bottom: 1.3em;
 }
 
 h3, .configurator
@@ -704,6 +752,14 @@ h3 img
     vertical-align: middle;
 }
 
+.configurator .t-datepicker,
+.configurator .t-timepicker,
+.configurator .t-datetimepicker
+{
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
 .configurator .t-button
 {
     margin-top: 2em;
@@ -712,10 +768,10 @@ h3 img
 
 /* skin-specific example styles */
 .t-black { background-color: #3d3d3d; color: #fff; }
-.t-black h3, .t-black .configurator-legend { color: #9eda29; }
+.t-black h3, .t-black .legend { color: #9eda29; }
 
 .t-forest { background-color: #d3e0c2; color: #2b2c20; }
-.t-forest h3, .t-forest .configurator-legend { color: #3c4c30; }
+.t-forest h3, .t-forest .legend { color: #3c4c30; }
 
 /* event log */
 
@@ -760,7 +816,7 @@ h3 img
 {
     border-bottom: 1px solid #ddd;
     padding: 5px 5px 5px 24px;
-    background: transparent url('Images/sprite.png') no-repeat -14px -124px;
+    background: transparent url('Images/sprite.png') no-repeat -183px -213px;
 }
 
 /* code viewer */
@@ -768,7 +824,7 @@ h3 img
 {
     background: #bdd0bc;
     color: #000;
-    border-color: #7d7c6f;
+    border-color: #a4b5a3;
 }
 
 #code-viewer-tabs .t-item { margin-right: 0; border-color: #b3c3af; }

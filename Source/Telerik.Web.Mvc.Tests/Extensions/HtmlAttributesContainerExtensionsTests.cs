@@ -5,52 +5,94 @@
 
 namespace Telerik.Web.Mvc.Extensions.Tests
 {
-    using System.Collections.Generic;
     using Moq;
+    using System;
+    using System.Collections.Generic;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.UI;
     using Xunit;
 
 	public class HtmlAttributesContainerExtensionsTests
 	{
-		[Fact]
-		public void Should_add_a_css_class_to_attributes_collection()
+        private readonly Mock<IHtmlAttributesContainer> container;
+        private readonly IDictionary<string, object> attributes;
+        
+        public HtmlAttributesContainerExtensionsTests()
+        {
+            attributes = new Dictionary<string, object>();
+            container = new Mock<IHtmlAttributesContainer>();
+            container.SetupGet(c => c.HtmlAttributes).Returns(attributes);
+        }
+
+        [Fact]
+		public void Should_add_a_css_class_to_attributes_collection_if_not_present()
 		{
-			var dictionary = new Dictionary<string, object>();
-
-			var myAttributesBag = new Mock<IHtmlAttributesContainer>();
-			myAttributesBag.SetupGet(a => a.HtmlAttributes).Returns(dictionary);
-			
-			HtmlAttributesContainerExtensions.AppendCssClass(myAttributesBag.Object, "custom-class");
-
-			Assert.True(dictionary.ContainsKey("class"));
+            HtmlAttributesContainerExtensions.AppendCssClass(container.Object, "foo");
+            
+			Assert.Equal("foo", attributes["class"]);
+		}        
+        
+        [Fact]
+		public void Should_append_class_to_existing_one()
+		{
+            attributes["class"] = "foo";
+            
+            HtmlAttributesContainerExtensions.AppendCssClass(container.Object, "bar");
+            
+			Assert.Equal("foo bar", attributes["class"]);
 		}
 
-		[Fact]
-		public void Should_contain_added_class()
-		{
-			var dictionary = new Dictionary<string, object>();
+        [Fact]
+        public void Prepend_should_add_class_if_not_present()
+        {
+            HtmlAttributesContainerExtensions.PrependCssClass(container.Object, "foo");
 
-			var myAttributesBag = new Mock<IHtmlAttributesContainer>();
-			myAttributesBag.SetupGet(a => a.HtmlAttributes).Returns(dictionary);
-			
-			HtmlAttributesContainerExtensions.AppendCssClass(myAttributesBag.Object, "custom-class");
+            Assert.Equal("foo", attributes["class"]);
+        }
 
-			Assert.True(((string)dictionary["class"]).Contains("custom-class"));
-		}
+        [Fact]
+        public void Should_prepend_class_to_existing_one()
+        {
+            attributes["class"] = "foo";
 
-		[Fact]
-		public void Should_contain_added_classes()
-		{
-			var dictionary = new Dictionary<string, object>();
+            HtmlAttributesContainerExtensions.PrependCssClass(container.Object, "bar");
 
-			var myAttributesBag = new Mock<IHtmlAttributesContainer>();
-			myAttributesBag.SetupGet(a => a.HtmlAttributes).Returns(dictionary);
+            Assert.Equal("bar foo", attributes["class"]);
+        }
 
-			HtmlAttributesContainerExtensions.AppendCssClasses(myAttributesBag.Object, new string[] { "class1", "class2" });
+        [Fact]
+        public void Should_not_throw_if_class_is_not_present()
+        {
+            Assert.DoesNotThrow(() => HtmlAttributesContainerExtensions.ThrowIfClassIsPresent(container.Object, "foo", "bar"));
+        }        
+        
+        [Fact]
+        public void Should_not_throw_if_class_is_null()
+        {
+            attributes["class"] = null;
+            Assert.DoesNotThrow(() => HtmlAttributesContainerExtensions.ThrowIfClassIsPresent(container.Object, "foo", "bar"));
+        }        
+        
+        [Fact]
+        public void Should_not_throw_if_class_does_not_contain_argument()
+        {
+            attributes["class"] = "";
+            Assert.DoesNotThrow(() => HtmlAttributesContainerExtensions.ThrowIfClassIsPresent(container.Object, "foo", "bar"));
+        }        
+        
+        [Fact]
+        public void Should_throw_if_class_contains_completely_the_argument()
+        {
+            attributes["class"] = "foo";
+            Assert.Throws<NotSupportedException>(() => HtmlAttributesContainerExtensions.ThrowIfClassIsPresent(container.Object, "foo", "bar"));
+        }
 
-			Assert.True(((string)dictionary["class"]).Contains("class1"));
-			Assert.True(((string)dictionary["class"]).Contains("class2"));
-		}
-	}
+        [Fact]
+        public void Should_not_throw_if_class_contains_partially_the_argument()
+        {
+            attributes["class"] = "foos";
+            Assert.DoesNotThrow(() => HtmlAttributesContainerExtensions.ThrowIfClassIsPresent(container.Object, "foo", "bar"));
+        }
+
+    }
 }

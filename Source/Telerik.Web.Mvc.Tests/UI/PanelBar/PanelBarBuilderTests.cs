@@ -37,24 +37,6 @@
         }
 
         [Fact]
-        public void Theme_should_set_Theme_property_of_panelBar()
-        {
-            const string theme = "theme";
-            builder.Theme(theme);
-
-            Assert.Equal(theme, panelBar.Theme);
-        }
-
-        [Fact]
-        public void Theme_should_return_builder()
-        {
-            const string theme = "theme";
-            var returnedBuilder = builder.Theme(theme);
-
-            Assert.IsType(typeof(PanelBarBuilder), returnedBuilder);
-        }
-
-        [Fact]
         public void BintTo_for_SiteMap_should_get_SiteMap_and_create_items() 
         {
             const string viewDataKey = "sample";

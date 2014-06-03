@@ -1,6 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using Xunit;
+    using Telerik.Web.Mvc.Infrastructure;
+    using System.Globalization;
 
     public class AutoCompleteHtmlBuilderTests
     {
@@ -43,25 +45,7 @@
 
             Assert.Equal(AutoComplete.Name, tag.Attribute("name"));
         }
-
-        [Fact]
-        public void Build_should_output_input_title_attribute_same_as_component_name()
-        {
-            AutoComplete.Name = "test.test";
-
-            IHtmlNode tag = renderer.Build();
-
-            Assert.Equal(AutoComplete.Name, tag.Attribute("title"));
-        }
-
-        [Fact]
-        public void Build_should_output_input_with_Autocomplete_off()
-        {
-            IHtmlNode tag = renderer.Build();
-
-            Assert.Equal("off", tag.Attribute("autocomplete"));
-        }
-
+        
         [Fact]
         public void Build_should_output_input_with_class_attribute()
         {
@@ -78,6 +62,56 @@
             IHtmlNode tag = renderer.Build();
 
             Assert.Equal("width: 100px;", tag.Attribute("style"));
+        }
+
+        [Fact]
+        public void Build_should_output_disable_attributes()
+        {
+            AutoComplete.Enabled = false;
+
+            IHtmlNode tag = renderer.Build();
+
+            Assert.Equal("disabled", tag.Attribute("disabled"));
+        }
+
+        [Fact]
+        public void AutoComplete_should_be_disabled()
+        {
+            AutoComplete.Enabled = false;
+
+            IHtmlNode tag = renderer.Build();
+
+            Assert.Equal("disabled", tag.Attribute("disabled"));
+        }
+
+#if MVC2 || MVC3
+        [Fact]
+        public void Render_method_should_set_selectedIndex_depending_on_ViewData_value()
+        {
+            AutoComplete.Name = "AutoComplete1";
+            AutoComplete.Items.Add("Item1");
+            AutoComplete.Items.Add("Item2");
+
+            AutoCompleteTestHelper.valueProvider.Setup(v => v.GetValue("AutoComplete1")).Returns(new System.Web.Mvc.ValueProviderResult("Item2", "Item2", CultureInfo.CurrentCulture));
+
+            var tag = renderer.Build();
+
+            Assert.Equal("Item2", tag.Attribute("value"));
+        }
+#endif
+        [Fact]
+        public void Render_method_should_set_selectedIndex_depending_on_returned_value_from_ValueProvider()
+        {
+            AutoComplete.Name = "AutoComplete1";
+            AutoComplete.Items.Add("Item1");
+            AutoComplete.Items.Add("Item2");
+            AutoComplete.Items.Add("Item3");
+
+            AutoComplete.ViewContext.ViewData.Add("AutoComplete1", "Item3");
+            
+            var tag = renderer.Build();
+
+            Assert.Equal("Item3", tag.Attribute("value"));
         }
     }
 }

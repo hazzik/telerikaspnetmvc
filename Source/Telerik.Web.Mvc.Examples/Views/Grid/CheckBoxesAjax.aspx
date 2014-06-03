@@ -9,8 +9,8 @@
         {
             columns.Bound(o => o.OrderID)
                    .ClientTemplate("<input type='checkbox' name='checkedRecords' value='<#= OrderID #>' />")
-                   .Title("Check")
-                   .Width(50)
+                   .Title("")
+                   .Width(36)
                    .HtmlAttributes(new { style = "text-align:center" });
             
             columns.Bound(o => o.OrderID).Width(100);

@@ -5,7 +5,6 @@
 
 namespace Telerik.Web.Mvc.Infrastructure
 {
-    using System.Diagnostics;
     using System.Web;
 
     /// <summary>
@@ -20,7 +19,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// <returns>true if the <see cref="T:System.Web.IHttpHandler"/> instance is reusable; otherwise, false.</returns>
         public virtual bool IsReusable
         {
-            [DebuggerStepThrough]
             get
             {
                 return false;

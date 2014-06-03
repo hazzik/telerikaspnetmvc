@@ -57,7 +57,7 @@
                 { Text: "Product 18", Value: "18" },
                 { Text: "Product 19", Value: "19" },
                 { Text: "Product 20", Value: "20" }
-            ]);
+            ], true /*preserve state*/);
         }
 
         function onDropDownListDataBinding(e) {
@@ -92,7 +92,7 @@
 
             autocomplete.dataBind(["Product 1", "Product 2", "Product 3", "Product 4", "Product 5", "Product 6", "Product 7",
                                     "Product 8", "Product 9", "Product 10", "Product 11", "Product 12", "Product 13", "Product 14",
-                                    "Product 15", "Product 16", "Product 17", "Product 18", "Product 19", "Product 20" ]);
+                                    "Product 15", "Product 16", "Product 17", "Product 18", "Product 19", "Product 20" ], true /*preserve state*/);
         }
 
     </script>

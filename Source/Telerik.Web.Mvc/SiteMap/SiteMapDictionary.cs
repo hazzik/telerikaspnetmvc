@@ -8,10 +8,7 @@ namespace Telerik.Web.Mvc
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
-
-    using Infrastructure;
-    using Infrastructure.Implementation;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Defines a class that is used to store <see cref="SiteMapBase"/> against a key.
@@ -30,13 +27,10 @@ namespace Telerik.Web.Mvc
         /// <value>The default site map factory.</value>
         public static Func<SiteMapBase> DefaultSiteMapFactory
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultSiteMapFactory;
             }
-
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNull(value, "value");
@@ -51,7 +45,6 @@ namespace Telerik.Web.Mvc
         /// <value>The default site map.</value>
         public SiteMapBase DefaultSiteMap
         {
-            [DebuggerStepThrough]
             get
             {
                 if (defaultSiteMap == null)
@@ -62,7 +55,6 @@ namespace Telerik.Web.Mvc
                 return defaultSiteMap;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 defaultSiteMap = value;
@@ -78,7 +70,6 @@ namespace Telerik.Web.Mvc
         /// </returns>
         public int Count
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerDictionary.Count;
@@ -93,7 +84,6 @@ namespace Telerik.Web.Mvc
         /// </returns>
         public bool IsReadOnly
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerDictionary.IsReadOnly;
@@ -109,7 +99,6 @@ namespace Telerik.Web.Mvc
         /// </returns>
         public ICollection<string> Keys
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerDictionary.Keys;
@@ -125,7 +114,6 @@ namespace Telerik.Web.Mvc
         /// </returns>
         public ICollection<SiteMapBase> Values
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerDictionary.Values;
@@ -138,13 +126,11 @@ namespace Telerik.Web.Mvc
         /// <value></value>
         public SiteMapBase this[string key]
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerDictionary[key];
             }
 
-            [DebuggerStepThrough]
             set
             {
                 innerDictionary[key] = value;
@@ -178,7 +164,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        [DebuggerStepThrough]
         public void Add(KeyValuePair<string, SiteMapBase> item)
         {
             innerDictionary.Add(item);
@@ -198,7 +183,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.IDictionary`2"/> is read-only.
         /// </exception>
-        [DebuggerStepThrough]
         public void Add(string key, SiteMapBase value)
         {
             innerDictionary.Add(key, value);
@@ -210,7 +194,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        [DebuggerStepThrough]
         public void Clear()
         {
             innerDictionary.Clear();
@@ -223,7 +206,6 @@ namespace Telerik.Web.Mvc
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        [DebuggerStepThrough]
         public bool Contains(KeyValuePair<string, SiteMapBase> item)
         {
             return innerDictionary.Contains(item);
@@ -239,7 +221,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        [DebuggerStepThrough]
         public bool ContainsKey(string key)
         {
             return innerDictionary.ContainsKey(key);
@@ -265,7 +246,6 @@ namespace Telerik.Web.Mvc
         /// -or-
         /// Type <paramref name="T"/> cannot be cast automatically to the type of the destination <paramref name="array"/>
         /// </exception>
-        [DebuggerStepThrough]
         public void CopyTo(KeyValuePair<string, SiteMapBase>[] array, int arrayIndex)
         {
             innerDictionary.CopyTo(array, arrayIndex);
@@ -277,7 +257,6 @@ namespace Telerik.Web.Mvc
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        [DebuggerStepThrough]
         public IEnumerator<KeyValuePair<string, SiteMapBase>> GetEnumerator()
         {
             return innerDictionary.GetEnumerator();
@@ -293,7 +272,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only.
         /// </exception>
-        [DebuggerStepThrough]
         public bool Remove(KeyValuePair<string, SiteMapBase> item)
         {
             return innerDictionary.Remove(item);
@@ -312,7 +290,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.NotSupportedException">
         /// The <see cref="T:System.Collections.Generic.IDictionary`2"/> is read-only.
         /// </exception>
-        [DebuggerStepThrough]
         public bool Remove(string key)
         {
             return innerDictionary.Remove(key);
@@ -329,7 +306,6 @@ namespace Telerik.Web.Mvc
         /// <exception cref="T:System.ArgumentNullException">
         /// <paramref name="key"/> is null.
         /// </exception>
-        [DebuggerStepThrough]
         public bool TryGetValue(string key, out SiteMapBase value)
         {
             return innerDictionary.TryGetValue(key, out value);
@@ -341,7 +317,6 @@ namespace Telerik.Web.Mvc
         /// <returns>
         /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
         /// </returns>
-        [DebuggerStepThrough]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -350,13 +325,13 @@ namespace Telerik.Web.Mvc
         private static Func<SiteMapBase> CreateDefaultSiteMapFactory()
         {
             Func<SiteMapBase> factory = () =>
-                                               {
-                                                   XmlSiteMap siteMap = new XmlSiteMap(new PathResolver(), new FileSystemWrapper(), new CacheManagerWrapper());
+            {
+                XmlSiteMap siteMap = new XmlSiteMap();
 
-                                                   siteMap.Load();
+                siteMap.Load();
 
-                                                   return siteMap;
-                                               };
+                return siteMap;
+            };
 
             return factory;
         }

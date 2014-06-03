@@ -13,8 +13,7 @@
 
                     Telerik Editor for ASP.NET MVC allows your users to edit HTML in a familiar,
                     user-friendly way.&lt;br /&gt;
-                    In this &lt;strong&gt;&lt;em&gt;Beta version&lt;/em&gt;&lt;/strong&gt;,
-                    the Editor provides the core HTML editing engine, which includes
+                    In this version, the Editor provides the core HTML editing engine, which includes
                     basic text formatting, hyperlinks, lists, and image handling.
                     The extension &lt;strong&gt;outputs identical HTML&lt;/strong&gt;
                     across all major browsers, follows accessibility standards
@@ -92,22 +91,27 @@
             var html = editor.value();
 
             if (!htmlSourcePopup) {
-                htmlSourcePopup = $('<div>' +
-                        '<textarea style="width:700px;height:400px;font: normal 12px Consolas,Courier New,monospace"></textarea>' +
-                        '<div class="t-button-wrapper">' + 
-                            '<button id="htmlCancel" class="t-button t-state-default" style="float:right">Cancel</button>' +
-                            '<button id="htmlUpdate" class="t-button t-state-default">Update</button>' +
-                        '</div>' +
-                  '</div>')
-                  .css('display', 'none')
+                htmlSourcePopup =
+                    $('<div class="html-view">' +
+                          '<div class="textarea t-state-default"><textarea></textarea></div>' +
+                          '<div class="t-button-wrapper">' + 
+                              '<button id="htmlCancel" class="t-button t-state-default">Cancel</button>' +
+                              '<button id="htmlUpdate" class="t-button t-state-default">Update</button>' +
+                          '</div>' +
+                      '</div>')
+                    .css('display', 'none')
                   .tWindow({
                         title: 'View Generated HTML',
                         modal: true, 
                         resizable: false, 
                         draggable: true,
+                        width: 700,
                         onLoad: function() {
                             var $popup = $(this);
-                            $popup.find('textarea')
+                            $popup.find('.textarea')
+                                    .css('width', function() {
+                                        return 700 - (this.offsetWidth - $(this).width());
+                                    })
                                     .focus()
                                   .end()
                                   .find('#htmlCancel')
@@ -133,7 +137,7 @@
             $(htmlSourcePopup.element).find('textarea').text(html);
 
             htmlSourcePopup.center().open();
-    }
+        }
 
     </script>
 
@@ -144,6 +148,32 @@
         .t-editor .t-html
         {
             background-image: url('<%= Url.Content("~/Content/Editor/CustomTools/insert-html-icon.png") %>');
+        }
+        
+        .html-view .t-button-wrapper
+        {
+            padding: .5em 0;
+        }
+        
+        #htmlCancel
+        {
+            float: right;
+        }
+        
+        .textarea
+        {
+            border-width: 1px;
+            border-style: solid;
+        }
+        
+        .textarea textarea
+        {
+             margin: 0;
+             padding: 0;
+             border: 0;
+             font: normal 12px Consolas,Courier New,monospace;
+             width: 100%;
+             height: 300px;
         }
     </style>
 </asp:Content>

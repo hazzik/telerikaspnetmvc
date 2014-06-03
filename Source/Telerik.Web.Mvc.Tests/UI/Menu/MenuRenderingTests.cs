@@ -1,10 +1,11 @@
 ﻿namespace Telerik.Web.Mvc.Tests.Menu
 {
+    using Moq;
     using System;
     using System.IO;
+    using System.Web;
     using System.Web.Routing;
     using System.Web.UI;
-    using Moq;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI;
     using Xunit;
@@ -110,9 +111,11 @@
         {
             menu.HighlightPath = true;
 
-            menu.ViewContext.RouteData.Values["controller"] = "Grid";
-            menu.ViewContext.RouteData.Values["action"] = "Basic";
-            menu.ViewContext.RouteData.Values["id"] = "10";
+            var httpContext = new Mock<HttpContextBase>();
+
+            menu.ViewContext.HttpContext = httpContext.Object;
+            httpContext.Setup(h => h.Request.Url).Returns(new Uri("http://localhost/$(SESSION)/app/Grid/Basic/10"));
+            httpContext.Setup(h => h.Response.Output).Returns(TextWriter.Null);
 
             menu.Items[0].Text = "Grid";
             menu.Items[0].Items.Add(new MenuItem
@@ -132,8 +135,8 @@
 
             menu.Render();
 
-            Assert.True(menu.Items[0].Items[1].Selected);
             Assert.False(menu.Items[0].Items[0].Selected);
+            Assert.True(menu.Items[0].Items[1].Selected);
         }
 
         [Fact]
@@ -141,8 +144,12 @@
         {
             menu.HighlightPath = true;
 
-            menu.ViewContext.RouteData.Values["controller"] = "Grid";
-            menu.ViewContext.RouteData.Values["action"] = "FirstBasic";
+            var httpContext = new Mock<HttpContextBase>();
+            
+            menu.ViewContext.HttpContext = httpContext.Object;
+            httpContext.Setup(h => h.Request.Url).Returns(new Uri("http://localhost/$(SESSION)/app/Grid/FirstBasic"));
+            httpContext.Setup(h => h.Response.Output).Returns(TextWriter.Null);
+
             menu.Items[0].Text = "Grid";
             menu.Items[0].Items.Add(new MenuItem { Text = "SubItem1" });
             menu.Items[0].Items.Add(new MenuItem { Text = "SubItem2", ControllerName = "Grid", ActionName = "InMemory", Enabled = true });

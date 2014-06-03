@@ -227,6 +227,30 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Sets the action to which the item should navigate
         /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Menu()
+        ///             .Name("Menu")
+        ///             .Items(items => items.Add().Text("Index").Action(MVC.Home.Index(3).GetRouteValueDictionary()))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TBuilder Action(RouteValueDictionary routeValues)
+        {
+            item.Action(routeValues);
+
+            if (item.ActionName.HasValue())
+            {
+                SetTextIfEmpty(item.ActionName);
+            }
+
+            return this as TBuilder;
+        }
+
+        /// <summary>
+        /// Sets the action to which the item should navigate
+        /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="routeValues">The route values.</param>

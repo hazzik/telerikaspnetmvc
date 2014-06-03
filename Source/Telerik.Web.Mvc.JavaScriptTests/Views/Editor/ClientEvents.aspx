@@ -81,33 +81,28 @@
             assertTrue(onSelectionChangeRaised);
         }
 
+        function test_exec_raises_onExecute() {
+            editor.exec('undo');
+            assertTrue(onExecuteRaised);
+        }
+
         function test_up_arrow_raises_selection_change() {
             type(38);
 
             assertTrue(changeRaised);
         }
 
-        function test_exec_raises_onExecute() {
-            editor.exec('undo');
-            assertTrue(onExecuteRaised);
+        function test_enter_raises_selection_change() {
+            var editor = getEditor();
+            editor.value('foo');
+            type(13);
+
+            assertTrue(changeRaised);
         }
 
-        function test_exec_supplies_command_name_and_object() {
-            var e;
-            $(editor.element).bind('execute', function() {
-                e = arguments[0];
-            });
-
-            editor.value('foo');
-            var range = editor.createRange();
-            range.selectNodeContents(editor.body.firstChild);
-            editor.getSelection().removeAllRanges();
-            editor.getSelection().addRange(range);
-
-            editor.exec('bold');
-
-            assertEquals('bold', e.name);
-            assertTrue(e.command instanceof $.telerik.editor.FormatCommand);
+        function test_mouseup_raises_selection_change() {
+            $(getEditor().document).mouseup();
+            assertTrue(changeRaised);
         }
 
         function test_down_arrow_raises_selection_change() {
@@ -164,19 +159,6 @@
             assertTrue(changeRaised);
         }
 
-        function test_enter_raises_selection_change() {
-            var editor = getEditor();
-            editor.value('foo');
-            type(13);
-
-            assertTrue(changeRaised);
-        }
-
-        function test_mouseup_raises_selection_change() {
-            $(getEditor().document).mouseup();
-            assertTrue(changeRaised);
-        }
-
         function test_exec_raises_selection_change() {
             var editor = getEditor();
             editor.value('foo');
@@ -202,5 +184,24 @@
 
             assertTrue(changeRaised);
         }
+        
+        function test_exec_supplies_command_name_and_object() {
+            var e;
+            $(editor.element).bind('execute', function() {
+                e = arguments[0];
+            });
+
+            editor.value('foo');
+            var range = editor.createRange();
+            range.selectNodeContents(editor.body.firstChild);
+            editor.getSelection().removeAllRanges();
+            editor.getSelection().addRange(range);
+
+            editor.exec('bold');
+
+            assertEquals('bold', e.name);
+            assertTrue(e.command instanceof $.telerik.editor.FormatCommand);
+        }
+
     </script>
 </asp:Content>

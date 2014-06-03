@@ -9,6 +9,7 @@
                           .Add("telerik.examples.css")
                           .Add("telerik.common.css")
                           .Add("telerik." + Html.GetCurrentTheme() + ".css")
+                          .Add("telerik.rtl.css")
                           .Combined(true)
                           .Compress(true))
                      %>

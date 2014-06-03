@@ -25,6 +25,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View();
         }
 
+        public ActionResult ClientAPI()
+        {
+            return View();
+        }
+
         public JsonResult _AjaxDropDownList()
         {
             IEnumerable<SelectListItem> list = new List<SelectListItem> { 

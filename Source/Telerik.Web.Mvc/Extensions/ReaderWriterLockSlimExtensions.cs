@@ -6,7 +6,6 @@
 namespace Telerik.Web.Mvc.Extensions
 {
     using System;
-    using System.Diagnostics;
     using System.Threading;
 
     using Infrastructure;
@@ -21,7 +20,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         public static IDisposable ReadAndWrite(this ReaderWriterLockSlim instance)
         {
             Guard.IsNotNull(instance, "instance");
@@ -36,7 +34,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         public static IDisposable Read(this ReaderWriterLockSlim instance)
         {
             Guard.IsNotNull(instance, "instance");
@@ -51,7 +48,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         public static IDisposable Write(this ReaderWriterLockSlim instance)
         {
             Guard.IsNotNull(instance, "instance");
@@ -65,13 +61,11 @@ namespace Telerik.Web.Mvc.Extensions
         {
             private readonly Action action;
 
-            [DebuggerStepThrough]
             public DisposableCodeBlock(Action action)
             {
                 this.action = action;
             }
 
-            [DebuggerStepThrough]
             public void Dispose()
             {
                 action();

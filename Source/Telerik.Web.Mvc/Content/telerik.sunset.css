@@ -16,14 +16,20 @@
     background: #90330a url('Sunset/sprite.png') repeat-x 0 -368px;
 }
 
+.t-panelbar .t-state-hover { background-image: none; }
+
 .t-icon { background-image: url('Sunset/sprite.png'); }
 .t-editor .t-tool-icon { background-image: url('Sunset/editor.png'); }
 
 .t-expand { background-position: 0 -160px; }
 .t-collapse { background-position: 0 -176px; }
+.t-rtl .t-expand { background-position: -64px -160px; }
 
 .t-plus, .t-plus-disabled { background-position: 0 -256px; }
 .t-minus, .t-minus-disabled { background-position: -16px -256px; }
+
+.t-rtl .t-plus, .t-rtl .t-plus-disabled { background-position: 0 -272px; }
+.t-rtl .t-minus, .t-rtl .t-minus-disabled { background-position: -16px -272px; }
 
 .t-arrow-up { background-position: -16px -160px; }
 .t-arrow-down { background-position: -16px -176px; }
@@ -60,6 +66,7 @@
 
 .t-refresh { background-position: -32px -240px; }
 .t-icon-calendar { background-position: -48px -240px; }
+.t-icon-clock { background-position: -64px -336px; }
 
 .t-edit { background-position: 0 -336px; }
 .t-delete { background-position: -16px -336px; }
@@ -171,6 +178,20 @@
     background-color: #ffc0cb;
 }
 
+.t-button
+{
+    background: #e8e8e8 url('Sunset/sprite.png') repeat-x 0 -96px;
+    color: #333;
+    border-color: #d1711a;
+    color: #2d0e06;
+}
+
+.t-button-hover
+{
+    background-position: 0 -128px;
+    border-color: #e7941e;
+}
+
 .t-state-disabled,
 .t-state-disabled .t-link
 {
@@ -186,20 +207,6 @@
 {
     border-color: #bbb99d;
     background-color: #dee0c8;
-}
-
-.t-button
-{
-    background: #e8e8e8 url('Sunset/sprite.png') repeat-x 0 -96px;
-    color: #333;
-    border-color: #d1711a;
-    color: #2d0e06;
-}
-
-.t-button-hover
-{
-    background-position: 0 -128px;
-    border-color: #e7941e;
 }
 
 .t-panelbar .t-link
@@ -226,6 +233,19 @@
 .t-grouping-row td
 {
     background: #fff url('Sunset/sprite.png') repeat-x 0 -48px;
+}
+
+.t-footer-template td
+{
+    background-color: #dee0c8;
+    border-color: #cabaab #dee0c8 #f1e9dc;
+}
+
+.t-footer-template-wrap,
+.t-footer-template-wrap table
+{
+    background-color: #dee0c8;
+    border-color: #cabaab;
 }
 
 .t-grouping-header .t-group-indicator
@@ -257,11 +277,6 @@
     background-color: #ea9959;
 }
 
-.t-panelbar .t-state-hover
-{
-    background-image: none;
-}
-
 .t-calendar th
 {
     border-color: #d2c7b4;
@@ -277,9 +292,13 @@
 .t-treeview-lines .t-bot
 {
     background-image: url('Sunset/treeview-nodes.png');
-    background-repeat: no-repeat;
-    margin-left: -16px;
-    padding-left: 16px;
+}
+
+.t-rtl .t-treeview-lines .t-top,
+.t-rtl .t-treeview-lines .t-mid,
+.t-rtl .t-treeview-lines .t-bot
+{
+    background-image: url('Sunset/treeview-nodes-rtl.png');
 }
 
 .t-treeview-lines .t-item { background-image: url('Sunset/treeview-line.png'); }

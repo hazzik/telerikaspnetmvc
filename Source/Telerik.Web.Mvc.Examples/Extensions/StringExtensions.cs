@@ -102,6 +102,9 @@
                 {
                     int splitPoint = currentLine.Substring(0, WRAP_THRESHOLD - indentSize).LastIndexOf(' ');
 
+                    if (splitPoint < 0)
+                        splitPoint = WRAP_THRESHOLD; // cuts though code, though
+
                     result.Append(currentLine.Substring(0, splitPoint))
                           .Append(newLine.PadRight(newLineLength + currentLineIndentSize + indentSize));
 

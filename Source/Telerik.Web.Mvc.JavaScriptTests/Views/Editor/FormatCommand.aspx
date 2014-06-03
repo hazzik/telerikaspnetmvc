@@ -62,8 +62,8 @@
         function test_fontName_exec() {
             var range = createRangeFromText(editor, '|foo|');
             editor.selectRange(range);
-            editor.exec('fontName', {value: 'Arial,Helvetica,sans-serif'});
-            assertEquals('<span style="font-family:Arial,Helvetica,sans-serif;">foo</span>', editor.value());
+            editor.exec('fontName', {value: 'Arial'});
+            assertEquals('<span style="font-family:Arial;">foo</span>', editor.value());
         }        
         
         function test_fontSize_exec() {

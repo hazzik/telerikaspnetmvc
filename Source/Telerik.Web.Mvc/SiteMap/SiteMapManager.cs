@@ -5,8 +5,6 @@
 
 namespace Telerik.Web.Mvc
 {
-    using System.Diagnostics;
-
     /// <summary>
     /// Defines a class that is used to store global sitemaps.
     /// </summary>
@@ -20,7 +18,6 @@ namespace Telerik.Web.Mvc
         /// <value>The site maps.</value>
         public static SiteMapDictionary SiteMaps
         {
-            [DebuggerStepThrough]
             get
             {
                 return siteMaps;

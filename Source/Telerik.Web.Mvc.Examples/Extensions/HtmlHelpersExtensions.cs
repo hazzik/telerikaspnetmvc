@@ -3,11 +3,12 @@ namespace Telerik.Web.Mvc.Examples
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Web.Mvc;
     using System.Web.Mvc.Html;
     using System.Web.UI;
     using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.UI;
 
     public static class HtmlHelpersExtensions
     {
@@ -19,17 +20,17 @@ namespace Telerik.Web.Mvc.Examples
                 { "tabstrip", 721 }
             };
 
-        public static ExampleConfigurator Configurator(this HtmlHelper instance, string title)
+        public static ExampleConfigurator Configurator(this HtmlHelper html, string title)
         {
-            return new ExampleConfigurator(instance)
+            return new ExampleConfigurator(html)
                         .Title(title);
         }
         
-        public static string ExampleTitle(this HtmlHelper helper)
+        public static string ExampleTitle(this HtmlHelper html)
         {
-            XmlSiteMap sitemap = (XmlSiteMap)helper.ViewData["telerik.mvc.examples"];
-            string controller = (string)helper.ViewContext.RouteData.Values["controller"];
-            string action = (string)helper.ViewContext.RouteData.Values["action"];
+            XmlSiteMap sitemap = (XmlSiteMap)html.ViewData["telerik.mvc.examples"];
+            string controller = (string)html.ViewContext.RouteData.Values["controller"];
+            string action = (string)html.ViewContext.RouteData.Values["action"];
 
             SiteMapNode exampleSiteMapNode = sitemap.RootNode.ChildNodes
                 .SelectRecursive(node => node.ChildNodes)
@@ -44,9 +45,9 @@ namespace Telerik.Web.Mvc.Examples
             return string.Empty;
         }
 
-        public static string ProductMetaTag(this HtmlHelper instance)
+        public static string ProductMetaTag(this HtmlHelper html)
         {
-            string controller = (string)instance.ViewContext.RouteData.Values["controller"];
+            string controller = (string)html.ViewContext.RouteData.Values["controller"];
 
             if (!controllerToProductIdMap.ContainsKey(controller))
             {
@@ -56,21 +57,31 @@ namespace Telerik.Web.Mvc.Examples
             return String.Format("<meta name=\"ProductId\" content=\"{0}\" />", controllerToProductIdMap[controller]);
         }
 
-        public static string CheckBox(this HtmlHelper instance, string id, bool isChecked, string labelText)
+        public static string CheckBox(this HtmlHelper html, string id, bool isChecked, string labelText)
         {
-            return (new StringBuilder())
-                        .Append(instance.CheckBox(id, isChecked))
-                        .Append("<label for=\"")
-                        .Append(id)
-                        .Append("\">")
-                        .Append(labelText)
-                        .Append("</label>")
-                    .ToString();
+            return html.CheckBox(id, isChecked) + new HtmlTag("label").Attribute("for", id).Html(labelText).ToString();
         }
 
-        public static string GetCurrentTheme(this HtmlHelper instance)
+        public static string GetCurrentTheme(this HtmlHelper html)
         {
-            return instance.ViewContext.HttpContext.Request.QueryString["theme"] ?? "vista";
+            return html.ViewContext.HttpContext.Request.QueryString["theme"] ?? "vista";
+        }
+
+        public static string WaveValidatorLink(this HtmlHelper html)
+        {
+            var link = new HtmlTag("a")
+                .Attributes(new
+                {
+                    href = String.Format("http://wave.webaim.org/report?url={0}", System.Web.HttpUtility.UrlEncode(html.ViewContext.HttpContext.Request.Url.AbsoluteUri)),
+                    id = "wave-validate",
+                    @class = "t-button t-state-default"
+                });
+
+            new HtmlTag("span").AddClass("t-icon wave-logo").AppendTo(link);
+
+            new LiteralNode("Validate with WAVE").AppendTo(link);
+
+            return link.ToString();
         }
     }
 
@@ -83,10 +94,10 @@ namespace Telerik.Web.Mvc.Examples
         private string title;
         private MvcForm form;
 
-        public ExampleConfigurator(HtmlHelper instance)
+        public ExampleConfigurator(HtmlHelper htmlHelper)
         {
-            this.htmlHelper = instance;
-            this.writer = new HtmlTextWriter(instance.ViewContext.HttpContext.Response.Output);
+            this.htmlHelper = htmlHelper;
+            this.writer = new HtmlTextWriter(htmlHelper.ViewContext.HttpContext.Response.Output);
         }
 
         public ExampleConfigurator Title(string title)
@@ -101,7 +112,7 @@ namespace Telerik.Web.Mvc.Examples
             this.writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass);
             this.writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
-            this.writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass + "-legend");
+            this.writer.AddAttribute(HtmlTextWriterAttribute.Class, "legend");
             this.writer.RenderBeginTag(HtmlTextWriterTag.H3);
             this.writer.Write(this.title);
             this.writer.RenderEndTag();

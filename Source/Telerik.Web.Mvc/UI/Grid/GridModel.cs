@@ -7,7 +7,8 @@ namespace Telerik.Web.Mvc
 {
     using System.Collections;
     using System.Collections.Generic;
-
+    using System.Data;
+    using Telerik.Web.Mvc.UI;
 
     public interface IGridModel
     {
@@ -32,6 +33,11 @@ namespace Telerik.Web.Mvc
         public GridModel(IEnumerable data)
         {
             Data = data;
+        }
+
+        public GridModel(DataTable data)
+        {
+            Data = data.WrapAsEnumerable();
         }
 
         public IEnumerable Data

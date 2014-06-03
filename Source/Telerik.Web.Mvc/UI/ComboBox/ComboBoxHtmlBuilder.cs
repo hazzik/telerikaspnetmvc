@@ -6,13 +6,12 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Linq;
-
-    using Extensions;
-    using Infrastructure;
+    using System.Web.Mvc;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     
     public class ComboBoxHtmlBuilder : IDropDownHtmlBuilder
     {
-
         public ComboBoxHtmlBuilder(IComboBoxRenderable component)
         {
             this.Component = component;
@@ -26,22 +25,28 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            return new HtmlTag("div")
-                    .Attribute("id", Component.Id)
-                    .Attributes(Component.HtmlAttributes)
-                    .PrependClass(UIPrimitives.Widget, "t-combobox", UIPrimitives.Header);
+            IHtmlNode root = new HtmlTag("div")
+                            .Attribute("id", Component.Id)
+                            .Attributes(Component.HtmlAttributes)
+                            .PrependClass(UIPrimitives.Widget, "t-combobox", UIPrimitives.Header)
+                            .ToggleClass("t-state-disabled", !Component.Enabled);
+
+            this.InnerContentTag().AppendTo(root);
+            this.HiddenInputTag().AppendTo(root);
+
+            return root;
         }
 
         public IHtmlNode InnerContentTag()
         {
             IHtmlNode root = new HtmlTag("div").AddClass("t-dropdown-wrap t-state-default");
 
-            IHtmlNode input = new HtmlTag("input")
-                    .Attributes(new { type = "text",
-                                      title = Component.Id })
-                    .Attributes(Component.InputHtmlAttributes)
-                    .PrependClass(UIPrimitives.Input)
-                    .AppendTo(root);
+            IHtmlNode input = new HtmlTag("input", TagRenderMode.SelfClosing)
+                              .Attributes(new { type = "text"})
+                              .ToggleAttribute("disabled", "disabled", !Component.Enabled)
+                              .Attributes(Component.InputHtmlAttributes)
+                              .PrependClass(UIPrimitives.Input)
+                              .AppendTo(root);
 
             if(Component.Items.Any() && Component.SelectedIndex != -1) 
             {
@@ -57,10 +62,7 @@ namespace Telerik.Web.Mvc.UI
                 });
 
                 string value = Component.ViewContext.Controller.ValueOf<string>(Component.Name + "-input");
-                if (value.HasValue())
-                {
-                    input.Attribute("value", value);
-                }
+                input.ToggleAttribute("value", value, value.HasValue());
             }
 
             IHtmlNode link = new HtmlTag("span").AddClass("t-select", UIPrimitives.Header);
@@ -74,13 +76,14 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode HiddenInputTag()
         {
-            IHtmlNode input = new HtmlTag("input")
-                    .Attributes(new { type = "text", 
+            IHtmlNode input = new HtmlTag("input", TagRenderMode.SelfClosing)
+                              .Attributes(new { type = "text", 
                                       style="display:none" });
-
+            
             if (Component.Items.Any() && Component.SelectedIndex != -1)
             {
-                input.Attribute("value", Component.Items[Component.SelectedIndex].Value);
+                DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
+                input.Attribute("value", selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text);
             }
 
             if (Component.Name.HasValue()) { 
@@ -88,10 +91,7 @@ namespace Telerik.Web.Mvc.UI
                                        id = Component.Id + "-value" });
 
                 string value = Component.ViewContext.Controller.ValueOf<string>(Component.Name);
-                if (value.HasValue())
-                {
-                    input.Attribute("value", value);
-                }
+                input.ToggleAttribute("value", value, value.HasValue());
             }
             
             return input;

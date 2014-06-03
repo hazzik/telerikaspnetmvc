@@ -81,7 +81,7 @@
         function test_clicking_root_item_should_open_it() {
             var opend = false;
             menu.open = function() { opend = true }
-            menu.click({preventDefault:function(){}}, $("li:first", menu.element)[0]);
+            menu.click({ preventDefault: function () { }, stopPropagation: function () { } }, $("li:first", menu.element)[0]);
             assertTrue(opend);
             assertTrue(menu.clicked);
         }

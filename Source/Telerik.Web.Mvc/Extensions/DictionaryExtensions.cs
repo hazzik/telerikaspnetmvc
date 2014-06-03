@@ -6,7 +6,6 @@
 namespace Telerik.Web.Mvc.Extensions
 {
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Text;
     using System.Web;
     using System.Web.Routing;
@@ -138,7 +137,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <param name="from">From.</param>
-        [DebuggerStepThrough]
         public static void Merge(this IDictionary<string, object> instance, IDictionary<string, object> from)
         {
             Merge(instance, from, true);
@@ -150,7 +148,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// <param name="instance">The instance.</param>
         /// <param name="values">The values.</param>
         /// <param name="replaceExisting">if set to <c>true</c> [replace existing].</param>
-        [DebuggerStepThrough]
         public static void Merge(this IDictionary<string, object> instance, object values, bool replaceExisting)
         {
             Merge(instance, new RouteValueDictionary(values), replaceExisting);
@@ -161,7 +158,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <param name="values">The values.</param>
-        [DebuggerStepThrough]
         public static void Merge(this IDictionary<string, object> instance, object values)
         {
             Merge(instance, values, true);

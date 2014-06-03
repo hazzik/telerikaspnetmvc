@@ -33,6 +33,7 @@
             for (var i = 0; i < cultures.length; i++) {
                 suite.addTestPage("Core/DateFormatting?culture=" + cultures[i]);
                 suite.addTestPage("Core/NumberFormatting?culture=" + cultures[i]);
+                suite.addTestPage("Core/TimeParsing?culture=" + cultures[i]);
             }
 
             allTests.addTestSuite(suite);

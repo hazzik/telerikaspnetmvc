@@ -43,6 +43,15 @@
             var result = JsonForBoundColumn((Customer c) => c.Id);
 
             Assert.Equal("Id", result["member"]);
+        }        
+        
+        
+        [Fact]
+        public void Should_serialize_encoded_if_false_for_bound_column()
+        {
+            var result = JsonForBoundColumn((Customer c) => c.Id, c => c.Encoded = false);
+
+            Assert.Equal(false, result["encoded"]);
         }
 
         [Fact]
@@ -110,7 +119,7 @@
             Assert.False(result.ContainsKey("format"));
         }
 
-#if MVC2
+#if MVC2 || MVC3
         [Fact]
         public void Should_serialize_readonly_if_set()
         {
@@ -202,7 +211,7 @@
             Assert.False(result.ContainsKey("filters"));
         }
 
-#if MVC2
+#if MVC2 || MVC3
         [Fact]
         public void Should_serialize_editor_html()
         {

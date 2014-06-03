@@ -38,6 +38,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View();
         }
 
+        public ActionResult Selection()
+        {
+            return View();
+        }
+
         [HttpPost]
         public ActionResult AjaxView1()
         {

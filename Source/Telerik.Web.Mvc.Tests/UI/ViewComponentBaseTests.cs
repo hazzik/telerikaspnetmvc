@@ -77,7 +77,7 @@ namespace Telerik.Web.Mvc.UI.Tests
         {
             ViewComponentBaseTestDouble component = new ViewComponentBaseTestDouble(_viewContext, _clientSideObjectWriterFactory.Object);
 
-            Assert.Throws<InvalidOperationException>(component.CheckRequired);
+            Assert.Throws<InvalidOperationException>(() => component.CheckRequired());
         }
 
         [Fact]

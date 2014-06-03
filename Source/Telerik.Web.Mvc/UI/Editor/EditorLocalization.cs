@@ -10,18 +10,8 @@ namespace Telerik.Web.Mvc.UI
 
     public class EditorLocalization : ViewComponentLocalization, IClientSerializable
     {
-        public EditorLocalization()
-            : this(null)
-        {
-        }
-
-        public EditorLocalization(CultureInfo culture)
-            : this(null, culture)
-        {
-        }
-
-        public EditorLocalization(string resourceLocation, CultureInfo culture)
-            : base(resourceLocation, "EditorLocalization", culture)
+        public EditorLocalization(ILocalizationService localizationService, CultureInfo culture)
+            : base(localizationService, null, "EditorLocalization", culture)
         {
         }
 
@@ -110,9 +100,19 @@ namespace Telerik.Web.Mvc.UI
             get { return GetValue("FontName"); }
         }
 
+        public string FontNameInherit
+        {
+            get { return GetValue("FontNameInherit"); }
+        }
+
         public string FontSize
         {
             get { return GetValue("FontSize"); }
+        }
+
+        public string FontSizeInherit
+        {
+            get { return GetValue("FontSizeInherit"); }
         }
 
         public string FormatBlock

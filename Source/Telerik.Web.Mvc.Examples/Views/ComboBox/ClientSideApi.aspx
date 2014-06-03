@@ -42,6 +42,18 @@
             e.cancelBubble = true;
         }
 
+        function enableComboBox() {
+            $("#ComboBox").data("tComboBox").enable();
+            $('#OpenComboBoxDropDown').removeClass('t-state-disabled').removeAttr('disabled');
+            $('#CloseComboBoxDropDown').removeClass('t-state-disabled').removeAttr('disabled');
+        }
+
+        function disableComboBox() {
+            $("#ComboBox").data("tComboBox").disable();
+            $('#OpenComboBoxDropDown').addClass('t-state-disabled').attr('disabled', 'disabled');
+            $('#CloseComboBoxDropDown').addClass('t-state-disabled').attr('disabled', 'disabled');
+        }
+
     </script>
 
     <% using ( Html.Configurator("ComboBox client API")
@@ -65,9 +77,13 @@
                 <button class="t-button t-state-default" onclick="getSelectedFromComboBoxt()" style="width: 100px;">Get Value</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="openComboBoxDropDown(event)">Open</button>
+                <button id="OpenComboBoxDropDown" class="t-button t-state-default" onclick="openComboBoxDropDown(event)">Open</button>
                 /
-                <button class="t-button t-state-default" onclick="closeComboBoxDropDown(event)">Close</button>
+                <button id="CloseComboBoxDropDown" class="t-button t-state-default" onclick="closeComboBoxDropDown(event)">Close</button>
+            </li>
+            <li>
+                <button class="t-button t-state-default" onclick="enableComboBox()">Enable</button> /
+                <button class="t-button t-state-default" onclick="disableComboBox()">Disable</button>
             </li>
         </ul>
     <% } %>
@@ -81,13 +97,12 @@
     <script type="text/javascript">
 
         function selectItemInDropDownList() {
+            $("#DropDownList").focus();
             var dropDownList = $("#DropDownList").data("tDropDownList");
 
             var index = $("#dropDownListItemIndex").data("tTextBox").value();
 
-            var $items = dropDownList.dropDown.$element.find('> .t-reset > .t-item');
-
-            dropDownList.select($items[index]);
+            dropDownList.select(index);
         }
 
         function getSelectedFromDropDownList() {
@@ -114,6 +129,18 @@
             e.cancelBubble = true;
         }
 
+        function enableDropDownList() {
+            $("#DropDownList").data("tDropDownList").enable();
+            $('#OpenDropDownListDropDown').removeClass('t-state-disabled').removeAttr('disabled');
+            $('#CloseDropDownListDropDown').removeClass('t-state-disabled').removeAttr('disabled');
+        }
+
+        function disableDropDownListr() {
+            $("#DropDownList").data("tDropDownList").disable();
+            $('#OpenDropDownListDropDown').addClass('t-state-disabled').attr('disabled', 'disabled');
+            $('#CloseDropDownListDropDown').addClass('t-state-disabled').attr('disabled', 'disabled');
+        }
+
     </script>
 
     <% using ( Html.Configurator("DropDownList client API")
@@ -137,20 +164,23 @@
                     <button class="t-button t-state-default" onclick="getSelectedFromDropDownList()" style="width: 100px;">Get Value</button>
                 </li>
                 <li>
-                    <button class="t-button t-state-default" onclick="openDropDownListDropDown(event)">
+                    <button id="OpenDropDownListDropDown" class="t-button t-state-default" onclick="openDropDownListDropDown(event)">
                         Open</button>
                     /
-                    <button class="t-button t-state-default" onclick="closeDropDownListDropDown(event)">
+                    <button id="CloseDropDownListDropDown" class="t-button t-state-default" onclick="closeDropDownListDropDown(event)">
                         Close</button>
                 </li>
-            </ul>
+                <li>
+                    <button class="t-button t-state-default" onclick="enableDropDownList()">Enable</button> /
+                    <button class="t-button t-state-default" onclick="disableDropDownListr()">Disable</button>
+                </li>
+           </ul>
     <% } %>
 
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
-        
         .example .configurator
         {
             width: 300px;
@@ -172,6 +202,5 @@
             *display: inline;
             zoom: 1;
         }
-        
     </style>
 </asp:Content>

@@ -6,9 +6,9 @@
 namespace Telerik.Web.Mvc.Extensions
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Web.UI;
-
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public static class HtmlTextWriterExtensions
     {
@@ -16,7 +16,7 @@ namespace Telerik.Web.Mvc.Extensions
         {
             Guard.IsNotNull(writer, "writer");
 
-            if (!attributes.IsNullOrEmpty())
+            if (attributes.Any())
             {
                 foreach (KeyValuePair<string, object> attribute in attributes)
                 {

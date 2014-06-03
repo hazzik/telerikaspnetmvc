@@ -12,7 +12,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         [Fact]
         public void Should_be_able_get_fields()
         {
-            Assert.NotEmpty(new FieldCache().GetFields(typeof(DummyObjectWithPublicField)));
+            Assert.NotEmpty(new FieldCache(new NoCache()).GetFields(typeof(DummyObjectWithPublicField)));
         }
 
         public class DummyObjectWithPublicField

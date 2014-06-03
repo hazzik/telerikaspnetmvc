@@ -5,8 +5,9 @@
 
 namespace Telerik.Web.Mvc.UI.Tests
 {
-    using Xunit;
     using System.Collections.Generic;
+    using System.Globalization;
+    using Xunit;
 
     public class ComboBoxHtmlBuilderTests
     {
@@ -67,6 +68,23 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void Build_should_call_InnerContentMethod_and_append_to_wrapper()
+        {
+            IHtmlNode tag = renderer.Build().Children[0];
+
+            Assert.Equal("div", tag.TagName);
+            Assert.True(tag.Attribute("class").Contains("t-dropdown-wrap"));
+        }
+
+        [Fact]
+        public void Build_should_call_HiddenInputTag_and_append_to_wrapper()
+        {
+            IHtmlNode tag = renderer.Build().Children[1];
+
+            Assert.Equal("input", tag.TagName);
+        }
+
+        [Fact]
         public void InnerContentTag_should_output_input_html_elemnt()
         {
             IHtmlNode tag = renderer.InnerContentTag();
@@ -88,16 +106,6 @@ namespace Telerik.Web.Mvc.UI.Tests
             IHtmlNode tag = renderer.InnerContentTag();
 
             Assert.Equal("text", tag.Children[0].Attribute("type"));
-        }
-
-        [Fact]
-        public void InnerContentTag_should_output_input_title()
-        {
-            combobox.Name = "ComboBox";
-
-            IHtmlNode tag = renderer.InnerContentTag();
-
-            Assert.Equal(combobox.Id, tag.Children[ 0 ].Attribute("title"));
         }
 
         [Fact]
@@ -154,6 +162,22 @@ namespace Telerik.Web.Mvc.UI.Tests
             Assert.Equal("Item2", tag.Children[0].Attribute("value"));
         }
 
+#if MVC2 || MVC3
+        [Fact]
+        public void InnerContentTag_should_add_attr_value_if_value_is_posted()
+        {
+            combobox.Name = "ComboBox1";
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            combobox.SelectedIndex = 1;
+
+            ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1-input")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            Assert.Equal("2", tag.Children[0].Attribute("value"));
+        }
+#endif
         [Fact]
         public void InnerContentTag_should_output_span_tag()
         {
@@ -251,7 +275,7 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
-        public void HiddenInputTag_should_add_attr_value_with_selected_item_text()
+        public void HiddenInputTag_should_add_attr_value_with_selected_item_value()
         {
             combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
             combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
@@ -264,13 +288,55 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void HiddenInputTag_should_add_attr_value_with_selected_item_text_if_value_is_not_set()
+        {
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2" });
+
+            combobox.SelectedIndex = 1;
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            Assert.Equal("Item2", tag.Attribute("value"));
+        }
+
+#if MVC2 || MVC3
+        [Fact]
+        public void HiddenInputTag_should_add_attr_value_if_value_is_posted()
+        {
+            combobox.Name = "ComboBox1";
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            combobox.SelectedIndex = 1;
+
+            ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            Assert.Equal("2", tag.Attribute("value"));
+        }
+#endif
+
+        [Fact]
         public void HiddenInputTag_does_not_output_name_attribute_for_unnamed_components()
         {
-            var renderer = new ComboBoxHtmlBuilder(new EditorComboBox("FontFace", new List<DropDownItem>() { new DropDownItem { Text = "Arial", Value = "Arial,Verdana,sans-serif" } } ));
+            var renderer = new ComboBoxHtmlBuilder(new EditorComboBox("FontFace", new List<DropDownItem>() { new DropDownItem { Text = "Arial", Value = "Arial,Verdana,sans-serif" } }, TestHelper.CreateViewContext() ));
 
             IHtmlNode tag = renderer.HiddenInputTag();
 
             Assert.False(tag.Attributes().ContainsKey("name"));
+        }
+
+        [Fact]
+        public void ComboBox_should_should_be_disabled()
+        {
+            combobox.Enabled = false;
+
+            IHtmlNode div = renderer.Build();
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            Assert.Equal("disabled", tag.Children[0].Attribute("disabled"));
+            Assert.Contains("t-state-disabled", div.Attribute("class"));
         }
     }
 }

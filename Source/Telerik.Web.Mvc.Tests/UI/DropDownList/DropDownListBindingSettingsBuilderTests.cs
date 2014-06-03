@@ -58,5 +58,41 @@
             var sameBuilder = builder.Select(action, controller, routeValues);
             Assert.IsType(typeof(DropDownListBindingSettingsBuilder), sameBuilder);
         }
+
+        [Fact]
+        public void Select_method_with_RouteValueDinctionary_populated_from_MVCT4_templates_should_set_controller_action_and_routevalues()
+        {
+            const string actionName = "Index";
+            const string controllerName = "Home";
+
+            RouteValueDictionary values = new RouteValueDictionary();
+            values.Add("action", actionName);
+            values.Add("controller", controllerName);
+            values.Add("id", 1);
+
+            builder.Select(values);
+
+            Assert.Equal(actionName, settings.Select.ActionName);
+            Assert.Equal(controllerName, settings.Select.ControllerName);
+            Assert.True(settings.Select.RouteValues.ContainsKey("id"));
+            Assert.Equal(1, settings.Select.RouteValues["id"]);
+        }
+
+        [Fact]
+        public void Select_method_with_RouteValueDinctionary_should_populate_action_and_controller_name_if_no_routeValues_is_presented_in_the_argument_dictionary()
+        {
+            const string actionName = "Index";
+            const string controllerName = "Home";
+
+            RouteValueDictionary values = new RouteValueDictionary();
+            values.Add("action", actionName);
+            values.Add("controller", controllerName);
+
+            builder.Select(values);
+
+            Assert.Equal(actionName, settings.Select.ActionName);
+            Assert.Equal(controllerName, settings.Select.ControllerName);
+            Assert.Equal(0, settings.Select.RouteValues.Count);
+        }
     }
 }

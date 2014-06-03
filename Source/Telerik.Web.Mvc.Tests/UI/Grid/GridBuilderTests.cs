@@ -2,11 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.IO;
     using System.Linq.Expressions;
     using System.Web.UI;
     using Moq;
-    using Telerik.Web.Mvc.UI.Tests;
+    using UI.Tests;
     using UI;
     using Xunit;
 
@@ -43,6 +44,14 @@
             builder.BindTo(customers);
 
             Assert.Same(customers, grid.DataSource);
+        }
+
+        [Fact]
+        public void BindTo_sets_the_data_source_as_GridCustomGroupingWrapper_of_model_type_if_non_generic_enumerable_is_assigned()
+        {
+            builder.BindTo(new object[0]);
+
+            Assert.IsType<GridCustomGroupingWrapper<Customer>>(grid.DataSource);
         }
 
         [Fact]
@@ -86,13 +95,41 @@
         {
             Expression<Func<Customer, int>> expression = c => c.Id;
 
-            builder.DataKeys(keys =>
-            {
-                keys.Add(expression).RouteKey("customerId");
-            });
+            builder.DataKeys(keys => keys.Add(expression).RouteKey("customerId"));
 
             Assert.Same(expression, ((GridDataKey<Customer, int>)grid.DataKeys[0]).Expression);
             Assert.Same("customerId", grid.DataKeys[0].RouteKey);
+        }
+
+
+        [Fact]
+        public void Should_add_data_key_by_name()
+        {
+            const string expectedRouteValue = "CustomerId";
+            const string expectedFieldName = "Id";
+
+            builder.DataKeys(keys => keys.Add(expectedFieldName).RouteKey(expectedRouteValue));
+                
+            var firstDataKey = (GridDataKey<Customer, int>)grid.DataKeys[0];
+            firstDataKey.RouteKey.ShouldEqual(expectedRouteValue);
+            firstDataKey.Expression.ShouldNotBeNull();
+            firstDataKey.Name.ShouldEqual(expectedFieldName);
+        }
+
+        [Fact]
+        public void Should_add_data_key_by_name_if_bound_to_DataRowViews()
+        {
+            var dataRowViewGrid = GridTestHelper.CreateGrid<DataRowView>();
+            var dataRowViewBuilder = new GridBuilder<DataRowView>(dataRowViewGrid);
+
+            const string expectedRouteValue = "CustomerId";
+            const string expectedFieldName = "Id";
+
+            dataRowViewBuilder.DataKeys(keys => keys.Add(expectedFieldName).RouteKey(expectedRouteValue));
+            var firstDataKey = dataRowViewGrid.DataKeys[0];
+
+            firstDataKey.RouteKey.ShouldEqual(expectedRouteValue);
+            firstDataKey.Name.ShouldEqual(expectedFieldName);
         }
     }
 }

@@ -8,18 +8,18 @@
         <ul id="field-list">
             <li>
                 <%= Html.LabelFor(x => x.OrderID)%>
-                <%= Html.Telerik().NumericTextBoxFor(m => m.OrderID)%>
+                <%= Html.Telerik().NumericTextBoxFor(m => m.OrderID).MinValue(0).MaxValue(100) %>
                 <span class="error"><%= Html.ValidationMessageFor(x => x.OrderID)%></span>
             </li>
             <li>
                 <%= Html.LabelFor(x => x.ContactName)%>
                 <%= Html.TextBoxFor(x => x.ContactName) %>
-                <span class="error"><%= Html.ValidationMessageFor(x => x.ContactName)%></span>
+                <span class="error"><%= Html.ValidationMessageFor(x => x.ContactName) %></span>
             </li>
             <li>
                 <%= Html.LabelFor(x => x.ShipAddress)%>
                 <%= Html.TextAreaFor(x => x.ShipAddress) %>
-                <span class="error"><%= Html.ValidationMessageFor(x => x.ShipAddress)%></span>
+                <span class="error"><%= Html.ValidationMessageFor(x => x.ShipAddress) %></span>
             </li>
             <li>
                 <button class="t-button t-state-default" type="submit">Save</button>

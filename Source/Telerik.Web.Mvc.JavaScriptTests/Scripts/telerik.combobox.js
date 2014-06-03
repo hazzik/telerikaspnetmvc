@@ -13,6 +13,11 @@
         this.loader = new $t.list.loader(this);
         this.trigger = new $t.list.trigger(this);
         this.$text = $element.find('> .t-dropdown-wrap > .t-input').attr('autocomplete', 'off');
+        var $input = this.$input = this.$element.find('input:last');
+        var $selectIcon = $element.find('> .t-dropdown-wrap > .t-select');
+
+        if(!$input.attr('disabled'))
+            $selectIcon.bind('click', $.proxy(togglePopup, this));
 
         this.filtering = new $t.list.filtering(this);
         this.filtering.autoFill = function (component, itemText) {
@@ -38,23 +43,11 @@
         }
 
         this.dropDown = new $t.dropDown({
-            outerHeight: $element.outerHeight(),
-            outerWidth: $element.outerWidth(),
-            zIndex: $t.list.getZIndex($element),
             attr: this.dropDownAttr,
             effects: this.effects,
             onOpen: $.proxy(function () {
                 var data = this.data;
                 var dropDown = this.dropDown;
-                var offset = $element.offset();
-
-                dropDown.position(offset.top, offset.left);
-                if (!dropDown.outerHeight) dropDown.outerHeight = $element.outerHeight();
-                if (!dropDown.outerWidth) {
-                    dropDown.outerWidth = $element.outerWidth();
-                    dropDown.$element.css('width', dropDown.outerWidth - 2);
-                }
-
                 if (data.length == 0) return;
 
                 var text = this.$text.val();
@@ -71,18 +64,44 @@
 
                     this.isFiltered = false;
                 }
-
-                return true;
             }, this),
             onClick: $.proxy(function (e) { // same as DDL
                 this.select(e.item);
-                this.trigger.change(this);
+                this.trigger.change();
                 this.trigger.close();
             }, this)
         });
 
+        this.dropDown.$element.css('direction', $element.closest('.t-rtl').length ? 'rtl' : '');
+
+        this.enable = function () {
+            $element
+            .removeClass('t-state-disabled')
+            .find('.t-input')
+                .removeAttr("disabled");
+
+            $selectIcon.bind('click', $.proxy(togglePopup, this));
+        }
+
+        this.disable = function () {
+            $element
+            .addClass('t-state-disabled')
+            .find('.t-input')
+                .attr('disabled', 'disabled');
+
+            $selectIcon.unbind('click');
+        }
+
         this.fill = function (callback) {
-            function updateSelectedItem(component) {
+            function updateSelection(component) {
+                var value = component.value();
+                if (value) {
+                    component.select(function (dataItem) {
+                        return value == (dataItem.Value || dataItem.Text);
+                    });
+                    return;
+                }
+
                 var $items = dropDown.$items;
                 var selectedIndex = component.index;
                 var $selectedItems = $items.filter('.t-state-selected')
@@ -117,8 +136,8 @@
 
                     loader.ajaxRequest(function (data) {
                         this.data = data;
-                        dropDown.dataBind(data);
-                        updateSelectedItem(this);
+                        this.dataBind(data, true);
+                        updateSelection(this);
 
                         $t.trigger(this.element, 'dataBound');
                         this.trigger.change();
@@ -128,8 +147,8 @@
                     { data: postData });
                 }
                 else {
-                    dropDown.dataBind(this.data);
-                    updateSelectedItem(this);
+                    this.dataBind(this.data, true);
+                    updateSelection(this);
                     if (callback) callback();
                 }
             }
@@ -153,8 +172,8 @@
             $t.list.updateTextAndValue(this, $(this.dropDown.$items[index]).text(), this.data[this.selectedIndex].Value);
         }
 
-        this.text = function (text) {
-            return this.$text.val(text);
+        this.text = function () {
+            return this.$text.val.apply(this.$text, arguments);
         }
 
         this.value = function () {
@@ -198,15 +217,13 @@
                 }, this)
             });
 
-        $element
-            .find('> .t-dropdown-wrap > .t-select')
-            .click($.proxy(function (e) {
-                this.loader.ajaxError = false;
-                if (!this.dropDown.isOpened())
-                    this.$text[0].focus();
-                else
-                    this.trigger.close();
-            }, this));
+        function togglePopup(e){
+            this.loader.ajaxError = false;
+            if (!this.dropDown.isOpened())
+                this.$text[0].focus();
+            else
+                this.trigger.close();
+        }
 
         //PRIVATE
         function resetTimer(component) {
@@ -273,7 +290,6 @@
             }
 
             if (key == 13) {
-
                 if (dropDown.isOpened()) e.preventDefault();
 
                 var $selectedItems = dropDown.$items.filter('.t-state-selected:first');
@@ -301,7 +317,7 @@
             if (key == 0 || $.inArray(key, $t.list.keycodes) != -1) return true;
 
             // always set value. Select(item) will override it if needed.
-            this.$input.val(this.$text.val() + String.fromCharCode(key));
+            setTimeout($.proxy(function () { this.$input.val(this.$text.val()); }, this), 0);
 
             resetTimer(this);
         }

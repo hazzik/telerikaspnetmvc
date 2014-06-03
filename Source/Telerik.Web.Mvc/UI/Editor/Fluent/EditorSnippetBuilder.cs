@@ -14,14 +14,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
     public class EditorSnippetBuilder : IHideObjectMembers
     {
         private readonly IList<DropDownItem> items;
-        private readonly IVirtualPathProvider pathProvider;
+        private readonly IVirtualPathProvider provider;
 
-        public EditorSnippetBuilder(IList<DropDownItem> items)
+        public EditorSnippetBuilder(IList<DropDownItem> items, IVirtualPathProvider provider)
         {
             Guard.IsNotNull(items, "items");
-
-            pathProvider = ServiceLocator.Current.Resolve<IVirtualPathProvider>();
-
+            this.provider = provider;
             this.items = items;
         }
 
@@ -51,12 +49,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
                 fileName = string.Format("~/Content/{0}", fileName);
             }
 
-            if (!pathProvider.FileExists(fileName))
+            if (!provider.FileExists(fileName))
             {
                 throw new FileNotFoundException(Resources.TextResource.SpecifiedFileDoesNotExist.FormatWith(fileName));
             }
 
-            return pathProvider.ReadAllText(fileName);
+            return provider.ReadAllText(fileName);
         }
     }
 }

@@ -31,11 +31,10 @@ namespace Telerik.Web.Mvc.UI.Html
             var content = new HtmlTag("textarea")
                             .Attributes(new
                             {
-                                title = editor.Id,
                                 @class = "t-content t-raw-content",
                                 cols = "20",
                                 rows = "5",
-                                name = editor.Id,
+                                name = editor.Name,
                                 id = editor.Id + "-value"
                             });
 

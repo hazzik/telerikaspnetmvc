@@ -9,7 +9,6 @@ namespace Telerik.Web.Mvc.Extensions
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     
@@ -55,7 +54,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// <typeparam name="T"></typeparam>
         /// <param name="instance">The instance.</param>
         /// <param name="action">The action to be applied.</param>
-        [DebuggerStepThrough]
         public static void Each<T>(this IEnumerable<T> instance, Action<T> action)
         {
             foreach (T item in instance)

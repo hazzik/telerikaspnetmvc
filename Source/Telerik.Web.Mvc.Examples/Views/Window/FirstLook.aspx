@@ -15,7 +15,7 @@
     <% } %>
     
     <% Html.Telerik().Window()
-           .Name("MyLovelyWindow")
+           .Name("Window")
            .Title("Telerik Window for ASP.NET MVC")
            .Draggable((bool)ViewData["movable"])
            .Resizable(resizing => resizing
@@ -44,7 +44,7 @@
     
     <% Html.Telerik().ScriptRegistrar()
            .OnDocumentReady(() => {%>
-                var lovelyWindow = $('#MyLovelyWindow');
+                var lovelyWindow = $('#Window');
                 var undoButton = $('#undo');
                 undoButton
                     .bind('click', function(e) {
@@ -64,10 +64,9 @@
 
 <asp:content contentplaceholderid="HeadContent" runat="server">
     <style type="text/css">
-        
         .example form
         {
-            width: 400px;
+            width: 430px;
             height: 370px;
             float: right;
         }

@@ -6,7 +6,6 @@
 namespace Telerik.Web.Mvc
 {
     using System.ComponentModel;
-    using System.Diagnostics;
     using Infrastructure;
 
     /// <summary>
@@ -35,7 +34,6 @@ namespace Telerik.Web.Mvc
         /// <value>The root node.</value>
         public SiteMapNodeBuilder RootNode
         {
-            [DebuggerStepThrough]
             get
             {
                 return siteMapNodeBuilder;

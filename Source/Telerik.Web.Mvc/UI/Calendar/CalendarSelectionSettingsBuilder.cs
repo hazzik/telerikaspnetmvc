@@ -47,6 +47,17 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Sets the action to which the date should navigate
         /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        public CalendarSelectionSettingsBuilder Action(RouteValueDictionary routeValues)
+        {
+            settings.Action(routeValues);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action to which the date should navigate
+        /// </summary>
         /// <param name="action">Name of the action.</param>
         /// <param name="values">The route values.</param>
         public CalendarSelectionSettingsBuilder Action(string action, object values)

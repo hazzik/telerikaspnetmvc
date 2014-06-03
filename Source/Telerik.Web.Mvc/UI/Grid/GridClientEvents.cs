@@ -21,6 +21,7 @@ namespace Telerik.Web.Mvc.UI
             OnDelete = new ClientEvent();
             OnDetailViewExpand = new ClientEvent();
             OnDetailViewCollapse = new ClientEvent();
+            OnColumnReorder = new ClientEvent();
         }
         
         public ClientEvent OnDetailViewCollapse
@@ -36,6 +37,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public ClientEvent OnColumnResize 
+        { 
+            get; 
+            private set; 
+        }        
+        
+        public ClientEvent OnColumnReorder
         { 
             get; 
             private set; 
@@ -98,6 +105,7 @@ namespace Telerik.Web.Mvc.UI
         public void SerializeTo(string key, IClientSideObjectWriter writer)
         {
             writer.AppendClientEvent("onColumnResize", OnColumnResize);
+            writer.AppendClientEvent("onColumnReorder", OnColumnReorder);
             writer.AppendClientEvent("onDelete", OnDelete);
             writer.AppendClientEvent("onDetailViewCollapse", OnDetailViewCollapse);
             writer.AppendClientEvent("onDetailViewExpand", OnDetailViewExpand);

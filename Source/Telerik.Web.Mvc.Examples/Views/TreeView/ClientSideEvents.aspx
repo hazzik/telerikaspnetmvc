@@ -1,4 +1,4 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Employee>>" %>
 <asp:content contentPlaceHolderID="MainContent" runat="server">
     
         <%= Html.Telerik().TreeView()
@@ -19,46 +19,17 @@
                         .OnNodeDropped("onNodeDropped")
                         .OnNodeDragCancelled("onNodeDragCancelled")
                 )
-                .DragAndDrop(true)      
-                .Items(treeView =>
-                {
-                    treeView.Add().Text("UI Components")
-                        .Items(item =>
-                        {
-                            item.Add().Text("ASP.NET WebForms");
-                            item.Add().Text("Silverlight");
-                            item.Add().Text("ASP.NET MVC");
-                            item.Add().Text("WinForms");
-                            item.Add().Text("WPF");
-                        })
-                        .Expanded(true);
-
-                    treeView.Add().Text("Data")
-                        .Items(item =>
-                        {
-                            item.Add().Text("OpenAccess ORM");
-                            item.Add().Text("Reporting");
-                        });
-
-                    treeView.Add().Text("TFS Tools")
-                        .Items(item =>
-                        {
-                            item.Add().Text("Work Item Manager");
-                            item.Add().Text("Project Dashboard");
-                        });
-
-                    treeView.Add().Text("Automated Testing")
-                        .Items(item =>
-                        {
-                            item.Add().Text("Web Testing Tools");
-                        });
-
-                    treeView.Add().Text("ASP.NET CMS")
-                        .Items(item =>
-                        {
-                            item.Add().Text("Sitefinity CMS");
-                        });
-                })
+                            .DragAndDrop(true)
+                    .BindTo(Model, (item, employee) =>
+                    {
+                        // bind initial data - can be omitted if there is none
+                        item.Text = employee.FirstName + " " + employee.LastName;
+                        item.Value = employee.EmployeeID.ToString();
+                        item.LoadOnDemand = employee.Employees.Count > 0;
+                    })
+                    .DataBinding(dataBinding => dataBinding
+                            .Ajax().Select("_AjaxLoading", "TreeView")
+                    )
       %>
         
     <script type="text/javascript">
@@ -91,7 +62,10 @@
         }
 
         function onNodeDrop(e) {
-            $console.log('OnNodeDrop :: ' + treeView().getItemText(e.item) + " " + (e.isValid ? "(valid)" : "(not valid)"));
+            $console.log('OnNodeDrop :: `' + treeView().getItemText(e.item) + '` '
+                                        + e.dropPosition +
+                                        ' `' + treeView().getItemText(e.destinationItem) + '` '
+                                        + (e.isValid ? '(valid)' : '(not valid)'));
         }
 
         function onNodeDropped(e) {

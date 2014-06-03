@@ -92,6 +92,12 @@
             getGrid('#Grid2').sendValues = function() {};
         }
         
+        function tearDown() {
+            var wnd = $('.t-window').data('tWindow');
+            
+            if (wnd) wnd.destroy();
+        }
+        
         function getGrid(selector) {
             
             var grid = $(selector || '#Grid').data('tGrid');
@@ -118,12 +124,56 @@
         function cancelSave(e) {
             e.preventDefault();
         }
+        
+        function onDetailViewExpand(e) {
+            onDetailViewExpandArguments = e;
+        }
+        
+        function onDetailViewCollapse(e) {
+            onDetailViewCollapseArguments = e;
+        }
 
         function test_client_object_is_available_in_on_load() {
             assertNotNull(onLoadGrid);
             assertNotUndefined(onLoadGrid);
         }
+        
+        function test_clicking_insert_raises_onSave_informs_mode() {
+            $('#Grid1 .t-grid-add:first').click();
+            $('#Grid1form #Name').val('test');
+            $('#Grid1 .t-grid-insert:first').click();
+            $('#Grid1 .t-grid-insert:first').click();
+            getGrid('#Grid1').cancelRow($('#Grid1form').closest('tr'));
+            assertNotUndefined(onSaveArguments);
+            assertNotUndefined(onSaveArguments.form);
+            assertNotUndefined(onSaveArguments.values);
+        }
 
+        function test_clicking_insert_raises_onSave_popup_mode() {
+            $('#Grid2 .t-grid-add:first').click();
+            $('#Grid2form #Name').val('test');
+            $('#Grid2form .t-grid-insert:first').click();
+            getGrid('#Grid2').cancelRow($('#Grid2form').closest('tr'));
+            assertNotUndefined(onSaveArguments);
+            assertNotUndefined(onSaveArguments.form);
+            assertNotUndefined(onSaveArguments.values);
+        }
+        function test_clicking_edit_raises_onEdit_popup_mode() {
+            $('#Grid2 .t-grid-edit:first').click();
+            assertNotUndefined(onEditArguments);
+            assertNotUndefined(onEditArguments.form);
+            assertEquals(getGrid('#Grid2').data[0], onEditArguments.dataItem);
+        }
+        
+        function test_clicking_save_raises_onSave_popup_mode() {
+            $('#Grid2 .t-grid-edit:first').click();
+            $('#Grid2form .t-grid-update:first').click();
+            assertNotUndefined(onSaveArguments);
+            assertNotUndefined(onSaveArguments.form);
+            assertEquals(getGrid('#Grid2').data[0], onSaveArguments.dataItem);
+            assertNotUndefined(onSaveArguments.values);
+        }
+        
         function test_clicking_edit_raises_onEdit_inline_mode() {
             $('#Grid .t-grid-edit:first').click();
             assertNotUndefined(onEditArguments);
@@ -138,7 +188,7 @@
             assertEquals('insert', onEditArguments.mode);
             assertNotUndefined(onEditArguments.form);
         }
-
+        
         function test_clicking_save_raises_onSave_inline_mode() {
             $('#Grid .t-grid-edit:first').click();
             $('#Grid .t-grid-update:first').click();
@@ -148,7 +198,7 @@
             assertNotUndefined(onSaveArguments.dataItem);
             assertNotUndefined(onSaveArguments.values);
         }
-
+        
         function test_cancelling_save_prevents_send_values() {
             var called = false;
             getGrid('#Grid3').sendValues = function() {
@@ -168,24 +218,27 @@
             $('#Grid3 .t-grid-insert:first').click();
             assertFalse(called);
         }
-
+        
         function test_clicking_insert_raises_onSave_inline_mode() {
             $('#Grid .t-grid-add:first').click();
             $('#Gridform #Name').val('test');
             $('#Grid .t-grid-insert:first').click();
+            
             assertNotUndefined(onSaveArguments);
             assertEquals('insert', onSaveArguments.mode);
             assertNotUndefined(onSaveArguments.form);
             assertNotUndefined(onSaveArguments.values);
         }
-
+        
         function test_clicking_edit_raises_onEdit_informs_mode() {
             $('#Grid1 .t-grid-edit:first').click();
+            $('#Grid1 .t-grid-cancel:first').click();
+            
             assertNotUndefined(onEditArguments);
             assertNotUndefined(onEditArguments.form);
             assertEquals(getGrid('#Grid1').data[0], onEditArguments.dataItem);
         }
-
+        
         function test_clicking_add_raises_onEdit_informs_mode() {
             $('#Grid1 .t-grid-add:first').click();
             assertNotUndefined(onEditArguments);
@@ -195,50 +248,17 @@
         function test_clicking_save_raises_onSave_informs_mode() {
             $('#Grid1 .t-grid-edit:first').click();
             $('#Grid1 .t-grid-update:first').click();
+            
             assertNotUndefined(onSaveArguments);
             assertNotUndefined(onSaveArguments.form);
             assertEquals(getGrid('#Grid1').data[0], onSaveArguments.dataItem);
             assertNotUndefined(onSaveArguments.values);
         }
 
-        function test_clicking_insert_raises_onSave_informs_mode() {
-            $('#Grid1 .t-grid-add:first').click();
-            $('#Grid1form #Name').val('test');
-            $('#Grid1 .t-grid-insert:first').click();
-            assertNotUndefined(onSaveArguments);
-            assertNotUndefined(onSaveArguments.form);
-            assertNotUndefined(onSaveArguments.values);
-        }
-
-        function test_clicking_edit_raises_onEdit_popup_mode() {
-            $('#Grid2 .t-grid-edit:first').click();
-            assertNotUndefined(onEditArguments);
-            assertNotUndefined(onEditArguments.form);
-            assertEquals(getGrid('#Grid2').data[0], onEditArguments.dataItem);
-        }
-        
         function test_clicking_add_raises_onEdit_popup_mode() {
             $('#Grid2 .t-grid-add:first').click();
             assertNotUndefined(onEditArguments);
             assertNotUndefined(onEditArguments.form);
-        }
-
-        function test_clicking_save_raises_onSave_popup_mode() {
-            $('#Grid2 .t-grid-edit:first').click();
-            $('#Grid2form .t-grid-update:first').click();
-            assertNotUndefined(onSaveArguments);
-            assertNotUndefined(onSaveArguments.form);
-            assertEquals(getGrid('#Grid2').data[0], onSaveArguments.dataItem);
-            assertNotUndefined(onSaveArguments.values);
-        }
-
-        function test_clicking_insert_raises_onSave_popup_mode() {
-            $('#Grid2 .t-grid-add:first').click();
-            $('#Grid2form #Name').val('test');
-            $('#Grid2form .t-grid-insert:first').click();
-            assertNotUndefined(onSaveArguments);
-            assertNotUndefined(onSaveArguments.form);
-            assertNotUndefined(onSaveArguments.values);
         }
 
         function test_clicking_delete_raises_on_delete() {
@@ -254,14 +274,6 @@
             }
             $('#Grid .t-grid-delete:first').click();
             assertFalse(called);
-        }
-
-        function onDetailViewExpand(e) {
-            onDetailViewExpandArguments = e;
-        }
-        
-        function onDetailViewCollapse(e) {
-            onDetailViewCollapseArguments = e;
         }
 
         function test_detail_view_expand() {

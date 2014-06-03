@@ -34,14 +34,6 @@
         }
 
         [Fact]
-        public void Build_should_render_title_with_name_for_value()
-        {
-            IHtmlNode tag = renderer.InputTag();
-
-            Assert.Equal(input.Name, tag.Attribute("title"));
-        }
-
-        [Fact]
         public void Build_should_render_html_attributes()
         {
             input.HtmlAttributes.Add("title", "genericInput");
@@ -167,6 +159,18 @@
             IHtmlNode tag = renderer.DownButtonTag();
 
             Assert.Equal("test", tag.Attribute("title"));
+        }
+
+        [Fact]
+        public void TextBox_should_should_be_disabled()
+        {
+            input.Enabled = false;
+
+            IHtmlNode div = renderer.Build(objectName);
+            IHtmlNode tag = renderer.InputTag();
+
+            Assert.Equal("disabled", tag.Attribute("disabled"));
+            Assert.Contains("t-state-disabled", div.Attribute("class"));
         }
     }
 }

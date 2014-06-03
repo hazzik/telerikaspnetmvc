@@ -20,14 +20,9 @@
 
             container = new List<DropDownItem>();
 
-            var locator = new Mock<IServiceLocator>();
-            locator.Setup(l => l.Resolve<IVirtualPathProvider>()).Returns(pathProvider.Object);
-
-            ServiceLocator.SetCurrent(() => locator.Object);
-
             pathProvider.Setup(p => p.FileExists(It.IsAny<string>())).Returns(true);
 
-            builder = new EditorSnippetBuilder(container);
+            builder = new EditorSnippetBuilder(container, pathProvider.Object);
         }
 
         [Fact]

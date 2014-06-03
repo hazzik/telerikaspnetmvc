@@ -14,37 +14,49 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
     using Extensions;
 
-    public class AuthorizeAttributeCache : CacheBase<RuntimeTypeHandle, IDictionary<string, IEnumerable<AuthorizeAttribute>>>, IAuthorizeAttributeCache
+    internal  class AuthorizeAttributeCache : IAuthorizeAttributeCache
     {
         private static readonly Type authorizeAttributeType = typeof(AuthorizeAttribute);
 
         private readonly IControllerTypeCache controllerTypeCache;
         private readonly IActionMethodCache actionMethodCache;
+        private readonly ICache cache;
 
-        public AuthorizeAttributeCache(IControllerTypeCache controllerTypeCache, IActionMethodCache actionMethodCache)
+        public AuthorizeAttributeCache(ICache cache, IControllerTypeCache controllerTypeCache, IActionMethodCache actionMethodCache)
         {
-            Guard.IsNotNull(controllerTypeCache, "controllerTypeCache");
-            Guard.IsNotNull(actionMethodCache, "actionMethodCache");
-
+            this.cache = cache;
             this.controllerTypeCache = controllerTypeCache;
             this.actionMethodCache = actionMethodCache;
         }
 
-        public IEnumerable<AuthorizeAttribute> GetAuthorizeAttributes(RequestContext requestContext, string controllerName, string actionName)
+        public IEnumerable<AuthorizeAttribute> GetAuthorizeAttributes(RequestContext requestContext, string controllerName, string actionName, RouteValueDictionary routeValues)
         {
-            Guard.IsNotNull(requestContext, "requestContext");
-            Guard.IsNotNullOrEmpty(controllerName, "controllerName");
-            Guard.IsNotNullOrEmpty(actionName, "actionName");
+            IEnumerable<AuthorizeAttribute> attributes = null;
+            
+            IList<Type> controllerTypes = controllerTypeCache.GetControllerTypes(requestContext, controllerName) ?? new List<Type>();
 
-            Type controllerType = controllerTypeCache.GetControllerType(requestContext, controllerName);
+            Type controllerType = GetControllerByArea(controllerTypes, routeValues);
+            
+            if (controllerType != null)
+            {
+                var map = cache.Get(controllerType.AssemblyQualifiedName,() => GetInternal(controllerType, actionMethodCache.GetAllActionMethods(controllerType)));
 
-            IDictionary<string, IEnumerable<AuthorizeAttribute>> map = GetOrCreate(controllerType.TypeHandle, () => GetInternal(controllerType, actionMethodCache.GetAllActionMethods(requestContext, controllerName)));
-
-            IEnumerable<AuthorizeAttribute> attributes;
-
-            map.TryGetValue(actionName, out attributes);
-
+                map.TryGetValue(actionName, out attributes);
+            }
+            
             return attributes ?? new List<AuthorizeAttribute>();
+        }
+
+        private Type GetControllerByArea(IList<Type> controllerTypes, RouteValueDictionary routeValues) 
+        {
+            object area;
+
+            if (routeValues != null && routeValues.TryGetValue("Area", out area)) 
+            {
+                return controllerTypes.Where(t => t.FullName.Contains(area.ToString())).FirstOrDefault();
+            }
+
+            return controllerTypes.FirstOrDefault();
         }
 
         private static IDictionary<string, IEnumerable<AuthorizeAttribute>> GetInternal(ICustomAttributeProvider controllerType, IEnumerable<KeyValuePair<string, IList<MethodInfo>>> actionMethods)

@@ -104,11 +104,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual EditorBuilder StyleSheets(Action<WebAssetItemGroupBuilder> configurator)
+        public virtual EditorBuilder StyleSheets(Action<WebAssetGroupBuilder> configurator)
         {
             Guard.IsNotNull(configurator, "configurator");
 
-            var builder = new WebAssetItemGroupBuilder(Component.StyleSheets);
+            var builder = new WebAssetGroupBuilder(Component.StyleSheets);
             configurator(builder);
 
             return this;
@@ -129,7 +129,10 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </example>
         public EditorBuilder Localizable(string culture)
         {
-            Component.Localization = new EditorLocalization(new CultureInfo(culture));
+            var localizationServiceFactory = DI.Current.Resolve<ILocalizationServiceFactory>();
+            var cultureInfo = new CultureInfo(culture);
+            
+            Component.Localization = new EditorLocalization(localizationServiceFactory.Create("EditorLocalization", cultureInfo), cultureInfo);
 
             return this;
         }

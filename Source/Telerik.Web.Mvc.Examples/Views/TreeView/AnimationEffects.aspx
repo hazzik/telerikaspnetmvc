@@ -5,7 +5,11 @@
         .Name("TreeView")
         .Effects(fx =>
         {
-            if (ViewData["animation"].ToString() == "expand")
+            if (ViewData["animation"].ToString() == "slide")
+            {
+                fx.Slide();
+            }
+            else if (ViewData["animation"].ToString() == "expand")
             {
                 fx.Expand();
             }
@@ -44,14 +48,17 @@
    { %>
     <ul>
          <li>
+            <%= Html.RadioButton("animation", "slide", new { id = "slide", title = "slide" })%>
+            <label for="slide"><strong>slide</strong> animation</label>
+            <br />
             <%= Html.RadioButton("animation", "toggle", new { id = "toggle", title = "toggle" }) %>
             <label for="toggle"><strong>toggle</strong> animation</label>
             <br />
             <%= Html.RadioButton("animation", "expand", new { id = "expand", title = "expand" })%>
-            <label for="toggle"><strong>expand</strong> animation</label>
+            <label for="expand"><strong>expand</strong> animation</label>
             <br />
             <%= Html.CheckBox("enableOpacityAnimation", ( bool )ViewData[ "enableOpacityAnimation" ], new { title = "enableOpacityAnimation" })%>
-            <label for="toggle"><strong>opacity</strong> animation</label>
+            <label for="enableOpacityAnimation"><strong>opacity</strong> animation</label>
         </li>
         <li>
             <ul>

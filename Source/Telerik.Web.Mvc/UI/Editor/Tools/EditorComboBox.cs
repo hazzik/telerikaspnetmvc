@@ -13,11 +13,13 @@ namespace Telerik.Web.Mvc.UI
 
     public class EditorComboBox : IEditorListTool, IComboBoxRenderable
     {
-        public EditorComboBox(string identifier, IList<DropDownItem> items)
+        public EditorComboBox(string identifier, IList<DropDownItem> items, ViewContext viewContext)
         {
             Items = items;
             Identifier = identifier.ToCamelCase();
             HtmlAttributes = new Dictionary<string, object>() { { "class", "t-" + Identifier } };
+            ViewContext = viewContext;
+            Enabled = true;
         }
 
         public string Identifier { get; private set; }
@@ -38,9 +40,21 @@ namespace Telerik.Web.Mvc.UI
 
         public int SelectedIndex { get; set; }
 
+        public bool Enabled { get; set; }
+
         public IHtmlBuilder CreateHtmlBuilder()
         {
+            if (ViewContext.HttpContext.Request.Browser.IsBrowser("IE"))
+            {
+                return new EditorSelectBoxHtmlBuilder(ToSelectBox());
+            }
+
             return new EditorComboBoxHtmlBuilder(this);
+        }
+        
+        private EditorSelectBox ToSelectBox()
+        {
+            return new EditorSelectBox(Identifier, Items);
         }
     }
 }

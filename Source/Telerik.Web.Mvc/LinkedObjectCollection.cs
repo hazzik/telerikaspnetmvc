@@ -8,7 +8,6 @@ namespace Telerik.Web.Mvc
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using System.Diagnostics;
 
     using Infrastructure;
 
@@ -46,7 +45,6 @@ namespace Telerik.Web.Mvc
         /// <returns>The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1"/>.</returns>
         public int Count
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerList.Count;
@@ -60,7 +58,6 @@ namespace Telerik.Web.Mvc
         /// <returns>true if the <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only; otherwise, false.</returns>
         public bool IsReadOnly
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerList.IsReadOnly;
@@ -73,7 +70,6 @@ namespace Telerik.Web.Mvc
         /// <value></value>
         public T this[int index]
         {
-            [DebuggerStepThrough]
             get
             {
                 return innerList[index];
@@ -139,7 +135,6 @@ namespace Telerik.Web.Mvc
         /// Removes all items from the <see cref="T:System.Collections.Generic.ICollection`1"/>.
         /// </summary>
         /// <exception cref="T:System.NotSupportedException">The <see cref="T:System.Collections.Generic.ICollection`1"/> is read-only. </exception>
-        [DebuggerStepThrough]
         public void Clear()
         {
             foreach (T item in innerList)
@@ -157,7 +152,6 @@ namespace Telerik.Web.Mvc
         /// <returns>
         /// true if <paramref name="item"/> is found in the <see cref="T:System.Collections.Generic.ICollection`1"/>; otherwise, false.
         /// </returns>
-        [DebuggerStepThrough]
         public bool Contains(T item)
         {
             return innerList.Contains(item);
@@ -183,7 +177,6 @@ namespace Telerik.Web.Mvc
         /// -or-
         /// Type <paramref name="T"/> cannot be cast automatically to the type of the destination <paramref name="array"/>.
         /// </exception>
-        [DebuggerStepThrough]
         public void CopyTo(T[] array, int arrayIndex)
         {
             innerList.CopyTo(array, arrayIndex);
@@ -195,7 +188,6 @@ namespace Telerik.Web.Mvc
         /// <returns>
         /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
         /// </returns>
-        [DebuggerStepThrough]
         public IEnumerator<T> GetEnumerator()
         {
             return innerList.GetEnumerator();
@@ -208,7 +200,6 @@ namespace Telerik.Web.Mvc
         /// <returns>
         /// The index of <paramref name="item"/> if found in the list; otherwise, -1.
         /// </returns>
-        [DebuggerStepThrough]
         public int IndexOf(T item)
         {
             return innerList.IndexOf(item);
@@ -321,7 +312,6 @@ namespace Telerik.Web.Mvc
             innerList.RemoveAt(index);
         }
 
-        [DebuggerStepThrough]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

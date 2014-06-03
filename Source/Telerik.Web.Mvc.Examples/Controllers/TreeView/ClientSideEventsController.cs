@@ -6,7 +6,7 @@ namespace Telerik.Web.Mvc.Examples
     {
         public ActionResult ClientSideEvents()
         {
-            return View();
+            return View(GetRootEmployees());
         }
     }
 }

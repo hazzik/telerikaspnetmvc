@@ -12,7 +12,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         [Fact]
         public void Should_be_able_get_properties()
         {
-            Assert.NotEmpty(new PropertyCache().GetProperties(typeof(SiteMapBase)));
+            Assert.NotEmpty(new PropertyCache(new NoCache()).GetProperties(typeof(SiteMapBase)));
         }
     }
 }

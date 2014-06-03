@@ -4,7 +4,7 @@
     using System;
     using System.Collections.Generic;
     using Xunit;
-    
+
     public class GridHeaderCellHtmlBuilderTests
     {
         [Fact]
@@ -96,6 +96,39 @@
             column.SetupGet(c => c.Title).Returns(() => "");
 
             Assert.Equal("&nbsp;", new GridHeaderCellHtmlBuilder(column.Object).Build().InnerHtml);
+        }
+
+        [Fact]
+        public void Should_use_column_header_template_if_declared()
+        {
+            var column = new Mock<IGridColumn>();
+            column.SetupGet(c => c.HeaderTemplate)
+               .Returns(() => new HtmlTemplate
+               {
+                   Html = "value"
+               })
+               .Verifiable();
+
+            new GridHeaderCellHtmlBuilder(column.Object).Build();
+            column.VerifyAll();
+        }
+
+        [Fact]
+        public void Should_use_header_template_if_both_title_and_header_template_are_set()
+        {
+            var column = new Mock<IGridColumn>();
+            column.SetupGet(c => c.HeaderTemplate)
+                .Returns(() => new HtmlTemplate
+                {
+                    Html = "value"
+                })
+                .Verifiable();
+
+            new GridHeaderCellHtmlBuilder(column.Object).Build();
+
+            column.VerifyGet(c => c.Title, Times.Never());
+
+            column.VerifyAll();
         }
     }
 }

@@ -3,6 +3,7 @@
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
+using System.Web.Script.Serialization;
 namespace Telerik.Web.Mvc
 {
     /// <summary>
@@ -14,6 +15,7 @@ namespace Telerik.Web.Mvc
         /// Gets or sets the T object that is the parent of the current node.
         /// </summary>
         /// <value>The parent.</value>
+        [ScriptIgnore]
         public T Parent
         {
             get;
@@ -24,6 +26,7 @@ namespace Telerik.Web.Mvc
         /// Gets the previous T object on the same level as the current one, relative to the T.ParentNode object (if one exists).
         /// </summary>
         /// <value>The previous sibling.</value>
+        [ScriptIgnore]
         public T PreviousSibling
         {
             get;
@@ -34,6 +37,7 @@ namespace Telerik.Web.Mvc
         /// Gets the next T node on the same hierarchical level as the current one, relative to the T.ParentNode property (if one exists).
         /// </summary>
         /// <value>The next sibling.</value>
+        [ScriptIgnore]
         public T NextSibling
         {
             get;

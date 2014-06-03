@@ -17,7 +17,7 @@ namespace Telerik.Web.Mvc.UI
 
         public override void EditModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
         {
-            #if MVC2
+            #if MVC2 || MVC3
 
             Grid<T> grid = context.Grid;
 
@@ -37,7 +37,7 @@ namespace Telerik.Web.Mvc.UI
 
         public override void InsertModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
         {
-            #if MVC2
+            #if MVC2 || MVC3
 
             Grid<T> grid = context.Grid;
 
@@ -57,7 +57,7 @@ namespace Telerik.Web.Mvc.UI
 
         public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
         {
-            #if MVC2
+            #if MVC2 || MVC3
             Grid<T> grid = context.Grid;
             var urlBuilder = new GridUrlBuilder(grid);
 
@@ -78,7 +78,7 @@ namespace Telerik.Web.Mvc.UI
             #endif
         }
 
-        #if MVC2
+        #if MVC2 || MVC3
         private void AppendCancelButton<T>(Grid<T> grid, IHtmlNode parent) where T : class
         {
             var urlBuilder = new GridUrlBuilder(grid);

@@ -12,5 +12,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         bool IsAccessibleToUser(RequestContext requestContext, string routeName);
 
         bool IsAccessibleToUser(RequestContext requestContext, string controllerName, string actionName);
+
+        bool IsAccessibleToUser(RequestContext requestContext, string controllerName, string actionName, RouteValueDictionary routeValues);
     }
 }

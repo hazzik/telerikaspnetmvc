@@ -11,8 +11,8 @@
             columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(120);
         })
         .Groupable()
-        .Pageable()
         .Sortable()
+        .Pageable()
         .Filterable()
 %>
 </asp:Content>

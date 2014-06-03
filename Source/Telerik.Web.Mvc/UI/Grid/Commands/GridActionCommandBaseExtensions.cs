@@ -9,7 +9,6 @@ namespace Telerik.Web.Mvc.UI
 
     public static class GridActionCommandBaseExtensions
     {
-#if MVC2
         public static string ButtonContent(this GridActionCommandBase command, string localizedText, string cssClass)
         {
             switch (command.ButtonType)
@@ -36,6 +35,5 @@ namespace Telerik.Web.Mvc.UI
                             .PrependClass(UIPrimitives.Icon, cssClass)
                             .ToString();
         }
-#endif
     }
 }

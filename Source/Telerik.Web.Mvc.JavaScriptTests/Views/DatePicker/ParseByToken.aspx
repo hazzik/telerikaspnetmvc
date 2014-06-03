@@ -5,11 +5,12 @@
     <h2>Date by token</h2>
 
     <script type="text/javascript">
-        
-        function getDatePicker() {
-            return $('#DatePicker').data('tDatePicker');
+        var $t;
+
+        function setUp() {
+            $t = $.telerik;
         }
-            
+
         function compareDates(expected, returned) {
             var isValid = true;
 
@@ -27,7 +28,7 @@
            
             var expectedDate = new Date();
 
-            var returnedDate = getDatePicker().parse("today");
+            var returnedDate = $t.datetime.parseByToken("today");
 
             assertTrue(compareDates(expectedDate, returnedDate));
         }
@@ -36,7 +37,7 @@
             var expectedDate = new Date();
             expectedDate.setDate(expectedDate.getDate() -1);
 
-            var returnedDate = getDatePicker().parse("yesterday");
+            var returnedDate = $t.datetime.parseByToken("yesterday");
 
             assertTrue(compareDates(expectedDate, returnedDate));
         }
@@ -45,7 +46,7 @@
             var expectedDate = new Date();
             expectedDate.setDate(expectedDate.getDate() + 1);
 
-            var returnedDate = getDatePicker().parse("tomorrow");
+            var returnedDate = $t.datetime.parseByToken("tomorrow");
 
             assertTrue(compareDates(expectedDate, returnedDate));
         }
@@ -55,7 +56,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //friday
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("monday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("monday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() - 4); //set the expected date
 
@@ -66,7 +67,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //friday
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("friday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("friday", tmpDate);
 
             assertTrue(compareDates(expectedDate, returnedDate));
         }
@@ -75,8 +76,8 @@
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //friday
             var expectedDate = new Date(2009, 10, 27); //friday
-            
-            var returnedDate = getDatePicker().parse("sunday", null, tmpDate);
+
+            var returnedDate = $t.datetime.parseByToken("sunday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 2); //set the expected date
 
@@ -87,7 +88,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("March", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("March", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() - 8);
 
@@ -97,8 +98,8 @@
         function test_parseByToken_should_return_December_of_current_year() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
-            
-            var returnedDate = getDatePicker().parse("december", null, tmpDate);
+
+            var returnedDate = $t.datetime.parseByToken("december", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 1);
 
@@ -109,7 +110,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("november", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("november", tmpDate);
 
             assertTrue(compareDates(expectedDate, returnedDate));
         }
@@ -119,7 +120,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("next friday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next friday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 7);
 
@@ -130,7 +131,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("last friday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last friday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() - 7);
 
@@ -141,7 +142,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("next monday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next monday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 3);
 
@@ -152,7 +153,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("last monday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last monday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() - 11);
 
@@ -163,7 +164,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("next sunday", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next sunday", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 9);
 
@@ -174,7 +175,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("next november", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next november", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 12);
 
@@ -185,7 +186,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("last november", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last november", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() - 12);
 
@@ -196,7 +197,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("next february", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next february", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 3);
             
@@ -207,7 +208,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("last february", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last february", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() - 21);
 
@@ -218,7 +219,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("next december", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next december", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 13);
 
@@ -230,7 +231,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("next fri", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next fri", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 7);
 
@@ -241,7 +242,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("last fri", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last fri", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() - 7);
 
@@ -252,7 +253,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("next mon", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next mon", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 3);
 
@@ -263,7 +264,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("last mon", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last mon", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() - 11);
 
@@ -275,7 +276,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
-            var returnedDate = getDatePicker().parse("next sun", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next sun", tmpDate);
 
             expectedDate.setDate(expectedDate.getDate() + 9);
 
@@ -286,7 +287,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("next Nov", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next Nov", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 12);
 
@@ -297,7 +298,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("last Nov", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last Nov", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() - 12);
 
@@ -308,7 +309,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("next feb", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next feb", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 3);
 
@@ -319,7 +320,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("last feb", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last feb", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() - 21);
 
@@ -330,7 +331,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
-            var returnedDate = getDatePicker().parse("next dec", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next dec", tmpDate);
 
             expectedDate.setMonth(expectedDate.getMonth() + 13);
 
@@ -342,7 +343,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("next year", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next year", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear() + 1, expectedDate.getMonth(), expectedDate.getDate());
 
@@ -353,7 +354,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("last year", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last year", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear() - 1, expectedDate.getMonth(), expectedDate.getDate());
 
@@ -365,7 +366,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("next month", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next month", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth() + 1, expectedDate.getDate());
 
@@ -377,7 +378,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("last month", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last month", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth() - 1, expectedDate.getDate());
 
@@ -389,7 +390,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("next week", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next week", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() + 7);
 
@@ -401,7 +402,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("last week", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last week", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() - 7);
 
@@ -413,7 +414,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("next day", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("next day", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() + 1);
 
@@ -426,7 +427,7 @@
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
-            var returnedDate = getDatePicker().parse("last day", null, tmpDate);
+            var returnedDate = $t.datetime.parseByToken("last day", tmpDate);
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() - 1);
 
@@ -435,33 +436,18 @@
         
         function test_parseByToken_should_return_null_if_cannot_parse_first_token()
         {
-            var returnedDate = getDatePicker().parse("undefined");
+            var returnedDate = $t.datetime.parseByToken("undefined");
             assertNull(returnedDate);
         }
 
         function test_parseByToken_should_return_null_if_second_token_is_not_provided() {
-            var returnedDate = getDatePicker().parse("next ");
+            var returnedDate = $t.datetime.parseByToken("next ");
             assertNull(returnedDate);
         }
 
         function test_parseByToken_should_return_null_if_second_token_is_not_correct() {
-            var returnedDate = getDatePicker().parse("next undeffined");
+            var returnedDate = $t.datetime.parseByToken("next undeffined");
             assertNull(returnedDate);
-        }
-
-        /////min and max date testing
-        function test_parse_date_less_than_min_date_should_return_null() {
-
-            var tmpDate = new $.telerik.datetime(1900, 9, 01);
-            var result = getDatePicker().parse("last year", null, tmpDate);
-            assertNull(result);
-        }
-
-        function test_parse_date_bigger_than_min_date_should_return_null() {
-
-            var tmpDate = new $.telerik.datetime(2099, 9, 01);
-            var result = getDatePicker().parse("next year", null, tmpDate);
-            assertNull(result);
         }
        
     </script>

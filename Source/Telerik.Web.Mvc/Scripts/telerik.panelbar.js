@@ -17,7 +17,7 @@
             var clickableItems = '.t-item:not(.t-state-disabled) > .t-link';
 
             $element
-                .delegate(clickableItems, 'click', $t.delegate(this, this._click))
+                .delegate(clickableItems, 'click', $.proxy(this._click, this))
 				.delegate(clickableItems, 'mouseenter', $t.hover)
 				.delegate(clickableItems, 'mouseleave', $t.leave)
                 .delegate('.t-item.t-state-disabled > .t-link', 'click', $t.preventDefault);
@@ -79,26 +79,28 @@
             this.toggle(li, false);
         },
 
-        _click: function (e, element) {
+        _click: function (e) {
             var $target = $(e.target);
 
-            if ($target.closest('.t-link')[0] != element || $target.closest('.t-widget')[0] != this.element)
+            var element = this.element;
+
+            if ($target.closest('.t-widget')[0] != element)
                 return;
 
-            var $element = $(element);
-            var $item = $element.closest('.t-item');
+            var $link = $target.closest('.t-link');
+            var $item = $link.closest('.t-item');
+            
+            $(element).find('.t-state-selected').removeClass('t-state-selected');
 
-            $element
-                .find('.t-link').removeClass('t-state-selected').end()
-                .addClass('t-state-selected');
+            $link.addClass('t-state-selected');
 
-            if ($t.trigger(this.element, 'select', { item: $item[0] })) {
+            if ($t.trigger(element, 'select', { item: $item[0] })) {
                 e.preventDefault();
             }
 
             var contents = $item.find('> .t-content, > .t-group');
-            var href = $element.attr('href');
-            var isAnchor = (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + this.element.id + '-') != -1));
+            var href = $link.attr('href');
+            var isAnchor = (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + element.id + '-') != -1));
 
             if (isAnchor || contents.length > 0)
                 e.preventDefault();
@@ -112,7 +114,7 @@
             if (contents.length != 0) {
                 var visibility = contents.is(':visible');
 
-                if (!$t.trigger(this.element, !visibility ? 'expand' : 'collapse', { item: $item[0] }))
+                if (!$t.trigger(element, !visibility ? 'expand' : 'collapse', { item: $item[0] }))
                     this._toggleItem($item, visibility, e);
             }
         },

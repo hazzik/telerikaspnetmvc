@@ -153,16 +153,6 @@
             assertEquals(0, $('.t-window').length);
         }
 
-        function test_closing_the_window_restores_content() {
-            var range = createRangeFromText(editor, '|foo|');
-            execImageCommandOnRange(range);
-
-            $('.t-window .t-close').click();
-
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
-
         function test_setting_title_sets_alt() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
@@ -236,6 +226,16 @@
             range = editor.getRange();
             range.insertNode(editor.document.createElement('span'));
             assertEquals('<img alt="" src="http://foo" /><span></span>bar', editor.value());
+        }
+
+        function test_closing_the_window_restores_content() {
+            var range = createRangeFromText(editor, '|foo|');
+            execImageCommandOnRange(range);
+            
+            $('.t-window').css({width:200,height:300}).find('.t-close').click();
+
+            assertEquals('foo', editor.value())
+            assertEquals(0, $('.t-window').length);
         }
     </script>
 </asp:Content>

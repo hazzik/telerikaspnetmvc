@@ -4,7 +4,7 @@
 // All other rights reserved.
 
 using System.Collections.Generic;
-using Telerik.Web.Mvc.Infrastructure;
+using System.Globalization;
 
 namespace Telerik.Web.Mvc.UI
 {
@@ -22,7 +22,7 @@ namespace Telerik.Web.Mvc.UI
         /// <returns></returns>
         public static string ToString(int duration)
         {
-            return durationMap.ContainsKey(duration) ? durationMap[duration] : duration.ToString(Culture.Invariant);
+            return durationMap.ContainsKey(duration) ? durationMap[duration] : duration.ToString(CultureInfo.InvariantCulture);
         }
 
         private static IDictionary<int, string> BuildMap()

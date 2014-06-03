@@ -14,25 +14,15 @@
 
         public GridSelectActionCommandHtmlTests()
         {
-            var virtualPathProvider = new Mock<IVirtualPathProvider>();
-            virtualPathProvider.Setup(vpp => vpp.FileExists(It.IsAny<string>())).Returns(false);
-
-            var serviceLocator = new Mock<IServiceLocator>();
-            serviceLocator.Setup(sl => sl.Resolve<IVirtualPathProvider>()).Returns(virtualPathProvider.Object);
-
-            ServiceLocator.SetCurrent(() => serviceLocator.Object);
-
             var grid = GridTestHelper.CreateGrid<Customer>();
-
-            grid.Localization = new GridLocalization();
 
             command = new GridSelectActionCommand();
             context = new Mock<IGridRenderingContext<Customer>>();
             context.Setup(c => c.Grid).Returns(grid);
             parentNode = new HtmlTag("td");
         }
-        
-#if MVC2
+
+#if MVC2 || MVC3
         [Fact]
         public void BoundModeHtml_method_should_return_a_tag_append_to_parent()
         {

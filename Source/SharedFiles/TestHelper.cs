@@ -9,7 +9,6 @@ namespace Telerik.Web.Mvc
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.Specialized;
-    using System.Diagnostics;
     using System.IO;
     using System.Text;
     using System.Web;
@@ -21,7 +20,7 @@ namespace Telerik.Web.Mvc
     using Moq;
 
 
-#if MVC2
+#if MVC2 || MVC3
     class ValueProvider : IValueProvider
     {
         private readonly IDictionary<string, ValueProviderResult> data;
@@ -58,7 +57,7 @@ namespace Telerik.Web.Mvc
 #if MVC1
             ValueProvider = valueProviderData;
 #endif
-#if MVC2
+#if MVC2 || MVC3
             ValueProvider = new ValueProvider(valueProviderData);
 #endif
             ViewData = viewData;
@@ -72,7 +71,6 @@ namespace Telerik.Web.Mvc
         public const string AppPathModifier = "/$(SESSION)";
         public const string ApplicationPath = "/app/";
 
-        [DebuggerStepThrough]
         public static HtmlHelper CreateHtmlHelper()
         {
             Mock<IViewDataContainer> viewDataContainer = new Mock<IViewDataContainer>();
@@ -86,17 +84,21 @@ namespace Telerik.Web.Mvc
             return helper;
         }
 
-#if MVC2
-        [DebuggerStepThrough]
+#if MVC2 || MVC3
         public static HtmlHelper<TModel> CreateHtmlHelper<TModel>() where TModel : class, new()
         {
-            Mock<IViewDataContainer> viewDataContainer = new Mock<IViewDataContainer>();
+            return CreateHtmlHelper(new TModel());
+        }
 
-            viewDataContainer.SetupGet(container => container.ViewData).Returns(new ViewDataDictionary { Model = new TModel() });
+        public static HtmlHelper<TModel> CreateHtmlHelper<TModel>(TModel value)
+        {
+            var viewDataContainer = new Mock<IViewDataContainer>();
 
-            ViewContext viewContext = TestHelper.CreateViewContext();
+            viewDataContainer.SetupGet(container => container.ViewData).Returns(new ViewDataDictionary { Model = value });
 
-            HtmlHelper<TModel> helper = new HtmlHelper<TModel>(viewContext, viewDataContainer.Object);
+            var viewContext = CreateViewContext();
+
+            var helper = new HtmlHelper<TModel>(viewContext, viewDataContainer.Object);
 
             return helper;
         }
@@ -104,7 +106,6 @@ namespace Telerik.Web.Mvc
         private static Mock<HttpContextBase> httpContext;
         private static object sync = new object();
 
-        [DebuggerStepThrough]
         public static Mock<HttpContextBase> CreateMockedHttpContext(bool createNew)
         {
             if (createNew)
@@ -128,7 +129,6 @@ namespace Telerik.Web.Mvc
             return httpContext;
         }
 
-        [DebuggerStepThrough]
         public static Mock<HttpContextBase> CreateMockedHttpContext()
         {
             return CreateMockedHttpContext(false);
@@ -159,7 +159,6 @@ namespace Telerik.Web.Mvc
             result.Setup(context => context.Response.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(r => AppPathModifier + r);
             return result;
         }
-        [DebuggerStepThrough]
         public static RequestContext CreateRequestContext()
         {
             return new RequestContext(CreateMockedHttpContext().Object, new RouteData
@@ -172,7 +171,6 @@ namespace Telerik.Web.Mvc
                 });
         }
 
-        [DebuggerStepThrough]
         public static void RegisterDummyRoutes(RouteCollection routes)
         {
             routes.Clear();
@@ -186,7 +184,7 @@ namespace Telerik.Web.Mvc
         public static ViewContext CreateViewContext()
         {
             return new ViewContext(CreateControllerContext(), new Mock<IView>().Object, new ViewDataDictionary(), new TempDataDictionary()
-#if MVC2
+#if MVC2 || MVC3
                 , TextWriter.Null
 #endif            
             );
@@ -197,7 +195,6 @@ namespace Telerik.Web.Mvc
             return new ControllerContext(CreateRequestContext(), new ControllerTestDouble(new Dictionary<string, 
                 ValueProviderResult>(), new Mock<IViewDataContainer>().Object.ViewData));
         }
-        [DebuggerStepThrough]
         public static void RegisterDummyRoutes()
         {
             RegisterDummyRoutes(RouteTable.Routes);
@@ -213,9 +210,9 @@ namespace Telerik.Web.Mvc
                 {
                     if (siteMap == null)
                     {
-                        Mock<IPathResolver> _pathResolver = new Mock<IPathResolver>();
-                        Mock<IFileSystem> _fileSystem = new Mock<IFileSystem>();
-                        Mock<ICacheManager> _cacheManager = new Mock<ICacheManager>();
+                        Mock<IPathResolver> pathResolver = new Mock<IPathResolver>();
+                        Mock<IVirtualPathProvider> fileSystem = new Mock<IVirtualPathProvider>();
+                        Mock<ICacheProvider> cacheProvider = new Mock<ICacheProvider>();
 
                         const string Xml = @"<?xml version=""1.0"" encoding=""utf-8"" ?>" + "\r\n" +
                                            @"<siteMap compress=""false"" cacheDurationInMinutes=""120"" generateSearchEngineMap=""true"">" +
@@ -241,11 +238,11 @@ namespace Telerik.Web.Mvc
                                            @"    </siteMapNode>" + "\r\n" +
                                            @"</siteMap>";
 
-                        _pathResolver.Setup(pathResolver => pathResolver.Resolve(It.IsAny<string>())).Returns("C:\\Web.sitemap").Verifiable();
-                        _fileSystem.Setup(fileSystem => fileSystem.ReadAllText(It.IsAny<string>())).Returns(Xml).Verifiable();
-                        _cacheManager.Setup(cache => cache.Insert(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CacheItemRemovedCallback>(), It.IsAny<string>())).Verifiable();
+                        pathResolver.Setup(p => p.Resolve(It.IsAny<string>())).Returns("C:\\Web.sitemap").Verifiable();
+                        fileSystem.Setup(f => f.ReadAllText(It.IsAny<string>())).Returns(Xml).Verifiable();
+                        cacheProvider.Setup(cache => cache.Insert(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CacheItemRemovedCallback>(), It.IsAny<string>())).Verifiable();
 
-                        siteMap = new XmlSiteMap(_pathResolver.Object, _fileSystem.Object, _cacheManager.Object);
+                        siteMap = new XmlSiteMap(pathResolver.Object, fileSystem.Object, cacheProvider.Object);
                         siteMap.Load();
                     }
                 }

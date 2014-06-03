@@ -168,6 +168,23 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the Url, which will be requested to return the content. 
         /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Window()
+        ///         .Name("Window")
+        ///         .LoadContentFrom(MVC.Home.Index().GetRouteValueDictionary());
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowBuilder LoadContentFrom(RouteValueDictionary routeValues)
+        {
+            return routeValues.ApplyTo<WindowBuilder>(LoadContentFrom);
+        }
+
+        /// <summary>
+        /// Sets the Url, which will be requested to return the content. 
+        /// </summary>
         /// <param name="actionName">The action name.</param>
         /// <param name="controllerName">The controller name.</param>
         /// <example>

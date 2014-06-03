@@ -6,27 +6,23 @@
 namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
-    using System.Reflection;
 
-    public class ReflectedAuthorizeAttributeCache : CacheBase<RuntimeTypeHandle, ConstructorInfo>, IReflectedAuthorizeAttributeCache
+    internal class ReflectedAuthorizeAttributeCache : IReflectedAuthorizeAttributeCache
     {
         private readonly IAuthorizeAttributeBuilder builder;
+        private readonly ICache cache;
 
-        public ReflectedAuthorizeAttributeCache(IAuthorizeAttributeBuilder builder)
+        public ReflectedAuthorizeAttributeCache(ICache cache, IAuthorizeAttributeBuilder builder)
         {
-            Guard.IsNotNull(builder, "builder");
-
+            this.cache = cache;
             this.builder = builder;
         }
 
         public IAuthorizeAttribute GetAttribute(Type attributeType)
         {
-            Guard.IsNotNull(attributeType, "attributeType");
-
-            ConstructorInfo ctor = GetOrCreate(attributeType.TypeHandle, () => builder.Build(attributeType));
-            IAuthorizeAttribute attribute = ctor.Invoke(new object[0]) as IAuthorizeAttribute;
-
-            return attribute;
+            var ctor = cache.Get(attributeType.AssemblyQualifiedName, () => builder.Build(attributeType));
+            
+            return ctor.Invoke(new object[0]) as IAuthorizeAttribute;
         }
     }
 }

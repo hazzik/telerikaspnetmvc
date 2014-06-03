@@ -51,6 +51,7 @@
                         item.Add().Text("Child Item 6.1");
                     });
                 items.Add().Text("Item7");
+                items.Add().Text("Item8").Enabled(false);
             }
             ).ClientEvents(events =>
             {
@@ -72,6 +73,28 @@
 
         function getMenu() {
             return $("#Menu").data("tMenu");
+        }
+
+        function test_click_method_should_call_preventDefault_method() {
+            var item = getRootItem(7);
+            var isCalled = false;
+
+            var e = { preventDefault: function () { isCalled = true; }, stopPropagation: function () { } }
+
+            getMenu().click(e, item);
+
+            assertTrue(isCalled);
+        }
+
+        function test_click_method_should_call_stopPropagation_method_always() {
+            var item = getRootItem(7);
+            var isCalled = false;
+
+            var e = { stopPropagation: function () { isCalled = true; }, preventDefault: function () { } }
+
+            getMenu().click(e, item);
+
+            assertTrue(isCalled);
         }
 
         function test_clicking_should_raise_onSelect_event() {

@@ -1,11 +1,8 @@
 ﻿(function ($) {
     var $t = $.telerik;
 
-    var dateFormatTokenRegExp = /d{1,4}|M{1,4}|yy(?:yy)?|([Hhmstf])\1*|"[^"]*"|'[^']*'/g;
-
     $.extend($t, {
         calendar: function (element, options) {
-
             this.element = element;
 
             $.extend(this, options);
@@ -16,23 +13,36 @@
             this.viewedMonth = $t.datetime.firstDayOfMonth(this.selectedDate
 			 || ($t.calendar.isInRange(today, this.minDate, this.maxDate) ? today : this.minDate));
 
+            var header = new $t.stringBuilder()
+                         .cat('<a href="#" class="t-link t-nav-prev ')
+                         .catIf('t-state-disabled', this.currentView.compare(this.viewedMonth, this.minDate, false) <= 0)
+                         .cat('">')
+			             .cat('<span class="t-icon t-arrow-prev"></span></a><a href="#" class="t-link t-nav-fast">')
+			             .cat($t.calendar.views[0].title(this.viewedMonth))
+			             .cat('</a>')
+			             .cat('<a href="#" class="t-link t-nav-next ')
+                         .catIf('t-state-disabled', this.currentView.compare(this.viewedMonth, this.maxDate, true) >= 0)
+                         .cat('"><span class="t-icon t-arrow-next"></span></a>');
+
+            $('.t-header', this.element).html(header.string());
+
             /* header */
             $('.t-nav-next:not(.t-state-disabled)', element)
-			 .live('click', $.proxy(this.navigateToFuture, this));
+			    .live('click', $.proxy(this.navigateToFuture, this));
 
             $('.t-nav-prev:not(.t-state-disabled)', element)
-			 .live('click', $.proxy(this.navigateToPast, this));
+			    .live('click', $.proxy(this.navigateToPast, this));
 
             $('.t-nav-fast:not(.t-state-disabled)', element)
-			 .live('click', $.proxy(this.navigateUp, this));
+			    .live('click', $.proxy(this.navigateUp, this));
 
             $('.t-link.t-state-disabled', element)
-			 .live('click', $t.preventDefault);
+			    .live('click', $t.preventDefault);
 
             $('td:not(.t-state-disabled):has(.t-link)', element)
-			 .live('mouseenter', $t.hover)
-			 .live('mouseleave', $t.leave)
-			 .live('click', $.proxy(this.navigateDown, this));
+				.live('mouseenter', $t.hover)
+			    .live('mouseleave', $t.leave)
+			    .live('click', $.proxy(this.navigateDown, this));
 
             $t.bind(this, {
                 change: this.onChange,
@@ -41,59 +51,31 @@
         }
     });
 
-    $.extend($t.cultureInfo, {
-        days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-        abbrDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-        abbrMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        longTime: 'h:mm:ss tt',
-        longDate: 'dddd, MMMM dd, yyyy',
-        shortDate: 'M/d/yyyy',
-        shortTime: 'h:mm tt',
-        fullDateTime: 'dddd, MMMM dd, yyyy h:mm:ss tt',
-        generalDateShortTime: 'M/d/yyyy h:mm tt',
-        generalDateTime: 'M/d/yyyy h:mm:ss tt',
-        sortableDateTime: "yyyy'-'MM'-'ddTHH':'mm':'ss",
-        universalSortableDateTime: "yyyy'-'MM'-'dd HH':'mm':'ss'Z'",
-        monthYear: 'MMMM, yyyy',
-        monthDay: 'MMMM dd',
-        today: 'today',
-        tomorrow: 'tomorrow',
-        yesterday: 'yesterday',
-        next: 'next',
-        last: 'last',
-        year: 'year',
-        month: 'month',
-        week: 'week',
-        day: 'day',
-        am: 'AM',
-        pm: 'PM',
-        dateSeparator: '/',
-        timeSeparator: ':'
-    });
-
     $t.calendar.prototype = {
         stopAnimation: false, // used by tests
 
         updateSelection: function () {
-
             var focusedDate = new $t.datetime();
             var firstDayOfMonth = $t.datetime.firstDayOfMonth(this.viewedMonth);
             var lastDayOfMonth = new $t.datetime(firstDayOfMonth.value).date(32).date(0);
 
-            if (this.selectedDate === null || !$t.calendar.isInRange(this.selectedDate, firstDayOfMonth, lastDayOfMonth))
-                this.goToView(0, $t.datetime.firstDayOfMonth(this.selectedDate
-		|| ($t.calendar.isInRange(focusedDate, this.minDate, this.maxDate) ? focusedDate : this.minDate)));
-
+            if (this.selectedDate === null || !$t.calendar.isInRange(this.selectedDate, firstDayOfMonth, lastDayOfMonth)) { 
+                var viewedMonth = $t.datetime.firstDayOfMonth(this.selectedDate
+	                                                      || ($t.calendar.isInRange(focusedDate, this.minDate, this.maxDate) 
+                                                                                    ? focusedDate
+                                                                                    : this.minDate));
+                this.goToView(0, viewedMonth);
+            }
+            
             var me = this;
             var days = $('.t-content td:not(.t-other-month)', this.element)
-		.removeClass('t-state-selected');
+		                .removeClass('t-state-selected');
 
             if (this.selectedDate !== null) {
                 days.filter(function () {
                     return (parseInt($(this).text(), 10) == me.selectedDate.date());
                 })
-		.addClass('t-state-selected');
+		        .addClass('t-state-selected');
             }
         },
 
@@ -115,18 +97,18 @@
                 return $('.t-overlay', this.element).remove();
 
             $('<div/>')
-		.addClass('t-overlay')
-		.css({
-		    opacity: 0,
-		    width: this.element.offsetWidth,
-		    height: this.element.offsetHeight,
-		    position: 'absolute',
-		    top: 0,
-		    left: 0,
-		    zIndex: 3,
-		    backgroundColor: '#fff'
-		})
-		.appendTo(this.element);
+		        .addClass('t-overlay')
+		        .css({
+		            opacity: 0,
+		            width: this.element.offsetWidth,
+		            height: this.element.offsetHeight,
+		            position: 'absolute',
+		            top: 0,
+		            left: 0,
+		            zIndex: 3,
+		            backgroundColor: '#fff'
+		        })
+		        .appendTo(this.element);
         },
 
         goToView: function (viewIndex, viewedMonth) {
@@ -173,19 +155,18 @@
             oldView.find('td').removeClass('t-state-hover');
 
             $('.t-nav-fast', this.element)
-		.html(this.currentView.title(viewedMonth))
-		.toggleClass('t-state-disabled', viewIndex == $t.calendar.views.length - 1);
+		        .html(this.currentView.title(viewedMonth))
+		        .toggleClass('t-state-disabled', viewIndex == $t.calendar.views.length - 1);
 
             $('.t-nav-prev', this.element)
-		.toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.minDate, false) <= 0);
+		        .toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.minDate, false) <= 0);
 
             $('.t-nav-next', this.element)
-		.toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.maxDate, true) >= 0);
+		        .toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.maxDate, true) >= 0);
 
-            var newView =
-		$('<table class="t-content" cellspacing="0"></table>')
-		.html(this.currentView.body(viewedMonth, this.minDate, this.maxDate, this.selectedDate, this.urlFormat, this.dates))
-		.toggleClass('t-meta-view', viewIndex == 1 || viewIndex == 2);
+            var newView = $('<table class="t-content" cellspacing="0"></table>')
+		                    .html(this.currentView.body(viewedMonth, this.minDate, this.maxDate, this.selectedDate, this.urlFormat, this.dates))
+		                    .toggleClass('t-meta-view', viewIndex == 1 || viewIndex == 2);
 
             var me = this;
 
@@ -202,39 +183,39 @@
 
             if (plunge) {
                 outerAnimationContainer =
-		$t.fx._wrap(oldView)
-		.css({
-		    overflow: 'hidden',
-		    position: 'relative'
-		});
+		            $t.fx._wrap(oldView)
+		                 .css({
+		                     overflow: 'hidden',
+		                     position: 'relative'
+		                 });
                 newView.wrap($('<div/>')
-		.addClass('t-animation-container')
-		.css($.extend({
-		    position: 'absolute',
-		    zIndex: 1,
-		    fontSize: 1,
-		    lineHeight: 1,
-		    width: target.outerWidth(),
-		    height: target.outerHeight(),
-		    opacity: 0
-		}, target.position())))
-		.parent()
-		.insertAfter(oldView);
+		               .addClass('t-animation-container')
+		               .css($.extend({
+		                   position: 'absolute',
+		                   zIndex: 1,
+		                   fontSize: 1,
+		                   lineHeight: 1,
+		                   width: target.outerWidth(),
+		                   height: target.outerHeight(),
+		                   opacity: 0
+		               }, target.position())))
+		               .parent()
+		               .insertAfter(oldView);
 
                 if (!this.stopAnimation) {
                     newView.parent()
-		.animate({
-		    fontSize: oldViewFontSize,
-		    lineHeight: oldViewLineHeight,
-		    top: 0, left: 0,
-		    width: oldViewWidth,
-		    height: oldViewHeight,
-		    opacity: 1
-		}, 'normal', function () {
-		    newView.appendTo(me.element);
-		    outerAnimationContainer.remove();
-		    me.overlay(false);
-		});
+		                   .animate({
+		                       fontSize: oldViewFontSize,
+		                       lineHeight: oldViewLineHeight,
+		                       top: 0, left: 0,
+		                       width: oldViewWidth,
+		                       height: oldViewHeight,
+		                       opacity: 1
+		                   }, 'normal', function () {
+		                       newView.appendTo(me.element);
+		                       outerAnimationContainer.remove();
+		                       me.overlay(false);
+		                   });
                 } else { //animation is stopped for test purposes
                     oldView.remove();
                     newView.appendTo(me.element);
@@ -246,11 +227,11 @@
                 newView.insertBefore(oldView);
 
                 outerAnimationContainer =
-		$t.fx._wrap(newView)
-		.css({
-		    overflow: 'hidden',
-		    position: 'relative'
-		});
+		            $t.fx._wrap(newView)
+		                 .css({
+		                     overflow: 'hidden',
+		                     position: 'relative'
+		                 });
 
                 var coordinatesMod;
                 if (viewIndex != 0)
@@ -262,26 +243,26 @@
                 };
 
                 oldView.wrap($('<div/>')
-		.addClass('t-animation-container')
-		.css($.extend({
-		    position: 'absolute'
-		}, maximizedViewProperties)))
-		.parent()
-		.insertAfter(newView)
+		               .addClass('t-animation-container')
+		               .css($.extend({
+		                   position: 'absolute'
+		               }, maximizedViewProperties)))
+		               .parent()
+		               .insertAfter(newView)
 
                 if (!this.stopAnimation) {
                     oldView.parent()
-		.animate($.extend({
-		    fontSize: 1,
-		    lineHeight: 1,
-		    width: 48,
-		    height: 54,
-		    opacity: 0
-		}, collapseCoordinates), 'normal', function () {
-		    newView.appendTo(me.element);
-		    outerAnimationContainer.remove();
-		    me.overlay(false);
-		});
+		                   .animate($.extend({
+		                       fontSize: 1,
+		                       lineHeight: 1,
+		                       width: 48,
+		                       height: 54,
+		                       opacity: 0
+		                   }, collapseCoordinates), 'normal', function () {
+		                       newView.appendTo(me.element);
+		                       outerAnimationContainer.remove();
+		                       me.overlay(false);
+		                   });
                 } else {//animation is stopped for test purposes
                     oldView.remove();
                     newView.appendTo(me.element);
@@ -298,39 +279,38 @@
             this.viewedMonth = $t.datetime.firstDayOfMonth($t.calendar.fitDateToRange(viewedMonth, this.minDate, this.maxDate));
 
             this.currentView = $t.calendar.views[viewIndex];
-
+            
             $('.t-nav-fast', this.element)
-		.html(this.currentView.title(viewedMonth))
-		.toggleClass('t-state-disabled', viewIndex == $t.calendar.views.length - 1);
+		        .html(this.currentView.title(viewedMonth))
+		        .toggleClass('t-state-disabled', viewIndex == $t.calendar.views.length - 1);
 
             $('.t-nav-prev', this.element)
-		.toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.minDate, false) <= 0);
+		        .toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.minDate, false) <= 0);
 
             $('.t-nav-next', this.element)
-		.toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.maxDate, true) >= 0);
+		        .toggleClass('t-state-disabled', this.currentView.compare(this.viewedMonth, this.maxDate, true) >= 0);
 
             this.overlay(true);
 
-            var newView =
-		$('<table class="t-content" cellspacing="0"></table>')
-		.html(this.currentView.body(viewedMonth, this.minDate, this.maxDate, this.selectedDate, this.urlFormat, this.dates))
-		.toggleClass('t-meta-view', viewIndex == 1 || viewIndex == 2);
+            var newView = $('<table class="t-content" cellspacing="0"></table>')
+		                      .html(this.currentView.body(viewedMonth, this.minDate, this.maxDate, this.selectedDate, this.urlFormat, this.dates))
+		                      .toggleClass('t-meta-view', viewIndex == 1 || viewIndex == 2);
 
             var oldView = $('.t-content', this.element);
 
             var viewWidth = oldView.outerWidth();
 
             oldView.add(newView)
-		.css({ width: viewWidth, 'float': 'left' });
+		           .css({ width: viewWidth, 'float': 'left' });
 
             var animationContainer =
-		$t.fx._wrap(oldView)
-		.css({
-		    position: 'relative',
-		    width: viewWidth * 2,
-		    'float': 'left',
-		    left: (forward ? 0 : -200)
-		});
+		           $t.fx._wrap(oldView)
+		                .css({
+		                    position: 'relative',
+		                    width: viewWidth * 2,
+		                    'float': 'left',
+		                    left: (forward ? 0 : -200)
+		                });
 
             newView[forward ? 'insertAfter' : 'insertBefore'](oldView);
 
@@ -427,7 +407,7 @@
     $.fn.tCalendar = function (options) {
         return $t.create(this, {
             name: 'tCalendar',
-            init: function(element, options) { 
+            init: function (element, options) {
                 return new $t.calendar(element, options);
             },
             options: options
@@ -446,23 +426,22 @@
             index: 0,
             title: function (viewedMonth) {
                 return new $t.stringBuilder()
-			 .cat($t.cultureInfo.months[viewedMonth.month()])
-			 .cat(' ')
-			 .cat(viewedMonth.year()).string();
+			        .cat($t.cultureInfo.months[viewedMonth.month()])
+			        .cat(' ')
+			        .cat(viewedMonth.year()).string();
             },
             body: function (viewedMonth, minDate, maxDate, selectedDate, urlFormat, dates) {
-
                 var html = (new $t.stringBuilder())
-			 .cat('<thead><tr class="t-week-header">');
+			               .cat('<thead><tr class="t-week-header">');
 
                 for (var i = 0; i < 7; i++) {
                     html.cat('<th scope="col" abbr="')
-			 .cat($t.cultureInfo.abbrDays[i])
-			 .cat('" title="')
-			 .cat($t.cultureInfo.days[i])
-			 .cat('">')
-			 .cat($t.cultureInfo.days[i].charAt(0))
-			 .cat('</th>');
+			            .cat($t.cultureInfo.abbrDays[i])
+			            .cat('" title="')
+			            .cat($t.cultureInfo.days[i])
+			            .cat('">')
+			            .cat($t.cultureInfo.days[i].charAt(0))
+			            .cat('</th>');
                 }
 
                 html.cat('</tr></thead><tbody>');
@@ -471,8 +450,8 @@
 
                 var month = viewedMonth.month();
 
-                var selectedDateInViewedMonth = selectedDate === null ? false
-			 : viewedMonth.year() == selectedDate.year();
+                var selectedDateInViewedMonth = selectedDate === null ? false : 
+                                                viewedMonth.year() == selectedDate.year();
                 var cellClass;
 
                 for (var weekRow = 0; weekRow < 6; weekRow++) {
@@ -480,16 +459,15 @@
                     html.cat('<tr>');
 
                     for (var day = 0; day < 7; day++) {
-
                         cellClass =
-			 currentDayInCalendar.month() != month ? 't-other-month' :
-			 (selectedDateInViewedMonth
-			 && currentDayInCalendar.month() == selectedDate.month()
-			 && currentDayInCalendar.date() == selectedDate.date()) ? ' t-state-selected' : '';
+			            currentDayInCalendar.month() != month ? 't-other-month' :
+			            (selectedDateInViewedMonth
+			            && currentDayInCalendar.month() == selectedDate.month()
+			            && currentDayInCalendar.date() == selectedDate.date()) ? ' t-state-selected' : '';
 
                         html.cat('<td')
-			 .catIf(' class="' + cellClass + '"', cellClass)
-			 .cat('>');
+			                .catIf(' class="' + cellClass + '"', cellClass)
+			                .cat('>');
 
                         if ($t.calendar.isInRange(currentDayInCalendar, minDate, maxDate)) {
                             html.cat('<a href="')
@@ -497,17 +475,19 @@
                             if (urlFormat) {
                                 if (dates)
                                     url = $t.calendar.isInCollection(currentDayInCalendar, dates) ?
-			 $t.calendar.formatUrl(urlFormat, currentDayInCalendar) : '#';
+			                              $t.calendar.formatUrl(urlFormat, currentDayInCalendar) : '#';
                                 else
                                     url = $t.calendar.formatUrl(urlFormat, currentDayInCalendar);
                             }
 
                             html.cat(url)
-			 .cat('" class="t-link')
-			 .cat(url != '#' ? ' t-action-link' : '')
-			 .cat('">')
-			 .cat(currentDayInCalendar.date())
-			 .cat('</a>');
+			                    .cat('" class="t-link')
+			                    .cat(url != '#' ? ' t-action-link' : '')
+                                .cat('" title="')
+                                .cat($t.datetime.format(currentDayInCalendar.toDate(), $t.cultureInfo.longDate))
+			                    .cat('">')
+			                    .cat(currentDayInCalendar.date())
+			                    .cat('</a>');
                         } else {
                             html.cat('&nbsp;');
                         }
@@ -534,7 +514,7 @@
                     result = -1;
                 else // date1Year == date2Year
                     result = date1Month == date2Month ? 0 :
-			 date1Month > date2Month ? 1 : -1;
+			                 date1Month > date2Month ? 1 : -1;
                 return result;
             },
             firstLastDay: function (date, isFirstDay, calendar) {
@@ -550,14 +530,25 @@
 			     body: function (viewedMonth, minDate, maxDate) {
 			         return $t.calendar.metaView(true, viewedMonth, function () {
 			             var result = [];
-			             for (var i = 0; i < 12; i++) {
-			                 if (viewedMonth.year() <= minDate.year())
-			                     i < minDate.month() ? result.push('&nbsp;') : result.push($t.cultureInfo.abbrMonths[i]);
-			                 else if (viewedMonth.year() >= maxDate.year())
-			                     i > maxDate.month() ? result.push('&nbsp;') : result.push($t.cultureInfo.abbrMonths[i]);
-			                 else
-			                     result.push($t.cultureInfo.abbrMonths[i]);
-			             }
+
+                         var startMonth = 0;
+                         var endMonth = 11;
+
+                         if (minDate.year() == maxDate.year()) {
+                             startMonth = minDate.month();
+                             endMonth = maxDate.month();
+                         }
+                         else if (viewedMonth.year() == minDate.year())
+                             startMonth = minDate.month();
+                         else if (viewedMonth.year() == maxDate.year())
+                             endMonth = maxDate.month();
+
+                         for (var i = 0; i < 12; i++) {
+                             if (i >= startMonth && i <= endMonth)
+                                 result.push($t.cultureInfo.abbrMonths[i]);
+                             else
+                                 result.push('&nbsp;');
+                         }
 
 			             return result;
 			         });
@@ -586,7 +577,6 @@
 			     },
 			     body: function (viewedMonth, minDate, maxDate) {
 			         return $t.calendar.metaView(false, viewedMonth, function () {
-
 			             var result = [];
 			             var minYear = minDate.year();
 			             var maxYear = maxDate.year();
@@ -633,10 +623,8 @@
 			             for (var i = -1; i < 11; i++) {
 			                 var firstYearInCenturyTemp = firstYearInCentury + i * 10;
 			                 if ((firstYearInCenturyTemp + 10) >= minDate.year() && firstYearInCenturyTemp <= maxDate.year())
-			                     result.push(
-			 firstYearInCenturyTemp + '-<br />' +
-			 (firstYearInCenturyTemp + 9) + '&nbsp;'
-			 );
+			                     result.push(firstYearInCenturyTemp + '-<br />' +
+			                     (firstYearInCenturyTemp + 9) + '&nbsp;');
 			                 else
 			                     result.push('&nbsp;<br />&nbsp;');
 			             }
@@ -657,7 +645,7 @@
 			     },
 			     firstLastDay: function (date, isFirstDay) {
 			         return isFirstDay ? new $t.datetime(date.year() - (date.year() % 100), 0, 1) :
-			 new $t.datetime(date.year() - (date.year() % 100) + 99, 0, 1);
+			                new $t.datetime(date.year() - (date.year() % 100) + 99, 0, 1);
 			     },
 			     navCheck: function (date1, date2, isBigger) {
 			         var tmp = this.compare(date2, date1, isBigger);
@@ -673,104 +661,23 @@
             return checkBigger ? check(value2) : check(value1);
         },
 
-        pad: function (value) {
-            if (value < 10)
-                return '0' + value;
-            return value;
-        },
-
-        standardFormat: function (format) {
-            var l = $t.cultureInfo;
-
-            var standardFormats = {
-                d: l.shortDate,
-                D: l.longDate,
-                F: l.fullDateTime,
-                g: l.generalDateShortTime,
-                G: l.generalDateTime,
-                m: l.monthDay,
-                M: l.monthDay,
-                s: l.sortableDateTime,
-                t: l.shortTime,
-                T: l.longTime,
-                u: l.universalSortableDateTime,
-                y: l.monthYear,
-                Y: l.monthYear
-            };
-
-            return standardFormats[format];
-        },
-
-        formatDate: function (date, format) {
-            var l = $t.cultureInfo;
-
-            var d = date.getDate();
-            var day = date.getDay();
-            var M = date.getMonth();
-            var y = date.getFullYear();
-            var h = date.getHours();
-            var m = date.getMinutes();
-            var s = date.getSeconds();
-            var f = date.getMilliseconds();
-            var pad = $t.calendar.pad;
-
-            var dateFormatters = {
-                d: d,
-                dd: pad(d),
-                ddd: l.abbrDays[day],
-                dddd: l.days[day],
-
-                M: M + 1,
-                MM: pad(M + 1),
-                MMM: l.abbrMonths[M],
-                MMMM: l.months[M],
-
-                yy: pad(y % 100),
-                yyyy: y,
-
-                h: h % 12 || 12,
-                hh: pad(h % 12 || 12),
-                H: h,
-                HH: pad(h),
-
-                m: m,
-                mm: pad(m),
-
-                s: s,
-                ss: pad(s),
-
-                f: Math.floor(f / 100),
-                ff: Math.floor(f / 10),
-                fff: f,
-
-                tt: h < 12 ? l.am : l.pm
-            };
-
-            format = format || 'G';
-            format = $t.calendar.standardFormat(format) ? $t.calendar.standardFormat(format) : format;
-
-            return format.replace(dateFormatTokenRegExp, function (match) {
-                return match in dateFormatters ? dateFormatters[match] : match.slice(1, match.length - 1);
-            });
-        },
-
         html: function (viewedMonth, selectedDate, minDate, maxDate, urlFormat, dates) {
             viewedMonth = viewedMonth || new $t.datetime();
             minDate = minDate || $.fn.tCalendar.defaults.minDate;
             maxDate = maxDate || $.fn.tCalendar.defaults.maxDate;
 
             return new $t.stringBuilder().cat('<div class="t-widget t-calendar">')
-			 .cat('<div class="t-header">')
-			 .cat('<a href="#" class="t-link t-nav-prev">')
-			 .cat('<span class="t-icon t-arrow-prev"></span></a><a href="#" class="t-link t-nav-fast">')
-			 .cat($t.calendar.views[0].title(viewedMonth))
-			 .cat('</a>')
-			 .cat('<a href="#" class="t-link t-nav-next"><span class="t-icon t-arrow-next"></span></a>')
-			 .cat('</div>')
-			 .cat('<table class="t-content" cellspacing="0">')
-			 .cat($t.calendar.views[0].body(viewedMonth, minDate, maxDate, selectedDate, urlFormat, dates))
-			 .cat('</table></div>')
-			 .string();
+			                             .cat('<div class="t-header">')
+			                             .cat('<a href="#" class="t-link t-nav-prev">')
+			                             .cat('<span class="t-icon t-arrow-prev"></span></a><a href="#" class="t-link t-nav-fast">')
+			                             .cat($t.calendar.views[0].title(viewedMonth))
+			                             .cat('</a>')
+			                             .cat('<a href="#" class="t-link t-nav-next"><span class="t-icon t-arrow-next"></span></a>')
+			                             .cat('</div>')
+			                             .cat('<table class="t-content" cellspacing="0">')
+			                             .cat($t.calendar.views[0].body(viewedMonth, minDate, maxDate, selectedDate, urlFormat, dates))
+			                             .cat('</table></div>')
+			                             .string();
         },
 
         metaView: function (isYearView, viewedMonth, getCollection) {
@@ -784,13 +691,13 @@
             for (var i = 0, len = collection.length; i < len; i++) {
 
                 html.catIf('</tr><tr>', i > 0 && i % 4 == 0)
-			 .cat('<td')
-			 .catIf(' class="t-other-month"', (i == 0 || i == len - 1) && isYearView == false)
-			 .cat('>');
+			        .cat('<td')
+			        .catIf(' class="t-other-month"', (i == 0 || i == len - 1) && isYearView == false)
+			        .cat('>');
 
                 if (collection[i] !== '&nbsp;' && collection[i] !== '&nbsp;<br />&nbsp;')
                     html.cat('<a href="#" class="t-link">')
-			 .cat(collection[i]).cat('</a>')
+			            .cat(collection[i]).cat('</a>')
                 else
                     html.cat(collection[i]);
 
@@ -804,13 +711,13 @@
 
         isInRange: function (date, minDate, maxDate) {
             if (!date) return false;
-            return minDate.value - date.value <= 0 && maxDate.value - date.value >= 0;
+                return minDate.value - date.value <= 0 && maxDate.value - date.value >= 0;
         },
 
         fitDateToRange: function (date, minDate, maxDate) {
             if (date.value < minDate.value) date = new $t.datetime(minDate.value)
             if (date.value > maxDate.value) date = new $t.datetime(maxDate.value)
-            return date;
+                return date;
         },
 
         isInCollection: function (date, dates) {
@@ -852,11 +759,11 @@
         },
 
         formatUrl: function (urlFormat, date) {
-            return urlFormat.replace("{0}", $t.calendar.formatDate(date.toDate(), $t.cultureInfo.shortDate));
+            return urlFormat.replace("{0}", $t.datetime.format(date.toDate(), $t.cultureInfo.shortDate));
         }
     });
 
     $.extend($t.formatters, {
-        date: $t.calendar.formatDate
+        date: $t.datetime.format
     });
 })(jQuery);

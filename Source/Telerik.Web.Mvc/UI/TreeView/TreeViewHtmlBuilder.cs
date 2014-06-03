@@ -13,7 +13,7 @@ namespace Telerik.Web.Mvc.UI
     public class TreeViewHtmlBuilder : NavigationHtmlBuilderBase<TreeView, TreeViewItem>, ITreeViewHtmlBuilder
     {
         public TreeViewHtmlBuilder(TreeView treeView, IActionMethodCache actionMethodCache)
-            :base(treeView, actionMethodCache)
+            : base(treeView, actionMethodCache)
         {
         }
 
@@ -96,10 +96,11 @@ namespace Telerik.Web.Mvc.UI
                     .AddClass(UIPrimitives.Input)
                     .Attributes(new { type = "hidden", name = Component.Name + "_checkedNodes.Index", value = string.Join(":", indexes.ToArray()) })
                     .AppendTo(chkBoxWrapperTag);
-                
+
                 IHtmlNode chkBoxTag = new HtmlTag("input", TagRenderMode.SelfClosing)
                     .AddClass(UIPrimitives.Input)
-                    .Attributes(new { name = checkedItemNamePrefix + "Checked", type = "checkbox", value = item.Checked, title = checkedItemNamePrefix })
+                    .Attributes(new { name = checkedItemNamePrefix + "Checked", type = "checkbox", value = item.Checked })
+                    .ToggleAttribute("disabled", "disabled", !item.Enabled)
                     .AppendTo(chkBoxWrapperTag);
 
                 if (item.Checked)
@@ -128,19 +129,22 @@ namespace Telerik.Web.Mvc.UI
 
             IHtmlNode tag = new HtmlTag(isNavigatable ? "a" : "span");
 
-            tag.PrependClass("t-in")
-                .ToggleClass(UIPrimitives.DisabledState, !item.Enabled)
-                .ToggleClass(UIPrimitives.SelectedState, item.Enabled && item.Selected);
-
             if (isNavigatable)
             {
                 if (item.Enabled)
                 {
                     tag.Attribute("href", url);
                 }
+            }
 
-                tag.Attributes(item.LinkHtmlAttributes)
-                   .PrependClass(UIPrimitives.Link);
+            tag.Attributes(item.LinkHtmlAttributes)
+               .PrependClass("t-in")
+               .ToggleClass(UIPrimitives.DisabledState, !item.Enabled)
+               .ToggleClass(UIPrimitives.SelectedState, item.Enabled && item.Selected);
+
+            if (isNavigatable)
+            {
+                tag.PrependClass(UIPrimitives.Link);
             }
 
             if (!string.IsNullOrEmpty(item.ImageUrl))
@@ -158,7 +162,7 @@ namespace Telerik.Web.Mvc.UI
             return tag;
         }
 
-        public IHtmlNode ItemHiddenInputValue(TreeViewItem item) 
+        public IHtmlNode ItemHiddenInputValue(TreeViewItem item)
         {
             return new HtmlTag("input", TagRenderMode.SelfClosing)
                  .AddClass(UIPrimitives.Input)

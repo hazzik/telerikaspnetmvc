@@ -7,10 +7,9 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
     using System.Linq;
+    using Telerik.Web.Mvc.Extensions;
 
-    using Extensions;
-
-    class GridClientObjectSerializer<T>
+    internal class GridClientObjectSerializer<T>
         where T : class
     {
         private readonly Grid<T> grid;
@@ -39,6 +38,12 @@ namespace Telerik.Web.Mvc.UI
             new GridUrlFormatSerializer<T>(grid).SerializeTo(writer);
 
             grid.Editing.SerializeTo("editing", writer);
+#if MVC2 || MVC3          
+            if (grid.OutputValidation)
+            {
+                writer.AppendObject("validationMetadata", grid.ValidationMetadata);
+            }
+#endif
             grid.Grouping.SerializeTo("grouping", writer);
             grid.Paging.SerializeTo("paging", writer);
             grid.Sorting.SerializeTo("sorting", writer);
@@ -47,10 +52,13 @@ namespace Telerik.Web.Mvc.UI
             grid.WebService.SerializeTo("ws", writer);
             grid.ClientEvents.SerializeTo("clientEvents", writer);
             grid.Localization.SerializeTo("localization", writer);
+
             if (grid.DetailView != null)
             {
                 grid.DetailView.SerializeTo("detail", writer);
             }
+
+            writer.Append("noRecordsTemplate", grid.NoRecordsTemplate);
         }
     }
 }

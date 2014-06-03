@@ -7,16 +7,14 @@
     <script type="text/javascript">
         var dropDownObject;
         var $component;
+        var position;
+        var $input;
         var $t;
 
         function setUp() {
             $t = $.telerik;
 
             dropDownObject = new $t.dropDown({
-                offset: {left: 100, top: 100},
-                outerHeight: 100,
-                outerWidth: 200,
-                zIndex: 10,
                 attr: 'width: 200px',
                 effects: $t.fx.toggle.defaults()
             });
@@ -24,6 +22,15 @@
             dropDownObject.dataBind([{ Text: 'text1', Value: '1' },
                                      { Text: 'text2', Value: '2' },
                                      { Text: 'text3', Value: '3'}]);
+
+            $input = $('#testInput');
+
+            position = {
+                offset: $input.offset(),
+                outerHeight: $input.outerHeight(),
+                outerWidth: $input.outerWidth(),
+                zIndex: $t.getElementZIndex($input[0])
+            }
         }
 
         function test_dropDown_should_create_$element_with_passed_attributes() {
@@ -31,19 +38,35 @@
             var dropDown = new $t.dropDown({
                 attr: 'style="width: 300px; overflow-y: visible"'
             });
-
+            
+            dropDown.$element.appendTo(document.body);
             assertEquals('300px', dropDown.$element.css('width'));
             assertEquals('visible', dropDown.$element.css('overflow-y'));
         }
 
-        function test_dropDown_should_create_$element_with_width_equal_to_outerWidth_property_and_overflow_auto() {
+
+        function test_dropDown_should_create_$element_with_passed_attr_and_preserve_default_classes() {
 
             var dropDown = new $t.dropDown({
-                outerWidth: 200 //2 pixels are always extracted in the constructor of dropDown
+                attr: 'class="bob"'
             });
 
-            assertEquals('198px', dropDown.$element.css('width'));
-            assertEquals('auto', dropDown.$element.css('overflow-y'));
+            assertEquals('bob t-popup t-group', dropDown.$element.attr('class'));
+        }
+
+        function test_dropDown_should_set_width_property_and_overflow_auto_when_open() {
+
+            var position1 = {
+                offset: $input.offset(),
+                outerHeight: $input.outerHeight(),
+                outerWidth: 200, //2 pixels are always extracted in the constructor of dropDown
+                zIndex: $t.getElementZIndex($input[0])
+            }
+
+            dropDownObject.open(position1)
+
+            assertEquals('198px', dropDownObject.$element.css('width'));
+            assertEquals('auto', dropDownObject.$element.css('overflow-y'));
         }
 
         function test_dataBind_should_create_li_items_depending_on_passed_data() {
@@ -67,8 +90,10 @@
 
             dropDownObject.dataBind([{ Text: 'text1', Value: '1' },
                                      { Text: 'text2', Value: '2'}]);
+            
+            dropDownObject.$element.appendTo(document.body);
 
-            assertEquals('auto', dropDownObject.$element.css('height'));
+            assertEquals('42px', dropDownObject.$element.css('height'));
         }
 
         function test_dataBind_should_height_to_200px_if_items_are_more_than_10_and_dropDown_does_not_have_set_height() {
@@ -92,6 +117,7 @@
                                      { Text: 'text2', Value: '2' },
                                      { Text: 'text2', Value: '2' } ]);
 
+            dropDown.$element.appendTo(document.body);
             assertEquals('200px', dropDown.$element.css('height'));
         }
 
@@ -116,20 +142,8 @@
                                 { Text: 'text2', Value: '2' },
                                 { Text: 'text2', Value: '2'}]);
 
+             dropDown.$element.appendTo(document.body);
              assertEquals('300px', dropDown.$element.css('height'));
-        }
-
-        function test_dataBinding_method_should_be_called() {
-            var isCalled = false;
-
-            dropDownObject.onDataBinding = function () {
-                isCalled = true;
-            }
-
-            dropDownObject.dataBind([{ Text: 'text1', Value: '1' },
-                                     { Text: 'text2', Value: '2'}]);
-
-            assertEquals(true, isCalled);
         }
 
         function test_itemCrate_method_should_be_called_twice() {
@@ -145,7 +159,7 @@
             assertEquals(2, count);
         }
 
-        function test_itemCrate_method_should_be_called_twice() {
+        function test_highlight_method_should_select_second_item() {
             
             dropDownObject.dataBind([{ Text: 'text1', Value: '1' },
                                      { Text: 'text2', Value: '2' },
@@ -164,32 +178,24 @@
 
             dropDownObject.onOpen = function () { isCalled = true; }
 
-            dropDownObject.open();
+            dropDownObject.open(position);
 
             assertTrue(isCalled);
         }
 
-        function test_open_method_should_be_prevented_by_open_callback() {
-            
-            var isCalled = false;
-            var play = $t.fx.play;
-            $t.fx.play = function () { isCalled = true; }
-
-            dropDownObject.onOpen = function () { return false; }
-            dropDownObject.open();
-
-            assertFalse(isCalled);
-
-            dropDownObject.onOpen = null;
-            $t.fx.play = play;
-        }
-
         function test_open_should_apply_offset_and_outerHeight_to_the_animation_container() {
-            dropDownObject.open();
+            var position1 = {
+                offset: {top:180, left:100},
+                outerHeight: 20,
+                outerWidth: $input.outerWidth(),
+                zIndex: 10
+            }
+
+            dropDownObject.open(position1);
 
             var animationContainer = dropDownObject.$element.parent();
 
-            assertEquals('10', animationContainer.css('zIndex'))
+            assertEquals('10', animationContainer.css('zIndex').toString())
             assertEquals(200, animationContainer.offset().top) //outerHeight + offset.Top
             assertEquals(100, animationContainer.offset().left)
         }
@@ -200,57 +206,11 @@
 
             dropDownObject.highlight(dropDownObject.$items.last());
             dropDownObject.scrollTo = function () { isCalled = true; }
-            dropDownObject.open();
+            dropDownObject.open(position);
 
             assertTrue(isCalled);
 
             dropDownObject.scrollTo = scrollTo;
-        }
-
-        function test_close_method_should_call_close_callback() {
-            var isCalled = false;
-
-            dropDownObject.onClose = function () { isCalled = true; }
-
-            dropDownObject.close();
-
-            assertTrue(isCalled);
-        }
-
-        function test_close_method_should_be_prevented_by_close_callback() {
-
-            var isCalled = false;
-            var rewind = $t.fx.rewind;
-            $t.fx.rewind = function () { isCalled = true; }
-
-            dropDownObject.onClose = function () { return false; }
-            dropDownObject.close();
-
-            assertFalse(isCalled);
-
-            $t.fx.rewind = rewind;
-        }
-
-        function test_click_item_should_call_click_callback() {
-            var isCalled = false;
-            var dropDown = new $t.dropDown({
-                offset: { left: 100, top: 100 },
-                outerHeight: 100,
-                outerWidth: 200,
-                zIndex: 10,
-                effects: $t.fx.toggle.defaults()
-            });
-
-            dropDown.dataBind([{ Text: 'text1', Value: '1' },
-                               { Text: 'text2', Value: '2' },
-                               { Text: 'text3', Value: '3'}]);
-
-            dropDown.onClick = function () { isCalled = true; }
-            dropDown.open();
-
-            dropDown.$items.first().trigger('click');
-
-            assertTrue(isCalled);
         }
 
         function test_click_item_should_pass_clicked_item_to_click_callback() {
@@ -269,33 +229,16 @@
                                { Text: 'text3', Value: '3'}]);
 
             dropDown.onClick = function (e) { item = e.item; }
-            dropDown.open();
+            dropDown.open(position);
 
             dropDown.$items.last().trigger('click');
 
             assertEquals('text3', $(item).text());
         }
 
-        function test_position_should_set_offset_object() {
-            var dropDown = new $t.dropDown({
-                offset: { left: 100, top: 100 },
-                outerHeight: 100,
-                outerWidth: 200,
-                zIndex: 10,
-                effects: $t.fx.toggle.defaults()
-            });
-
-            dropDown.dataBind([{ Text: 'text1', Value: '1' },
-                               { Text: 'text2', Value: '2' },
-                               { Text: 'text3', Value: '3'}]);
-
-            dropDown.position(5, 10);
-
-            assertEquals(5, dropDown.offset.top)
-            assertEquals(10, dropDown.offset.left)
-        }
-
     </script>
+
+    <input id="testInput" />
 
     <% Html.Telerik().ScriptRegistrar()
            .Scripts(scripts => scripts

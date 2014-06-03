@@ -22,5 +22,10 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         {
             return View();
         }
+
+        public ActionResult Rendering()
+        {
+            return View();
+        }
     }
 }

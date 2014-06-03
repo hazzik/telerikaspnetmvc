@@ -5,7 +5,7 @@
     $t.autocomplete = function (element, options) {
         $.extend(this, options);
 
-        var $element = $(element);
+        var $element = $(element).attr('autocomplete', 'off');
 
         this.$text = $element;
         this.element = element;
@@ -62,6 +62,19 @@
                 }
             }
         }
+
+        this.enable = function () {
+            $element
+            .removeClass('t-state-disabled')
+            .removeAttr("disabled");
+        }
+
+        this.disable = function () {
+            $element
+            .addClass('t-state-disabled')
+            .attr('disabled', 'disabled');
+        }
+
         this.filtering.multiple = $.proxy(function (text) {
             if (this.multiple) {
                 text = text.split(this.separator);
@@ -71,29 +84,16 @@
         }, this);
 
         this.dropDown = new $t.dropDown({
-            outerHeight: $element.outerHeight(),
-            outerWidth: $element.outerWidth(),
-            zIndex: $t.list.getZIndex($element),
             attr: this.dropDownAttr,
             effects: this.effects,
-            onOpen: $.proxy(function () {
-                var dropDown = this.dropDown;
-                var offset = $element.offset();
-
-                dropDown.position(offset.top, offset.left);
-                if (!dropDown.outerHeight) dropDown.outerHeight = $element.outerHeight();
-                if (!dropDown.outerWidth) {
-                    dropDown.outerWidth = $element.outerWidth();
-                    dropDown.$element.css('width', dropDown.outerWidth - 2);
-                }
-                return true;
-            }, this),
             onClick: $.proxy(function (e) {
                 this.select(e.item);
                 this.trigger.change();
                 this.trigger.close();
             }, this)
         });
+
+        this.dropDown.$element.css('direction', $element.closest('.t-rtl').length ? 'rtl' : '');
 
         this.fill = function (callback) {
             function highlightItem(component) {
@@ -115,23 +115,26 @@
 
                     loader.ajaxRequest(function (data) {
                         this.data = data;
-                        dropDown.dataBind(data);
+                        this.dataBind(data, true);
                         highlightItem(this);
+
                         $t.trigger(this.element, 'dataBound');
+                        this.trigger.change();
+
                         if (callback) callback();
                     },
                     { data: postData });
                 }
                 else {
-                    dropDown.dataBind(this.data);
+                    this.dataBind(this.data, true);
                     highlightItem(this);
                     if (callback) callback();
                 }
             }
         }
 
-        this.text = function (text) {
-            return this.$text.val(text);
+        this.text = function () {
+            return this.$text.val.apply(this.$text, arguments);
         }
 
         this.value = function () {
@@ -165,20 +168,18 @@
             this.text(value);
         }
 
-        this.previousValue = this.value();
-
         $t.list.common.call(this);
         $t.list.filters.call(this);
+        $t.list.initialize.call(this);
 
-        $t.bind(this, {
-            dataBinding: this.onDataBinding,
-            dataBound: this.onDataBound,
-            error: this.onError,
-            open: this.onOpen,
-            close: this.onClose,
-            valueChange: this.onChange,
-            load: this.onLoad
-        });
+        //overrides common.databind method
+        this.dataBind = function (data, preserveStatus) {
+            data = data || [];
+            this.data = data;
+            this.dropDown.dataBind(this.data);
+            if (!preserveStatus)
+                this.text('');
+        }
 
         $element
             .bind({
@@ -194,10 +195,11 @@
                 }, this)
             });
 
-        $(document).bind('mousedown', $.proxy(function (e) {
+        $(document.documentElement).bind('mousedown', $.proxy(function (e) {
             var $parent = this.dropDown.$element.parent();
+            var parentLength = $parent.length;
 
-            if (($parent.length > 0) && !$.contains(element, e.target) && !$.contains($parent[0], e.target)) {
+            if ((!parentLength && element !== e.target) || (parentLength && !$.contains(element, e.target) && !$.contains($parent[0], e.target))) {
                 this.trigger.change();
                 this.trigger.close();
             }
@@ -264,19 +266,20 @@
                 }, this), 0);
             }
 
-            if (key == 13) { //move caret to the end of the input
-                if (dropDown.$items.length) {
+            if (key == 13) {
+
+                if (dropDown.isOpened()) e.preventDefault();
+
+                if (dropDown.$items) {
                     var $selectedItems = dropDown.$items.filter('.t-state-selected:first');
 
-                    if (dropDown.isOpened()) e.preventDefault();
-
-                    if ($selectedItems.length > 0) {
+                    if ($selectedItems.length > 0)
                         this.select($selectedItems[0]);
-                        trigger.change();
-                        trigger.close();
-                        $t.list.moveToEnd(this.element);
-                    }
                 }
+
+                trigger.change();
+                trigger.close();
+                $t.list.moveToEnd(this.element);
             }
 
             if (key == 27 || key == 9) {

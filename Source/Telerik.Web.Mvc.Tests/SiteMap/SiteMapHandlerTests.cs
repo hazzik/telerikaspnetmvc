@@ -22,20 +22,11 @@ namespace Telerik.Web.Mvc.Tests
         private readonly Mock<IHttpResponseCacher> _cacher;
         private readonly Mock<IUrlGenerator> _urlGenerator;
         private readonly Mock<HttpContextBase> _httpContext;
-        private readonly Mock<IServiceLocator> locator = new Mock<IServiceLocator>();
 
         private readonly SiteMapHandler _handler;
 
         public SiteMapHandlerTests()
         {
-            locator = new Mock<IServiceLocator>();
-
-            locator.Setup(l => l.Resolve<IPathResolver>()).Returns(new Mock<IPathResolver>().Object);
-            locator.Setup(l => l.Resolve<IFileSystem>()).Returns(new Mock<IFileSystem>().Object);
-            locator.Setup(l => l.Resolve<ICacheManager>()).Returns(new Mock<ICacheManager>().Object);
-
-            ServiceLocator.SetCurrent(() => locator.Object);
-
             _siteMaps = new SiteMapDictionary();
             _compressor = new Mock<IHttpResponseCompressor>();
             _cacher = new Mock<IHttpResponseCacher>();
@@ -48,10 +39,6 @@ namespace Telerik.Web.Mvc.Tests
         [Fact]
         public void Default_constructor_should_not_throw_exception()
         {
-            locator.Setup(l => l.Resolve<IHttpResponseCompressor>()).Returns(_compressor.Object);
-            locator.Setup(l => l.Resolve<IHttpResponseCacher>()).Returns(_cacher.Object);
-            locator.Setup(l => l.Resolve<IUrlGenerator>()).Returns(_urlGenerator.Object);
-
             Assert.DoesNotThrow(() => new SiteMapHandler());
         }
 

@@ -6,8 +6,7 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-
-    using Infrastructure;
+    using System.Globalization;
 
     public class SlideAnimation : IEffect, IAnimation
     {
@@ -39,7 +38,7 @@ namespace Telerik.Web.Mvc.UI
 
         public string Serialize()
         {
-            return String.Format(Culture.Current, "{{name:'{0}'}}", Name);
+            return String.Format(CultureInfo.CurrentCulture, "{{name:'{0}'}}", Name);
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Mvc;
     using System.Web.Routing;
 
+    using Extensions;
+
     public class ContentNavigationItemBuilder<TItem, TBuilder> : NavigationItemBuilder<TItem, TBuilder>
         where TItem : NavigationItem<TItem>, IAsyncContentContainer
         where TBuilder : NavigationItemBuilder<TItem, TBuilder>, IHideObjectMembers
@@ -17,6 +19,27 @@ namespace Telerik.Web.Mvc.UI
             : base(item, viewContext)
         {
             ViewContext = viewContext;
+        }
+
+        /// <summary>
+        /// Sets the Url, which will be requested to return the content. 
+        /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().PanelBar()
+        ///         .Name("PanelBar")
+        ///         .Items(parent => {
+        ///
+        ///              parent.Add()
+        ///                    .LoadContentFrom(MVC.Home.Index().GetRouteValueDictionary());
+        ///          })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TBuilder LoadContentFrom(RouteValueDictionary routeValues)
+        {
+            return routeValues.ApplyTo<TBuilder>(LoadContentFrom);
         }
 
         /// <summary>

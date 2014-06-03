@@ -157,6 +157,20 @@
         }
 
         [Fact]
+        public void Should_merge_style_with_contentHtmlAttributes()
+        {
+            item.Selected = true;
+            item.ContentHtmlAttributes.Clear();
+
+            item.ContentHtmlAttributes.Add("style", "height:200px");
+
+            IHtmlNode tag = builder.ItemContentTag(item);
+
+            Assert.Contains(UIPrimitives.ActiveState.ToString(), tag.Attribute("class"));
+            Assert.Equal("height:200px;display:block", tag.Attribute("style"));
+        }
+
+        [Fact]
         public void Should_call_WriteImage()
         {
             const string url = "testUrl";

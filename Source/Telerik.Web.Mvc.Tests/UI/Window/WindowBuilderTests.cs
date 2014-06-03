@@ -129,7 +129,7 @@
 
             Assert.IsType(typeof(WindowBuilder), returnedBuilder);
         }
-
+        
         [Fact]
         public void LoadContentFrom_should_set_contentUrl()
         {

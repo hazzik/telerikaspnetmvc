@@ -6,10 +6,12 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-    using System.Collections.Generic;
     using System.Web.Routing;
-    using Infrastructure;
+    using System.Collections.Generic;
+    using System.Web.Script.Serialization;
 
+    using Infrastructure;
+    
     public abstract class NavigationItem<T> : LinkedObjectBase<T>, INavigatable, IHideObjectMembers, IHtmlAttributesContainer, IContentContainer where T : NavigationItem<T>
     {
         private string text;
@@ -34,30 +36,35 @@ namespace Telerik.Web.Mvc.UI
             Encoded = true;
         }
 
+        [ScriptIgnore]
         public RouteValueDictionary RouteValues 
         { 
             get; 
             set; 
         }
 
+        [ScriptIgnore]
         public IDictionary<string, object> HtmlAttributes 
         { 
             get; 
             private set; 
         }
 
+        [ScriptIgnore]
         public IDictionary<string, object> ImageHtmlAttributes 
         { 
             get; 
             private set; 
         }
 
+        [ScriptIgnore]
         public IDictionary<string, object> LinkHtmlAttributes 
         { 
             get; 
             private set; 
         }
 
+        [ScriptIgnore]
         public IDictionary<string, object> ContentHtmlAttributes 
         { 
             get; 
@@ -70,12 +77,14 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
+        [ScriptIgnore]
         public HtmlTemplate Template
         {
             get;
             private set;
         }
 
+        [ScriptIgnore]
         public string Html
         {
             get
@@ -88,6 +97,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        [ScriptIgnore]
         public bool Visible 
         { 
             get; 
@@ -100,12 +110,14 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
+        [ScriptIgnore]
         public string SpriteCssClasses 
         { 
             get; 
             set; 
         }
 
+        [ScriptIgnore]
         public Action Content
         {
             get
@@ -166,6 +178,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        [ScriptIgnore]
         public string ControllerName
         {
             get
@@ -182,6 +195,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        [ScriptIgnore]
         public string ActionName
         {
             get
@@ -198,6 +212,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        [ScriptIgnore]
         public string RouteName
         {
             get

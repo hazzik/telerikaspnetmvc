@@ -61,10 +61,10 @@ This example shows the in-line data editing feature of Telerik Grid for ASP.NET 
         .DataKeys(keys => keys.Add(c => c.CustomerID))
         <em>.DataBinding(dataBinding => dataBinding
             .WebService()
-                .Select("~/Models/Customers.asmx/GetCustomers")
-                .Update("~/Models/Customers.asmx/SaveCustomer")
-                .Insert("~/Models/Customers.asmx/InsertCustomer")
-                .Delete("~/Models/Customers.asmx/DeleteCustomer")
+                .Select("~/Models/Products.svc/Select")
+                .Update("~/Models/Products.svc/Update")
+                .Insert("~/Models/Products.svc/Insert")
+                .Delete("~/Models/Products.svc/Delete");
         )</em>
         .Columns(columns =>
         {

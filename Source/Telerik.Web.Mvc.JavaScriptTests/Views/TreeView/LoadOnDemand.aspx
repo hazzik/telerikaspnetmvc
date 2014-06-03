@@ -4,7 +4,15 @@
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <h2>Load on Demand tests</h2>
 
-    <% Html.Telerik().TreeView()
+    <%= Html.Telerik().TreeView()
+            .Name("myTreeView_clientBound")
+            .DragAndDrop(true)
+            .ClientEvents(evt => evt
+                .OnDataBinding("onDataBinding")
+            )
+            .Effects(fx => fx.Toggle()) %>
+
+    <%= Html.Telerik().TreeView()
             .Name("myTreeView")
             .Items(treeview =>
             {
@@ -14,7 +22,8 @@
                     })
                     .Value("1")
                     .LoadOnDemand(true)
-                    .Expanded(false);
+                    .Expanded(false)
+                    .Url("url");
                 
                 treeview.Add().Text("Item 2")
                     .Value("2")
@@ -39,10 +48,9 @@
             }
             )
             .DataBinding(settings => settings.Ajax().Select("LoadOnDemand", "TreeView"))
-            .Effects(fx => fx.Toggle())
-            .Render(); %>
+            .Effects(fx => fx.Toggle()) %>
 
-    <% Html.Telerik().TreeView()
+    <%= Html.Telerik().TreeView()
             .Name("myTreeView_ajaxRequest")
             .DataBinding(settings => settings.Ajax().Select("LoadOnDemand", "TreeView"))
             .Items(treeview =>
@@ -53,10 +61,11 @@
                     .Expanded(false);
             }
             )
-            .Effects(fx => fx.Toggle())
-            .Render(); %>
+            .Effects(fx => fx.Toggle()) %>
 
     <script type="text/javascript">
+        //<![CDATA[
+
         var treeView;
         
         function getTreeView(selector) {
@@ -65,6 +74,11 @@
         
         function setUp() {
             treeView = getTreeView();
+        }
+
+        
+        function findItemByText(text) {
+            return $('.t-in:contains(' + text + ')').closest('.t-item');
         }
         
         function test_opening_ajaxified_nodes_with_server_side_rendered_children_does_not_trigger_ajax_request() {
@@ -168,6 +182,37 @@
             assertEquals(true, group.is(':visible'));
             assertEquals(1, $root.children().length);
         }
+
+        function test_treeView_ajaxBinding_set_item_url() {
+            assertEquals("url", $('.t-item a').attr('href'));
+        }
+
+        function onDataBinding(e) {
+            var treeview = getTreeView("#myTreeView_clientBound");
+
+            if (e.item != treeview.element) {
+                treeview.dataBind(e.item, [{ Text: "Abyss Node", LoadOnDemand: true, Value: "abyss" }]);
+            }
+        }
+
+        function test_opening_lod_nodes_sets_child_loaded_flags() {
+            var treeview = getTreeView("#myTreeView_clientBound");
+
+            try {
+                treeview.bindTo([
+                    { Text: "Product 1", Expanded: false, LoadOnDemand: true, Value: "abyss" }
+                ]);
+
+                findItemByText('Product 1').find('> div > .t-plus').trigger('click');
+
+                assertFalse(findItemByText('Abyss Node').data('loaded'));
+            } finally {
+                $(treeview.element).unbind('dataBinding');
+            }
+        }
+        
+        //]]>
+
     </script>
 
 </asp:Content>

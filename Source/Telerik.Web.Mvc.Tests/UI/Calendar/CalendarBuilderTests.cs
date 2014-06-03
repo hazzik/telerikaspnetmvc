@@ -133,24 +133,6 @@
         }
 
         [Fact]
-        public void Theme_should_set_Theme_property_of_datePicker()
-        {
-            const string theme = "theme";
-            builder.Theme(theme);
-
-            Assert.Equal(theme, calendar.Theme);
-        }
-
-        [Fact]
-        public void Theme_should_return_builder()
-        {
-            const string theme = "theme";
-            var returnedBuilder = builder.Theme(theme);
-
-            Assert.IsType(typeof(CalendarBuilder), returnedBuilder);
-        }
-
-        [Fact]
         public void ClientEvents_should_set_events_of_the_calendar()
         {
             Action<CalendarClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };

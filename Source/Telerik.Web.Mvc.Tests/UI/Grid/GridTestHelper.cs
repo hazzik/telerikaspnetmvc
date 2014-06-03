@@ -8,12 +8,31 @@ namespace Telerik.Web.Mvc.UI.Tests
     using System.Web;
     using System.Web.Mvc;
     using System.Web.UI;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure.Implementation;
     
     public static class GridTestHelper
     {
         public static ControllerBase Controller(IDictionary<string, ValueProviderResult> valueProvider, ViewDataDictionary viewData)
         {
             return new ControllerTestDouble(valueProvider, viewData);
+        }
+
+        public static ILocalizationService CreateLocalizationService()
+        {
+            var localizationService = new Mock<ILocalizationService>();
+            
+            EmbeddedResource resource = new EmbeddedResource("GridLocalization", null);
+
+            localizationService.Setup(l => l.One(It.IsAny<string>())).Returns((string key) => resource.GetByKey(key));
+            localizationService.Setup(l => l.All()).Returns(() => new Dictionary<string, string>());
+
+            return localizationService.Object;
+        }
+
+        public static GridLocalization CreateLocalization()
+        {
+            return new GridLocalization(CreateLocalizationService(), null);
         }
 
         public static Grid<T> CreateGrid<T>(HtmlTextWriter writer, IClientSideObjectWriter objectWriter) where T : class
@@ -36,7 +55,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             
             clientSideObjectFactory.Setup(f=>f.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TextWriter>())).Returns(objectWriter);
 
-            Grid<T> grid = new Grid<T>(viewContext, clientSideObjectFactory.Object, urlGenerator.Object) { Name = "Grid" };
+            Grid<T> grid = new Grid<T>(viewContext, clientSideObjectFactory.Object, urlGenerator.Object, CreateLocalizationService()) { Name = "Grid" };
 
             return grid;
         }

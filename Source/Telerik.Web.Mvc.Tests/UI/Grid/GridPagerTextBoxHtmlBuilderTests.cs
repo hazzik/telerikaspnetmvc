@@ -1,27 +1,18 @@
-﻿
-namespace Telerik.Web.Mvc.UI.Html.Tests
+﻿namespace Telerik.Web.Mvc.UI.Html.Tests
 {
-    using Moq;
-    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
     
     public class GridPagerTextBoxHtmlBuilderTests
     {
         public GridPagerTextBoxHtmlBuilderTests()
         {
-            var virtualPathProvider = new Mock<IVirtualPathProvider>();
-            virtualPathProvider.Setup(vpp => vpp.FileExists(It.IsAny<string>())).Returns(false);
-
-            var serviceLocator = new Mock<IServiceLocator>();
-            serviceLocator.Setup(sl => sl.Resolve<IVirtualPathProvider>()).Returns(virtualPathProvider.Object);
-
-            ServiceLocator.SetCurrent(() => serviceLocator.Object);
         }
 
         [Fact]
         public void Should_create_div()
         {
-            var localization = new GridLocalization();
+            var localization = GridTestHelper.CreateLocalization();
             var builder = new GridPagerTextBoxHtmlBuilder(localization);
 
             var div = builder.Build();
@@ -34,7 +25,7 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         [Fact]
         public void Should_create_input()
         {
-            var builder = new GridPagerTextBoxHtmlBuilder(new GridLocalization())
+            var builder = new GridPagerTextBoxHtmlBuilder(GridTestHelper.CreateLocalization())
             {
                 Value = "1",
                 TotalPages = 20

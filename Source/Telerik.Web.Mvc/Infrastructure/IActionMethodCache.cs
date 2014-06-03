@@ -8,12 +8,13 @@ namespace Telerik.Web.Mvc.Infrastructure
     using System.Collections.Generic;
     using System.Reflection;
     using System.Web.Routing;
+    using System;
 
     public interface IActionMethodCache
     {
         IList<MethodInfo> GetActionMethods(RequestContext requestContext, string controllerName, string actionName);
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Just to avoid creating some extra classes to hold the data structure.")]
         IDictionary<string, IList<MethodInfo>> GetAllActionMethods(RequestContext requestContext, string controllerName);
+
+        IDictionary<string, IList<MethodInfo>> GetAllActionMethods(Type controllerType);
     }
 }

@@ -29,7 +29,28 @@
             
             return isValid;
         }
-        
+
+        function isValidDateTime(date, year, month, day, hours, minutes, seconds, milliseconds) {
+            var isValid = true;
+
+            if (year != date.year())
+                isValid = false;
+            else if (month != date.month() + 1)
+                isValid = false;
+            else if (day != date.date())
+                isValid = false;
+            else if (hours && hours != date.hours())
+                isValid = false;
+            else if (minutes && minutes != date.minutes())
+                isValid = false;
+            else if (seconds && seconds != date.seconds())
+                isValid = false;
+            else if (milliseconds && milliseconds != date.milliseconds())
+                isValid = false;
+
+            return isValid;
+        }
+
         function test_parse_G_date_format() { // ISO format
 
             var dateFormat = "G";
@@ -37,12 +58,62 @@
             assertTrue(isValidDate(2000, 12, 23, result));
         }
 
+        function test_parse_short_year_11_should_return_year_2011() { // ISO format
+
+            var dateFormat = "G";
+            var result = getDatePicker().parse("12/23/11", dateFormat);
+            assertEquals(2011, result.year());
+        }
+
+        function test_parse_short_year_31_should_return_year_1931() { // ISO format
+
+            var dateFormat = "G";
+            var result = getDatePicker().parse("12/23/31", dateFormat);
+            assertEquals(1931, result.year());
+        }
+
         function test_parse_G_date_format_time_parsing() { // ISO format
 
             var dateFormat = "G";
             var result = getDatePicker().parse("12/23/2000 8:12:22 pm", dateFormat);
             assertTrue(new Date(2000, 11, 23, 20, 12, 22) - result.toDate() == 0);
-        }      
+        }
+
+        function test_parse_G_date_time_at_midnight() { // ISO format
+            
+            var dateFormat = "G";
+            var result = getDatePicker().parse("10/23/2000 12:00:00 pm", dateFormat);
+            assertTrue(result.toDate().toString(), isValidDateTime(result, 2000, 10, 23, 12, 0, 0));
+        }
+
+        function test_parse_G_date_time_at_noon() { // ISO format
+
+            var dateFormat = "G";
+            var result = getDatePicker().parse("10/23/2000 12:00:00 am", dateFormat);
+            assertTrue(result.toDate().toString(), isValidDateTime(result, 2000, 10, 23, 0, 0, 0));
+        }
+
+        function test_parse_G_date_time_without_seconds() { // ISO format
+            
+            var dateFormat = "G";
+            var result = getDatePicker().parse("10/23/2000 12:21 am", dateFormat);
+            assertTrue(result.toDate().toString(), isValidDateTime(result, 2000, 10, 23, 0, 21, 0));
+        }
+
+        function test_parse_G_date_time_with_am_without_seconds_and_minutes() { // ISO format
+            
+            var dateFormat = "G";
+            var result = getDatePicker().parse("10/23/2000 12 am", dateFormat);
+            assertTrue(result.toDate().toString(), isValidDateTime(result, 2000, 10, 23, 0, 0, 0));
+        }
+
+        function test_parse_G_date_time_with_pm_without_seconds_and_minutes()
+        { // ISO format
+
+            var dateFormat = "G";
+            var result = getDatePicker().parse("10/23/2000 12 pm", dateFormat);
+            assertTrue(result.toDate().toString(), isValidDateTime(result, 2000, 10, 23, 0, 0, 0));
+        }
 
         //short date format
         function test_parse_ISO_date_format() { // ISO format
@@ -473,35 +544,30 @@
             assertTrue(isValidDate(2000, 12, 23, result));
         }
 
-        /////min and max date testing
-        function test_parse_date_less_than_min_date_should_return_null() {
-            
-            var dateFormat = "MM/dd/yyyy";
-            var result = getDatePicker().parse("01/23/1800", dateFormat);
-            assertNull(result);
+        function test_parse_date_not_exactly_matching_date_format_M_dd_yyyy_should_return_correct_date() {
+
+            var dateFormat = "M/dd/yyyy";
+
+            var result = getDatePicker().parse("01012010", dateFormat);
+            assertTrue(isValidDate(2010, 1, 1, result));
         }
 
-        function test_parse_date_bigger_than_min_date_should_return_null() {
+        function test_parse_date_not_exactly_matching_date_format_d_M_yyyy_should_return_correct_date() {
 
-            var dateFormat = "MM/dd/yyyy";
-            var result = getDatePicker().parse("01/23/2100", dateFormat);
-            assertNull(result);
+            var dateFormat = "d/M/yyyy";
+
+            var result = getDatePicker().parse("29102010", dateFormat);
+            assertTrue(isValidDate(2010, 10, 29, result));
         }
 
-        function test_parse_date_equal_to_min_should_parsed_correctly() {
-            
-            var dateFormat = "MM/dd/yyyy";
+        function test_parse_day_and_month_should_produce_date_with_current_year() {
 
-            var result = getDatePicker().parse("1/1/1900", dateFormat); //in FF new Date(1899, 11, 31) == 1.1.1900
-            assertTrue(isValidDate(1900, 1, 1, result));
-        }
+            var dateFormat = "M/dd/yyyy";
 
-        function test_parse_date_equal_to_max_should_parsed_correctly() {
-        
-            var dateFormat = "MM/dd/yyyy";
+            var date = new $.telerik.datetime();
 
-            var result = getDatePicker().parse("1/1/2100", dateFormat);
-            assertTrue(isValidDate(2100, 1, 1, result));
+            var result = getDatePicker().parse("1001", dateFormat);
+            assertTrue(isValidDate(date.year(), 10, 1, result));
         }
 
         //date format with time.
@@ -517,7 +583,15 @@
             var dateFormat = "MM/dd/yyyy";
 
             var result = getDatePicker().parse("1//2100", dateFormat);
-            assertEquals(null, result);            
+            assertEquals(null, result);
+        }
+
+        function test_parse_should_return_null_if_only_year_is_passed() {
+            var dateFormat = "M/dd/yyyy";
+
+            var result = getDatePicker().parse("2010", dateFormat);
+
+            assertEquals(null, result);
         }
     </script>
     

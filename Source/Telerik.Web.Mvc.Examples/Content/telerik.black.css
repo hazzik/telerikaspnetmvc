@@ -16,14 +16,20 @@
     background: #050505 url('Black/sprite.png') repeat-x 0 -368px;
 }
 
+.t-panelbar .t-state-hover { background-image: none; }
+
 .t-icon { background-image: url('Black/sprite.png'); }
 .t-editor .t-tool-icon { background-image: url('Black/editor.png'); }
 
 .t-expand { background-position: 0 -160px; }
 .t-collapse { background-position: 0 -176px; }
+.t-rtl .t-expand { background-position: -64px -160px; }
 
 .t-plus, .t-plus-disabled { background-position: 0 -256px; }
 .t-minus, .t-minus-disabled { background-position: -16px -256px; }
+
+.t-rtl .t-plus, .t-rtl .t-plus-disabled { background-position: 0 -272px; }
+.t-rtl .t-minus, .t-rtl .t-minus-disabled { background-position: -16px -272px; }
 
 .t-arrow-up { background-position: -16px -160px; }
 .t-arrow-down { background-position: -16px -176px; }
@@ -60,6 +66,7 @@
 
 .t-refresh { background-position: -32px -240px; }
 .t-icon-calendar { background-position: -48px -240px; }
+.t-icon-clock { background-position: -64px -336px; }
 
 .t-edit { background-position: 0 -336px; }
 .t-delete { background-position: -16px -336px; }
@@ -157,6 +164,18 @@
     background-color: #ffc0cb;
 }
 
+.t-button
+{
+    background: #e8e8e8 url('Black/sprite.png') repeat-x 0 -96px;
+    color: #fff;
+}
+
+.t-button-hover
+{
+    background-position: 0 -128px;
+    color: #9eda29;
+}
+
 .t-state-disabled,
 .t-state-disabled .t-link
 {
@@ -173,18 +192,6 @@
     background-color: #2c2c2c;
 }
 
-.t-button
-{
-    background: #e8e8e8 url('Black/sprite.png') repeat-x 0 -96px;
-    color: #fff;
-}
-
-.t-button-hover
-{
-    background-position: 0 -128px;
-    color: #9eda29;
-}
-
 .t-tabstrip li.t-state-active
 {
     border-bottom-color: #4f4f4f;
@@ -199,6 +206,19 @@
 .t-grouping-row td
 {
     background: #4f4f4f url('Black/sprite.png') repeat-x 0 -48px;
+}
+
+.t-footer-template td
+{
+    background-color: #2e2e2e;
+    border-color: #080808 #2e2e2e;
+}
+
+.t-footer-template-wrap,
+.t-footer-template-wrap table
+{
+    background-color: #2e2e2e;
+    border-color: #080808;
 }
 
 .t-grouping-header .t-group-indicator
@@ -236,11 +256,6 @@
     border-color: #000;
 }
 
-.t-panelbar .t-state-hover
-{
-    background-image: none;
-}
-
 .t-filter-options,
 .t-menu .t-group
 {
@@ -260,9 +275,13 @@
 .t-treeview-lines .t-bot
 {
     background-image: url('Black/treeview-nodes.png');
-    background-repeat: no-repeat;
-    margin-left: -16px;
-    padding-left: 16px;
+}
+
+.t-rtl .t-treeview-lines .t-top,
+.t-rtl .t-treeview-lines .t-mid,
+.t-rtl .t-treeview-lines .t-bot
+{
+    background-image: url('Black/treeview-nodes-rtl.png');
 }
 
 .t-treeview-lines .t-item { background-image: url('Black/treeview-line.png'); }

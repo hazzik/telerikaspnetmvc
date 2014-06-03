@@ -112,18 +112,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Sets the theme of the menu
-        /// </summary>
-        public MenuBuilder Theme(string name)
-        {
-            Guard.IsNotNullOrEmpty(name, "name");
-
-            Component.Theme = name;
-
-            return this;
-        }
-
-        /// <summary>
         /// Binds the menu to a sitemap
         /// </summary>
         /// <param name="viewDataKey">The view data key.</param>

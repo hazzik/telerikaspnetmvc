@@ -20,7 +20,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         public ReflectedAuthorizeAttributeCacheTests()
         {
             _builder = new Mock<IAuthorizeAttributeBuilder>();
-            _cache = new ReflectedAuthorizeAttributeCache(_builder.Object);
+            _cache = new ReflectedAuthorizeAttributeCache(new NoCache(), _builder.Object);
         }
 
         [Fact]

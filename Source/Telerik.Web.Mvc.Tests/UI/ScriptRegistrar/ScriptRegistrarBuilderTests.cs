@@ -5,11 +5,11 @@
 
 namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Moq;
     using System;
     using System.Collections.Generic;
     using System.Web.Mvc;
-
-    using Moq;
+    using Telerik.Web.Mvc.Infrastructure;
     using Xunit;
 
     public class ScriptRegistrarBuilderTests
@@ -25,7 +25,10 @@ namespace Telerik.Web.Mvc.UI.Tests
                                               ViewData = new ViewDataDictionary()
                                           };
 
-            _scriptRegistrar = new ScriptRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, new Mock<IWebAssetItemMerger>().Object, new Mock<ScriptWrapperBase>().Object);
+            _scriptRegistrar = new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), 
+                new List<IScriptableComponent>(), 
+                viewContext, 
+                new Mock<IWebAssetCollectionResolver>().Object, new Mock<ScriptWrapperBase>().Object);
 
             _builder = new ScriptRegistrarBuilder(_scriptRegistrar);
         }
@@ -116,12 +119,6 @@ namespace Telerik.Web.Mvc.UI.Tests
             _builder.OnWindowUnload("foo.dispose();");
 
             Assert.Contains("foo.dispose();", _scriptRegistrar.OnWindowUnloadStatements);
-        }
-
-        [Fact]
-        public void Render_should_not_throw_exception()
-        {
-            Assert.DoesNotThrow(() => _builder.Render());
         }
 
         [Fact]

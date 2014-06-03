@@ -9,13 +9,13 @@
     
     <% using (Html.Configurator("Try entering...").Begin()) { %>
         <ul class="humanReadableExamples">
-            <li><a href="#"><%= DateTime.Today.ToShortDateString() %></a></li>
-            <li><a href="#">today</a></li>
-            <li><a href="#">tomorrow</a></li>
+            <li><a href="#" class="t-link"><%= DateTime.Today.ToShortDateString() %></a></li>
+            <li><a href="#" class="t-link">today</a></li>
+            <li><a href="#" class="t-link">tomorrow</a></li>
         </ul>
         <ul class="humanReadableExamples">
-            <li><a href="#">next Tuesday</a></li>
-            <li><a href="#">last March</a></li>
+            <li><a href="#" class="t-link">next Tuesday</a></li>
+            <li><a href="#" class="t-link">last March</a></li>
         </ul>
     <% } %>
     
@@ -25,8 +25,8 @@
             
             setTimeout($.proxy(function() {
                 $('#DatePicker-input')
-                .val($(this).text())
-                .focus();
+                .focus()
+                .val($(this).text());
             }, this), 0);
         });
     <%}); %>

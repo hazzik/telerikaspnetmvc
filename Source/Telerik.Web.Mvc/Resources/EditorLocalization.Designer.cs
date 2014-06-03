@@ -88,11 +88,29 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (inherited font).
+        /// </summary>
+        internal static string FontNameInherit {
+            get {
+                return ResourceManager.GetString("FontNameInherit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select font size.
         /// </summary>
         internal static string FontSize {
             get {
                 return ResourceManager.GetString("FontSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (inherited size).
+        /// </summary>
+        internal static string FontSizeInherit {
+            get {
+                return ResourceManager.GetString("FontSizeInherit", resourceCulture);
             }
         }
         

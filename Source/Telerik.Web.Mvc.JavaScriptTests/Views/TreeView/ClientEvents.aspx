@@ -100,34 +100,40 @@
         }
         
         function test_clicking_load_on_demand_nodes_triggers_databinding_event() {
-            var treeview = $("#ClientSideTreeView").data("tTreeView");
-            var hasCalledDataBinding = false;
-            var eventContainsItem = false;
-            
-            var nodeToClick = $(treeview.element)
-                                    .find('.t-item')
-                                    .filter(function() {
-                                        return $(this).find('> div').text().indexOf("LoadOnDemand") >= 0;
-                                    });
+            var treeview = $("#ClientSideTreeView").data("tTreeView"),
+                node = $(treeview.element).find('.t-item'),
+                hasCalledDataBinding = false,
+                eventContainsItem = false;
         
             $(treeview.element).bind('dataBinding', function(e) {
                 hasCalledDataBinding = true;
-                eventContainsItem = e.item == nodeToClick[0];
+                eventContainsItem = e.item == node[0];
             });
             
-            nodeToClick.find('.t-plus').click();
+            treeview.nodeToggle(null, node, true);
             
             assertTrue("DataBinding event should be fired when elements with LoadOnDemand are clicked.", hasCalledDataBinding);
             assertTrue("DataBinding event should contain item in event data", eventContainsItem);
         }
 
-        function test_reload_method_should_remove_items_group() {
-            var treeview = $("#ClientSideTreeView").data("tTreeView");
+        function getItemHtml(item) {
+            var html = new $.telerik.stringBuilder();
+                          
+            $.telerik.treeview.getItemHtml({
+                item: item,
+                html: html,
+                isFirstLevel: false,
+                groupLevel: 0,
+                itemIndex: 0,
+                itemsCount: 1
+            });
 
-            var $item = $('<li><div class="t-mid"><span class="t-icon t-minus"></span>' +
-                          '<span class="t-in">Steven Buchanan</span></div>' + 
-                          '<ul class="t-group"><li class="t-item"><div class="t-top">' + 
-                          '<span class="t-in">Michael Suyama</span></div></li></ul></li>');
+            return html.string();
+        }
+
+        function test_reload_method_should_remove_items_group() {
+            var treeview = $("#ClientSideTreeView").data("tTreeView"),
+                $item = $(getItemHtml({ Text: 'Steven Buchanan', Items: [{ Text: 'Michael Suyama' }] }));
 
             treeview.reload($item);
 
@@ -135,33 +141,57 @@
         }
 
         function test_reload_method_should_call_ajaxRequest_method() {
-            var treeview = $("#ClientSideTreeView").data("tTreeView");
-            var isCalled = false;
-            var ajax = treeview.ajaxRequest;
+            var treeview = $("#ClientSideTreeView").data("tTreeView"),
+                oldAjaxRequest = treeview.ajaxRequest,
+                isCalled = false;
 
-            treeview.ajaxRequest = function () { isCalled = true; };
+            try {
+                treeview.ajaxRequest = function () { isCalled = true; };
             
-            treeview.reload($('<li></li>'));
+                treeview.reload($('<li></li>'));
 
-            assertTrue(isCalled);
+                assertTrue(isCalled);
 
-            treeview.ajaxRequest = ajax;
+            } finally {
+                treeview.ajaxRequest = oldAjaxRequest;
+            }
         }
 
         function test_clicking_disabled_items_does_not_trigger_select_event() {
-            var treeviewElement = $("#DisabledTreeView");
-            var isCalled = false;
+            var treeviewElement = $("#DisabledTreeView"),
+                isCalled = false;
+                
+            try {
+                treeviewElement.bind('select', function(e) { isCalled = true; });
 
-            treeviewElement.bind('select', function(e) { isCalled = true; });
+                treeviewElement.find('.t-in.t-state-disabled').trigger('click');
 
-            treeviewElement.find('.t-in.t-state-disabled').trigger('click');
-
-            assertFalse(isCalled);
-            
-            treeviewElement.unbind('select');
+                assertFalse(isCalled);
+            } finally {
+                treeviewElement.unbind('select');
+            }
         }
 
-        function test_onNodeDrop_isValid_on_valid_operation() {
+        function test_expanding_load_on_demand_nodes_triggers_expand_event() {
+            var treeviewElement = $("#ClientSideTreeView"),
+                treeview = treeviewElement.data("tTreeView"),
+                node = treeviewElement.find('.t-item:first'),
+                expandTrigggered = false,
+                eventContainsItem = false;
+        
+            try {
+                treeviewElement.bind('expand', function(e) {
+                    expandTrigggered = true;
+                    eventContainsItem = e.item == node[0];
+                });
+            
+                treeview.nodeToggle(null, node, true);
+            
+                assertTrue("Expand event should be fired when elements with LoadOnDemand are expanded.", expandTrigggered);
+                assertTrue("Expand event should contain item in event data", eventContainsItem);
+            } finally {
+                treeviewElement.unbind('expand');
+            }
         }
         
     </script>

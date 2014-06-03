@@ -1,158 +1,159 @@
 ﻿(function ($) {
-    var $t = $.telerik;
-    var dragClueOffset = 10;
+    var $t = $.telerik,
+        nop = function () { },
+        draggables = {},
+        cues = {},
+        droppableDefaults = {
+            scope: 'default',
+            drop: nop,
+            over: nop,
+            out: nop,
+            owner: document.body
+        },
+        draggableDefaults = {
+            distance: 5, /* Dinstance in pixels the mouse should move before dragging should start. */
+            cursorAt: { left: 10, top: 10 }, /* The offset of the cursor from the dragging cue. */
+            scope: 'default', /* Used to group draggables and droppables. */
+            start: nop, /* Called when dragging starts. Return `false` to prevent dragging. */
+            drag: nop, /* Called when the mouse is moved during dragging. */
+            stop: nop, /* Called when dragging stops. Return `false` to prevent the stop animation. */
+            destroy: nop, /* Called when the draggable is destroyed. Used to remove any dragging/dropping cues from DOM. */
+            owner: document.body, /* The DOM element to which events are attached. Used with 'selector' and 'delegate'. */
+            cue: function() { /* Called to create the dragging cue. Return a jQuery object representing the cue. */
+                return $('<span />');
+            }
+        };    
+    
+    $t.droppable = function (options) {
+       $.extend(this, droppableDefaults, options);
+       $(this.owner).delegate(this.selector, 'mouseenter', $.proxy(this._over, this))
+                    .delegate(this.selector, 'mouseup', $.proxy(this._drop, this))
+                    .delegate(this.selector, 'mouseleave', $.proxy(this._out, this));
+    }
+    
+    $t.droppable.prototype = {
+        _over: function(e) {
+            this._raise(e, this.over);
+        },
+        _out: function(e) {
+            this._raise(e, this.out);
+        },
+        _drop: function(e) {
+            this._raise(e, $.proxy(function(e) {
+                this.drop(e);
+                e.destroy(e);
+            }, this));
+        },
+        _raise: function(e, callback) {
+            var draggable = draggables[this.scope];
+            if (draggable)
+                callback($.extend(e, draggable, { $droppable: $(e.currentTarget) }));
+        }
+    }
 
-    $t.draganddrop = function (_namespace, options) {
+    $t.dragCue = function (html) {
+        return $('<div class="t-header t-drag-clue" />')
+            .html(html)
+            .prepend('<span class="t-icon t-drag-status t-denied" />')
+            .appendTo(document.body);
+    }
+    
+    $t.dragCueStatus = function($cue, status) {
+        $cue.find('.t-drag-status')
+            .attr('className', 't-icon t-drag-status')
+            .addClass(status);
+    }
 
-        if (!(this instanceof arguments.callee))
-            return new arguments.callee(_namespace, options);
-
-        this.hitTestOffset = 5;
-
-        $.extend(this, options)
-
-        _namespace = '.' + (_namespace || 'draganddrop');
+    $t.draggable = function (options) {
+        $.extend(this, draggableDefaults, options);
         
-        var draggables = options.draggables;
+        $(this.owner).delegate(this.selector, 'mousedown', $.proxy(this._wait, this))
+                     .delegate(this.selector, 'dragstart', $t.preventDefault);
+    
+        this._startProxy = $.proxy(this._start, this);
+        this._destroyProxy = $.proxy(this._destroy, this);
+        this._stopProxy = $.proxy(this._stop, this);
+        this._dragProxy = $.proxy(this._drag, this);
+    }
 
-        $.each($.isArray(draggables) ? draggables : [draggables], $.proxy(function(_, draggable) {
-            $(draggable).live('mousedown', $.proxy(this.waitForDrag, this))
-                        .live('dragstart', $t.preventDefault);
-        }, this))
-        
-        this.evt = { ss: 'selectstart' + _namespace, mm: 'mousemove' + _namespace,
-            ku: 'keyup' + _namespace, mu: 'mouseup' + _namespace
-        };
-    };
-
-    $t.draganddrop.applyContext = function (object, context) {
-        var result = {};
-
-        $.each(object, function (item) {
-            result[item] = $.isFunction(this) ? $.proxy(this, context) : this;
-        });
-
-        return result;
-    };
-
-    $t.draganddrop.prototype = {
-
-        moveClue: function (e) {
-            
-            if (!this.useDragClue) {
-                this.onDragMove(e, this.$draggedElement);
-                return;
-            }
-
-            this.$dragClue.css({
-                left: e.pageX + dragClueOffset,
-                top: e.pageY + dragClueOffset
-            });
-
-            var status = this.onDragMove(e, this.$draggedElement, this.$dragClue) || 't-denied';
-
-            this.$dragClueStatus.className = 't-icon t-drag-status ' + status;
+    $t.draggable.prototype = {
+        _raise: function(e, callback) {
+            var draggable = draggables[this.scope];
+            if (draggable)
+                return callback($.extend(e, draggable));
         },
 
-        startDrag: function (e) {
-            var left = this.hittestCoordinates.left - e.pageX;
-            var top = this.hittestCoordinates.top - e.pageY;
-            var distance = Math.sqrt((top * top) + (left * left));
+        _wait: function (e) {
+            this.$target = $(e.currentTarget);
+            this._startPosition = { x: e.pageX, y: e.pageY };
 
-            if (distance >= this.hitTestOffset) {
-                $(document)
-                    .bind(this.evt.ss, function () { return false; })
-                    .unbind(this.evt.mm);
+            $(document).bind( {
+                        mousemove: this._startProxy,
+                        mouseup: this._destroyProxy
+                      })
+                      .trigger('mousedown', e); // manually triggering 'mousedown' because the next statement will prevent that.
 
-                if (this.onDragStart(e, this.$draggedElement)) {
-                    // drag cancelled
-                }
-
-                if (this.useDragClue) {
-                    this.$dragClueStatus = $('<span class="t-icon t-drag-status t-denied" />')[0];
-
-                    this.$dragClue =
-                            $('<div class="t-header t-drag-clue" />')
-                            .html(this.createDragClue(this.$draggedElement))
-                            .prepend(this.$dragClueStatus)
-                            .css({
-                                left: e.pageX + dragClueOffset,
-                                top: e.pageY + dragClueOffset
-                            })
-                            .appendTo(document.body);
-                }
-
-                $(document).bind(this.evt.mm, $t.stop(this.moveClue, this))
-                           .bind(this.evt.ku, $t.stop(this.keyboardListener, this));
-
-                this.dragStarted = true;
-            }
-        },
-
-        removeDragClue: function () {
-            if (this.$dragClue) {
-                this.$dragClue.remove();
-                this.$dragClue = null;
-                this.$dragClueStatus = null;
-            }
-        },
-
-        stopDrag: function (e) {
-
-            if (this.dragStarted) {
-                var onDropAction = this.onDrop(e, this.$draggedElement, this.useDragClue ? this.$dragClue : undefined);
-
-                if (this.useDragClue && this.$dragClue) {
-                    if (!onDropAction)
-                        this.$dragClue.animate(this.$draggedElement.offset(), 'fast', $.proxy(this.removeDragClue, this));
-                    else if (typeof onDropAction == 'function')
-                        onDropAction($.proxy(this.removeDragClue, this));
-                    else
-                        this.removeDragClue();
-                }
-
-                this.dragStarted = false;
-            }
-
-            $(document).unbind([this.evt.ss, this.evt.mm, this.evt.mu, this.evt.ku].join(' '));
-        },
-
-        waitForDrag: function (e) {
-            var $target = $(e.target);
-
-            if (e.which !== 1 || !this.shouldDrag($target))
-                return;
-
-            this.$draggedElement = $target;
-
-            this.hittestCoordinates = {
-                left: e.pageX,
-                top: e.pageY
-            };
-
-            $(document).bind(this.evt.mm, $t.stop(this.startDrag, this))
-                       .bind(this.evt.mu, $t.stop(this.stopDrag, this));
-
-            if (this.hitTestOffset == 0)
-                this.startDrag(e);
-
-            $(document).trigger('mousedown', e);
-
+            // required to avoid selection in Gecko
             return false;
         },
 
-        keyboardListener: function (e) {
-            // cancel drag on Esc
-            if (e.keyCode == 27) {
-                $(document).unbind([this.evt.ss, this.evt.mm, this.evt.mu, this.evt.ku].join(' '));
-                this.onDragCancelled(e, this.$draggedElement);
+        _start: function(e) {
+            var x = this._startPosition.x - e.pageX, 
+                y = this._startPosition.y - e.pageY;
 
-                if (this.useDragClue && this.$dragClue)
-                    this.$dragClue.animate(this.$draggedElement.offset(), 'fast', $.proxy(this.removeDragClue, this));
+            var distance = Math.sqrt((x * x) + (y * y));
+            
+            if (distance >= this.distance) {
+                var $cue = cues[this.selector];
+                
+                if (!$cue) {
+                    $cue = cues[this.selector] = this.cue({ $draggable: this.$target });
+                    
+                    $(document).unbind('mousemove', this._startProxy)
+                               .unbind('mouseup', this._destroyProxy)
+                               .bind({
+                                'mouseup keydown': this._stopProxy,
+                                mousemove: this._dragProxy,
+                                selectstart: false
+                                });
+                } 
+                    
+                draggables[this.scope] = {
+                    $cue: $cue.css({ position: 'absolute', left: e.pageX + this.cursorAt.left, top: e.pageY + this.cursorAt.top }),
+                    $draggable: this.$target,
+                    destroy: this._destroyProxy
+                }
 
-                this.dragStarted = false;
+                if (this._raise(e, this.start) === false)
+                    this._destroy(e);
             }
-        }
-    };
+        },
 
+        _drag: function(e) {
+            this._raise(e, this.drag);
+            draggables[this.scope].$cue.css({ left: e.pageX + this.cursorAt.left, top: e.pageY + this.cursorAt.top });
+        },
+
+        _stop: function(e) {
+            if (e.type == 'mouseup' || e.keyCode == 27)
+                if (this._raise(e, this.stop) === false) {
+                    this._destroy(e);
+                } else {
+                    var draggable = draggables[this.scope];
+                    draggable.$cue.animate(draggable.$draggable.offset(), 'fast', this._destroyProxy);
+                }
+        },
+
+        _destroy: function(e) {
+            $(document).unbind('mouseup keydown', this._stopProxy)
+                       .unbind('mousemove', this._dragProxy)
+                       .unbind('mousemove', this._startProxy)
+                       .unbind('selectstart', false);
+            
+            this._raise(e, this.destroy);
+
+            draggables[this.scope] = null;
+            cues[this.selector] = null;
+        }
+    }
 })(jQuery);

@@ -88,20 +88,6 @@
             assertEquals(dataItem.Name, nameMapping(dataItem));
         }
 
-        function test_createColumnMappings_maps_fields_of_nested_objects() {
-            var grid =createGrid(gridElement, { columns: [
-	            { member: "NestedObject.Id" }
-	        ]
-            
-            });
-
-            var dataItem = { NestedObject: { Id: 1} };
-
-            grid.createColumnMappings(dataItem);
-            var nestedObjectMapping = grid.columns[0].display;
-            assertEquals(dataItem.NestedObject.Id, nestedObjectMapping(dataItem));
-        }
-
         function test_bind_populates_from_data() {
             var grid = getGrid("#Grid_DefaultPager");
             var data = [{ Name: "Test", BirthDate: { Day: 1}}];
@@ -250,15 +236,15 @@
             assertEquals(1, grid.sanitizePage("1"));
         }
 
-        function test_sanitizePage_returns_one_when_the_value_is_not_a_number() {
+        function test_sanitizePage_returns_currentPage_when_the_value_is_not_a_number() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(1, grid.sanitizePage("something"));
+            assertEquals(2, grid.sanitizePage("something"));
         }
 
-        function test_sanitizePage_returns_one_when_the_value_is_a_negative_number_or_zero() {
+        function test_sanitizePage_returns_currentPage_when_the_value_is_a_negative_number_or_zero() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(1, grid.sanitizePage("-1"));
-            assertEquals(1, grid.sanitizePage("0"));
+            assertEquals(2, grid.sanitizePage("-1"));
+            assertEquals(2, grid.sanitizePage("0"));
         }
 
         function test_sanitizePage_returns_whole_fraction_when_the_value_is_floating_point() {

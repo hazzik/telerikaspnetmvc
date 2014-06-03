@@ -64,6 +64,27 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
+        /// Sets the current page of the grid.
+        /// </summary>
+        /// <param name="page">The page which the grid should display initially. Must be greater than zero.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Pageable(paging => paging.PageTo(2))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual GridPagerSettingsBuilder PageTo(int page)
+        {
+            Guard.IsNotZeroOrNegative(page, "page");
+
+            pager.CurrentPage = page;
+            
+            return this;
+        }
+
+        /// <summary>
         /// Sets the pager style.
         /// </summary>
         /// <param name="value">The pager style to set.</param>

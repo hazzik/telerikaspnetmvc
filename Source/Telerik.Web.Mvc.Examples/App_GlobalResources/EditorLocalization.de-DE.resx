@@ -126,8 +126,14 @@
   <data name="FontName" xml:space="preserve">
     <value>Schriftfamilie</value>
   </data>
+  <data name="FontNameInherit" xml:space="preserve">
+    <value>(Schrift übernehmen)</value>
+  </data>
   <data name="FontSize" xml:space="preserve">
     <value>Größe</value>
+  </data>
+  <data name="FontSizeInherit" xml:space="preserve">
+    <value>(Größe übernehmen)</value>
   </data>
   <data name="FormatBlock" xml:space="preserve">
     <value>Absatzstil</value>

@@ -67,7 +67,7 @@
                 });
             });
         }
-        
+
         [Fact]
         public void Should_throw_if_data_binding_is_not_configured_for_insert_command_ajax()
         {
@@ -94,7 +94,7 @@
                 });
             });
         }
-        
+
         [Fact]
         public void Should_throw_if_data_binding_is_not_configured_for_insert_command_web_service()
         {
@@ -152,7 +152,7 @@
                 });
             });
         }
-        
+
         [Fact]
         public void Should_throw_if_data_binding_is_not_configured_for_insert_command_server()
         {
@@ -203,7 +203,7 @@
         public void Should_throw_when_using_template_columns_and_ajax()
         {
             grid.Ajax.Enabled = true;
-            grid.Columns.Add(new GridTemplateColumn<Customer>(grid, delegate {}));
+            grid.Columns.Add(new GridTemplateColumn<Customer>(grid, delegate { }));
 
             Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
         }
@@ -236,5 +236,27 @@
             grid.WebService.Enabled = true;
             Assert.Throws<ArgumentException>(() => grid.VerifySettings());
         }
+
+        [Fact]
+        public void Should_throw_if_grid_rtl_class_is_set()
+        {
+            grid.HtmlAttributes["class"] = "t-grid-rtl";
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+
+#if MVC2 || MVC3
+
+        [Fact]
+        public void Should_throw_if_bound_to_data_row_view_column_editor_template_is_set_and_in_inLine_mode()
+        {
+            var dataRowViewGrid = GridTestHelper.CreateGrid<System.Data.DataRowView>();
+
+            dataRowViewGrid.Editing.Mode = GridEditMode.InLine;
+            dataRowViewGrid.Columns.Add(new GridBoundColumn<System.Data.DataRowView, object>(dataRowViewGrid, c => c) { EditorTemplateName = "sometemplate" });
+
+            dataRowViewGrid.Editing.Enabled = true;
+            Assert.Throws<NotSupportedException>(() => dataRowViewGrid.VerifySettings());
+        }
+#endif
     }
 }

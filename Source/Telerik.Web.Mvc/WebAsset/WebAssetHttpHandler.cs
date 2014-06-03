@@ -6,20 +6,20 @@
 namespace Telerik.Web.Mvc
 {
     using System;
-    using System.Diagnostics;
     using System.IO;
     using System.Web;
-    using Infrastructure;
     using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure.Implementation;
 
     /// <summary>
     /// The HttpHandler to compress, cache and combine web assets.
     /// </summary>
     public class WebAssetHttpHandler : HttpHandlerBase
     {
-        private readonly IWebAssetRegistry assetRegistry;
         private readonly IHttpResponseCompressor httpResponseCompressor;
         private readonly IHttpResponseCacher httpResponseCacher;
+        private readonly IWebAssetGroupReader reader;
 
         private static string defaultPath = "~/asset.axd";
         private static string idParameterName = "id";
@@ -30,13 +30,9 @@ namespace Telerik.Web.Mvc
         /// <param name="assetRegistry">The asset registry.</param>
         /// <param name="httpResponseCompressor">The HTTP response compressor.</param>
         /// <param name="httpResponseCacher">The HTTP response cacher.</param>
-        public WebAssetHttpHandler(IWebAssetRegistry assetRegistry, IHttpResponseCompressor httpResponseCompressor, IHttpResponseCacher httpResponseCacher)
+        public WebAssetHttpHandler(IWebAssetGroupReader reader, IHttpResponseCompressor httpResponseCompressor, IHttpResponseCacher httpResponseCacher)
         {
-            Guard.IsNotNull(assetRegistry, "assetRegistry");
-            Guard.IsNotNull(httpResponseCompressor, "httpResponseCompressor");
-            Guard.IsNotNull(httpResponseCacher, "httpResponseCacher");
-
-            this.assetRegistry = assetRegistry;
+            this.reader = reader;
             this.httpResponseCompressor = httpResponseCompressor;
             this.httpResponseCacher = httpResponseCacher;
         }
@@ -44,7 +40,9 @@ namespace Telerik.Web.Mvc
         /// <summary>
         /// Initializes a new instance of the <see cref="WebAssetHttpHandler"/> class.
         /// </summary>
-        public WebAssetHttpHandler(): this(ServiceLocator.Current.Resolve<IWebAssetRegistry>(), ServiceLocator.Current.Resolve<IHttpResponseCompressor>(), ServiceLocator.Current.Resolve<IHttpResponseCacher>())
+        public WebAssetHttpHandler(): this(DI.Current.Resolve<IWebAssetGroupReader>(), 
+            DI.Current.Resolve<IHttpResponseCompressor>(), 
+            DI.Current.Resolve<IHttpResponseCacher>())
         {
         }
 
@@ -54,13 +52,11 @@ namespace Telerik.Web.Mvc
         /// <value>The default path.</value>
         public static string DefaultPath
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultPath;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -75,13 +71,11 @@ namespace Telerik.Web.Mvc
         /// <value>The name of the id parameter.</value>
         public static string IdParameterName
         {
-            [DebuggerStepThrough]
             get
             {
                 return idParameterName;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -100,21 +94,22 @@ namespace Telerik.Web.Mvc
 
             if (!string.IsNullOrEmpty(id))
             {
-                WebAsset asset = assetRegistry.Retrieve(id);
-
-                if (asset != null)
+                WebAssetGroup group = SharedWebAssets.FindScriptGroup(id)
+                    ?? SharedWebAssets.FindStyleSheetGroup(id) ?? new WebAssetGroupSerializer().Deserialize(id);
+                
+                if (group != null)
                 {
                     HttpResponseBase response = context.Response;
 
                     // Set the content type
-                    response.ContentType = asset.ContentType;
+                    response.ContentType = group.ContentType;
 
-                    string content = asset.Content;
+                    string content = reader.Read(group);
 
                     if (!string.IsNullOrEmpty(content))
                     {
                         // Compress
-                        if (asset.Compress && !context.IsMono())
+                        if (group.Compress && !context.IsMono())
                         {
                             httpResponseCompressor.Compress(context);
                         }
@@ -128,7 +123,7 @@ namespace Telerik.Web.Mvc
                         // Cache
                         if (!context.IsDebuggingEnabled)
                         {
-                            httpResponseCacher.Cache(context, TimeSpan.FromDays(asset.CacheDurationInDays));
+                            httpResponseCacher.Cache(context, TimeSpan.FromDays(group.CacheDurationInDays));
                         }
                     }
                 }

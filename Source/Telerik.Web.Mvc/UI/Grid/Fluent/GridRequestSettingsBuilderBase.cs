@@ -96,6 +96,25 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the action, controller and route values
         /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Ajax(ajax => ajax.Action(MVC.Home.Index(1).GetRouteValueDictionary()))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual TBuilder Action(RouteValueDictionary routeValues)
+        {
+            Settings.Action(routeValues);
+
+            return this as TBuilder;
+        }
+
+        /// <summary>
+        /// Sets the action, controller and route values
+        /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="routeValues">The route values.</param>

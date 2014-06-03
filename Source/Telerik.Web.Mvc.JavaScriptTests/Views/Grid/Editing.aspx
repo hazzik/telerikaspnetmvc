@@ -135,7 +135,7 @@
                 .Delete("Delete", "Dummy")
                 .Update("Update", "Dummy")
             )
-            .Editable(editing => editing.Mode(GridEditMode.PopUp))
+            .Editable(editing => editing.Mode(GridEditMode.PopUp).Window(settings => settings.Effects(effects => effects.Toggle())))
             .Pageable(pager => pager.PageSize(10))
     %>
 
@@ -161,10 +161,82 @@
             )
             .Editable(editing => editing.Mode(GridEditMode.InLine))
             .Pageable(pager => pager.PageSize(10))
+    %>    
+    
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid8")
+            .DataKeys(keys => keys.Add(c => c.Name))
+            .ToolBar(toolbar => toolbar.Insert())
+            .Columns(columns => 
+                {
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Address);
+                    columns.Command(commands =>
+                    {
+                        commands.Edit();
+                        commands.Delete();
+                    });
+                })
+            .DataBinding(binding => binding.Ajax()
+                .Select("Select", "Dummy")
+                .Insert("Insert", "Dummy")
+                .Delete("Delete", "Dummy")
+                .Update("Update", "Dummy")
+            )
+            .Editable(editing => editing.Mode(GridEditMode.InLine))
+            .Pageable(pager => pager.PageSize(10))
+    %>    
+    
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid9")
+            .DataKeys(keys => keys.Add(c => c.Name))
+            .ToolBar(toolbar => toolbar.Insert())
+            .Columns(columns => 
+                {
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Address);
+                    columns.Command(commands =>
+                    {
+                        commands.Edit();
+                        commands.Delete();
+                    });
+                })
+            .DataBinding(binding => binding.Ajax()
+                .Select("Select", "Dummy")
+                .Insert("Insert", "Dummy")
+                .Delete("Delete", "Dummy")
+                .Update("Update", "Dummy")
+            )
+            .Editable(editing => editing.Mode(GridEditMode.InLine))
+            .Pageable(pager => pager.PageSize(10))
+    %>
+
+     <%= Html.Telerik().Grid(Model)
+            .Name("Grid10")
+            .DataKeys(keys => keys.Add(c => c.Name))
+            .ToolBar(toolbar => toolbar.Insert())
+            .Columns(columns => 
+                {
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Address);
+                    columns.Command(commands =>
+                    {
+                        commands.Edit();
+                        commands.Delete();
+                    });
+                })
+            .DataBinding(binding => binding.Ajax()
+                .Select("Select", "Dummy")
+                .Insert("Insert", "Dummy")
+                .Delete("Delete", "Dummy")
+                .Update("Update", "Dummy")
+            )
+            .Editable(editing => editing.Mode(GridEditMode.InLine))
+            .Pageable(pager => pager.PageSize(10))
     %>
 
     <script type="text/javascript">
-
+        
         function getGrid(selector) {
             return $(selector || "#Grid1").data("tGrid");
         }
@@ -192,6 +264,8 @@
         function tearDown() {
             getGrid().cancel();
             getGrid().editing = { confirmDelete: true, mode: 'InLine' };
+            var wnd = $('.t-window').data('tWindow');
+            if (wnd) wnd.destroy();
         }
 
         function test_edit_for_does_not_exist_by_default() {
@@ -213,6 +287,11 @@
             edit();
 
             assertEquals('Customer1', $('#Grid1 tbody tr').find(':input').first().val());
+        }
+
+        function test_date_is_set_according_to_format() {
+            edit();
+            
             assertEquals('1/1/1980', $('#Grid1 tbody tr').find(':input').eq(1).val());
         }
 
@@ -476,17 +555,24 @@
             assertEquals('<a href="#" class="t-grid-action t-button t-state-default t-grid-edit" title="edit"><span class="t-icon t-edit" style="width:20px"></span>Edit</a>', builder.string());
         }
 
-        function test_editRow_should_set_value_to_the_numericTextBox_through_value_method() {
+        function test_nested_properties_are_set() {
+            $('#Grid9 tbody tr:first').find('.t-grid-edit').trigger('click');
             
-            var isCalled = false;
-
-            $.telerik.textbox.prototype.value = function(){isCalled = true;}
-
-            $('#Grid7 tbody tr:first').find('.t-grid-edit').trigger('click');
-
-            assertTrue(isCalled);
+            assertEquals('foo', $('#Grid9form #Address_Street').val());
         }
 
-    </script>
+        function test_extractValues_extracts_all_input_values() {
+            $('#Grid8 tbody tr:first').find('.t-grid-edit').trigger('click');
+            var values = getGrid('#Grid8').extractValues($('#Grid8 tbody tr:first'));
+            assertEquals('foo', values['Address.Street']);
+        }        
+        
+        function test_null_is_not_set_to_ui_elements() {
+            var grid = getGrid('#Grid10');
+            grid.data[7].Name = null;
 
+            $('#Grid10 tbody tr:eq(7)').find('.t-grid-edit').trigger('click');
+            assertEquals('', $('#Grid10form input[name=Name]').val());
+        }
+    </script>
 </asp:Content>

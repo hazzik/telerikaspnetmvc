@@ -35,7 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
@@ -45,7 +45,7 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE;MVC2</DefineConstants>
     <Optimize>true</Optimize>
@@ -54,6 +54,45 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug MVC2 Coverage|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Telerik.Web.Mvc.JavaScriptTests.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MVC3</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;MVC3</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -75,15 +114,31 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU'">
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
+  <ItemGroup Condition="$(TargetFrameworkVersion) == 'v4.0'">
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\ComboBoxController.cs" />
     <Compile Include="Controllers\AutoCompleteController.cs" />
+    <Compile Include="Controllers\DateTimePickerController.cs" />
     <Compile Include="Controllers\DropDownController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\DropDownListController.cs" />
+    <Compile Include="Controllers\TimePickerController.cs" />
     <Compile Include="Extensions\ControllerExtensions.cs" />
     <Compile Include="Controllers\TabStripController.cs" />
     <Compile Include="Controllers\TreeViewController.cs" />
@@ -137,18 +192,30 @@
     <Content Include="Scripts\jsUnit\images\logo_jsunit.gif" />
     <Content Include="Scripts\jsUnit\images\powerby-transparent.gif" />
     <Content Include="Scripts\jsUnit\images\red.gif" />
+    <Content Include="Views\AutoComplete\ClientAPI.aspx" />
     <Content Include="Views\AutoComplete\Multiple.aspx" />
     <Content Include="Views\AutoComplete\KeyboardSupport.aspx" />
     <Content Include="Views\Calendar\ClientEvents.aspx" />
     <Content Include="Views\Calendar\Navigation.aspx" />
+    <Content Include="Views\Calendar\Rendering.aspx" />
     <Content Include="Views\ComboBox\ClientAPI.aspx" />
     <Content Include="Views\ComboBox\AjaxLoading.aspx" />
+    <Content Include="Views\AutoComplete\ClientEvents.aspx" />
     <Content Include="Views\ComboBox\ClientEvents.aspx" />
     <Content Include="Views\ComboBox\Filtering.aspx" />
-    <Content Include="Views\ComboBox\Rendering.aspx" />
+    <Content Include="Views\AutoComplete\Rendering.aspx" />
     <Content Include="Views\ComboBox\KeyboardSupport.aspx" />
     <Content Include="Views\ComboBox\FilteringData.aspx" />
+    <Content Include="Views\ComboBox\Rendering.aspx" />
+    <Content Include="Views\Core\TimeParsing.aspx" />
+    <Content Include="Views\Core\FormatString.aspx" />
+    <Content Include="Views\DatePicker\DateView.aspx" />
     <Content Include="Views\DatePicker\Popup.aspx" />
+    <Content Include="Views\DateTimePicker\ClientEvents.aspx" />
+    <Content Include="Views\DateTimePicker\ComponentInitialization.aspx" />
+    <Content Include="Views\DateTimePicker\ClientApi.aspx" />
+    <Content Include="Views\DateTimePicker\KeyboardSupport.aspx" />
+    <Content Include="Views\DropDownList\ClientAPI.aspx" />
     <Content Include="Views\DropDownList\DropDownRendering.aspx" />
     <Content Include="Views\DropDownList\ClientEvents.aspx" />
     <Content Include="Views\Core\NumberFormatting.aspx" />
@@ -159,6 +226,7 @@
     <Content Include="Views\DatePicker\ParseByToken.aspx" />
     <Content Include="Views\DatePicker\ClientEvents.aspx" />
     <Content Include="Views\DropDown\DropDown.aspx" />
+    <Content Include="Views\DropDown\Loader.aspx" />
     <Content Include="Views\Editor\BlockFormatFinder.aspx" />
     <Content Include="Views\Editor\BlockFormatter.aspx" />
     <Content Include="Views\Editor\ClientEvents.aspx" />
@@ -166,6 +234,7 @@
     <Content Include="Views\Editor\ClientSideApi.aspx" />
     <Content Include="Views\Editor\Clipboard.aspx" />
     <Content Include="Views\Editor\Components.aspx" />
+    <Content Include="Views\Editor\RtlSupport.aspx" />
     <Content Include="Views\Editor\Dom.aspx" />
     <Content Include="Views\Editor\ExpandRange.aspx" />
     <Content Include="Views\Editor\FormatBlock.aspx" />
@@ -204,7 +273,14 @@
     <Content Include="Views\Editor\UndoRedoStack.aspx" />
     <Content Include="Views\Editor\ListFormatter.aspx" />
     <Content Include="Views\Editor\UnlinkCommand.aspx" />
-    <Content Include="Views\Shared\EditorTemplates\int.ascx" />
+    <Content Include="Views\Grid\FormViewBinder.aspx" />
+    <Content Include="Views\Grid\ModelBinder.aspx" />
+    <Content Include="Views\Grid\ErrorView.aspx" />
+    <Content Include="Views\Grid\ModelStateErrors.aspx" />
+    <Content Include="Views\Input\NumberParsing.aspx" />
+    <Content Include="Views\PanelBar\Selection.aspx" />
+    <Content Include="Views\Grid\EditorTemplates\Address.ascx" />
+    <Content Include="Views\Grid\EditorTemplates\int.ascx" />
     <Content Include="Views\Shared\Suite.aspx" />
     <Content Include="Views\Editor\Serialization.aspx" />
     <Content Include="Views\Editor\Range.aspx" />
@@ -234,13 +310,19 @@
     <Content Include="Views\PanelBar\SingleExpandClientAPI.aspx" />
     <Content Include="Views\PanelBar\SingleExpandCollapse.aspx" />
     <Content Include="Views\PanelBar\ExpandCollapse.aspx" />
-    <Content Include="Views\Shared\EditorTemplates\Date.ascx" />
+    <Content Include="Views\Grid\EditorTemplates\Date.ascx" />
     <Content Include="Views\TabStrip\AjaxLoading.aspx" />
     <Content Include="Views\TabStrip\AjaxView1.ascx" />
     <Content Include="Views\TabStrip\AjaxView2.ascx" />
     <Content Include="Views\TabStrip\ClientAPI.aspx" />
+    <Content Include="Views\TimePicker\ClientAPI.aspx" />
+    <Content Include="Views\TimePicker\ClientEvents.aspx" />
+    <Content Include="Views\TimePicker\TimeView.aspx" />
+    <Content Include="Views\TimePicker\KeyboardSupport.aspx" />
+    <Content Include="Views\TimePicker\Rendering.aspx" />
     <Content Include="Views\TreeView\ClientEvents.aspx" />
     <Content Include="Views\TreeView\ClientSideRendering.aspx" />
+    <Content Include="Views\TreeView\ClientAPI.aspx" />
     <Content Include="Views\TreeView\DragAndDrop.aspx" />
     <Content Include="Views\TreeView\ExpandCollapse.aspx" />
     <Content Include="Views\Window\ClientCreation.aspx" />
@@ -303,6 +385,13 @@
       <!-- FileWrites is the list of files to delete when performing a Clean -->
       <FileWrites Include="@(Resources)" />
     </ItemGroup>
+    <CallTarget Targets="InstrumentScripts" Condition=" '$(Configuration)' == 'Debug MVC2 Coverage' " />
+  </Target>
+  <Target Name="InstrumentScripts">
+    <RemoveDir Directories="InstrumentedScripts" />
+    <Message Importance="high" Text="Instrumenting scripts..." />
+    <Exec Command="Build\jscoverage.exe --no-instrument=jsunit --no-instrument=editor --encoding=UTF-8 Scripts InstrumentedScripts">
+    </Exec>
   </Target>
   <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
     <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)..\$(ProjectName)" />
@@ -313,7 +402,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>28021</DevelopmentServerPort>
+          <DevelopmentServerPort>49909</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

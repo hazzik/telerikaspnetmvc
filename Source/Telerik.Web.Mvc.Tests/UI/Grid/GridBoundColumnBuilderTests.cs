@@ -2,9 +2,8 @@
 {
     using System;
     using Fluent;
-    using UI;
     using Xunit;
-    
+
     public class GridBoundColumnBuilderTests
     {
         private readonly GridBoundColumn<Customer, int> column;
@@ -30,6 +29,20 @@
             builder.HeaderHtmlAttributes(new { @class="test" });
 
             Assert.Equal("test", column.HeaderHtmlAttributes["class"]);
+        }
+
+        [Fact]
+        public void FooterHtmlAttributes_throws_if_null_passed_as_argument()
+        {
+            Assert.Throws<ArgumentNullException>(() => builder.FooterHtmlAttributes(null));
+        }
+
+        [Fact]
+        public void FooterHtmlAttributes_sets_the_header_attributes_of_the_column()
+        {
+            builder.FooterHtmlAttributes(new { @class = "test" });
+
+            Assert.Equal("test", column.FooterHtmlAttributes["class"]);
         }
 
         [Fact]
@@ -96,5 +109,115 @@
             builder.Title("");
             Assert.Equal("", builder.Column.Title);
         }
+
+        [Fact]
+        public void Should_set_header_template()
+        {
+            Action template = () => { };
+
+            builder.HeaderTemplate(template);
+
+            column.HeaderTemplate.HasValue().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_throw_if_null_is_passed_as_header_template()
+        {
+            Assert.Throws<ArgumentNullException>(() => builder.HeaderTemplate((Action) null));
+
+            Assert.Throws<ArgumentNullException>(() => builder.HeaderTemplate((Func<object,object>)null));
+
+            Assert.Throws<ArgumentException>(() => builder.HeaderTemplate((string)null));
+            Assert.Throws<ArgumentException>(() => builder.HeaderTemplate(String.Empty));
+        }
+
+        [Fact]
+        public void Header_template_should_return_not_null_column_builder()
+        {
+            builder.HeaderTemplate(() => { }).ShouldNotBeNull();
+            builder.HeaderTemplate("my_template").ShouldNotBeNull();
+            builder.HeaderTemplate(t => t).ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void Should_set_header_template_from_string()
+        {
+            const string expectedValue = "my_template";
+            builder.HeaderTemplate(expectedValue);
+            column.HeaderTemplate.HasValue().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_set_header_template_for_razor()
+        {
+            Func<object, object> template = t => t;
+            builder.HeaderTemplate(template);
+
+            column.HeaderTemplate.HasValue().ShouldBeTrue();
+        }
+        
+        [Fact]
+        public void Should_set_footer_template()
+        {
+            Action template = () => { };
+
+            builder.FooterTemplate(template);
+
+            column.FooterTemplate.HasValue().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_throw_if_null_is_passed_as_footer_template()
+        {
+            Assert.Throws<ArgumentNullException>(() => builder.FooterTemplate((Action)null));
+
+            Assert.Throws<ArgumentNullException>(() => builder.FooterTemplate((Func<object, object>)null));
+
+            Assert.Throws<ArgumentException>(() => builder.FooterTemplate((string)null));
+            Assert.Throws<ArgumentException>(() => builder.FooterTemplate(String.Empty));
+        }
+
+        [Fact]
+        public void Footer_template_should_return_not_null_column_builder()
+        {
+            builder.FooterTemplate(() => { }).ShouldNotBeNull();
+            builder.FooterTemplate("my_template").ShouldNotBeNull();
+            builder.FooterTemplate(t => t).ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void Should_set_footer_template_from_string()
+        {
+            const string expectedValue = "my_template";
+            builder.FooterTemplate(expectedValue);
+            column.FooterTemplate.HasValue().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_set_footer_template_for_razor()
+        {
+            Func<object, object> template = t => t;
+            builder.FooterTemplate(template);
+
+            column.FooterTemplate.HasValue().ShouldBeTrue();
+        }
+
+#if MVC2 || MVC3
+        [Fact]
+        public void Should_set_editor_template_name()
+        {
+            const string expectedValue = "SomeEditorName";
+            builder.EditorTemplateName(expectedValue);
+
+            column.EditorTemplateName.ShouldEqual(expectedValue);
+        }
+
+        [Fact]
+        public void Should_throw_if_editor_template_name_is_empty()
+        {
+            Assert.Throws<ArgumentException>(() => builder.EditorTemplateName(string.Empty));
+        }
+#endif
+
     }
 }

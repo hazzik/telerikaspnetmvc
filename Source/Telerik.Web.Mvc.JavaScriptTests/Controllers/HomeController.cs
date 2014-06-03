@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
         {
             var requestedTestPage = Request.QueryString.Get("testpage");
 
-            if (indexPageRegex.IsMatch(requestedTestPage))
+            if (!string.IsNullOrEmpty(requestedTestPage) && indexPageRegex.IsMatch(requestedTestPage))
             {
                 requestedTestPage += (indexPageRegex.Match(requestedTestPage).Length == 15 ? "/" : "") + "Home/Suite";
                 return RedirectToAction("Index", new { autorun = "true", testpage = requestedTestPage });

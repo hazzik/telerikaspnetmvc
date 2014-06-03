@@ -12,6 +12,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
     using Moq;
     using Xunit;
 
+using System;
+
     public class ActionMethodCacheTests
     {
         private readonly Mock<IControllerTypeCache> controllerTypeCache;
@@ -20,13 +22,13 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
         public ActionMethodCacheTests()
         {
             controllerTypeCache = new Mock<IControllerTypeCache>();
-            actionMethodCache = new ActionMethodCache(controllerTypeCache.Object);
+            actionMethodCache = new ActionMethodCache(new NoCache(), controllerTypeCache.Object);
         }
 
         [Fact]
         public void GetActionMethods_should_return_correct_action_methods()
         {
-            controllerTypeCache.Setup(c => c.GetControllerType(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns(typeof (HomeController));
+            controllerTypeCache.Setup(c => c.GetControllerTypes(It.IsAny<RequestContext>(), It.IsAny<string>())).Returns(new List<Type> { typeof(HomeController)} );
 
             IDictionary<string, IList<MethodInfo>> actionMethods = actionMethodCache.GetAllActionMethods(TestHelper.CreateRequestContext(), "Home");
 

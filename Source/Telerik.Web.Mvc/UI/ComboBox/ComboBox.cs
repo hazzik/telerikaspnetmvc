@@ -35,6 +35,7 @@ namespace Telerik.Web.Mvc.UI
 
             Items = new List<DropDownItem>();
             SelectedIndex = -1;
+            Enabled = true;
         }
 
         public bool AutoFill
@@ -106,6 +107,12 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
+        public bool Enabled 
+        { 
+            get; 
+            set; 
+        }
+
         public override void WriteInitializationScript(System.IO.TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tComboBox", writer);
@@ -153,18 +160,12 @@ namespace Telerik.Web.Mvc.UI
             if (Items.Any())
             {
                 this.PrepareItemsAndDefineSelectedIndex();
+                this.UpdateSelectedIndexFromViewContext();
             }
 
             IDropDownHtmlBuilder builder = new ComboBoxHtmlBuilder(this);
 
-            IHtmlNode rootTag = builder.Build();
-
-            builder.InnerContentTag().AppendTo(rootTag);
-
-            builder.HiddenInputTag().AppendTo(rootTag);
-
-            //output window HTML
-            rootTag.WriteTo(writer);
+            builder.Build().WriteTo(writer);
 
             base.WriteHtml(writer);
         }

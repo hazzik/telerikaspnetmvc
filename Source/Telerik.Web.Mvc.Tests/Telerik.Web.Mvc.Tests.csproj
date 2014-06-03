@@ -36,18 +36,19 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug MVC2 NET35\</OutputPath>
+    <OutputPath>bin\Debug MVC2\</OutputPath>
     <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU' ">
-    <OutputPath>bin\Release MVC2 NET35\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2|AnyCPU' ">
+    <OutputPath>bin\Release MVC2\</OutputPath>
     <DefineConstants>TRACE;MVC2</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -56,8 +57,31 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug MVC3\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MVC3</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU' ">
+    <OutputPath>bin\Release MVC3\</OutputPath>
+    <DefineConstants>TRACE;MVC3</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Moq, Version=3.0.307.1, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+    <Reference Include="Moq, Version=4.0.10827.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Moq.dll</HintPath>
     </Reference>
@@ -84,8 +108,16 @@
       <HintPath>..\References\xunit.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <Choose>
-    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU'">
+  <ItemGroup Condition="$(TargetFrameworkVersion) == 'v4.0'">
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <Choose>    
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU'">
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>    
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC2|AnyCPU' Or $(TargetFrameworkVersion) == 'v4.0'">
       <ItemGroup>
         <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
       </ItemGroup>
@@ -103,12 +135,39 @@
     <Compile Include="..\SharedFiles\TestHelper.cs">
       <Link>TestHelper.cs</Link>
     </Compile>
+    <Compile Include="Data\DynamicPropertyAccessExpressionBuilderTests.cs" />
+    <Compile Include="Infrastructure\Implementation\CacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\DependencyInjectionContainerTests.cs" />
+    <Compile Include="Infrastructure\Implementation\NoCacheTests.cs" />
+    <Compile Include="UI\Grid\GridDynamicDataKeyTests.cs" />
+    <Compile Include="UI\Grid\GridEditingSettingsBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridFooterCellHtmlBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridFooterRowHtmlBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridFooterRowHtmlScrollingBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridGroupingSettingsBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridJsonResultAdapterTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Grid\GridRowViewDataKeyTests.cs" />
+    <Compile Include="UI\Grid\GridToolBarCommandFactoryTests.cs" />
+    <Compile Include="UI\Grid\GridToolBarSettingsTests.cs" />
+    <Compile Include="UI\Grid\GridViewResultAdapterTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Menu\MenuSettingsVerificationTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarSettingsVerificationTests.cs" />
+    <Compile Include="UI\TimePicker\TimePickerRenderingTests.cs" />
+    <Compile Include="UI\TimePicker\TmiePickerHtmlBuilderTests.cs" />
+    <Compile Include="UI\TimePicker\TimePickerClientEventsBuilderTests.cs" />
+    <Compile Include="UI\TimePicker\TimePickerTestHelper.cs" />
+    <Compile Include="UI\TimePicker\TimePickerBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridDataTableWrapperExtensionsTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\AbsoluteWebAssetResolverTests.cs" />
     <Compile Include="Data\QueryableExtensionsTests.cs" />
     <Compile Include="Extensions\HtmlAttributesContainerExtensionsTests.cs" />
-    <Compile Include="Infrastructure\CacheBaseTests.cs" />
-    <Compile Include="Infrastructure\DisposableBaseTests.cs" />
     <Compile Include="Infrastructure\FilterDescriptorFactoryTests.cs" />
     <Compile Include="Infrastructure\HtmlTagTests.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\FilterDescriptorExtensionsTests.cs" />
     <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterLexerTests.cs" />
     <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeTests.cs" />
     <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeVisitorTests.cs" />
@@ -121,8 +180,6 @@
     <Compile Include="Infrastructure\Implementation\ObjectCopierTests.cs" />
     <Compile Include="Infrastructure\Implementation\PropertyCacheTests.cs" />
     <Compile Include="Infrastructure\Implementation\ReflectedAuthorizeAttributeCacheTests.cs" />
-    <Compile Include="Infrastructure\Implementation\ServiceLocatorImplTests.cs" />
-    <Compile Include="Infrastructure\Implementation\UrlEncoderTests.cs" />
     <Compile Include="Infrastructure\Implementation\VirtualPathProviderWrapperTests.cs" />
     <Compile Include="Infrastructure\PathHelperTests.cs" />
     <Compile Include="LinkedObjectCollectionTests.cs" />
@@ -165,6 +222,7 @@
     <Compile Include="UI\ComboBox\ComboBoxFilterSettingsBuilderTests.cs" />
     <Compile Include="UI\ComboBox\ComboBoxDataBindingConfigurationBuilderTests.cs" />
     <Compile Include="UI\ComboBox\ComboBoxWebServiceBindingSettingsBuilderTests.cs" />
+    <Compile Include="UI\ContentNavigationItemBuilderTests.cs" />
     <Compile Include="UI\DropDownList\DropDownExtensionsTests.cs" />
     <Compile Include="UI\DropDownList\DropDownListRenderingTests.cs" />
     <Compile Include="UI\DropDownList\DropDownItemFactoryTests.cs" />
@@ -181,6 +239,7 @@
     <Compile Include="UI\Editor\EditorHtmlBuilderTests.cs" />
     <Compile Include="UI\Editor\EditorTestHelper.cs" />
     <Compile Include="UI\Editor\SnippetsBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridEmptyRowHtmlBuilderTests.cs" />
     <Compile Include="UI\Grid\GridToolBarCustomCommandHtmlTests.cs" />
     <Compile Include="UI\Grid\GridToolBarInsertCommandHtmlTests.cs" />
     <Compile Include="UI\Grid\GridDeleteActionCommandHtmlTests.cs" />
@@ -307,7 +366,11 @@
     <Compile Include="UI\TreeView\TreeViewSerializationTests.cs" />
     <Compile Include="UI\TreeView\TreeViewTestHelper.cs" />
     <Compile Include="UI\TreeView\TreeViewRendererTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetDefaultSettingsTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\CdnWebAssetResolverTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\CombinedWebAssetGroupResolverTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\RebaseImagePathContentFilterTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetCheckerTests.cs" />
+    <Compile Include="WebAsset\WebAssetDefaultSettingsTests.cs" />
     <Compile Include="UI\Window\WindowEffectBuilderTests.cs" />
     <Compile Include="UI\Window\WindowRenderingTests.cs" />
     <Compile Include="UI\Window\WindowHtmlBuilderTests.cs" />
@@ -318,27 +381,28 @@
     <Compile Include="UI\Window\WindowBuilderTests.cs" />
     <Compile Include="UI\Window\WindowTestHelper.cs" />
     <Compile Include="UrlGeneratorTests.cs" />
-    <Compile Include="WebAsset\WebAssetLocatorTests.cs" />
-    <Compile Include="WebAsset\WebAssetRegistryTests.cs" />
-    <Compile Include="WebAsset\WebAssetTests.cs" />
-    <Compile Include="Extensions\ArrayExtensionsTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupConverterTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupReaderTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupResolverTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetGroupSerializerTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetResolverFactoryTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\LocalWebAssetResolverTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetLocatorTests.cs" />
+    <Compile Include="Infrastructure\Implementation\WebAsset\WebAssetCollectionResolverTests.cs" />
     <Compile Include="UI\ClientSideEnumValueAttributeTests.cs" />
     <Compile Include="Extensions\CollectionExtensionsTests.cs" />
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\HttpContextBaseExtensionsTests.cs" />
-    <Compile Include="Infrastructure\Implementation\CacheManagerWrapperTests.cs" />
     <Compile Include="Infrastructure\HttpHandlerBaseTests.cs" />
     <Compile Include="Infrastructure\GuardTests.cs" />
     <Compile Include="Extensions\EnumerableExtensionsTests.cs" />
-    <Compile Include="Infrastructure\CultureTests.cs" />
     <Compile Include="Extensions\ReaderWriterLockSlimExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionsTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemGroupBuilderTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemGroupTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemCollectionBuilderTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemCollectionTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemTests.cs" />
-    <Compile Include="UI\WebAsset\WebAssetItemMergerTests.cs" />
+    <Compile Include="WebAsset\WebAssetGroupBuilderTests.cs" />
+    <Compile Include="WebAsset\WebAssetGroupTests.cs" />
+    <Compile Include="WebAsset\WebAssetCollectionBuilderTests.cs" />
+    <Compile Include="WebAsset\WebAssetCollectionTests.cs" />
+    <Compile Include="WebAsset\WebAssetTests.cs" />
     <Compile Include="UI\ClientSideObjectWriterFactoryTests.cs" />
     <Compile Include="UI\HtmlHelperExtensionTests.cs" />
     <Compile Include="UI\ViewComponentFactoryTests.cs" />
@@ -361,9 +425,12 @@
     <Compile Include="Infrastructure\Implementation\HttpResponseCacherTests.cs" />
     <Compile Include="Infrastructure\Implementation\HttpResponseCompressorTests.cs" />
     <Compile Include="Infrastructure\Implementation\ConfigurationManagerWrapperTests.cs" />
-    <Compile Include="Infrastructure\Implementation\FileSystemWrapperTests.cs" />
     <Compile Include="Infrastructure\Implementation\PathResolverTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XUnit\BooleanAssertionExtensions.cs" />
+    <Compile Include="XUnit\CollectionAssertionExtensions.cs" />
+    <Compile Include="XUnit\ObjectAssertExtensions.cs" />
+    <Compile Include="XUnit\StringAssertionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Telerik.Web.Mvc\Telerik.Web.Mvc.csproj">
@@ -376,6 +443,7 @@
       <Link>Telerik.Web.snk</Link>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

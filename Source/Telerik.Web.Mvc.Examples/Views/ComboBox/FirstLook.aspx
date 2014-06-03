@@ -45,11 +45,11 @@
             </li>
             <li>
                 <strong>highlight</strong> first item
-                <%= Html.CheckBox("ComboBoxAttributes.HighlightFirst", Model.ComboBoxAttributes.HighlightFirst.GetValueOrDefault(false), new { title = "HighlightFirst" })%>
+                <%= Html.CheckBox("ComboBoxAttributes.HighlightFirst", Model.ComboBoxAttributes.HighlightFirst.GetValueOrDefault(false)) %>
             </li>
             <li>
                 <strong>auto-filling</strong> text
-                <%= Html.CheckBox("ComboBoxAttributes.AutoFill", Model.ComboBoxAttributes.AutoFill.GetValueOrDefault(false), new { title = "AutoFill" })%>
+                <%= Html.CheckBox("ComboBoxAttributes.AutoFill", Model.ComboBoxAttributes.AutoFill.GetValueOrDefault(false)) %>
             </li>
         </ul>
         <button type="submit" class="t-button t-state-default">Apply</button>
@@ -113,9 +113,9 @@
             })
     %>
 
-        <% using (Html.Configurator("The AutoComplete should...")
-                  .PostTo("FirstLook", "ComboBox")
-                  .Begin())
+    <% using (Html.Configurator("The AutoComplete should...")
+                .PostTo("FirstLook", "ComboBox")
+                .Begin())
        { %>
         <ul>
             <li>
@@ -129,17 +129,17 @@
             </li>
             <li>
                 allow <strong>multiple</strong> values
-                <%= Html.CheckBox("AutoCompleteAttributes.AllowMultipleValues", Model.AutoCompleteAttributes.AllowMultipleValues.GetValueOrDefault(false))%>
+                <%= Html.CheckBox("AutoCompleteAttributes.AllowMultipleValues", Model.AutoCompleteAttributes.AllowMultipleValues.GetValueOrDefault(false)) %>
                 separated by
                 <%= Html.TextBoxFor(m => m.AutoCompleteAttributes.MultipleSeparator, new { style = "width: 40px"}) %>
             </li>
             <li>
                 <strong>highlight</strong> first item
-                <%= Html.CheckBox("AutoCompleteAttributes.HighlightFirst", Model.AutoCompleteAttributes.HighlightFirst.GetValueOrDefault(false))%>
+                <%= Html.CheckBox("AutoCompleteAttributes.HighlightFirst", Model.AutoCompleteAttributes.HighlightFirst.GetValueOrDefault(false)) %>
             </li>
             <li>
                 <strong>auto-filling</strong> text
-                <%= Html.CheckBox("AutoCompleteAttributes.AutoFill", Model.AutoCompleteAttributes.AutoFill.GetValueOrDefault(false))%>
+                <%= Html.CheckBox("AutoCompleteAttributes.AutoFill", Model.AutoCompleteAttributes.AutoFill.GetValueOrDefault(false)) %>
             </li>
         </ul>
         <button type="submit" class="t-button t-state-default">Apply</button>
@@ -149,7 +149,6 @@
 
 <asp:content ID="Content1" contentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
-        
         #ComboBox
         {
             margin-bottom: 280px;
@@ -193,6 +192,5 @@
         {
             vertical-align: middle;
         }
-       
     </style>
 </asp:content>

@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using Telerik.Web.Mvc.Extensions;
+    using Extensions;    
 
     public class GridColumnGenerator<T> where T : class
     {
@@ -24,10 +24,54 @@ namespace Telerik.Web.Mvc.UI
 
         public IEnumerable<GridColumnBase<T>> GetColumns()
         {
+            if (typeof(T) == typeof(DataRowView) && grid.DataSource is GridDataTableWrapper)
+            {
+                return GetColumnsForDataTable(grid.DataSource as GridDataTableWrapper);
+            }
+
             return typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                 .Where(property => property.CanRead && property.GetGetMethod().GetParameters().Length == 0)
-                                .Where(property => property.PropertyType.IsEnum || (property.PropertyType != typeof(object) && property.PropertyType.IsPredefinedType()))
+                                .Where(property => property.PropertyType.IsEnum || (property.PropertyType != typeof(object) && property.PropertyType.IsPredefinedType())
+                                    || (property.PropertyType.IsNullableType() && property.PropertyType.GetNonNullableType().IsPredefinedType()))
                                 .Select(property => CreateBoundColumn(property));
+        }
+
+        private IEnumerable<GridColumnBase<T>> GetColumnsForDataTable(GridDataTableWrapper dataTableWrapper)
+        {            
+            var dataTable = dataTableWrapper.Table;
+            if (dataTable == null)
+            {
+                return Enumerable.Empty<GridColumnBase<T>>();
+            }
+            return dataTable.Columns.OfType<DataColumn>()
+                                    .Select(c => CreateBoundColumn(c.ColumnName, c.DataType));
+        }
+
+        public GridColumnBase<T> CreateBoundColumn(string memberName, Type memberType)
+        {
+            bool liftMemberAccess = false;
+
+            if (grid.DataSource != null)
+            {
+                liftMemberAccess = grid.DataSource.AsQueryable().Provider.IsLinqToObjectsProvider();
+            }
+
+            LambdaExpression lambdaExpression = ExpressionBuilder.Lambda<T>(memberType, memberName, liftMemberAccess);
+
+            Type columnType = typeof(GridBoundColumn<,>).MakeGenericType(new[] { typeof(T), lambdaExpression.Body.Type });
+
+            ConstructorInfo constructor = columnType.GetConstructor(new[] { grid.GetType(), lambdaExpression.GetType() });
+
+            IGridBoundColumn column = (IGridBoundColumn)constructor.Invoke(new object[] { grid, lambdaExpression });
+
+            column.Member = memberName;
+            column.Title = memberName.AsTitle();
+
+            if (memberType != null)
+            {
+                column.MemberType = memberType;
+            }
+            return (GridColumnBase<T>)column;
         }
 
         public GridColumnBase<T> CreateBoundColumn(PropertyInfo property)

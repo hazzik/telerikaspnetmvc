@@ -9,6 +9,9 @@
              <option value="fr-FR">Francais</option>
              <option value="de-DE">Deutsch</option>
              <option value="bg-BG">Български</option>
+             <option value="pt-BR">Português do Brasil</option>
+             <option value="ru-RU">Русский</option>
+             <option value="uk-UA">Українське</option>
         </select>
     </div>
 
@@ -24,8 +27,7 @@
 
                     Telerik Editor for ASP.NET MVC allows your users to edit HTML in a familiar,
                     user-friendly way.&lt;br /&gt;
-                    In this &lt;strong&gt;&lt;em&gt;Beta version&lt;/em&gt;&lt;/strong&gt;,
-                    the Editor provides the core HTML editing engine, which includes
+                    In this version, the Editor provides the core HTML editing engine, which includes
                     basic text formatting, hyperlinks, lists, and image handling.
                     The extension &lt;strong&gt;outputs identical HTML&lt;/strong&gt;
                     across all major browsers, follows accessibility standards

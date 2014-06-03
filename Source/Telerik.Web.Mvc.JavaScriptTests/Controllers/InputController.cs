@@ -27,5 +27,10 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         {
             return View();
         }
+
+        public ActionResult NumberParsing()
+        {
+            return View();
+        }
     }
 }

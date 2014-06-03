@@ -6,12 +6,12 @@
 namespace Telerik.Web.Mvc.Extensions
 {
     using System;
-    using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.IO.Compression;
     using System.Text;
     using System.Text.RegularExpressions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Contains the extension methods of <see cref="string"/>.
@@ -26,10 +26,9 @@ namespace Telerik.Web.Mvc.Extensions
         /// <param name="instance">A string to format.</param>
         /// <param name="args">An System.Object array containing zero or more objects to format.</param>
         /// <returns>A copy of format in which the format items have been replaced by the System.String equivalent of the corresponding instances of System.Object in args.</returns>
-        [DebuggerStepThrough]
         public static string FormatWith(this string instance, params object[] args)
         {
-            return string.Format(Culture.Current, instance, args);
+            return string.Format(CultureInfo.CurrentCulture, instance, args);
         }
 
         public static bool HasValue(this string value)
@@ -45,7 +44,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// <returns>
         /// <c>true</c> if the value of the comparing parameter is the same as this string; otherwise, <c>false</c>.
         /// </returns>
-        [DebuggerStepThrough]
         public static bool IsCaseSensitiveEqual(this string instance, string comparing)
         {
             return string.CompareOrdinal(instance, comparing) == 0;
@@ -59,22 +57,9 @@ namespace Telerik.Web.Mvc.Extensions
         /// <returns>
         /// <c>true</c> if the value of the comparing parameter is the same as this string; otherwise, <c>false</c>.
         /// </returns>
-        [DebuggerStepThrough]
         public static bool IsCaseInsensitiveEqual(this string instance, string comparing)
         {
             return string.Compare(instance, comparing, StringComparison.OrdinalIgnoreCase) == 0;
-        }
-
-        /// <summary>
-        /// Determines whether this instance is null or empty string.
-        /// </summary>
-        /// <param name="instance">The string to check its value.</param>
-        /// <returns>
-        /// <c>true</c> if the value is null or empty string; otherwise, <c>false</c>.
-        /// </returns>
-        public static bool IsNullOrEmpty(this string instance) 
-        {
-            return string.IsNullOrEmpty(instance);
         }
 
         /// <summary>
@@ -82,7 +67,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         public static string Compress(this string instance)
         {
             Guard.IsNotNullOrEmpty(instance, "instance");
@@ -113,7 +97,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// </summary>
         /// <param name="instance">The instance.</param>
         /// <returns></returns>
-        [DebuggerStepThrough]
         public static string Decompress(this string instance)
         {
             Guard.IsNotNullOrEmpty(instance, "instance");
@@ -146,7 +129,6 @@ namespace Telerik.Web.Mvc.Extensions
             return instance[0].ToString().ToLower() + instance.Substring(1);
         }
 
-        [DebuggerStepThrough]
         public static T ToEnum<T>(this string instance, T defaultValue) where T : IComparable, IFormattable
         {
             T convertedValue = defaultValue;

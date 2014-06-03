@@ -3,6 +3,7 @@
     using System;
     using System.Web.Mvc;
     using Xunit;
+    using Telerik.Web.Mvc.UI.Fluent;
 
     public class DatePickerClientEventsBuilderTests
     {

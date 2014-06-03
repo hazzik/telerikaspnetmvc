@@ -7,8 +7,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
     using System.Collections.Generic;
-
-    using Extensions;
+    using System.Globalization;
+    using Telerik.Web.Mvc.Extensions;
 
     public class FilterParser
     {
@@ -76,7 +76,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         {
             IFilterNode firstArgument = PrimaryExpression();
 
-            if (Is(FilterTokenType.ComparisonOperator))
+            if (Is(FilterTokenType.ComparisonOperator) || Is(FilterTokenType.Function))
             {
                 return ParseComparisonExpression(firstArgument);
             }
@@ -139,16 +139,31 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         private IFilterNode ParseComparisonExpression(IFilterNode firstArgument)
         {
-            FilterToken comparison = Expect(FilterTokenType.ComparisonOperator);
+            if (Is(FilterTokenType.ComparisonOperator))
+            {
+                FilterToken comparison = Expect(FilterTokenType.ComparisonOperator);
 
-            IFilterNode secondArgument = PrimaryExpression();
+                IFilterNode secondArgument = PrimaryExpression();
 
-            return new ComparisonNode
-                       {
-                           First = firstArgument,
-                           FilterOperator = comparison.ToFilterOperator(),
-                           Second = secondArgument
-                       };
+                return new ComparisonNode
+                           {
+                               First = firstArgument,
+                               FilterOperator = comparison.ToFilterOperator(),
+                               Second = secondArgument
+                           };
+            }
+
+            FilterToken function = Expect(FilterTokenType.Function);
+
+            var functionNode = new FunctionNode
+            {
+                FilterOperator = function.ToFilterOperator()
+            };
+
+            functionNode.Arguments.Add(firstArgument);
+            functionNode.Arguments.Add(PrimaryExpression());
+                
+            return functionNode;
         }
 
         private IFilterNode ParseAndExpression(IFilterNode firstArgument)
@@ -180,7 +195,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
             return new BooleanNode
                        {
-                           Value = Convert.ToBoolean(stringToken.Value, Culture.Current)
+                           Value = Convert.ToBoolean(stringToken.Value, CultureInfo.CurrentCulture)
                        };
         }
 
@@ -190,7 +205,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
             return new NumberNode
                        {
-                           Value = Convert.ToDouble(number.Value, Culture.Current)
+                           Value = Convert.ToDouble(number.Value, CultureInfo.CurrentCulture)
                        };
         }
 

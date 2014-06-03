@@ -11,6 +11,7 @@ namespace Telerik.Web.Mvc.UI
         {
             OnLoad = new ClientEvent();
             OnOpen = new ClientEvent();
+            OnActivate = new ClientEvent();
             OnClose = new ClientEvent();
             OnMove = new ClientEvent();
             OnResize = new ClientEvent();
@@ -21,6 +22,8 @@ namespace Telerik.Web.Mvc.UI
         public ClientEvent OnLoad { get; private set; }
 
         public ClientEvent OnOpen { get; private set; }
+
+        public ClientEvent OnActivate { get; private set; }
 
         public ClientEvent OnClose { get; private set; }
 

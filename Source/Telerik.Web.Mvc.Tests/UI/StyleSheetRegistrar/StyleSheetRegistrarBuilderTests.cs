@@ -5,8 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI.Tests
 {
-    using System.Web.Mvc;
     using Moq;
+    using System.Web.Mvc;
     using Telerik.Web.Mvc.Infrastructure;
     using Xunit;
 
@@ -17,22 +17,13 @@ namespace Telerik.Web.Mvc.UI.Tests
 
         public StyleSheetRegistrarBuilderTests()
         {
-            Mock<IServiceLocator> locator = new Mock<IServiceLocator>();
-
-            locator.Setup(l => l.Resolve<IUrlGenerator>()).Returns(new Mock<IUrlGenerator>().Object);
-            locator.Setup(l => l.Resolve<IConfigurationManager>()).Returns(new Mock<IConfigurationManager>().Object);
-            locator.Setup(l => l.Resolve<INavigationItemAuthorization>()).Returns(new Mock<INavigationItemAuthorization>().Object);
-            locator.Setup(l => l.Resolve<ITabStripHtmlBuilderFactory>()).Returns(new Mock<ITabStripHtmlBuilderFactory>().Object);
-
-            ServiceLocator.SetCurrent(() => locator.Object);
-
             ViewContext viewContext = new ViewContext
                                           {
                                               HttpContext = TestHelper.CreateMockedHttpContext().Object,
                                               ViewData = new ViewDataDictionary()
                                           };
 
-            _styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, new Mock<IWebAssetItemMerger>().Object);
+            _styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, new Mock<IWebAssetCollectionResolver>().Object);
 
             _builder = new StyleSheetRegistrarBuilder(_styleSheetRegistrar);
         }

@@ -57,6 +57,7 @@
         width: 30%;
         text-align: right;
         padding-right: 3%;
+        clear: left;
     }
     
     .t-edit-form-container .editor-field

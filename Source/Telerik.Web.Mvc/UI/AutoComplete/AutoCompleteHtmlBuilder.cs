@@ -5,8 +5,9 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using Extensions;
-    using Infrastructure;
+    using System.Web.Mvc;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class AutoCompleteHtmlBuilder : IAutoCompleteHtmlBuilder
     {
@@ -24,22 +25,23 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            IHtmlNode input = new HtmlTag("input")
-                            .Attributes(new
-                            {
-                                title = Component.Name,
-                                id = Component.Id,
-                                autocomplete = "off",
-                                name = Component.Name
-                            })
-                            .Attributes(Component.HtmlAttributes)
-                            .PrependClass(UIPrimitives.Widget, "t-autocomplete", UIPrimitives.Input);
-
             string value = Component.ViewContext.Controller.ValueOf<string>(Component.Name);
-            if (value.HasValue())
-                input.Attribute("value", value);
+            if (string.IsNullOrEmpty(value))
+            {
+                object viewDataValue = Component.ViewContext.ViewData.Eval(Component.Name);
+                value = viewDataValue != null ? viewDataValue.ToString() : "";
+            }
 
-            return input;
+            return new HtmlTag("input", TagRenderMode.SelfClosing)
+                        .Attributes(new
+                        {
+                            id = Component.Id,
+                            name = Component.Name
+                        })
+                        .ToggleAttribute("disabled", "disabled", !Component.Enabled)
+                        .Attributes(Component.HtmlAttributes)
+                        .PrependClass(UIPrimitives.Widget, "t-autocomplete", UIPrimitives.Input)
+                        .ToggleAttribute("value", value, value.HasValue());
         }
     }
 }

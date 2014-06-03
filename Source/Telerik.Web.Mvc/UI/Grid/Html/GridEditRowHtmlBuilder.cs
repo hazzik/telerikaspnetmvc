@@ -67,11 +67,11 @@ namespace Telerik.Web.Mvc.UI.Html
 
             tr.AppendTo(tbody);
 
-            if (Row.Grid.HasDetailView)
+            if (Row.Grid.HasDetailView )
             {
                 var detailViewAdorner = new GridToggleDetailViewAdorner
                 {
-                    Expanded = Row.DetailRow.Expanded
+                    Expanded = Row.DetailRow != null ? Row.DetailRow.Expanded : false
                 };
             
                 detailViewAdorner.ApplyTo(tr);
@@ -105,7 +105,8 @@ namespace Telerik.Web.Mvc.UI.Html
                 .Attribute("method", "post")
                 .Attribute("action", ActionUrl)
                 .Attribute("id", ID)
-                .AddClass(UIPrimitives.Grid.EditingForm);
+                .AddClass(UIPrimitives.Grid.EditingForm)
+                .Attributes(Row.Grid.Editing.FormHtmlAttributes);
         }
         
         protected IHtmlNode CreateCell()

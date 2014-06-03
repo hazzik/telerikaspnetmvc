@@ -18,13 +18,13 @@
                 jsonObject = [
                     { Text: "Product 1", Expanded: true,
                         Items: [
-                          { Text: "Product 4", Expanded: true,
+                          { Text: "Product 1.1", Expanded: true,
                               Items: [
-                                { Text: "Product 6", Value: 6 },
-                                { Text: "Product 7" }
+                                { Text: "Product 1.1.1", Value: 6 },
+                                { Text: "Product 1.1.2" }
                             ]
                           },
-                          { Text: "LoadOnDemand Abyss", LoadOnDemand: true, Value: "abyss" }
+                          { Text: "Abyss product", LoadOnDemand: true, Value: "abyss" }
                       ]
                     },
                     { Text: "Product 2 (unavailable)", Enabled: false },
@@ -33,7 +33,7 @@
 
                 treeview.bindTo(jsonObject);
             } else {
-                jsonObject = [{ Text: "Abyss Node", LoadOnDemand: true, Value: "abyss" }];
+                jsonObject = [{ Text: "Abyss subproduct", LoadOnDemand: true, Value: "abyss" }];
                 
                 treeview.dataBind(e.item, jsonObject);
             }

@@ -6,14 +6,17 @@
 namespace Telerik.Web.Mvc.UI.Html
 {
     using Telerik.Web.Mvc.Infrastructure;
-    
+    using Telerik.Web.Mvc.Extensions;
+
     public class GridEmptyRowHtmlBuilder : HtmlBuilderBase
     {
         private readonly int colspan;
+        private readonly HtmlTemplate noRecordsTemplate;
 
-        public GridEmptyRowHtmlBuilder(int colspan)
+        public GridEmptyRowHtmlBuilder(int colspan, HtmlTemplate noRecordsTemplate)
         {
             this.colspan = colspan;
+            this.noRecordsTemplate = noRecordsTemplate;
         }
 
         protected override IHtmlNode BuildCore()
@@ -21,11 +24,13 @@ namespace Telerik.Web.Mvc.UI.Html
             IHtmlNode tr = new HtmlTag("tr")
                 .AddClass("t-no-data");
 
-            new HtmlTag("td").Attribute("colspan", colspan.ToString())
-                .AppendTo(tr);
+            var td = new HtmlTag("td").Attribute("colspan", colspan.ToString());
+            
+            noRecordsTemplate.Apply(td);
+
+            td.AppendTo(tr);
 
             return tr;
-
         }
     }
 }

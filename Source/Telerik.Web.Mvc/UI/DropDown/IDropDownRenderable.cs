@@ -15,6 +15,8 @@ using System.Web.Mvc;
 
         IList<DropDownItem> Items { get; }
 
-        int SelectedIndex { get; }
+        int SelectedIndex { get; set; }
+
+        bool Enabled { get; }
     }
 }

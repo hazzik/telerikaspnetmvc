@@ -120,6 +120,16 @@ namespace Telerik.Web.Mvc.Infrastructure
             return this;
         }
 
+        public IHtmlNode ToggleCss(string key, string value, bool condition)
+        {
+            if (condition)
+            {
+                Css(key, value);
+            }
+
+            return this;
+        }
+
         public IHtmlNode PrependClass(string[] classes)
         {
             foreach (string @class in classes.Reverse())

@@ -18,6 +18,7 @@
             suite.addTestPage("ComboBox");
             suite.addTestPage("DatePicker");
             suite.addTestPage("DropDownList");
+            suite.addTestPage("DropDown");
             suite.addTestPage("Editor");
             suite.addTestPage("Grid");
             suite.addTestPage("Input");

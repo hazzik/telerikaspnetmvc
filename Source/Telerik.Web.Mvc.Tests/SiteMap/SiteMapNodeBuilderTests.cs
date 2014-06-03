@@ -96,6 +96,42 @@ namespace Telerik.Web.Mvc.Tests
         }
 
         [Fact]
+        public void Action_method_with_RouteValueDinctionary_populated_from_MVCT4_templates_should_set_controller_action_and_routevalues()
+        {
+            const string actionName = "Index";
+            const string controllerName = "Home";
+
+            RouteValueDictionary values = new RouteValueDictionary();
+            values.Add("action", actionName);
+            values.Add("controller", controllerName);
+            values.Add("id", 1);
+
+            _builder.Action(values);
+
+            Assert.Equal(actionName, _node.ActionName);
+            Assert.Equal(controllerName, _node.ControllerName);
+            Assert.True(_node.RouteValues.ContainsKey("id"));
+            Assert.Equal(1, _node.RouteValues["id"]);
+        }
+
+        [Fact]
+        public void Action_method_with_RouteValueDinctionary_should_populate_action_and_controller_name_if_no_routeValues_is_presented_in_the_argument_dictionary()
+        {
+            const string actionName = "Index";
+            const string controllerName = "Home";
+
+            RouteValueDictionary values = new RouteValueDictionary();
+            values.Add("action", actionName);
+            values.Add("controller", controllerName);
+
+            _builder.Action(values);
+
+            Assert.Equal(actionName, _node.ActionName);
+            Assert.Equal(controllerName, _node.ControllerName);
+            Assert.Equal(0, _node.RouteValues.Count);
+        }
+
+        [Fact]
         public void Should_be_able_to_set_action_with_route_value_dictionary()
         {
             RouteValueDictionary values = new RouteValueDictionary

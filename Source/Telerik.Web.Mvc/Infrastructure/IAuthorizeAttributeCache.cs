@@ -11,6 +11,6 @@ namespace Telerik.Web.Mvc.Infrastructure
 
     public interface IAuthorizeAttributeCache
     {
-        IEnumerable<AuthorizeAttribute> GetAuthorizeAttributes(RequestContext requestContext, string controllerName, string actionName);
+        IEnumerable<AuthorizeAttribute> GetAuthorizeAttributes(RequestContext requestContext, string controllerName, string actionName, RouteValueDictionary routeValues);
     }
 }

@@ -19,9 +19,16 @@ namespace Telerik.Web.Mvc.UI
             this.grid = grid;
 
             Groups = new List<GroupDescriptor>();
+            Visible = true;
         }
 
         public bool Enabled
+        {
+            get;
+            set;
+        }
+
+        public bool Visible
         {
             get;
             set;

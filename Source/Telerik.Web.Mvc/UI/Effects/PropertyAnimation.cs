@@ -6,8 +6,7 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-
-    using Infrastructure;
+    using System.Globalization;
 
     public class PropertyAnimation : IEffect, IAnimation
     {
@@ -51,9 +50,9 @@ namespace Telerik.Web.Mvc.UI
 
         public string Serialize()
         {
-            return String.Format(Culture.Current, "{{name:'{0}',properties:['{1}']}}",
+            return String.Format(CultureInfo.CurrentCulture, "{{name:'{0}',properties:['{1}']}}",
                                  Name,
-                                 AnimationType.ToString().ToLower(Culture.Invariant));
+                                 AnimationType.ToString().ToLower(CultureInfo.InvariantCulture));
         }
     }
 }

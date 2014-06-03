@@ -1,10 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.UI.Html.Tests
 {
-    using Moq;
-    using Xunit;
-
-    using Telerik.Web.Mvc.UI.Tests;
     using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.UI.Tests;
+    using Xunit;
 
     public class GridToolBarInsertCommandHtmlTests
     {
@@ -14,22 +12,12 @@
 
         public GridToolBarInsertCommandHtmlTests()
         {
-            var virtualPathProvider = new Mock<IVirtualPathProvider>();
-            virtualPathProvider.Setup(vpp => vpp.FileExists(It.IsAny<string>())).Returns(false);
-
-            var serviceLocator = new Mock<IServiceLocator>();
-            serviceLocator.Setup(sl => sl.Resolve<IVirtualPathProvider>()).Returns(virtualPathProvider.Object);
-
-            ServiceLocator.SetCurrent(() => serviceLocator.Object);
-
             grid = GridTestHelper.CreateGrid<Customer>();
-
-            grid.Localization = new GridLocalization();
 
             command = new GridToolBarInsertCommand<Customer>();
             parentNode = new HtmlTag("td");
         }
-#if MVC2
+#if MVC2 || MVC3
         [Fact]
         public void Html_method_should_return_a_tag_append_to_parent()
         {

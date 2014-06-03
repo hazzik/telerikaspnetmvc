@@ -4,6 +4,7 @@
     using System.Web.Routing;
     using Telerik.Web.Mvc.UI;
     using Xunit;
+    using System;
 
     public class NavigationItemBuilderTests
     {
@@ -152,6 +153,42 @@
             var item = builder.Route(routeName, new { @class = "test" });
 
             Assert.IsType(typeof(NavigationItemBuilderTestDouble), item);
+        }
+
+        [Fact]
+        public void Action_method_with_RouteValueDinctionary_populated_from_MVCT4_templates_should_set_controller_action_and_routevalues() 
+        {
+            const string actionName = "Index";
+            const string controllerName = "Home";
+
+            RouteValueDictionary values = new RouteValueDictionary();
+            values.Add("action", actionName);
+            values.Add("controller", controllerName);
+            values.Add("id", 1);
+
+            builder.Action(values);
+
+            Assert.Equal(actionName, Item.ActionName);
+            Assert.Equal(controllerName, Item.ControllerName);
+            Assert.True(Item.RouteValues.ContainsKey("id"));
+            Assert.Equal(1, Item.RouteValues["id"]);
+        }
+
+        [Fact]
+        public void Action_method_with_RouteValueDinctionary_should_populate_action_and_controller_name_if_no_routeValues_is_presented_in_the_argument_dictionary()
+        {
+            const string actionName = "Index";
+            const string controllerName = "Home";
+
+            RouteValueDictionary values = new RouteValueDictionary();
+            values.Add("action", actionName);
+            values.Add("controller", controllerName);
+
+            builder.Action(values);
+
+            Assert.Equal(actionName, Item.ActionName);
+            Assert.Equal(controllerName, Item.ControllerName);
+            Assert.Equal(0, Item.RouteValues.Count);
         }
 
         [Fact]

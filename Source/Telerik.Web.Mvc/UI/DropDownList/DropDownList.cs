@@ -27,6 +27,7 @@
 
             Items = new List<DropDownItem>();
             SelectedIndex = 0;
+            Enabled = true;
         }
 
         public IUrlGenerator UrlGenerator 
@@ -74,6 +75,12 @@
             set;
         }
 
+        public bool Enabled 
+        { 
+            get; 
+            set; 
+        }
+
         public override void WriteInitializationScript(System.IO.TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tDropDownList", writer);
@@ -102,6 +109,8 @@
                 objectWriter.Append("dropDownAttr", DropDownHtmlAttributes.ToAttributeString());
             }
 
+            objectWriter.Append("enabled", this.Enabled, true);
+
             objectWriter.Complete();
 
             base.WriteInitializationScript(writer);
@@ -112,17 +121,12 @@
             if (Items.Any())
             {
                 this.PrepareItemsAndDefineSelectedIndex();
+                this.UpdateSelectedIndexFromViewContext();
             }
 
             IDropDownHtmlBuilder builder = new DropDownListHtmlBuilder(this);
 
-            IHtmlNode rootTag = builder.Build();
-
-            builder.InnerContentTag().AppendTo(rootTag);
-
-            builder.HiddenInputTag().AppendTo(rootTag);
-
-            rootTag.WriteTo(writer);
+            builder.Build().WriteTo(writer);
 
             base.WriteHtml(writer);
         }

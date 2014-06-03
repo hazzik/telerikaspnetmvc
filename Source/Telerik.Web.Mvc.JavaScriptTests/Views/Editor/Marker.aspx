@@ -318,5 +318,16 @@
             assertEquals(3, range.startOffset);
             assertTrue(range.collapsed);
         }
+
+        function test_remove_marker_from_empty_paragraph() {
+            editor.value('<p>&nbsp;</p>');
+            var range = editor.getRange();
+            range.selectNodeContents(editor.body.firstChild);
+            range.collapse(true);
+
+            var marker = new Marker();
+            marker.add(range);
+            marker.remove(range);
+        }
     </script>
 </asp:Content>

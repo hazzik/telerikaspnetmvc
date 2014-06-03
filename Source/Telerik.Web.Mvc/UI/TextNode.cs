@@ -78,6 +78,11 @@ namespace Telerik.Web.Mvc.UI
             throw new NotSupportedException();
         }
 
+        public IHtmlNode ToggleCss(string key, string value, bool condition)
+        {
+            throw new NotSupportedException();
+        }
+
         public IHtmlNode Html(string value)
         {
             throw new NotSupportedException();

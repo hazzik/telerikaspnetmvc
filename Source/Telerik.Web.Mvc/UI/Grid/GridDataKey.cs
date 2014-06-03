@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Mvc.Html;
 
     using Extensions;
-    
+
     public class GridDataKey<TModel, TValue> : IGridDataKey<TModel>
         where TModel : class
     {
@@ -52,7 +52,7 @@ namespace Telerik.Web.Mvc.UI
         {
             return Value(dataItem);
         }
-#if MVC2        
+#if MVC2 || MVC3
         public string HiddenFieldHtml(HtmlHelper<TModel> htmlHelper)
         {
             return htmlHelper.HiddenFor(Expression, new { id = "" }).ToString();

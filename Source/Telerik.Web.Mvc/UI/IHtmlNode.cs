@@ -53,6 +53,8 @@ namespace Telerik.Web.Mvc.UI
 
         IHtmlNode ToggleAttribute(string key, string value, bool condition);
 
+        IHtmlNode ToggleCss(string key, string value, bool condition);
+
         IHtmlNode Template(Action value);
 
         IHtmlNode Css(string key, string value);

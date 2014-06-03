@@ -238,5 +238,17 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        /// <summary>
+        /// Enables or disables the autocomplete.
+        /// </summary>
+        /// <param name="allowSpinner"></param>
+        /// <returns></returns>
+        public AutoCompleteBuilder Enable(bool value)
+        {
+            Component.Enabled = value;
+
+            return this;
+        }
     }
 }

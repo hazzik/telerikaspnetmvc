@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
     using System.ComponentModel;
-    using Extensions;
+    using System.Linq;
     using Xunit;
 
     public class GridSortDescriptorSerializerTests
@@ -38,13 +38,13 @@
         [Fact]
         public void Deserialize_empty_data_returns_empty_list()
         {
-            Assert.True(GridDescriptorSerializer.Deserialize<SortDescriptor>("").IsEmpty());
+            Assert.False(GridDescriptorSerializer.Deserialize<SortDescriptor>("").Any());
         }
 
         [Fact]
         public void Deserialize_data_without_separators_returns_empty_list()
         {
-            Assert.True(GridDescriptorSerializer.Deserialize<SortDescriptor>("Column 1 asc Column2 desc").IsEmpty());
+            Assert.False(GridDescriptorSerializer.Deserialize<SortDescriptor>("Column 1 asc Column2 desc").Any());
         }
     }
 }

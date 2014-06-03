@@ -6,19 +6,17 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Web.Mvc;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Manages ASP.NET MVC views style sheet files.
     /// </summary>
     public class StyleSheetRegistrar
     {
+        private readonly IWebAssetCollectionResolver resolver;
         /// <summary>
         /// Used to ensure that the same instance is used for the same HttpContext.
         /// </summary>
@@ -33,11 +31,9 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="styleSheets">The style sheets.</param>
         /// <param name="viewContext">The view context.</param>
         /// <param name="assetItemMerger">The asset merger.</param>
-        public StyleSheetRegistrar(WebAssetItemCollection styleSheets, ViewContext viewContext, IWebAssetItemMerger assetItemMerger)
+        public StyleSheetRegistrar(WebAssetCollection styleSheets, ViewContext viewContext, IWebAssetCollectionResolver resolver)
         {
-            Guard.IsNotNull(styleSheets, "styleSheets");
-            Guard.IsNotNull(viewContext, "viewContext");
-            Guard.IsNotNull(assetItemMerger, "assetItemMerger");
+            this.resolver = resolver;
 
             if (viewContext.HttpContext.Items[Key] != null)
             {
@@ -46,12 +42,11 @@ namespace Telerik.Web.Mvc.UI
 
             viewContext.HttpContext.Items[Key] = this;
 
-            DefaultGroup = new WebAssetItemGroup("default", false) { DefaultPath = WebAssetDefaultSettings.StyleSheetFilesPath };
+            DefaultGroup = new WebAssetGroup("default", false) { DefaultPath = WebAssetDefaultSettings.StyleSheetFilesPath };
             StyleSheets = styleSheets;
             styleSheets.Insert(0, DefaultGroup);
 
             ViewContext = viewContext;
-            AssetMerger = assetItemMerger;
 
             AssetHandlerPath = WebAssetHttpHandler.DefaultPath;
         }
@@ -62,13 +57,10 @@ namespace Telerik.Web.Mvc.UI
         /// <value>The asset handler path.</value>
         public string AssetHandlerPath
         {
-            [DebuggerStepThrough]
             get
             {
                 return assetHandlerPath;
             }
-
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotVirtualPath(value, "value");
@@ -81,7 +73,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets or sets the default group.
         /// </summary>
         /// <value>The default group.</value>
-        public WebAssetItemGroup DefaultGroup
+        public WebAssetGroup DefaultGroup
         {
             get;
             private set;
@@ -91,7 +83,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets the stylesheets that will be rendered in the view.
         /// </summary>
         /// <value>The style sheets.</value>
-        public WebAssetItemCollection StyleSheets
+        public WebAssetCollection StyleSheets
         {
             get;
             private set;
@@ -102,16 +94,6 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         /// <value>The view context.</value>
         protected ViewContext ViewContext
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets or sets the asset merger.
-        /// </summary>
-        /// <value>The asset merger.</value>
-        protected IWebAssetItemMerger AssetMerger
         {
             get;
             private set;
@@ -147,32 +129,20 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="writer">The writer.</param>
         protected virtual void Write(TextWriter writer)
         {
-            IList<string> mergedList = new List<string>();
-
             bool isSecured = ViewContext.HttpContext.Request.IsSecureConnection;
             bool canCompress = ViewContext.HttpContext.Request.CanCompress();
 
-            Action<WebAssetItemCollection> append = assets =>
-                                                    {
-                                                        IList<string> result = AssetMerger.Merge("text/css", AssetHandlerPath, isSecured, canCompress, assets);
-
-                                                        if (!result.IsNullOrEmpty())
-                                                        {
-                                                            mergedList.AddRange(result);
-                                                        }
-                                                    };
-
-            if (!StyleSheets.IsEmpty())
+            var urls = resolver.Resolve(new ResolverContext
             {
-                append(StyleSheets);
-            }
-
-            if (!mergedList.IsEmpty())
+                ContentType = "text/css",
+                HttpHandlerPath = AssetHandlerPath,
+                IsSecureConnection = isSecured,
+                SupportsCompression = canCompress
+            }, StyleSheets);
+            
+            foreach (string stylesheet in urls)
             {
-                foreach (string stylesheet in mergedList)
-                {
-                    writer.WriteLine("<link type=\"text/css\" href=\"{0}\" rel=\"stylesheet\"/>".FormatWith(stylesheet));
-                }
+                writer.WriteLine("<link type=\"text/css\" href=\"{0}\" rel=\"stylesheet\"/>".FormatWith(stylesheet));
             }
         }
     }

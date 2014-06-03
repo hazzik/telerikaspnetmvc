@@ -212,7 +212,7 @@
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
-            $('.t-window .t-close').click();
+            $('.t-window').css({width:200,height:300}).find('.t-close').click();
 
             assertEquals('foo', editor.value())
             assertEquals(0, $('.t-window').length);
@@ -232,6 +232,19 @@
             assertEquals('<a href="foo" title="bar">foo</a>', editor.value())
         }
 
+        function test_setting_opening_in_new_window() {
+            var range = createRangeFromText(editor, '|foo|');
+            execLinkCommandOnRange(range);
+
+            $('#t-editor-link-url')
+                .val('foo');
+
+            $('#t-editor-link-target').attr('checked', true)
+
+            $('.t-dialog-insert').click();
+            assertEquals('<a href="foo" target="_blank">foo</a>', editor.value())
+        }
+
         function test_title_text_box_is_updated() {
             var range = createRangeFromText(editor, '<a href="#" title="bar">|foo|</a>');
             execLinkCommandOnRange(range);
@@ -243,7 +256,7 @@
             var range = createRangeFromText(editor, '<a href="#" target="_blank">|foo|</a>');
             execLinkCommandOnRange(range);
 
-            assertEquals('true', $('#t-editor-link-target').val());
+            assertTrue($('#t-editor-link-target').is(':checked'));
         }
 
         function test_updatung_link_text() {

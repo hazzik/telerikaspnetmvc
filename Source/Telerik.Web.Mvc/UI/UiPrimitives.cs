@@ -180,6 +180,9 @@ namespace Telerik.Web.Mvc.UI
 
             public const string GroupIndicator = "t-group-indicator";
 
+            public const string FooterTemplateRow = "t-footer-template";
+            public const string FooterTemplateRowWrap = "t-footer-template-wrap";
+
             /// <summary>
             /// Grid action
             /// </summary>

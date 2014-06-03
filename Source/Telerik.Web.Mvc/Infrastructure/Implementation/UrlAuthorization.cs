@@ -7,10 +7,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
     using System.Collections.Specialized;
+    using System.Globalization;
     using System.Web;
     using System.Web.Routing;
-
-    using Extensions;
+    using Telerik.Web.Mvc.Extensions;
 
     public class UrlAuthorization : IUrlAuthorization
     {
@@ -21,7 +21,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             Guard.IsNotNull(requestContext, "requestContext");
             Guard.IsNotNullOrEmpty(url, "url");
 
-            InternalSiteMapNode node = new InternalSiteMapNode(provider, url.ToLower(Culture.Invariant), url);
+            InternalSiteMapNode node = new InternalSiteMapNode(provider, url.ToLower(CultureInfo.InvariantCulture), url);
             bool allowed = node.IsAccessibleToUser(requestContext.HttpContext);
 
             return allowed;

@@ -7,7 +7,7 @@ This example shows the various pager styles supported by Telerik Grid for ASP.NE
     <li>Numeric pager buttons</li>
 </ul>
 <p>
-You can customize the pager style, pager position and page size by using the <strong>Pageable</strong> method:
+You can customize the pager style, pager position and page size by using the <code>Pageable</code> method:
 </p>
 <pre class="prettyprint">
 &lt;%= Html.Telerik().Grid(Model)
@@ -18,5 +18,14 @@ You can customize the pager style, pager position and page size by using the <st
                   .Position(GridPagerPosition.Bottom)
         )
         </em>
+ %&gt;
+</pre>
+<p>
+You can set the initial page of the grid by using the <code>PageTo</code> method
+</p>
+<pre class="prettyprint">
+&lt;%= Html.Telerik().Grid(Model)
+        .Name("Grid")
+        .Pageable(paging => paging.<em>PageTo(3)</em>)
  %&gt;
 </pre>

@@ -1,10 +1,10 @@
-﻿#if MVC2
+﻿#if MVC2 || MVC3
 namespace Telerik.Web.Mvc.UI.Html.Tests
 {
     using Moq;
-    using Telerik.Web.Mvc.Infrastructure;
-    using Telerik.Web.Mvc.UI;
-    using Telerik.Web.Mvc.UI.Tests;
+    using Infrastructure;
+    using UI;
+    using UI.Tests;
     using Xunit;
 
     public class GridInlineEditRowHtmlBuilderTests
@@ -112,6 +112,17 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
             builder.Build();
 
             column.VerifyAll();
+        }
+
+        [Fact]
+        public void Should_append_custom_form_attributes_if_set()
+        {
+            const string attributeName = "att";
+            const string attributeValue = "val";
+
+            row.Grid.Editing.FormHtmlAttributes.Add(attributeName, attributeValue);
+            var form = builder.Build().Children[0].Children[0];
+            Assert.Equal(attributeValue, form.Attribute(attributeName));
         }
     }
 }

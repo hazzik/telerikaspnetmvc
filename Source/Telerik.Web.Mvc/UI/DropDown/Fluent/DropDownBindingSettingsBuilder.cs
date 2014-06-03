@@ -51,6 +51,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the action, controller and route values for the select operation
         /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DropDownList()
+        ///             .Name("DropDownList")
+        ///             .DataBinding(dataBinding => 
+        ///             {
+        ///                 dataBinding.Ajax().Select(MVC.Home.Indec(1).GetRouteValueDictionary());
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TSettingsBuilder Select(RouteValueDictionary routeValues)
+        {
+            settings.Select.Action(routeValues);
+
+            return this as TSettingsBuilder;
+        }
+
+        /// <summary>
+        /// Sets the action, controller and route values for the select operation
+        /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="routeValues">The route values.</param>

@@ -58,5 +58,17 @@
 
             return this;
         }
+
+        /// <summary>
+        /// Enables or disables the dropdownlist.
+        /// </summary>
+        /// <param name="allowSpinner"></param>
+        /// <returns></returns>
+        public DropDownListBuilder Enable(bool value)
+        {
+            Component.Enabled = value;
+
+            return this;
+        }
     }
 }

@@ -100,13 +100,27 @@
                                                         new $t.datetime(2009, 9, 30),
                                                         new $t.datetime(2009, 9, 26),
                                                         '/aspnet-mvc-beta/calendar/selectaction?date={0}');
-            var renderedDays = $('.t-link', html);
 
             var days_with_URL = $('.t-link', html).filter(function(index) {
                 return $(this).attr('href') != '#';
             })
 
             assertTrue($(days_with_URL[0]).hasClass('t-action-link'))
+        }
+
+        function test_buildDateRows_should_render_title_attribute() {
+            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+                                                        new $t.datetime(2009, 9, 10),
+                                                        new $t.datetime(2009, 9, 30),
+                                                        new $t.datetime(2009, 9, 26),
+                                                        '/aspnet-mvc-beta/calendar/selectaction?date={0}');
+
+            var days_with_title = $('.t-link', html).filter(function (index) {
+                
+                return $(this).attr('title') == '';
+            })
+
+            assertEquals(0, days_with_title.length);
         }
 
         function test_if_focusedDate_has_same_month_as_min_date_prev_arrow_should_be_disabled() {

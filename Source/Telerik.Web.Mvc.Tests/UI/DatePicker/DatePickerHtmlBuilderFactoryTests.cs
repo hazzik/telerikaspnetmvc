@@ -1,7 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using Xunit;
-
+    using Telerik.Web.Mvc.UI.Html;
 
     public class DatePickerHtmlBuilderFactoryTests
     {

@@ -1,7 +1,10 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using System;
+    using System.Data;
+    using System.Linq;
     using Xunit;
-    
+
     public class GridColumnGeneratorTests
     {
         private GridColumnGenerator<Customer> generator;
@@ -38,7 +41,7 @@
                 HeaderHtmlAttributes = { },
                 Hidden = true,
                 HtmlAttributes = { },
-#if MVC2                
+#if MVC2 || MVC3
                 ReadOnly = true,
 #endif
                 Title = "foo",
@@ -56,7 +59,7 @@
             Assert.Equal(column.HeaderHtmlAttributes, settings.HeaderHtmlAttributes);
             Assert.Equal(column.Hidden, settings.Hidden);
             Assert.Equal(column.HtmlAttributes, settings.HtmlAttributes);
-#if MVC2                            
+#if MVC2 || MVC3
             Assert.Equal(column.ReadOnly, settings.ReadOnly);
 #endif
             Assert.Equal(column.Title, settings.Title);
@@ -87,6 +90,59 @@
 
             var column = (GridBoundColumn<Customer, string>)generator.CreateColumn(settings);
             Assert.Equal(column.Template, settings.Template);
+        }
+
+        [Fact]
+        public void Should_create_columns_from_DataTable()
+        {
+            const string firstColumnName = "Column1";
+            const string secondColumnName = "Column2";
+
+            var dataTable = new DataTable();
+            dataTable.Columns.Add(firstColumnName, typeof(int));
+            dataTable.Columns.Add(secondColumnName, typeof(DateTime));
+
+            var grid = GridTestHelper.CreateGrid<DataRowView>();
+            grid.DataSource = dataTable.WrapAsEnumerable();
+            var dataTableColumnGenerator = new GridColumnGenerator<DataRowView>(grid);
+
+            var columns = dataTableColumnGenerator.GetColumns();
+
+            Assert.Equal(2, columns.Count());
+            Assert.Equal(firstColumnName, columns.ElementAt(0).Member);            
+            Assert.Equal(secondColumnName, columns.ElementAt(1).Member);
+        }
+
+        [Fact]
+        public void Should_return_empty_collection_if_null_DataTable_is_provided()
+        {
+            DataTable dataTable = null;
+
+            var grid = GridTestHelper.CreateGrid<DataRowView>();
+            grid.DataSource = dataTable.WrapAsEnumerable();
+            var dataTableColumnGenerator = new GridColumnGenerator<DataRowView>(grid);
+            Assert.Empty(dataTableColumnGenerator.GetColumns());
+        }
+
+        [Fact]
+        public void Should_generate_columns_for_properties_of_nullable_bindable_type()
+        {
+            var grid = GridTestHelper.CreateGrid<NullableFoo>();
+            grid.DataSource = Enumerable.Empty<NullableFoo>();
+            var columnGenerator = new GridColumnGenerator<NullableFoo>(grid);
+            var generatedColumns = columnGenerator.GetColumns();
+
+            generatedColumns.Count().ShouldEqual(1);
+            generatedColumns.First().Member.ShouldEqual("Bar");
+        }
+
+        private class NullableFoo
+        {
+            public int? Bar { get; set; }
+            public NonBindableValueType? NonBindableValueType { get; set; }
+        }
+        private struct NonBindableValueType
+        {
         }
     }
 }

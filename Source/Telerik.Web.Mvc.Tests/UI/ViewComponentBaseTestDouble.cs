@@ -30,7 +30,7 @@ namespace Telerik.Web.Mvc.UI.Tests
 
         public void CheckRequired()
         {
-            base.EnsureRequired();
+            base.VerifySettings();
         }
 
         public void Html()
@@ -38,9 +38,10 @@ namespace Telerik.Web.Mvc.UI.Tests
             base.WriteHtml(new HtmlTextWriter(TextWriter.Null));
         }
 
-        protected override void EnsureRequired()
+        public override void VerifySettings()
         {
-            base.EnsureRequired();
+            base.VerifySettings();
+
             HasEnsuredRequired = true;
         }
 

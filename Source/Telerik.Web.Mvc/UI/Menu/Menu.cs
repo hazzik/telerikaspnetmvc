@@ -77,12 +77,6 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public string Theme
-        {
-            get;
-            set;
-        }
-
         public Effects Effects
         {
             get;
@@ -112,7 +106,7 @@ namespace Telerik.Web.Mvc.UI
             get;
             set;
         }
-
+        
         public override void WriteInitializationScript(TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tMenu", writer);
@@ -140,11 +134,18 @@ namespace Telerik.Web.Mvc.UI
             base.WriteInitializationScript(writer);
         }
 
+        public override void VerifySettings()
+        {
+            base.VerifySettings();
+
+            this.ThrowIfClassIsPresent("t-menu-rtl", TextResource.Rtl);
+        }
+
         protected override void WriteHtml(HtmlTextWriter writer)
         {
             Guard.IsNotNull(writer, "writer");
 
-            if (!Items.IsEmpty())
+            if (Items.Any())
             {
                 if (SelectedIndex != -1 && Items.Count < SelectedIndex)
                 {
@@ -170,14 +171,7 @@ namespace Telerik.Web.Mvc.UI
 
         private void HighlightSelectedItem(MenuItem item)
         {
-            string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
-            string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
-
-            var urlHelper = new UrlHelper(ViewContext.RequestContext);
-            var menuItemUrl = item.GenerateUrl(ViewContext, UrlGenerator);
-            var currentUrl = urlHelper.Action(actionName, controllerName);
-
-            if (!currentUrl.IsNullOrEmpty() && menuItemUrl.IsCaseInsensitiveEqual(currentUrl))
+            if (item.IsCurrent(ViewContext, UrlGenerator))
             {
                 isPathHighlighted = true;
 

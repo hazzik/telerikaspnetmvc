@@ -3,6 +3,7 @@
 
     using System;
     using Xunit;
+    using Telerik.Web.Mvc.UI.Fluent;
 
     public class DatePickerBuilderTests
     {
@@ -13,24 +14,6 @@
         {
             datePicker = DatePickerTestHelper.CreateDatePicker(null, null);
             builder = new DatePickerBuilder(datePicker);
-        }
-
-        [Fact]
-        public void Theme_should_set_Theme_property_of_datePicker()
-        {
-            const string theme = "theme";
-            builder.Theme(theme);
-
-            Assert.Equal(theme, datePicker.Theme);
-        }
-
-        [Fact]
-        public void Theme_should_return_builder()
-        {
-            const string theme = "theme";
-            var returnedBuilder = builder.Theme(theme);
-
-            Assert.IsType(typeof(DatePickerBuilder), returnedBuilder);
         }
 
         [Fact]
@@ -140,15 +123,15 @@
         {
             DateTime date = DateTime.Now;
 
-            builder.MinDate(date);
+            builder.Min(date);
 
-            Assert.Equal(date, datePicker.MinDate);
+            Assert.Equal(date, datePicker.Min);
         }
 
         [Fact]
         public void MinDate_should_return_builder()
         {
-            var returnedBuilder = builder.MinDate(DateTime.Now);
+            var returnedBuilder = builder.Min(DateTime.Now);
 
             Assert.IsType(typeof(DatePickerBuilder), returnedBuilder);
         }
@@ -157,21 +140,21 @@
         public void MinDate_with_string_should_set_MinDate_of_the_picker()
         {
             var date = new DateTime(2000, 10, 10);
-            builder.MinDate(date.ToShortDateString());
+            builder.Min(date.ToShortDateString());
 
-            Assert.Equal(date, datePicker.MinDate);
+            Assert.Equal(date, datePicker.Min);
         }
 
         [Fact]
         public void MinDate_with_string_should_throw_exception_if_incorrect_string_is_passed()
         {
-            Assert.Throws(typeof(ArgumentException), () => builder.MinDate("incorrect"));
+            Assert.Throws(typeof(ArgumentException), () => builder.Min("incorrect"));
         }
 
         [Fact]
         public void MinDate_with_string_should_return_builder()
         {
-            var returnedBuilder = builder.MinDate(DateTime.Now.ToShortDateString());
+            var returnedBuilder = builder.Min(DateTime.Now.ToShortDateString());
 
             Assert.IsType(typeof(DatePickerBuilder), returnedBuilder);
         }
@@ -180,15 +163,15 @@
         public void MaxDate_should_set_MaxDate_of_the_picker()
         {
             DateTime date = DateTime.Now;
-            builder.MaxDate(date);
+            builder.Max(date);
 
-            Assert.Equal(date, datePicker.MaxDate);
+            Assert.Equal(date, datePicker.Max);
         }
 
         [Fact]
         public void MaxDate_should_return_builder()
         {
-            var returnedBuilder = builder.MaxDate(DateTime.Now);
+            var returnedBuilder = builder.Max(DateTime.Now);
 
             Assert.IsType(typeof(DatePickerBuilder), returnedBuilder);
         }
@@ -197,21 +180,21 @@
         public void MaxDate_with_string_should_set_MaxDate_of_the_picker()
         {
             var date = new DateTime(2000, 10, 10);
-            builder.MaxDate(date.ToShortDateString());
+            builder.Max(date.ToShortDateString());
 
-            Assert.Equal(date, datePicker.MaxDate);
+            Assert.Equal(date, datePicker.Max);
         }
 
         [Fact]
         public void MaxDate_with_string_should_throw_exception_if_incorrect_string_is_passed()
         {
-            Assert.Throws(typeof(ArgumentException), () => builder.MaxDate("incorrect"));
+            Assert.Throws(typeof(ArgumentException), () => builder.Max("incorrect"));
         }
 
         [Fact]
         public void MaxDate_with_string_should_return_builder()
         {
-            var returnedBuilder = builder.MaxDate(DateTime.Now.ToShortDateString());
+            var returnedBuilder = builder.Max(DateTime.Now.ToShortDateString());
 
             Assert.IsType(typeof(DatePickerBuilder), returnedBuilder);
         }

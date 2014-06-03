@@ -7,11 +7,16 @@
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
 
     <script type="text/javascript">
+        
 
         function getEditor() {
             return $('#Editor').data("tEditor");
         }
-
+        
+        function value($ui) {
+            return $.browser.msie ? $.trim($ui.text()) : $ui.val();
+        }
+        
         function setUp() {
             window.editor = getEditor();
         }
@@ -88,7 +93,7 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals('', $('.t-fontSize .t-input', editor.element).val());
+            assertEquals('', value($('.t-fontSize .t-input', editor.element)));
         }
 
         function test_font_size_combobox_on_custom_font_size() {
@@ -96,7 +101,15 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals('8px', $('.t-fontSize .t-input', editor.element).val());
+            assertEquals('8px', value($('.t-fontSize .t-input', editor.element)));
+        }        
+        
+        function test_inherited_font_size() {
+            editor.selectRange(createRangeFromText(editor, '<span>f|o|o</span>'));
+
+            $(editor.element).trigger('selectionChange');
+
+            assertEquals(editor.localization.fontSizeInherit, value($('.t-fontSize .t-input', editor.element)));
         }
 
         function test_font_size_combobox_on_relative_font_size() {
@@ -104,15 +117,7 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals('2 (10pt)', $('.t-fontSize .t-input', editor.element).val());
-        }
-
-        function test_font_size_combobox_should_report_inherit_when_inheriting_body_size() {
-            editor.selectRange(createRangeFromText(editor, '<span>f|o|o</span>'));
-
-            $(editor.element).trigger('selectionChange');
-
-            assertEquals('inherit', $('.t-fontSize .t-input', editor.element).val());
+            assertEquals('2 (10pt)', value($('.t-fontSize .t-input', editor.element)));
         }
 
     </script>

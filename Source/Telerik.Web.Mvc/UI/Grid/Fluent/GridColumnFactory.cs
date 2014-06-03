@@ -22,6 +22,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
     public class GridColumnFactory<TModel> : IHideObjectMembers 
         where TModel : class
     {
+        private bool hasGeneratedColumn;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GridColumnFactory{TModel}"/> class.
         /// </summary>
@@ -101,6 +103,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             LambdaExpression lambdaExpression = ExpressionBuilder.Lambda<TModel>(memberType, memberName, liftMemberAccess);
 
+#if MVC3
+            if (typeof(TModel).IsDynamicObject() && memberType != null && lambdaExpression.Body.Type.GetNonNullableType() != memberType.GetNonNullableType())
+            {
+                lambdaExpression = Expression.Lambda(Expression.Convert(lambdaExpression.Body, memberType), lambdaExpression.Parameters);
+            }
+#endif
             Type columnType = typeof(GridBoundColumn<,>).MakeGenericType(new[] { typeof(TModel), lambdaExpression.Body.Type });
 
             ConstructorInfo constructor = columnType.GetConstructor(new[] { Container.GetType(), lambdaExpression.GetType() });
@@ -118,6 +126,46 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Container.Columns.Add((GridColumnBase<TModel>)column);
 
             return new GridBoundColumnBuilder<TModel>(column);
+        }
+        
+        protected virtual void AutoGenerate(bool shouldGenerate, Action<GridColumnBase<TModel>> columnAction)
+        {
+            if (hasGeneratedColumn) return;
+
+            if (shouldGenerate)
+            {
+                new GridColumnGenerator<TModel>(Container)
+                    .GetColumns()
+                    .Each(c =>
+                              {
+                                  if (columnAction != null)
+                                  {
+                                      columnAction(c);
+                                  }
+                                  Container.Columns.Add(c);
+                              });
+                hasGeneratedColumn = true;
+            }
+            Container.AutoGenerateColumns = shouldGenerate;
+        }
+
+        /// <summary>
+        /// Determines if columns should be automatically generated.
+        /// </summary>
+        /// <param name="shouldGenerate">If true columns should be generated, otherwise false.</param>
+        public virtual void AutoGenerate(bool shouldGenerate)
+        {
+            AutoGenerate(shouldGenerate, null);
+        }
+
+        /// <summary>
+        /// Determines if columns should be automatically generated.
+        /// </summary>
+        /// <param name="columnAction">Action which will be executed for each generated column.</param>
+        public virtual void AutoGenerate(Action<GridColumnBase<TModel>> columnAction)
+        {
+            Guard.IsNotNull(columnAction, "callback");
+            AutoGenerate(true, columnAction);
         }
 
         /// <summary>

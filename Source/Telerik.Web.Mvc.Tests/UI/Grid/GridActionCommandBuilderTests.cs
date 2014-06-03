@@ -2,7 +2,7 @@
 {
     using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
-#if MVC2
+#if MVC2 || MVC3
     public class GridActionCommandBuilderTests
     {
         internal static GridActionCommandBaseDouble command;

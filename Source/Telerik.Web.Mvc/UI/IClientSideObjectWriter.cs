@@ -169,17 +169,9 @@ namespace Telerik.Web.Mvc.UI
         /// Appends the specified name and value to the end of this instance.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <param name="values">The values.</param>
+        /// <param name="values">The HtmlTemplate.</param>
         /// <returns></returns>
-        IClientSideObjectWriter Append(string name, IList<string> values);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="values">The values.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, IList<int> values);
+        IClientSideObjectWriter Append(string name, HtmlTemplate htmlTemplate);
 
         IClientSideObjectWriter AppendCollection(string name, IEnumerable value);
 

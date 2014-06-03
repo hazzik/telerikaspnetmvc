@@ -46,14 +46,6 @@ namespace Telerik.Web.Mvc.Tests.Menu
 		}
 
 		[Fact]
-		public void Setting_theme_sets_menu_theme()
-		{
-			builder.Theme("Lovely");
-
-			Assert.Equal("Lovely", menu.Theme);
-		}
-
-		[Fact]
 		public void Effects_creates_fx_factory()
 		{
 			var fxFacCreated = false;

@@ -7,14 +7,13 @@ namespace Telerik.Web.Mvc
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Text;
     using System.Web;
     using System.Xml;
-
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Defines a class that is used to generate searach engine sitemap xml.
@@ -55,7 +54,7 @@ namespace Telerik.Web.Mvc
         /// <summary>
         /// Initializes a new instance of the <see cref="SiteMapHandler"/> class.
         /// </summary>
-        public SiteMapHandler() : this(SiteMapManager.SiteMaps, ServiceLocator.Current.Resolve<IHttpResponseCompressor>(), ServiceLocator.Current.Resolve<IHttpResponseCacher>(), ServiceLocator.Current.Resolve<IUrlGenerator>())
+        public SiteMapHandler() : this(SiteMapManager.SiteMaps, DI.Current.Resolve<IHttpResponseCompressor>(), DI.Current.Resolve<IHttpResponseCacher>(), DI.Current.Resolve<IUrlGenerator>())
         {
         }
 
@@ -65,13 +64,11 @@ namespace Telerik.Web.Mvc
         /// <value>The default path.</value>
         public static string DefaultPath
         {
-            [DebuggerStepThrough]
             get
             {
                 return defaultPath;
             }
 
-            [DebuggerStepThrough]
             set
             {
                 Guard.IsNotNullOrEmpty(value, "value");
@@ -121,7 +118,7 @@ namespace Telerik.Web.Mvc
             int priority = (int) node.UpdatePriority;
             double actualPriority = priority * .01;
 
-            return actualPriority.ToString("0.0", Culture.Invariant);
+            return actualPriority.ToString("0.0", CultureInfo.InvariantCulture);
         }
 
         private void WriteSiteMap(XmlWriter writer, SiteMapBase siteMap, HttpContextBase httpContext)
@@ -162,12 +159,12 @@ namespace Telerik.Web.Mvc
 
                         if (node.LastModifiedAt.HasValue)
                         {
-                            writer.WriteElementString("lastmod", SiteMapNameSpace, node.LastModifiedAt.Value.ToString("yyyy-MM-dd", Culture.Invariant));
+                            writer.WriteElementString("lastmod", SiteMapNameSpace, node.LastModifiedAt.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                         }
 
                         if (node.ChangeFrequency != SiteMapChangeFrequency.Automatic)
                         {
-                            writer.WriteElementString("changefreq", SiteMapNameSpace, node.ChangeFrequency.ToString().ToLower(Culture.Invariant));
+                            writer.WriteElementString("changefreq", SiteMapNameSpace, node.ChangeFrequency.ToString().ToLower(CultureInfo.InvariantCulture));
                         }
 
                         if (node.UpdatePriority != SiteMapUpdatePriority.Automatic)

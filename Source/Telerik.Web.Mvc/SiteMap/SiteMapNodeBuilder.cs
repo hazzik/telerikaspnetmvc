@@ -14,9 +14,10 @@ namespace Telerik.Web.Mvc
     using System.Web.Mvc;
     using System.Web.Routing;
 
+    using UI;
+    using Resources;
     using Extensions;
     using Infrastructure;
-    using Resources;
 
     /// <summary>
     /// Builder class for fluently configuring <see cref="SiteMapNode"/>.
@@ -133,6 +134,17 @@ namespace Telerik.Web.Mvc
         public virtual SiteMapNodeBuilder Route(string routeName)
         {
             return Route(routeName, (object) null);
+        }
+
+        /// <summary>
+        /// Sets the action to which the date should navigate
+        /// </summary>
+        /// <param name="routeValues">The route values of the Action method.</param>
+        public SiteMapNodeBuilder Action(RouteValueDictionary routeValues)
+        {
+            siteMapNode.Action(routeValues);
+
+            return this;
         }
 
         /// <summary>
@@ -336,7 +348,7 @@ namespace Telerik.Web.Mvc
 
         private void SetRouteValues(ICollection<KeyValuePair<string, object>> values)
         {
-            if (!values.IsNullOrEmpty())
+            if (values != null && values.Any())
             {
                 siteMapNode.RouteValues.Clear();
                 siteMapNode.RouteValues.AddRange(values);

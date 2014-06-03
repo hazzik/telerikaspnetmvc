@@ -3,535 +3,328 @@
     var $t = $.telerik;
 
     var sharedCalendar = null;
-    var dateCheck = /\d/;
 
-    $.extend($t.datetime, {
+    $t.datetime.parseByToken = function (value, today) {
+        if (value === null || value === '') return null;
 
-        parse: function (value, format, today, minDate, maxDate) {
-            format = $t.calendar.standardFormat(format) ? $t.calendar.standardFormat(format) : format;
-            if (dateCheck.test(value))
-                return $t.datetime.parseMachineDate(value, format, minDate, maxDate);
+        today = today || new $t.datetime(); // required for unit tests
+        var firstToken = null;
+        var secondToken = null;
+        var tokenType = null;
+        var pos = 0;
 
-            return $t.datetime.parseByToken(value, today, minDate, maxDate);
-        },
-
-        parseMachineDate: function (value, format, minDate, maxDate) {
-            var year = -1;
-            var month = -1;
-            var day = -1;
-            var hours = 0;
-            var minutes = 0;
-            var seconds = 0;
-            var shortYearCutoff = '+10';
-            var isPM;
-            var literal = false;
-
-            // Returns count of the format character in the date format string
-            var lookAhead = function (match) {
-                var index = 0;
-                while (Matches(match)) {
-                    index++;
-                    formatPosition++
-                }
-                return index;
-            };
-            var lookForLiteral = function () {
-                var matches = Matches("'");
-                if (matches)
-                    formatPosition++;
-                return matches;
-            };
-            var Matches = function (match) {
-                return (formatPosition + 1 < format.length && format.charAt(formatPosition + 1) == match);
+        var Matches = function (name) {
+            var token = null;
+            if (name && value.substring(pos, pos + name.length).toLowerCase() == name.toLowerCase()) {
+                token = name;
             }
-            // Extract a number from the string value
-            var getNumber = function (size) {
-                var digits = new RegExp('^\\d{1,' + size + '}');
-                var num = value.substr(currentTokenIndex).match(digits);
-                if (num) {
-                    currentTokenIndex += num[0].length;
-                    return parseInt(num[0], 10);
-                } else {
-                    return -1;
-                }
-            };
-            // Extract a name from the string value and convert to an index
-            var getName = function (names) {
-                for (var i = 0; i < names.length; i++) {
-                    if (value.substr(currentTokenIndex, names[i].length) == names[i]) {
-                        currentTokenIndex += names[i].length;
-                        return i + 1;
-                    }
-                }
-                return -1;
-            };
+            return token;
+        }
 
-            var checkLiteral = function () {
-                if (value.charAt(currentTokenIndex) == format.charAt(formatPosition)) {
-                    currentTokenIndex++;
-                }
-            };
+        var searchForDayMonth = function () {
+            var token = null;
+            $.each(['days', 'abbrDays', 'months', 'abbrMonths'], function (index, key) {
+                if (token !== null) return;
 
-            var count = 0;
-            var currentTokenIndex = 0;
-            var valueLength = value.length;
-
-            for (var formatPosition = 0, flength = format.length; formatPosition < flength; formatPosition++) {
-                if (currentTokenIndex == valueLength) break;
-                if (literal) {
-                    checkLiteral();
-                    if (format.charAt(formatPosition) == "'")
-                        literal = false;
-                } else {
-                    switch (format.charAt(formatPosition)) {
-                        case 'd':
-                            count = lookAhead('d');
-                            day = count <= 1 ? getNumber(2) : getName($t.cultureInfo[count == 3 ? 'days' : 'abbrDays']);
-                            break;
-                        case 'M':
-                            count = lookAhead('M');
-                            month = count <= 1 ? getNumber(2) : getName($t.cultureInfo[count == 3 ? 'months' : 'abbrMonths']);
-                            break;
-                        case 'y':
-                            count = lookAhead('y');
-                            year = getNumber(count <= 1 ? 2 : 4);
-                            break;
-                        case 'H': // 0-24 hours
-                            hours = getNumber(lookAhead('H') + 1)
-                            break;
-                        case 'h': // 0-12 hours
-                            hours = getNumber(lookAhead('h') + 1)
-                            break;
-                        case 'm':
-                            minutes = getNumber(lookAhead('m') + 1)
-                            break;
-                        case 's':
-                            seconds = getNumber(lookAhead('s') + 1)
-                            break;
-                        case 't': // AM/PM or A/P
-                            count = lookAhead('t');
-                            var timeConversion = value.substr(currentTokenIndex, count + 1).toLowerCase();
-                            isPM = timeConversion == 'pm' || timeConversion == 'p';
-                        case "'":
-                            checkLiteral();
-                            literal = true;
-                            break;
-                        default:
-                            checkLiteral();
-                    }
-                }
-            }
-
-            var tempDate = new $t.datetime();
-            if (year == -1)
-                year = tempDate.year();
-            else if (year < 100)
-                year += tempDate.year() - tempDate.year() % 100 +
-                                (year <= shortYearCutoff ? 0 : -100);
-
-            var date = new $t.datetime(year, month - 1, day, isPM ? hours + 12 : hours, minutes, seconds);
-
-            if (year == -1 || month == -1 || day == -1)
-                return null;
-
-            if (minDate && maxDate)
-                date = $t.calendar.isInRange(date, minDate, maxDate) ? date : null;
-
-            return date;
-        },
-
-        parseByToken: function (value, today, minDate, maxDate) {
-            today = today || new $t.datetime(); // required for unit tests
-            var firstToken = null;
-            var secondToken = null;
-            var tokenType = null;
-            var pos = 0;
-
-            var Matches = function (name) {
-                var token = null;
-                if (name && value.substring(pos, pos + name.length).toLowerCase() == name.toLowerCase()) {
-                    token = name;
-                }
-                return token;
-            }
-
-            var searchForDayMonth = function () {
-                var token = null;
-                $.each(['days', 'abbrDays', 'months', 'abbrMonths'], function (index, key) {
+                $.each($t.cultureInfo[key], function (index, name) {
                     if (token !== null) return;
-
-                    $.each($t.cultureInfo[key], function (index, name) {
-                        if (token !== null) return;
-                        token = Matches(name);
-                    });
-
-                    tokenType = key;
+                    token = Matches(name);
                 });
-                return token;
-            }
 
-            var adjustDate = function () {
-                var gap;
-                var modifyDate = function (mod, isday) {
-                    today[isday ? 'date' : 'month']
+                tokenType = key;
+            });
+            return token;
+        }
+
+        var adjustDate = function () {
+            var gap;
+            var modifyDate = function (mod, isday) {
+                today[isday ? 'date' : 'month']
                     (today[isday ? 'date' : 'month']()
                      + (gap != 0 ? ((gap + ((gap > 0 ? 1 : -1) * mod)) % mod) : 0)
                         + (secondToken ?
                             (firstToken == $t.cultureInfo['next'] ? 1 : -1) * mod : 0));
-                }
-                var arrayPosition = $.inArray(secondToken || firstToken, $t.cultureInfo[tokenType]);
-                if (tokenType.toLowerCase().indexOf('day') > -1) {
-                    gap = (arrayPosition == 0 ? 7 : arrayPosition) - today.day();
-                    modifyDate(7, true)
-                } else {
-                    gap = arrayPosition - today.month();
-                    modifyDate(12, false)
-                }
             }
+            var arrayPosition = $.inArray(secondToken || firstToken, $t.cultureInfo[tokenType]);
+            if (tokenType.toLowerCase().indexOf('day') > -1) {
+                gap = (arrayPosition == 0 ? 7 : arrayPosition) - today.day();
+                modifyDate(7, true)
+            } else {
+                gap = arrayPosition - today.month();
+                modifyDate(12, false)
+            }
+        }
 
-            var adjustDateBySecondToken = function () {
-                var gapDiff = function (possition) {
-                    var gap;
-                    switch (secondToken) {
-                        case 'year': gap = possition == 1 ? 1 : 0; break;
-                        case 'month': gap = possition == 2 ? 1 : 0; break;
-                        case 'week': gap = possition == 3 ? 7 : 0; break;
-                        case 'day': gap = possition == 3 ? 1 : 0; break;
-                    }
-                    return gap;
+        var adjustDateBySecondToken = function () {
+            var gapDiff = function (possition) {
+                var gap;
+                switch (secondToken) {
+                    case 'year': gap = possition == 1 ? 1 : 0; break;
+                    case 'month': gap = possition == 2 ? 1 : 0; break;
+                    case 'week': gap = possition == 3 ? 7 : 0; break;
+                    case 'day': gap = possition == 3 ? 1 : 0; break;
                 }
-                var direction = (firstToken == $t.cultureInfo['next'] ? 1 : -1);
-                today.year(
+                return gap;
+            }
+            var direction = (firstToken == $t.cultureInfo['next'] ? 1 : -1);
+            today.year(
                     today.year() + gapDiff(1) * direction,
                     today.month() + gapDiff(2) * direction,
                     today.date() + gapDiff(3) * direction
                 );
-            }
-
-            // search for first token
-            $.each(['today', 'tomorrow', 'yesterday', 'next', 'last'], function (index, name) {
-                if (firstToken !== null) return;
-                firstToken = Matches($t.cultureInfo[name]);
-            })
-
-            if (firstToken !== null) {
-                pos += firstToken.length;
-
-                if (/[^\s\d]\s+[^\s\d]/i.test(value)) {
-                    pos++;
-                    $.each(['year', 'month', 'week', 'day'], function (index, name) {
-                        if (secondToken !== null) return;
-                        secondToken = Matches($t.cultureInfo[name]);
-                    })
-                    tokenType = null;
-
-                    if (secondToken === null) {
-                        secondToken = searchForDayMonth();
-                    }
-                    if (secondToken === null)
-                        return null; // invalid date.
-                } else {
-                    switch (firstToken) {
-                        case $t.cultureInfo['today']: break;
-                        case $t.cultureInfo['tomorrow']:
-                            today.date(today.date() + 1);
-                            break;
-                        case $t.cultureInfo['yesterday']:
-                            today.date(today.date() - 1);
-                            break;
-                        default:
-                            today = null; // incorrect token
-                            break;
-                    }
-                    if (minDate && maxDate)
-                        today = $t.calendar.isInRange(today, minDate, maxDate) ? today : null;
-
-                    return today;
-                }
-
-            } else {
-                firstToken = searchForDayMonth();
-                if (firstToken != null) {
-                    adjustDate();
-
-                    if (minDate && maxDate)
-                        today = $t.calendar.isInRange(today, minDate, maxDate) ? today : null;
-                    return today;
-                } else {
-                    return null;
-                }
-            }
-
-            // first and second tokens are not null
-            if (tokenType !== null)
-                adjustDate();
-            else // second token is year, month, week, day
-                adjustDateBySecondToken();
-
-            if (minDate && maxDate)
-                today = $t.calendar.isInRange(today, minDate, maxDate) ? today : null;
-
-            return today;
         }
-    });
 
-    $t.datepicker = function (element, options) {
-        this.element = element;
-        this.isValueChanged = false;
+        // search for first token
+        $.each(['today', 'tomorrow', 'yesterday', 'next', 'last'], function (index, name) {
+            if (firstToken !== null) return;
+            firstToken = Matches($t.cultureInfo[name]);
+        })
 
-        $.extend(this, options);
+        if (firstToken !== null) {
+            pos += firstToken.length;
 
-        $('> .t-icon', element)
-            .bind('click', $t.delegate(this, this.togglePopup))
+            if (/[^\s\d]\s+[^\s\d]/i.test(value)) {
+                pos++;
+                $.each(['year', 'month', 'week', 'day'], function (index, name) {
+                    if (secondToken !== null) return;
+                    secondToken = Matches($t.cultureInfo[name]);
+                })
+                tokenType = null;
 
-        this.$input = $('.t-input', element)
-                    .keydown($t.delegate(this, this.keyDown))
-                    .focus($t.delegate(this, this.show))
-                    .attr('autocomplete', 'off');
+                if (secondToken === null) {
+                    secondToken = searchForDayMonth();
+                }
+                if (secondToken === null)
+                    return null; // invalid date.
+            } else {
+                switch (firstToken) {
+                    case $t.cultureInfo['today']: break;
+                    case $t.cultureInfo['tomorrow']:
+                        today.date(today.date() + 1);
+                        break;
+                    case $t.cultureInfo['yesterday']:
+                        today.date(today.date() - 1);
+                        break;
+                    default:
+                        today = null; // incorrect token
+                        break;
+                }
 
-        this.focusedDate = this.selectedDate || ($t.calendar.isInRange(this.focusedDate, this.minDate, this.maxDate)
-                                                                ? this.focusedDate : new $t.datetime(this.minDate.value));
+                return today;
+            }
 
-        $t.bind(this, {
-            open: this.onOpen,
-            close: this.onClose,
-            change: this.onChange,
-            load: this.onLoad
-        });
+        } else {
+            firstToken = searchForDayMonth();
+            if (firstToken != null) {
+                adjustDate();
+                return today;
+            } else {
+                return null;
+            }
+        }
+
+        // first and second tokens are not null
+        if (tokenType !== null)
+            adjustDate();
+        else // second token is year, month, week, day
+            adjustDateBySecondToken();
+
+        return today;
+    };
+
+    function defineFocusedDate(focusedValue, selectedValue, minValue, maxValue) {
+        if (!focusedValue)
+            focusedValue = new $t.datetime();
+
+        if (selectedValue)
+            focusedValue = new $t.datetime(selectedValue.toDate());
+        else
+            focusedValue = $t.calendar.isInRange(focusedValue, minValue, maxValue)
+                        ? focusedValue
+                        : new $t.datetime(minValue.value);
+
+        return focusedValue;
     }
 
-    $.extend($t.datepicker, {
-        hideSharedCalendar: function (e) {
+    /*
+    options.minValue
+    options.maxValue
+    options.selectedValue
+    options.effects
+    options.onChange
+    options.isRtl
+    options.zIndex
+    */
 
-            var associatedDatePicker = sharedCalendar.data('associatedDatePicker');
+    $t.dateView = function (options) {
+        $.extend(this, options);
+        this.isValueChanged = false;
 
-            if (associatedDatePicker) {
-                if ($.contains(associatedDatePicker, e.target) || $.contains(sharedCalendar[0], e.target))
-                    return;
+        this.focusedValue = defineFocusedDate(null, this.selectedValue, this.minValue, this.maxValue);
 
-                var datepicker = $(associatedDatePicker).data('tDatePicker');
-                if (!datepicker)
-                    datepicker = $(associatedDatePicker).tDatePicker().data('tDatePicker');
-                datepicker.parseDate($('.t-input', associatedDatePicker).val());
-                datepicker.hide();
-            }
-        },
+        this.$calendar = this._createSharedCalendar();
+    }
 
-        adjustDate: function (viewIndex, date, monthValue, otherViewValue) {
-            if (viewIndex == 0)
-                $t.datetime.modify(date, $t.datetime.msPerDay * monthValue);
-            else if (viewIndex == 1)
-                date.addMonth(otherViewValue);
-            else
-                date.addYear((viewIndex == 2 ? otherViewValue : 10 * otherViewValue));
-        }
-    });
-
-    $t.datepicker.prototype = {
-        enable: function () {
-            this.$input.attr('disabled', false);
-            $('.t-icon', this.element).unbind('click').bind('click', $t.delegate(this, this.togglePopup));
-        },
-
-        disable: function (e) {
-            this.$input.attr('disabled', true);
-            $('.t-icon', this.element).unbind('click').bind('click', $t.preventDefault);
-        },
-
-        $calendar: function () {
+    $t.dateView.prototype = {
+        _createSharedCalendar: function () {
             if (!sharedCalendar) {
-                sharedCalendar = $($t.calendar.html(this.focusedDate, this.selectedDate, this.minDate, this.maxDate))
-                                    .hide()
-                                    .addClass('t-datepicker-calendar')
-                                    .bind('click', function (e) { e.stopPropagation(); })
-                                    .appendTo(document.body)
-                                    .tCalendar({
-                                        selectedDate: this.selectedDate,
-                                        minDate: this.minDate,
-                                        maxDate: this.maxDate
-                                    });
-                $(document).bind('mousedown', $t.datepicker.hideSharedCalendar);
+                sharedCalendar = $($t.calendar.html(this.focusedValue, this.selectedValue, this.minValue, this.maxValue))
+                                .hide()
+                                .addClass('t-datepicker-calendar')
+                                .bind('click', function (e) { e.stopPropagation(); })
+                                .appendTo(document.body)
+                                .tCalendar({
+                                    selectedValue: this.selectedValue,
+                                    minDate: this.minValue,
+                                    maxDate: this.maxValue
+                                });
+
+                $t.fx._wrap(sharedCalendar);
+
+                if ($.browser.msie && $.browser.version <= 6)
+                    $('<iframe class="t-iframe-overlay" src="javascript:false;"></iframe>')
+                    .prependTo(sharedCalendar)
+                    .height(sharedCalendar.height());
             }
-
-            // reposition & rewire the shared calendar
-
-            var elementPosition = $(this.element).offset();
-
-            elementPosition.top += $(this.element).height();
-
-            var animationContainer = $t.fx._wrap(sharedCalendar);
-
-            animationContainer.css($.extend({
-                position: 'absolute'
-            }, elementPosition));
-
-            var calendar = sharedCalendar.data('tCalendar');
-
-            if (sharedCalendar.data('associatedDatePicker') != this.element) {
-                calendar.minDate = this.minDate;
-                calendar.maxDate = this.maxDate;
-                calendar.selectedDate = this.selectedDate;
-                calendar.goToView(0, this.focusedDate);
-
-                sharedCalendar
-                    .unbind('change')
-                    .bind('change', $.proxy(this.calendarChange, this))
-                    .unbind('navigate')
-                    .bind('navigate', $.proxy(this.viewedMonthChanged, this))
-                    .data('associatedDatePicker', this.element);
-
-                if (this.selectedDate)
-                    this.value(this.focusedDate); // if selectedDate - the focusedDate = selectedDate.
-            }
-
-            var viewIndex = calendar.currentView.index;
-
-            if (!sharedCalendar.is(':visible') && calendar.viewedMonth.value - this.focusedDate.value != 0) {
-                calendar.goToView(viewIndex, this.focusedDate)
-                        .value(this.selectedDate);
-            }
-
-            $t.calendar.focusDate(this.focusedDate, viewIndex, sharedCalendar);
 
             return sharedCalendar;
         },
 
-        isOpened: function () {
-            return sharedCalendar && sharedCalendar.data('associatedDatePicker') == this.element && sharedCalendar.is(':visible');
+        _getCalendar: function () {
+            return sharedCalendar.data('tCalendar');
         },
 
-        viewedMonthChanged: function (e) {
+        _reassignSharedCalendar: function () {
+            var calendar = this._getCalendar();
 
-            var calendar = sharedCalendar.data('tCalendar');
-            var viewedMonth = calendar.viewedMonth;
+            if (sharedCalendar.data('associatedDateView') != this) {
+                sharedCalendar.stop(true, true);
+
+                this.focusedValue = defineFocusedDate(this.focusedValue, this.selectedValue, this.minValue, this.maxValue);
+
+                calendar.minDate = this.minValue;
+                calendar.maxDate = this.maxValue;
+                calendar.selectedValue = this.selectedValue;
+                calendar.goToView(0, this.focusedValue);
+
+                sharedCalendar
+                    .unbind('change')
+                    .bind('change', $.proxy(function (e) {
+                        var selectedValue = this.selectedValue;
+                        var newValue = new $t.datetime(e.date);
+                        if (selectedValue !== null)
+                            newValue.hours(selectedValue.hours())
+                                    .minutes(selectedValue.minutes())
+                                    .seconds(selectedValue.seconds())
+                                    .milliseconds(selectedValue.milliseconds());
+                        this.onChange(newValue);
+                    }, this))
+                    .unbind('navigate')
+                    .bind('navigate', $.proxy(function (e) {
+                        var focusedValue = this.focusedValue;
+                        var viewedMonth = calendar.viewedMonth;
+                        var viewIndex = calendar.currentView.index;
+
+                        if (viewIndex == 0)
+                            focusedValue = this.selectedValue ? new $t.datetime(this.selectedValue.toDate()) : focusedValue;
+                        else
+                            focusedValue.year(viewedMonth.year(), viewedMonth.month(), focusedValue.date());
+
+                        $t.calendar.focusDate(focusedValue, viewIndex, sharedCalendar, e.direction);
+
+                    }, this))
+                    .data('associatedDateView', this);
+
+                if (this.selectedValue)
+                    calendar.value(this.selectedValue);
+
+                $t.calendar.focusDate(this.focusedValue, calendar.currentView.index, sharedCalendar);
+            }
+        },
+
+        open: function (position) {
+            if (this.isOpened())
+                return;
+
+            this._reassignSharedCalendar();
+
+            var isRtl = this.isRtl;
+            var $calendar = this.$calendar;
+
+            // reposition & rewire the shared calendar
+            elementPosition = position.offset;
+            elementPosition.top += position.outerHeight;
+
+            if (isRtl)
+                elementPosition.left -= (sharedCalendar.outerWidth() || sharedCalendar.parent().outerWidth()) - position.outerWidth;
+
+            $t.fx._wrap(sharedCalendar).css($.extend({
+                position: 'absolute',
+                direction: isRtl ? 'rtl' : '',
+                display: sharedCalendar.is(':visible') ? '' : 'none'
+            }, elementPosition));
+
+            var calendar = this._getCalendar();
             var viewIndex = calendar.currentView.index;
 
-            if (viewIndex == 0) {
-                this.focusedDate = this.selectedDate || this.focusedDate;
-            } else {
-                this.focusedDate.year(viewedMonth.year(), viewedMonth.month(), this.focusedDate.date());
+            if (!sharedCalendar.is(':visible') && calendar.viewedMonth.value - this.focusedValue.value != 0) {
+                calendar.goToView(viewIndex, this.focusedValue)
+                        .value(this.selectedValue);
             }
-            $t.calendar.focusDate(this.focusedDate, viewIndex, sharedCalendar, e.direction);
+
+            $t.calendar.focusDate(this.focusedValue, calendar.currentView.index, sharedCalendar);
+
+            $t.fx._wrap($calendar).css('zIndex', position.zIndex).show();
+
+            $t.fx.play(this.effects, $calendar, { direction: 'bottom' });
         },
 
-        value: function (date) {
-            if (arguments.length == 0) return this.selectedDate === null ? null : this.selectedDate.toDate();
-
-            var parsedValue = date === null ? null : date.getDate || date.value ? date : this.parse(date);
-            var isNull = parsedValue === null;
-
-            this.selectedDate = isNull ? null : parsedValue.value ? parsedValue : new $t.datetime(parsedValue);
-            if (!isNull) this.focusedDate = this.selectedDate;
-
-            this.$input.val(isNull ? '' : $t.calendar.formatDate(this.selectedDate.toDate(), this.format));
-
+        close: function () {
             if (this.isOpened())
-                this.$calendar().data('tCalendar').value(this.selectedDate);
-
-            return this;
-        },
-
-        calendarChange: function (e) {
-
-            var newlySelectedDate = new $t.datetime(e.date);
-
-            if (this.checkSelectedDate(this.selectedDate, newlySelectedDate))
-                return this;
-
-            this.$input.removeClass('t-state-error');
-            this.hide();
-        },
-
-        checkSelectedDate: function (selectedDate, newlySelectedDate) {
-            if (!selectedDate || (selectedDate.value > newlySelectedDate.value || newlySelectedDate.value > selectedDate.value)) {
-
-                this.value(newlySelectedDate);
-
-                return $t.trigger(this.element, 'change', {
-                    previousDate: selectedDate === null ? null : selectedDate.toDate(),
-                    date: newlySelectedDate.toDate()
-                });
-            }
-        },
-
-        togglePopup: function (e) {
-            e.preventDefault();
-            var $input = this.$input;
-
-            if (this.isOpened()) {
-                this.parseDate($input.val());
-                $input.blur();
-                this.hide();
-            } else {
-                $input[0].focus();
-            }
-        },
-
-        showPopup: function () {
-            var parsedValue = this.parse($(':input', this.element).val());
-            this.selectedDate = parsedValue;
-            if (parsedValue !== null)
-                this.focusedDate = new $t.datetime(parsedValue.value);
-
-            var calendar = this.$calendar();
-            if (calendar) {
-                var zIndex = 'auto';
-
-                $(this.element).parents().andSelf().each(function () {
-                    zIndex = $(this).css('zIndex');
-                    if (Number(zIndex)) {
-                        zIndex = Number(zIndex) + 1;
-                        return false;
-                    }
-                });
-
-                $t.fx._wrap(calendar).css('zIndex', zIndex).show();
-
-                $t.fx.play(this.effects, calendar, { direction: 'bottom' });
-            }
-        },
-
-        hidePopup: function () {
-            if (this.isOpened())
-                $t.fx.rewind(this.effects, this.$calendar(), { direction: 'bottom' }, function () {
+                $t.fx.rewind(this.effects, this.$calendar, { direction: 'bottom' }, function () {
                     if (sharedCalendar)
                         $t.fx._wrap(sharedCalendar).hide();
                 });
         },
 
-        show: function () {
-            this.showPopup();
-            $t.trigger(this.element, 'open');
+        isOpened: function () {
+            return sharedCalendar && sharedCalendar.data('associatedDateView') == this && sharedCalendar.is(':visible');
         },
 
-        hide: function () {
-            if (this.isOpened())
-                $t.trigger(this.element, 'close');
-            this.hidePopup();
+        value: function (value) {
+            if (value === undefined)
+                return this.selectedValue.toDate();
+
+            var isNull = value === null;
+            var calendar = this._getCalendar();
+
+            //set selected date
+            if (!isNull)
+                value = value.value ? value : new $t.datetime(value);
+
+            calendar.value(value);
+            this.selectedValue = value;
+
+            //update focused date;
+            if (isNull)
+                value = new $t.datetime();
+
+            this.focusedValue = new $t.datetime(value.toDate());
+            $t.calendar.focusDate(value, calendar.currentView.index, sharedCalendar);
         },
 
-        keyDown: function (e) {
-            var inputValue = $(e.target).val();
-
-            if (e.keyCode == 9) { // tab button
-                this.parseDate(inputValue);
-                this.hide();
-            }
-
-            if (e.keyCode == 27) //escape button
-                this.hide();
-
+        navigate: function (e) {
             if (this.isOpened() && $('.t-overlay', sharedCalendar).length > 0)
                 return;
 
             var isFuture;
             var isNavProcessed = false;
-            var $calendar = this.$calendar();
-            var calendar = $calendar.data('tCalendar');
+            var $calendar = this.$calendar;
+            var calendar = this._getCalendar();
             var viewedMonth = calendar.viewedMonth;
             var currentView = calendar.currentView;
-            var viewIndex = calendar.currentView.index;
-            var date = new $t.datetime(this.focusedDate.value)
+            var viewIndex = currentView.index;
+            var date = new $t.datetime(this.focusedValue.value)
 
             var navigate = function (className, method, futureNav) {
                 if (!$(className, $calendar).hasClass('t-state-disabled')) {
@@ -560,141 +353,345 @@
                 return true;
             }
 
+            var adjustDate = $t.datepicker.adjustDate;
+
             if ($calendar.is(':visible') && !e.shiftKey) {
+                isNavProcessed = true;
                 switch (e.keyCode) {
                     case 37: // left arrow
-                        isNavProcessed = true;
                         if (e.ctrlKey) {
                             if (!navPrevNext('.t-nav-prev', 'navigateToPast')) return;
                         } else {
-                            $t.datepicker.adjustDate(viewIndex, date, -1, -1); // date modified by reference
+                            adjustDate(viewIndex, date, -1, -1); // date modified by reference
                             if (currentView.navCheck(date, viewedMonth, false))
                                 if (!navigate('.t-nav-prev', 'navigateToPast')) return;
                         }
                         break;
                     case 38: // up arrow
-                        isNavProcessed = true;
                         if (e.ctrlKey) {
                             navigate('.t-nav-fast', 'navigateUp');
                         } else {
-                            $t.datepicker.adjustDate(viewIndex, date, -7, -4); // date modified by reference
+                            adjustDate(viewIndex, date, -7, -4); // date modified by reference
                             if (currentView.navCheck(date, viewedMonth, false))
                                 if (!navigate('.t-nav-prev', 'navigateToPast')) return;
                         }
                         break;
                     case 39: // right arrow
-                        isNavProcessed = true;
                         if (e.ctrlKey) {
                             if (!navPrevNext('.t-nav-next', 'navigateToFuture', true)) return;
                         } else {
-                            $t.datepicker.adjustDate(viewIndex, date, 1, 1); // date modified by reference
+                            adjustDate(viewIndex, date, 1, 1); // date modified by reference
                             if (currentView.navCheck(date, viewedMonth, true))
                                 if (!navigate('.t-nav-next', 'navigateToFuture', true)) return;
                         }
                         break;
                     case 40: //down arrow
-                        isNavProcessed = true;
                         if (e.ctrlKey) {
                             navigateDown();
                         } else {
-                            $t.datepicker.adjustDate(viewIndex, date, 7, 4); // date modified by reference
+                            adjustDate(viewIndex, date, 7, 4); // date modified by reference
                             if (currentView.navCheck(date, viewedMonth, true))
                                 if (!navigate('.t-nav-next', 'navigateToFuture', true)) return;
                         }
                         break;
                     case 33: // page up
                         if (!navPrevNext('.t-nav-prev', 'navigateToPast')) return;
-                        isNavProcessed = true;
                         break;
                     case 34: //page down
                         if (!navPrevNext('.t-nav-next', 'navigateToFuture', true)) return;
-                        isNavProcessed = true;
                         break;
                     case 35: //end
                         date = $t.calendar.views[viewIndex].firstLastDay(date, false, calendar);
-                        isNavProcessed = true;
                         break;
                     case 36: //home
                         date = $t.calendar.views[viewIndex].firstLastDay(date, true, calendar);
-                        isNavProcessed = true;
                         break;
                     case 13: // enter
-                        if (this.isValueChanged) {
-                            this.parseDate(inputValue);
-                            this.isValueChanged = false;
-                            break;
-                        }
-                        isNavProcessed = true;
-                        if (viewIndex == 0) {
-                            $(e.target).removeClass('t-state-error');
-                            if (this.checkSelectedDate(this.selectedDate, this.focusedDate))
-                                return;
-                            this.hide();
-                        } else navigateDown();
+                        e.stopPropagation();
+
+                        if (viewIndex == 0)
+                            this.onChange(this.focusedValue);
+                        else
+                            navigateDown();
                         break;
-                }
-            } else {
-                if (e.altKey && e.keyCode == 40) {
-                    this.show();
-                    var result = this.parseDate(inputValue);
-                    if (inputValue != "" && result === null)
-                        isNavProcessed = true;
-                } else if (e.keyCode == 13) {
-                    this.parseDate(inputValue);
+                    default:
+                        isNavProcessed = false;
+                        break;
                 }
             }
 
             if (isNavProcessed) {
                 e.preventDefault();
-                date = $t.calendar.fitDateToRange(date, this.minDate, this.maxDate);
+                date = $t.calendar.fitDateToRange(date, this.minValue, this.maxValue);
 
                 $t.calendar.focusDate(date, viewIndex, $calendar, isFuture);
-                this.focusedDate = date;
-            } else {
-                var key = e.keyCode;
-                var isInRange = function (code, min, max) { return code > min && code < max; }
-                if (isInRange(key, 47, 57) || isInRange(key, 65, 90) || isInRange(key, 95, 105) //check if digit or other allowed key is pressed
-                    || key == 8 || key == 32 || key == 47)
-                    this.isValueChanged = true;
+                this.focusedValue = date;
             }
-        },
-
-        parseDate: function (value) {
-            var result = null;
-            var setNull = function () {
-                this.selectedDate = null;
-                if (this.isOpened()) {
-                    this.$calendar().data('tCalendar').selectedDate = null;
-                    $('.t-state-selected', this.$calendar()).removeClass('t-state-selected');
-                }
-            }
-            if (value != "") {
-                result = this.parse(value, this.format);
-                var isNull = result === null;
-
-                if (!isNull) {
-                    this.focusedDate = result;
-
-                    if (this.checkSelectedDate(this.selectedDate, result))
-                        return;
-                } else {
-                    $.proxy(setNull, this)();
-                }
-
-                this.$input
-                    .toggleClass('t-state-error', isNull)
-                    .val(isNull ? value : $t.calendar.formatDate(result.toDate(), this.format));
-            } else {
-                this.$input.removeClass('t-state-error');
-                $.proxy(setNull, this)();
-            }
-            return result;
-        },
-
-        parse: function (value, format, today) {
-            return $t.datetime.parse(value, format || this.format, today, this.minDate, this.maxDate);
         }
     }
+
+    $.each(['min', 'max'], $.proxy(function (index, method) {
+        $t.dateView.prototype[method] =
+            function (value) {
+                var propertyName = method + 'Value';
+                if (value === undefined)
+                    return this[propertyName].toDate();
+
+                this[propertyName] = value.value ? value : new $t.datetime(value);
+                sharedCalendar.data("associatedDateView", null);
+                this._reassignSharedCalendar();
+            };
+    }, this));
+
+    $t.datepicker = function (element, options) {
+        this.element = element;
+
+        $.extend(this, options);
+
+        var $input = this.$input = $('.t-input', element)
+                         .attr('autocomplete', 'off')
+                         .bind({
+                             change: function (e) { e.stopPropagation(); },
+                             keydown: $.proxy(this._keydown, this),
+                             focus: $.proxy(function (e) {
+                                 this._change($input.val());
+                                 this._open();
+                                 this.$input.removeClass('t-state-error');
+                             }, this)
+                         });
+
+        this.inputValue = $input.val();
+
+        this.dateView = new $t.dateView({
+            selectedValue: this.selectedValue,
+            minValue: this.minDate,
+            maxValue: this.maxDate,
+            effects: this.effects,
+            isRtl: $input.closest('.t-rtl').length,
+            onChange: $.proxy(function (value) {
+                this._change(value);
+                this._close();
+            }, this)
+        });
+
+        $('.t-icon-calendar', element)
+            .bind('click', this.enabled
+                           ? $.proxy(this._togglePopup, this)
+                           : $t.preventDefault);
+
+        $(document.documentElement).bind('mousedown', $.proxy(function (e) {
+            if (!sharedCalendar) return;
+
+            var associatedDateView = sharedCalendar.data('associatedDateView');
+            if (associatedDateView && associatedDateView == this.dateView) {
+                if ($.contains(element, e.target)
+                || $.contains(sharedCalendar[0], e.target))
+                    return;
+
+                this._change(this.$input.val());
+                this._close();
+            }
+        }, this));
+
+        $t.bind(this, {
+            open: this.onOpen,
+            close: this.onClose,
+            change: this.onChange,
+            load: this.onLoad
+        });
+    }
+
+    $t.datepicker.prototype = {
+        _togglePopup: function () {
+            var $input = this.$input;
+
+            if (this.dateView.isOpened()) {
+                this._change($input.val());
+                this._close();
+            } else {
+                $input[0].focus();
+            }
+        },
+
+        _close: function () {
+            if (!sharedCalendar.is(':animated') && this.dateView.isOpened())
+                this._trigger('close');
+        },
+
+        _open: function () {
+            if (!this.dateView.isOpened())
+                this._trigger('open');
+        },
+
+        _trigger: function (methodName) {
+            if (!$t.trigger(this.element, methodName))
+                this[methodName]();
+        },
+
+        _change: function (newValue) {
+            var selectedValue = this.selectedValue;
+            var parsedValue = this.parse(newValue);
+
+            if (parsedValue != null) {
+                if (parsedValue.value - this.minDate.value <= 0) {
+                    parsedValue = this.minDate;
+                }
+                else if (parsedValue.value - this.maxDate.value >= 0) {
+                    parsedValue = this.maxDate;
+                }
+            }
+
+            if ((selectedValue === null && parsedValue !== null)
+            || (selectedValue !== null && parsedValue === null)
+            || (selectedValue && parsedValue && (selectedValue.value > parsedValue.value
+                                                || parsedValue.value > selectedValue.value))) {
+
+                $t.trigger(this.element, 'change', {
+                    previousValue: selectedValue === null ? null : selectedValue.toDate(),
+                    value: parsedValue === null ? null : parsedValue.toDate(),
+                    previousDate: selectedValue === null ? null : selectedValue.toDate(),
+                    date: parsedValue === null ? null : parsedValue.toDate()
+                });
+            }
+
+            if (parsedValue == null || this.inputValue != newValue)
+                this._value(parsedValue);
+        },
+
+        _keydown: function (e) {
+            var keyCode = e.keyCode;
+            var inputValue = e.target.value;
+
+            if (keyCode == 9) { // tab button
+                this._change(inputValue);
+                this._close();
+            } else if (keyCode == 27) {//escape button
+                this._close();
+            } else if (keyCode == 13 && (this.inputValue != inputValue || !this.dateView.isOpened())) {
+                this._change(inputValue);
+                this._close();
+            } else if (e.altKey) {
+                if (keyCode == 40)
+                    this._open();
+                else if (keyCode == 38)
+                    this._close();
+            } else {
+                this.dateView.navigate(e);
+            }
+        },
+
+        enable: function () {
+            this.$input.attr('disabled', false);
+            $(this.element).removeClass('t-state-disabled')
+                  .find('.t-icon')
+                  .unbind('click')
+                  .bind('click', $.proxy(this._togglePopup, this));
+        },
+
+        disable: function (e) {
+            this.$input.attr('disabled', true);
+            $(this.element).addClass('t-state-disabled')
+                .find('.t-icon')
+                .unbind('click')
+                .bind('click', $t.preventDefault);
+        },
+
+        _value: function (value) {
+            var text = this.$input.val();
+            var isNull = value === null;
+
+            this.selectedValue = value;
+
+            this.dateView.value(value);
+
+            if (!isNull)
+                text = $t.datetime.format(value.toDate(), this.format);
+
+            this.inputValue = text;
+            this.$input.toggleClass('t-state-error', isNull && text != '')
+                       .val(text);
+        },
+
+        value: function (val) {
+            if (val === undefined)
+                return this.selectedValue === null ? null : this.selectedValue.toDate();
+
+            var parsedValue = this.parse(val);
+            parsedValue = $t.calendar.isInRange(parsedValue, this.minDate, this.maxDate) ? parsedValue : null;
+
+            if (parsedValue === null)
+                this.$input.removeClass('t-state-error').val('');
+
+            this._value(parsedValue);
+
+            return this;
+        },
+
+        //obsolete
+        showPopup: function () {
+            this.open();
+        },
+
+        //obsolete
+        hidePopup: function () {
+            this.close();
+        },
+
+        open: function () {
+            var $input = this.$input;
+
+            this.dateView.open({
+                offset: $input.offset(),
+                outerHeight: $input.outerHeight(),
+                outerWidth: $input.outerWidth(),
+                zIndex: $t.getElementZIndex($input[0])
+            });
+        },
+
+        close: function () {
+            this.dateView.close();
+        },
+
+        parse: function (value, format) {
+            if (value === null || value.value)
+                return value;
+
+            return value.getDate
+                   ? new $t.datetime(value)
+                   : $t.datetime.parse({
+                       value: value,
+                       format: format || this.format,
+                       shortYearCutOff: this.shortYearCutOff
+                   });
+        }
+    }
+
+    $.each(["min", "max"], $.proxy(function (index, method) {
+        $t.datepicker.prototype[method] =
+        function (value) {
+            var propertyName = method + 'Date';
+            if (value === undefined)
+                return this[propertyName].toDate();
+
+            var parsedValue = this.parse(value);
+            if (parsedValue !== null) {
+                this[propertyName] = parsedValue;
+                this.dateView[method](parsedValue);
+                this._change(parsedValue);
+            }
+        };
+    }, this));
+
+    $.extend($t.datepicker, {
+        adjustDate: function (viewIndex, date, monthValue, otherViewValue) {
+            if (viewIndex == 0)
+                $t.datetime.modify(date, $t.datetime.msPerDay * monthValue);
+            else if (viewIndex == 1)
+                date.addMonth(otherViewValue);
+            else
+                date.addYear((viewIndex == 2 ? otherViewValue : 10 * otherViewValue));
+        }
+    });
 
     $.fn.tDatePicker = function (options) {
         return $t.create(this, {
@@ -708,11 +705,12 @@
 
     $.fn.tDatePicker.defaults = {
         effects: $t.fx.slide.defaults(),
-        selectedDate: null,
+        selectedValue: null,
         format: $t.cultureInfo.shortDate,
-        focusedDate: new $t.datetime(),
         minDate: new $t.datetime(1899, 11, 31),
-        maxDate: new $t.datetime(2100, 0, 1)
+        maxDate: new $t.datetime(2100, 0, 1),
+        shortYearCutOff: 30,
+        enabled: true
     };
 
 })(jQuery);

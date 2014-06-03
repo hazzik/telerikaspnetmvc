@@ -126,8 +126,14 @@
   <data name="FontName" xml:space="preserve">
     <value>Шрифт</value>
   </data>
+  <data name="FontNameInherit" xml:space="preserve">
+    <value>(наследен шрифт)</value>
+  </data>
   <data name="FontSize" xml:space="preserve">
     <value>Размер на шрифта</value>
+  </data>
+  <data name="FontSizeInherit" xml:space="preserve">
+    <value>(наследен размер)</value>
   </data>
   <data name="FormatBlock" xml:space="preserve">
     <value>Избери формат</value>

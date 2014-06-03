@@ -21,6 +21,9 @@ namespace Telerik.Web.Mvc.UI
         public override IDictionary<string, object> Serialize()
         {
             var result = base.Serialize();
+            
+            result["title"] = column.Title;
+
             var commands = new List<IDictionary<string,object>>();
             
             column.Commands.Each(c =>
