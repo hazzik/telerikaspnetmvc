@@ -33,7 +33,7 @@ namespace Telerik.Web.Mvc.UI.Html
              
             var insertItem = creator.CreateInsertItem();
 
-            if (insertItem != null)
+            if (insertItem != null && groupLevel == 0)
             {
                 counter++;
                 yield return insertItem;

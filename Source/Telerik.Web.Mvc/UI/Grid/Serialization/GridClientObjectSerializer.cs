@@ -38,27 +38,49 @@ namespace Telerik.Web.Mvc.UI
             new GridUrlFormatSerializer<T>(grid).SerializeTo(writer);
 
             grid.Editing.SerializeTo("editing", writer);
+            var shouldSerializeDataSource = false;
+
 #if MVC2 || MVC3          
             if (grid.OutputValidation)
             {
                 writer.AppendObject("validationMetadata", grid.ValidationMetadata);
             }
+
+            shouldSerializeDataSource = grid.Editing.Enabled && grid.IsClientBinding && !grid.IsEmpty;
 #endif
             grid.Grouping.SerializeTo("grouping", writer);
             grid.Paging.SerializeTo("paging", writer);
             grid.Sorting.SerializeTo("sorting", writer);
             grid.Selection.SerializeTo("selection", writer);
+
+            if (grid.DataBinding.IsClientOperationMode)
+            {
+                writer.Append("operationMode", "client");
+                shouldSerializeDataSource = true;
+            }
+
+            grid.KeyboardNavigation.SerializeTo("keyboardNavigation", writer);
+
+            if (shouldSerializeDataSource)
+            {
+                grid.SerializeDataSource(writer);
+            }
+
             grid.Ajax.SerializeTo("ajax", writer);
             grid.WebService.SerializeTo("ws", writer);
             grid.ClientEvents.SerializeTo("clientEvents", writer);
-            grid.Localization.SerializeTo("localization", writer);
-
+            grid.Localization.SerializeTo("localization", writer);            
             if (grid.DetailView != null)
             {
                 grid.DetailView.SerializeTo("detail", writer);
             }
 
-            writer.Append("noRecordsTemplate", grid.NoRecordsTemplate);
+            if (grid.ClientRowTemplate.HasValue())
+            {
+                writer.Append("rowTemplate", grid.IsSelfInitialized ? grid.ClientRowTemplate.Replace("<", "%3c").Replace(">", "%3e") : grid.ClientRowTemplate);
+            }
+
+            writer.Append("noRecordsTemplate", grid.NoRecordsTemplate);                
         }
     }
 }

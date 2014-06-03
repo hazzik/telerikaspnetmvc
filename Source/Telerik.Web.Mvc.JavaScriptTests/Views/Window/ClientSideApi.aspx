@@ -25,96 +25,143 @@
 
 <asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
-<script type="text/javascript">    
+    <script type="text/javascript">    
 
-    var oWindow;
+        var oWindow;
 
-    function getWindow(selector) {
-        return $(selector || '#Window').data('tWindow');
-    }
-    
-    module("Window / ClientSideApi", {
-        setup: function() {
-            oWindow = getWindow();
-        },
-        teardown: function() {
+        function getWindow(selector) {
+            return $(selector || '#Window').data('tWindow');
         }
-    });
     
-    test('title gets title', function() {
-        equal(oWindow.title(), 'Title');
-    });
+        module("Window / ClientSideApi", {
+            setup: function() {
+                oWindow = getWindow();
+            },
+            teardown: function() {
+            }
+        });
     
-    test('title sets title', function() {
-        var oldTitle = oWindow.title();
-        var titleElement = $('.t-window-title', oWindow.element);
-
-        oWindow.title('Title is the new title!');
-
-        equal(titleElement.text(), 'Title is the new title!');
-
-        oWindow.title(oldTitle);
-
-        equal(titleElement.text(), oldTitle);
-    });
+        test('title gets title', function() {
+            equal(oWindow.title(), 'Title');
+        });
     
-    test('content gets content', function() {
-        equal(oWindow.content(), 'Content');
-    });
+        test('title sets title', function() {
+            var oldTitle = oWindow.title();
+            var titleElement = $('.t-window-title', oWindow.element);
+
+            oWindow.title('Title is the new title!');
+
+            equal(titleElement.text(), 'Title is the new title!');
+
+            oWindow.title(oldTitle);
+
+            equal(titleElement.text(), oldTitle);
+        });
     
-    test('content sets content', function() {
-        var oldContent = oWindow.content();
-        var contentElement = $('.t-window-content', oWindow.element);
+        test('content gets content', function() {
+            equal(oWindow.content(), 'Content');
+        });
+    
+        test('content sets content', function() {
+            var oldContent = oWindow.content();
+            var contentElement = $('.t-window-content', oWindow.element);
 
-        oWindow.content('Content is the new content!');
+            oWindow.content('Content is the new content!');
 
-        equal(contentElement.text(), 'Content is the new content!');
+            equal(contentElement.text(), 'Content is the new content!');
 
-        oWindow.content(oldContent);
+            oWindow.content(oldContent);
         
-        equal(contentElement.text(), oldContent);
-    });
+            equal(contentElement.text(), oldContent);
+        });
 
-    test('open of modal window adds overlay if it does not exist', function() {
-        $('body > .t-overlay').remove();
+        test('open of modal window adds overlay if it does not exist', function() {
+            $('body > .t-overlay').remove();
 
-        getWindow('#ModalWindow').open();
+            getWindow('#ModalWindow').open();
 
-        equal($('body > .t-overlay').length, 1);
-    });
+            equal($('body > .t-overlay').length, 1);
+        });
 
-    test('dblclick on resizable window title maximizes window', function() {
-        var $window = $('<div />').tWindow();
+        test('dblclick on resizable window title maximizes window', function() {
+            var $window = $('<div />').tWindow();
 
-        $window.find('.t-window-titlebar').trigger('dblclick');
+            $window.find('.t-window-titlebar').trigger('dblclick');
 
-        ok($window.data('tWindow').isMaximized);
-    });
+            ok($window.data('tWindow').isMaximized);
+        });
 
-    test('dblclick on non resizable window title does not maximize window', function() {
-        var $window = $('<div />').tWindow({ resizable: false });
+        test('dblclick on non resizable window title does not maximize window', function() {
+            var $window = $('<div />').tWindow({ resizable: false });
 
-        $window.find('.t-window-titlebar').trigger('dblclick');
+            $window.find('.t-window-titlebar').trigger('dblclick');
 
-        ok(!$window.data('tWindow').isMaximized);
-    });
+            ok(!$window.data('tWindow').isMaximized);
+        });
 
-    test('open method set offset left and top to auto', function() {
-        var $window = $('#Window1');
-        $.telerik.window.create($window[0], {});
+        test('open method set offset left and top to auto', function() {
+            var $window = $('#Window1');
+            $.telerik.window.create($window[0], {});
        
-        var initialOffset = $window.show().offset();
-        $window.hide();
+            var initialOffset = $window.show().offset();
+            $window.hide();
 
-        $window.tWindow().data('tWindow').open();
+            $window.tWindow().data('tWindow').open();
 
-        var afterOpenOffset = $window.offset();
+            var afterOpenOffset = $window.offset();
         
-        equal(afterOpenOffset.left - 20, parseInt(initialOffset.left));
-        equal(afterOpenOffset.top - 20, parseInt(initialOffset.top));
-        $window.tWindow().data('tWindow').close();
-    });
+            equal(afterOpenOffset.left - 20, parseInt(initialOffset.left));
+            equal(afterOpenOffset.top - 20, parseInt(initialOffset.top));
+            $window.tWindow().data('tWindow').close();
+        });
 
-</script>
+        test('title function works after client-side creation', function () {
+            var wnd = $.telerik.window.create({
+                    title: 'foo',
+                    modal: false
+                });
+
+            equal(wnd.find('.t-window-title').text(), 'foo');
+
+            wnd.data('tWindow').title('bar');
+
+            equal(wnd.find('.t-window-title').text(), 'bar');
+        });
+
+        test('destroying a modal window moves overlay before previous window', function() {
+            $(".t-window,.t-overlay").remove();
+
+            var dialog = $t.window.create({
+                html: "foo",
+                modal: true
+            });
+
+            var overlappingDialog = $t.window.create({
+                html: "bar",
+                modal: true
+            });
+
+            overlappingDialog.data("tWindow").destroy();
+            ok(dialog.prev("div").is(".t-overlay"));
+        });
+
+        test('closing a modal window moves overlay before previous window', function() {
+            $(".t-window,.t-overlay").remove();
+
+            var dialog = $t.window.create({
+                html: "foo",
+                modal: true
+            });
+
+            var overlappingDialog = $t.window.create({
+                html: "bar",
+                modal: true
+            });
+
+            overlappingDialog.data("tWindow").close();
+            ok(dialog.prev("div").is(".t-overlay"));
+        });
+
+    </script>
 
 </asp:Content>

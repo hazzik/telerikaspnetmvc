@@ -235,10 +235,10 @@
     <value>Brak danych</value>
   </data>
   <data name="CancelChanges" xml:space="preserve">
-    <value>Cancel Changes</value>
+    <value>Anuluj zmiany</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Zapisz zmiany</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Odśwież</value>

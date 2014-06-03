@@ -30,6 +30,7 @@ namespace Telerik.Web.Mvc.Infrastructure
             globalization["monthYear"] = dateTimeFormats.YearMonthPattern;
             globalization["days"] = dateTimeFormats.DayNames;
             globalization["abbrDays"] = dateTimeFormats.AbbreviatedDayNames;
+            globalization["shortestDays"] = dateTimeFormats.ShortestDayNames;
             globalization["abbrMonths"] = dateTimeFormats.AbbreviatedMonthNames;
             globalization["months"] = dateTimeFormats.MonthNames;
             globalization["am"] = dateTimeFormats.AMDesignator;

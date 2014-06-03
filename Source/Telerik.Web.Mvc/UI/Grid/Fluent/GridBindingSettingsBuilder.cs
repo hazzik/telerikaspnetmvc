@@ -13,7 +13,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
     /// <summary>
     /// Defines the fluent interface for building <see cref="GridBindingSettings"/>
     /// </summary>
-    public class GridBindingSettingsBuilder : IHideObjectMembers
+    public class GridBindingSettingsBuilder<T> : IHideObjectMembers where T : GridBindingSettingsBuilder<T>
     {
         private GridBindingSettings settings;
 
@@ -43,11 +43,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <remarks>
         /// The Enabled method is useful when you need to enable binding based on certain conditions.
         /// </remarks>
-        public GridBindingSettingsBuilder Enabled(bool value)
+        public T Enabled(bool value)
         {
             settings.Enabled = value;
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -65,11 +65,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(RouteValueDictionary routeValues)
+        public T Select(RouteValueDictionary routeValues)
         {
             settings.Select.Action(routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -89,11 +89,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(string actionName, string controllerName, RouteValueDictionary routeValues)
+        public T Select(string actionName, string controllerName, RouteValueDictionary routeValues)
         {
             settings.Select.Action(actionName, controllerName, routeValues);
             
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -113,11 +113,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(string actionName, string controllerName, object routeValues)
+        public T Select(string actionName, string controllerName, object routeValues)
         {
             settings.Select.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(string actionName, string controllerName)
+        public T Select(string actionName, string controllerName)
         {
             return Select(actionName, controllerName, (object)null);
         }
@@ -157,11 +157,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(string routeName, RouteValueDictionary routeValues)
+        public T Select(string routeName, RouteValueDictionary routeValues)
         {
             settings.Select.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -180,11 +180,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(string routeName, object routeValues)
+        public T Select(string routeName, object routeValues)
         {
             settings.Select.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select(string routeName)
+        public T Select(string routeName)
         {
             return Select(routeName, (object)null);
         }
@@ -223,11 +223,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Select<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
+        public T Select<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             settings.Select.Action(controllerAction);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -245,11 +245,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(RouteValueDictionary routeValues)
+        public T Insert(RouteValueDictionary routeValues)
         {
             settings.Insert.Action(routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -269,11 +269,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(string actionName, string controllerName, RouteValueDictionary routeValues)
+        public T Insert(string actionName, string controllerName, RouteValueDictionary routeValues)
         {
             settings.Insert.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -293,11 +293,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(string actionName, string controllerName, object routeValues)
+        public T Insert(string actionName, string controllerName, object routeValues)
         {
             settings.Insert.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(string actionName, string controllerName)
+        public T Insert(string actionName, string controllerName)
         {
             return Insert(actionName, controllerName, (object)null);
         }
@@ -337,11 +337,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(string routeName, RouteValueDictionary routeValues)
+        public T Insert(string routeName, RouteValueDictionary routeValues)
         {
             settings.Insert.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -360,11 +360,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(string routeName, object routeValues)
+        public T Insert(string routeName, object routeValues)
         {
             settings.Insert.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert(string routeName)
+        public T Insert(string routeName)
         {
             return Insert(routeName, (object)null);
         }
@@ -403,11 +403,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Insert<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
+        public T Insert<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             settings.Insert.Action(controllerAction);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -425,11 +425,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(RouteValueDictionary routeValues)
+        public T Update(RouteValueDictionary routeValues)
         {
             settings.Update.Action(routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -449,11 +449,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(string actionName, string controllerName, RouteValueDictionary routeValues)
+        public T Update(string actionName, string controllerName, RouteValueDictionary routeValues)
         {
             settings.Update.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -473,11 +473,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(string actionName, string controllerName, object routeValues)
+        public T Update(string actionName, string controllerName, object routeValues)
         {
             settings.Update.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -496,7 +496,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(string actionName, string controllerName)
+        public T Update(string actionName, string controllerName)
         {
             return Update(actionName, controllerName, (object)null);
         }
@@ -517,11 +517,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(string routeName, RouteValueDictionary routeValues)
+        public T Update(string routeName, RouteValueDictionary routeValues)
         {
             settings.Update.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -540,11 +540,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(string routeName, object routeValues)
+        public T Update(string routeName, object routeValues)
         {
             settings.Update.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -562,7 +562,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update(string routeName)
+        public T Update(string routeName)
         {
             return Update(routeName, (object)null);
         }
@@ -583,11 +583,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Update<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
+        public T Update<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             settings.Update.Action(controllerAction);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -605,11 +605,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(RouteValueDictionary routeValues)
+        public T Delete(RouteValueDictionary routeValues)
         {
             settings.Delete.Action(routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -629,11 +629,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(string actionName, string controllerName, RouteValueDictionary routeValues)
+        public T Delete(string actionName, string controllerName, RouteValueDictionary routeValues)
         {
             settings.Delete.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -653,11 +653,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(string actionName, string controllerName, object routeValues)
+        public T Delete(string actionName, string controllerName, object routeValues)
         {
             settings.Delete.Action(actionName, controllerName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -676,7 +676,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(string actionName, string controllerName)
+        public T Delete(string actionName, string controllerName)
         {
             return Delete(actionName, controllerName, (object)null);
         }
@@ -697,11 +697,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(string routeName, RouteValueDictionary routeValues)
+        public T Delete(string routeName, RouteValueDictionary routeValues)
         {
             settings.Delete.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -720,11 +720,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(string routeName, object routeValues)
+        public T Delete(string routeName, object routeValues)
         {
             settings.Delete.Route(routeName, routeValues);
 
-            return this;
+            return (T) this;
         }
 
         /// <summary>
@@ -742,7 +742,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete(string routeName)
+        public T Delete(string routeName)
         {
             return Delete(routeName, (object)null);
         }
@@ -763,11 +763,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBindingSettingsBuilder Delete<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
+        public T Delete<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             settings.Delete.Action(controllerAction);
 
-            return this;
+            return (T) this;
         }
     }
 }

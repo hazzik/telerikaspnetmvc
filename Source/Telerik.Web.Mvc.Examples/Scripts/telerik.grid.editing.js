@@ -1,6 +1,8 @@
 ﻿(function ($) {
 
-    var $t = $.telerik, dateRe = /^\/Date\((.*?)\)\/$/;
+    var $t = $.telerik, dateRe = /^\/Date\((.*?)\)\/$/, customFormatRegEx = /[0#?]/, numberTypeRegExp = /[npc?]/;
+
+    $t.scripts.push("telerik.grid.editing.js");
 
     var UnobtrusiveValidator = function (formId) {
         this.formId = formId;
@@ -55,7 +57,7 @@
                     unobtrusive.parseElement(this, true);
                 });
 
-                $("form").each(function () {
+                $(selector).each(function () {
                     var info = unobtrusive.validationInfo(this);
                     if (info) {
                         info.attachValidation();
@@ -248,21 +250,23 @@
                 return match && match.index == 0 && match[0].length == value.length;
             });
 
-            $.validator.addMethod('number', function (value, element) {
+             $.validator.addMethod('number', function (value, element) {
                 var groupSize = $t.cultureInfo.numericgroupsize;
-                var builder = new $t.stringBuilder();
+                if (groupSize) {
+                    var builder = new $t.stringBuilder();
 
-                builder.cat('^-?(?:\\d+|\\d{1,')
-					   .cat(groupSize)
-					   .cat('}(?:')
-					   .cat($t.cultureInfo.numericgroupseparator)
-					   .cat('\\d{')
-					   .cat(groupSize)
-					   .cat('})+)(?:\\')
-					   .cat($t.cultureInfo.numericdecimalseparator)
-					   .cat('\\d+)?$');
-
-                return this.optional(element) || new RegExp(builder.string()).test(value);
+                    builder.cat('^-?(?:\\d+|\\d{1,')
+                        .cat(groupSize)
+                        .cat('}(?:')
+                        .cat($t.cultureInfo.numericgroupseparator)
+                        .cat('\\d{')
+                        .cat(groupSize)
+                        .cat('})+)(?:\\')
+                        .cat($t.cultureInfo.numericdecimalseparator)
+                        .cat('\\d+)?$');
+                    return this.optional(element) || (builder && new RegExp(builder.string()).test(value));
+                }
+                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/.test(value);
             });
         },
         parse: function () {
@@ -466,11 +470,11 @@
                                 grid.cancel();
                         });
     }
-    
+
     function flatten(result, value, prefix) {
         for (var key in value) {
             if ($.isPlainObject(value[key])) {
-                flatten(result, value, prefix ? prefx + "." + key : key);
+                flatten(result, value, prefix ? prefix + "." + key : key);
             } else {
                 result[prefix ? prefix + "." + key : key] = value[key];
             }
@@ -480,11 +484,11 @@
     function unflatten(value) {
         for (var key in value) {
             var firstMemberIndex = key.indexOf(".");
-            
+
             if (firstMemberIndex > -1) {
                 var firstMember = key.substring(0, firstMemberIndex);
                 var child = value[firstMember] || {};
-                child[key.substring(firstMemberIndex +1)] = value[key];
+                child[key.substring(firstMemberIndex + 1)] = value[key];
                 value[firstMember] = unflatten(child);
 
                 delete value[key];
@@ -495,7 +499,7 @@
 
     function sanitizeDates(dataItem) {
         var member, value, date;
-        
+
         for (member in dataItem) {
             value = dataItem[member];
             if (typeof value === "string") {
@@ -527,17 +531,19 @@
 
             if (grid.editing.mode == 'InCell') {
                 sanitizeDates(grid.editing.defaultDataItem || {});
-                
+
                 grid.changeLog = new $t.grid.ChangeLog(grid.pageSize || (grid.data && grid.data.length) || 0);
 
                 $(grid.element).bind('dataBound', function () {
                     grid.changeLog.clear();
+                    grid.valid = true;
+                    grid.td = null;
                 });
 
                 grid.cellEditor = new $t.grid.CellEditor(
                     {
                         columns: grid.columns,
-                        cellIndex: function (td) { return td.index(); },
+                        cellIndex: function (td) { return grid.cellIndex(td); },
                         id: grid.formId(),
                         bind: $.proxy(grid.formViewBinder.bind, grid.formViewBinder),
                         validate: $.proxy(grid.validation, grid)
@@ -557,16 +563,18 @@
                 }
 
                 grid.submitChanges = function () {
-                    if (grid.changeLog.dirty()) {
+                    if (grid.changeLog.dirty() && grid.validate()) {
 
                         var inserted = grid.changeLog.inserted;
                         var updated = $.grep(grid.changeLog.updated, function (value) { return value != undefined });
                         var deleted = $.grep(grid.changeLog.deleted, function (value) { return value != undefined });
+                        var additionalValues = {};
 
                         if ($t.trigger(grid.element, 'submitChanges', {
                             inserted: inserted,
                             updated: updated,
-                            deleted: deleted
+                            deleted: deleted,
+                            values: additionalValues
                         })) {
                             return;
                         }
@@ -577,14 +585,15 @@
                             deleted: $.map(deleted, function (value) { return grid._convert(value); })
                         } : grid.changeLog.serialize(inserted, updated, deleted);
 
-                        grid.sendValues(values, 'updateUrl');
+                        grid.sendValues($.extend(values, additionalValues), 'updateUrl');
                     }
                 }
 
                 grid.cancelChanges = function () {
-                    grid.changeLog.clear();
-                    grid.dataBind(grid.data.slice(0));
+                    grid.changeLog.clear();                    
                     grid.valid = true;
+                    grid.td = null;
+                    grid.ajaxRequest();
                 }
 
                 grid.cellIndex = function (td) {
@@ -603,12 +612,16 @@
                     if (grid.valid && (column && !column.readonly)) {
                         grid.td = td;
 
+                        if(grid.form().length) {                            
+                            $.data(grid.form()[0], 'validator', null);
+                        }
+
                         td = $(td);
                         var tr = td.parent();
                         var index = grid.rowIndex(tr);
-                        
+
                         var dataItem = grid.changeLog.get(index) || grid.dataItem(tr);
-                        
+
                         dirtyIndicator = td.find('.t-dirty');
 
                         grid.cellEditor.edit(td, dataItem);
@@ -628,7 +641,7 @@
                         td = $(td);
                         var tr = td.parent();
                         var dataItem = grid.dataItem(tr);
-                        
+
                         var values = unflatten(grid.modelBinder.bind(td));
 
                         var dirty = false;
@@ -645,11 +658,11 @@
                         if (tr.hasClass('t-grid-new-row')) {
                             grid.changeLog.insert(grid.rowIndex(tr), values);
                         } else {
-                            
+
                             dirty = grid.changeLog.update(grid.rowIndex(tr), dataItem, values);
                         }
-                        
-                        grid.cellEditor.display(td, values);
+
+                        grid.cellEditor.display(td, $.extend(true, {}, dataItem, values));
                         if (dirty || tr.hasClass('t-grid-new-row')) {
                             dirtyIndicator = $('<span class="t-dirty" />');
                         }
@@ -662,12 +675,28 @@
                     }
                 }
 
+                grid.cancelCell = function (td) {
+                    td = $(td);
+                    var tr = td.parent(),
+                        index = grid.rowIndex(tr),                        
+                        dataItem = grid.changeLog.get(index) || grid.dataItem(tr);
+                    
+                    grid.valid = true;
+                    grid.cellEditor.display(td, dataItem);                    
+                    if (dirtyIndicator && dirtyIndicator.length) {
+                        dirtyIndicator.prependTo(grid.td)
+                    }                    
+                    grid.td = null;
+                }
+
                 grid.td = null;
-                grid.$tbody.delegate('td:not(.t-grid-edit-cell)', grid.editing.beginEdit || 'click', function (e) {
-                    grid.editCell(this);
+                grid.$tbody.delegate('tr:not(.t-grouping-row,.t-no-data) > td:not(.t-detail-cell,.t-grid-edit-cell,.t-group-cell,.t-hierarchy-cell)', grid.editing.beginEdit || 'click', function (e) {
+                    if ($(this).closest("tbody")[0] == grid.$tbody[0]) {
+                        grid.editCell(this);
+                    }
                 });
 
-                $(document).mousedown(function (e) {
+                $(document).mousedown(function (e) {                    
                     if (grid.td && !$.contains(grid.td, e.target) && grid.td != e.target && !$(e.target).closest('.t-animation-container').length) {
                         grid.saveCell(grid.td);
                     }
@@ -701,33 +730,43 @@
 
         grid.errorView = new $t.grid.ErrorView();
 
-        var builder = new $t.grid.DataCellBuilder({ columns: grid.columns });
+        var builder = new $t.grid.DataCellBuilder({ columns: grid.columns, rowTemplate: grid.rowTemplate });
 
         var column = $.grep(grid.columns, function (c) {
             return c.commands && $.grep(c.commands, function (cmd) { return cmd.name == 'edit' })[0];
         })[0];
+
+        if (!column) {
+            column = { commands: [{ name: "edit", buttonType: "Text"}] };
+            column.insert = grid.insertFor(column);
+            column.edit = grid.editFor(column);
+        }
 
         var formContainerBuilder = new $t.grid.FormContainerBuilder({
             html: function () { return unescape(grid.editing.editor) },
             insert: function () { return column.insert() },
             edit: function () { return column.edit() }
         });
-        
+
         var editMode = grid.editing.mode;
+        var groups = function () {
+            return (grid.groups || []).length;
+        };
+
         if (editMode == 'InLine') {
             grid.rowEditor = new $t.grid.Editor({
                 id: grid.formId(),
                 cancel: builder.display,
                 edit: builder.edit,
                 insert: builder.insert,
-                groups: (grid.groups || []).length,
+                groups: groups,
                 details: grid.detail
             });
         } else if (editMode == 'InForm') {
             grid.rowEditor = new $t.grid.Editor({
                 id: grid.formId(),
                 cancel: builder.display,
-                groups: (grid.groups || []).length,
+                groups: groups,
                 details: grid.detail,
                 edit: function () {
                     return '<td colspan="' + grid.columns.length + '">' +
@@ -761,13 +800,15 @@
             });
         }
 
-        $element.delegate(':input:not(.t-button):not(textarea)', 'keydown', function (e) {
-            if (e.keyCode == 13 || e.keyCode == 27) {
-                e.preventDefault();
-                var keyMap = { 13: '.t-grid-update, .t-grid-insert', 27: '.t-grid-cancel' };
-                $(this).closest('tr').find(keyMap[e.keyCode]).click();
-            }
-        });
+        if(!grid.keyboardNavigation) {
+            $element.delegate(':input:not(.t-button):not(textarea)', 'keydown', $t.stop(function (e) {
+                if (e.keyCode == 13 || e.keyCode == 27) {
+                    e.preventDefault();
+                    var keyMap = { 13: '.t-grid-update, .t-grid-insert', 27: '.t-grid-cancel' };
+                    $(this).closest('tr').find(keyMap[e.keyCode]).click();
+                }
+            }));
+        }
     }
 
     $t.editing.implementation = {
@@ -828,14 +869,19 @@
             }
         },
 
-        updateRow: function ($tr) {            
+        updateRow: function ($tr) {
             if (this.validate()) {
                 var dataItem = this.dataItem($tr.data('tr') || $tr);
-                var values = this.extractValues($tr);
+                var values = this.extractValues($tr, (this.editing.mode != 'InCell' || !this.ws));
                 if ($t.trigger(this.element, 'save', { mode: 'edit', dataItem: dataItem, values: values, form: this.form()[0] }))
                     return;
 
-                this.sendValues($.extend(dataItem, values), 'updateUrl');
+                if (this.editing.mode == 'InCell') {
+                    values = $.extend(dataItem, values);
+                }
+
+                sanitizeDates(values);
+                this.sendValues(values, 'updateUrl');
             }
         },
 
@@ -843,14 +889,28 @@
             var dataItem = this.dataItem($tr);
 
             if (this.editing.mode != 'InCell') {
-                if ($t.trigger(this.element, 'delete', { dataItem: dataItem }))
+                var values = this.extractValues($tr, true);
+                if ($t.trigger(this.element, 'delete', { dataItem: dataItem, values: values }))
                     return;
+                
+                if(!this._isServerOperation() && this.dataSource) {
+                    this.deletedIds.push(this.dataSource.id(dataItem));
+                }
 
                 if (this.editing.confirmDelete === false || confirm(this.localization.deleteConfirmation))
-                    this.sendValues(dataItem, 'deleteUrl');
+                    this.sendValues(values, 'deleteUrl');
             } else {
                 if (this.editing.confirmDelete === false || confirm(this.localization.deleteConfirmation)) {
                     this.changeLog.erase(this.rowIndex($tr), dataItem);
+                    if (this.td && $.contains($tr[0], this.td)) {
+                        this.td = null;
+                        this.valid = true;
+                    }
+
+                    if(!this._isServerOperation() && this.dataSource) {
+                        this.deletedIds.push(this.dataSource.id(dataItem));
+                    } 
+
                     this.cancelRow($tr);
                     $tr.hide();
                 }
@@ -900,7 +960,7 @@
 
         addRow: function () {
             var dataItem = $.extend(true, {}, this.editing.defaultDataItem);
-            
+
             if (this.editing.mode != 'InCell') {
                 cancelAll();
 
@@ -919,7 +979,8 @@
 
                 $t.trigger(this.element, 'edit', {
                     mode: 'insert',
-                    form: form[0]
+                    form: form[0],
+                    dataItem: dataItem
                 });
 
                 this.validation();
@@ -937,14 +998,38 @@
                             }
                         }
                     }
-                    
+
+                    $t.trigger(this.element, 'edit', {
+                        mode: 'insert',
+                        form: this.form()[0],
+                        dataItem: dataItem,
+                        cell: this.td
+                    });
+
                     this.validation();
                 }
             }
+
+            if(this.editing.mode != 'PopUp') {
+                this.$tbody.find(" > tr.t-no-data").hide();
+            }
         },
 
-        extractValues: function ($tr) {
-            return this.modelBinder.bind($tr);
+        extractValues: function ($tr, extractKeys) {
+            var values = this.modelBinder.bind($tr);
+
+            if (extractKeys) {
+                var dataItem = this.dataItem($tr.data('tr') || $tr);
+
+                for (var dataKey in this.dataKeys) {
+                    var value = this.valueFor({ member: dataKey })(dataItem);
+                    if (value instanceof Date)
+                        value = $t.formatString('{0:G}', value);
+
+                    values[this.ws ? dataKey : this.dataKeys[dataKey]] = value;
+                }
+            }
+            return values;
         },
 
         cancelRow: function ($tr) {
@@ -955,13 +1040,24 @@
 
             this.rowEditor.cancel($tr, dataItem);
 
+            if ($tr.is('.t-grid-new-row')) {
+                this.$tbody.find(" > tr.t-no-data").show();
+                return;
+            }
+
             $t.trigger(this.element, 'rowDataBound', { row: $tr[0], dataItem: dataItem });
         },
 
         validate: function () {
             var form = this.form();
             if (form.length) {
-                return form.validate().form();
+                var validator = form.validate();
+                var valid = validator.form();
+                if (validator.pendingRequest) {
+                    validator.formSubmitted = true;
+                    return false;
+                }
+                return valid;
             }
             return true;
         },
@@ -969,7 +1065,40 @@
         cancel: function () {
             this.cancelRow(this.$tbody.find('>.t-grid-edit-row'));
         },
+        _dataSource: function() {
+            var that = this,
+                options = this._dataSourceOptions(),
+                routeKeys = [],
+                getters = [];
 
+            $.each(that.dataKeys, function(dataKey, routeKey) {
+                routeKeys.push(routeKey);
+                getters.push($t.getter(dataKey));
+            });
+
+            if (that.isAjax()) {
+                $.extend(true, options, {                    
+                    model: $t.Model.define({
+                        id: function(data, value) {
+                            var keys;
+
+                            if (value === undefined) {
+                                return $.map(getters, function(getter) {
+                                    return getter(data);
+                                }).join("-");
+                            } else {
+                                keys = value.split("-");
+
+                                $.each(routeKeys, function(index, routeKey) {
+                                    data[routeKey] = keys[index]; 
+                                });
+                            }
+                        }
+                    })                    
+                });
+            }
+            that.dataSource = new $t.DataSource(options);
+        },
         _convert: function (values) {
             for (var key in values) {
                 var value = values[key];
@@ -982,8 +1111,22 @@
 
                     values[key] = this.ws ? '\\/Date(' + value.getTime() + ')\\/' : $t.formatString(format, value);
                 }
+                if (typeof value === "number") {
+                    var numericType = "numeric", 
+                        column = this.columnFromMember(key),
+                        format = (column && column.format ? column.format : "N").toLowerCase(),
+                        types = { "n": numericType, "p": "percent", "c": "currency", "#": numericType, "0": numericType };
+
+                    value = value.toString();
+                    var type = format.match(numberTypeRegExp) || format.match(customFormatRegEx);
+                    values[key] = type ? value.replace(".", $t.cultureInfo[types[type] + "decimalseparator"]) : value;
+                }
+
                 if (value == undefined) {
                     delete values[key];
+                }
+                if ($.isPlainObject(value)) {
+                    this._convert(value);
                 }
             }
             return values;
@@ -1000,6 +1143,8 @@
                     }
                 }
             }
+
+            this.showBusy();
 
             $.ajax(this.ajaxOptions({
                 data: this.ws ? (this.editing.mode == 'InCell' ? values : { value: values }) : values,
@@ -1041,13 +1186,20 @@
             if (this.validationMetadata) {
                 return new Mvc2Validator(this.validationMetadata);
             } else {
-                return new UnobtrusiveValidator($("#" + this.formId()));
+                return new UnobtrusiveValidator("#" + this.formId());
             }
         }
     }
 
     $t.grid.ModelBinder = function () {
-        this.binders = {             
+        this.binders = {
+            ':input.t-autocomplete': function () {
+                return $(this).val();
+            },
+            '.t-numerictextbox :input': function () {
+                return $(this).data('tTextBox')
+                              .value();
+            },
             ':input:not(.t-input):not(:radio),:radio:checked': function () {
                 return $(this).val();
             },
@@ -1058,14 +1210,18 @@
                 return $(this).data('tDatePicker')
                               .value();
             },
-            '.t-numerictextbox :input': function () {
-                return $(this).data('tTextBox')
+            '.t-timepicker :input': function () {
+                return $(this).data('tTimePicker')
                               .value();
             },
-            '.t-editor textarea:hidden': function() {
+            '.t-datetimepicker :input': function () {
+                return $(this).data('tDateTimePicker')
+                              .value();
+            },
+            '.t-editor textarea:hidden': function () {
                 var editor = $(this).closest(".t-editor")
                                     .data("tEditor");
-                if(editor.encoded) {
+                if (editor.encoded) {
                     return editor.encodedValue();
                 }
                 return editor.value();
@@ -1089,17 +1245,20 @@
         this.converters = converters || {};
         this.binders = {
             ':input:not(:radio)': function (value) {
+                if (typeof value == 'boolean') {
+                    value = value + "";
+                }
                 $(this).val(value);
             },
             ':checkbox': function (value) {
-                $(this).attr('checked', value == true)
+                $(this).attr('checked', value == true);
             },
-            ':radio': function (value) {                             
+            ':radio': function (value) {
                 var input = $(this).val();
-                if(typeof value == 'boolean') {
+                if (typeof value == 'boolean') {
                     input = input.toLowerCase();
                 }
-                if(input == value.toString()) {
+                if (input == value.toString()) {
                     $(this).attr('checked', true);
                 }
             }
@@ -1113,15 +1272,19 @@
         }
 
         function editorEvaluator() {
-            return function (value) {                                
+            return function (value) {
                 $(this).closest(".t-editor")
                        .data("tEditor")
-                       .value(value);                
+                       .value(value);
             };
         }
 
         this.binders['.t-numerictextbox :input'] = evaluator('tTextBox');
         this.binders['.t-dropdown :input:hidden'] = evaluator('tDropDownList');
+        this.binders['.t-datepicker :input'] = evaluator("tDatePicker");
+        this.binders['.t-datetimepicker :input'] = evaluator("tDateTimePicker");
+        this.binders['.t-timepicker :input'] = evaluator("tTimePicker");
+        this.binders['.t-slider :input'] = evaluator("tSlider");
         this.binders['.t-combobox :input:hidden'] = evaluator('tComboBox');
         this.binders['.t-editor textarea:hidden'] = editorEvaluator();
 
@@ -1131,7 +1294,13 @@
 
                 while (members.length) {
                     var member = members.shift();
-                    if (value != null && typeof (value[member]) != 'undefined') {
+
+                    if (member.indexOf("[") > -1) {
+                        value = new Function("d", "try { return d." + member + "}catch(e){}")(value);                        
+                        if (value != null) {
+                            match = true;
+                        }
+                    }else if (value != null && typeof (value[member]) != 'undefined') {
                         value = value[member];
                         match = true;
                     } else if (match) {
@@ -1172,7 +1341,15 @@
         function impl(dataItem, method) {
 
             return $.map(options.columns, function (column, index) {
-                return '<td ' + (column.attr ? column.attr : '') + (index == options.columns.length - 1 ? ' class="t-last">' : '>') +
+                var className;                
+                
+                if (index == 0 && method == "insert") {
+                    className = "t-grid-edit-cell";     
+                } else if (index == options.columns.length -1 ) {
+                    className = "t-last";
+                }
+
+                return '<td ' + (column.attr ? column.attr : '') + (className? ' class="' + className + '"' : "") + ">" +
                             column[index == 0 ? method : 'display'](dataItem) +
                        '</td>';
             }).join('');
@@ -1210,6 +1387,10 @@
         }
 
         this.display = function (dataItem) {
+            if (options.rowTemplate) {
+                return '<td colspan="' + options.columns.length + '">' + options.rowTemplate(dataItem) + "</td>";
+            }
+
             return impl(dataItem, 'display');
         }
     }
@@ -1257,8 +1438,8 @@
 
             $(options.container).one('dataBound', destroy);
 
-            wnd.find('t-close')
-               .bind('close', $t.stopAll(destroy))
+            wnd.find('.t-close')
+               .click($t.stopAll(destroy))
                .end()
                .data('tWindow')
                .open()
@@ -1282,8 +1463,8 @@
         }
     }
 
-    $t.grid.Editor = function (options) {        
-        var groupsCount = (options.groups || 0);
+    $t.grid.Editor = function (options) {
+        var groups = options.groups || function () { return 0 };
 
         function impl(tr, dataItem, method) {
             var td = tr.find('.t-group-cell,.t-hierarchy-cell');
@@ -1308,12 +1489,12 @@
             }
         }
 
-        this.insert = function (container, dataItem) { 
-            var html = '<tr class="t-grid-new-row">' + 
-                       new Array(groupsCount + 1).join('<td class="t-group-cell" />') +
-                       ((options.details) ? '<td class="t-hierarchy-cell"/>' : "") + 
+        this.insert = function (container, dataItem) {
+            var html = '<tr class="t-grid-new-row">' +
+                       new Array(groups() + 1).join('<td class="t-group-cell" />') +
+                       ((options.details) ? '<td class="t-hierarchy-cell"/>' : "") +
                        '</tr>';
-            var tr = $(html);                        
+            var tr = $(html);
 
             container.prepend(tr);
 
@@ -1409,7 +1590,7 @@
                     destValue = values[member];
 
                 if (sourceValue instanceof Date) {
-                    if (destValue.getTime() !== sourceValue.getTime()) {
+                    if (destValue instanceof Date && destValue.getTime() !== sourceValue.getTime()) {
                         dirty = true;
                     }
                 } else if (destValue !== sourceValue) {
@@ -1458,13 +1639,11 @@
                     for (var member in dataItem) {
                         var value = dataItem[member],
                             key = prefix + '[' + destinationIndex + '].' + member;
-                        
-
 
                         if ($.isPlainObject(value)) {
                             flatten(result, value, key);
                         } else {
-                            result[key] = value; 
+                            result[key] = value;
                         }
                     }
                     destinationIndex++;
@@ -1505,14 +1684,14 @@
                     return true;
                 }
             }
-            
+
             return false;
         }
 
         this.clear();
     }
 
-    $t.grid.ErrorView = function () {        
+    $t.grid.ErrorView = function () {
         this.bind = function ($ui, modelState) {
             $ui.find('span[id$=_validationMessage]')
                .removeClass('field-validation-error')
@@ -1526,7 +1705,7 @@
             $.each(modelState, function (key, value) {
                 if ('errors' in value && value.errors[0]) {
                     var originalKey = key;
-                    key = key.replace('.','_');
+                    key = key.replace('.', '_');
                     $ui.find('#' + key + '_validationMessage, [data-valmsg-for="' + originalKey + '"]')
                        .html(value.errors[0])
                        .removeClass('field-validation-valid')

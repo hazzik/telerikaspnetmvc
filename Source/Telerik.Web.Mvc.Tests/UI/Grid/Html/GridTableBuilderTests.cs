@@ -5,6 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI.Html.Tests
 {
+    using System.Web.Mvc;
     using System.Linq;
     using Xunit;
 
@@ -59,6 +60,19 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
             var col = colGroup.Children[0];
 
             col.Attribute("style").ShouldContain("width:" + width);
+        }
+
+        [Fact]
+        public void Should_set_selfclosing_to_col()
+        {
+            var colData = new[] { new GridColData() };
+            var builder = new GridTableBuilder(colData);
+
+            var table = builder.CreateTable();
+            var colGroup = table.Children[0];
+            var col = colGroup.Children[0];
+
+            col.RenderMode.ShouldEqual(TagRenderMode.SelfClosing);
         }
     }
 }

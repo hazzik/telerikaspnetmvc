@@ -347,19 +347,9 @@ namespace Telerik.Web.Mvc.UI
         public static class Window
         {
             /// <summary>
-            /// Window buttons class
-            /// </summary>
-            public const string Action = "t-window-action";
-
-            /// <summary>
             /// Window content area
             /// </summary>
             public const string Content = "t-window-content";
-
-            /// <summary>
-            /// Window icon
-            /// </summary>
-            public const string Icon = "t-window-icon";
 
             /// <summary>
             /// Window title bar

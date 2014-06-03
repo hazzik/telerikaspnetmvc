@@ -244,6 +244,88 @@
             Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
         }
 
+        [Fact]
+        public void Should_not_throw_if_binding_mode_is_server_and_server_detailView_template_is_used()
+        {
+            grid.Server.Enabled = true;
+
+            grid.DetailView = new GridDetailView<Customer>();
+            grid.DetailView.Template.Html = "foo";
+            Assert.DoesNotThrow(() => grid.VerifySettings());
+        }
+
+        [Fact]
+        public void Should_throw_if_binding_mode_is_ajax_and_server_detailView_template_is_used()
+        {
+            grid.Ajax.Enabled = true;
+
+            grid.DetailView = new GridDetailView<Customer>(); 
+            grid.DetailView.Template.Html = "foo";            
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+
+        [Fact]
+        public void Should_not_throw_if_binding_mode_is_ajax_and_server_detailView_template_is_used_and_client_template_is_set()
+        {
+            grid.Ajax.Enabled = true;
+
+            grid.DetailView = new GridDetailView<Customer>();
+            grid.DetailView.Template.Html = "foo";
+            grid.DetailView.ClientTemplate = "bar";
+            Assert.DoesNotThrow(() => grid.VerifySettings());
+        }
+        [Fact]
+        public void Should_throw_when_using_page_on_scroll_and_paging_disabled()
+        {            
+            grid.Paging.Enabled = false;
+            grid.Paging.PageOnScroll = true;
+
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+
+        [Fact]
+        public void Should_throw_when_using_page_on_scroll_and_scrolling_disabled()
+        {
+            grid.Paging.Enabled = true;
+            grid.Paging.PageOnScroll = true;
+            grid.Scrolling.Enabled = false;
+
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+
+        [Fact]
+        public void Should_throw_when_using_page_on_scroll_and_server()
+        {
+            grid.Server.Enabled = true;
+            grid.Paging.Enabled = true;
+            grid.Paging.PageOnScroll = true;
+
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+
+        [Fact]
+        public void Should_not_throw_when_using_page_on_scroll_and_ajax()
+        {
+            grid.Ajax.Enabled = true;
+            grid.Paging.Enabled = true;
+            grid.Paging.PageOnScroll = true;
+            grid.Scrolling.Enabled = true;
+
+            Assert.DoesNotThrow(() => grid.VerifySettings());
+        }
+
+        [Fact]
+        public void Should_not_throw_when_using_page_on_scroll_and_webservice()
+        {
+            grid.WebService.Enabled = true;
+            grid.WebService.Select.Url = "some url";
+            grid.Paging.Enabled = true;
+            grid.Paging.PageOnScroll = true;
+            grid.Scrolling.Enabled = true;
+
+            Assert.DoesNotThrow(() => grid.VerifySettings());
+        }
+
 #if MVC2 || MVC3
 
         [Fact]
@@ -267,7 +349,19 @@
             grid.Editing.Mode = GridEditMode.InCell;
             Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
         }
-        
+
+        [Fact]
+        public void Should_throw_if_in_cell_mode_is_enabled_client_row_template_is_set()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            grid.DataKeys.Add(new GridDataKey<Customer, int>(c => c.Id));
+            grid.DataBinding.Ajax.Enabled = true;
+            grid.Editing.Enabled = true;
+            grid.Editing.Mode = GridEditMode.InCell;
+            grid.ClientRowTemplate = "foo";
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+
         [Fact]
         public void Should_throw_if_submitChanges_button_is_present_and_edit_mode_is_not_in_cell()
         {

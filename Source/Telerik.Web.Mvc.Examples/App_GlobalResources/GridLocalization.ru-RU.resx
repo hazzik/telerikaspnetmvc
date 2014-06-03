@@ -232,13 +232,13 @@
     <value>истина</value>
   </data>
   <data name="NoRecords" xml:space="preserve">
-    <value>NoRecords</value>
+    <value>Нет записей для отображения</value>
   </data>
   <data name="CancelChanges" xml:space="preserve">
-    <value>Cancel Changes</value>
+    <value>Отменить изменения</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Сохранить изменения</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Обновить</value>

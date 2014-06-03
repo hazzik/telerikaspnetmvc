@@ -1,13 +1,13 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests.Grid
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Data;
+    using System.Linq;
     using Telerik.Web.Mvc.UI;
     using Telerik.Web.Mvc.UI.Html;
     using Xunit;
-    using System.Linq;
 
     public class GridBoundColumnTests
     {
@@ -20,6 +20,18 @@
             }
 
             public Category Category
+            {
+                get;
+                set;
+            }
+
+            public IList<Category> Categories
+            {
+                get;
+                set;
+            }
+
+            public Category[] CategoriesArray
             {
                 get;
                 set;
@@ -122,6 +134,34 @@
 
             Assert.Equal("Category.Owner.Name", column.Member);
         }
+#if MVC2 || MVC3
+        [Fact]
+        public void Name_should_be_extracted_correctly_from_indexer_expression()
+        {
+            var column = new GridBoundColumn<Product, string>(GridTestHelper.CreateGrid<Product>(), p => p.Categories[0].Owner.Name);
+
+            Assert.Equal("Categories[0].Owner.Name", column.Member);
+        }
+
+        [Fact]
+        public void Name_should_be_extracted_correctly_from_indexer_expression_with_bound_argument()
+        {
+            var argument = 0;
+
+            var column = new GridBoundColumn<Product, string>(GridTestHelper.CreateGrid<Product>(), p => p.Categories[argument].Owner.Name);
+
+            Assert.Equal("Categories[0].Owner.Name", column.Member);
+        }
+
+        [Fact]
+        public void Name_should_be_extracted_correctly_from_array_access()
+        {
+            var column = new GridBoundColumn<Product, string>(GridTestHelper.CreateGrid<Product>(), p => p.CategoriesArray[0].Owner.Name);
+
+            Assert.Equal("CategoriesArray[0].Owner.Name", column.Member);
+        }
+
+#endif
 
         [Fact]
         public void Type_should_be_set()
@@ -171,6 +211,35 @@
         public void Should_support_parameter_expression()
         {
             new GridBoundColumn<User, User>(GridTestHelper.CreateGrid<User>(), u => u);
+        }
+
+        [Fact]
+        public void Should_add_attributes_if_hidden()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            var column = new GridBoundColumn<Customer, int>(grid, c => c.Id);
+            column.Hidden = true;
+
+            ((string)column.HtmlAttributes["style"]).ShouldContain("display:none;width:0;");
+        }
+
+        [Fact]
+        public void Should_remove_attributes_if_hidden_is_set_to_false()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            var column = new GridBoundColumn<Customer, int>(grid, c => c.Id);
+            column.Hidden = true;
+            column.Hidden = false;
+            ((string)column.HtmlAttributes["style"]).ShouldNotContain("display:none;width:0;");
+        }
+
+        [Fact]
+        public void Should_not_add_attributes_if_hidden_is_set_to_false()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            var column = new GridBoundColumn<Customer, int>(grid, c => c.Id);         
+            column.Hidden = false;
+            column.HtmlAttributes.ContainsKey("style").ShouldBeFalse();
         }
 
 #if MVC2 || MVC3

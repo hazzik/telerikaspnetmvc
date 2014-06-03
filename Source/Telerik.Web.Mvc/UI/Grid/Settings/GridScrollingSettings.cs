@@ -4,11 +4,11 @@
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
-{
+{    
     public class GridScrollingSettings
-    {
+    {        
         public GridScrollingSettings()
-        {
+        {            
             Height = "200px";
         }
 

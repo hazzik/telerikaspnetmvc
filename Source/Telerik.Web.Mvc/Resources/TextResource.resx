@@ -295,4 +295,16 @@ The request for '{0}' has found the following matching controllers:{2}</value>
   <data name="PropertyMustBePositiveNumber" xml:space="preserve">
     <value>{0} must be positive number.</value>
   </data>
+  <data name="InCellModeNotSupportedWithRowTemplate" xml:space="preserve">
+    <value>InCell editing mode is not supported when ClientRowTemplate is used</value>
+  </data>
+  <data name="CannotUsePageOnScrollWithServerBinding" xml:space="preserve">
+    <value>Cannot use PageOnScroll with Server binding.</value>
+  </data>
+  <data name="PagingMustBeEnabledToUsePageOnScroll" xml:space="preserve">
+    <value>Paging must be enabled to use PageOnScroll.</value>
+  </data>
+  <data name="ScrollingMustBeEnabledToUsePageOnScroll" xml:space="preserve">
+    <value>Scrolling must be enabled to use PageOnScroll.</value>
+  </data>
 </root>

@@ -6,11 +6,15 @@
 namespace Telerik.Web.Mvc.Extensions
 {
     using System.Linq.Expressions;
+    using System.Web.Mvc;
 
     public static class ExpressionExtensions
     {
         public static string MemberWithoutInstance(this LambdaExpression expression)
         {
+#if MVC2 || MVC3
+            return ExpressionHelper.GetExpressionText(expression);
+#else
             MemberExpression memberExpression = expression.ToMemberExpression();
 
             if (memberExpression == null)
@@ -33,6 +37,7 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return memberExpression.Member.Name;
+#endif
         }
 
         public static bool IsBindable(this LambdaExpression expression)

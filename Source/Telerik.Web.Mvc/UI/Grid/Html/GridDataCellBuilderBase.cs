@@ -14,12 +14,13 @@ namespace Telerik.Web.Mvc.UI.Html
         public GridDataCellBuilderBase()
         {
             Decorators = new List<IGridCellBuilderDecorator>();
+            HtmlAttributes = new Dictionary<string, object>();
         }
         
         public IDictionary<string, object> HtmlAttributes
         {
             get;
-            set;
+            private set;
         }
         
         public IHtmlNode CreateCell(object dataItem)

@@ -15,14 +15,15 @@ namespace Telerik.Web.Mvc.Extensions
     {
         public static RouteValueDictionary GridRouteValues(this ControllerBase controller)
         {
-            RouteValueDictionary routeValues = new RouteValueDictionary();
+            var routeValues = new RouteValueDictionary();
 
             foreach (string key in controller.ControllerContext.HttpContext.Request.Params)
             {
                 if (key.EndsWith(GridUrlParameters.CurrentPage, StringComparison.OrdinalIgnoreCase) ||
                     key.EndsWith(GridUrlParameters.Filter, StringComparison.OrdinalIgnoreCase) ||
                     key.EndsWith(GridUrlParameters.OrderBy, StringComparison.OrdinalIgnoreCase) ||
-                    key.EndsWith(GridUrlParameters.GroupBy, StringComparison.OrdinalIgnoreCase))
+                    key.EndsWith(GridUrlParameters.GroupBy, StringComparison.OrdinalIgnoreCase) ||
+                    key.EndsWith(GridUrlParameters.PageSize, StringComparison.OrdinalIgnoreCase))
                 {
                     routeValues[key] = controller.ControllerContext.HttpContext.Request.Params[key];
                 }

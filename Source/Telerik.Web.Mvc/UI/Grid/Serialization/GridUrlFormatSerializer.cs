@@ -6,6 +6,7 @@
 namespace Telerik.Web.Mvc.UI
 {
     using Extensions;
+    using System.Web.Routing;
 
     class GridUrlFormatSerializer<T>
         where T : class
@@ -37,18 +38,21 @@ namespace Telerik.Web.Mvc.UI
                 {
                     grid.Server.Select.RouteValues[grid.Prefix(GridUrlParameters.GroupBy)] = "{2}";
                 }
-                
+
                 if (grid.Filtering.Enabled)
                 {
                     grid.Server.Select.RouteValues[grid.Prefix(GridUrlParameters.Filter)] = "{3}";
                 }
 
-                if (grid.Paging.Enabled && (grid.Paging.Style & GridPagerStyles.PageSizeDropDown) == GridPagerStyles.PageSizeDropDown)
-                {
-                    grid.Server.Select.RouteValues[grid.Prefix(GridUrlParameters.PageSize)] = "{4}";
-                }
+                writer.Append("urlFormat", grid.UrlBuilder.Url(grid.Server.Select, AppendPageSize));
+            }
+        }
 
-                writer.Append("urlFormat", grid.UrlBuilder.Url(grid.Server.Select));
+        private void AppendPageSize(RouteValueDictionary routeValues)
+        {
+            if (grid.Paging.Enabled && (grid.Paging.Style & GridPagerStyles.PageSizeDropDown) == GridPagerStyles.PageSizeDropDown)
+            {
+                routeValues[grid.Prefix(GridUrlParameters.PageSize)] = "{4}";
             }
         }
     }

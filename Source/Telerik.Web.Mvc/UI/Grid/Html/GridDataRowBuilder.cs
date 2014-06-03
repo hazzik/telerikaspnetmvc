@@ -5,7 +5,6 @@
 namespace Telerik.Web.Mvc.UI.Html
 {
     using System.Collections.Generic;
-    using Telerik.Web.Mvc.Infrastructure;
 
     public class GridDataRowBuilder : IGridRowBuilder
     {

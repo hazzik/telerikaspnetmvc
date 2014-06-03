@@ -202,7 +202,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (Aggregates.Any())
             {
-                var dataSource = bindingContext.DataSource.AsQueryable();
+                var dataSource = GetCustomDataSource(bindingContext.DataSource).AsQueryable();
 
                 var source = dataSource;
                 if (FilterDescriptors.Any())

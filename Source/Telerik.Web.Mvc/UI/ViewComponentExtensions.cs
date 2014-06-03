@@ -20,8 +20,8 @@ namespace Telerik.Web.Mvc.UI
                 return result;
             }
 
-            object viewDateValue = instance.ViewContext.ViewData.Eval(instance.Name);
-            return Convert.ToString(viewDateValue) ?? string.Empty;
+            object value = instance.ViewContext.ViewData.Eval(instance.Name);
+            return value != null && value.GetType().IsPredefinedType() ? Convert.ToString(value) : string.Empty;
         }
 
         public static IDictionary<string, object> GetUnobtrusiveValidationAttributes(this IViewComponent instance)

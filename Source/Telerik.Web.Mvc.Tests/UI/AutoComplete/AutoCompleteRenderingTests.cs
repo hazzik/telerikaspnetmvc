@@ -217,18 +217,5 @@
 
             AutoCompleteTestHelper.clientSideObjectWriter.Verify(w => w.Append("encoded", It.IsAny<bool>(), true));
         }
-
-        [Fact]
-        public void WriteInitializationScript_should_encode_Items_collection_if_Encoded_true()
-        {
-            var decodedText = "Test<script>alert('i can haz your data');</script>";
-
-            AutoComplete.Items.Clear();
-            AutoComplete.Items.Add(decodedText);
-
-            AutoComplete.WriteInitializationScript(textWriter.Object);
-
-            Assert.Equal(AutoComplete.Items[0], System.Web.HttpUtility.HtmlEncode(decodedText));
-        }
     }
 }

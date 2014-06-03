@@ -2,8 +2,8 @@
     Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        Expand / Collapse Tests</h2>
+    <h2>Expand / Collapse Tests</h2>
+
     <% Html.Telerik().TreeView()
             .Name("myTreeView")
             .Items(treeview =>
@@ -55,6 +55,10 @@
                     })
                     .Enabled(false)
                     .Expanded(false);
+
+                treeview.Add().Text("Item 7")
+                    .LoadOnDemand(true)
+                    .Content(() => {%>foo<%});
             }
             )
             .Effects(fx => fx.Toggle())
@@ -75,7 +79,7 @@
 
 <asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
         module("TreeView / ExpandCollapse", {
             setup: function() {
@@ -139,6 +143,13 @@
             equal(item.find('.t-group').css("display"), "none");
         });
 
-</script>
+        test('items with content allow to be expanded', function() {
+            var item = $("ul li:nth-child(7)", treeView.element),
+                icon = item.find('.t-icon');
+            
+            equal(icon.css("display"), "block");
+        });
+
+    </script>
 
 </asp:Content>

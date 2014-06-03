@@ -7,12 +7,13 @@
     using System.Globalization;
 
 
-    public class InputComponentExtensionsTests
+    public class InputComponentExtensionsTests: IDisposable
     {
         ViewContext viewContext;
         DatePicker datepicker;
         ValueProviderResult result;
         ModelState state;
+        CultureInfo currentCulture; 
 
         public InputComponentExtensionsTests()
         {
@@ -25,6 +26,12 @@
             state.Value = result;
 
             viewContext.ViewData.ModelState.Add("DatePicker1", state);
+            currentCulture = CultureInfo.CurrentCulture;
+        }
+
+        public void Dispose()
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
         }
 
         [Fact]

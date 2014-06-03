@@ -144,7 +144,7 @@
 
         var firsDayOfWeek = $(html).find('th').eq(0);
 
-        equal(firsDayOfWeek.html(), "T", "FirstDayOfWeek is not get into account");
+        equal(firsDayOfWeek.html(), "Tu", "FirstDayOfWeek is not get into account");
         equal(firsDayOfWeek.attr('title'), "Tuesday", "FirstDayOfWeek is not get into account");
 
         $.telerik.cultureInfo.firstDayOfWeek = 0; //Tuesday

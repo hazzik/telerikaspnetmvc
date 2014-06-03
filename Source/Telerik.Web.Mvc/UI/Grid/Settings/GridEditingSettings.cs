@@ -94,7 +94,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var result = new Dictionary<string, object>();
 #if MVC2 || MVC3
-            string editorHtml = grid.EditorHtml;
+            var editorHtml = grid.EditorHtml;
 
             if (grid.IsSelfInitialized && editorHtml != null)
             {
@@ -107,7 +107,7 @@ namespace Telerik.Web.Mvc.UI
 #if MVC2 || MVC3
                 .Add("editor", editorHtml, () => Mode != GridEditMode.InLine)
                 .Add("beginEdit", BeginEdit == GridBeginEditEvent.Click ? "click" : "dblclick", () => BeginEdit != GridBeginEditEvent.Auto)
-                .Add("defaultDataItem", SerializeDefaultDataItem(), () => DefaultDataItem() != null)
+                .Add("defaultDataItem", SerializeDefaultDataItem(), () => grid.IsClientBinding && DefaultDataItem() != null)
 #endif
                 .Add("popup", SerializePopUp(), () => Mode == GridEditMode.PopUp && grid.IsClientBinding);
 
@@ -172,27 +172,6 @@ namespace Telerik.Web.Mvc.UI
             if (grid.IsClientBinding)
             {
                 writer.AppendObject("dataKeys", grid.DataKeys.ToDictionary(dataKey => dataKey.Name, dataKey => (object)dataKey.RouteKey));
-
-                if (!grid.IsEmpty)
-                {
-                    var dataTableEnumerable = grid.DataSource as GridDataTableWrapper;
-                    if (dataTableEnumerable != null && dataTableEnumerable.Table != null)
-                    {
-                        writer.AppendCollection("data",
-                                                grid.DataProcessor.ProcessedDataSource.SerializeToDictionary(
-                                                    dataTableEnumerable.Table));
-
-                    }
-                    else if (grid.DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup>)
-                    {
-                        IEnumerable<IGroup> grouppedDataSource = grid.DataProcessor.ProcessedDataSource.Cast<IGroup>();
-                        writer.AppendCollection("data", grouppedDataSource.Leaves());
-                    }
-                    else
-                    {
-                        writer.AppendCollection("data", grid.DataProcessor.ProcessedDataSource);
-                    }
-                }
             }
         }
     }

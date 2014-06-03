@@ -49,13 +49,26 @@
         equal(result, expectedUrl);
     });
 
-    test("formatUrl should return URL if no {0}", function () {
-        var formatUrl = '/test?test="fake"';
-        var date = new $t.datetime(2000, 10, 10);
+    test("calendar with arabic culture should render full name of week days", function () {
+        var minDate = new $t.datetime(2000, 10, 10);
+        var maxDate = new $t.datetime(2010, 10, 10);
+        
+        $t.cultureInfo.currentCulture = 'ar-SA';
+        var html = $t.calendar.html(new $t.datetime(), minDate, maxDate, "", "", "");
+        var result = $(html).find('thead th');
+        
+        equal(result.eq(0)[0].title, 'Sunday');
+    });
 
-        var result = $t.calendar.formatUrl(formatUrl, date);
-
-        equal(result, formatUrl);
+    test("calendar with arabic culture should render full name of week days", function () {
+        var minDate = new $t.datetime(2000, 10, 10);
+        var maxDate = new $t.datetime(2010, 10, 10);
+        
+        $t.cultureInfo.currentCulture = 'ar-SA';
+        var html = $t.calendar.html(new $t.datetime(), minDate, maxDate, "", "", "");
+        var result = $(html).find('thead th');
+        
+        equal(result.eq(0)[0].title, 'Sunday');
     });
 
 </script>

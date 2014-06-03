@@ -4,6 +4,7 @@
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
+    using System.Web;
 
     public class DropDownListHtmlBuilder : IDropDownHtmlBuilder
     {
@@ -19,12 +20,11 @@
         }
 
         public IHtmlNode Build()
-        {           
+        {
             IHtmlNode root = new HtmlElement("div")
                                 .Attributes(Component.HtmlAttributes)
                                 .PrependClass(UIPrimitives.Widget, "t-dropdown", UIPrimitives.Header)
-                                .ToggleClass("t-state-disabled", !Component.Enabled)
-                                .ToggleAttribute("disabled", "disabled", !Component.Enabled);
+                                .ToggleClass("t-state-disabled", !Component.Enabled);
 
             this.InnerContentTag().AppendTo(root);
             
@@ -44,6 +44,10 @@
             if (items.Count > 0 && !(string.IsNullOrEmpty(items[selectedIndex].Text) || items[selectedIndex].Text.Trim().Length == 0)) 
             {
                 text = items[selectedIndex].Text;
+                
+                if (Component.Encoded) {
+                    text = HttpUtility.HtmlEncode(text);
+                }
             }          
 
             new HtmlElement("span")

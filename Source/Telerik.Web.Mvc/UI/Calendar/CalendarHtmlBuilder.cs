@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using Extensions;
-    using Infrastructure;
 
     public class CalendarHtmlBuilder : ICalendarHtmlBuilder
     {
@@ -33,7 +32,7 @@ namespace Telerik.Web.Mvc.UI
                                   .AddClass(UIPrimitives.Header);
 
             IHtmlNode span = new HtmlElement("span")
-                             .Text(Calendar.DetermineFocusedDate().Value.ToString("MMMM yyyy"));
+                             .Text(Calendar.DetermineFocusedDate().ToString("MMMM yyyy"));
 
             headerDiv.Children.Add(span);
 
@@ -51,21 +50,15 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode HeaderTag()
         {
-            IHtmlNode header = new HtmlElement("thead").AddClass("t-week-header");
-
-            return header;
+            return new HtmlElement("thead");
         }
 
-        public IHtmlNode HeaderCellTag(string dayOfWeek)
+        public IHtmlNode HeaderCellTag(string dayName, string abbreviatedDayName, string shortestDayName)
         {
-            IHtmlNode cell = new HtmlElement("th")
-                             .Attributes(new { scope = "col", title = dayOfWeek})
-                             .Text(dayOfWeek.Substring(0, 1));
-
-            if (dayOfWeek.Length > 3)
-                cell.Attribute("abbr", dayOfWeek.Substring(0, 3));
-
-            return cell;
+            return new HtmlElement("th")
+                   .Attributes(new { scope = "col", title = dayName })
+                   .Attribute("abbr", abbreviatedDayName)
+                   .Text(shortestDayName);
         }
 
         public IHtmlNode MonthTag()
@@ -103,7 +96,7 @@ namespace Telerik.Web.Mvc.UI
 
                 cell.Children.Add(link);
             }
-            else 
+            else
             {
                 cell.Html("&nbsp;");
             }
@@ -111,7 +104,7 @@ namespace Telerik.Web.Mvc.UI
             return cell;
         }
 
-        private bool IsInRange(DateTime date) 
+        private bool IsInRange(DateTime date)
         {
             return Calendar.MinDate <= date && date <= Calendar.MaxDate;
         }

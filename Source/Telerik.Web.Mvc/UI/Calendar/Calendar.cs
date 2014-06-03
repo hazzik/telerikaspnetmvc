@@ -125,14 +125,20 @@ namespace Telerik.Web.Mvc.UI
 
             DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
             string[] dayNames = dateTimeFormat.DayNames;
+            string[] abbreviatedDayNames = dateTimeFormat.AbbreviatedDayNames;
+            string[] shortestDayNames = dateTimeFormat.ShortestDayNames;
             int firstDayIndex = (int)dateTimeFormat.FirstDayOfWeek;
 
-            var modifiedDayNames = dayNames.Skip(firstDayIndex).Take(dayNames.Length);
-            modifiedDayNames = modifiedDayNames.Concat(dayNames.Take(firstDayIndex));
+            var modifiedDayNames = dayNames.Skip(firstDayIndex).Take(dayNames.Length)
+                                           .Concat(dayNames.Take(firstDayIndex)).ToList();
+            var modifiedAbbreviatedDayNames = abbreviatedDayNames.Skip(firstDayIndex).Take(abbreviatedDayNames.Length)
+                                                                 .Concat(abbreviatedDayNames.Take(firstDayIndex)).ToList();
+            var modifiedShortestDayNames = shortestDayNames.Skip(firstDayIndex).Take(shortestDayNames.Length)
+                                                           .Concat(shortestDayNames.Take(firstDayIndex)).ToList();
 
-            foreach(string dayName in modifiedDayNames)
+            for (int i = 0; i < modifiedDayNames.Count; i++)
             {
-                row.Children.Add(renderer.HeaderCellTag(dayName));
+                row.Children.Add(renderer.HeaderCellTag(modifiedDayNames[i], modifiedAbbreviatedDayNames[i], modifiedShortestDayNames[i]));
             }
 
             headerTag.Children.Add(row);
@@ -140,28 +146,58 @@ namespace Telerik.Web.Mvc.UI
             return headerTag;
         }
 
+        private DateTime GetStartOfWeek(DateTime selectedDate, DayOfWeek weekStart)
+        {
+            int selectedDay = (int)selectedDate.DayOfWeek;
+
+            int daysToSubtract = 0;
+            while (selectedDay != (int)weekStart)
+            {
+                if (selectedDay == 0)
+                    selectedDay = 6;
+                else
+                    selectedDay--;
+
+                daysToSubtract++;
+            }
+
+            DateTime result = selectedDate.Subtract(TimeSpan.FromDays(daysToSubtract));
+            return new DateTime(result.Ticks, selectedDate.Kind);
+        }
+
+        private DateTime GetLastDayOfMonth(DateTime date)
+        {
+            DateTime result = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+            return new DateTime(result.Ticks, date.Kind);
+        }
+
         private IHtmlNode BuildMonthView(ICalendarHtmlBuilder renderer) 
         {
+            NormalizeSelectDates();
+
             IHtmlNode monthTag = renderer.MonthTag();
 
-            DateTime? focusedDate = this.DetermineFocusedDate();
-            DateTime prevMonth = new DateTime(focusedDate.Value.Year, focusedDate.Value.Month, 1).AddDays(-1);
+            DateTime focusedDate = this.DetermineFocusedDate();
+            DateTime prevMonth = GetLastDayOfMonth(focusedDate).AddMonths(-1);
+            DateTime startDate = GetStartOfWeek(prevMonth, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek);
 
-            int firstDayOfMonthView = DateTime.DaysInMonth(prevMonth.Year, prevMonth.Month) - ((int)(prevMonth).DayOfWeek) + (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
-
-            DateTime startDate = new DateTime(prevMonth.Year, prevMonth.Month, firstDayOfMonthView);
             for (int weekRow = 0; weekRow < 6; weekRow++)
             {
                 IHtmlNode rowTag = renderer.RowTag();
 
                 for (int day = 0; day < 7; day++) 
                 {
-                    renderer.CellTag(startDate, Value, urlFormat, startDate.Month != focusedDate.Value.Month).AppendTo(rowTag);
+                    renderer.CellTag(startDate, Value, urlFormat, startDate.Month != focusedDate.Month).AppendTo(rowTag);
                     startDate = startDate.AddDays(1);
                 }
                 monthTag.Children.Add(rowTag);
             }
             return monthTag;
+        }
+
+        private void NormalizeSelectDates()
+        {
+            this.SelectionSettings.Dates = this.SelectionSettings.Dates.Select(date => new DateTime(date.Year, date.Month, date.Day)).ToList();
         }
 
         public override void VerifySettings()

@@ -433,10 +433,14 @@ W3CSelection.prototype = {
     },
 
     getRangeAt: function () {
-        var textRange, range = new W3CRange(this.ownerDocument), selection = this.ownerDocument.selection;
-
+        var textRange, range = new W3CRange(this.ownerDocument), selection = this.ownerDocument.selection, element;
+        
         try {
             textRange = selection.createRange();
+            element = textRange.item ? textRange.item(0) : textRange.parentElement();
+			if (element.ownerDocument != this.ownerDocument) {
+				return range;
+            }
         } catch (ex) {
             return range;
         }
@@ -608,13 +612,18 @@ function RestorePoint(range) {
         return path;
     }
 
-    function pathToNode(path) {
-        var node = rootNode, length = path.length;
+    function toRangePoint(range, start, path, denormalizedOffset) {
+        var node = rootNode, length = path.length, offset = denormalizedOffset;
 
         while (length--)
             node = node.childNodes[path[length]];
 
-        return node;
+        while (node.nodeType == 3 && node.nodeValue.length < offset) {
+            offset -= node.nodeValue.length;
+            node = node.nextSibling;
+        }
+
+        range[start ? 'setStart' : 'setEnd'](node, offset);
     }
 
     this.startContainer = nodeToPath(range.startContainer);
@@ -625,8 +634,8 @@ function RestorePoint(range) {
     this.toRange = function () {
         var result = range.cloneRange();
 
-        result.setStart(pathToNode(this.startContainer), this.startOffset);
-        result.setEnd(pathToNode(this.endContainer), this.endOffset);
+        toRangePoint(result, true, this.startContainer, this.startOffset);
+        toRangePoint(result, false, this.endContainer, this.endOffset);
 
         return result;
     }

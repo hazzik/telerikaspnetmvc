@@ -87,6 +87,14 @@
             dropdownlist.ViewContext.ViewData["DDL"] = value;
             dropdownlist.GetValueFromViewDataByName().ShouldEqual(value.ToString());
         }
+
+        [Fact]
+        public void GetValueFromViewDataByName_should_return_empty_string_is_model_type_is_not_predifined_type()
+        {
+            dropdownlist.Name = "DDL";
+            dropdownlist.ViewContext.ViewData["DDL"] = new DropDownItem { Text = "item1", Value = "item1" };
+            dropdownlist.GetValueFromViewDataByName().ShouldEqual(string.Empty);
+        }
         
         [Fact]
         public void PrepareItemsAndDefineSelectedIndex_should_select_first_item_if_no_selected_items()

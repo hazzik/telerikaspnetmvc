@@ -8,8 +8,10 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using System.Web.Script.Serialization;
     using System.Web.UI;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
@@ -78,7 +80,7 @@ namespace Telerik.Web.Mvc.UI
                 // Return from htmlattributes if user has specified
                 // otherwise build it from name
                 return HtmlAttributes.ContainsKey("id") ?
-                       HtmlAttributes["id"].ToString() :
+                       (string)HtmlAttributes["id"] :
                        (!string.IsNullOrEmpty(Name) ? Name.Replace(".", HtmlHelper.IdAttributeDotReplacement) : null);
             }
         }
@@ -221,7 +223,44 @@ namespace Telerik.Web.Mvc.UI
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Type, "text/javascript");
                 writer.RenderBeginTag(HtmlTextWriterTag.Script);
-                WriteInitializationScript(writer);
+
+                if (ViewContext.HttpContext.Request.IsAjaxRequest())
+                {
+                    var registrar = ScriptRegistrar.Current;
+
+                    registrar.ScriptableComponents.Clear();
+                    registrar.ScriptableComponents.Add(this);
+
+                    try
+                    {
+                        var dependencies = registrar.CollectScriptFiles();
+                        var common = dependencies.First(file => file.Contains("telerik.common"));
+                        var buffer = new StringWriter();
+                        WriteInitializationScript(buffer);
+
+                        var initializationScript = "jQuery.telerik.load({0},function(){{ {1} }});".FormatWith(new JavaScriptSerializer().Serialize(dependencies),
+                            buffer.ToString());
+
+                        writer.WriteLine("if(!jQuery.telerik){");
+                        writer.WriteLine("jQuery.ajax({");
+                        writer.WriteLine("url:\"{0}\",".FormatWith(common));
+                        writer.WriteLine("dataType:\"script\",");
+                        writer.WriteLine("cache:false,");
+                        writer.WriteLine("success:function(){");
+                        writer.WriteLine(initializationScript);
+                        writer.WriteLine("}});}else{");
+                        writer.WriteLine(initializationScript);
+                        writer.WriteLine("}");
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        WriteInitializationScript(writer);
+                    }
+                }
+                else
+                {
+                    WriteInitializationScript(writer);
+                }
                 writer.RenderEndTag();
             }
         }

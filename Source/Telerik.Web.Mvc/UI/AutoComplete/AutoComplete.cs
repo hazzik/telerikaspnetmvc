@@ -142,14 +142,6 @@ namespace Telerik.Web.Mvc.UI
 
             if (Items.Any())
             {
-                if (Encoded) 
-                {
-                    for (int i = 0, length = Items.Count; i < length; i++) 
-                    {
-                        Items[i] = System.Web.HttpUtility.HtmlEncode(Items[i]);
-                    }
-                }
-
                 objectWriter.AppendCollection("data", Items);
             }
 

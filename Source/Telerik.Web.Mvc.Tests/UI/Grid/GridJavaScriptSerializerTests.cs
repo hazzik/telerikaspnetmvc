@@ -372,5 +372,32 @@
 
             writer.VerifyAll();
         }
+
+        [Fact]
+        public void Should_not_serialize_pageOnScroll_if_paging_disabled() 
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+
+            writer.Setup(w => w.Append("pageOnScroll", It.IsAny<bool>()));
+
+            var serializer = new GridClientObjectSerializer<Customer>(grid);
+            serializer.Serialize(writer.Object);
+
+            writer.Verify(w => w.Append("pageOnScroll", It.IsAny<bool>()), Times.Never());
+        }
+
+        [Fact]
+        public void Should_serialize_pageOnScroll_if_paging_enabled()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            grid.Paging.Enabled = true;
+
+            writer.Setup(w => w.Append("pageOnScroll", It.IsAny<bool>()));
+
+            var serializer = new GridClientObjectSerializer<Customer>(grid);
+            serializer.Serialize(writer.Object);
+
+            writer.VerifyAll();
+        }
     }
 }

@@ -21,7 +21,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         public IEnumerable<string> Resolve(ResolverContext resolverContext)
         {
-            string minifiedFileName = Path.ChangeExtension(asset.FileName, ".min" + asset.Extension);
+            string assetFileName = asset.FileName;
+            string minifiedFileName = Path.ChangeExtension(assetFileName, (assetFileName.IndexOf(".min.") == -1 ? ".min" : "") + asset.Extension);
 
             return new[] {
                 "{0}/{1}/{2}/{3}".FormatWith(GetBaseUrl(resolverContext), 

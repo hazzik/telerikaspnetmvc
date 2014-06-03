@@ -1,6 +1,7 @@
 ﻿(function ($) {
 
     var $t = $.telerik;
+    $t.scripts.push("telerik.tabstrip.js");
 
     $t.tabstrip = function (element, options) {
         this.element = element;
@@ -90,16 +91,16 @@
 
             if ($t.trigger(this.element, 'select', { item: $item[0], contentElement: $content[0] })) {
                 e.preventDefault();
+            } else {
+                var isAnchor = $link.data('ContentUrl') || (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + this.element.id + '-') != -1));
+
+                if (!href || isAnchor || ($content.length > 0 && $content[0].childNodes.length == 0))
+                    e.preventDefault();
+                else return;
+
+                if (this.activateTab($item))
+                    e.preventDefault();
             }
-
-            var isAnchor = $link.data('ContentUrl') || (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + this.element.id + '-') != -1));
-
-            if (!href || isAnchor || ($content.length > 0 && $content[0].childNodes.length == 0))
-                e.preventDefault();
-            else return;
-
-            if (this.activateTab($item))
-                e.preventDefault();
         },
 
         activateTab: function ($item) {

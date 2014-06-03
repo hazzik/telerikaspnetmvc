@@ -74,7 +74,8 @@
             .DetailView(detailView => detailView.Template(c =>
                 {
                     %> Details for :<%= c.Name %> <%
-                }))
+                })
+                .ClientTemplate("<#= Name #>"))
            .Render();
     %>    
     
@@ -333,6 +334,7 @@
             $('#Grid .t-grid-delete:first').click();
             ok(undefined !== onDeleteArguments);
             ok(undefined !== onDeleteArguments.dataItem);
+            ok(undefined !== onDeleteArguments.values);
         });
 
         test('cancelling delete', function() {

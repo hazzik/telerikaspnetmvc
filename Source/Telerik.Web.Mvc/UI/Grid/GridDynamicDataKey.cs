@@ -43,10 +43,24 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
+#if MVC2 || MVC1
         public object GetValue(object dataItem)
         {
             return Value(dataItem);
         }
+#elif MVC3
+        public object GetValue(object dataItem)
+        {
+            try
+            {
+                return Value(dataItem);
+            }
+            catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException)
+            {
+                return null;
+            }
+        }
+#endif
 
 #if MVC2 || MVC3
         public string HiddenFieldHtml(HtmlHelper<object> htmlHelper)

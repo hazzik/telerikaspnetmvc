@@ -95,6 +95,22 @@
             items.Add().Text("Item1").Value("1");
         }) %>
 
+    <%= Html.Telerik().ComboBox()
+            .Name("AjaxComboBox")
+            .DataBinding(binding => binding.Ajax().Select("Fake", "Home"))
+    %>
+
+    <%= Html.Telerik().ComboBox()
+            .Name("ComboBoxWithEncodedValue")
+            .Items(items =>
+            {
+                items.Add().Text("Chef Anton's    Cajun Seasoning").Value("1");
+                items.Add().Text("Item2").Value("2");
+            })
+            .Filterable(f => f.FilterMode(AutoCompleteFilterMode.StartsWith))
+                    
+    %>
+
     <div class="t-combobox t-header t-fontFamily"><div class="t-dropdown-wrap t-state-default"><input type="text" title="Select font family" class="t-input" autocomplete="off"><span class="t-select t-header"><span class="t-icon t-arrow-down">select</span></span></div><input type="text" style="display: none;"></div>
 </asp:Content>
 
@@ -109,6 +125,33 @@
             $t = $.telerik;
         }
 
+        test('open method should not throw exception if no data', function () {
+            try {
+                var combo = getComboBox("#ComboBox3");
+                combo.open();
+            } catch (e) {
+                ok(false);
+            }
+        });
+
+        test('open method should call ajax if isAjax and no data', function () {
+            
+            var combo = getComboBox("#AjaxComboBox");
+            var oldFill = combo.fill;
+            var called = false;
+
+            try {
+                combo.fill = function () { called = true; }
+                combo.open();
+            } catch (e) {
+                ok(false);
+            } finally {
+                combo.fill = oldFill;
+            }
+
+            ok(called);
+        });
+
         test('show method should open dropDown list', function() {
             var combo = getComboBox();
             combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
@@ -118,22 +161,22 @@
             ok(combo.dropDown.isOpened());
         });
 
-        test('show method reposition dropDown list', function() {
+        test('show method reposition dropDown list', function () {
             var combo = getComboBox();
             combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
 
             combo.close();
             combo.open();
-
+            
             var animatedContainer = combo.dropDown.$element.parent();
 
             var elementPosition = combo.$wrapper.offset();
 
             elementPosition.top += combo.$wrapper.outerHeight();
 
-            ok(animatedContainer.css('position') == 'absolute');
-            ok(animatedContainer.css('top') == Math.round(elementPosition.top * 1000) / 1000 + 'px');
-            ok(animatedContainer.css('left') == Math.round(elementPosition.left * 1000) / 1000 + 'px');
+            equal(animatedContainer.css('position'), 'absolute');
+            equal(animatedContainer.css('top'), Math.round(elementPosition.top * 1000) / 1000 + 'px');
+            equal(animatedContainer.css('left'), Math.round(elementPosition.left * 1000) / 1000 + 'px');
         });
 
         test('select should select one item only', function() {
@@ -159,6 +202,23 @@
             combo.select(li);
 
             ok(combo.selectedIndex == 3);
+        });
+
+        test('select should call $t.list.updateTextAndValue method with decoded value', function () {
+            var combo = $("#ComboBoxWithEncodedValue").data("tComboBox"),
+                old = $t.list.updateTextAndValue,
+                passedText;
+
+            $t.list.updateTextAndValue = function (component, text, value) { passedText = text; };
+
+            combo.fill();
+            combo.selectedIndex = -1;
+
+            combo.select(0);
+            
+            equal(passedText, "Chef Anton's    Cajun Seasoning");
+
+            $t.list.updateTextAndValue = old;
         });
 
         test('select method should select correct item index after filtration', function () {
@@ -284,25 +344,26 @@
             equal(combo.dropDown.$items.length, 20);
         });
 
-        test('open method should set height of the dropDown if items are filtered and item is selected', function() {
+        test('open method should set height of the dropDown if items are filtered and item is selected', function () {
 
             var combo = getComboBox();
-            
+
             combo.dropDown.$element.css('height', 'auto'); // set auto in order to simulate filtering of items and reducing their count to less then 10
 
+            combo.reload();
             combo.select(combo.dropDown.$items[0]);
             combo.isFiltered = true;
-                        
+
             combo.close();
             combo.open();
 
             equal(combo.dropDown.$element.css('height'), "200px");
         });
 
-        test('open method should unformat filtered items if there is selected item', function() {
+        test('open method should unformat filtered items if there is selected item', function () {
 
             var combo = getComboBox();
-
+            combo.filter = 1;
             var text = combo.dropDown.$items.first().html();
             combo.dropDown.$items.first().html("<strong>" + text + "<strong>");
             combo.isFiltered = true;
@@ -310,7 +371,7 @@
             combo.select(combo.dropDown.$items[0]);
             combo.close();
             combo.open();
-            
+
             equal(combo.dropDown.$items.first().html().indexOf('<strong>'), -1);
         });
 
@@ -554,7 +615,7 @@
             ok(combo.dropDown.$items.eq(2).hasClass('t-state-selected'));
         });
 
-        test('enable method should enable comboBox', function() {
+        test('disable method should disable comboBox', function() {
             var combo = getComboBox('#ComboBox3');
 
             combo.enable();
@@ -562,9 +623,10 @@
 
             ok($('#ComboBox3').closest(".t-combobox").hasClass('t-state-disabled'));
             equal($('#ComboBox3').closest(".t-combobox").find('.t-input').attr('disabled'), true);
+            equal($('#ComboBox3').attr('disabled'), true);
         });
 
-        test('enable method should disable comboBox', function() {
+        test('enable method should enable comboBox', function() {
             var combo = getComboBox('#ComboBox3');
 
             combo.disable();
@@ -572,6 +634,54 @@
 
             ok(!$('#ComboBox3').hasClass('t-state-disabled'));
             ok(!$('#ComboBox3').find('.t-input').attr('disabled'));
+            ok(!$('#ComboBox3').attr('disabled'));
+        });
+
+        test('call enable() twice brokes opening drop-down', function() {
+            var combo = getComboBox('#ComboBox3');
+
+            combo.disable();
+            combo.enable();
+            combo.enable();
+
+            combo.$wrapper.find('.t-select').click();
+
+            setTimeout(function() {
+                ok(combo.dropDown.isOpened());
+                start();
+            }, 300);
+
+            stop(400);
+        });
+
+        test('select method should return selected index', function () {
+            var combo = getComboBox('#ComboBox3');
+            var index = combo.select(2);
+            equal(index, combo.selectedIndex);
+        });
+
+        test('value method should update correctly previousValue', function () {
+            var combo = getComboBox('#ComboBox3');
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: false },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            combo.dataBind(data);
+            
+            combo.value("3");
+
+            equal(combo.previousValue, "3");
+        });
+
+        test('dataBind should clear filteredDataIndexes', function () {
+            var combo = getComboBox('#ComboBox3');
+
+            combo.filteredDataIndexes = [9, 2];
+            combo.dataBind();
+            
+            equal(combo.filteredDataIndexes, null);
         });
 
 </script>

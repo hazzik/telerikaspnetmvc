@@ -4,6 +4,7 @@
 
     @(Html.Telerik().ComboBox()
                       .Name("ComboBox")
+                      .HtmlAttributes(new { id = "ComboBox_wrapper" })
                       .AutoFill(Model.ComboBoxAttributes.AutoFill.Value)
                       .BindTo(new SelectList(Model.Products, "ProductID", "ProductName"))
                       .Filterable(filtering =>
@@ -125,7 +126,7 @@
                 @Html.CheckBox("AutoCompleteAttributes.HighlightFirst", Model.AutoCompleteAttributes.HighlightFirst.GetValueOrDefault(false), new { title = "HighlightFirst" })
             </li>
             <li>
-                <label for="AutoCompleteAttributes_AutoFill"><strong><strong>auto-filling</strong> text</label>
+                <label for="AutoCompleteAttributes_AutoFill"><strong>auto-filling</strong> text</label>
                 @Html.CheckBox("AutoCompleteAttributes.AutoFill", Model.AutoCompleteAttributes.AutoFill.GetValueOrDefault(false), new { title = "AutoFill" })
             </li>
             <li>
@@ -141,16 +142,16 @@
 @section HeadContent {
 
     <style type="text/css">
-        
-        #AutoComplete
+                
+        #ComboBox_wrapper
         {
-            clear: both;
             margin-bottom: 280px;
             float: left;
         }
         
-        #ComboBox
+        #AutoComplete
         {
+            clear: both;
             margin-bottom: 280px;
             float: left;
         }
@@ -178,6 +179,7 @@
         {
             vertical-align: middle;
         }
+       
        
     </style>
 

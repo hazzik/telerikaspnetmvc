@@ -1,6 +1,7 @@
 ﻿(function ($) {
 
     var $t = $.telerik;
+    $t.scripts.push("telerik.timepicker.js");
 
     $t.timeView = function (options) {
         $.extend(this, options);
@@ -291,28 +292,28 @@
 
             var minValue = this.minValue,
                 maxValue = this.maxValue,
-                parsedValue = this.parse(val),
-                selectedValue = this.selectedValue;
+                val = this.parse(val),
+                oldValue = this.selectedValue;
 
-            if (parsedValue != null && !$t.timeView.isInRange(parsedValue, minValue, maxValue)) {
+            if (val != null && !$t.timeView.isInRange(val, minValue, maxValue)) {
                 var getTimeMilliseconds = $t.timeView.getTimeMilliseconds,
-                    msValue = getTimeMilliseconds(parsedValue),
+                    msValue = getTimeMilliseconds(val),
                     minDiff = Math.abs(getTimeMilliseconds(minValue) - msValue),
                     maxDiff = Math.abs(getTimeMilliseconds(maxValue) - msValue);
 
-                parsedValue = new Date(minDiff < maxDiff ? minValue : maxValue);
+                val = new Date(minDiff < maxDiff ? minValue : maxValue);
             }
 
-            var formattedSelectedValue = selectedValue ? $t.datetime.format(selectedValue, this.format) : '',
-                formattedValue = parsedValue ? $t.datetime.format(parsedValue, this.format) : '';
+            var formattedSelectedValue = oldValue ? $t.datetime.format(oldValue, this.format) : '',
+                formattedValue = val ? $t.datetime.format(val, this.format) : '';
+
+            this._value(val);
 
             if (formattedValue != formattedSelectedValue) {
-                if ($t.trigger(this.element, 'valueChange', { previousValue: selectedValue, value: parsedValue })) {
-                    parsedValue = new Date(selectedValue);
+                if ($t.trigger(this.element, 'valueChange', { previousValue: oldValue, value: val })) {
+                    this._value(oldValue)
                 }
             }
-
-            this._value(parsedValue);
         },
 
         _value: function (value) {
@@ -389,8 +390,8 @@
                 return value;
 
             var result = $t.datetime.parse({
-                AM: $t.cultureInfo.AM,
-                PM: $t.cultureInfo.PM,
+                AM: $t.cultureInfo.am,
+                PM: $t.cultureInfo.pm,
                 value: value,
                 format: this.format,
                 baseDate: this.selectedValue ? new $t.datetime(this.selectedValue) : new $t.datetime()

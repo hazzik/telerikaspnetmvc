@@ -14,10 +14,13 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
     public class GridHeaderCellBuilderTests
     {
         private readonly GridHeaderCellBuilder builder;
+        private readonly GridHeaderCellBuilder builderWithCustomCssClass;
+        private readonly string customCssClass = "myClass";
 
         public GridHeaderCellBuilderTests()
         {
             builder = new GridHeaderCellBuilder(new Dictionary<string, object>(), delegate { });
+            builderWithCustomCssClass = new GridHeaderCellBuilder(new Dictionary<string, object>() { {"class", customCssClass} }, delegate { });
         }
 
         [Fact]
@@ -36,6 +39,7 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         public void Should_apply_css_classes()
         {
             builder.CreateCell().Attribute("class").ShouldEqual("t-header");
+            builderWithCustomCssClass.CreateCell().Attribute("class").ShouldEqual("t-header " + customCssClass);
         }
 
         [Fact]
@@ -63,7 +67,19 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         }
 
         [Fact]
-        public void Should_append_content()
+        public void Should_append_content_in_template_cell()
+        {
+            var content = new HtmlElement("foo");
+
+            Action<IHtmlNode> appendContent = node => content.AppendTo(node);
+            var headerAttributes = new Dictionary<string, object>();
+            var cell = new GridHeaderCellBuilder(headerAttributes, appendContent, true).CreateCell();
+
+            cell.Children.ShouldContain(content);
+        }
+
+        [Fact]
+        public void Should_append_content_in_nontemplate_cell()
         {
             var content = new HtmlElement("foo");
 
@@ -71,7 +87,9 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
             var headerAttributes = new Dictionary<string, object>();
             var cell = new GridHeaderCellBuilder(headerAttributes, appendContent).CreateCell();
 
-            cell.Children.ShouldContain(content);
+            var span = GetSpan(cell);
+
+            span.Children.ShouldContain(content);
         }
 
         [Fact]
@@ -82,6 +100,11 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
 
             builder.CreateCell();
             decorator.Verify(d => d.Decorate(It.IsAny<IHtmlNode>()), Times.Once());
+        }
+
+        private IHtmlNode GetSpan(IHtmlNode cell)
+        {
+            return cell.Children[0];
         }
     }
 }

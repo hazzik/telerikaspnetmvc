@@ -21,6 +21,8 @@ namespace Telerik.Web.Mvc.UI.Html
             var span = new HtmlElement("span")
                             .AddClass(UIPrimitives.Icon, button.SpriteCssClass);
 
+            span.Attributes(button.ImageHtmlAttributes);
+
             span.AppendTo(parent);
         }
     }

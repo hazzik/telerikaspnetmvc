@@ -48,20 +48,20 @@
 
     test('select which was wrapped should be hidden', function () {
         ok(!$select.is(':visible'), 'select was not hidden')
-    })
+    });
 
     test('innerHtml should be equal to the select text', function () {
         var $text = $select.data('tDropDownList').$text;
         var text = $select.find('option:selected').text();
         equal(text, $text.html(), 'value was not set');
-    })
+    });
 
     test('innerHtml should set $nbsp; if select value is empty', function () {
         var select = $('<select/>');
         select.tDropDownList();
         var $text = select.closest('.t-dropdown').find('.t-input');
         equal($text.html(), '&nbsp;', '&nbsp; was not rendered');
-    })
+    });
 
     test('hidden input should be rendered if the element is HTML select and its properties should be set', function () {
         var select = $('<select id="selectID" name="selectName"><option value="1">Item1<option/></select>');
@@ -72,7 +72,7 @@
         equal(hiddenInput.val(), '1', 'property value was not applied correctly');
         equal(hiddenInput.attr('name'), 'selectName', 'property name was not applied correctly');
         ok(!hiddenInput.is(':visible'), 'added input is not hidden');
-    })
+    });
 
     test('data should be extracted from select HTML element', function () {
         var select = $select.data('tDropDownList');
@@ -95,6 +95,22 @@
         equal(selectObject.data.length, 1, 'data was overriden');
         equal(selectObject.data[0].Text, "StaticData1", 'text property is overriden');
         equal(selectObject.data[0].Value, "Value1", 'value property is overriden');
-    })
+    });
+
+    // the following test will be skipped in Chome and Safari, as they do not support the DOMAttrModified event yet
+    test('hidden input CSS class changes should be reflected in the dropdown-wrap element', function () {
+
+        if (jQuery.browser.webkit) {
+            return;
+        }
+
+        var additionalClass = "input-validation-field";
+        var innerWrap = $("#selectList").data("tDropDownList").$wrapper.find(">.t-dropdown-wrap");
+
+        $select.data('tDropDownList').$element.attr("class", additionalClass);
+        
+        ok(innerWrap.attr("class").indexOf(additionalClass) != -1, 'CSS class was not transfered to the inner wrapper');
+    });
+
 </script>
 </asp:Content>

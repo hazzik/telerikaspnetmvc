@@ -79,6 +79,11 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected virtual IGridRowBuilder CreateDataRowBuilder(GridRenderingData renderingData, GridItem item)
         {
+            if (renderingData.RowTemplate != null)
+            {
+                return new GridTemplateRowBuilder(td => renderingData.RowTemplate(item.DataItem, td), renderingData.Colspan);
+            }
+
             return new GridDataRowBuilder(item.DataItem, renderingData.Columns.Select(column => cellBuilderFactory.CreateDisplayCellBuilder(column, renderingData.HtmlHelper)));
         }
 
@@ -132,11 +137,13 @@ namespace Telerik.Web.Mvc.UI.Html
             
             var column = renderingData.Columns.OfType<IGridBoundColumn>().FirstOrDefault(c => c.Member == member);
 
+            var format = column != null && column.Format.HasValue() ? column.Format : "{0}";
+
             var template = new HtmlTemplate<GridGroupAggregateResult>
             {
-                InlineTemplate = (result) => "{0}: {1}".FormatWith(result.Title, result.Key)
+                InlineTemplate = (result) => "{0}: {1}".FormatWith(result.Title, format.FormatWith(result.Key))
             };
-            
+
             var title = member.AsTitle();
 
             if (column != null)

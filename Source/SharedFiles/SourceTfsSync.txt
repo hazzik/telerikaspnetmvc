@@ -1,16 +1,17 @@
-C:\Builds\74\Griffin\Trunk Full:
+F:\114\Griffin\Trunk Full:
 Replacing Sources
 
-C:\Builds\74\Griffin\Trunk Full\Sources:
+F:\114\Griffin\Trunk Full\Sources:
 Replacing Build
 Replacing Documentation
 Replacing Misc
 Replacing Resources
 Replacing Source
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Build:
+F:\114\Griffin\Trunk Full\Sources\Build:
 Replacing AfterCompile.proj
 Replacing BeforeCompile.proj
+Replacing BuildHelp.Proj
 Replacing BuildInstaller.proj
 Replacing CDN
 Replacing CI
@@ -23,23 +24,28 @@ Replacing CopySource.Proj
 Replacing DeployCDN.proj
 Replacing DropDeliverables.proj
 Replacing Full
+Replacing Help
 Replacing MSBuildTasks
 Replacing RunTests.proj
 Replacing UpdateAssemblyVersion.proj
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Build\CDN:
+F:\114\Griffin\Trunk Full\Sources\Build\CDN:
 Replacing TFSBuild.proj
 Replacing TFSBuild.rsp
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Build\CI:
+F:\114\Griffin\Trunk Full\Sources\Build\CI:
 Replacing TFSBuild.proj
 Replacing TFSBuild.rsp
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Build\Full:
+F:\114\Griffin\Trunk Full\Sources\Build\Full:
 Replacing TFSBuild.proj
 Replacing TFSBuild.rsp
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Build\MSBuildTasks:
+F:\114\Griffin\Trunk Full\Sources\Build\Help:
+Replacing TFSBuild.proj
+Replacing TFSBuild.rsp
+
+F:\114\Griffin\Trunk Full\Sources\Build\MSBuildTasks:
 Replacing Brion.MSBuildTasks.dll
 Replacing ICSharpCode.SharpZipLib.dll
 Replacing Interop.COMAdmin.dll
@@ -64,21 +70,21 @@ Replacing xunit.console.exe
 Replacing xunit.runner.msbuild.dll
 Replacing xunit.runner.utility.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Build\MSBuildTasks\ResourceUploader:
+F:\114\Griffin\Trunk Full\Sources\Build\MSBuildTasks\ResourceUploader:
 Replacing Ionic.Zlib.dll
 Replacing LitS3.dll
 Replacing ResourceUploader.AmazonS3.dll
 Replacing ResourceUploader.Core.dll
 Replacing ResourceUploader.MSBuildTasks.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation:
+F:\114\Griffin\Trunk Full\Sources\Documentation:
 Replacing Content
 Replacing ContentLayout.content
 Replacing Media
 Replacing TelerikMvcExtensionsManual.shfbproj
 Replacing Tokens.tokens
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content:
 Replacing AjaxPartialViews.aml
 Replacing Changes.aml
 Replacing GettingStarted
@@ -92,14 +98,16 @@ Replacing VisualStudioExtensions
 Replacing WebAssets
 Replacing WebAssets.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\GettingStarted:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\GettingStarted:
 Replacing Installation.aml
 Replacing Upgrading.aml
 Replacing UsingInProject.aml
 Replacing UsingSampleProjects.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI:
+Replacing Buttons.aml
 Replacing Calendar
+Replacing Chart
 Replacing ComboBox
 Replacing DatePicker
 Replacing DateTimePicker
@@ -120,23 +128,36 @@ Replacing Troubleshooting.aml
 Replacing Upload
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Calendar:
 Replacing ClientAPI.aml
 Replacing Globalization.aml
 Replacing Introduction.aml
 Replacing SelectAction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Chart:
+Replacing Appearance.aml
+Replacing Axes.aml
+Replacing ClientAPI.aml
+Replacing DataBinding
+Replacing Introduction.aml
+Replacing Series.aml
+Replacing Troubleshooting.aml
+
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Chart\DataBinding:
+Replacing AjaxBinding.aml
+Replacing ServerBinding.aml
+
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\ComboBox:
 Replacing ClientApi.aml
 Replacing DataBinding
 Replacing Filtering.aml
 Replacing Introduction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\ComboBox\DataBinding:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\ComboBox\DataBinding:
 Replacing ClientSideBinding.aml
 Replacing ServerBinding.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\DatePicker:
 Replacing ClientAPI.aml
 Replacing DateParsing.aml
 Replacing EditTemplate.aml
@@ -145,12 +166,12 @@ Replacing Introduction.aml
 Replacing KeyboardNavigation.aml
 Replacing ServerAPI.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\DateTimePicker:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\DateTimePicker:
 Replacing ClientApi.aml
 Replacing Configuration.aml
 Replacing Introduction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Editor:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Editor:
 Replacing ClientApi.aml
 Replacing ImageBrowser.aml
 Replacing Introduction.aml
@@ -160,7 +181,7 @@ Replacing Styles.aml
 Replacing Toolbar.aml
 Replacing Tools.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid:
 Replacing Aggregates.aml
 Replacing ClientAPI.aml
 Replacing Columns.aml
@@ -173,27 +194,28 @@ Replacing Introduction.aml
 Replacing Localization.aml
 Replacing MasterDetail
 Replacing Paging.aml
+Replacing RowTemplate.aml
 Replacing Sorting.aml
 Replacing Troubleshooting.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid\DataBinding:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid\DataBinding:
 Replacing AjaxBinding.aml
 Replacing CustomBinding.aml
 Replacing ServerBinding.aml
 Replacing WebServiceBinding.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid\Editing:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid\Editing:
 Replacing AjaxEditing.aml
 Replacing CellEditing.aml
 Replacing Configuration.aml
 Replacing ServerEditing.aml
 Replacing WebServiceEditing.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid\MasterDetail:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Grid\MasterDetail:
 Replacing ClientDetail.aml
 Replacing ServerDetail.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Menu:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Menu:
 Replacing BindingOptions.aml
 Replacing ClientAPI.aml
 Replacing Effects.aml
@@ -202,7 +224,7 @@ Replacing Orientation.aml
 Replacing ServerAPI.aml
 Replacing Templates.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\NumericTextBox:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\NumericTextBox:
 Replacing ClientAPI.aml
 Replacing EditTemplate.aml
 Replacing Globalization.aml
@@ -210,7 +232,7 @@ Replacing Introduction.aml
 Replacing KeyboardSupport.aml
 Replacing ServerAPI.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\PanelBar:
 Replacing BindingOptions.aml
 Replacing ClientAPI.aml
 Replacing Effects.aml
@@ -219,16 +241,16 @@ Replacing Introduction.aml
 Replacing ServerAPI.aml
 Replacing Templates.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Slider:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Slider:
 Replacing ClientApi.aml
 Replacing Configuration.aml
 Replacing Introduction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Splitter:
 Replacing ClientAPI.aml
 Replacing Introduction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\TabStrip:
 Replacing BindingOptions.aml
 Replacing ClientAPI.aml
 Replacing Effects.aml
@@ -236,12 +258,12 @@ Replacing Introduction.aml
 Replacing ServerAPI.aml
 Replacing Templates.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\TimePicker:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\TimePicker:
 Replacing ClientApi.aml
 Replacing Configuration.aml
 Replacing Introduction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\TreeView:
 Replacing BindingOptions.aml
 Replacing CheckBoxSupport.aml
 Replacing ClientAPI.aml
@@ -250,7 +272,7 @@ Replacing ExpandCollapse.aml
 Replacing Introduction.aml
 Replacing PopulateOnDemand.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Upload:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Upload:
 Replacing Async.aml
 Replacing Browsers.aml
 Replacing ClientAPI.aml
@@ -262,23 +284,23 @@ Replacing ServerAPI.aml
 Replacing Sync.aml
 Replacing Troubleshooting.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Window:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\TelerikUI\Window:
 Replacing ClientApi.aml
 Replacing Introduction.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\VisualStudioExtensions:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\VisualStudioExtensions:
 Replacing Introduction.aml
 Replacing LatestVersionRetrieval.aml
 Replacing OptionsDialog.aml
 Replacing ProjectConfiguration.aml
 Replacing ProjectUpgrade.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Content\WebAssets:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Content\WebAssets:
 Replacing CDN.aml
 Replacing Introduction.aml
 Replacing JavaScriptAssets.aml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Media:
+F:\114\Griffin\Trunk Full\Sources\Documentation\Media:
 Replacing AccordionSample.png
 Replacing AddReference.png
 Replacing AlertJqueryVersion.png
@@ -287,10 +309,17 @@ Replacing AppGlobarResourcesEditor.png
 Replacing AssociationEF.png
 Replacing AssociationLS.png
 Replacing BindingNavigationComponentCompilerError.png
+Replacing ButtonsBare.png
+Replacing ButtonsCustomIcon.png
+Replacing ButtonsIcon.png
+Replacing ButtonsIconText.png
+Replacing ButtonsIntro.png
 Replacing CalendarGlobalization.png
 Replacing CalendarSample.png
 Replacing CalendarSelectionAction.png
 Replacing CellMode.png
+Replacing ChartIEIntranet.png
+Replacing ChartStructure.png
 Replacing ComboBoxFiltering.png
 Replacing ComboBoxSample.png
 Replacing DatePickerCorrectDate.png
@@ -311,6 +340,7 @@ Replacing GridFiltering.png
 Replacing GridIntroduction.png
 Replacing GroupFooterTemplate.png
 Replacing GroupHeaderTemplate.png
+Replacing IEScripBehaviors.png
 Replacing ImageBrowser.png
 Replacing jQueryEasingScript.png
 Replacing LocalizedEditor.png
@@ -335,6 +365,7 @@ Replacing TelerikUICss.png
 Replacing TelerikUIDefaultTheme.png
 Replacing TimePickerIntroduction.png
 Replacing UnitPrice.png
+Replacing Upload_ActiveX.png
 Replacing Upload_DD_1.png
 Replacing Upload_DD_2.png
 Replacing Upload_DD_3.png
@@ -346,8 +377,7 @@ Replacing USResouceFile.png
 Replacing USResouceFileEditor.png
 Replacing VSX
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Documentation\Media\VSX:
-Replacing CreateBackup.png
+F:\114\Griffin\Trunk Full\Sources\Documentation\Media\VSX:
 Replacing CreationAndConfigurationWizard 1.1.png
 Replacing CreationAndConfigurationWizard 1.2.png
 Replacing CreationAndConfigurationWizard 1.png
@@ -359,6 +389,7 @@ Replacing GetLatestVersionDownloading.jpg
 Replacing GetLatestVersionLogin.jpg
 Replacing GetLatestVersionNoNewVersion.jpg
 Replacing GetLatestVersionSuccess.jpg
+Replacing NewProject1.png
 Replacing OptionsDialog.png
 Replacing OptionsDialogGeneral.png
 Replacing OptionsDialogMenu.png
@@ -367,16 +398,19 @@ Replacing OverviewMenuConvert.png
 Replacing OverviewMenuCreate.png
 Replacing OverviewProjectTemplates.png
 Replacing UpgradeWizard.png
+Replacing UpgradeWizard1.png
+Replacing UpgradeWizard2.png
+Replacing UpgradeWizard3.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Misc:
+F:\114\Griffin\Trunk Full\Sources\Misc:
 Replacing Telerik.HelpProcessor
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Misc\Telerik.HelpProcessor:
+F:\114\Griffin\Trunk Full\Sources\Misc\Telerik.HelpProcessor:
 Replacing Telerik.HelpProcessor
 Replacing Telerik.HelpProcessor.sln
 Replacing Telerik.HelpProcessor.vssscc
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Misc\Telerik.HelpProcessor\Telerik.HelpProcessor:
+F:\114\Griffin\Trunk Full\Sources\Misc\Telerik.HelpProcessor\Telerik.HelpProcessor:
 Replacing AddMetaTagsTask.cs
 Replacing ChangeHtmToHtmlTask.cs
 Replacing ConceptualTopics.cs
@@ -393,13 +427,13 @@ Replacing Telerik.HelpProcessor.csproj.vspscc
 Replacing UpdateIconAndMediaPathTask.cs
 Replacing UpdateTocCommand.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Misc\Telerik.HelpProcessor\Telerik.HelpProcessor\Properties:
+F:\114\Griffin\Trunk Full\Sources\Misc\Telerik.HelpProcessor\Telerik.HelpProcessor\Properties:
 Replacing AssemblyInfo.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Resources:
+F:\114\Griffin\Trunk Full\Sources\Resources:
 Replacing TelerikExtensionsEULA.rtf
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source:
+F:\114\Griffin\Trunk Full\Sources\Source:
 Replacing CI.sln
 Replacing Griffin.sln
 Replacing Griffin.vssscc
@@ -410,7 +444,7 @@ Replacing Telerik.Web.Mvc.Examples
 Replacing Telerik.Web.Mvc.JavaScriptTests
 Replacing Telerik.Web.Mvc.Tests
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\References:
+F:\114\Griffin\Trunk Full\Sources\Source\References:
 Replacing ArtOfTest.Common.dll
 Replacing ArtOfTest.WebAii.Design.dll
 Replacing ArtOfTest.WebAii.dll
@@ -422,14 +456,14 @@ Replacing Spark.dll
 Replacing Spark.Web.Mvc.dll
 Replacing xunit.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\SharedFiles:
+F:\114\Griffin\Trunk Full\Sources\Source\SharedFiles:
 Replacing CodeAnalysisDictionary.xml
 Replacing CommonAssemblyInfo.cs
 Replacing Source.snk
 Replacing Telerik.Web.snk
 Replacing TestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc:
 Replacing Build
 Replacing Content
 Replacing Data
@@ -451,19 +485,21 @@ Replacing UI
 Replacing UrlGenerator.cs
 Replacing WebAsset
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Build:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Build:
 Replacing EcmaScript.NET.modified.dll
 Replacing GetVersion.dll
 Replacing Telerik.MSBuildTasks.dll
 Replacing Yahoo.Yui.Compressor.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content:
 Replacing Black
 Replacing Default
 Replacing Forest
 Replacing Hay
 Replacing Office2007
 Replacing Office2010Black
+Replacing Office2010Blue
+Replacing Office2010Silver
 Replacing Outlook
 Replacing Simple
 Replacing Sitefinity
@@ -476,346 +512,236 @@ Replacing telerik.forest.css
 Replacing telerik.hay.css
 Replacing telerik.office2007.css
 Replacing telerik.office2010black.css
+Replacing telerik.office2010blue.css
+Replacing telerik.office2010silver.css
 Replacing telerik.outlook.css
 Replacing telerik.rtl.css
 Replacing telerik.simple.css
 Replacing telerik.sitefinity.css
 Replacing telerik.sunset.css
 Replacing telerik.telerik.css
+Replacing telerik.transparent.css
 Replacing telerik.vista.css
 Replacing telerik.web20.css
 Replacing telerik.webblue.css
 Replacing telerik.windows7.css
+Replacing Transparent
 Replacing Vista
 Replacing Web20
 Replacing WebBlue
 Replacing Windows7
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Black:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Black:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Default:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Default:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Forest:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Forest:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Hay:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Hay:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Office2007:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Office2007:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Office2010Black:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Office2010Black:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Outlook:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Office2010Blue:
+Replacing editor.png
+Replacing gradient.png
+Replacing imagebrowser.png
+Replacing loading.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
+Replacing sprite.png
+Replacing sprite-vertical.png
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Office2010Silver:
+Replacing editor.png
+Replacing gradient.png
+Replacing imagebrowser.png
+Replacing loading.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
+Replacing sprite.png
+Replacing sprite-vertical.png
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Outlook:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Simple:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Simple:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Sitefinity:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Sitefinity:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Sunset:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Sunset:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Telerik:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Telerik:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Vista:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Transparent:
+Replacing active.png
+Replacing editor.png
+Replacing gradient.png
+Replacing group.png
+Replacing hover.png
+Replacing imagebrowser.png
+Replacing loading.gif
+Replacing selected.png
+Replacing slider-h.gif
+Replacing slider-v.gif
+Replacing sprite.png
+Replacing sprite-vertical.png
+Replacing toolbar.png
+Replacing widget.png
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Vista:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Web20:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Web20:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\WebBlue:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\WebBlue:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 Replacing treeview-line.png
 Replacing treeview-nodes.png
 Replacing treeview-nodes-rtl.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Windows7:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Content\Windows7:
 Replacing editor.png
 Replacing imagebrowser.png
 Replacing loading.gif
-Replacing slider-h-both.gif
-Replacing slider-h-bottom.gif
-Replacing slider-hs-both.gif
-Replacing slider-hs-bottom.gif
-Replacing slider-hs-top.gif
-Replacing slider-h-top.gif
-Replacing slider-v-both.gif
-Replacing slider-v-left.gif
-Replacing slider-v-right.gif
-Replacing slider-vs-both.gif
-Replacing slider-vs-left.gif
-Replacing slider-vs-right.gif
+Replacing slider-h.gif
+Replacing slider-v.gif
 Replacing sprite.png
 Replacing sprite-vertical.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Extensions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Extensions:
 Replacing CollectionExtensions.cs
 Replacing CustomAttributeProviderExtensions.cs
 Replacing DictionaryExtensions.cs
@@ -826,6 +752,7 @@ Replacing HtmlTextWriterExtensions.cs
 Replacing HttpContextBaseExtensions.cs
 Replacing HttpRequestBaseExtensions.cs
 Replacing ListSortDirectionExtensions.cs
+Replacing MemberExpressionExtensions.cs
 Replacing ObjectExtensions.cs
 Replacing QueryableExtensions.cs
 Replacing QueryProviderExtensions.cs
@@ -835,7 +762,7 @@ Replacing StringExtensions.cs
 Replacing StructExtensions.cs
 Replacing TypeExtensions.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure:
 Replacing DI.cs
 Replacing DynamicTypeBuilder.cs
 Replacing FilterCompositionLogicalOperator.cs
@@ -877,7 +804,7 @@ Replacing QueryableFactory.cs
 Replacing ViewComponentLocalization.cs
 Replacing WebAsset
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation:
 Replacing ActionMethodCache.cs
 Replacing AuthorizeAttributeBuilder.cs
 Replacing AuthorizeAttributeCache.cs
@@ -918,7 +845,7 @@ Replacing UrlResolver.cs
 Replacing VirtualPathProviderWrapper.cs
 Replacing WebAsset
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions:
 Replacing ExpressionBuilderBase.cs
 Replacing ExpressionBuilderFactory.cs
 Replacing ExpressionBuilderOptions.cs
@@ -928,25 +855,25 @@ Replacing Grouping
 Replacing IdentityExpressionBuilder.cs
 Replacing MemberAccess
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\Filtering:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\Filtering:
 Replacing FilterDescriptionExpressionBuilder.cs
 Replacing FilterDescriptorCollectionExpressionBuilder.cs
 Replacing FilterDescriptorExpressionBuilder.cs
 Replacing FilterExpressionBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\Grouping:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\Grouping:
 Replacing Aggregates
 Replacing GroupDescriptorCollectionExpressionBuilder.cs
 Replacing GroupDescriptorExpressionBuilder.cs
 Replacing GroupDescriptorExpressionBuilderBase.cs
 Replacing QueryableAggregatesExpressionBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\Grouping\Aggregates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\Grouping\Aggregates:
 Replacing AggregateFunctionExpressionBuilderBase.cs
 Replacing EnumerableAggregateFunctionExpressionBuilder.cs
 Replacing EnumerableSelectorAggregateFunctionExpressionBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\MemberAccess:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\MemberAccess:
 Replacing CustomTypeDescriptorExtensions.cs
 Replacing CustomTypeDescriptorPropertyAccessExpressionBuilder.cs
 Replacing DataRowFieldAccessExpressionBuilder.cs
@@ -958,20 +885,20 @@ Replacing Unbox.cs
 Replacing XmlNodeChildElementAccessExpressionBuilder.cs
 Replacing XmlNodeExtensions.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer:
 Replacing IMemberAccessToken.cs
 Replacing IndexerToken.cs
 Replacing MemberAccessTokenExtensions.cs
 Replacing MemberAccessTokenizer.cs
 Replacing PropertyToken.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Filtering:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Filtering:
 Replacing FilterDescription.cs
 Replacing FilterDescriptorExtensions.cs
 Replacing FilterOperatorExtensions.cs
 Replacing Parsing
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Filtering\Parsing:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Filtering\Parsing:
 Replacing AndNode.cs
 Replacing BooleanNode.cs
 Replacing ComparisonNode.cs
@@ -994,14 +921,14 @@ Replacing OrNode.cs
 Replacing PropertyNode.cs
 Replacing StringNode.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Grouping:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Grouping:
 Replacing AggregateFunctionsGroup.cs
 Replacing Aggregates
 Replacing Group.cs
 Replacing GroupExtensions.cs
 Replacing IGroup.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Grouping\Aggregates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Grouping\Aggregates:
 Replacing AggregateFunction.cs
 Replacing AggregateFunctionCollection.cs
 Replacing AggregateResult.cs
@@ -1017,10 +944,10 @@ Replacing MaxFunction.cs
 Replacing MinFunction.cs
 Replacing SumFunction.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Sorting:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\Sorting:
 Replacing SortDescriptorCollectionExpressionBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\WebAsset:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\Implementation\WebAsset:
 Replacing AbsoluteWebAssetResolver.cs
 Replacing CdnWebAssetResolver.cs
 Replacing CombinedWebAssetGroupResolver.cs
@@ -1037,7 +964,7 @@ Replacing WebAssetGroupSerializer.cs
 Replacing WebAssetLocator.cs
 Replacing WebAssetResolverFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\WebAsset:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Infrastructure\WebAsset:
 Replacing IWebAssetChecker.cs
 Replacing IWebAssetCollectionResolver.cs
 Replacing IWebAssetContentFilter.cs
@@ -1049,10 +976,10 @@ Replacing IWebAssetResolver.cs
 Replacing IWebAssetResolverFactory.cs
 Replacing ResolverContext.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Properties:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Properties:
 Replacing AssemblyInfo.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Resources:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Resources:
 Replacing EditorLocalization.Designer.cs
 Replacing EditorLocalization.resx
 Replacing GridLocalization.resx
@@ -1060,12 +987,13 @@ Replacing TextResource.Designer.cs
 Replacing TextResource.resx
 Replacing UploadLocalization.resx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Scripts:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Scripts:
 Replacing Editor
 Replacing jquery.validate.min.js
 Replacing jquery-1.5.1.min.js
 Replacing telerik.autocomplete.js
 Replacing telerik.calendar.js
+Replacing telerik.chart.js
 Replacing telerik.combobox.js
 Replacing telerik.common.js
 Replacing telerik.datepicker.js
@@ -1090,7 +1018,7 @@ Replacing telerik.treeview.js
 Replacing telerik.upload.js
 Replacing telerik.window.js
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Scripts\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\Scripts\Editor:
 Replacing components.js
 Replacing dom.js
 Replacing editor.js
@@ -1106,7 +1034,7 @@ Replacing range.js
 Replacing serializer.js
 Replacing system.js
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\SiteMap:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\SiteMap:
 Replacing PopulateSiteMapAttribute.cs
 Replacing SiteMapBase.cs
 Replacing SiteMapBuilder.cs
@@ -1120,9 +1048,10 @@ Replacing SiteMapNodeFactory.cs
 Replacing SiteMapUpdatePriority.cs
 Replacing XmlSiteMap.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI:
 Replacing AutoComplete
 Replacing Calendar
+Replacing Chart
 Replacing ClientEvent.cs
 Replacing ClientSideEnumValueAttribute.cs
 Replacing ClientSideObjectWriter.cs
@@ -1139,7 +1068,6 @@ Replacing Editor
 Replacing Effects
 Replacing ExpressionBuilder.cs
 Replacing Grid
-Replacing GridViewResultAdapterFactory.cs
 Replacing HtmlBuilderBase.cs
 Replacing HtmlElement.cs
 Replacing HtmlFragment.cs
@@ -1196,7 +1124,7 @@ Replacing ViewComponentExtensions.cs
 Replacing ViewComponentFactory.cs
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\AutoComplete:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\AutoComplete:
 Replacing AutoComplete.cs
 Replacing AutoCompleteDataBindingConfiguration.cs
 Replacing AutoCompleteFilterMode.cs
@@ -1205,7 +1133,7 @@ Replacing Fluent
 Replacing IAutoCompleteHtmlBuilder.cs
 Replacing Settings
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\AutoComplete\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\AutoComplete\Fluent:
 Replacing AutoCompleteBindingSettingsBuilder.cs
 Replacing AutoCompleteBuilder.cs
 Replacing AutoCompleteDataBindingConfigurationBuilder.cs
@@ -1213,12 +1141,12 @@ Replacing AutoCompleteFilterSettingsBuilder.cs
 Replacing AutoCompleteMultipleValuesSettingsBuilder.cs
 Replacing AutoCompleteWebServiceBindingSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\AutoComplete\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\AutoComplete\Settings:
 Replacing AutoCompleteBindingSettings.cs
 Replacing AutoCompleteFilterSettings.cs
 Replacing AutoCompleteMultipleValuesSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Calendar:
 Replacing Calendar.cs
 Replacing CalendarBuilder.cs
 Replacing CalendarClientEvents.cs
@@ -1232,53 +1160,161 @@ Replacing CalendarSelectionSettingsBuilder.cs
 Replacing ICalendarHtmlBuilder.cs
 Replacing ICalendarHtmlBuilderFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart:
+Replacing Axes
+Replacing Chart.cs
+Replacing ChartArea.cs
+Replacing ChartClientEvents.cs
+Replacing ChartDefaults.cs
+Replacing ChartElementBorder.cs
+Replacing ChartLegend.cs
+Replacing ChartLine.cs
+Replacing ChartSpacing.cs
+Replacing ChartTitle.cs
+Replacing Enums
+Replacing Fluent
+Replacing Html
+Replacing IChart.cs
+Replacing PlotArea.cs
+Replacing Serialization
+Replacing Series
+Replacing Settings
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Axes:
+Replacing ChartAxisBase.cs
+Replacing ChartCategoryAxis.cs
+Replacing ChartNumericAxis.cs
+Replacing IChartAxis.cs
+Replacing IChartCategoryAxis.cs
+Replacing IChartNumericAxis.cs
+Replacing IChartValueAxis.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Enums:
+Replacing ChartAxisTickType.cs
+Replacing ChartBarLabelsPosition.cs
+Replacing ChartLegendPosition.cs
+Replacing ChartLineLabelsPosition.cs
+Replacing ChartMarkerShape.cs
+Replacing ChartTextAlignment.cs
+Replacing ChartTitlePosition.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Fluent:
+Replacing ChartAreaBuilder.cs
+Replacing ChartAxisBuilderBase.cs
+Replacing ChartBarLabelsBuilder.cs
+Replacing ChartBarSeriesBuilder.cs
+Replacing ChartBindingSettingsBuilder.cs
+Replacing ChartBuilder.cs
+Replacing ChartCategoryAxisBuilder.cs
+Replacing ChartClientEventsBuilder.cs
+Replacing ChartDataBindingConfigurationBuilder.cs
+Replacing ChartDataLabelsBuilderBase.cs
+Replacing ChartLegendBuilder.cs
+Replacing ChartLineBuilder.cs
+Replacing ChartLineLabelsBuilder.cs
+Replacing ChartLineMarkersBuilder.cs
+Replacing ChartLineSeriesBuilder.cs
+Replacing ChartNumericAxisBuilder.cs
+Replacing ChartSeriesBuilderBase.cs
+Replacing ChartSeriesDefaultsBuilder.cs
+Replacing ChartSeriesFactory.cs
+Replacing ChartTitleBuilder.cs
+Replacing ChartValueAxisFactory.cs
+Replacing PlotAreaBuilder.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Html:
+Replacing ChartHtmlBuilder.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Serialization:
+Replacing ChartAreaSerializer.cs
+Replacing ChartAxisSerializerBase.cs
+Replacing ChartBarLabelsSerializer.cs
+Replacing ChartBarSeriesSerializer.cs
+Replacing ChartCategoryAxisSerializer.cs
+Replacing ChartElementBorderSerializer.cs
+Replacing ChartLegendSerializer.cs
+Replacing ChartLineLabelsSerializer.cs
+Replacing ChartLineMarkersSerializer.cs
+Replacing ChartLineSerializer.cs
+Replacing ChartLineSeriesSerializer.cs
+Replacing ChartNumericAxisSerializer.cs
+Replacing ChartSeriesDefaultsSerializer.cs
+Replacing ChartSeriesSerializer.cs
+Replacing ChartSpacingSerializer.cs
+Replacing ChartTitleSerializer.cs
+Replacing IChartSerializer.cs
+Replacing PlotAreaSerializer.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Series:
+Replacing ChartBarLabels.cs
+Replacing ChartBarSeries.cs
+Replacing ChartBarSeriesOrientation.cs
+Replacing ChartBarSeriesOverlay.cs
+Replacing ChartBoundSeries.cs
+Replacing ChartDataLabels.cs
+Replacing ChartLineLabels.cs
+Replacing ChartLineMarkers.cs
+Replacing ChartLineSeries.cs
+Replacing ChartSeriesBase.cs
+Replacing ChartSeriesDefaults.cs
+Replacing IChartBarSeries.cs
+Replacing IChartBoundSeries.cs
+Replacing IChartLineSeries.cs
+Replacing IChartSeries.cs
+Replacing IChartSeriesDefaults.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Chart\Settings:
+Replacing ChartBindingSettings.cs
+Replacing ChartDataBindingSettings.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ComboBox:
 Replacing ComboBox.cs
 Replacing ComboBoxHtmlBuilder.cs
 Replacing Fluent
 Replacing IComboBoxRenderable.cs
 Replacing Settings
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ComboBox\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ComboBox\Fluent:
 Replacing ComboBoxBuilder.cs
 Replacing ComboBoxFilterSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ComboBox\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ComboBox\Settings:
 Replacing ComboBoxFilterSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePicker:
 Replacing DatePicker.cs
 Replacing Fluent
 Replacing Html
 Replacing IDatePickerHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePicker\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePicker\Fluent:
 Replacing DatePickerBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePicker\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePicker\Html:
 Replacing DatePickerHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePickerBase:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePickerBase:
 Replacing DatePickerBase.cs
 Replacing DatePickerClientEvents.cs
 Replacing Fluent
 Replacing IDatePicker.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePickerBase\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DatePickerBase\Fluent:
 Replacing DatePickerBaseBuilder.cs
 Replacing DatePickerClientEventsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DateTimePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DateTimePicker:
 Replacing DateTimePicker.cs
 Replacing DateTimePickerClientEvents.cs
 Replacing DateTimePickerHtmlBuilder.cs
 Replacing Fluent
+Replacing IDatePickerHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DateTimePicker\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DateTimePicker\Fluent:
 Replacing DateTimePickerBuilder.cs
 Replacing DateTimePickerClientEventsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDown:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDown:
 Replacing DropDownBindingSettingsExtensions.cs
 Replacing DropDownClientEvents.cs
 Replacing DropDownExtentions.cs
@@ -1291,7 +1327,7 @@ Replacing IDropDownHtmlBuilder.cs
 Replacing IDropDownRenderable.cs
 Replacing Settings
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDown\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDown\Fluent:
 Replacing DropDownBindingSettingsBuilder.cs
 Replacing DropDownBuilderBase.cs
 Replacing DropDownClientEventsBuilder.cs
@@ -1299,23 +1335,23 @@ Replacing DropDownItemBuilder.cs
 Replacing DropDownItemFactory.cs
 Replacing DropDownWebServiceBindingSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDown\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDown\Settings:
 Replacing DropDownBindingSettings.cs
 Replacing IDropDownBindingSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDownList:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDownList:
 Replacing DropDownList.cs
 Replacing DropDownListDataBindingConfiguration.cs
 Replacing DropDownListHtmlBuilder.cs
 Replacing Fluent
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDownList\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\DropDownList\Fluent:
 Replacing DropDownListBindingSettingsBuilder.cs
 Replacing DropDownListBuilder.cs
 Replacing DropDownListDataBindingConfigurationBuilder.cs
 Replacing DropDownListWebServiceBindingSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor:
 Replacing Editor.cs
 Replacing EditorClientEvents.cs
 Replacing EditorDefaultOptions.cs
@@ -1330,7 +1366,7 @@ Replacing IEditorUrlBuilder.cs
 Replacing ImageBrowser
 Replacing Tools
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\Fluent:
 Replacing EditorBuilder.cs
 Replacing EditorClientEventsBuilder.cs
 Replacing EditorCustomToolBuilder.cs
@@ -1339,7 +1375,7 @@ Replacing EditorFileBrowserSettingsBuilder.cs
 Replacing EditorSnippetBuilder.cs
 Replacing EditorToolFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\Html:
 Replacing EditorBreakHtmlBuilder.cs
 Replacing EditorButtonHtmlBuilder.cs
 Replacing EditorColorPickerHtmlBuilder.cs
@@ -1351,7 +1387,7 @@ Replacing EditorSelectBoxHtmlBuilder.cs
 Replacing EditorSeparatorHtmlBuilder.cs
 Replacing EditorToolGroupHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\ImageBrowser:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\ImageBrowser:
 Replacing BrowseResult.cs
 Replacing DirectoryBrowser.cs
 Replacing DirectoryEntry.cs
@@ -1368,7 +1404,7 @@ Replacing ImageSize.cs
 Replacing IThumbnailCreator.cs
 Replacing ThumbnailCreator.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\Tools:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Editor\Tools:
 Replacing EditorBreak.cs
 Replacing EditorButton.cs
 Replacing EditorColorPicker.cs
@@ -1379,7 +1415,7 @@ Replacing EditorSelectBox.cs
 Replacing EditorSeparator.cs
 Replacing IEditorListTool.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Effects:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Effects:
 Replacing AnimationBuilder.cs
 Replacing AnimationDuration.cs
 Replacing AnimationDurationConverter.cs
@@ -1402,7 +1438,7 @@ Replacing SlideAnimationBuilder.cs
 Replacing ToggleEffect.cs
 Replacing ZoomAnimation.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid:
 Replacing AggregateDescriptor.cs
 Replacing Columns
 Replacing Commands
@@ -1413,6 +1449,8 @@ Replacing Fluent
 Replacing Grid.cs
 Replacing GridActionAttribute.cs
 Replacing GridActionBindingContext.cs
+Replacing GridActionResultAdapterFactory.cs
+Replacing GridActionResultFactory.cs
 Replacing GridAggregateResult.cs
 Replacing GridBeginEditEvent.cs
 Replacing GridBindingContextExtensions.cs
@@ -1435,6 +1473,7 @@ Replacing GridGroupAggregateResult.cs
 Replacing GridJsonResultAdapter.cs
 Replacing GridLocalization.cs
 Replacing GridModel.cs
+Replacing GridOperationMode.cs
 Replacing GridPagerPosition.cs
 Replacing GridPagerStyles.cs
 Replacing GridRow.cs
@@ -1453,6 +1492,7 @@ Replacing IFilterDescriptor.cs
 Replacing IGrid.cs
 Replacing IGridActionResultAdapter.cs
 Replacing IGridActionResultAdapterFactory.cs
+Replacing IGridActionResultFactory.cs
 Replacing IGridBindingContext.cs
 Replacing IGridColumnContainer.cs
 Replacing IGridDataKey.cs
@@ -1464,7 +1504,7 @@ Replacing Settings
 Replacing SortDescriptor.cs
 Replacing ToolBar
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Columns:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Columns:
 Replacing GridActionColumn.cs
 Replacing GridBoundColumn.cs
 Replacing GridColumnBase.cs
@@ -1475,7 +1515,7 @@ Replacing IGridBoundColumn.cs
 Replacing IGridColumn.cs
 Replacing IGridTemplateColumn.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Commands:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Commands:
 Replacing GridActionCommandBase.cs
 Replacing GridDeleteActionCommand.cs
 Replacing GridEditActionCommand.cs
@@ -1483,11 +1523,12 @@ Replacing GridSelectActionCommand.cs
 Replacing IGridActionCommand.cs
 Replacing IGridLocalization.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Fluent:
 Replacing GridActionColumnBuilder.cs
 Replacing GridActionCommandBuilderBase.cs
 Replacing GridActionCommandFactory.cs
 Replacing GridAggregatesFactory.cs
+Replacing GridAjaxBindingSettingsBuilder.cs
 Replacing GridAjaxSettingsBuilder.cs
 Replacing GridBindingSettingsBuilder.cs
 Replacing GridBoundColumnBuilder.cs
@@ -1515,6 +1556,7 @@ Replacing GridFilterStringDescriptorBuilder.cs
 Replacing GridGroupDescriptorBuilder.cs
 Replacing GridGroupDescriptorFactory.cs
 Replacing GridGroupingSettingsBuilder.cs
+Replacing GridKeyboardNavigationSettingsBuilder.cs
 Replacing GridPagerSettingsBuilder.cs
 Replacing GridReorderingSettingsBuilder.cs
 Replacing GridRequestSettingsBuilder.cs
@@ -1523,6 +1565,7 @@ Replacing GridResizingSettingsBuilder.cs
 Replacing GridScrollSettingsBuilder.cs
 Replacing GridSelectActionCommandBuilder.cs
 Replacing GridSelectionSettingsBuilder.cs
+Replacing GridServerBindingSettingsBuilder.cs
 Replacing GridSortDescriptorBuilder.cs
 Replacing GridSortDescriptorFactory.cs
 Replacing GridSortSettingsBuilder.cs
@@ -1534,7 +1577,7 @@ Replacing GridToolBarCustomCommandBuilder.cs
 Replacing GridWebServiceBindingSettingsBuilder.cs
 Replacing GridWebServiceSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Html:
 Replacing GridActionCellBuilder.cs
 Replacing GridAlternatingRowBuilderDecorator.cs
 Replacing GridButtonBuilder.cs
@@ -1616,6 +1659,7 @@ Replacing GridTableBuilderDetailViewColDecorator.cs
 Replacing GridTableBuilderFactory.cs
 Replacing GridTableBuilderGroupColDecorator.cs
 Replacing GridTemplateCellBuilder.cs
+Replacing GridTemplateRowBuilder.cs
 Replacing GridToolBarBuilder.cs
 Replacing GridToolBarData.cs
 Replacing IGridButtonBuilder.cs
@@ -1628,6 +1672,7 @@ Replacing IGridDataKeyComparer.cs
 Replacing IGridDataSectionBuilder.cs
 Replacing IGridDecoratableCellBuilder.cs
 Replacing IGridEditFormBuilder.cs
+Replacing IGridFormatableCellBuilder.cs
 Replacing IGridFormBuilder.cs
 Replacing IGridFunctionalSectionBuilder.cs
 Replacing IGridGroupHeaderBuilder.cs
@@ -1654,7 +1699,7 @@ Replacing IGridTableBuilderDecorator.cs
 Replacing IGridTableBulderFactory.cs
 Replacing IGridToolBarBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Serialization:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Serialization:
 Replacing GridActionColumnSerializer.cs
 Replacing GridBoundColumnSerializer.cs
 Replacing GridClientObjectSerializer.cs
@@ -1663,7 +1708,7 @@ Replacing GridPluginSerializer.cs
 Replacing GridUrlFormatSerializer.cs
 Replacing IGridColumnSerializer.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\Settings:
 Replacing GridAjaxSettings.cs
 Replacing GridBindingSettings.cs
 Replacing GridColumnSettings.cs
@@ -1672,6 +1717,7 @@ Replacing GridDataBindingSettings.cs
 Replacing GridEditingSettings.cs
 Replacing GridFilteringSettings.cs
 Replacing GridGroupingSettings.cs
+Replacing GridKeyboardNavigationSettings.cs
 Replacing GridPagingSettings.cs
 Replacing GridReorderingSettings.cs
 Replacing GridResizingSettings.cs
@@ -1680,7 +1726,7 @@ Replacing GridSelectionSettings.cs
 Replacing GridSortSettings.cs
 Replacing GridWebServiceSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\ToolBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Grid\ToolBar:
 Replacing GridToolbarCommandBase.cs
 Replacing GridToolbarCustomCommand.cs
 Replacing GridToolbarInsertCommand.cs
@@ -1688,7 +1734,7 @@ Replacing GridToolBarPosition.cs
 Replacing GridToolbarSettings.cs
 Replacing GridToolBarSubmitChangesCommand.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Menu:
 Replacing Menu.cs
 Replacing MenuBuilder.cs
 Replacing MenuClientEvents.cs
@@ -1700,7 +1746,7 @@ Replacing MenuItemBuilder.cs
 Replacing MenuItemFactory.cs
 Replacing MenuOrientation.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\PanelBar:
 Replacing PanelBar.cs
 Replacing PanelBarBuilder.cs
 Replacing PanelBarClientEvents.cs
@@ -1712,13 +1758,13 @@ Replacing PanelBarItem.cs
 Replacing PanelBarItemBuilder.cs
 Replacing PanelBarItemFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ScriptRegistrar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\ScriptRegistrar:
 Replacing ScriptRegistrar.cs
 Replacing ScriptRegistrarBuilder.cs
 Replacing ScriptWrapper.cs
 Replacing ScriptWrapperBase.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider:
 Replacing Fluent
 Replacing Html
 Replacing RangeSlider.cs
@@ -1728,14 +1774,14 @@ Replacing SliderBaseClientEvents.cs
 Replacing SliderOrientation.cs
 Replacing SliderTickPlacement.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider\Fluent:
 Replacing RangeSliderBuilder.cs
 Replacing RangeSliderClientEventsBuilder.cs
 Replacing SliderBuilder.cs
 Replacing SliderClientEventsBuilder.cs
 Replacing SliderTooltipBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider\Html:
 Replacing IRangeSliderHtmlBuilder.cs
 Replacing IRangeSliderHtmlBuilderFactory.cs
 Replacing ISliderHtmlBuilder.cs
@@ -1747,11 +1793,11 @@ Replacing SliderHtmlBuilder.cs
 Replacing SliderHtmlBuilderFactory.cs
 Replacing SliderRenderingData.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Slider\Settings:
 Replacing ISliderTooltipSettings.cs
 Replacing SliderTooltipSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Splitter:
 Replacing Fluent
 Replacing Html
 Replacing Splitter.cs
@@ -1759,20 +1805,20 @@ Replacing SplitterClientEvents.cs
 Replacing SplitterOrientation.cs
 Replacing SplitterPane.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Splitter\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Splitter\Fluent:
 Replacing SplitterBuilder.cs
 Replacing SplitterClientEventsBuilder.cs
 Replacing SplitterPaneBuilder.cs
 Replacing SplitterPaneFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Splitter\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Splitter\Html:
 Replacing SplitterHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\StyleSheetRegistrar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\StyleSheetRegistrar:
 Replacing StyleSheetRegistrar.cs
 Replacing StyleSheetRegistrarBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TabStrip:
 Replacing ITabStripHtmlBuilder.cs
 Replacing ITabStripHtmlBuilderFactory.cs
 Replacing TabStrip.cs
@@ -1785,7 +1831,7 @@ Replacing TabStripItem.cs
 Replacing TabStripItemBuilder.cs
 Replacing TabStripItemFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TextBox:
 Replacing CurrencyTextBox.cs
 Replacing Fluent
 Replacing IntegerTextBox.cs
@@ -1799,7 +1845,7 @@ Replacing TextBoxBaseClientEvents.cs
 Replacing TextBoxBaseHtmlBuilder.cs
 Replacing TextBoxBaseHtmlBuilderFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TextBox\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TextBox\Fluent:
 Replacing CurrencyTextBoxBuilder.cs
 Replacing IntegerTextBoxBuilder.cs
 Replacing NumericTextBoxBuilder.cs
@@ -1807,18 +1853,18 @@ Replacing PercentTextBoxBuilder.cs
 Replacing TextBoxBaseClientEventsBuilder.cs
 Replacing TextBoxBuilderBase.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TimePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TimePicker:
 Replacing Fluent
 Replacing Html
 Replacing TimePicker.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TimePicker\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TimePicker\Fluent:
 Replacing TimePickerBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TimePicker\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TimePicker\Html:
 Replacing TimePickerHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TreeView:
 Replacing Fluent
 Replacing ITreeViewHtmlBuilder.cs
 Replacing ITreeViewHtmlBuilderFactory.cs
@@ -1832,7 +1878,7 @@ Replacing TreeViewHtmlBuilderFactory.cs
 Replacing TreeViewItem.cs
 Replacing TreeViewItemModel.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TreeView\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TreeView\Fluent:
 Replacing TreeViewBindingSettingsBuilder.cs
 Replacing TreeViewBuilder.cs
 Replacing TreeViewClientEventsBuilder.cs
@@ -1842,11 +1888,11 @@ Replacing TreeViewItemBuilder.cs
 Replacing TreeViewItemFactory.cs
 Replacing TreeViewWebServiceBindingSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TreeView\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\TreeView\Settings:
 Replacing TreeViewBindingSettings.cs
 Replacing TreeViewDragAndDropSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload:
 Replacing Fluent
 Replacing Html
 Replacing Settings
@@ -1854,19 +1900,19 @@ Replacing Upload.cs
 Replacing UploadClientEvents.cs
 Replacing UploadLocalization.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload\Fluent:
 Replacing UploadAsyncSettingsBuilder.cs
 Replacing UploadBuilder.cs
 Replacing UploadClientEventsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload\Html:
 Replacing UploadHtmlBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Upload\Settings:
 Replacing IUploadAsyncSettings.cs
 Replacing UploadAsyncSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Window:
 Replacing Fluent
 Replacing HeaderButton.cs
 Replacing IWindowButton.cs
@@ -1880,17 +1926,17 @@ Replacing WindowClientEvents.cs
 Replacing WindowHtmlBuilder.cs
 Replacing WindowHtmlBuilderFactory.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Window\Fluent:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Window\Fluent:
 Replacing WindowBuilder.cs
 Replacing WindowButtonsBuilder.cs
 Replacing WindowClientEventsBuilder.cs
 Replacing WindowEffectsBuilder.cs
 Replacing WindowResizingSettingsBuilder.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Window\Settings:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\UI\Window\Settings:
 Replacing WindowResizingSettings.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\WebAsset:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\WebAsset:
 Replacing Configuration
 Replacing IWebAsset.cs
 Replacing SharedWebAssetGroupBuilder.cs
@@ -1904,14 +1950,14 @@ Replacing WebAssetGroupBuilder.cs
 Replacing WebAssetHttpHandler.cs
 Replacing WebAssetType.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\WebAsset\Configuration:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc\WebAsset\Configuration:
 Replacing WebAssetConfigurationElement.cs
 Replacing WebAssetConfigurationElementCollection.cs
 Replacing WebAssetConfigurationSection.cs
 Replacing WebAssetGroupConfigurationElement.cs
 Replacing WebAssetGroupConfigurationElementCollection.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples:
 Replacing App_Data
 Replacing App_GlobalResources
 Replacing Areas
@@ -1923,6 +1969,7 @@ Replacing favicon.ico
 Replacing Filters
 Replacing Global.asax
 Replacing Global.asax.cs
+Replacing ModelBinders
 Replacing Models
 Replacing Properties
 Replacing sample.sitemap
@@ -1930,21 +1977,24 @@ Replacing Scripts
 Replacing Telerik.Web.Mvc.Examples.csproj
 Replacing Telerik.Web.Mvc.Examples.csproj.vspscc
 Replacing Telerik.Web.Mvc.Examples.sln
+Replacing UrlGenerator.cs
 Replacing Views
 Replacing Web.config
 Replacing Web.MVC2.config
 Replacing Web.sitemap
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\App_Data:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\App_Data:
 Replacing Northwind.mdf
 Replacing Northwind_log.ldf
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\App_GlobalResources:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\App_GlobalResources:
 Replacing EditorLocalization.bg-BG.resx
 Replacing EditorLocalization.de-DE.resx
 Replacing EditorLocalization.fr-FR.resx
+Replacing EditorLocalization.nl-NL.resx
 Replacing EditorLocalization.pl-PL.resx
 Replacing EditorLocalization.pt-BR.resx
+Replacing EditorLocalization.resx
 Replacing EditorLocalization.ru-RU.resx
 Replacing EditorLocalization.uk-UA.resx
 Replacing GridLocalization.bg-BG.resx
@@ -1955,20 +2005,24 @@ Replacing GridLocalization.pl-PL.resx
 Replacing GridLocalization.pt-BR.designer.cs
 Replacing GridLocalization.pt-BR.resx
 Replacing GridLocalization.pt-PT.resx
+Replacing GridLocalization.resx
 Replacing GridLocalization.ru-RU.resx
 Replacing GridLocalization.uk-UA.resx
 Replacing UploadLocalization.bg-BG.resx
+Replacing UploadLocalization.pl-PL.resx
+Replacing UploadLocalization.ru-RU.resx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas:
 Replacing Razor
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor:
 Replacing RazorAreaRegistration.cs
 Replacing Views
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views:
 Replacing _ViewStart.cshtml
 Replacing Calendar
+Replacing Chart
 Replacing ComboBox
 Replacing DatePicker
 Replacing Editor
@@ -1986,7 +2040,7 @@ Replacing Upload
 Replacing Web.config
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Calendar:
 Replacing Accessibility.cshtml
 Replacing ClientSideApi.cshtml
 Replacing ClientSideEvents.cshtml
@@ -1995,7 +2049,14 @@ Replacing Globalization.cshtml
 Replacing RtlSupport.cshtml
 Replacing SelectAction.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Chart:
+Replacing AjaxBinding.cshtml
+Replacing ClientSideApi.cshtml
+Replacing ClientSideEvents.cshtml
+Replacing CombinationChart.cshtml
+Replacing FirstLook.cshtml
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\ComboBox:
 Replacing Accessibility.cshtml
 Replacing AjaxLoading.cshtml
 Replacing AnimationEffects.cshtml
@@ -2009,7 +2070,7 @@ Replacing FirstLook.cshtml
 Replacing RtlSupport.cshtml
 Replacing ServerValidation.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\DatePicker:
 Replacing Accessibility.cshtml
 Replacing AnimationEffects.cshtml
 Replacing ClientSideApi.cshtml
@@ -2022,7 +2083,7 @@ Replacing Globalization.cshtml
 Replacing RtlSupport.cshtml
 Replacing ServerValidation.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Editor:
 Replacing Accessibility.cshtml
 Replacing ClientSideApi.cshtml
 Replacing ClientSideEvents.cshtml
@@ -2038,10 +2099,10 @@ Replacing ServerValidation.cshtml
 Replacing Snippets.cshtml
 Replacing Styles.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Editor\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Editor\EditorTemplates:
 Replacing Editor.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Grid:
 Replacing Accessibility.cshtml
 Replacing AggregatesAjax.cshtml
 Replacing AggregatesServerSide.cshtml
@@ -2051,6 +2112,7 @@ Replacing CheckBoxesAjax.cshtml
 Replacing CheckBoxesServerSide.cshtml
 Replacing CheckedOrders.cshtml
 Replacing ClientEditTemplates.cshtml
+Replacing ClientRowTemplate.cshtml
 Replacing ClientSideEvents.cshtml
 Replacing ColumnReordering.cshtml
 Replacing ColumnResizing.cshtml
@@ -2065,6 +2127,7 @@ Replacing DetailsAjax.cshtml
 Replacing DetailsServerSide.cshtml
 Replacing DisplayTemplates
 Replacing EditingAjax.cshtml
+Replacing EditingBatch.cshtml
 Replacing EditingServerSide.cshtml
 Replacing EditingWebService.cshtml
 Replacing EditorTemplates
@@ -2076,29 +2139,33 @@ Replacing Grouping.cshtml
 Replacing HeaderFooterTemplates.cshtml
 Replacing HierarchyAjax.cshtml
 Replacing HierarchyServerSide.cshtml
+Replacing KeyboardNavigation.cshtml
 Replacing Localization.cshtml
+Replacing OperationMode.cshtml
+Replacing PageOnScroll.cshtml
 Replacing Paging.cshtml
 Replacing RtlSupport.cshtml
 Replacing SelectionClientSide.cshtml
 Replacing SelectionServerSide.cshtml
 Replacing ServerBinding.cshtml
 Replacing ServerEditTemplates.cshtml
+Replacing ServerRowTemplate.cshtml
 Replacing Sorting.cshtml
 Replacing TemplatesClientSide.cshtml
 Replacing TemplatesServerSide.cshtml
 Replacing WebService.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Grid\DisplayTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Grid\DisplayTemplates:
 Replacing Employee.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Grid\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Grid\EditorTemplates:
 Replacing ClientEmployee.cshtml
 Replacing Employee.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Home:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Home:
 Replacing FirstLook.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Menu:
 Replacing Accessibility.cshtml
 Replacing AnimationEffects.cshtml
 Replacing ClientSideApi.cshtml
@@ -2111,7 +2178,7 @@ Replacing SiteMapBinding.cshtml
 Replacing Sprites.cshtml
 Replacing Templates.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\NumericTextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\NumericTextBox:
 Replacing Accessibility.cshtml
 Replacing ClientSideApi.cshtml
 Replacing ClientSideEvents.cshtml
@@ -2122,7 +2189,7 @@ Replacing Globalization.cshtml
 Replacing RtlSupport.cshtml
 Replacing ServerValidation.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\PanelBar:
 Replacing Accessibility.cshtml
 Replacing AjaxLoading.cshtml
 Replacing AjaxView_BasedOnJQuery.cshtml
@@ -2139,7 +2206,7 @@ Replacing SiteMapBinding.cshtml
 Replacing Sprites.cshtml
 Replacing Templates.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Shared:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Shared:
 Replacing _AccessibilityValidation.cshtml
 Replacing _CodeViewer.cshtml
 Replacing _CulturePicker.cshtml
@@ -2155,7 +2222,7 @@ Replacing _TopNavigation.cshtml
 Replacing CodeFile.cshtml
 Replacing EditorTemplates
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Shared\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Shared\EditorTemplates:
 Replacing Currency.cshtml
 Replacing Date.cshtml
 Replacing DateTime.cshtml
@@ -2163,7 +2230,7 @@ Replacing Integer.cshtml
 Replacing Number.cshtml
 Replacing Time.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Slider:
 Replacing Accessibility.cshtml
 Replacing ClientSideApi.cshtml
 Replacing ClientSideEvents.cshtml
@@ -2172,10 +2239,10 @@ Replacing EditorTemplates
 Replacing EditTemplate.cshtml
 Replacing FirstLook.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Slider\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Slider\EditorTemplates:
 Replacing Slider.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Splitter:
 Replacing Accessibility.cshtml
 Replacing AjaxLoading.cshtml
 Replacing ClientSideApi.cshtml
@@ -2185,7 +2252,7 @@ Replacing FullScreen.cshtml
 Replacing NestingComponents.cshtml
 Replacing Orientation.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\TabStrip:
 Replacing Accessibility.cshtml
 Replacing AjaxLoading.cshtml
 Replacing AjaxView_BasedOnJQuery.cshtml
@@ -2201,7 +2268,7 @@ Replacing RtlSupport.cshtml
 Replacing SiteMapBinding.cshtml
 Replacing Sprites.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\TreeView:
 Replacing Accessibility.cshtml
 Replacing AjaxLoading.cshtml
 Replacing AnimationEffects.cshtml
@@ -2217,7 +2284,7 @@ Replacing SiteMapBinding.cshtml
 Replacing Sprites.cshtml
 Replacing Templates.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Upload:
 Replacing ClientSideApi.cshtml
 Replacing ClientSideEvents.cshtml
 Replacing FirstLook.cshtml
@@ -2225,7 +2292,7 @@ Replacing RtlSupport.cshtml
 Replacing SyncUpload.cshtml
 Replacing SyncUploadResult.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Areas\Razor\Views\Window:
 Replacing Accessibility.cshtml
 Replacing AjaxView.cshtml
 Replacing AnimationEffects.cshtml
@@ -2236,8 +2303,9 @@ Replacing LoadingExternalPage.cshtml
 Replacing PopupForm.cshtml
 Replacing RtlSupport.cshtml
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content:
 Replacing Calendar
+Replacing Chart
 Replacing ComboBox
 Replacing Common
 Replacing DatePicker
@@ -2256,10 +2324,10 @@ Replacing TreeView
 Replacing Upload
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Calendar:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Calendar\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Calendar\Descriptions:
 Replacing Accessibility.html
 Replacing ClientSideApi.html
 Replacing ClientSideEvents.html
@@ -2268,10 +2336,20 @@ Replacing Globalization.html
 Replacing RtlSupport.html
 Replacing SelectAction.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Chart:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\ComboBox\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Chart\Descriptions:
+Replacing AjaxBinding.html
+Replacing ClientSideApi.html
+Replacing ClientSideEvents.html
+Replacing CombinationChart.html
+Replacing FirstLook.html
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\ComboBox:
+Replacing Descriptions
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\ComboBox\Descriptions:
 Replacing Accessibility.html
 Replacing AjaxLoading.html
 Replacing AnimationEffects.html
@@ -2285,13 +2363,13 @@ Replacing FirstLook.html
 Replacing RtlSupport.html
 Replacing ServerValidation.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common:
 Replacing Icons
 Replacing orm-comparison.png
 Replacing sprite.png
 Replacing validation-error-message.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons:
 Replacing Ajax
 Replacing delete.png
 Replacing edit.png
@@ -2304,24 +2382,24 @@ Replacing Suites
 Replacing Suites_32
 Replacing wave.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Ajax:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Ajax:
 Replacing Editor.png
 Replacing Grid.png
 Replacing Scheduler.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Mvc:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Mvc:
 Replacing Grid.png
 Replacing Menu.png
 Replacing PanelBar.png
 Replacing TabStrip.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Sl:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Sl:
 Replacing Chart.gif
 Replacing Docking.gif
 Replacing GridView.gif
 Replacing Scheduler.gif
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Suites:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Suites:
 Replacing ajax.png
 Replacing mvc.png
 Replacing orm.png
@@ -2332,7 +2410,7 @@ Replacing test.png
 Replacing win.png
 Replacing wpf.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Suites_32:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Common\Icons\Suites_32:
 Replacing AJAX.png
 Replacing CMS.png
 Replacing JustCode.png
@@ -2346,10 +2424,10 @@ Replacing TFS.png
 Replacing WinForms.png
 Replacing WPF.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\DatePicker:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\DatePicker\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\DatePicker\Descriptions:
 Replacing Accessibility.html
 Replacing AnimationEffects.html
 Replacing ClientSideApi.html
@@ -2362,17 +2440,17 @@ Replacing Globalization.html
 Replacing RtlSupport.html
 Replacing ServerValidation.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor:
 Replacing CustomTools
 Replacing Descriptions
 Replacing editor.png
 Replacing Snippets
 Replacing Styles
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\CustomTools:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\CustomTools:
 Replacing insert-html-icon.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\Descriptions:
 Replacing Accessibility.html
 Replacing ClientSideApi.html
 Replacing ClientSideEvents.html
@@ -2387,21 +2465,21 @@ Replacing ServerValidation.html
 Replacing Snippets.html
 Replacing Styles.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\Snippets:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\Snippets:
 Replacing Features.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\Styles:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Editor\Styles:
 Replacing blockquote.png
 Replacing editorStyles.css
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid:
 Replacing Customers
 Replacing Descriptions
 Replacing Employees
 Replacing ExternalServiceFacebook
 Replacing ExternalServiceTwitter
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\Customers:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\Customers:
 Replacing ALFKI.jpg
 Replacing ANATR.jpg
 Replacing ANTON.jpg
@@ -2494,7 +2572,7 @@ Replacing WHITC.jpg
 Replacing WILMK.jpg
 Replacing WOLZA.jpg
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\Descriptions:
 Replacing Accessibility.html
 Replacing AggregatesAjax.html
 Replacing AggregatesServerSide.html
@@ -2503,6 +2581,7 @@ Replacing AutoGenerateColumns.html
 Replacing CheckBoxesAjax.html
 Replacing CheckBoxesServerSide.html
 Replacing ClientEditTemplates.html
+Replacing ClientRowTemplate.html
 Replacing ClientSideEvents.html
 Replacing ColumnReordering.html
 Replacing ColumnResizing.html
@@ -2526,19 +2605,23 @@ Replacing Grouping.html
 Replacing HeaderFooterTemplates.html
 Replacing HierarchyAjax.html
 Replacing HierarchyServerSide.html
+Replacing KeyboardNavigation.html
 Replacing Localization.html
+Replacing OperationMode.html
+Replacing PageOnScroll.html
 Replacing Paging.html
 Replacing RtlSupport.html
 Replacing SelectionClientSide.html
 Replacing SelectionServerSide.html
 Replacing ServerBinding.html
 Replacing ServerEditTemplates.html
+Replacing ServerRowTemplate.html
 Replacing Sorting.html
 Replacing TemplatesClientSide.html
 Replacing TemplatesServerSide.html
 Replacing WebService.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\Employees:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\Employees:
 Replacing 1.jpg
 Replacing 2.jpg
 Replacing 3.jpg
@@ -2549,17 +2632,17 @@ Replacing 7.jpg
 Replacing 8.jpg
 Replacing 9.jpg
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\ExternalServiceFacebook:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\ExternalServiceFacebook:
 Replacing background.png
 Replacing fb_connect.png
 Replacing fb_silhouette.png
 Replacing loading.gif
 Replacing xd_receiver.htm
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\ExternalServiceTwitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Grid\ExternalServiceTwitter:
 Replacing twitter-logo.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images:
 Replacing background.png
 Replacing menu.png
 Replacing menu-separator.png
@@ -2567,9 +2650,11 @@ Replacing overview-sprite.jpg
 Replacing sprite.png
 Replacing telerik-logo.png
 Replacing Themes
+Replacing transparent-skin-background.jpg
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes:
 Replacing Calendar
+Replacing Chart
 Replacing ComboBox
 Replacing DatePicker
 Replacing Editor
@@ -2584,248 +2669,310 @@ Replacing TreeView
 Replacing Upload
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Calendar:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Chart:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\ComboBox:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\DatePicker:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Editor:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Grid:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\NumericTextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Menu:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\NumericTextBox:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\PanelBar:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Slider:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Splitter:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\TabStrip:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\TreeView:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Upload:
 Replacing Black.png
 Replacing Default.png
 Replacing Forest.png
 Replacing Hay.png
 Replacing Office2007.png
 Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
 Replacing Outlook.png
 Replacing Simple.png
 Replacing Sitefinity.png
 Replacing Sunset.png
 Replacing Telerik.png
+Replacing Transparent.png
 Replacing Vista.png
 Replacing Web20.png
 Replacing WebBlue.png
 Replacing Windows7.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Images\Themes\Window:
+Replacing Black.png
+Replacing Default.png
+Replacing Forest.png
+Replacing Hay.png
+Replacing Office2007.png
+Replacing Office2010Black.png
+Replacing Office2010Blue.png
+Replacing Office2010Silver.png
+Replacing Outlook.png
+Replacing Simple.png
+Replacing Sitefinity.png
+Replacing Sunset.png
+Replacing Telerik.png
+Replacing Transparent.png
+Replacing Vista.png
+Replacing Web20.png
+Replacing WebBlue.png
+Replacing Windows7.png
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Menu:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Menu\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Menu\Descriptions:
 Replacing Accessibility.html
 Replacing AnimationEffects.html
 Replacing ClientSideApi.html
@@ -2838,10 +2985,10 @@ Replacing SiteMapBinding.html
 Replacing Sprites.html
 Replacing Templates.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\NumericTextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\NumericTextBox:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\NumericTextBox\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\NumericTextBox\Descriptions:
 Replacing Accessibility.html
 Replacing ClientSideApi.html
 Replacing ClientSideEvents.html
@@ -2852,12 +2999,12 @@ Replacing Globalization.html
 Replacing RtlSupport.html
 Replacing ServerValidation.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar:
 Replacing Descriptions
 Replacing FirstLook
 Replacing Templates
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar\Descriptions:
 Replacing Accessibility.html
 Replacing AjaxLoading.html
 Replacing AnimationEffects.html
@@ -2870,7 +3017,7 @@ Replacing SiteMapBinding.html
 Replacing Sprites.html
 Replacing Templates.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar\FirstLook:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar\FirstLook:
 Replacing contacts.gif
 Replacing contactsItems.gif
 Replacing foldersList.gif
@@ -2888,17 +3035,17 @@ Replacing notesItems.gif
 Replacing tasks.gif
 Replacing tasksItems.gif
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar\Templates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\PanelBar\Templates:
 Replacing digitalCamera.gif
 Replacing exposure.gif
 Replacing How-to-find-us.gif
 Replacing slr.gif
 Replacing Testimonials.gif
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Slider:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Slider\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Slider\Descriptions:
 Replacing Accessibility.html
 Replacing ClientSideApi.html
 Replacing ClientSideEvents.html
@@ -2906,10 +3053,10 @@ Replacing ColorPicker.html
 Replacing EditTemplate.html
 Replacing FirstLook.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Splitter:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Splitter\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Splitter\Descriptions:
 Replacing Accessibility.html
 Replacing AjaxLoading.html
 Replacing ClientSideApi.html
@@ -2918,10 +3065,10 @@ Replacing FirstLook.html
 Replacing NestingComponents.html
 Replacing Orientation.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TabStrip:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TabStrip\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TabStrip\Descriptions:
 Replacing Accessibility.html
 Replacing AjaxLoading.html
 Replacing AnimationEffects.html
@@ -2933,17 +3080,17 @@ Replacing RtlSupport.html
 Replacing SiteMapBinding.html
 Replacing Sprites.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView:
 Replacing Common
 Replacing Descriptions
 Replacing FirstLook
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView\Common:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView\Common:
 Replacing contact.png
 Replacing file.png
 Replacing folder.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView\Descriptions:
 Replacing Accessibility.html
 Replacing AjaxLoading.html
 Replacing AnimationEffects.html
@@ -2959,7 +3106,7 @@ Replacing SiteMapBinding.html
 Replacing Sprites.html
 Replacing Templates.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView\FirstLook:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\TreeView\FirstLook:
 Replacing contacts.gif
 Replacing contactsItems.gif
 Replacing foldersList.gif
@@ -2977,10 +3124,10 @@ Replacing notesItems.gif
 Replacing tasks.gif
 Replacing tasksItems.gif
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Upload:
 Replacing Descriptions
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Upload\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Upload\Descriptions:
 Replacing ClientSideApi.html
 Replacing ClientSideEvents.html
 Replacing FirstLook.html
@@ -2988,11 +3135,11 @@ Replacing RtlSupport.html
 Replacing SyncUpload.html
 Replacing SyncUploadResult.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Window:
 Replacing Descriptions
 Replacing window.png
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Window\Descriptions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Content\Window\Descriptions:
 Replacing Accessibility.html
 Replacing AnimationEffects.html
 Replacing ClientSideApi.html
@@ -3002,9 +3149,11 @@ Replacing LoadingExternalPage.html
 Replacing PopupForm.html
 Replacing RtlSupport.html
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers:
 Replacing Calendar
 Replacing CalendarController.cs
+Replacing Chart
+Replacing ChartController.cs
 Replacing ComboBox
 Replacing ComboBoxController.cs
 Replacing DatePicker
@@ -3034,7 +3183,7 @@ Replacing UploadController.cs
 Replacing Window
 Replacing WindowController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Calendar:
 Replacing AccessibilityController.cs
 Replacing ClientSideApiController.cs
 Replacing ClientSideEventsController.cs
@@ -3043,7 +3192,14 @@ Replacing GlobalizationController.cs
 Replacing RtlSupportController.cs
 Replacing SelectActionController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Chart:
+Replacing AjaxBindingController.cs
+Replacing ClientSideApiController.cs
+Replacing ClientSideEventsController.cs
+Replacing CombinationChartController.cs
+Replacing FirstLookController.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\ComboBox:
 Replacing AccessibilityController.cs
 Replacing AjaxLoadingController.cs
 Replacing AnimationEffectsController.cs
@@ -3057,7 +3213,7 @@ Replacing FirstLookController.cs
 Replacing RtlSupportController.cs
 Replacing ServerValidationController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\DatePicker:
 Replacing AccessibilityController.cs
 Replacing AnimationEffectsController.cs
 Replacing ClientSideApiController.cs
@@ -3070,7 +3226,7 @@ Replacing GlobalizationController.cs
 Replacing RtlSupportController.cs
 Replacing ServerValidationController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Editor:
 Replacing AccessibilityController.cs
 Replacing ClientSideApiController.cs
 Replacing ClientSideEventsController.cs
@@ -3086,7 +3242,7 @@ Replacing ServerValidationController.cs
 Replacing SnippetsController.cs
 Replacing StylesController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Grid:
 Replacing AccessibilityController.cs
 Replacing AggregatesAjaxController.cs
 Replacing AggregatesServerSideController.cs
@@ -3095,6 +3251,7 @@ Replacing AutoGenerateColumnsController.cs
 Replacing CheckBoxesAjaxController.cs
 Replacing CheckBoxesServerSideController.cs
 Replacing ClientEditTemplatesController.cs
+Replacing ClientRowTemplateController.cs
 Replacing ClientSideEventsController.cs
 Replacing ColumnReorderingController.cs
 Replacing ColumnResizingController.cs
@@ -3119,19 +3276,23 @@ Replacing GroupingController.cs
 Replacing HeaderFooterTemplatesController.cs
 Replacing HierarchyAjaxController.cs
 Replacing HierarchyServerSideController.cs
+Replacing KeyboardNavigationController.cs
 Replacing LocalizationController.cs
+Replacing OperationModeController.cs
+Replacing PageOnScrollController.cs
 Replacing PagingController.cs
 Replacing RtlSupportController.cs
 Replacing SelectionClientSideController.cs
 Replacing SelectionServerSideController.cs
 Replacing ServerBindingController.cs
 Replacing ServerEditTemplatesController.cs
+Replacing ServerRowTemplateController.cs
 Replacing SortingController.cs
 Replacing TemplatesClientSideController.cs
 Replacing TemplatesServerSideController.cs
 Replacing WebServiceController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Menu:
 Replacing AccessibilityController.cs
 Replacing AnimationEffectsController.cs
 Replacing ClientSideApiController.cs
@@ -3144,7 +3305,7 @@ Replacing SiteMapBindingController.cs
 Replacing SpritesController.cs
 Replacing TemplatesController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\NumericTextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\NumericTextBox:
 Replacing AccessibilityController.cs
 Replacing ClientSideApiController.cs
 Replacing ClientSideEventsController.cs
@@ -3155,7 +3316,7 @@ Replacing GlobalizationController.cs
 Replacing RtlSupportController.cs
 Replacing ServerValidationController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\PanelBar:
 Replacing AccessibilityController.cs
 Replacing AjaxLoadingController.cs
 Replacing AnimationEffectsController.cs
@@ -3168,7 +3329,7 @@ Replacing SiteMapBindingController.cs
 Replacing SpritesController.cs
 Replacing TemplatesController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Slider:
 Replacing AccessibilityController.cs
 Replacing ClientSideApiController.cs
 Replacing ClientSideEventsController.cs
@@ -3176,7 +3337,7 @@ Replacing ColorPickerController.cs
 Replacing EditTemplateController.cs
 Replacing FirstLookController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Splitter:
 Replacing AccessibilityController.cs
 Replacing AjaxLoadingController.cs
 Replacing ClientSideApiController.cs
@@ -3185,7 +3346,7 @@ Replacing FirstLookController.cs
 Replacing NestingComponentsController.cs
 Replacing OrientationController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\TabStrip:
 Replacing AccessibilityController.cs
 Replacing AjaxLoadingController.cs
 Replacing AnimationEffectsController.cs
@@ -3197,7 +3358,7 @@ Replacing RtlSupportController.cs
 Replacing SiteMapBindingController.cs
 Replacing SpritesController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\TreeView:
 Replacing AccessibilityController.cs
 Replacing AjaxLoadingController.cs
 Replacing AnimationEffectsController.cs
@@ -3213,14 +3374,14 @@ Replacing SiteMapBindingController.cs
 Replacing SpritesController.cs
 Replacing TemplatesController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Upload:
 Replacing ClientSideApiController.cs
 Replacing ClientSideEventsController.cs
 Replacing FirstLookController.cs
 Replacing RtlSupportController.cs
 Replacing SyncUploadController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Controllers\Window:
 Replacing AccessibilityController.cs
 Replacing AnimationEffectsController.cs
 Replacing ClientSideApiController.cs
@@ -3230,20 +3391,24 @@ Replacing LoadingExternalPageController.cs
 Replacing PopupFormController.cs
 Replacing RtlSupportController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Extensions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Extensions:
 Replacing ControllerContextExtensions.cs
 Replacing CustomBindingExtensions.cs
 Replacing DictionaryExtensions.cs
 Replacing HtmlHelpersExtensions.cs
 Replacing StringExtensions.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Filters:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Filters:
 Replacing AutoPopulateSourceCodeAttribute.cs
 Replacing CultureAwareActionAttribute.cs
 Replacing PopulateProductSiteMapAttribute.cs
 Replacing SourceCodeFileAttribute.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Models:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\ModelBinders:
+Replacing DateTimeModelBinder.cs
+Replacing DecimalModelBinder.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Models:
 Replacing AggregatedOrder.cs
 Replacing ClientEditableOrder.cs
 Replacing CustomerDto.cs
@@ -3281,6 +3446,7 @@ Replacing Products.asmx
 Replacing Products.asmx.cs
 Replacing Products.svc
 Replacing Products.svc.cs
+Replacing SalesData.cs
 Replacing SearchResult.cs
 Replacing SessionClientOrderRepository.cs
 Replacing SessionCustomerRepository.cs
@@ -3289,10 +3455,10 @@ Replacing SessionOrderRepository.cs
 Replacing SessionProductRepository.cs
 Replacing TwitterItem.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Properties:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Properties:
 Replacing AssemblyInfo.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Scripts:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Scripts:
 Replacing jquery.unobtrusive-ajax.js
 Replacing jquery.unobtrusive-ajax.min.js
 Replacing jquery.validate.min.js
@@ -3303,8 +3469,9 @@ Replacing MicrosoftAjax.js
 Replacing MicrosoftMvcValidation.debug.js
 Replacing telerik.examples.min.js
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views:
 Replacing Calendar
+Replacing Chart
 Replacing ComboBox
 Replacing DatePicker
 Replacing Editor
@@ -3323,7 +3490,7 @@ Replacing Web.config
 Replacing Web.MVC2.config
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Calendar:
 Replacing Accessibility.aspx
 Replacing ClientSideApi.aspx
 Replacing ClientSideEvents.aspx
@@ -3332,7 +3499,14 @@ Replacing Globalization.aspx
 Replacing RtlSupport.aspx
 Replacing SelectAction.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Chart:
+Replacing AjaxBinding.aspx
+Replacing ClientSideApi.aspx
+Replacing ClientSideEvents.aspx
+Replacing CombinationChart.aspx
+Replacing FirstLook.aspx
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\ComboBox:
 Replacing Accessibility.aspx
 Replacing AjaxLoading.aspx
 Replacing AnimationEffects.aspx
@@ -3346,7 +3520,7 @@ Replacing FirstLook.aspx
 Replacing RtlSupport.aspx
 Replacing ServerValidation.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\DatePicker:
 Replacing Accessibility.aspx
 Replacing AnimationEffects.aspx
 Replacing ClientSideApi.aspx
@@ -3359,7 +3533,7 @@ Replacing Globalization.aspx
 Replacing RtlSupport.aspx
 Replacing ServerValidation.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Editor:
 Replacing Accessibility.aspx
 Replacing ClientSideApi.aspx
 Replacing ClientSideEvents.aspx
@@ -3375,10 +3549,10 @@ Replacing ServerValidation.aspx
 Replacing Snippets.aspx
 Replacing Styles.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Editor\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Editor\EditorTemplates:
 Replacing Editor.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Grid:
 Replacing Accessibility.aspx
 Replacing AggregatesAjax.aspx
 Replacing AggregatesServerSide.aspx
@@ -3388,6 +3562,7 @@ Replacing CheckBoxesAjax.aspx
 Replacing CheckBoxesServerSide.aspx
 Replacing CheckedOrders.ascx
 Replacing ClientEditTemplates.aspx
+Replacing ClientRowTemplate.aspx
 Replacing ClientSideEvents.aspx
 Replacing ColumnReordering.aspx
 Replacing ColumnResizing.aspx
@@ -3414,29 +3589,33 @@ Replacing Grouping.aspx
 Replacing HeaderFooterTemplates.aspx
 Replacing HierarchyAjax.aspx
 Replacing HierarchyServerSide.aspx
+Replacing KeyboardNavigation.aspx
 Replacing Localization.aspx
+Replacing OperationMode.aspx
+Replacing PageOnScroll.aspx
 Replacing Paging.aspx
 Replacing RtlSupport.aspx
 Replacing SelectionClientSide.aspx
 Replacing SelectionServerSide.aspx
 Replacing ServerBinding.aspx
 Replacing ServerEditTemplates.aspx
+Replacing ServerRowTemplate.aspx
 Replacing Sorting.aspx
 Replacing TemplatesClientSide.aspx
 Replacing TemplatesServerSide.aspx
 Replacing WebService.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Grid\DisplayTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Grid\DisplayTemplates:
 Replacing Employee.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Grid\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Grid\EditorTemplates:
 Replacing ClientEmployee.ascx
 Replacing Employee.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Home:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Home:
 Replacing FirstLook.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Menu:
 Replacing Accessibility.aspx
 Replacing AnimationEffects.aspx
 Replacing ClientSideApi.aspx
@@ -3449,7 +3628,7 @@ Replacing SiteMapBinding.aspx
 Replacing Sprites.aspx
 Replacing Templates.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\NumericTextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\NumericTextBox:
 Replacing Accessibility.aspx
 Replacing ClientSideApi.aspx
 Replacing ClientSideEvents.aspx
@@ -3460,7 +3639,7 @@ Replacing Globalization.aspx
 Replacing RtlSupport.aspx
 Replacing ServerValidation.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\PanelBar:
 Replacing Accessibility.aspx
 Replacing AjaxLoading.aspx
 Replacing AjaxView_BasedOnJQuery.ascx
@@ -3477,7 +3656,7 @@ Replacing SiteMapBinding.aspx
 Replacing Sprites.aspx
 Replacing Templates.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Shared:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Shared:
 Replacing AccessibilityValidation.ascx
 Replacing CodeFile.ascx
 Replacing CodeViewer.ascx
@@ -3493,7 +3672,7 @@ Replacing LeftNavigation.ascx
 Replacing Site.Master
 Replacing TopNavigation.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Shared\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Shared\EditorTemplates:
 Replacing Currency.ascx
 Replacing Date.ascx
 Replacing DateTime.ascx
@@ -3501,7 +3680,7 @@ Replacing Integer.ascx
 Replacing Number.ascx
 Replacing Time.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Slider:
 Replacing Accessibility.aspx
 Replacing ClientSideApi.aspx
 Replacing ClientSideEvents.aspx
@@ -3510,10 +3689,10 @@ Replacing EditorTemplates
 Replacing EditTemplate.aspx
 Replacing FirstLook.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Slider\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Slider\EditorTemplates:
 Replacing Slider.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Splitter:
 Replacing Accessibility.aspx
 Replacing AjaxLoading.aspx
 Replacing AjaxView_Grid.ascx
@@ -3523,7 +3702,7 @@ Replacing FirstLook.aspx
 Replacing NestingComponents.aspx
 Replacing Orientation.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\TabStrip:
 Replacing Accessibility.aspx
 Replacing AjaxLoading.aspx
 Replacing AjaxView_BasedOnJQuery.ascx
@@ -3539,7 +3718,7 @@ Replacing RtlSupport.aspx
 Replacing SiteMapBinding.aspx
 Replacing Sprites.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\TreeView:
 Replacing Accessibility.aspx
 Replacing AjaxLoading.aspx
 Replacing AnimationEffects.aspx
@@ -3555,7 +3734,7 @@ Replacing SiteMapBinding.aspx
 Replacing Sprites.aspx
 Replacing Templates.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Upload:
 Replacing ClientSideApi.aspx
 Replacing ClientSideEvents.aspx
 Replacing FirstLook.aspx
@@ -3563,7 +3742,7 @@ Replacing RtlSupport.aspx
 Replacing SyncUpload.aspx
 Replacing SyncUploadResult.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Examples\Views\Window:
 Replacing Accessibility.aspx
 Replacing AjaxView.ascx
 Replacing AnimationEffects.aspx
@@ -3574,7 +3753,7 @@ Replacing LoadingExternalPage.aspx
 Replacing PopupForm.aspx
 Replacing RtlSupport.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests:
 Replacing Build
 Replacing Content
 Replacing Controllers
@@ -3592,18 +3771,19 @@ Replacing Views
 Replacing Web.config
 Replacing Web.MVC2.config
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Build:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Build:
 Replacing jscoverage.exe
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Content:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Content:
 Replacing qunit.css
 Replacing qunit-runner.css
 Replacing Site.css
 Replacing styles.css
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Controllers:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Controllers:
 Replacing AutoCompleteController.cs
 Replacing CalendarController.cs
+Replacing ChartController.cs
 Replacing ComboBoxController.cs
 Replacing CoreController.cs
 Replacing DatePickerController.cs
@@ -3624,17 +3804,17 @@ Replacing TreeViewController.cs
 Replacing UploadController.cs
 Replacing WindowController.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Extensions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Extensions:
 Replacing ControllerExtensions.cs
 Replacing HtmlHelperExtensions.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Models:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Models:
 Replacing Customer.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Properties:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Properties:
 Replacing AssemblyInfo.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Scripts:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Scripts:
 Replacing editorTestHelper.js
 Replacing jquery.mockjax.js
 Replacing MicrosoftAjax.debug.js
@@ -3645,9 +3825,10 @@ Replacing qunit.js
 Replacing qunit-runner.js
 Replacing splitterTestHelper.js
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views:
 Replacing AutoComplete
 Replacing Calendar
+Replacing Chart
 Replacing ComboBox
 Replacing Core
 Replacing DatePicker
@@ -3671,7 +3852,7 @@ Replacing Web.config
 Replacing Web.MVC2.config
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\AutoComplete:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\AutoComplete:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
@@ -3679,14 +3860,17 @@ Replacing KeyboardSupport.aspx
 Replacing Multiple.aspx
 Replacing Rendering.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Calendar:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing Navigation.aspx
 Replacing Rendering.aspx
 Replacing StaticMethods.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Chart:
+Replacing Configuration.aspx
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\ComboBox:
 Replacing AjaxLoading.aspx
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
@@ -3696,14 +3880,14 @@ Replacing FilteringData.aspx
 Replacing KeyboardSupport.aspx
 Replacing Rendering.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Core:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Core:
 Replacing DateFormatting.aspx
 Replacing FormatString.aspx
 Replacing Linq.aspx
 Replacing NumberFormatting.aspx
 Replacing TimeParsing.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DatePicker:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
@@ -3713,7 +3897,7 @@ Replacing DateView.aspx
 Replacing ParseByToken.aspx
 Replacing Popup.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DateTimePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DateTimePicker:
 Replacing ClientApi.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
@@ -3721,17 +3905,17 @@ Replacing ComponentInitialization.aspx
 Replacing Globalization.aspx
 Replacing KeyboardSupport.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DropDown:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DropDown:
 Replacing DropDown.aspx
 Replacing Loader.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DropDownList:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\DropDownList:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
 Replacing DropDownRendering.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Editor:
 Replacing ApplyBlockFormats.aspx
 Replacing ApplyInlineFormats.aspx
 Replacing Backspace.aspx
@@ -3787,7 +3971,7 @@ Replacing TypingHandler.aspx
 Replacing UndoRedoStack.aspx
 Replacing UnlinkCommand.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Grid:
 Replacing Binding.aspx
 Replacing ButtonBuilders.aspx
 Replacing CellEditor.aspx
@@ -3807,31 +3991,33 @@ Replacing Layout.aspx
 Replacing Localization.aspx
 Replacing ModelBinder.aspx
 Replacing ModelStateErrors.aspx
+Replacing Navigation.aspx
 Replacing Paging.aspx
 Replacing PopUpEditor.aspx
 Replacing Selection.aspx
 Replacing Sorting.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Grid\EditorTemplates:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Grid\EditorTemplates:
 Replacing Address.ascx
 Replacing Date.ascx
 Replacing int.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Home:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Home:
 Replacing Index.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Input:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Input:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
 Replacing NumberParsing.aspx
 Replacing NumericTextBox.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Menu:
 Replacing ClientAPI.aspx
+Replacing ClientEvents.aspx
 Replacing OpenOnClick.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\PanelBar:
 Replacing AjaxLoading.aspx
 Replacing AjaxView1.ascx
 Replacing AjaxView2.ascx
@@ -3842,18 +4028,18 @@ Replacing Serialization.aspx
 Replacing SingleExpandClientAPI.aspx
 Replacing SingleExpandCollapse.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Shared:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Shared:
 Replacing Error.aspx
 Replacing Site.Master
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Slider:
 Replacing ClientSideAPI.aspx
 Replacing ClientSideRendering.aspx
 Replacing RangeSlider.aspx
 Replacing Rendering.aspx
 Replacing Slider.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Splitter:
 Replacing ClientCreation.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideApi.aspx
@@ -3862,14 +4048,14 @@ Replacing LoadOnDemand.aspx
 Replacing PaneResizing.aspx
 Replacing PaneSizing.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\TabStrip:
 Replacing AjaxLoading.aspx
 Replacing AjaxView1.ascx
 Replacing AjaxView2.ascx
 Replacing ClientAPI.aspx
 Replacing Serialization.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\TimePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\TimePicker:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
@@ -3877,7 +4063,7 @@ Replacing KeyboardSupport.aspx
 Replacing Rendering.aspx
 Replacing TimeView.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\TreeView:
 Replacing ClientAPI.aspx
 Replacing ClientEvents.aspx
 Replacing ClientSideRendering.aspx
@@ -3885,7 +4071,7 @@ Replacing DragAndDrop.aspx
 Replacing ExpandCollapse.aspx
 Replacing LoadOnDemand.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Upload:
 Replacing Common
 Replacing DragAndDrop.aspx
 Replacing FormDataUpload.aspx
@@ -3894,13 +4080,14 @@ Replacing Rendering.aspx
 Replacing SyncUpload.aspx
 Replacing Upload.master
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Upload\Common:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Upload\Common:
 Replacing Async.ascx
 Replacing AsyncNoAuto.ascx
+Replacing AsyncNoMultiple.ascx
 Replacing Events
 Replacing Selection.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Upload\Common\Events:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Upload\Common\Events:
 Replacing Cancel.ascx
 Replacing Error.ascx
 Replacing Remove.ascx
@@ -3908,11 +4095,11 @@ Replacing Select.ascx
 Replacing Success.ascx
 Replacing Upload.ascx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.JavaScriptTests\Views\Window:
 Replacing ClientCreation.aspx
 Replacing ClientSideApi.aspx
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests:
 Replacing Data
 Replacing Extensions
 Replacing Infrastructure
@@ -3926,11 +4113,11 @@ Replacing UrlGeneratorTests.cs
 Replacing WebAsset
 Replacing XUnit
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Data:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Data:
 Replacing DynamicPropertyAccessExpressionBuilderTests.cs
 Replacing QueryableExtensionsTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Extensions:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Extensions:
 Replacing CollectionExtensionsTests.cs
 Replacing DictionaryExtensionsTests.cs
 Replacing EnumerableExtensionsTests.cs
@@ -3940,7 +4127,7 @@ Replacing IHtmlNodeExtensions.cs
 Replacing ReaderWriterLockSlimExtensionsTests.cs
 Replacing StringExtensionsTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure:
 Replacing FilterDescriptorFactoryTests.cs
 Replacing GuardTests.cs
 Replacing HtmlTagTests.cs
@@ -3948,7 +4135,7 @@ Replacing HttpHandlerBaseTests.cs
 Replacing Implementation
 Replacing PathHelperTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation:
 Replacing ActionMethodCacheTests.cs
 Replacing AuthorizeAttributeBuilderTests.cs
 Replacing AuthorizeAttributeCacheTests.cs
@@ -3973,17 +4160,17 @@ Replacing UrlResolverTests.cs
 Replacing VirtualPathProviderWrapperTests.cs
 Replacing WebAsset
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation\Filtering:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation\Filtering:
 Replacing FilterDescriptorExtensionsTests.cs
 Replacing Parsing
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation\Filtering\Parsing:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation\Filtering\Parsing:
 Replacing FilterLexerTests.cs
 Replacing FilterNodeTests.cs
 Replacing FilterNodeVisitorTests.cs
 Replacing FilterParserTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation\WebAsset:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Infrastructure\Implementation\WebAsset:
 Replacing AbsoluteWebAssetResolverTests.cs
 Replacing CdnWebAssetResolverTests.cs
 Replacing CombinedWebAssetGroupResolverTests.cs
@@ -3998,10 +4185,10 @@ Replacing WebAssetGroupSerializerTests.cs
 Replacing WebAssetLocatorTests.cs
 Replacing WebAssetResolverFactoryTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Properties:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\Properties:
 Replacing AssemblyInfo.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\SiteMap:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\SiteMap:
 Replacing PopulateSiteMapAttributeTests.cs
 Replacing SiteMapBaseTests.cs
 Replacing SiteMapBuilderTests.cs
@@ -4013,10 +4200,11 @@ Replacing SiteMapNodeFactoryTests.cs
 Replacing SiteMapNodeTests.cs
 Replacing XmlSiteMapTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI:
 Replacing AnimationDurationConverterTests.cs
 Replacing AutoComplete
 Replacing Calendar
+Replacing Chart
 Replacing ClientSideEnumValueAttributeTests.cs
 Replacing ClientSideObjectWriterFactoryTests.cs
 Replacing ClientSideObjectWriterTests.cs
@@ -4024,6 +4212,7 @@ Replacing ComboBox
 Replacing ContentNavigationItemBuilderTests.cs
 Replacing Customer.cs
 Replacing DatePicker
+Replacing DateTimePicker
 Replacing DropDown
 Replacing DropDownList
 Replacing Editor
@@ -4044,6 +4233,7 @@ Replacing NavigationItemContainerExtensionsTests.cs
 Replacing NavigationItemImageRendererTests.cs
 Replacing NavigationItemTests.cs
 Replacing PanelBar
+Replacing SalesData.cs
 Replacing ScriptRegistrar
 Replacing Slider
 Replacing Splitter
@@ -4060,7 +4250,7 @@ Replacing ViewComponentFactoryTests.cs
 Replacing ViewComponentModelFactoryTests.cs
 Replacing Window
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\AutoComplete:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\AutoComplete:
 Replacing AutoCompleteBuilderTests.cs
 Replacing AutoCompleteFilterSettingsBuilderTests.cs
 Replacing AutoCompleteHtmlBuilderTests.cs
@@ -4068,7 +4258,7 @@ Replacing AutoCompleteMultipleValuesSettingsBuilderTests.cs
 Replacing AutoCompleteRenderingTests.cs
 Replacing AutoCompleteTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Calendar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Calendar:
 Replacing CalendarBuilderTests.cs
 Replacing CalendarClientEventsBuilderTests.cs
 Replacing CalendarHtmlBuilderFactoryTests.cs
@@ -4077,7 +4267,45 @@ Replacing CalendarRenderingTests.cs
 Replacing CalendarSelectionSettingsBuilderTests.cs
 Replacing CalendarTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\ComboBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Chart:
+Replacing ChartAreaBuilderTests.cs
+Replacing ChartBarLabelsBuilderTests.cs
+Replacing ChartBarSeriesBuilderTests.cs
+Replacing ChartBindingSettingsBuilderTests.cs
+Replacing ChartBuilderTests.cs
+Replacing ChartCategoryAxisBuilderTests.cs
+Replacing ChartClientEventsBuilderTests.cs
+Replacing ChartHtmlBuilderTests.cs
+Replacing ChartLegendBuilderTests.cs
+Replacing ChartLineLabelsBuilderTests.cs
+Replacing ChartLineSeriesBuilderTests.cs
+Replacing ChartNumericAxisBuilderTests.cs
+Replacing ChartSeriesDefaultsBuilderTests.cs
+Replacing ChartSeriesFactoryTests.cs
+Replacing ChartTestHelper.cs
+Replacing ChartTitleBuilderTests.cs
+Replacing ChartValueAxisFactoryTests.cs
+Replacing PlotAreaBuilderTests.cs
+Replacing Serialization
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Chart\Serialization:
+Replacing ChartAreaSerializerTests.cs
+Replacing ChartAxisSerializerBaseTests.cs
+Replacing ChartBarLabelSerializerTests.cs
+Replacing ChartBarSeriesSerializerTests.cs
+Replacing ChartCategoryAxisSerializerTests.cs
+Replacing ChartLegendSerializerTests.cs
+Replacing ChartLineLabelSerializerTests.cs
+Replacing ChartLineMarkerSerializerTests.cs
+Replacing ChartLineSeriesSerializerTests.cs
+Replacing ChartMarginSerializerTests.cs
+Replacing ChartNumericAxisSerializerTests.cs
+Replacing ChartSerializationTests.cs
+Replacing ChartSeriesDefaultsSerializerTests.cs
+Replacing ChartTitleSerializerTests.cs
+Replacing PlotAreaSerializerTests.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\ComboBox:
 Replacing ComboBoxBindingSettingsBuilderTests.cs
 Replacing ComboBoxBuilderTests.cs
 Replacing ComboBoxDataBindingConfigurationBuilderTests.cs
@@ -4087,17 +4315,21 @@ Replacing ComboBoxRenderingTests.cs
 Replacing ComboBoxTestHelper.cs
 Replacing ComboBoxWebServiceBindingSettingsBuilderTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DatePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DatePicker:
 Replacing DatePickerBuilderTests.cs
 Replacing DatePickerClientEventsBuilderTests.cs
 Replacing DatePickerHtmlBuilderTests.cs
 Replacing DatePickerRenderingTests.cs
 Replacing DatePickerTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DropDown:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DateTimePicker:
+Replacing DateTimePickerHtmlBuilderTests.cs
+Replacing DateTimePickerTestHelper.cs
+
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DropDown:
 Replacing DropDownClientEventsBuilderTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DropDownList:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\DropDownList:
 Replacing DropDownExtensionsTests.cs
 Replacing DropDownItemBuilderTests.cs
 Replacing DropDownItemFactoryTests.cs
@@ -4108,7 +4340,7 @@ Replacing DropDownListHtmlBuilderTests.cs
 Replacing DropDownListRenderingTests.cs
 Replacing DropDownListTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Editor:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Editor:
 Replacing EditorBuilderTests.cs
 Replacing EditorDropDownItemsBuilderTests.cs
 Replacing EditorHtmlBuilderTests.cs
@@ -4118,7 +4350,7 @@ Replacing EditorTestHelper.cs
 Replacing ImageBrowserControllerTests.cs
 Replacing SnippetsBuilderTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Effects:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Effects:
 Replacing EffectBuilderTests.cs
 Replacing EffectPropertyBuildersTests.cs
 Replacing EffectsSerializationTests.cs
@@ -4126,7 +4358,7 @@ Replacing PropertyAnimationSerializationTests.cs
 Replacing SlideAnimationSerializationTests.cs
 Replacing ToggleAnimationSerializationTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Grid:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Grid:
 Replacing AggregateDescriptorTests.cs
 Replacing GridActionAttributeTests.cs
 Replacing GridActionBindingContextTests.cs
@@ -4169,7 +4401,7 @@ Replacing GridWorkingConditionsTests.cs
 Replacing Html
 Replacing SortDescriptorTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Grid\Html:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Grid\Html:
 Replacing GridActionCellBuilderTests.cs
 Replacing GridButtonBaseTests.cs
 Replacing GridButtonFactoryTests.cs
@@ -4209,7 +4441,7 @@ Replacing GridSortableHeaderCellBuilderTests.cs
 Replacing GridTableBuilderTests.cs
 Replacing GridToolBarBuilderTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Menu:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Menu:
 Replacing MenuBuilderTests.cs
 Replacing MenuClientEventsBuilderTests.cs
 Replacing MenuHtmlBuilderTests.cs
@@ -4219,7 +4451,7 @@ Replacing MenuSerializationTests.cs
 Replacing MenuSettingsVerificationTests.cs
 Replacing MenuTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\PanelBar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\PanelBar:
 Replacing PanelBarBuilderTests.cs
 Replacing PanelBarClientEventsBuilderTests.cs
 Replacing PanelBarHtmlBuilderTests.cs
@@ -4231,12 +4463,12 @@ Replacing PanelBarSettingsVerificationTests.cs
 Replacing PanelBarTestHelper.cs
 Replacing PanelBarTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\ScriptRegistrar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\ScriptRegistrar:
 Replacing ScriptRegistrarBuilderTests.cs
 Replacing ScriptRegistrarTests.cs
 Replacing ScriptWrapperTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Slider:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Slider:
 Replacing RangeSliderBuilderTests.cs
 Replacing RangeSliderClientEventsBuilderTests.cs
 Replacing RangeSliderRenderingTests.cs
@@ -4246,7 +4478,7 @@ Replacing SliderHtmlBuilderTests.cs
 Replacing SliderRenderingTests.cs
 Replacing SliderTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Splitter:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Splitter:
 Replacing SplitterBuilderTests.cs
 Replacing SplitterClientEventsBuilderTests.cs
 Replacing SplitterHtmlBuilderTests.cs
@@ -4254,11 +4486,11 @@ Replacing SplitterPaneBuilderTests.cs
 Replacing SplitterPaneFactoryTests.cs
 Replacing SplitterTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\StyleSheetRegistrar:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\StyleSheetRegistrar:
 Replacing StyleSheetRegistrarBuilderTests.cs
 Replacing StyleSheetRegistrarTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TabStrip:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TabStrip:
 Replacing TabStripBuilderTests.cs
 Replacing TabStripClientEventsBuilderTests.cs
 Replacing TabStripHtmlBuilderTests.cs
@@ -4268,7 +4500,7 @@ Replacing TabStripItemTests.cs
 Replacing TabStripRenderingTests.cs
 Replacing TabStripTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TextBox:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TextBox:
 Replacing CurrencyInputRenderingTests.cs
 Replacing CurrencyTextBoxBuilderTests.cs
 Replacing CurrencyTextBoxRenderingTests.cs
@@ -4285,13 +4517,13 @@ Replacing PercentTextBoxRenderingTests.cs
 Replacing TextBoxBaseTestHelper.cs
 Replacing TextBoxBaseTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TimePicker:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TimePicker:
 Replacing TimePickerBuilderTests.cs
 Replacing TimePickerHtmlBuilderTests.cs
 Replacing TimePickerRenderingTests.cs
 Replacing TimePickerTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TreeView:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\TreeView:
 Replacing TreeViewBindingSettingsBuilderBuilderTests.cs
 Replacing TreeViewBuilderTests.cs
 Replacing TreeViewDataBindingConfigurationBuilderTests.cs
@@ -4303,7 +4535,7 @@ Replacing TreeViewRenderingTests.cs
 Replacing TreeViewSerializationTests.cs
 Replacing TreeViewTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Upload:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Upload:
 Replacing UploadAsyncSettingsBuilderTests.cs
 Replacing UploadBuilderTests.cs
 Replacing UploadClientEventsBuilderTests.cs
@@ -4312,7 +4544,7 @@ Replacing UploadSerializationTests.cs
 Replacing UploadStubController.cs
 Replacing UploadTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Window:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\UI\Window:
 Replacing WindowBuilderTests.cs
 Replacing WindowButtonsBuilderTests.cs
 Replacing WindowClientEventsBuilderTests.cs
@@ -4323,7 +4555,7 @@ Replacing WindowRenderingTests.cs
 Replacing WindowResizingSettingsBuilderTests.cs
 Replacing WindowTestHelper.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\WebAsset:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\WebAsset:
 Replacing Configuration
 Replacing WebAssetCollectionBuilderTests.cs
 Replacing WebAssetCollectionTests.cs
@@ -4333,25 +4565,25 @@ Replacing WebAssetGroupTests.cs
 Replacing WebAssetHttpHandlerTests.cs
 Replacing WebAssetTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\WebAsset\Configuration:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\WebAsset\Configuration:
 Replacing SharedWebAssetTests.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\XUnit:
+F:\114\Griffin\Trunk Full\Sources\Source\Telerik.Web.Mvc.Tests\XUnit:
 Replacing BooleanAssertionExtensions.cs
 Replacing CollectionAssertionExtensions.cs
 Replacing ObjectAssertExtensions.cs
 Replacing StringAssertionExtensions.cs
 
-C:\Builds\74\Griffin\Trunk Full\Sources:
+F:\114\Griffin\Trunk Full\Sources:
 Replacing Installer
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer:
+F:\114\Griffin\Trunk Full\Sources\Installer:
 Replacing Telerik.Web.MVC.WiX
 Replacing Telerik.Web.MVC.WiX.sln
 Replacing Telerik.Web.MVC.WiX.vssscc
 Replacing Tools
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX:
 Replacing AutoGeneratedCustomActions
 Replacing AutoGeneratedWixFiles
 Replacing CustomActionDlls
@@ -4369,7 +4601,7 @@ Replacing Telerik.Web.MVC.WiX.wixproj.vspscc
 Replacing WixUI_TelerikCommon.wxs
 Replacing WixUI_TelerikCustom.wxs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\AutoGeneratedCustomActions:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\AutoGeneratedCustomActions:
 Replacing InstallExamples.CA.dll
 Replacing InstallScriptsAndContent.CA.dll
 Replacing InstallSources.CA.dll
@@ -4377,24 +4609,25 @@ Replacing UninstallExamples.CA.dll
 Replacing UninstallScriptsAndContent.CA.dll
 Replacing UninstallSources.CA.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\AutoGeneratedWixFiles:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\AutoGeneratedWixFiles:
 Replacing AppGlobalResourcesDir.wxs
 Replacing BinariesMVC1Dir.wxs
 Replacing BinariesMVC2Dir.wxs
 Replacing BinariesMVC3Dir.wxs
 Replacing DocumentationDir.wxs
 Replacing EditorTemplatesDir.wxs
+Replacing EditorTemplatesRazorDir.wxs
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\CustomActionDlls:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\CustomActionDlls:
 Replacing PromptVSClose.CA.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems:
 Replacing Banners
 Replacing Icons
 Replacing InstallerImages
 Replacing VeriSign
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\Banners:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\Banners:
 Replacing Banner_Content.jpg
 Replacing Banner_Default.jpg
 Replacing Banner_Examples.jpg
@@ -4402,11 +4635,11 @@ Replacing Banner_Finish.jpg
 Replacing Banner_Sources.jpg
 Replacing Banner_VS2008Setup.jpg
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\Icons:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\Icons:
 Replacing FOLDER.ico
 Replacing mvc.ico
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\InstallerImages:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\InstallerImages:
 Replacing Background_NoSteps.jpg
 Replacing browse_new_folder.ico
 Replacing browse_up_folder.ico
@@ -4422,11 +4655,11 @@ Replacing Steps_Installing.jpg
 Replacing Steps_Welcome.jpg
 Replacing tick.bmp
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\VeriSign:
+F:\114\Griffin\Trunk Full\Sources\Installer\Telerik.Web.MVC.WiX\InstallerRelatedItems\VeriSign:
 Replacing TELERIK.pvk
 Replacing TELERIK.spc
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Tools:
+F:\114\Griffin\Trunk Full\Sources\Installer\Tools:
 Replacing BaseUninstallCustomAction
 Replacing BaseUnpackCustomAction
 Replacing Heater.exe
@@ -4444,12 +4677,12 @@ Replacing Telerik.MSBuildTasks.dll
 Replacing Telerik.MSBuildTasks.FeatureListGenerator.dll
 Replacing wix.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Tools\BaseUninstallCustomAction:
+F:\114\Griffin\Trunk Full\Sources\Installer\Tools\BaseUninstallCustomAction:
 Replacing CustomAction.config
 Replacing Microsoft.Deployment.WindowsInstaller.dll
 Replacing Telerik.Deployment.ResourceUninstallation.dll
 
-C:\Builds\74\Griffin\Trunk Full\Sources\Installer\Tools\BaseUnpackCustomAction:
+F:\114\Griffin\Trunk Full\Sources\Installer\Tools\BaseUnpackCustomAction:
 Replacing CustomAction.config
 Replacing Microsoft.Deployment.Compression.dll
 Replacing Microsoft.Deployment.Compression.Zip.dll

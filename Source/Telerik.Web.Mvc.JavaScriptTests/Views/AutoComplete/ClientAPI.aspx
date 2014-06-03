@@ -68,7 +68,7 @@
 
             autocomplete.loader.isAjax = old;
 
-            equal('&lt;&gt;&amp;Visit W3Schools!', autocomplete.data[0].Text, 'Text property is not encoded');
+            equal('&lt;&gt;&amp;Visit W3Schools!', autocomplete.dropDown.$items.eq(0).html(), 'Text property is not encoded');
             equal(dataSource[0].Value, autocomplete.data[0].Value);
         });
 
@@ -88,7 +88,7 @@
 
             autocomplete.loader.isAjax = old;
 
-            equal('&lt;&gt;&amp;Visit W3Schools!', autocomplete.data[0], 'Text property is not encoded');
+            equal('&lt;&gt;&amp;Visit W3Schools!', autocomplete.dropDown.$items.eq(0).html(), 'Text property is not encoded');
         });
 
         test('dataBind method should not encode Text property if encoded is true and isAjax returns false', function () {

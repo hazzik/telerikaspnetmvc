@@ -159,15 +159,16 @@
 
 .t-rtl .t-grid div.t-grid-header
 {
-    padding-right: 0\9;
-    padding-left: 17px\9;
+    padding-right: 0;
+    padding-left: 17px;
     text-align: right;
 }
 
-.t-rtl .t-grid .t-header
+.t-rtl .t-grid .t-header,
+.t-rtl .t-grid td
 {
     text-align: right;
-    border-width: 0 0 1px 1px\9;
+    border-width: 0 0 0 1px;
 }
 
 .t-rtl .t-grid .t-header .t-link
@@ -178,7 +179,8 @@
 .t-rtl .t-grid .t-grid-filter
 {
     float: left;
-    margin: -1.8em 3px -.3em -.6em;
+    margin-right: 3px;
+    margin-left: -.6em;
 }
 
 .t-rtl .t-grid .t-pager
@@ -218,7 +220,6 @@
 .t-rtl .t-grid .t-last
 {
     border-left-width: 0;
-    border-right-width: 1px;
 }
 
 .t-rtl .t-grouping-header .t-button .t-icon {

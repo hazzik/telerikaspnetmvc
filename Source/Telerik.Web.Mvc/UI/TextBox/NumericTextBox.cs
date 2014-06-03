@@ -20,14 +20,73 @@ namespace Telerik.Web.Mvc.UI
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
 
-            MinValue = (T)Convert.ChangeType(int.MinValue, typeof(T));
-            MaxValue = (T)Convert.ChangeType(int.MaxValue, typeof(T));
-            IncrementStep = (T)Convert.ChangeType(1, typeof(T)); ;
+            MinValue = ReadField()["min"];
+            MaxValue = ReadField()["max"];
+            IncrementStep = (T)Convert.ChangeType(1, typeof(T));
             EmptyMessage = "Enter value";
 
             DecimalDigits = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalDigits;
             NumberGroupSize = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSizes[0];
             NegativePatternIndex = CultureInfo.CurrentCulture.NumberFormat.NumberNegativePattern;
+        }
+
+        private Dictionary<string, T> ReadField()
+        {
+            Func<object, object, Dictionary<string, T>> GetRangeValues = (min, max) => {
+                return new Dictionary<string, T>() { 
+                    { "min", (T)Convert.ChangeType(min, typeof(T)) },
+                    { "max", (T)Convert.ChangeType(max, typeof(T)) } 
+                };
+            };
+
+            var type = typeof(T);
+
+            if (type == typeof(int))
+            {
+                return GetRangeValues(int.MinValue, int.MaxValue);
+            }
+            else if (type == typeof(uint))
+            {
+                return GetRangeValues(uint.MinValue, uint.MaxValue);
+            }
+            else if (type == typeof(short))
+            {
+                return GetRangeValues(short.MinValue, short.MaxValue);
+            }
+            else if (type == typeof(ushort))
+            {
+                return GetRangeValues(ushort.MinValue, ushort.MaxValue);
+            }
+            else if (type == typeof(long))
+            {
+                return GetRangeValues(long.MinValue, long.MaxValue);
+            }
+            else if (type == typeof(ulong))
+            {
+                return GetRangeValues(ulong.MinValue, ulong.MaxValue);
+            }
+            else if (type == typeof(float))
+            {
+                return GetRangeValues(float.MinValue, float.MaxValue);
+            }
+            else if (type == typeof(double))
+            {
+                return GetRangeValues(double.MinValue, double.MaxValue);
+            }
+            else if (type == typeof(sbyte))
+            {
+                return GetRangeValues(sbyte.MinValue, sbyte.MaxValue);
+            }
+            else if (type == typeof(byte))
+            {
+                return GetRangeValues(byte.MinValue, byte.MaxValue);
+            }
+            else if (type == typeof(char))
+            {
+                return GetRangeValues(char.MinValue, char.MaxValue);
+            }
+
+            return GetRangeValues(decimal.MinValue, decimal.MaxValue);
         }
 
         public int DecimalDigits
@@ -94,16 +153,6 @@ namespace Telerik.Web.Mvc.UI
         public override void VerifySettings()
         {
             base.VerifySettings();
-
-            if (Nullable.Compare<T>(MinValue, MaxValue) == 1)
-            {
-                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
-            }
-
-            if (Value != null && (Nullable.Compare<T>(Value, MaxValue) == 1 || Nullable.Compare<T>(Value, MinValue) == -1))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
-            }
 
             if (NegativePatternIndex < 0 || NegativePatternIndex > 4)
             {

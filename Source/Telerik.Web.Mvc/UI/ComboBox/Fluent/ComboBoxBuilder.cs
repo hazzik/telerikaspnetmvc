@@ -6,8 +6,9 @@
 namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
-    
-    using Infrastructure;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="ComboBox"/> component.
@@ -22,7 +23,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
             : base(component)
         {
         }
-
 
         /// <summary>
         /// Use it to enable filtering of items.
@@ -59,6 +59,52 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Guard.IsNotNull(filtering, "filtering");
 
             filtering(new ComboBoxFilterSettingsBuilder(Component.Filtering));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes of the hidden input element.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public ComboBoxBuilder HiddenInputHtmlAttributes(object attributes)
+        {
+            return HiddenInputHtmlAttributes(attributes.ToDictionary());
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes of the hidden input element.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public ComboBoxBuilder HiddenInputHtmlAttributes(IDictionary<string, object> attributes)
+        {
+            Guard.IsNotNull(attributes, "attributes");
+
+            Component.HiddenInputHtmlAttributes.Clear();
+            Component.HiddenInputHtmlAttributes.Merge(attributes);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes of the input element.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public ComboBoxBuilder InputHtmlAttributes(object attributes)
+        {
+            return InputHtmlAttributes(attributes.ToDictionary());
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes of the input element.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public ComboBoxBuilder InputHtmlAttributes(IDictionary<string, object> attributes)
+        {
+            Guard.IsNotNull(attributes, "attributes");
+
+            Component.InputHtmlAttributes.Clear();
+            Component.InputHtmlAttributes.Merge(attributes);
 
             return this;
         }

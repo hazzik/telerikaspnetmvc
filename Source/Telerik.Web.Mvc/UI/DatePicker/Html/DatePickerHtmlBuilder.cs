@@ -72,7 +72,7 @@ namespace Telerik.Web.Mvc.UI.Html
             }
 
             return new HtmlElement("input", TagRenderMode.SelfClosing)
-                   .Attributes(new { name = Component.Name, id = Component.Id })
+                   .Attributes(new { name = Component.Name, id = Component.Id, type = "text" })
                    .ToggleAttribute("value", value, value.HasValue())
                    .ToggleAttribute("disabled", "disabled", !Component.Enabled)
                    .Attributes(Component.InputHtmlAttributes)

@@ -28,18 +28,18 @@
         });
         
         test('closes empty tags', function() {
-            editor.value('<br>');
-            equal(editor.value(), '<br />');
+            editor.value('<hr>');
+            equal(editor.value(), '<hr />');
         });
 
         test('converts to lower case', function() {
-            editor.value('<BR>');
-            equal(editor.value(), '<br />');
+            editor.value('<hr>');
+            equal(editor.value(), '<hr />');
         });
 
         test('converts mixed case to lower case', function() {
-            editor.value('<Br>');
-            equal(editor.value(), '<br />');
+            editor.value('<hr>');
+            equal(editor.value(), '<hr />');
         });
 
         test('returns child tags', function() {
@@ -63,23 +63,23 @@
         });
 
         test('expands attributes', function() {
-            editor.value('<br disabled>');
-            equal(editor.value(), '<br disabled="disabled" />');
+            editor.value('<hr disabled>');
+            equal(editor.value(), '<hr disabled="disabled" />');
         });
 
         test('fills custom attributes', function() {
-            editor.value('<br test="test">');
-            equal(editor.value(), '<br test="test" />');
+            editor.value('<hr test="test">');
+            equal(editor.value(), '<hr test="test" />');
         });
 
         test('caps attributes', function() {
-            editor.value('<br CLASS="test">');
-            equal(editor.value(), '<br class="test" />');
+            editor.value('<hr CLASS="test">');
+            equal(editor.value(), '<hr class="test" />');
         });
 
         test('attributes containing dashes', function() {
-            editor.value('<br class=t-input />');
-            equal(editor.value(), '<br class="t-input" />');
+            editor.value('<hr class=t-input />');
+            equal(editor.value(), '<hr class="t-input" />');
         });
 
         test('adds closing tag', function() {
@@ -185,8 +185,8 @@
         });
         
         test('style ending with whitespace', function() {
-            editor.value('<br style="display:none; " />');
-            equal(editor.value(), '<br style="display:none;" />');
+            editor.value('<hr style="display:none; " />');
+            equal(editor.value(), '<hr style="display:none;" />');
         });
 
         test('a href is not made absolute', function() {
@@ -244,18 +244,18 @@
         });
 
         test('attributes starting with underscore moz are removed', function() {
-            editor.value('<br _moz_resizing="true" />');
-            equal(editor.value(), '<br />');
+            editor.value('<hr _moz_resizing="true" />');
+            equal(editor.value(), '<hr />');
         });
 
         test('empty whitespace whitespace trimmed', function() {
-            editor.value('<br />      ');
-            equal(editor.value(), '<br />');
+            editor.value('<hr />      ');
+            equal(editor.value(), '<hr />');
         });
 
         test('whitespace empty whitespace trimmed', function() {
-            editor.value('           <br />');
-            equal(editor.value(), '<br />');
+            editor.value('           <hr />');
+            equal(editor.value(), '<hr />');
         });
         
         test('whitespace empty inline whitespace trimmed', function() {
@@ -324,13 +324,13 @@
         });
 
         test('text whitespace empty element whitespace preserved', function() {
-            editor.value('foo <br />');
-            equal(editor.value(), 'foo <br />');
+            editor.value('foo <hr />');
+            equal(editor.value(), 'foo <hr />');
         });
 
         test('empty element whitespace text whitespace trimmed', function() {
-            editor.value('<br /> foo');
-            equal(editor.value(), '<br />foo');
+            editor.value('<hr /> foo');
+            equal(editor.value(), '<hr />foo');
         });
 
         test('whitespace at end of inline element preserved', function() {
@@ -451,6 +451,16 @@
         test("single quotes in style attribute", function() {
             editor.value('<span style="font-family:\'Verdana\';">foo</span>');
             equal(editor.value(), '<span style="font-family:\'Verdana\';">foo</span>');
+        });
+
+        test('single brs are considered no value (to enable required field validation)', function() {
+            editor.value('<br>');
+            equal(editor.value(), '');
+        });
+
+        test('single empty paragraph is considered no value (to enable required field validation)', function() {
+            editor.value('<p></p>');
+            equal(editor.value(), '');
         });
 
 </script>

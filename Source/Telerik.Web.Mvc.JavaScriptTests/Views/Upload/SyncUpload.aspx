@@ -79,17 +79,17 @@
             equal($(".t-upload-files li.t-file", uploadInstance.wrapper).length, 1);
         });
 
-        test("the name of the empty input is cleared when the parent form is submitted", function() {
+        test("the empty input name is removed when the parent form is submitted", function() {
             $("#parentForm").trigger("submit");
 
-            equal($("input[name='']", uploadInstance.wrapper).length, 1);
+            equal(uploadInstance.element.attr("name"), "");
         });
 
-        asyncTest("the name of the empty input is restored when the parent submit is completed", function() {
+        asyncTest("the empty input is restored when the parent submit is completed", function() {
             $("#parentForm").trigger("submit");
 
             setTimeout(function() {
-                equal($("input[name='uploadInstance']", uploadInstance.wrapper).length, 1);
+                equal(uploadInstance.element.parent().length, 1);
                 start();
             }, 50);
         });

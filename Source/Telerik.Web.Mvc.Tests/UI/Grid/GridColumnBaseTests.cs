@@ -37,7 +37,8 @@
             column.Setup(c => c.Title).Returns(title);
 
             var cell = column.Object.CreateHeaderBuilder().CreateCell();
-            cell.InnerHtml.ShouldEqual(title);
+            var span = GetSpan(cell);
+            span.InnerHtml.ShouldEqual(title);
         }
 
         [Fact]
@@ -48,7 +49,8 @@
             column.SetupGet(c => c.Title).Returns(title);
 
             var cell = column.Object.CreateHeaderBuilder().CreateCell();
-            cell.InnerHtml.ShouldEqual(title);
+            var span = GetSpan(cell);
+            span.InnerHtml.ShouldEqual(title);
         }
 
         [Fact]
@@ -59,7 +61,8 @@
             column.SetupGet(c => c.Title).Returns(title);
 
             var cell = column.Object.CreateHeaderBuilder().CreateCell();
-            cell.InnerHtml.ShouldEqual("&nbsp;");
+            var span = GetSpan(cell);
+            span.InnerHtml.ShouldEqual("&nbsp;");
         }
 
         [Fact]
@@ -70,7 +73,8 @@
             column.SetupGet(c => c.Title).Returns(title);
 
             var cell = column.Object.CreateHeaderBuilder().CreateCell();
-            cell.InnerHtml.ShouldEqual("&nbsp;");
+            var span = GetSpan(cell);
+            span.InnerHtml.ShouldEqual("&nbsp;");
         }
 
         [Fact]
@@ -107,6 +111,11 @@
             var builder = column.Object.CreateDisplayBuilder(new Mock<IGridHtmlHelper>().Object);
 
             builder.Decorators.OfType<GridLastCellBuilderDecorator>().Count().ShouldEqual(1);
+        }
+
+        private IHtmlNode GetSpan(IHtmlNode cell)
+        {
+            return cell.Children[0];
         }
     }
 }

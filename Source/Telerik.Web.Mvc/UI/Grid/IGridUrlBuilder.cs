@@ -4,6 +4,9 @@
 // All other rights reserved.
 namespace Telerik.Web.Mvc.UI
 {
+    using System.Web.Routing;
+    using System;
+
     public interface IGridUrlBuilder
     {
         string SelectUrl();
@@ -25,5 +28,7 @@ namespace Telerik.Web.Mvc.UI
         string DeleteUrl(object dataItem);
 
         string Url(INavigatable settings);
+
+        string Url(INavigatable navigatable, Action<RouteValueDictionary> configurator);
     }
 }

@@ -6,6 +6,8 @@
             'multi': 1
         };
 
+    $t.scripts.push("telerik.panelbar.js");
+
     $.extend($t, {
         panelbar: function (element, options) {
             this.element = element;
@@ -150,7 +152,7 @@
         },
 
         _toggleGroup: function ($element, visibility) {
-            if ($element.data('animating'))
+            if ($element.is(":visible") != visibility || $element.data('animating'))
                 return;
 
             $element

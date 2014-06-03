@@ -36,7 +36,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         public bool IsAbsolute(WebAsset asset)
         {
-            return asset.Source.Contains("://");
+            return asset.Source.Contains("//");
         }
     }
 }

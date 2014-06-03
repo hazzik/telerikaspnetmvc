@@ -73,7 +73,7 @@
 
             tag.TagName.ShouldEqual("img");
             tag.Attribute("src").ShouldEqual(iconPath);
-            tag.ShouldHaveClasses(UIPrimitives.Image, UIPrimitives.Window.Icon);
+            tag.ShouldHaveClass(UIPrimitives.Image);
         }
 
         [Fact]
@@ -126,7 +126,7 @@
 
             linkTag.Children.ShouldNotBeEmpty();
             linkTag.TagName.ShouldEqual("a");
-            linkTag.ShouldHaveClasses(UIPrimitives.Window.Action, UIPrimitives.Link);
+            linkTag.ShouldHaveClasses(UIPrimitives.Link);
             linkTag.Children[0].TagName.ShouldEqual("span");
         }
 
@@ -208,6 +208,25 @@
             IHtmlNode content = renderer.ContentTag();
 
             content.Children.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ContentTag_should_not_render_IFrame_if_ContentUrl_is_relative()
+        {
+            window.ContentUrl = "httpfoosa";
+
+            IHtmlNode content = renderer.ContentTag();
+
+            content.Children.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ContentTag_should_render_IFrame_if_ContentUrl_is_protocolless()
+        {
+            window.ContentUrl = "//ajax.google.com/";
+
+            renderer.ContentTag()
+                .Children[0].Attribute("src").ShouldEqual(window.ContentUrl);
         }
 
         [Fact]

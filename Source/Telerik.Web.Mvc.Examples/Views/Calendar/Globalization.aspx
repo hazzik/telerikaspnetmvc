@@ -4,6 +4,7 @@
     <%= Html.Telerik().Calendar()
             .Name("Calendar")
             .HtmlAttributes(new { style = "width: 294px;" })
+            .Value(new DateTime(2011, 8, 31))
     %>
 
     <% Html.RenderPartial("CulturePicker"); %>

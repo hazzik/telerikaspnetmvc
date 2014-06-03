@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Globalization;
     using System.Linq;
     using Telerik.Web.Mvc.Infrastructure;
+    using System.Collections.Generic;
 
     public class GridPagingSettings : IClientSerializable
     {
@@ -15,13 +16,14 @@ namespace Telerik.Web.Mvc.UI
 
         private int pageSize = 10;
         private int total = 0;
+        private bool pageOnScroll = false;
 
         public GridPagingSettings(IGrid grid)
         {
             this.grid = grid;
             Style = GridPagerStyles.NextPreviousAndNumeric;
             CurrentPage = 1;
-            PageSizesInDropDown = new[] {5, 10, 20, 50};
+            PageSizesInDropDown = new[] {5, 10, 20, 50};            
         }
         
         public int CurrentPage
@@ -81,6 +83,22 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        public bool PageOnScroll
+        {
+            get
+            {
+                return pageOnScroll;
+            }
+            set
+            {
+                pageOnScroll = value;
+                if (pageOnScroll)
+                {
+                    grid.Scrolling.Enabled = true;
+                }
+            }
+        }
+
         public void SerializeTo(string key, IClientSideObjectWriter writer)
         {
             if (Enabled)
@@ -89,6 +107,31 @@ namespace Telerik.Web.Mvc.UI
                 writer.Append("total", grid.DataProcessor.Total);
                 writer.Append("currentPage", grid.DataProcessor.CurrentPage);
                 writer.AppendCollection("pageSizesInDropDown", PageSizesInDropDown.Select(v => v.ToString(CultureInfo.InvariantCulture)));
+
+                writer.Append("pageOnScroll", PageOnScroll);
+                if (grid.IsClientBinding && PageOnScroll)
+                {
+                    if (!grid.IsEmpty)
+                    {
+                        var dataTableEnumerable = grid.DataSource as GridDataTableWrapper;
+                        if (dataTableEnumerable != null && dataTableEnumerable.Table != null)
+                        {
+                            writer.AppendCollection("data",
+                                                    grid.DataProcessor.ProcessedDataSource.SerializeToDictionary(
+                                                        dataTableEnumerable.Table));
+
+                        }
+                        else if (grid.DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup>)
+                        {
+                            IEnumerable<IGroup> grouppedDataSource = grid.DataProcessor.ProcessedDataSource.Cast<IGroup>();
+                            writer.AppendCollection("data", grouppedDataSource.Leaves());
+                        }
+                        else
+                        {
+                            writer.AppendCollection("data", grid.DataProcessor.ProcessedDataSource);
+                        }
+                    }
+                }                
             }
             else
             {

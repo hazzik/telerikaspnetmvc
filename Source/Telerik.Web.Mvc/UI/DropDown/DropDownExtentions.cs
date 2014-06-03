@@ -26,6 +26,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (selectedItemIndex == -1)
             {
+                instance.Value = string.Empty;
                 selectedItemIndex = items.IndexOf(items.LastOrDefault(item => item.Selected == true));
             }
 

@@ -7,7 +7,8 @@
         var uploadInstance,
             _getSupportsFormData,
             validJSON = "{\"status\":\"OK\"}",
-            errorResponse = "ERROR!";
+            errorResponse = "ERROR!",
+            lastFormData;
 
         function createUpload(options) {
             copyUploadPrototype();
@@ -15,7 +16,14 @@
             $('#uploadInstance').tUpload($.extend({ async:{"saveUrl":"javascript:;","removeUrl":"/removeAction",autoUpload:true} }, options));
 
             var uploadInstance = $('#uploadInstance').data("tUpload");
-            uploadInstance._module.createFormData = function() { return { } };
+            uploadInstance._module.createFormData = function() {
+                lastFormData = { };
+
+                return {
+                    append: function(name, value) {
+                        lastFormData[name] = value;
+                    }
+                } };
             uploadInstance._module.postFormData = function(url, data, fileEntry) {
                 fileEntry.data("request", { abort: function() { } });
             };
@@ -37,9 +45,9 @@
             );
         }
 
-        function simulateUpload() {
+        function simulateUpload(index) {
             simulateFileSelect();
-            simulateRequestSuccess(0);
+            simulateRequestSuccess(index || 0);
         }
 
         function simulateUploadError() {
@@ -264,6 +272,7 @@
 
 <%= Html.Partial("Common/Async") %>
 <%= Html.Partial("Common/Selection") %>
+<%= Html.Partial("Common/AsyncNoMultiple") %>
 
 <script type="text/javascript">
 
@@ -431,12 +440,44 @@
                 }
             });
 
-            var saveUrl = "";
-            uploadInstance._module.postFormData = function (url) { saveUrl = url; };
-
             simulateFileSelect();
 
-            equal(saveUrl, "javascript:;?myId=42");
+            equal(lastFormData.myId, 42);
+        });
+
+        test("Anti-Forgery Token is sent to the server", function() {
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken' value='42' />");
+
+            uploadInstance = createUpload();
+            simulateFileSelect();
+
+            equal(lastFormData["__RequestVerificationToken"], "42");
+
+            $("input[name='__RequestVerificationToken']").remove();
+        });
+
+        test("Anti-Forgery Token with AppPath sent to the server", function() {
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken_test' value='42' />");
+
+            uploadInstance = createUpload();
+            simulateFileSelect();
+
+            equal(lastFormData["__RequestVerificationToken_test"], "42");
+
+            $("input[name='__RequestVerificationToken_test']").remove();
+        });
+
+        test("Multiple Anti-Forgery Tokens are sent to the server", function() {
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken_1' value='42' />");
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken_2' value='24' />");
+
+            uploadInstance = createUpload();
+            simulateFileSelect();
+
+            equal(lastFormData["__RequestVerificationToken_1"], "42");
+            equal(lastFormData["__RequestVerificationToken_2"], "24");
+
+            $("input[name^='__RequestVerificationToken']").remove();
         });
 
         test("cancelling upload event prevents the upload operation", function() {

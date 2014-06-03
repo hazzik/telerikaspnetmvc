@@ -5,10 +5,9 @@
 
 namespace Telerik.Web.Mvc.UI.Html
 {
-    using System;
-    using Telerik.Web.Mvc.UI;
     using System.Collections.Generic;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.UI;
 
     public class GridCellBuilderFactory : IGridCellBuilderFactory
     {

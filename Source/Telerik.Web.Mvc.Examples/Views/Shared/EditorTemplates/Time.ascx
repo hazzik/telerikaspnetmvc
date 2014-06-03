@@ -1,7 +1,3 @@
 <%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<DateTime?>" %>
 
-<%= Html.Telerik().TimePicker()
-        .Name(ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty))
-        .HtmlAttributes(new { id = ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty) + "_wrapper" })
-        .Value(Model > DateTime.MinValue? Model : DateTime.Today)
-%>
+<%= Html.Telerik().TimePickerFor(m => m) %>

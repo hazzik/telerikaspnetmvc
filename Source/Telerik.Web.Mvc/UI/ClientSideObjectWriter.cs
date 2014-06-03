@@ -49,7 +49,7 @@ namespace Telerik.Web.Mvc.UI
         /// Starts writing this instance.
         /// </summary>
         /// <returns></returns>
-        public IClientSideObjectWriter Start()
+        public virtual IClientSideObjectWriter Start()
         {
             if (hasStarted)
             {
@@ -70,7 +70,7 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         /// <param name="keyValuePair">The key value pair.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string keyValuePair)
+        public virtual IClientSideObjectWriter Append(string keyValuePair)
         {
             EnsureStart();
 
@@ -94,7 +94,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, string value)
+        public virtual IClientSideObjectWriter Append(string name, string value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -114,7 +114,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter AppendNullableString(string name, string value)
+        public virtual IClientSideObjectWriter AppendNullableString(string name, string value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -134,7 +134,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, int value)
+        public virtual IClientSideObjectWriter Append(string name, int value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -150,7 +150,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="value">The value.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, int value, int defaultValue)
+        public virtual IClientSideObjectWriter Append(string name, int value, int defaultValue)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -168,7 +168,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, int? value)
+        public virtual IClientSideObjectWriter Append(string name, int? value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -186,7 +186,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, double value)
+        public virtual IClientSideObjectWriter Append(string name, double value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -201,7 +201,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, double? value)
+        public virtual IClientSideObjectWriter Append(string name, double? value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -219,7 +219,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, decimal value)
+        public virtual IClientSideObjectWriter Append(string name, decimal value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -234,7 +234,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, decimal? value)
+        public virtual IClientSideObjectWriter Append(string name, decimal? value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -252,7 +252,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, bool value)
+        public virtual IClientSideObjectWriter Append(string name, bool value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -268,7 +268,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, bool value, bool defaultValue)
+        public virtual IClientSideObjectWriter Append(string name, bool value, bool defaultValue)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -286,13 +286,13 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter AppendDateOnly(string name, DateTime value)
+        public virtual IClientSideObjectWriter AppendDateOnly(string name, DateTime value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
             if (value != DateTime.MinValue)
             {
-                string dateValue = "new Date({0},{1},{2})".FormatWith(value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Day.ToString("00", CultureInfo.InvariantCulture));
+                string dateValue = "new Date({0},{1},{2})".FormatWith(value.Year.ToString("###0", CultureInfo.InvariantCulture), (value.Month - 1).ToString("#0", CultureInfo.InvariantCulture), value.Day.ToString("#0", CultureInfo.InvariantCulture));
 
                 Append("{0}:{1}".FormatWith(name, dateValue));
             }
@@ -306,15 +306,13 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter AppendDateOnly(string name, DateTime? value)
+        public virtual IClientSideObjectWriter AppendDateOnly(string name, DateTime? value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
-            if (value != null && value != DateTime.MinValue)
+            if (value.HasValue && value != DateTime.MinValue)
             {
-                string dateValue = "new Date({0},{1},{2})".FormatWith(value.Value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Value.Day.ToString("00", CultureInfo.InvariantCulture));
-
-                Append("{0}:{1}".FormatWith(name, dateValue));
+                AppendDateOnly(name, value.Value);
             }
 
             return this;
@@ -326,7 +324,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter AppendDatesOnly(string name, IEnumerable<DateTime> collection)
+        public virtual IClientSideObjectWriter AppendDatesOnly(string name, IEnumerable<DateTime> collection)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -406,13 +404,13 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, DateTime value)
+        public virtual IClientSideObjectWriter Append(string name, DateTime value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
             if (value != DateTime.MinValue)
             {
-                string dateValue = "new Date({0},{1},{2},{3},{4},{5},{6})".FormatWith(value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Day.ToString("00", CultureInfo.InvariantCulture), value.Hour.ToString("00", CultureInfo.InvariantCulture), value.Minute.ToString("00", CultureInfo.InvariantCulture), value.Second.ToString("00", CultureInfo.InvariantCulture), value.Millisecond.ToString("000", CultureInfo.InvariantCulture));
+                string dateValue = "new Date({0},{1},{2},{3},{4},{5},{6})".FormatWith(value.Year.ToString("###0", CultureInfo.InvariantCulture), (value.Month - 1).ToString("#0", CultureInfo.InvariantCulture), value.Day.ToString("#0", CultureInfo.InvariantCulture), value.Hour.ToString("#0", CultureInfo.InvariantCulture), value.Minute.ToString("#0", CultureInfo.InvariantCulture), value.Second.ToString("#0", CultureInfo.InvariantCulture), value.Millisecond.ToString("##0", CultureInfo.InvariantCulture));
 
                 Append("{0}:{1}".FormatWith(name, dateValue));
             }
@@ -426,7 +424,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, DateTime? value)
+        public virtual IClientSideObjectWriter Append(string name, DateTime? value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -444,7 +442,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="action">The action.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, Action action)
+        public virtual IClientSideObjectWriter Append(string name, Action action)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -463,7 +461,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="action">The action.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append(string name, Func<object, object> func)
+        public virtual IClientSideObjectWriter Append(string name, Func<object, object> func)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -486,7 +484,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append<TEnum>(string name, TEnum value) where TEnum : IComparable, IFormattable
+        public virtual IClientSideObjectWriter Append<TEnum>(string name, TEnum value) where TEnum : IComparable, IFormattable
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -511,7 +509,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="value">The value.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public IClientSideObjectWriter Append<TEnum>(string name, TEnum value, TEnum defaultValue) where TEnum : IComparable, IFormattable
+        public virtual IClientSideObjectWriter Append<TEnum>(string name, TEnum value, TEnum defaultValue) where TEnum : IComparable, IFormattable
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -523,14 +521,14 @@ namespace Telerik.Web.Mvc.UI
             return this;
         }
 
-        public IClientSideObjectWriter AppendCollection(string name, IEnumerable value)
+        public virtual IClientSideObjectWriter AppendCollection(string name, IEnumerable value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
             return Append("{0}:{1}".FormatWith(name, new JavaScriptSerializer().Serialize(value)));
         }
 
-        public IClientSideObjectWriter AppendObject(string name, object value)
+        public virtual IClientSideObjectWriter AppendObject(string name, object value)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -543,7 +541,7 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="name">The name.</param>
         /// <param name="event">Client event of the component.</para>
         /// <returns></returns>
-        public IClientSideObjectWriter AppendClientEvent(string name, ClientEvent clientEvent)
+        public virtual IClientSideObjectWriter AppendClientEvent(string name, ClientEvent clientEvent)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -563,7 +561,7 @@ namespace Telerik.Web.Mvc.UI
             return this;
         }
 
-        public IClientSideObjectWriter Append(string name, HtmlTemplate htmlTemplate)
+        public virtual IClientSideObjectWriter Append(string name, HtmlTemplate htmlTemplate)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
@@ -609,7 +607,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Completes this instance.
         /// </summary>
-        public void Complete()
+        public virtual void Complete()
         {
             EnsureStart();
 

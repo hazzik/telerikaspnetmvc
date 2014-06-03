@@ -3,6 +3,7 @@
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using System;
 
     public class MvcApplication : HttpApplication
     {
@@ -30,6 +31,8 @@
 
             AreaRegistration.RegisterAllAreas();
 #endif
+            ModelBinders.Binders.Add(typeof(decimal), new DecimalModelBinder());
+            ModelBinders.Binders.Add(typeof(DateTime), new DateTimeModelBinder());
 
             RegisterRoutes(RouteTable.Routes);
 

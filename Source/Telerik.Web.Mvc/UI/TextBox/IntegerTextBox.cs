@@ -34,10 +34,10 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Start();
 
-            objectWriter.Append("val", this.Value);
+            objectWriter.AppendObject("val", this.Value);
             objectWriter.Append("step", this.IncrementStep);
-            objectWriter.Append("minValue", this.MinValue);
-            objectWriter.Append("maxValue", this.MaxValue);
+            objectWriter.AppendObject("minValue", this.MinValue);
+            objectWriter.AppendObject("maxValue", this.MaxValue);
             objectWriter.Append("digits", 0);
             objectWriter.AppendNullableString("groupSeparator", this.NumberGroupSeparator);
             objectWriter.Append("groupSize", this.NumberGroupSize);
@@ -75,16 +75,6 @@ namespace Telerik.Web.Mvc.UI
         public override void VerifySettings()
         {
             base.VerifySettings();
-
-            if (MinValue > MaxValue)
-            {
-                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
-            }
-
-            if ((Value != null) && (MinValue > Value || Value > MaxValue))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
-            }
 
             if (NegativePatternIndex < 0 || NegativePatternIndex > 4)
             {

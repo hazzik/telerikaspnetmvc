@@ -1,6 +1,8 @@
 ﻿(function ($) {
     var $t = $.telerik;
 
+    $t.scripts.push("telerik.menu.js");
+
     $t.menu = function (element, options) {
         this.element = element;
         this.nextItemZIndex = 100;
@@ -12,11 +14,12 @@
             .live('mouseleave', $t.delegate(this, this.mouseleave), true)
             .live('click', $t.delegate(this, this.click));
 
-        $('.t-item').live('click', $t.delegate(this, this.click));
-
         $('.t-item:not(.t-state-disabled) > .t-link', element)
             .live('mouseenter', $t.hover)
             .live('mouseleave', $t.leave);
+
+        $('.t-item.t-state-disabled', element)
+            .live('click', function () { return false; });
 
         $(document).click($t.delegate(this, this.documentClick));
 

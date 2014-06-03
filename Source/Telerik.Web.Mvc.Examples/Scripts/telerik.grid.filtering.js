@@ -2,6 +2,8 @@
     var $t = $.telerik;
     var escapeQuoteRegExp = /'/ig;
     var fx = $t.fx.slide.defaults();
+    
+    $t.scripts.push("telerik.grid.filtering.js");
 
     function getFormat(column) {
         if (!column.format)
@@ -50,6 +52,13 @@
                 if (index > -1)
                     filters[key.substring(index + prefix.length).toLowerCase()] = value;
             });
+
+            if (column.type == "String") {
+                // put the ends with value last
+                var endswith = filters.endswith;
+                delete filters.endswith;
+                filters.endswith = endswith;
+            }
 
             html.cat('<select class="t-filter-operator">');
             $.each(filters, function (key, value) {
@@ -105,8 +114,8 @@
         createFilterMenu: function (column) {
             var filterMenuHtml = new $t.stringBuilder();
 
-            filterMenuHtml.cat('<div class="t-animation-container"><div class="t-filter-options t-group" style="display:none">')
-					.cat('<button class="t-button t-button-icontext t-clear-button"><span class="t-icon t-clear-filter"></span>')
+            filterMenuHtml.cat('<div class="t-animation-container"><div class="t-filter-options t-group t-popup" style="display:none">')
+					.cat('<button class="t-button t-button-icontext t-button-expand t-clear-button"><span class="t-icon t-clear-filter"></span>')
 					.cat(this.localization.filterClear)
 					.cat('</button><div class="t-filter-help-text">')
 					.cat(this.localization.filterShowRows)
@@ -127,7 +136,7 @@
                 this.createTypeSpecificInput(filterMenuHtml, column, fieldIdPrefix + 'second');
             }
 
-            filterMenuHtml.cat('<button class="t-button t-button-icontext t-filter-button"><span class="t-icon t-filter"></span>')
+            filterMenuHtml.cat('<button class="t-button t-button-icontext t-button-expand t-filter-button"><span class="t-icon t-filter"></span>')
                           .cat(this.localization.filter)
 				          .cat('</button></div></div>');
 
@@ -146,6 +155,7 @@
             });
 
             return $filterMenu
+                        .appendTo(this.element)
                         .find('.t-datepicker .t-input')
                         .each(function () {
                             $(this).tDatePicker({ format: getFormat(column) });
@@ -155,8 +165,7 @@
                         .each(function () {
                             $(this).tTextBox({ type: 'numeric', minValue: null, maxValue: null, numFormat: '', groupSeparator: '' });
                         })
-                        .end()
-                        .appendTo(this.element);
+                        .end();
         },
 
         showFilter: function (e) {
@@ -302,16 +311,26 @@
             }, this));
 
             if (!hasErrors) {
-                if (column.filters.length > 0)
+                if (column.filters.length > 0) {
                     this.filter(this.filterExpr());
+                } else {
+                    column.filters = null;
+                }
 
                 this.hideFilter();
             }
         },
 
-        isValidFilterValue: function (column, value) {
-            if (column.type == 'Number')
-                return !isNaN(value);
+        isValidFilterValue: function (column, value) {            
+           if (column.type == 'Date') {                
+                var date;
+                if (value.indexOf('Date(') > -1) {
+                    date = new Date(parseInt(value.replace(/^\/Date\((.*?)\)\/$/, '$1')));
+                } else {
+                    date = $t.datetime.parse({ value: value, format: getFormat(column) });
+                }
+                return date != undefined;
+            }
 
             return true;
         },

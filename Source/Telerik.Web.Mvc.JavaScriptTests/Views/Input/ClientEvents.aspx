@@ -19,6 +19,7 @@
             element = this;
             oldValue = e.oldValue;
             newValue = e.newValue;
+            componentValueInChangeHandler = $(this).data("tTextBox").value();
         }
 
         function getInput() {
@@ -122,6 +123,17 @@
 
         equal(numeric.value(), 20);
     });
+
+    test('In change event handler, component value should be the new', function () {
+        var numeric = getInput();
+
+        numeric.value(20);
+
+        numeric._update(30);
+
+        equal(componentValueInChangeHandler, 30);
+    });
+
 </script>
 
 </asp:Content>

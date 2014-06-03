@@ -23,7 +23,7 @@
 
     <%= Html.Telerik().DateTimePicker().Name("DateTimePickerWithInputAttr")
             .Effects(e=>e.Toggle())
-            .InputHtmlAttributes(new {value = "10/20/2000 11:00 AM"})
+            .InputHtmlAttributes(new {value = "12/12/2000 11:00 AM"})
     %>
 
 </asp:Content>
@@ -78,7 +78,7 @@
 
             var day = datetimepicker.dateView.$calendar.find('.t-state-selected');
 
-            equal('20', day.text(), 'not correct day is selected');
+            equal('12', day.text(), 'not correct day is selected');
         });
 
         test('timeView value should be called if selectedValue is not null', function () {

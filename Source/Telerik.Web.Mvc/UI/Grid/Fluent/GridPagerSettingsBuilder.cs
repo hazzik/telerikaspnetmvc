@@ -159,5 +159,26 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        /// <summary>
+        /// Enables or disables paging on scroll.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Pageable(paging => paging.PageOnScroll((bool)ViewData["pageOnScroll"]))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        /// <remarks>
+        /// The PageOnScroll method is useful when you need to enable paging on scroll based on certain conditions.
+        /// </remarks>
+        public virtual GridPagerSettingsBuilder PageOnScroll(bool value)
+        {
+            pager.PageOnScroll = value;
+
+            return this;
+        }
     }
 }

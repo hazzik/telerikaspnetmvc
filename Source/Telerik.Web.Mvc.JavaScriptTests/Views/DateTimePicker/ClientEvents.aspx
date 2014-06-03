@@ -35,10 +35,18 @@
        var isChanged;
        var isRaised;
        var count;
+       var callPreventDefault = false;
+       var newValue;
        //handlers
 
        function onChange(e) {
            isChanged = !isChanged;
+
+           newValue = $(this).data("tDateTimePicker").value();
+
+           if (callPreventDefault) {
+               e.preventDefault();
+           }
 
            start();
        }
@@ -186,6 +194,39 @@
 
            ok(!isChanged);
        });
+
+       test('if defaultPrevented in change event, then old value should be chosen', function () {
+           isChanged = false;
+
+           var datetimepicker = getDateTimePicker();
+
+           callPreventDefault = true;
+
+           var oldDate = datetimepicker.value();
+           var newDate = new Date();
+           newDate.setMonth(newDate.getMonth() + 1);
+           datetimepicker._update(newDate);
+
+           equal(+datetimepicker.value(), +oldDate);
+
+           callPreventDefault = false;
+       });
+
+       test('In change event handler, component value should be the new one', function () {
+           var datetimepicker = getDateTimePicker();
+
+           callPreventDefault = true;
+
+           var newDate = new Date();
+           newDate.setMonth(newDate.getMonth() + 2);
+
+           datetimepicker._update(newDate);
+
+           equal(+newValue, +newDate);
+
+           callPreventDefault = false;
+       });
+
 </script>
 
 </asp:Content>

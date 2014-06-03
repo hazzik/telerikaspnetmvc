@@ -183,5 +183,22 @@
 
             Assert.IsType(typeof(DropDownListBuilder), returnedBuilder);
         }
+
+        [Fact]
+        public void Delay_method_be_able_to_set_Delay_property()
+        {
+            int delay = 700;
+            builder.Delay(delay);
+
+            dropDownList.Delay.ShouldEqual(delay);
+        }
+
+        [Fact]
+        public void Delay_method_should_return_builder()
+        {
+            var returnedBuilder = builder.Delay(700);
+
+            Assert.IsType(typeof(DropDownListBuilder), returnedBuilder);
+        }
     }
 }

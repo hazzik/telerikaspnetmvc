@@ -13,6 +13,14 @@
             })
     %>
 
+        <%= Html.Telerik().AutoComplete()
+            .Name("AutoComplete2")
+            .BindTo(new string[]{
+                "Item1", "Item2, Item3"
+            })
+            .AutoFill(true)
+    %>
+
     <% Html.Telerik().ScriptRegistrar()
            .Scripts(scripts => scripts
                .Add("telerik.common.js")
@@ -206,6 +214,38 @@
             } finally {
                 autocomplete.trigger.close = close;
             }
+        });
+
+        test('autocomplete with autofill and no multiple selection allowed will append text of the highlighted item if it contains separator', function () {
+            var autocomplete = $("#AutoComplete2").data("tAutoComplete");
+
+            //autocomplete.dropDown.$element.eq(0).addClass("t-state-selected");
+
+            autocomplete.open();
+            autocomplete.$text.focus();
+            autocomplete.$text.val("I");
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+
+            equal(autocomplete.$text.val(), "Item1");
+        });
+
+        test('autocomplete with autofill and no multiple selection allowed will append text of the highlighted item if it contains separator, filter is contains', function () {
+            var autocomplete = $("#AutoComplete2").data("tAutoComplete");
+
+            autocomplete.$text.val(""); // this is required, otherwise the value from the previous test will cause different component behavior
+
+            //autocomplete.dropDown.$element.eq(0).addClass("t-state-selected");
+            autocomplete.filter = 2;
+            autocomplete.$text.select(); // using focus() will cause incorrect cursor behavior, which differs from the real user behavior and the test will not pass
+            autocomplete.$text.val("te");
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+            autocomplete.$text.trigger({ type: "keydown", keyCode: 40 });
+
+            equal(autocomplete.$text.val(), "tem1");
         });
 
     </script>

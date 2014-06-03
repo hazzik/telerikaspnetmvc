@@ -222,6 +222,21 @@
             ok($(comboBoxObject.dropDown.$items[0]).hasClass('t-state-selected'));
         });
 
+        test('filter StartsWith should not raise error if item.Text is empty text', function() {
+
+            var firstMatch = comboBoxObject.filters[1]; //none type filter.
+
+            comboBoxObject.dataBind(); //create empty ul
+
+            var data = [{ "Text": "", "Value": "1" },
+                        { "Text": "Chang", "Value": "2" },
+                        { "Text": "Aniseed Syrup", "Value": "3" }];
+                        
+            firstMatch(comboBoxObject, data, 'To');
+
+            ok(true);
+        });
+
         test('filter Contains should not render items if no match', function() {
             var contains = comboBoxObject.filters[2]; 
 

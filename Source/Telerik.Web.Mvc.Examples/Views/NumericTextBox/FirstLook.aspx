@@ -183,7 +183,7 @@
         
         .configurator .t-input
         {
-            width: 60px;
+            width: 75px;
         }
         
         .configurator label

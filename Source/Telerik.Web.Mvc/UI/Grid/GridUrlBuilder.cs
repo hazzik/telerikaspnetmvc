@@ -163,7 +163,7 @@ namespace Telerik.Web.Mvc.UI
 
             foreach (string key in grid.ViewContext.HttpContext.Request.QueryString)
             {
-                if (key != null && !result.ContainsKey(key))
+                if (key != null && key != "X-Requested-With" && !result.ContainsKey(key))
                 {
                     result[key] = grid.ViewContext.HttpContext.Request.QueryString[key];
                 }

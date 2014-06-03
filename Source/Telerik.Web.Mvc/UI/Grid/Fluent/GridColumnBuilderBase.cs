@@ -249,8 +249,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Column.Hidden = value;
 
-            Column.HtmlAttributes["style"] += "display:none;width:0;";
-
             return this as TColumnBuilder;
         }
 
@@ -359,7 +357,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(attributes, "attributes");
 
-            target.Clear();
             target.Merge(attributes);
         }        
         
@@ -367,7 +364,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(attributes, "attributes");
 
-            target.Clear();
             target.Merge(attributes);
         }
     }

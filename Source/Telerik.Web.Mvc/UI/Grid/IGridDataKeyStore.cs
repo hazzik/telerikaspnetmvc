@@ -42,12 +42,22 @@ namespace Telerik.Web.Mvc.UI
         
         public IDictionary<string, object> GetRouteValues(object dataItem)
         {
-            return dataKeys.ToDictionary(dataKey => dataKey.RouteKey, dataKey => dataKey.GetValue(dataItem));
+            if (dataItem != null)
+            {
+                return dataKeys.ToDictionary(dataKey => dataKey.RouteKey, dataKey => dataKey.GetValue(dataItem));
+            }
+
+            return new Dictionary<string, object>();
         }
         
         public IDictionary<string, object> GetDataKeyValues(object dataItem)
         {
-            return dataKeys.ToDictionary(dataKey => dataKey.Name, dataKey => dataKey.GetValue(dataItem));
+            if (dataItem != null)
+            {
+                return dataKeys.ToDictionary(dataKey => dataKey.Name, dataKey => dataKey.GetValue(dataItem));
+            }
+
+            return new Dictionary<string, object>();
         }
 
         public IEnumerable<Func<object, object>> DataKeyGetters

@@ -38,6 +38,14 @@
         }
 
         [Fact]
+        public void Input_should_render_type_text_attribute()
+        {
+            IHtmlNode tag = renderer.InputTag();
+
+            Assert.Equal("text", tag.Attribute("type"));
+        }
+
+        [Fact]
         public void Input_should_render_html_attributes()
         {
             timePicker.InputHtmlAttributes.Add("class", "t-test");

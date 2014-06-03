@@ -218,6 +218,22 @@
 
             equal(result, 11.22);
         });
+
+        test("parse method should return Number object from 100,55", function () {
+            var numericTextBox = getNumericTextBox(),
+                oldSeparator = numericTextBox.separator,
+                oldReg = numericTextBox.replaceRegExp;
+
+            numericTextBox.separator = ",";
+            numericTextBox.replaceRegExp = new RegExp('[ |' + '.]', 'g');
+
+            var result = numericTextBox.parse("100,55");
+
+            equal(result, 100.55);
+
+            numericTextBox.separator = oldSeparator;
+            numericTextBox.replaceRegExp = oldReg;
+        });
 </script>
 
 </asp:Content>

@@ -19,6 +19,16 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
+        GridScrollingSettings Scrolling
+        {
+            get;
+        }
+
+        GridKeyboardNavigationSettings KeyboardNavigation
+        {
+            get;
+        }
+
         bool IsSelfInitialized
         {
             get;
@@ -99,5 +109,7 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
         }
+
+        void SerializeDataSource(IClientSideObjectWriter writer);
     }
 }

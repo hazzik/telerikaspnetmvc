@@ -28,6 +28,9 @@
         function simulateUpload() {
             simulateFileSelect();
             triggerIframeLoad(0);
+
+            // Clean-up iframe as if the upload as if complete
+            $(".t-file:last", uploadInstance.wrapper).data("frame", null);
         }
 
         function simulateUploadWithResponse(response) {
@@ -204,6 +207,7 @@
 
 <%= Html.Partial("Common/Async") %>
 <%= Html.Partial("Common/Selection") %>
+<%= Html.Partial("Common/AsyncNoMultiple") %>
 
 <script type="text/javascript">
 
@@ -323,7 +327,42 @@
 
             simulateFileSelect();
 
-            equal($("form[target='uploadInstance_0']").attr("action"), "javascript:;?myId=42");
+            equal($("form[target='uploadInstance_0'] input[name='myId']").val(), "42");
+        });
+
+        test("Anti-Forgery Token is sent to the server", function() {
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken' value='42' />");
+
+            uploadInstance = createUpload();
+            simulateFileSelect();
+
+            equal($("form[target='uploadInstance_0'] input[name='__RequestVerificationToken']").val(), "42");
+
+            $("input[name='__RequestVerificationToken']").remove();
+        });
+
+        test("Anti-Forgery Token with AppPath sent to the server", function() {
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken_test' value='42' />");
+
+            uploadInstance = createUpload();
+            simulateFileSelect();
+
+            equal($("form[target='uploadInstance_0'] input[name='__RequestVerificationToken_test']").val(), "42");
+
+            $("input[name='__RequestVerificationToken_test']").remove();
+        });
+
+        test("Multiple Anti-Forgery Tokens are sent to the server", function() {
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken_1' value='42' />");
+            $(document.body).append("<input type='hidden' name='__RequestVerificationToken_2' value='24' />");
+
+            uploadInstance = createUpload();
+            simulateFileSelect();
+
+            equal($("form[target='uploadInstance_0'] input[name='__RequestVerificationToken_1']").val(), "42");
+            equal($("form[target='uploadInstance_0'] input[name='__RequestVerificationToken_2']").val(), "24");
+
+            $("input[name^='__RequestVerificationToken']").remove();
         });
 
         test("user data set in upload event is not duplicated after retry", function() {
@@ -336,7 +375,7 @@
             simulateUploadWithResponse(errorResponse);
             $(".t-retry", uploadInstance.wrapper).trigger("click");
 
-            equal($("form[target='uploadInstance_0']").attr("action"), "javascript:;?myId=42");
+            equal($("form[target='uploadInstance_0'] input[name='myId']").length, 1);
         });
 
         test("cancelling the upload event prevents the upload operation", function() {

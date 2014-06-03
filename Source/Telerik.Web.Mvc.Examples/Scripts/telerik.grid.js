@@ -1,6 +1,25 @@
 ﻿(function ($) {
+    var keys = {            
+            TAB: 9,
+            ENTER: 13,
+            ESC: 27,
+            LEFT: 37,
+            UP: 38,
+            RIGHT: 39,
+            DOWN: 40,            
+            SPACEBAR: 32,
+            PAGEUP: 33,
+            PAGEDOWN: 34,
+            F12: 123
+        };
     var $t = $.telerik;
-    var rdate = /"\\\/Date\((.*?)\)\\\/"/g;
+    var rdate = /"+\\\/Date\((.*?)\)\\\/"+/g;
+    var ROWSELECTOR = "tr:not(.t-grouping-row,.t-group-footer,.t-detail-row,.t-no-data,.t-footer-template):visible",
+        CELLSELECTOR = ">td:not(.t-group-cell,.t-hierarchy-cell)",
+        FIRST_CELL_SELECTOR = ROWSELECTOR + CELLSELECTOR + ":first"
+        FOCUSED = "t-state-focused";
+
+    $t.scripts.push("telerik.grid.js");
 
     function template(value) {
         return new Function('data', ("var p=[];" +
@@ -18,7 +37,9 @@
         return (value != null ? value + '' : '').replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-    }
+    }    
+
+    
 
     $t.grid = function (element, options) {
         this.element = element;
@@ -52,10 +73,20 @@
 
         var scrollables = this.$headerWrap.add(this.$footerWrap);
         
+        var grid = this;        
         $('> .t-grid-content', element).bind('scroll', function () {
+            if(grid.pageOnScroll) {
+                var pos = this.scrollTop + this.clientHeight;                
+                if(pos === this.scrollHeight && grid.currentPage < grid.totalPages()) {
+                    grid.pageTo(grid.currentPage + 1);    
+                }
+            }
             scrollables.scrollLeft(this.scrollLeft);
         });
 
+        if (this.rowTemplate) {
+            this.rowTemplate = template(this.rowTemplate);
+        }
 
         this.$tbody.delegate('.t-hierarchy-cell .t-plus, .t-hierarchy-cell .t-minus', 'click', $t.stopAll(function (e) {
             var $icon = $(e.target);
@@ -64,17 +95,20 @@
             $icon.toggleClass('t-minus', expanding)
                 .toggleClass('t-plus', !expanding);
             var $tr = $icon.closest('tr.t-master-row');
-            if (this.detail && !$tr.next().hasClass('t-detail-row'))
+            if (this.detail && !$tr.next().hasClass('t-detail-row')) {
+                var colSpan = 0;
+                $.each(this.columns, function(){ if(!this.hidden){ colSpan++; } });                
+
                 $(new $t.stringBuilder()
                         .cat('<tr class="t-detail-row">')
                         .rep('<td class="t-group-cell"></td>', $tr.find('.t-group-cell').length)
                         .cat('<td class="t-hierarchy-cell"></td>')
                         .cat('<td class="t-detail-cell" colspan="')
-                        .cat(this.$header.find('th:not(.t-group-cell,.t-hierarchy-cell):visible').length)
+                        .cat(colSpan)
                         .cat('">')
                         .cat(this.displayDetails(this.dataItem($tr)))
                         .cat('</td></tr>').string()).insertAfter($tr);
-
+            }
             $t.trigger(this.element, expanding ? 'detailViewExpand' : 'detailViewCollapse', { masterRow: $tr[0], detailRow: $tr.next('.t-detail-row')[0] });
             $tr.next().toggle(expanding);
         }, this));
@@ -118,7 +152,7 @@
         $(element).delegate('.t-button', 'hover', $t.preventDefault);
 
         if (this.sort)
-            this.$header.delegate('.t-link', 'hover', function () {
+            this.$header.delegate('a.t-link', 'hover', function () {
                 $(this).toggleClass('t-state-hover');
             });
 
@@ -126,22 +160,26 @@
         
         if (this.selectable) {
             var tbody = this.$tbody[0];
-            var grid = this;
             this.$tbody.delegate(nonSelectableRows, 'click', function (e) {
                 if (this.parentNode == tbody)
                     grid.rowClick(e);
             })
-            .delegate(nonSelectableRows, 'hover', function () {
-                if (this.parentNode == tbody)
-                    $(this).toggleClass('t-state-hover');
+            .delegate(nonSelectableRows, 'hover', function (e) {                
+                if (this.parentNode == tbody) {                 
+                    if(e.type == "mouseenter") {
+                        $(this).addClass('t-state-hover');
+                    } else {
+                        $(this).removeClass('t-state-hover');
+                    }
+                }
             });
         }
-        if (this.isAjax()) {
+        if (this.isAjax() || this.operationMode === "client") {
             this.$pager.delegate('.t-link:not(.t-state-disabled)', 'click', $t.stop(this.pagerClick, this));
             if (this.sort)
-                this.$header.delegate('.t-link', 'click', $t.stop(this.headerClick, this));
+                this.$header.delegate('a.t-link', 'click', $t.stop(this.headerClick, this));
         }
-
+        
         for (var i = 0; i < this.plugins.length; i++)
             $t[this.plugins[i]].initialize(this);
 
@@ -162,10 +200,603 @@
             submitChanges: this.onSubmitChanges
         });
 
-        this.initializeColumns();
-    }
+        this.initializeColumns(); 
+                
+        if(this.keyboardNavigation) {
+            this.initializeNavigation();
+        }
+
+        if(this.isAjax() || this.operationMode === "client") {
+            this._dataSource();
+        }        
+    }    
 
     $t.grid.prototype = {
+        initializeNavigation: function() {
+            var that = this,
+                element = $(that.element).attr("tabIndex", 0),
+                KEYDOWN = "keydown",
+                keyDownProxy = $.proxy(that._keyDown, that);                
+            
+            that._initNavigationMouseEvents();    
+            element.bind({
+                focus: function(e) {
+                    var current = that.current();
+                    if(current) {
+                        current.addClass(FOCUSED);
+                    } else if(current = that.$tbody.find("td." + FOCUSED).eq(0), current.length) {
+                        that._current = current;
+                    } else {
+                        that.current(element.find(FIRST_CELL_SELECTOR));
+                    }
+                },
+                focusout: function() {
+                    if (that._current) {
+                        that._current.removeClass(FOCUSED);
+                    }
+                },
+                keydown: keyDownProxy
+            });
+                       
+            if(that.editing && that.editing.mode == "PopUp") {
+                element.bind("edit", function(e) {
+                    $(e.form).bind(KEYDOWN, keyDownProxy);
+                });
+                
+                $("#" + that.formId()+":visible").bind(KEYDOWN, keyDownProxy);
+            }
+
+            if(that.pageOnScroll) {
+                element.bind("dataBinding", function() {
+                    var current = that.current(),
+                        rowIndex = current ? current.parent().index(ROWSELECTOR) - 1 : 0,
+                        cellIndex = current ? current.index() : 0;
+                    
+                    element.one("dataBound", function () {                          
+                        var rows = that.$tbody.find(ROWSELECTOR);
+                        that._focusGridElement();                        
+                        if(that._current) {
+                            that._current.removeClass(FOCUSED);
+                        }
+                        that._current = rows.eq(rowIndex).children().eq(cellIndex).addClass(FOCUSED);
+                    });
+                });
+            }
+        },
+        _keyDown: function(e) {
+            var that = this,
+                element = $(that.element),
+                tbody = that.$tbody,
+                isRtl = element.closest('.t-rtl').length,
+                key = e.keyCode,
+                DATABOUND = "dataBound",
+                currentProxy = $.proxy(that.current, that),
+                current = currentProxy(),
+                pageable = that.$pager.length > 0,
+                clientSelect = that.selectable, 
+                serverSelect = tbody.has("tr>td>.t-grid-select").length > 0,
+                target = $(e.target),
+                canHandle = !target.is(':button,a,:input,a>.t-icon'),
+                editable = that.editRow,
+                handled = false,
+                cellIndex;
+            
+            if(!current) {
+                if(that.editing && that.editing.mode == "PopUp") {
+                    current = that._current = element.find(FIRST_CELL_SELECTOR);                    
+                } else {
+                    return;
+                }
+            }            
+            cellIndex = current.index();
+            if(!$.browser.msie) {
+                canHandle = canHandle && target[0] === element[0];
+            }
+
+            if(canHandle) {
+                if(pageable && keys.PAGEUP == key) {
+                    if(!that.pageOnScroll) {
+                        element.one(DATABOUND, function () {
+                            currentProxy(element.find(FIRST_CELL_SELECTOR));
+                            that._focusGridElement();
+                        });
+                    }
+                    if(that.currentPage < that.totalPages()) {
+                        that.pageTo(that.currentPage + 1);
+                    }
+                    handled = true;
+                } else if(pageable && keys.PAGEDOWN == key) { 
+                    if(!that.pageOnScroll) {
+                        element.one(DATABOUND, function () {
+                            currentProxy(element.find(FIRST_CELL_SELECTOR));
+                            that._focusGridElement();
+                        });
+                        that.pageTo(Math.max(that.currentPage - 1, 1));
+                    }
+                    handled = true;
+                } else if(keys.UP === key) {                    
+                    currentProxy(current ? current.parent().prevAll(ROWSELECTOR).last().children(":eq(" + cellIndex + "),:eq(0)").last() : element.find(FIRST_CELL_SELECTOR));
+                    handled = true;
+                } else if(keys.DOWN === key) {
+                    currentProxy(current ? current.parent().nextAll(ROWSELECTOR).first().children(":eq(" + cellIndex + "),:eq(0)").last() : element.find(FIRST_CELL_SELECTOR));
+                    handled = true;                    
+                } else if (keys.LEFT === key) {
+                    if(current) {
+                        if(isRtl) {
+                            current = current.next();
+                        } else {
+                            current = current.prev(":not(.t-group-cell, .t-hierarchy-cell)");
+                        }
+                    } else {
+                        current = element.find(FIRST_CELL_SELECTOR);
+                    }                    
+                    currentProxy(current);
+                    handled = true;
+                } else if (keys.RIGHT === key) {
+                    if(current) {
+                        if(isRtl) {
+                            current = current.prev(":not(.t-group-cell, .t-hierarchy-cell)");
+                        } else {
+                            current = current.next();
+                        }
+                    } else {
+                        current = element.find(FIRST_CELL_SELECTOR);
+                    }
+                    currentProxy(current);
+                    handled = true;
+                } else if((clientSelect || serverSelect) && keys.SPACEBAR == key) {
+                    handled = true;
+                    var elements = current.parent().find(".t-grid-select:first").andSelf();
+                    if(serverSelect && elements[1]) {
+                        location.href = elements[1].href;
+                    } else if(clientSelect) {
+                        elements.click();
+                    }
+                }
+            }
+            
+            if(!handled && editable && !target.is(":button,a,a>.t-icon")) {
+                handled = that._handleEditing(e);
+            }
+            
+            if(handled) {
+                e.preventDefault();
+                e.stopPropagation();
+            }            
+        },
+        _handleEditing: function(e) {
+            var that = this,
+                key = e.keyCode,
+                currentProxy = $.proxy(that.current, that),
+                clearInputSelection = $.proxy(that._clearInputSelection, that),
+                focusGridElement = $.proxy(that._focusGridElement, that),
+                current = currentProxy(),                
+                element = $(that.element),
+                tbody = that.$tbody,
+                row = current.parent(),
+                rowIndex = row.index(),
+                valid,
+                handled = false,
+                editCellSelector = "td.t-grid-edit-cell",
+                firstInputSelector = ":input:visible:first",
+                isAjax = that.isAjax(),                
+                isInsert = row.closest("tr.t-grid-new-row")[0],
+                isInCell = that.editing.mode === "InCell",
+                isPopup = that.editing.mode === "PopUp",
+                isEdited = row.closest("tr.t-grid-edit-row")[0] || (isPopup && $("#" + that.formId()+":visible").length);
+            
+            if(keys.ENTER == key || keys.F12 == key) {
+                handled = true;                
+                if(isEdited) {                    
+                    clearInputSelection(current.find(firstInputSelector)[0]);
+                    if(isInCell) {
+                        valid = that.validate();                        
+                        if(!valid) { 
+                            current.find(firstInputSelector).focus();
+                            return;
+                        }
+                        if(current.is(editCellSelector)) {
+                            that.saveCell(current[0]);
+                        } else {                                                                                
+                            row.find(editCellSelector)
+                                .each(function() {
+                                    that.saveCell(this);
+                                });
+                            that.editCell(current[0]);
+                        }
+                        if(that.valid) {
+                            focusGridElement();                                       
+                        } 
+                    } else if(isAjax) {                        
+                        element.one("dataBound", function () {
+                            var grid = $(this).data("tGrid");
+                            grid._current = grid.$tbody.children().eq(rowIndex).find(CELLSELECTOR).eq(0);
+                            focusGridElement();
+                        });
+                        if(isPopup) {                            
+                            $(".t-grid-update,.t-grid-insert","#" + that.formId()).click();
+                        } else {
+                            if(isInsert) {
+                                that.insertRow(row);
+                            } else {
+                                that.updateRow(row);
+                            }
+                        }
+                    } else {
+                        if(that.validate()) {
+                            if(isPopup) {
+                                row = $("#" + that.formId());
+                            }
+                            row.find(".t-grid-update,.t-grid-insert").click();
+                        }
+                    }
+                } else {                    
+                    if(isInCell) {
+                        tbody.find(editCellSelector)
+                            .each(function() {
+                                that.saveCell(this);
+                            });
+                        that.editCell(current[0]);
+                    } else if(isAjax) {
+                        that.editRow(row);
+                        currentProxy(row.children().eq(0));
+                        if(isPopup) {
+                            row = $("#" + that.formId());
+                        }
+                        row.find(firstInputSelector).focus();                                                
+                    } else {
+                        location.href = row.find(".t-grid-edit:first").attr("href");
+                    }
+                }
+            } else if (keys.ESC == key && isEdited) {
+                handled = true;                
+                clearInputSelection(current.find(firstInputSelector)[0]);
+                if(isInCell && current.is(editCellSelector)) {
+                    that.cancelCell(current);
+                    focusGridElement();
+                } else if(isAjax) {   
+                    if(isPopup) {
+                        $(".t-grid-cancel","#" + this.formId()).click();
+                    } else {                 
+                        that.cancelRow(row);
+                    }
+                    currentProxy(row.find(CELLSELECTOR).eq(0));
+                    focusGridElement();
+                } else {                    
+                    if(isPopup) {
+                        row = $("#" + that.formId());
+                    }                    
+                    location.href = row.find(".t-grid-cancel:first").attr("href");
+                }
+            } else if(isEdited && isInCell && keys.TAB == key) {
+                handled = true;
+                clearInputSelection(current.find(firstInputSelector)[0]);
+                that.saveCell(current);
+                if(that.valid) {                    
+                    focusGridElement();
+                    currentProxy(e.shiftKey ? current.prev() : current.next());
+                }
+            }
+
+            return handled;
+        },
+        _initNavigationMouseEvents: function() {
+            var that = this,
+                tbody = that.$tbody,
+                selector = ROWSELECTOR + CELLSELECTOR,
+                browser = $.browser,
+                CLICK = "click",
+                DOWN = "mousedown",
+                current,
+                target,
+                currentTarget,
+                editRowClass = ".t-grid-edit-row",
+                escapedSelector = ":button,a,:input,a>.t-icon";
+            
+            if(browser.msie) {
+                tbody.delegate(selector, CLICK, function(e) { 
+                    target = $(e.target),
+                    currentTarget = $(e.currentTarget),
+                    current = that._current;
+                    
+                    if(currentTarget.closest("tbody")[0] !== tbody[0]) {
+                        return;
+                    }
+                    if (target.is(escapedSelector)) {
+                        if(!(current && !currentTarget.parent().is(editRowClass))) {
+                            if(current) {
+                                current.removeClass(FOCUSED);
+                            }
+                            that._current = currentTarget;                            
+                        }                                                
+                    } else {                        
+                        if(current && current[0] === currentTarget[0]) {
+                            that._current = null;
+                        }
+                        that.current(currentTarget);
+                        e.preventDefault();
+                    }
+                });
+            } else {                
+                tbody.delegate(selector, DOWN, function(e) {
+                    target = $(e.target),
+                    currentTarget = $(e.currentTarget),
+                    current = that._current;
+
+                    if(currentTarget.closest("tbody")[0] !== tbody[0]) {
+                        return;
+                    }
+                    if (target.is(escapedSelector)) {                        
+                        if(!(current && !currentTarget.parent().is(editRowClass))) {
+                            if(current) {
+                                current.removeClass(FOCUSED);
+                            }
+                            that._current = currentTarget;
+                        }
+                    } else {
+                        that.current(currentTarget);
+                    }                    
+                });
+            }
+        },
+        _clearInputSelection: function(input) {
+            if(!input) {
+                return;
+            }
+            var browser = $.browser,
+                range;
+            if(browser.msie && parseInt(browser.version) == 8) {
+                range = input.createTextRange();
+                range.moveStart('textedit', 1);
+                range.select();
+            }
+        },
+        _focusGridElement: function() {
+            var browser = $.browser;
+            if(browser.msie && parseInt(browser.version) < 9) {
+                $("body", document).focus();
+            }
+            this.element.focus();
+        },
+        current: function(element) {
+            var that = this,
+                current = that._current;                
+            if(element !== undefined && element.length) {
+                if (!current || current[0] !== element[0]) {
+                    element.addClass(FOCUSED);                    
+                    if (current) {
+                        current.removeClass(FOCUSED);
+                    }
+                    that._current = element;
+                    that._scrollTo(element.parent()[0]);
+                }
+            } else {
+                return that._current;
+            }
+        },
+        _scrollTo: function(element) {            
+            var container = this.$tbody.closest("div.t-grid-content")[0];
+            if(!element || !container) {
+                return;
+            }
+            
+            var elementOffsetTop = element.offsetTop,
+                elementOffsetHeight = element.offsetHeight,                
+                containerScrollTop = container.scrollTop,
+                containerOffsetHeight = container.clientHeight,
+                bottomDistance = elementOffsetTop + elementOffsetHeight;
+                        
+            container.scrollTop = containerScrollTop > elementOffsetTop
+                                    ? elementOffsetTop
+                                    : bottomDistance > (containerScrollTop + containerOffsetHeight)
+                                    ? bottomDistance - containerOffsetHeight
+                                    : containerScrollTop;        
+        },
+        _transformParams: function(data) {
+            var that = this, 
+                remoteOperations = that._isServerOperation();
+                params = {},
+                filter = $.isFunction(that.filterExpr) ?  that.filterExpr() : "";
+
+            if (remoteOperations) {
+                if(data["page"]) {
+                    params[that.queryString.page] = data["page"];
+                }
+
+                if(data["pageSize"]) {
+                    params[that.queryString.size] = data["pageSize"];                    
+                }
+
+                if(data["sort"] && data["sort"].length) {
+                    params[that.queryString.orderBy] = $.map(data["sort"], function (s) { return s.field + '-' + s.dir; }).join('~');                                        
+                }                                    
+
+                if(filter !== "") {
+                    params[that.queryString.filter] = filter;                                        
+                }
+                                    
+                if(that.groupBy) {
+                    params[that.queryString.groupBy] = that.groupBy;                                        
+                }                   
+                                                     
+                if(data["aggregates"] && data["aggregates"].length) {
+                    params["aggregates"] = $.map(that.columns, function(c) {
+                        if (c.aggregates) {
+                            return c.member + '-' + c.aggregates.join('-');
+                        }
+                    }).join('~')                                        
+                }                
+            }
+            delete data["page"];
+            delete data["pageSize"];
+            delete data["sort"];
+            delete data["filter"];
+            delete data["group"];
+            delete data["aggregates"];
+
+            params = $.extend(params, data);
+
+            if (that.ws) {
+                params =  $t.toJson({ state: params });
+            }
+
+            return params;
+        },
+        _dataSourceOptions: function() {
+            var that = this, 
+                paging = this.pageSize > 0,
+                options,
+                data = that.data || [];
+                remoteOperations = that._isServerOperation(),
+                deserializer = {
+                    translateGroup: function(group) {                        
+                        return { 
+                            value: group.Key,
+                            hasSubgroups: group.HasSubgroups,
+                            aggregates: group.Aggregates,
+                            items: group.HasSubgroups ? $.map(group.Items, $.proxy(this.translateGroup, this)) : group.Items
+                        };
+                    },
+                    flatGroups: function(group) {
+                        if(group.HasSubgroups) {
+                            return this.flatGroups(group.Items);
+                        }
+                        return group.Items;
+                    },
+                    convert: function (data) {                        
+                        return data.d || data;
+                    },
+                    mergeChanges: function(data, updated, deleted) {
+                        var id,
+                            idx,
+                            length,
+                            inserted = [],
+                            found,
+                            dataSource = that.dataSource;
+
+                        $.each(deleted, function(index, id) {
+                            for(idx = 0, length = data.length; idx < length; idx++){
+                                if(id === dataSource.id(data[idx])) {
+                                    data.splice(idx, 1);
+                                    break;
+                                }
+                            }                                
+                        });
+
+                        $.each(updated, function(index, item) {
+                            id = dataSource.id(this);
+                            found = false;
+                            for(idx = 0, length = data.length; idx < length; idx++) {
+                                if(id === dataSource.id(data[idx])) {
+                                    $.extend(true, data[idx], item); 
+                                    found = true;                                       
+                                    break;
+                                }
+                            }
+                            if(!found) {
+                                inserted.push(item);
+                            }
+                        });                            
+                        return data.concat(inserted);
+                    },
+                    data: function(data) {
+                        var dataSource = that.dataSource,
+                            currentData = dataSource.data(),
+                            pageIndex = dataSource.page() - 1,
+                            pageSize = dataSource.pageSize(),
+                            deleted = that.deletedIds || [];                
+
+                        that.deletedIds = [];
+                        if(data) {
+                            data = this.convert(data);                         
+                            data = !$.isArray(data) ? data.data || data.Data : data;
+
+                            if (currentData && currentData.length && !remoteOperations && dataSource.id) {
+                                if(data.length && typeof data[0].HasSubgroups != 'undefined' && !remoteOperations) {                                
+                                    data = $.map(data, $.proxy(this.flatGroups, this));
+                                }
+                                return this.mergeChanges(currentData, data, deleted);
+                            }
+                        }
+                        return data;
+                    },
+                    total: function(data) {
+                        if(data) {
+                            data = this.convert(data);  
+                            return !$.isArray(data) ? data.total || data.Total : data.length;
+                        }
+                        return 0;
+                    },
+                    groups: function(data) {
+                        data = this.data(data);
+                        return $.map(data, $.proxy(this.translateGroup, this));
+                    },
+                    aggregates: function(data) {
+                        data = this.convert(data);
+                        return data.aggregates || {};
+                    }
+                };
+
+            options = {
+                serverSorting: remoteOperations,
+                serverPaging: remoteOperations,
+                serverFiltering: remoteOperations,
+                serverGrouping: remoteOperations,
+                serverAggregates: remoteOperations,
+                page: paging ? that.currentPage : undefined,
+                pageSize: paging ? that.pageSize : undefined,
+                aggregates: that.aggregates,
+                change: $.proxy(that._dataChange, that)
+            };
+
+            if (remoteOperations || (that.isAjax() && !data.length)) {
+                $.extend(options, {
+                    transport: {
+                        dialect: {
+                            read: $.proxy(that._transformParams, this)
+                        },
+                        read: {
+                            type: "POST",
+                            //url: that.url("selectUrl"),
+                            dataType: 'text', // using 'text' instead of 'json' because of DateTime serialization
+                            dataFilter: function (data, dataType) {
+                                // convert "\/Date(...)\/" to "new Date(...)"
+                                try {
+                                    return eval('(' + data.replace(rdate, 'new Date($1)') + ')');
+                                } catch (e) {
+                                    // in case the result is not JSON raise the 'error' event
+                                    if (!$t.ajaxError(that.element, 'error', {}, 'parseeror'))
+                                        alert('Error! The requested URL did not return JSON.');
+                                }
+                            },
+                            contentType: that.ws ? "application/json; charset=utf-8" : undefined,
+                            complete: $.proxy(that.hideBusy, that)                   
+                        }
+                    },                   
+                    deserializer: deserializer
+                });
+            } else if (data.length){
+                $.extend(options, {
+                    data: {
+                        data: that.data,
+                        total: that.total
+                    },
+                    deserializer: deserializer
+                });
+            }
+            return options;
+        },
+        _dataSource: function() {
+            var that = this;
+            that.dataSource = new $t.DataSource(that._dataSourceOptions());
+        },
+        _mapAggregates: function(aggregates) {
+            var result = {};
+            for(var member in aggregates) {
+                result[member.replace(/^\w/, function($0) { return $0.toUpperCase(); })] = aggregates[member];
+            }
+            return result;
+        },
         rowClick: function (e) {
             var $target = $(e.target);
             if (!$target.is(':button,a,:input,a>.t-icon')) {
@@ -203,7 +834,11 @@
 
             if (this.isAjax()) {
                 e.preventDefault();
-                this.ajaxRequest(true);
+                if(!this._isServerOperation()) {
+                    this.dataSource.read();
+                } else {
+                    this.ajaxRequest(true);
+                }
             }
         },
 
@@ -326,6 +961,7 @@
             }
         
             result = Math.max(result, 1);
+            this.currentPage = 1;
             this.pageSize = result;
 
             if (this.isAjax()) {
@@ -336,14 +972,42 @@
         },
 
         pageTo: function (page) {
+            this._pagingInProgress = true;
             this.currentPage = page;
             if (this.isAjax())
                 this.ajaxRequest();
             else
                 this.serverRequest();
         },
+        _dataChange: function() {
+            var dataSource = this.dataSource;
 
-        ajaxOptions: function (options) {
+            this.total = dataSource.total();
+
+            this.aggregates = dataSource.aggregates();
+            var data = dataSource.view();      
+                  
+            if(this.pageOnScroll && this._pagingInProgress === true) {
+                data = (this.data || []).concat(data);
+                this._pagingInProgress = false;
+            }
+
+            this._current = null;
+
+            this._populate(data);           
+        },
+        _populate: function(data) {
+            this.data = [];
+            this.bindTo(data);
+
+            this.bindFooter();
+            
+            this.updatePager();
+            this.updateSorting();
+            $t.trigger(this.element, 'dataBound');
+            $t.trigger(this.element, 'repaint'); 
+        },
+        ajaxOptions: function (options) {                        
             var result = {
                 type: 'POST',
                 dataType: 'text', // using 'text' instead of 'json' because of DateTime serialization
@@ -381,9 +1045,7 @@
                         return;
                     }
 
-                    this.total = data.total || data.Total || 0;
-                    this.aggregates = data.aggregates || {};
-                    this.dataBind(data.data || data.Data);
+                    this.dataSource.success(data);
                 }, this)
             };
             $.extend(result, options);
@@ -419,33 +1081,89 @@
         },
 
         serverRequest: function () {
-            location.href = $t.formatString(unescape(this.urlFormat),
+            if (this.operationMode === "client") {
+                this.ajaxRequest();
+            } else {
+                location.href = $t.formatString(unescape(this.urlFormat),
                     this.currentPage, this.orderBy || '~', this.groupBy || '~', encodeURIComponent(this.filterBy) || '~', this.pageSize || '~');
+            }
         },
+        _isServerOperation: function() {
+            return this.operationMode !== "client";
+        },
+        ajaxRequest: function (additionalData) {           
+            var that = this,
+                pageSize = that.pageSize,                
+                currentPage = that.currentPage,
+                aggregates = $.map(that.columns, function(c) {
+                    return $.map(c.aggregates || [], function(a) {
+                        return { field: c.member, aggregate: a };
+                    });
+                });                
+            
+            if(currentPage > 1 && that.pageOnScroll && !that._pagingInProgress) {                
+                pageSize = currentPage * that.pageSize;
+                currentPage = 1;
+            }
 
-        ajaxRequest: function (additionalData) {
             var e = {
-                page: this.currentPage,
-                sortedColumns: this.sorted,
-                filteredColumns: $.grep(this.columns, function (column) {
+                page: currentPage,
+                sortedColumns: that.sorted,
+                filteredColumns: $.grep(that.columns, function (column) {
                     return column.filters;
                 })
             };
 
-            if ($t.trigger(this.element, 'dataBinding', e))
+            if ($t.trigger(that.element, 'dataBinding', e))
                 return;
 
-            if (!this.ajax && !this.ws)
+            if (!that.ajax && !that.ws && this.operationMode !== "client")
                 return;
 
-            this.showBusy();
+            if(that.dataSource.transport.options && that.dataSource.transport.options.read) {
+                that.dataSource.transport.options.read.url = this.url('selectUrl');
+            }
 
-            $.ajax(this.ajaxOptions({
-                data: $.extend({}, e.data, additionalData),
-                url: this.url('selectUrl')
-            }));
+            if(that._isServerOperation()) {
+                that.showBusy();                
+            }            
+
+            that.dataSource.query($.extend({
+                page: currentPage,
+                pageSize: pageSize,
+                sort: $.map(that.sorted, function(column) {
+                    return { 
+                        field: column.member,
+                        dir: column.order
+                    }
+                }),
+                filter: $.map($.grep(that.columns, function (column) {
+                    return column.filters;
+                }), function(column) {
+                    return $.map(column.filters, function(filter) {
+                        if (column.type == "Number") {
+                            filter.value = parseFloat(filter.value);
+                        } else if (column.type == "Date") {
+                            var format = column.format ? /\{0(:([^\}]+))?\}/.exec(column.format)[2] : $t.cultureInfo.shortDate;
+                            filter.value = $t.datetime.parse({ value: filter.value, format: format }).toDate();
+                        }
+                        return {
+                            field: column.member,
+                            operator: filter.operator,
+                            value: filter.value                       
+                        }; 
+                    });
+                }),
+                group: $.map(that.groups, function(group) {                    
+                    return { field: group.member, dir: group.order, aggregates: aggregates };
+                }),
+                aggregates: aggregates                
+            }, $.extend({}, e.data, additionalData)));
+//            $.ajax(this.ajaxOptions({
+//                data: $.extend({}, e.data, additionalData),
+//                url: this.url('selectUrl')
+//            }));
         },
-
         valueFor: function (column) {
             if (column.type == 'Date')
                 return new Function('data', 'var value = data.' + column.member +
@@ -515,8 +1233,30 @@
                 
                 if (column.groupHeaderTemplate)
                     column.groupHeader = template(column.groupHeaderTemplate);
-            
             }, this));
+
+            var j = this.columns.length - 1;
+            while (j >= 0)
+            {
+                var col = this.columns[j];
+
+                if (col.hidden) {
+                    j--;
+                    continue;
+                }
+
+                if (!col.attr) {
+                    col.attr = ' class="t-last"';
+                    break;
+                } else if (col.attr.indexOf("class") == -1) {
+                    col.attr += ' class="t-last"';
+                    break;
+                } else {
+                    col.attr = col.attr.replace('class="', 'class="t-last ');
+                    break;
+                }
+                j--;
+            }
 
             if (this.detail)
                 this.displayDetails = template(this.detail.template);
@@ -525,7 +1265,8 @@
         bindData: function (data, html, groups) {
             Array.prototype.push.apply(this.data, data);
 
-            var dataLength = Math.min(this.pageSize, data.length);
+            var dataLength = this.pageOnScroll ? data.length : Math.min(this.pageSize, data.length);
+            var colspan = this.columns.length;
 
             dataLength = this.pageSize ? dataLength : data.length;
 
@@ -546,16 +1287,23 @@
                 html.rep('<td class="t-group-cell"></td>', groups)
                     .catIf('<td class="t-hierarchy-cell"><a class="t-icon t-plus" href="#" /></td>', this.detail);
 
-                for (var i = 0, len = this.columns.length; i < len; i++) {
-                    var column = this.columns[i];
-
-                    html.cat('<td')
-                        .cat(column.attr)
-                        .catIf(' class="t-last"', i == len - 1)
-                        .cat('>')
-                        .cat(column.display(data[rowIndex]));
-
-                    html.cat('</td>');
+                if (this.rowTemplate) {
+                    html.cat('<td colspan="')
+                    .cat(colspan)
+                    .cat('">')
+                    .cat(this.rowTemplate(data[rowIndex]))
+                    .cat("</td>");
+                } else { 
+                    for (var i = 0, len = this.columns.length; i < len; i++) {
+                        var column = this.columns[i];
+                       
+                        html.cat('<td')
+                            .cat(column.attr)
+                            .cat('>')
+                            .cat(column.display(data[rowIndex]));
+    
+                        html.cat('</td>');
+                    }
                 }
 
                 html.cat('</tr>');
@@ -567,17 +1315,20 @@
         },
 
         dataItem: function (tr) {
-            return this.data[this.$tbody.find('> tr:not(.t-grouping-row,.t-detail-row,.t-grid-new-row)').index($(tr))];
+            return this.data[this.$tbody.find('> tr:not(.t-grouping-row,.t-detail-row,.t-grid-new-row,.t-group-footer)').index($(tr))];
         },
 
-        bindTo: function (data) {
+        _colspan: function() {
+            return this.groups.length + this.columns.length + (this.detail ? 1 : 0);
+        }, 
+        bindTo: function (data) {                    
             var html = new $t.stringBuilder();
-            var colspan = this.groups.length + this.columns.length + (this.detail ? 1 : 0);
+            var colspan = this._colspan();
 
             if (data && data.length) {
 
                 this.normalizeColumns(colspan);
-                if (typeof data[0].HasSubgroups != 'undefined')
+                if (typeof data[0].hasSubgroups != 'undefined')
                     for (var i = 0, l = data.length; i < l; i++)
                         this.bindGroup(data[i], colspan, html, 0);
                 else
@@ -707,7 +1458,7 @@
 
             this.$columns().each($.proxy(function (i, header) {
                 var direction = this.columns[i].order;
-                var $link = $(header).children('.t-link');
+                var $link = $(header).children('a.t-link');
                 var $icon = $link.children('.t-icon');
 
                 if (!direction) {
@@ -744,24 +1495,17 @@
         },
 
         dataBind: function (data) {
-            this.data = [];
-            this.bindTo(data);
-
-            this.bindFooter();
-            
-            this.updatePager();
-            this.updateSorting();
-            $t.trigger(this.element, 'dataBound');
-            $t.trigger(this.element, 'repaint');
+            this.dataSource.success(data);
         },
         
         bindFooter: function() {
-            var $footerCells = this.$footer.find('td:not(.t-group-cell,.t-hierarchy-cell)');
-            var aggregates = this.aggregates;
+            var that = this, 
+                $footerCells = that.$footer.find('td:not(.t-group-cell,.t-hierarchy-cell)'),
+                aggregates = that.aggregates;
             
-            $.each(this.columns, function(index) {
+            $.each(that.columns, function(index) {
                 if (this.footer)
-                    $footerCells.eq(index).html(this.footer(aggregates[this.member]));
+                    $footerCells.eq(index).html(this.footer(that._mapAggregates(aggregates[this.member] || {})));
             });
         },
 

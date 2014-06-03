@@ -2,15 +2,17 @@
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using Telerik.Web.Mvc.Resources;
-
 namespace Telerik.Web.Mvc.Extensions
 {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Data;
+    using System.Linq;
+    using System.Reflection;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Resources;
+
     internal static class TypeExtensions
     {
         internal static readonly Type[] PredefinedTypes = {
@@ -421,6 +423,17 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return "Object";
+        }
+
+        internal static bool IsPlainType(this Type type)
+        {
+            return
+
+            #if MVC3
+                !type.IsDynamicObject() &&
+            #endif
+                !type.IsDataRow() &&
+                !(type.IsCompatibleWith(typeof(ICustomTypeDescriptor)));
         }
     }
 }

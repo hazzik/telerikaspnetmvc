@@ -7,6 +7,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Text;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Lexer")]
@@ -255,6 +256,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         private bool TryParseNumber(out string number)
         {
+            char decimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
+
             SkipSeparators();
 
             char currentCharacter = Peek();
@@ -268,7 +271,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 currentCharacter = Next();
             }
 
-            if (currentCharacter == '.')
+            if (currentCharacter == decimalSeparator)
             {
                 decimalSymbols++;
                 result.Append(currentCharacter);
@@ -281,10 +284,9 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 return false;
             }
 
-            number = Read(
-                character =>
+            number = Read( character =>
                 {
-                    if (character == '.')
+                    if (character == decimalSeparator)
                     {
                         if (decimalSymbols < 1)
                         {

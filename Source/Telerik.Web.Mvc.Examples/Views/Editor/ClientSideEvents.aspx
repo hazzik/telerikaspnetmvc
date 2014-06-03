@@ -20,7 +20,16 @@
              $console.log('Editor OnSelectionChage.');
          }
 
-    </script>
+         function onPaste(e) {
+             var html = e.html.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\u00a0/g, '&nbsp;');
+   
+            $console.log('Editor OnPaste: ' + html);
+         }
+
+     </script>
 
     <% Html.Telerik().Editor()
            .Name("Editor")
@@ -28,6 +37,7 @@
                .OnLoad("onLoad")
                .OnChange("onChange")
                .OnExecute("onExecute")
+               .OnPaste("onPaste")
                .OnSelectionChange("onSelectionChage"))
            .Value(() =>
            { %>

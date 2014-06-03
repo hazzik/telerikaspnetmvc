@@ -10,7 +10,9 @@
        }
 
        var isChanged,
-           isRaised;
+           isRaised,
+           callPreventDefault = false,
+           newValue;
 
        //handlers
        function onLoad(e) {
@@ -19,6 +21,12 @@
 
        function onChange(e) {
            isChanged = true;
+
+           newValue = $(this).data("tTimePicker").value();
+
+           if (callPreventDefault) {
+               e.preventDefault();
+           }
        }
 
        function onClose(e) {
@@ -255,6 +263,41 @@
 
            ok(!isChanged, "change event was raised incorrectly");
        });
+
+       test('if defaultPrevented in change event, then old value should be chosen', function () {
+           isChanged = false;
+
+           var timepicker = getTimePicker();
+
+           callPreventDefault = true;
+
+           var oldTime = timepicker.value();
+           var newTime = new Date();
+           newTime.setHours(newTime.getHours() + 1);
+
+           timepicker._update(newTime);
+
+           equal(+timepicker.value(), +oldTime);
+
+           callPreventDefault = false;
+       });
+
+
+       test('In change event handler, component value should be the new one', function () {
+           var timepicker = getTimePicker();
+
+           callPreventDefault = true;
+
+           var newTime = new Date();
+           newTime.setHours(newTime.getHours() + 2);
+
+           timepicker._update(newTime);
+
+           equal(+newValue, +newTime);
+
+           callPreventDefault = false;
+       });
+
 
 </script>
 

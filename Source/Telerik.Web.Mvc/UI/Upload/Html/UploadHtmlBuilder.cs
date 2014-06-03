@@ -55,7 +55,7 @@ namespace Telerik.Web.Mvc.UI.Html
         public IHtmlNode CreateFileInput()
         {
             var element = new HtmlElement("input", TagRenderMode.SelfClosing)
-                .Attributes(new { type = "file", name = upload.Id, id = upload.Id });
+                .Attributes(new { type = "file", name = upload.Name, id = upload.Id });
 
             return element;
         }

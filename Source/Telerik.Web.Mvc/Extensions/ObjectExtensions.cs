@@ -2,22 +2,22 @@
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Telerik.Web.Mvc.UI;
 
 namespace Telerik.Web.Mvc.Extensions
 {
     internal static class ObjectExtensions
     {
-        public static IDictionary<string, object> ToDictionary(this object instance)
+        public static IDictionary<string, object> ToDictionary(this object @object)
         {
-            Dictionary<string, object> dictionary = new Dictionary<string, object>();
-            if (instance != null)
+            var dictionary = new Dictionary<string, object>(StringComparer.CurrentCultureIgnoreCase);
+            if (@object != null)
             {
-                foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(instance))
+                foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(@object))
                 {
-                    dictionary.Add(descriptor.Name, descriptor.GetValue(instance));
+                    dictionary.Add(property.Name.Replace("_", "-"), property.GetValue(@object));
                 }
             }
             return dictionary;

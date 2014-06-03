@@ -8,12 +8,9 @@
     {
         private ICalendarHtmlBuilder renderer;
         private Calendar calendar;
-        private DateTime date;
 
         public CalendarHtmlBuilderTests()
         {
-            date = new DateTime(2009, 12, 3);
-
             calendar = CalendarTestHelper.CreateCalendar(null);
             calendar.Name = "Calendar";
             renderer = new CalendarHtmlBuilder(calendar);
@@ -86,21 +83,22 @@
             IHtmlNode tag = renderer.HeaderTag();
 
             Assert.Equal("thead", tag.TagName);
-            Assert.Equal("t-week-header", tag.Attribute("class"));
         }
 
         [Fact]
         public void HeaderCellTag_should_render_th_with_htmlAttributes_and_day_name()
         {
-            const string dayOfWeek = "Wednesday";
+            const string dayName = "Wednesday";
+            const string abbreviatedDayName = "Wen";
+            const string shortestDayName = "We";
 
-            IHtmlNode tag = renderer.HeaderCellTag(dayOfWeek);
+            IHtmlNode tag = renderer.HeaderCellTag(dayName, abbreviatedDayName, shortestDayName);
 
             Assert.Equal("th", tag.TagName);
             Assert.Equal("col", tag.Attribute("scope"));
-            Assert.Equal(dayOfWeek, tag.Attribute("title"));
-            Assert.Equal(dayOfWeek.Substring(0, 3), tag.Attribute("abbr"));
-            Assert.Equal(dayOfWeek.Substring(0, 1), tag.InnerHtml);
+            Assert.Equal(dayName, tag.Attribute("title"));
+            Assert.Equal(abbreviatedDayName, tag.Attribute("abbr"));
+            Assert.Equal(shortestDayName, tag.InnerHtml);
         }
 
         [Fact]
@@ -189,7 +187,7 @@
 
             IHtmlNode tag = renderer.CellTag(day, calendar.Value, urlFormat, false);
 
-            Assert.Equal(string.Format(urlFormat, day), tag.Children[0].Attribute("href"));
+            Assert.Equal(string.Format(urlFormat, day.ToString()), tag.Children[0].Attribute("href"));
         }
 
         [Fact]
@@ -201,19 +199,7 @@
 
             IHtmlNode tag = renderer.CellTag(day, calendar.Value, urlFormat, false);
 
-            Assert.Equal(string.Format(urlFormat, day), tag.Children[0].Attribute("href"));
-        }
-
-        [Fact]
-        public void CellTag_should_render_link_with_selection_url_and_date_formatted_to_yyyy_MM_dd_format()
-        {
-            DateTime day = DateTime.Today;
-            const string urlFormat = "app/controller/action/{0:yyyy-MM-dd}";
-            calendar.SelectionSettings.Dates = new List<DateTime>();
-
-            IHtmlNode tag = renderer.CellTag(day, calendar.Value, urlFormat, false);
-
-            Assert.Equal(string.Format(urlFormat, day), tag.Children[0].Attribute("href"));
+            Assert.Equal(string.Format(urlFormat, day.ToString()), tag.Children[0].Attribute("href"));
         }
 
         [Fact]

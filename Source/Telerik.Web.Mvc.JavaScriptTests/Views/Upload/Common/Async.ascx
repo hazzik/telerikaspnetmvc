@@ -77,6 +77,19 @@
         ok(removeCalled);
     });
 
+    test("Anti-Forgery Token is sent to remove action", 1, function() {
+        $(document.body).append("<input type='hidden' name='__RequestVerificationToken' value='42' />");
+
+        $.mockjax(function(settings) {
+            equal(settings.data["__RequestVerificationToken"], 42);
+        });
+
+        simulateUpload();
+        simulateRemoveClick();
+
+        $("input[name='__RequestVerificationToken']").remove();
+    });
+
     asyncTest("clicking remove should remove file entry upon success", function() {
         simulateUpload();
         simulateRemove();

@@ -173,8 +173,8 @@
     test('insert adds group cells', function() {        
         editor = new Editor({
             id: 'foo',
-            insert: function() { return '<td />' },
-            groups: 1
+            insert: function() { return '<td />'; },
+            groups: function() { return 1; }
         });
         
         var table = $('<table><tr/></table>');
@@ -210,7 +210,7 @@
             id: 'foo',
             insert: function() { return '<td />' },
             details: true,
-            groups: 1
+            groups: function() { return 1; }
         });        
         var table = $('<table><tr/></table>');
         

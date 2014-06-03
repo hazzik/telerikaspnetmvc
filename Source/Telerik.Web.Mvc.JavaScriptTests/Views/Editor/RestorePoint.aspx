@@ -195,7 +195,7 @@
             editor.value('');
             var node = editor.document.createTextNode('foo');
             editor.body.appendChild(node);
-            node = editor.document.createTextNode('foo');
+            node = editor.document.createTextNode('bar');
             editor.body.appendChild(node);
             var range = editor.createRange();
             range.setStart(node, 3);
@@ -203,7 +203,11 @@
             var restorePoint = new RestorePoint(range);
             equal(restorePoint.startContainer.toString(), crossBrowserOffset('0,1,0'));
             equal(restorePoint.startOffset, 6);
-            
+
+            range = restorePoint.toRange();
+            equal(range.startContainer.nodeValue, node.nodeValue);
+            equal(range.startOffset, 3);
+            ok(range.collapsed);
         });
 
     </script>

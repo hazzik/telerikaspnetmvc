@@ -3,6 +3,7 @@
     <script type="text/javascript">
 
     function dump(obj) {
+       obj = obj || {};        
        var result = [];
        $.each(obj, function(key, value) { result.push('"' + key + '":"' + value + '"');});
        return '{' + result.join(',') + '}';
@@ -20,7 +21,7 @@
         $console.log("OnDataBound");
     }
 
-    function onRowDataBound(e) {
+    function onRowDataBound(e) {        
         var dataItem = e.dataItem;
         $console.log("OnRowDataBound :: " + dump(dataItem));
     }

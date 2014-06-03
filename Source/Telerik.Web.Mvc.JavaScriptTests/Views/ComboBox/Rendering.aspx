@@ -144,7 +144,7 @@
 
             var combo = $('#ComboBox2').data('tComboBox');
 
-            combo.dataBind([{ "Text": "Calendar &raquo; Select Action", "Value": "1" },
+            combo.dataBind([{ "Text": "Calendar » Select Action", "Value": "1" },
                            { "Text": "Chang", "Value": "2" },
                            { "Text": "Aniseed Syrup", "Value": "3"}]);
 

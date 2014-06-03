@@ -111,7 +111,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
             var column = (IGridBoundColumn)constructor.Invoke(new object[] { Container, lambdaExpression });
             
             column.Member = memberName;
-            column.Title = memberName.AsTitle();
+
+            if (!column.Title.HasValue())
+            {
+                column.Title = memberName.AsTitle();
+            }
             
             if (memberType != null)
             {

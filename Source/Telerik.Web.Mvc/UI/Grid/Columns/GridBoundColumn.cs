@@ -30,29 +30,21 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            if (
-#if MVC3
-!typeof(TModel).IsDynamicObject() &&
-#endif
- !typeof(TModel).IsDataRow() && !(typeof(TModel).IsCompatibleWith(typeof(ICustomTypeDescriptor))) && !expression.IsBindable())
+            if (typeof(TModel).IsPlainType() && !expression.IsBindable())
             {
                 throw new InvalidOperationException(TextResource.MemberExpressionRequired);
             }
 
             Expression = expression;
             Member = expression.MemberWithoutInstance();
-            MemberType = TypeFromMemberExpression(expression.ToMemberExpression());
+            MemberType = expression.ToMemberExpression().Type();
             Value = expression.Compile();
             Aggregates = new List<AggregateFunction>();
             GroupFooterTemplate = new HtmlTemplate<GridAggregateResult>();
             GroupHeaderTemplate = new HtmlTemplate<GridGroupAggregateResult>();
 
 #if MVC2 || MVC3
-            if (
-#if MVC3
-!typeof(TModel).IsDynamicObject() &&
-#endif
- !typeof(TModel).IsDataRow() && !(typeof(TModel).IsCompatibleWith(typeof(ICustomTypeDescriptor))))
+            if (typeof(TModel).IsPlainType())
             {
                 Metadata = ModelMetadata.FromLambdaExpression(expression, new ViewDataDictionary<TModel>());
                 MemberType = Metadata.ModelType;
@@ -208,28 +200,6 @@ namespace Telerik.Web.Mvc.UI
             return new GridBoundColumnSerializer(this);
         }
 
-        private static Type TypeFromMemberExpression(MemberExpression memberExpression)
-        {
-            if (memberExpression == null)
-            {
-                return null;
-            }
-
-            MemberInfo memberInfo = memberExpression.Member;
-
-            if (memberInfo.MemberType == MemberTypes.Property)
-            {
-                return ((PropertyInfo)memberInfo).PropertyType;
-            }
-
-            if (memberInfo.MemberType == MemberTypes.Field)
-            {
-                return ((FieldInfo)memberInfo).FieldType;
-            }
-
-            throw new NotSupportedException();
-        }
-
         public string GetSortUrl()
         {
             IList<SortDescriptor> orderBy = new List<SortDescriptor>(Grid.DataProcessor.SortDescriptors);
@@ -297,6 +267,8 @@ namespace Telerik.Web.Mvc.UI
                 return base.CreateDisplayBuilderCore(htmlHelper);
             }
 
+            IGridDataCellBuilder builder;
+
 #if MVC2 || MVC3
             if (!Format.HasValue() && Encoded && !typeof(TModel).IsDataRow()
 #if MVC3
@@ -305,21 +277,29 @@ namespace Telerik.Web.Mvc.UI
 #endif
 )
             {
-                return new GridDisplayForCellBuilder<TModel, TValue>
+                builder = new GridDisplayForCellBuilder<TModel, TValue>
                 {
                     Expression = Expression,
-                    HtmlAttributes = HtmlAttributes,
                     ViewContext = Grid.ViewContext
                 };
+                
+                builder.HtmlAttributes.Merge(HtmlAttributes);
+                
+                return builder;
             }
 #endif
-            return new GridDataCellBuilder<TModel, TValue>
+
+            builder = new GridDataCellBuilder<TModel, TValue>
             {
                 Encoded = Encoded,
                 Format = Format,
                 Value = Value,
-                HtmlAttributes = HtmlAttributes
+
             };
+
+            builder.HtmlAttributes.Merge(HtmlAttributes);
+            
+            return builder;
         }
 
         protected override IGridDataCellBuilder CreateEditBuilderCore(IGridHtmlHelper htmlHelper)
@@ -327,14 +307,17 @@ namespace Telerik.Web.Mvc.UI
 #if MVC2 || MVC3
             if (!ReadOnly)
             {
-                return new GridEditorForCellBuilder<TModel, TValue>()
+                var builder = new GridEditorForCellBuilder<TModel, TValue>()
                 {
                     Expression = Expression,
-                    HtmlAttributes = HtmlAttributes,
                     ViewContext = Grid.ViewContext,
                     TemplateName = EditorTemplateName,
                     Member = Member
                 };
+
+                builder.HtmlAttributes.Merge(HtmlAttributes);
+
+                return builder;
             }
 #endif
             return CreateDisplayBuilder(htmlHelper);
@@ -349,7 +332,7 @@ namespace Telerik.Web.Mvc.UI
         {
             IGridCellBuilder builder = null;
 
-            if (Sortable && Grid.Sorting.Enabled)
+            if (Sortable && Grid.Sorting.Enabled && !HeaderTemplate.HasValue())
             {
                 builder = new GridSortableHeaderCellBuilder(HeaderHtmlAttributes, GetSortUrl(), SortDirection, Grid.Localization.SortedAsc, Grid.Localization.SortedDesc, AppendHeaderContent);
             }

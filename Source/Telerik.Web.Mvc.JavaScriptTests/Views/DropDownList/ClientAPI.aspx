@@ -142,7 +142,7 @@
             
             ddl.dataBind(data);
 
-            equal(ddl.text(), '&nbsp;&nbsp;');
+            equal(ddl.text(), '&nbsp;');
             equal(ddl.value(), '');
         });
 
@@ -232,15 +232,17 @@
             ddl.disable();
             
             ok(ddl.$wrapper.hasClass('t-state-disabled'));
+            equal(ddl.$element.attr('disabled'), true);
         });
 
-        test('enable method should disable dropDownList', function () {
+        test('enable method should enable dropDownList', function () {
             var ddl = getDropDownList('DDL2');
             
             ddl.disable();
             ddl.enable();
 
             ok(!ddl.$wrapper.hasClass('t-state-disabled'));
+            ok(!ddl.$element.attr('disabled'));
         });
 
         test('text method should set &nbsp; if text is empty string', function () {
@@ -248,7 +250,7 @@
 
             ddl.text("");
 
-            equal(ddl.text(), "&nbsp;&nbsp;")
+            equal(ddl.text(), "&nbsp;")
         });
 
         test('text method should set &nbsp; if text is white space', function () {
@@ -256,7 +258,28 @@
             
             ddl.text(" ");
 
-            equal(ddl.text(), "&nbsp;&nbsp;")
+            equal(ddl.text(), "&nbsp;")
+        });
+
+        test('select method should return selected index', function () {
+            var ddl = getDropDownList();
+            var index = ddl.select(1);
+            equal(index, ddl.selectedIndex);
+        });
+
+        test('value method should update correctly previousValue', function () {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: false },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            ddl.dataBind(data);
+
+            ddl.value("Item3");
+
+            equal(ddl.previousValue, "3");
         });
 
 </script>

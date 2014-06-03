@@ -96,6 +96,13 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void NumericTextBox_should_return_new_instance_with_type_short()
+        {
+            var builder = _factory.NumericTextBox<short>();
+            Assert.IsType<short>(builder.ToComponent().MinValue);
+        }
+
+        [Fact]
         public void CurrencyTextBox_should_return_new_instance()
         {
             Assert.NotNull(_factory.CurrencyTextBox());

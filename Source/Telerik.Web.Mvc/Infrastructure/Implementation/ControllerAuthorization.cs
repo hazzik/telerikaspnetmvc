@@ -41,10 +41,17 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             RouteBase route = routes[routeName];
             RouteData routeData = route.GetRouteData(requestContext.HttpContext);
 
-            string controllerName = routeData.GetRequiredString("controller");
-            string actionName = routeData.GetRequiredString("action");
+            if (routeData != null)
+            {
+                string controllerName = routeData.GetRequiredString("controller");
+                string actionName = routeData.GetRequiredString("action");
 
-            return IsAccessibleToUser(requestContext, controllerName, actionName);
+                return IsAccessibleToUser(requestContext, controllerName, actionName);
+            }
+            else
+            {
+                return true;
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "We will not allow if there is any exception.")]

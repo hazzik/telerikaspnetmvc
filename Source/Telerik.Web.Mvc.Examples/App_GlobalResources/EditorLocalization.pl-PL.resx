@@ -124,13 +124,13 @@
     <value>Wstaw link</value>
   </data>
   <data name="DeleteFile" xml:space="preserve">
-    <value>Are you sure you want to delete "{0}"?</value>
+    <value>Czy na pewno chcesz usunąć "{0}"?</value>
   </data>
   <data name="DirectoryNotFound" xml:space="preserve">
-    <value>A directory with this name was not found.</value>
+    <value>Folder o tej nazwie nie został znaleziony.</value>
   </data>
   <data name="EmptyFolder" xml:space="preserve">
-    <value>Empty Folder</value>
+    <value>Opróżnij folder</value>
   </data>
   <data name="FontName" xml:space="preserve">
     <value>Wybierz czcionkę</value>
@@ -142,7 +142,7 @@
     <value>Wybierz rozmiar czcionki</value>
   </data>
   <data name="FontSizeInherit" xml:space="preserve">
-    <value>(inherited size)</value>
+    <value>(rozmiar odziedziczony)</value>
   </data>
   <data name="FormatBlock" xml:space="preserve">
     <value>Wybierz rozmiar bloku</value>
@@ -163,7 +163,7 @@
     <value>Wstaw listę wypunktowaną</value>
   </data>
   <data name="InvalidFileType" xml:space="preserve">
-    <value>The selected file "{0}" is not valid. Supported file types are {1}.</value>
+    <value>Wybrany plik "{0}" nie jest prawidłowy. Obsługiwane typy plików to: {1}.</value>
   </data>
   <data name="Italic" xml:space="preserve">
     <value>Kursywa</value>
@@ -181,25 +181,25 @@
     <value>Wyrównaj tekst do prawej</value>
   </data>
   <data name="OrderBy" xml:space="preserve">
-    <value>Arrange by:</value>
+    <value>Uporządkuj wg:</value>
   </data>
   <data name="OrderByName" xml:space="preserve">
-    <value>Name</value>
+    <value>Nazwa</value>
   </data>
   <data name="OrderBySize" xml:space="preserve">
-    <value>Size</value>
+    <value>Rozmiar</value>
   </data>
   <data name="Outdent" xml:space="preserve">
     <value>Zmniejsz wcięcie</value>
   </data>
   <data name="OverwriteFile" xml:space="preserve">
-    <value>A file with name "{0}" already exists in the current directory. Do you want to overwrite it?</value>
+    <value>Plik o nazwie "{0}" istnieje już w bieżącym folderze. Czy chcesz go zastąpić?</value>
   </data>
   <data name="Strikethrough" xml:space="preserve">
     <value>Przekreślenie</value>
   </data>
   <data name="Style" xml:space="preserve">
-    <value>Style</value>
+    <value>Styl</value>
   </data>
   <data name="Underline" xml:space="preserve">
     <value>Podkreślenie</value>
@@ -208,6 +208,6 @@
     <value>Usuń link</value>
   </data>
   <data name="UploadFile" xml:space="preserve">
-    <value>Upload</value>
+    <value>Załaduj</value>
   </data>
 </root>

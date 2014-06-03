@@ -60,88 +60,90 @@
                     {
                         item.Add().Text("Child Item 7.1");
                     });
+
+                panelbar.Add().Text("Item 8")
+                    .Items(item =>
+                    {
+                        item.Add().Text("Child Item 8.1");
+                    })
+                    .Expanded(true);
             }
             )
             .Effects(fx => fx.Toggle())
             .Render(); %>
-
-    <script type="text/javascript">
-
-        function getRootItem(index) {
-            return $('#myPanelBar').find('.t-header').parent().eq(index)
-        }
-    </script>
 
 </asp:Content>
 
 
 <asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
+        function getRootItem(index) {
+            return $("#myPanelBar").find(".t-header").parent().eq(index)
+        }
 
-
-        test('clicking collapsed item not expand if it is disabled', function() {
+        test("clicking collapsed item not expand if it is disabled", function() {
         
             var item = getRootItem(0);
             
             item
-                .toggleClass('t-state-default', false)
-				.toggleClass('t-state-disabled', true);
+                .toggleClass("t-state-default", false)
+				.toggleClass("t-state-disabled", true);
 
-            item.find('> .t-link').trigger('click');
+            item.find("> .t-link").trigger("click");
             
-            equal(item.find('.t-group').css("display"), "none");
+            equal(item.find(".t-group").css("display"), "none");
         });
 
-        test('clicking expanded items should toggle arrow', function() {
+        test("clicking expanded items should toggle arrow", function() {
             var item = getRootItem(1);
 
-            item.find('> .t-link').trigger('click');
+            item.find("> .t-link").trigger("click");
 
-            ok(item.find('.t-icon').hasClass('t-arrow-down'));
+            ok(item.find(".t-icon").hasClass("t-arrow-down"));
         });
 
-        test('clicking collapsed items should expand them', function() {
+        test("clicking collapsed items should expand them", function() {
             var item = getRootItem(2);
 
-            item.find('> .t-link').trigger('click');
+            item.find("> .t-link").trigger("click");
 
-            equal(item.find('.t-group').css("display"), "block");
+            equal(item.find(".t-group").css("display"), "block");
         });
 
-        test('clicking collapsed items should toggle arrow', function() {
+        test("clicking collapsed items should toggle arrow", function() {
             var item = getRootItem(3);
 
-            item.find('> .t-link').trigger('click');
+            item.find("> .t-link").trigger("click");
 
-            ok(item.find('.t-icon').hasClass('t-arrow-up'));
+            ok(item.find(".t-icon").hasClass("t-arrow-up"));
         });
 
-        test('clicking collapsed items should not expand child groups', function() {
+        test("clicking collapsed items should not expand child groups", function() {
             var item = getRootItem(4);
 
-            item.find('> .t-link').trigger('click');
+            item.find("> .t-link").trigger("click");
 
-            equal(item.find('.t-group .t-group').css("display"), "none");
+            equal(item.find(".t-group .t-group").css("display"), "none");
         });
 
-        test('clicking child group items should not collapse root group', function() {
+        test("clicking child group items should not collapse root group", function() {
             var item = getRootItem(5);
 
-            item.find('.t-item').trigger('click');
+            item.find(".t-item").trigger("click");
 
-            equal(item.find('.t-group').css("display"), "block");
+            equal(item.find(".t-group").css("display"), "block");
         });
 
-        test('clicking arrows toggles child groups', function() {
+        test("clicking arrows toggles child groups", function() {
             var item = getRootItem(6);
 
-            item.find('> .t-link > .t-icon').trigger('click');
+            item.find("> .t-link > .t-icon").trigger("click");
 
-            equal(item.find('.t-group').css("display"), "block");
+            equal(item.find(".t-group").css("display"), "block");
         });
 
-</script>
+    </script>
 
 </asp:Content>

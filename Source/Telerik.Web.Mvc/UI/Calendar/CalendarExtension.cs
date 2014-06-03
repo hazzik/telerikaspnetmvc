@@ -9,18 +9,18 @@ namespace Telerik.Web.Mvc.UI
 
     public static class CalendarExtension
     {
-        public static DateTime? DetermineFocusedDate(this Calendar calendar)
+        public static DateTime DetermineFocusedDate(this Calendar calendar)
         {
-            DateTime? focusedDate = DateTime.Today;
-            if (calendar.Value != null) {
-                focusedDate = calendar.Value;
+            DateTime focusedDate = DateTime.Today;
+            if (calendar.Value.HasValue) {
+                focusedDate = calendar.Value.Value;
             }
 
-            if (calendar.MinDate > focusedDate.Value) 
+            if (calendar.MinDate > focusedDate) 
             {
                 focusedDate = calendar.MinDate;
             }
-            else if (calendar.MaxDate < focusedDate.Value) 
+            else if (calendar.MaxDate < focusedDate) 
             {
                 focusedDate = calendar.MaxDate;
             }

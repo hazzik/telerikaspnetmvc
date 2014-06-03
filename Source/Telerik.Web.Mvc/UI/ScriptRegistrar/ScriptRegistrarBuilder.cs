@@ -115,7 +115,7 @@ namespace Telerik.Web.Mvc.UI
         /// Includes the jQuery script files. By default jQuery JavaScript is included. 
         /// </summary>
         /// <remarks>
-        /// Telerik Extensions for ASP.NET MVC require jQuery so make sure you manually include the JavaScrip file
+        /// Telerik Extensions for ASP.NET MVC require jQuery so make sure you manually include the JavaScript file
         /// if you disable the automatic including.
         /// </remarks>
         /// <param name="enable">if set to <c>true</c> [enable].</param>
@@ -129,6 +129,27 @@ namespace Telerik.Web.Mvc.UI
         public virtual ScriptRegistrarBuilder jQuery(bool enable)
         {
             scriptRegistrar.ExcludeFrameworkScripts = !enable;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets whether the jQuery validation script files will be registered. By default jQuery Validation JavaScript is included, if needed.
+        /// </summary>
+        /// <remarks>
+        /// Telerik Extensions for ASP.NET MVC use jQuery validation
+        /// </remarks>
+        /// <param name="enable">if set to <c>true</c> [enable].</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///            .jQueryValidation(false)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ScriptRegistrarBuilder jQueryValidation(bool enable)
+        {
+            scriptRegistrar.ExcludeValidationScripts = !enable;
 
             return this;
         }

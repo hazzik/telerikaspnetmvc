@@ -31,7 +31,8 @@ namespace Telerik.Web.Mvc.UI
                         .Attributes(new
                         {
                             id = Component.Id,
-                            name = Component.Name
+                            name = Component.Name,
+                            type = "text"
                         })
                         .ToggleAttribute("disabled", "disabled", !Component.Enabled)
                         .ToggleAttribute("value", value, value.HasValue())

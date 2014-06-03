@@ -38,6 +38,18 @@ namespace Telerik.Web.Mvc.UI
             FooterHtmlAttributes = new RouteValueDictionary();
         }
 
+        public Action HeaderTemplate
+        {
+            get;
+            set;
+        }
+
+        public Action<GridAggregateResult> FooterTemplate
+        {
+            get;
+            set;
+        }
+
         public string ClientTemplate
         {
             get
@@ -86,10 +98,25 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
+        private bool hidden;
         public bool Hidden
         {
-            get;
-            set;
+            get
+            {
+                return hidden;
+            }
+            set 
+            {
+                if (value)
+                {
+                    HtmlAttributes["style"] += "display:none;width:0;";
+                }
+                else if (HtmlAttributes.ContainsKey("style"))
+                {
+                    HtmlAttributes["style"] = ((string)HtmlAttributes["style"]).Replace("display:none;width:0;", "");
+                }
+                hidden = value;
+            }
         }
 
         public IDictionary<string, object> HtmlAttributes

@@ -55,6 +55,102 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
+        /// Sets the row template of the grid
+        /// </summary>
+        /// <param name="codeBlockTemplate">The template</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///     .RowTemplate(o =>
+        ///     {
+        ///        %&gt;
+        ///           &lt;%= o.Name %&gt;
+        ///           &lt;%= o.Age %&gt;
+        ///        &lt;%
+        ///     })
+        ///  %&gt;
+        /// </code> 
+        /// </example>
+        public GridBuilder<T> RowTemplate(Action<T, Grid<T>> codeBlockTemplate)
+        {
+            Guard.IsNotNull(codeBlockTemplate, "codeBlockTemplate");
+
+            Component.RowTemplate.CodeBlockTemplate = (dataItem) => codeBlockTemplate(dataItem, Component);
+            
+            return this;
+        }
+        /// <summary>
+        /// Sets the row template of the grid
+        /// </summary>
+        /// <param name="codeBlockTemplate">The template</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///     .RowTemplate(o =>
+        ///     {
+        ///        %&gt;
+        ///           &lt;%= o.Name %&gt;
+        ///           &lt;%= o.Age %&gt;
+        ///        &lt;%
+        ///     })
+        ///  %&gt;
+        /// </code> 
+        /// </example>
+        public GridBuilder<T> RowTemplate(Action<T> codeBlockTemplate)
+        {
+            Guard.IsNotNull(codeBlockTemplate, "codeBlockTemplate");
+
+            Component.RowTemplate.CodeBlockTemplate = codeBlockTemplate;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the row template of the grid using Razor syntax
+        /// </summary>
+        /// <param name="inlineTemplate">The template</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///     .RowTemplate(@&lt;text&gt;
+        ///           @item.Name
+        ///           @item.Age
+        ///     &lt;/text&gt;)
+        ///  %&gt;
+        /// </code> 
+        /// </example>
+        public GridBuilder<T> RowTemplate(Func<T, object> inlineTemplate)
+        {
+            Guard.IsNotNull(inlineTemplate, "inlineTemplate");
+
+            Component.RowTemplate.InlineTemplate = inlineTemplate;
+
+            return this;
+        }
+
+        public GridBuilder<T> RowTemplate(Func<Grid<T>, Func<T, object>> inlineTemplate)
+        {
+            Guard.IsNotNull(inlineTemplate, "inlineTemplate");
+
+            Component.RowTemplate.InlineTemplate = (dataItem)  => inlineTemplate(Component)(dataItem);
+
+            return this;
+        }
+
+        public GridBuilder<T> ClientRowTemplate(string template)
+        {
+            Component.ClientRowTemplate = template;
+            return this;
+        }
+
+        public GridBuilder<T> ClientRowTemplate(Func<Grid<T>, string> template)
+        {
+            Component.ClientRowTemplate = template(Component);
+
+            return this;
+        }
+
+        /// <summary>
         /// Configures the grid resizing settings
         /// </summary>
         /// <param name="configurator">Resizing settings configurator method</param>
@@ -698,6 +794,65 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Scrollable();
 
             configurator(new GridScrollSettingsBuilder(Component.Scrolling));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Enables keyboard navigation.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid()
+        ///             .Name("Grid")
+        ///             .Ajax(ajax => ajax.Action("_RelatedGrids_Orders", "Grid", new { customerID = "ALFKI" }))
+        ///             .Columns(columns=>
+        ///             {
+        ///                 columns.Add(c => c.OrderID).Width(100);
+        ///                 columns.Add(c => c.OrderDate).Width(200).Format("{0:dd/MM/yyyy}");
+        ///                 columns.Add(c => c.ShipAddress);
+        ///                 columns.Add(c => c.ShipCity).Width(200);
+        ///             })
+        ///             .BindTo((IEnumerable&lt;Order&gt;)ViewData["Orders"])
+        ///             .KeyboardNavigation();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBuilder<T> KeyboardNavigation()
+        {
+            Component.KeyboardNavigation.Enabled = true;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Enables keyboard navigation.
+        /// </summary>
+        /// <param name="configurator">Use builder to define keyboard navigation settings.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid()
+        ///             .Name("Grid")
+        ///             .Ajax(ajax => ajax.Action("_RelatedGrids_Orders", "Grid", new { customerID = "ALFKI" }))
+        ///             .Columns(columns=>
+        ///             {
+        ///                 columns.Add(c => c.OrderID).Width(100);
+        ///                 columns.Add(c => c.OrderDate).Width(200).Format("{0:dd/MM/yyyy}");
+        ///                 columns.Add(c => c.ShipAddress);
+        ///                 columns.Add(c => c.ShipCity).Width(200);
+        ///             })
+        ///             .BindTo((IEnumerable&lt;Order&gt;)ViewData["Orders"])
+        ///             .KeyboardNavigation(navigation => navigation.Enabled(true));
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBuilder<T> KeyboardNavigation(Action<GridKeyboardNavigationSettingsBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            KeyboardNavigation();
+
+            configurator(new GridKeyboardNavigationSettingsBuilder(Component.KeyboardNavigation));
 
             return this;
         }

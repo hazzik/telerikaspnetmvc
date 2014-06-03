@@ -3,13 +3,13 @@
     using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-
     using System.Runtime.Serialization;
 
     [KnownType(typeof(EditableCustomer))]
     public class EditableCustomer
     {
         [Required]
+        [DisplayName("Name")]
         public string ContactName
         {
             get;
@@ -23,6 +23,7 @@
             set;
         }
 
+        [ScaffoldColumn(false)]
         public string CustomerID
         {
             get;
@@ -31,6 +32,21 @@
 
         [Required]
         public string Country
+        {
+            get;
+            set;
+        }
+
+        [Required]
+        [DisplayName("Company")]
+        public string CompanyName
+        {
+            get;
+            set;
+        }
+
+        [Required]
+        public string Phone
         {
             get;
             set;

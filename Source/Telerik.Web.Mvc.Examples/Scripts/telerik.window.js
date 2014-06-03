@@ -1,10 +1,10 @@
 ﻿(function ($) {
 
     var $t = $.telerik;
+    $t.scripts.push("telerik.window.js");
 
     function isLocalUrl(url) {
-        var loweredUrl = url ? url.toLowerCase() : '';
-        return loweredUrl && loweredUrl.indexOf('http') !== 0 && loweredUrl.indexOf('https') !== 0;
+        return url && !(/^([a-z]+:)?\/\//i).test(url);
     }
 
     function fixIE6Sizing($element) {
@@ -31,8 +31,8 @@
             var endValues = {
                 width: resizeElement.width(),
                 height: resizeElement.height(),
-                left: parseInt($element.css('left')),
-                top: parseInt($element.css('top'))
+                left: parseInt($element.css('left')) || 0,
+                top: parseInt($element.css('top')) || 0
             };
 
             $element
@@ -83,10 +83,12 @@
                     top: endValues.top
                 }).hide();
 
-                resizeElement.css({
-                    width: endValues.width,
-                    height: endValues.height
-                });
+                setTimeout(function () {
+                    resizeElement.css({
+                        width: endValues.width,
+                        height: endValues.height
+                    });
+                }, 0);
 
                 if (end) end();
             });
@@ -108,7 +110,7 @@
             $t.window.create(element, options);
         }
 
-        if (!$element.parent().is('body')) {
+        if (!$element.is('body')) {
             var offset;
 
             if ($element.is(':visible')) {
@@ -126,10 +128,11 @@
                 .appendTo(document.body);
         }
 
-        if (this.modal)
+        if (this.modal) {
             this.overlay($element.is(':visible')).css({ opacity: 0.5 });
+        }
 
-        var windowActions = '.t-window-titlebar .t-window-action';
+        var windowActions = '.t-window-titlebar .t-link';
 
         $element
             .delegate(windowActions, 'mouseenter', $t.hover)
@@ -150,7 +153,7 @@
 
                     wnd.initialCursorPosition = $element.offset();
 
-                    wnd.resizeDirection = e.$draggable.attr('className').replace('t-resize-handle t-resize-', '').split('');
+                    wnd.resizeDirection = e.$draggable[0].className.replace('t-resize-handle t-resize-', '').split('');
 
                     wnd.resizeElement = $element.find('> .t-window-content');
 
@@ -227,6 +230,10 @@
 
                     fixIE6Sizing($element);
 
+                    if ($.browser.msie && parseInt($.browser.version) >= 9) {
+                        $element[0].style.cssText = $element[0].style.cssText;
+                    }
+
                     $t.trigger(wnd.element, 'resize');
                 }
 
@@ -296,9 +303,10 @@
 
                     if (e.keyCode == 27)
                         e.$draggable.closest('.t-window').css(wnd.initialWindowPosition);
-
+                    
                     return false;
                 }
+
                 new $t.draggable({
                     owner: wnd.element,
                     selector: '.t-window-titlebar',
@@ -323,8 +331,9 @@
 
         $(window).resize($.proxy(this.onDocumentResize, this));
 
-        if (isLocalUrl(this.contentUrl))
+        if (isLocalUrl(this.contentUrl)) {
             this.ajaxRequest();
+        }
     };
 
     $t.window.prototype = {
@@ -332,25 +341,27 @@
             var overlay = $('body > .t-overlay'),
                 $doc = $(document);
 
-            if (overlay.length == 0)
+            if (overlay.length == 0) {
                 overlay = $('<div class="t-overlay" />')
-                                .toggle(visible)
-                                .appendTo(this.element.ownerDocument.body);
-            else
-                overlay.toggle(visible);
+                    .toggle(visible)
+                    .insertBefore(this.element);
+            } else {
+                overlay.insertBefore(this.element).toggle(visible);
+            }
 
-            if ($.browser.msie && $.browser.version < 7)
+            if ($.browser.msie && $.browser.version < 7) {
                 overlay.css({
                     width: $doc.width() - 21,
                     height: $doc.height(),
                     position: 'absolute'
                 });
+            }
 
             return overlay;
         },
 
         windowActionHandler: function (e) {
-            var $target = $(e.target).closest('.t-window-action').find('.t-icon'),
+            var $target = $(e.target).closest('.t-link').find('.t-icon'),
                 contextWindow = this;
 
             $.each({
@@ -369,11 +380,12 @@
 
         center: function () {                       
             var $element = $(this.element),
-                $window = $(window);
+                $window = $(window),
+                $body = $(document.body);
 
             $element.css({
-                left: $window.scrollLeft() + Math.max(0, ($window.width() - $element.width()) / 2),
-                top: $window.scrollTop() + Math.max(0, ($window.height() - $element.height()) / 2)
+                left: $window.scrollLeft() + $body.scrollLeft() + Math.max(0, ($window.width() - $element.width()) / 2),
+                top: $window.scrollTop() + $body.scrollTop() + Math.max(0, ($window.height() - $element.height()) / 2)
             });
 
             return this;
@@ -406,20 +418,23 @@
                 if (this.modal) {
                     var overlay = this.overlay(false);
 
-                    if (this.effects.list.length > 0 && this.effects.list[0].name != 'toggle')
+                    if (this.effects.list.length > 0 && this.effects.list[0].name != 'toggle') {
                         overlay.css('opacity', 0).show().animate({ opacity: 0.5 }, this.effects.openDuration);
-                    else
+                    } else {
                         overlay.css('opacity', 0.5).show();
+                    }
                 }
                 
-                if (!$element.is(':visible'))
+                if (!$element.is(':visible')) {
                     $t.fx.play(this.effects, $element, {}, function() {
                         $t.trigger($element[0], 'activated');
                     });
+                }
             }
 
-           if (this.isMaximized)
+           if (this.isMaximized) {
                $('html, body').css('overflow', 'hidden');
+            }
 
             return this;
         },
@@ -439,35 +454,44 @@
                     var overlay = this.modal ? this.overlay(true) : $(undefined);
 
                     if (shouldHideOverlay) {
-                        if (this.effects.list.length > 0 && this.effects.list[0].name != 'toggle')
+                        if (this.effects.list.length > 0 && this.effects.list[0].name != 'toggle') {
                             overlay.animate({ opacity: 0 }, this.effects.closeDuration)
-                        else
+                        } else {
                             overlay.hide();
+                        }
+                    } else if (openedModalWindows.length > 0) {
+                        openedModalWindows.eq(openedModalWindows.length - 2).data("tWindow").overlay(true);
                     }
 
                     $t.fx.rewind(this.effects, $element, null, function () {
                         $element.hide();
 
-                        if (shouldHideOverlay)
+                        if (shouldHideOverlay) {
                             overlay.hide();
+                        }
                     });
                 }
             }
 
-            if (this.isMaximized)
+            if (this.isMaximized) {
                 $('html, body').css('overflow', '');
+            }
 
             return this;
         },
 
         toggleMaximization: function (e) {
-            if (e && $(e.target).closest('.t-window-action').length > 0) return;
+            if (e && $(e.target).closest('.t-link').length > 0) {
+                return;
+            }
+
             this[this.isMaximized ? 'restore' : 'maximize']();
         },
 
         restore: function () {
-            if (!this.isMaximized)
+            if (!this.isMaximized) {
                 return;
+            }
 
             $(this.element)
                 .css({
@@ -493,8 +517,9 @@
         },
 
         maximize: function (e) {
-            if (this.isMaximized)
+            if (this.isMaximized) {
                 return;
+            }
 
             var $element = $(this.element),
                 resizeElement = $element.find('> .t-window-content');
@@ -521,8 +546,9 @@
         },
 
         onDocumentResize: function () {
-            if (!this.isMaximized)
+            if (!this.isMaximized) {
                 return;
+            }
 
             var $element = $(this.element),
                 resizeElement = $element.find('> .t-window-content');
@@ -544,7 +570,9 @@
         },
 
         refresh: function () {
-            if (isLocalUrl(this.contentUrl)) this.ajaxRequest();
+            if (isLocalUrl(this.contentUrl)) {
+                this.ajaxRequest();
+            }
 
             return this;
         },
@@ -582,15 +610,19 @@
         destroy: function () {
             $(this.element).remove();
             
-            var openedModalWindows = $('.t-window').filter(function() {
+            var openedModalWindows = $('.t-window')
+                .filter(function() {
                     var window = $(this);
                     return window.is(':visible') && window.data('tWindow').modal;
                 });
                         
             var shouldHideOverlay = this.modal && openedModalWindows.length == 0;
 
-            if (shouldHideOverlay)
+            if (shouldHideOverlay) {
                 this.overlay(false).remove();
+            } else if (openedModalWindows.length > 0) {
+                openedModalWindows.eq(openedModalWindows.length - 2).data("tWindow").overlay(true);
+            }
         }
     };
 
@@ -599,9 +631,9 @@
         create: function () {
             var element, options;
 
-            if ($.isPlainObject(arguments[0]))
+            if ($.isPlainObject(arguments[0])) {
                 options = arguments[0];
-            else {
+            } else {
                 element = arguments[0];
                 options = $.extend({
                     html: element.innerHTML
@@ -621,7 +653,7 @@
                         .cat('<div class="t-window-actions t-header">');
 
             $.map(options.actions, function (command) {
-                windowHtml.cat('<a href="#" class="t-window-action t-link">')
+                windowHtml.cat('<a href="#" class="t-link">')
                         .cat('<span class="t-icon t-').cat(command.toLowerCase()).cat('">')
                             .cat(command)
                         .cat('</span></a>');
@@ -630,16 +662,33 @@
             windowHtml.cat('</div></div>')
                 .cat('<div class="t-window-content t-content" style="');
 
-            if (options.width) windowHtml.cat('width:').cat(options.width).cat('px;');
-            if (options.height) windowHtml.cat('height:').cat(options.height).cat('px;');
+            if (options.width) {
+                windowHtml.cat('width:').cat(options.width).cat('px;');
+            }
 
-            windowHtml.cat('">').cat(options.html).cat('</div>')
+            if (options.height) {
+                windowHtml.cat('height:').cat(options.height).cat('px;');
+            }
+
+            if (typeof (options.scrollable) != "undefined" && options.scrollable === false) {
+                windowHtml.cat('overflow:hidden;');
+            }
+
+            windowHtml.cat('">')
+                    .catIf(options.html, !options.contentUrl || (options.contentUrl && isLocalUrl(options.contentUrl)))
+                    .catIf('<iframe src="', options.contentUrl,
+                           '" title="', options.title,
+                           '" frameborder="0" style="border:0;width:100%;height:100%;">This page requires frames in order to show content</iframe>',
+                        options.contentUrl && !isLocalUrl(options.contentUrl))
+                    .cat('</div>')
                 .catIf('</div>', !element);
 
-            if (element)
+            if (element) {
                 $(element).html(windowHtml.string());
-            else
+            } else {
+                delete options.title;
                 return $(windowHtml.string()).appendTo(document.body).tWindow(options);
+            }
         },
 
         getResizeHandlesHtml: function () {

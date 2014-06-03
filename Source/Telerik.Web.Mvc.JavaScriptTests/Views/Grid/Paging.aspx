@@ -48,7 +48,21 @@
             .BindTo((List<Customer>)ViewData["moreData"])
             .Pageable(pager => pager.Position(GridPagerPosition.Both))
     %>
-
+    <%= Html.Telerik().Grid<Telerik.Web.Mvc.JavaScriptTests.Customer>()
+            .Name("Grid_LoadOnScroll")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate.Day);
+            })
+            .Ajax(settings => { })
+            .BindTo((List<Customer>)ViewData["moreData"])
+            .Pageable(pager => {
+                pager.PageOnScroll(true);
+                pager.Style(GridPagerStyles.Status);
+            })            
+            .Scrollable()
+    %>
     <div id="dummyGrid">
     </div>
 </asp:Content>
@@ -314,7 +328,7 @@
             grid.total = 10;
             grid.dataBind([]);
 
-            equal($(".t-numeric", grid.element).children().length, 1);
+            equal($(".t-numeric", grid.element).children().length, 0);
         });
 
         test('numeric pager when current page is less than total number of numeric buttons', function() {
@@ -356,6 +370,66 @@
             equal(displayingItemsText, 'Displaying items 11 - 20 of 20');
         });
 
+        test("data is populated with initial binding data", function() {
+            var grid = getGrid("#Grid_LoadOnScroll"),
+                data = grid.data;
+            
+            equal(data.length, grid.pageSize);
+        });
+
+        test("pageTo is called if scroll to bottom", function() {
+            var grid = getGrid("#Grid_LoadOnScroll"),
+                origPageTo = grid.pageTo,
+                scrollWasCalled = false,
+                gridContent = $("> .t-grid-content", grid.element)[0];
+            
+            grid.pageTo = function() {            
+                scrollWasCalled = true;                
+            };
+            gridContent.scrollTop = gridContent.scrollHeight;            
+            $(gridContent).trigger("scroll");
+
+            gridContent.scrollTop = 0;
+            grid.pageTo = origPageTo;
+
+            ok(scrollWasCalled);
+        });
+
+        test("pageTo is not called if on last page", function() {
+            var grid = getGrid("#Grid_LoadOnScroll"),
+                origPageTo = grid.pageTo,
+                scrollWasCalled = false,
+                gridContent = $("> .t-grid-content", grid.element)[0];
+            
+            grid.pageTo = function() {            
+                scrollWasCalled = true;                
+            };
+            gridContent.scrollTop = gridContent.scrollHeight;
+            grid.currentPage = grid.totalPages();
+            $(gridContent).trigger("scroll");
+
+            gridContent.scrollTop = 0;
+            grid.pageTo = origPageTo;
+
+            ok(!scrollWasCalled);
+        });
+
+        test("pageTo with loadOnScroll accumulate the data", function() {
+             var grid = getGrid("#Grid_LoadOnScroll"),
+                origAjaxRequest = grid.ajaxRequest,
+                data;
+
+            grid.ajaxRequest = function() {
+                grid.dataSource._view = grid.data;
+                grid._dataChange();
+            };
+            grid.pageTo(2);
+            data = grid.data;
+
+            equal(data.length, 20);
+
+            grid.ajaxRequest = origAjaxRequest;
+        });
 </script>
 
 </asp:Content>

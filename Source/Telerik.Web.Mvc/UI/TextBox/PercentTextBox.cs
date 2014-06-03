@@ -48,10 +48,10 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Start();
 
-            objectWriter.Append("val", Value);
+            objectWriter.AppendObject("val", Value);
             objectWriter.Append("step", IncrementStep);
-            objectWriter.Append("minValue", MinValue);
-            objectWriter.Append("maxValue", MaxValue);
+            objectWriter.AppendObject("minValue", MinValue);
+            objectWriter.AppendObject("maxValue", MaxValue);
             objectWriter.Append("symbol", PercentSymbol);
             objectWriter.Append("digits", DecimalDigits);
             objectWriter.Append("separator", DecimalSeparator);
@@ -97,16 +97,6 @@ namespace Telerik.Web.Mvc.UI
         public override void VerifySettings()
         {
             base.VerifySettings();
-
-            if (MinValue > MaxValue)
-            {
-                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
-            }
-
-            if ((Value != null) && (MinValue > Value || Value > MaxValue))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
-            }
 
             if (PositivePatternIndex < 0 || PositivePatternIndex > 2) //currency positive patterns are 3.
             {

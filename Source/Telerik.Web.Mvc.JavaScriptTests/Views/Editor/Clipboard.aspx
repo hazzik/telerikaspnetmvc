@@ -139,6 +139,13 @@
         equal(editor.value(), 'f<ul><li>foo</li></ul>oo');
     });
 
+    test('paste multiple lines from notepad', function() {
+        var range = createRangeFromText(editor, 'f||oo');
+        editor.selectRange(range);
+        clipboard.paste('<div class="t-paste-container">bar</div><div class="t-paste-container">baz</div>');
+        equal(editor.value(), 'fbar<br />bazoo');
+    });
+
 </script>
 
 </asp:Content>

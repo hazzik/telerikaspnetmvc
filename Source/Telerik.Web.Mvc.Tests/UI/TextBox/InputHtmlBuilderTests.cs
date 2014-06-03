@@ -65,6 +65,16 @@
         }
 
         [Fact]
+        public void InputTag_should_render_type_text_attribute()
+        {
+            input.Name = "IntegerInput";
+
+            IHtmlNode tag = renderer.InputTag();
+
+            Assert.Equal("text", tag.Attribute("type"));
+        }
+
+        [Fact]
         public void Input_should_render_html_attributes()
         {
             input.InputHtmlAttributes.Add("class", "t-test");

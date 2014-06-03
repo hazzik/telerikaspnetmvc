@@ -14,7 +14,14 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 
             return View();
         }
-        
+
+        public ActionResult Navigation()
+        {
+            ViewData["moreData"] = TestData(20);
+
+            return View(TestData(20));
+        }
+
         public ActionResult FormContainerBuilder()
         {
             return View(TestData(20));

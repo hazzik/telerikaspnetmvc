@@ -13,6 +13,14 @@
                     item.ControllerName = node.ControllerName.ToLower();
                     item.ActionName = node.ActionName.ToLower();
                 }
+
+                item.SpriteCssClasses = "t" + item.Text;
+                
+                if ("true".Equals(node.Attributes["isNew"]))
+                {
+                    item.Text += "<span class='isNew'>new</span>";
+                    item.Encoded = false;
+                }
             })
             .HighlightPath(true)
             .ItemAction(item =>
@@ -27,9 +35,9 @@
                     item.HtmlAttributes["class"] = "active-page";
                 }
 
-                if (item.Parent == null)
+                if (item.Parent != null)
                 {
-                    item.SpriteCssClasses = "t" + item.Text;
+                    item.SpriteCssClasses = "";
                 }
             })
             .Render();
@@ -45,16 +53,20 @@
                 item.ControllerName = node.ControllerName.ToLower();
                 item.ActionName = node.ActionName.ToLower();
             }
+            item.SpriteCssClasses = "t" + item.Text;
+
+            if ("true".Equals(node.Attributes["isNew"]))
+            {
+                item.Text += "<span class='isNew'>new</span>";
+                item.Encoded = false;
+            }
         })
-        
         .ItemAction(item =>
         {
             if (!item.Items.Any() && !string.IsNullOrEmpty(Request.QueryString["theme"]))
             {
                 item.RouteValues.Add("theme", Request.QueryString["theme"]);
             }
-
-            item.SpriteCssClasses = "t" + item.Text;
         })
         .Render();
 %>

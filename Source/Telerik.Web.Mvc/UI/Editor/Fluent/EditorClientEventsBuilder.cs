@@ -52,10 +52,10 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Defines the inline handler of the OnLoad client-side event
         /// </summary>
-        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <param name="inlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
         /// <example>
         /// <code lang="CS">
-        ///  &lt;% Html.Telerik().Editor()
+        ///  @(Html.Telerik().Editor()
         ///            .Name("Editor")
         ///            .ClientEvents(events => events.OnLoad(
         ///                 @&lt;text&gt;
@@ -63,9 +63,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///                     //event handling code
         ///                 }
         ///                 &lt;/text&gt;
-        ///            ))
-        ///            .Render();
-        /// %&gt;
+        ///            )))
         /// </code>
         /// </example>
         public EditorClientEventsBuilder OnLoad(Func<object, object> inlineCodeBlock)
@@ -88,6 +86,71 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public EditorClientEventsBuilder OnLoad(string onLoadHandlerName)
         {
             return HandlerName(events.OnLoad, onLoadHandlerName);
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnPaste client-side event
+        /// </summary>
+        /// <param name="onPasteAction">The action defining the inline handler.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Editor()
+        ///            .Name("Editor")
+        ///            .ClientEvents(events => events.OnPaste(() =>
+        ///            {
+        ///                 %&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;%
+        ///            }))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>        
+        public EditorClientEventsBuilder OnPaste(Action codeBlock)
+        {
+            return CodeBlock(events.OnPaste, codeBlock);
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="inlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  @(Html.Telerik().Editor()
+        ///        .Name("Editor")
+        ///        .ClientEvents(events => events.OnPaste(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///         ))
+        /// )
+        /// </code>
+        /// </example>
+        public EditorClientEventsBuilder OnPaste(Func<object, object> inlineCodeBlock)
+        {
+            return InlineCodeBlock(events.OnPaste, inlineCodeBlock);
+        }
+
+        /// <summary>
+        ///  Defines the name of the JavaScript function that will handle the the OnPaste client-side event.
+        /// </summary>
+        /// <param name="onPasteHandlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Editor()
+        ///             .Name("Editor")
+        ///             .ClientEvents(events => events.OnPaste("onPaste"))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public EditorClientEventsBuilder OnPaste(string onPasteHandlerName)
+        {
+            return HandlerName(events.OnPaste, onPasteHandlerName);
         }
 
         /// <summary>

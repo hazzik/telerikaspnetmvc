@@ -13,6 +13,7 @@ namespace Telerik.Web.Mvc.UI
             OnChange = new ClientEvent();
             OnExecute = new ClientEvent();
             OnError = new ClientEvent();
+            OnPaste = new ClientEvent();
         }
 
         public ClientEvent OnChange
@@ -45,9 +46,16 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
+        public ClientEvent OnPaste 
+        { 
+            get; 
+            private set;
+        }
+
         public void SerializeTo(IClientSideObjectWriter writer)
         {
             writer.AppendClientEvent("onLoad", OnLoad);
+            writer.AppendClientEvent("onPaste", OnPaste);
             writer.AppendClientEvent("onSelectionChange", OnSelectionChange);
             writer.AppendClientEvent("onChange", OnChange);
             writer.AppendClientEvent("onExecute", OnExecute);

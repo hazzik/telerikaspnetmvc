@@ -14,6 +14,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Linq.Expressions;
     using System.Web.Mvc;
     using Telerik.Web.Mvc;
+    using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI.Fluent;
     using Telerik.Web.Mvc.UI.Html;
@@ -545,11 +546,11 @@ namespace Telerik.Web.Mvc.UI
         /// <example>
         /// <code lang="CS">
         ///  &lt;%= Html.Telerik().Upload()
-        ///             .Upload("Upload")
+        ///             .Name("Upload")
         ///             .Async(async => async
         ///                 .Save("ProcessAttachments", "Home")
         ///                 .Remove("RemoveAttachment", "Home")
-        ///             );
+        ///             )
         /// %&gt;
         /// </code>
         /// </example>
@@ -558,6 +559,84 @@ namespace Telerik.Web.Mvc.UI
             return UploadBuilder.Create(Register(() => 
                 new Upload(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(),
                             DI.Current.Resolve<ILocalizationServiceFactory>().Create("UploadLocalization", CultureInfo.CurrentUICulture))));
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Telerik.Web.Mvc.UI.Chart{T}"/>
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ChartBuilder<T> Chart<T>() where T : class
+        {
+            return ChartBuilder<T>.Create(Register(() =>
+                new Chart<T>(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Telerik.Web.Mvc.UI.Chart{T}"/> bound to the specified data source.
+        /// </summary>
+        /// <typeparam name="T">The type of the data item</typeparam>
+        /// <param name="dataSource">The data source.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart(Model)
+        ///             .Name("Chart")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ChartBuilder<T> Chart<T>(IEnumerable<T> dataSource) where T : class
+        {
+            ChartBuilder<T> builder = Chart<T>();
+
+            builder.Component.DataSource = dataSource;
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Telerik.Web.Mvc.UI.Chart{T}"/> bound an item in ViewData.
+        /// </summary>
+        /// <typeparam name="T">Type of the data item</typeparam>
+        /// <param name="dataSourceViewDataKey">The data source view data key.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart&lt;SalesData&gt;("sales")
+        ///             .Name("Chart")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ChartBuilder<T> Chart<T>(string dataSourceViewDataKey) where T : class
+        {
+            ChartBuilder<T> builder = Chart<T>();
+
+            builder.Component.DataSource = ViewContext.ViewData.Eval(dataSourceViewDataKey) as IEnumerable<T>;
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Creates a new unbound <see cref="Chart"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().Chart("sales")
+        ///             .Name("Chart")
+        ///             .Series(series => {
+        ///                 series.Bar(new int[] { 1, 2, 3 }).Name("Total Sales");
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ChartBuilder<object> Chart()
+        {
+            ChartBuilder<object> builder = Chart<object>();
+
+            return builder;
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -1000,7 +1079,7 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(expression, "expression");
 
             return DropDownList().Name(GetName(expression))
-                                 .Value(Convert.ToString(ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model) ?? string.Empty);
+                                 .Value(GetValue(expression));
         }
 
         /// <summary>
@@ -1016,7 +1095,7 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(expression, "expression");
 
             return ComboBox().Name(GetName(expression))
-                             .Value(Convert.ToString(ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model) ?? string.Empty);
+                             .Value(GetValue(expression));
         }
 
         /// <summary>
@@ -1030,9 +1109,9 @@ namespace Telerik.Web.Mvc.UI
         public virtual AutoCompleteBuilder AutoCompleteFor<TProperty>(Expression<Func<TModel, TProperty>> expression)
         {
             Guard.IsNotNull(expression, "expression");
-
+            
             return AutoComplete().Name(GetName(expression))
-                                 .Value(Convert.ToString(ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model) ?? string.Empty);
+                                 .Value(GetValue(expression));
         }
 
         /// <summary>
@@ -1127,6 +1206,12 @@ namespace Telerik.Web.Mvc.UI
         {
             string name = ExpressionHelper.GetExpressionText(expression);
             return HtmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
+        }
+
+        private string GetValue<TValue>(Expression<Func<TModel, TValue>> expression) 
+        {
+            object model = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+            return model != null && model.GetType().IsPredefinedType() ? Convert.ToString(model) : string.Empty;
         }
 
         private Nullable<TValue> GetRangeValidationParameter<TValue>(IEnumerable<ModelValidator> validators, string parameter) where TValue : struct

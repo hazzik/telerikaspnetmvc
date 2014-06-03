@@ -4,6 +4,7 @@
 
     @(Html.Telerik().ComboBox()
                       .Name("AjaxComboBox")
+                      .HtmlAttributes(new { id = "AjaxComboBox_wrapper" })
                       .AutoFill(Model.ComboBoxAttributes.AutoFill.Value)
                       .DataBinding(binding => binding.Ajax()
                                                      .Select("_FilteringAjax", "ComboBox")
@@ -180,7 +181,7 @@
      } 
 
     <script type="text/javascript">
-        
+
         function onComboBoxDataBinding(e) {
             e.data = $.extend({}, e.data, { filterMode: $('#ComboBoxAttributes_FilterMode').data('tDropDownList').value() });
         }
@@ -196,20 +197,19 @@
 @section HeadContent {
 
     <style type="text/css">
-        
-        #AjaxComboBox
+        #AjaxComboBox_wrapper
         {
             margin-bottom: 280px;
             float: left;
         }
-       
+        
         #AjaxAutoComplete
         {
             clear: both;
             margin-bottom: 280px;
             float: left;
         }
-       
+                      
         .example .configurator
         {
             width: 400px;
@@ -233,8 +233,7 @@
         {
             vertical-align: middle;
         }
-    
+       
     </style>
 
 }
-

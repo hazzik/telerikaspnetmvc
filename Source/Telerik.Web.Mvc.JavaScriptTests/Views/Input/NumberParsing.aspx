@@ -33,15 +33,13 @@
 
 <script type="text/javascript">
 
-
-
         test('parse with simple format', function() {
-            equal(getInput('#CurrencyTextBox').parse("1.00"), 1.00);
+            equal(getInput('#CurrencyTextBox').parse("1" + jQuery.telerik.cultureInfo.numericdecimalseparator + "23"), 1.23);
         });
 
-        test('parse with negative currency format', function() {
-            equal(getInput('#CurrencyTextBox').parse("($1.00)"), -1.00);
-        });
+//        test('parse with negative currency format', function() {
+//            equal(getInput('#CurrencyTextBox').parse("($1" + jQuery.telerik.cultureInfo.numericdecimalseparator + "23)"), -1.23);
+//        });
 
 </script>
 

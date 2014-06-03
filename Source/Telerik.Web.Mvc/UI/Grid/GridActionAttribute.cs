@@ -21,6 +21,8 @@ namespace Telerik.Web.Mvc
     public class GridActionAttribute : FilterAttribute, IActionFilter
     {
         private readonly IGridActionResultAdapterFactory adapterFactory;
+        private readonly IGridActionResultFactory resultFactory;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GridActionAttribute"/> class.
         /// </summary>
@@ -28,6 +30,7 @@ namespace Telerik.Web.Mvc
         {
             ActionParameterName = "command";
             adapterFactory = DI.Current.Resolve<IGridActionResultAdapterFactory>();
+            resultFactory = DI.Current.Resolve<IGridActionResultFactory>();
         }
 
         /// <summary>
@@ -179,10 +182,7 @@ namespace Telerik.Web.Mvc
 
             SerializeAggregateResults(result, dataProcessor.AggregatesResults);
 
-            filterContext.Result = new JsonResult
-            {
-                Data = result
-            };
+            filterContext.Result = resultFactory.Create(result);
         }
 
         private void SerializeAggregateResults(Dictionary<string, object> result, IEnumerable<AggregateResult> aggregatesResults)

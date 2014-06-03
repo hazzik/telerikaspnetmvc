@@ -26,6 +26,7 @@ namespace Telerik.Web.Mvc.UI
             ClientEvents = new DropDownClientEvents();
             DataBinding = new AutoCompleteDataBindingConfiguration();
             DropDownHtmlAttributes = new RouteValueDictionary();
+            HiddenInputHtmlAttributes = new RouteValueDictionary();
             InputHtmlAttributes = new RouteValueDictionary();
 
             Effects = new Effects();
@@ -50,8 +51,8 @@ namespace Telerik.Web.Mvc.UI
             {
                 // Return from htmlattributes if user has specified
                 // otherwise build it from name
-                return InputHtmlAttributes.ContainsKey("id") ?
-                       InputHtmlAttributes["id"].ToString() :
+                return HiddenInputHtmlAttributes.ContainsKey("id") ?
+                       HiddenInputHtmlAttributes["id"].ToString() :
                        (!string.IsNullOrEmpty(Name) ? Name.Replace(".", HtmlHelper.IdAttributeDotReplacement) : null);
             }
         }
@@ -87,6 +88,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public IDictionary<string, object> DropDownHtmlAttributes
+        {
+            get;
+            private set;
+        }
+
+        public IDictionary<string, object> HiddenInputHtmlAttributes
         {
             get;
             private set;
@@ -178,8 +185,11 @@ namespace Telerik.Web.Mvc.UI
             {
                 objectWriter.AppendCollection("data", Items);
             }
+            else
+            {
+                objectWriter.Append("selectedValue", Value.HasValue() ? Value : this.GetValueFromViewDataByName());
+            }
 
-            objectWriter.Append("selectedValue", Value.HasValue() ? Value : this.GetValueFromViewDataByName());
             objectWriter.Append("index", SelectedIndex, -1);
 
             if (DropDownHtmlAttributes.Any())
@@ -188,6 +198,7 @@ namespace Telerik.Web.Mvc.UI
             }
 
             objectWriter.Append("encoded", this.Encoded, true);
+            objectWriter.Append("enabled", this.Enabled, true);
             objectWriter.Append("openOnFocus", this.OpenOnFocus, false);
 
             objectWriter.Complete();
@@ -199,11 +210,6 @@ namespace Telerik.Web.Mvc.UI
         {
             if (Items.Any())
             {
-                if (Encoded)
-                {
-                    this.EncodeTextPropertyofItems();
-                }
-
                 this.SyncSelectedIndex();
             }
 

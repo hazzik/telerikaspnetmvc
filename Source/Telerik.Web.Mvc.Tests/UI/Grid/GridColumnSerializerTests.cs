@@ -347,5 +347,21 @@
             var result = JsonForBoundColumn((Customer c) => c.Id);
             Assert.False(result.ContainsKey("order"));
         }
+
+        [Fact]
+        public void Should_serialize_hidden_if_set()
+        {
+            var result = JsonForBoundColumn((Customer c) => c.Id, c => c.Hidden = true);
+
+            result["hidden"].ShouldEqual(true);
+        }
+
+        [Fact]
+        public void Should_not_serialize_hidden_if_not_set()
+        {
+            var result = JsonForBoundColumn((Customer c) => c.Id, c => c.Hidden = false);
+
+            result.ContainsKey("hidden").ShouldBeFalse();
+        }
     }
 }

@@ -34,11 +34,19 @@
 
        var isChanged;
        var isRaised;
+       var callPreventDefault = false;
+       var newValue;
 
        //handlers
 
        function onChange(e) {
            isChanged = true;
+
+           newValue = $(this).data("tDatePicker").value();
+
+           if (callPreventDefault) {
+               e.preventDefault();
+           }
        }
 
        function onClose() {
@@ -187,18 +195,32 @@
            isChanged = false;
 
            var datepicker = getDatePicker();
-           var old = datepicker.onChange;
 
-           datepicker.onChange = function (e) { e.preventDefault(); };
+           callPreventDefault = true;
 
            var oldDate = datepicker.value();
            var newDate = new Date();
            newDate.setMonth(newDate.getMonth() + 1);
            datepicker._update(newDate);
 
-           notEqual(+datepicker.value(), +oldDate);
+           equal(+datepicker.value(), +oldDate);
+           
+           callPreventDefault = false;
+       });
 
-           datepicker.onChange = old;
+       test('In change event handler, component value should be the new one', function () {
+           var datepicker = getDatePicker();
+
+           callPreventDefault = true;
+
+           var newDate = new Date();
+           newDate.setMonth(newDate.getMonth() + 2);
+
+           datepicker._update(newDate);
+
+           equal(+newValue, +newDate);
+
+           callPreventDefault = false;
        });
 
 </script>

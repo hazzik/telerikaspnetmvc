@@ -35,7 +35,7 @@ namespace Telerik.Web.Mvc.UI.Tests
 
             htmlHelper = TestHelper.CreateHtmlHelper<TestModel>();
 
-            htmlHelper.ViewData.Model = new TestModel { ID = 1, DoubleProperty = 1.0, DecimalProperty = 1.0m, DateTimeProperty = DateTime.Today, TimeProperty = DateTime.Now.TimeOfDay };
+            htmlHelper.ViewData.Model = new TestModel { ID = 1, DoubleProperty = 1.0, DecimalProperty = 1.0m, DateTimeProperty = DateTime.Today, TimeProperty = DateTime.Now.TimeOfDay, ComplexModel = new TestModel() };
 
             factory = new ViewComponentFactory<TestModel>(htmlHelper, new Mock<IClientSideObjectWriterFactory>().Object, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
         }
@@ -438,6 +438,22 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void DropDownListFor_should_return_new_instance_with_set_value()
+        {
+            var builder = factory.DropDownListFor(m => m.ID);
+
+            Assert.Equal(htmlHelper.ViewData.Model.ID.ToString(), builder.ToComponent().Value);
+        }
+
+        [Fact]
+        public void DropDownListFor_should_not_set_value_if_Model_is_not_predifined_type()
+        {
+            var builder = factory.DropDownListFor(m => m.ComplexModel);
+
+            builder.ToComponent().Value.ShouldBeEmpty();
+        }
+
+        [Fact]
         public void ComboBoxFor_should_return_new_instance()
         {
             Assert.NotNull(factory.ComboBoxFor(m => m.ID));
@@ -449,6 +465,22 @@ namespace Telerik.Web.Mvc.UI.Tests
             var builder = factory.ComboBoxFor(m => m.ID);
 
             Assert.Equal("ID", builder.ToComponent().Name);
+        }
+
+        [Fact]
+        public void ComboBoxFor_should_return_new_instance_with_set_value()
+        {
+            var builder = factory.ComboBoxFor(m => m.ID);
+
+            Assert.Equal(htmlHelper.ViewData.Model.ID.ToString(), builder.ToComponent().Value);
+        }
+
+        [Fact]
+        public void ComboBoxFor_should_not_set_value_if_Model_is_not_predifined_type()
+        {
+            var builder = factory.ComboBoxFor(m => m.ComplexModel);
+
+            builder.ToComponent().Value.ShouldBeEmpty();
         }
 
         [Fact]
@@ -473,6 +505,22 @@ namespace Telerik.Web.Mvc.UI.Tests
             Assert.Equal(string.Empty, builder.ToComponent().Value);
         }
 
+        [Fact]
+        public void AutoCompleteFor_should_return_new_instance_with_set_value()
+        {
+            var builder = factory.AutoCompleteFor(m => m.ID);
+
+            Assert.Equal(htmlHelper.ViewData.Model.ID.ToString(), builder.ToComponent().Value);
+        }
+
+        [Fact]
+        public void AutoCompleteFor_should_not_set_value_if_Model_is_not_predifined_type()
+        {
+            var builder = factory.AutoCompleteFor(m => m.ComplexModel);
+
+            builder.ToComponent().Value.ShouldBeEmpty();
+        }
+
         public class TestModel
         {
             public int ID { get; set; }
@@ -492,6 +540,8 @@ namespace Telerik.Web.Mvc.UI.Tests
             [Range(typeof(TimeSpan), "00:00:00", "22:22:22")]
             public TimeSpan TimeProperty { get; set; }
             public TimeSpan? NullableTime { get; set; }
+
+            public TestModel ComplexModel { get; set; }
         }
 #endif
     }

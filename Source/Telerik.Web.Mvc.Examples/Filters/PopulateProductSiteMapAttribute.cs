@@ -1,7 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.Examples
 {
-    using System.Linq;
     using System;
+    using System.Linq;
     using Telerik.Web.Mvc.Extensions;
 
     public class PopulateProductSiteMapAttribute : PopulateSiteMapAttribute
@@ -10,29 +10,31 @@
         {
             base.OnResultExecuting(filterContext);
 
-            XmlSiteMap fullSiteMap = (XmlSiteMap)filterContext.Controller.ViewData[ViewDataKey];
-            XmlSiteMap productSiteMap = new XmlSiteMap();
+            var fullSiteMap = (XmlSiteMap)filterContext.Controller.ViewData[ViewDataKey];
+            var productSiteMap = new XmlSiteMap();
             productSiteMap.RootNode = new SiteMapNode();
 
             foreach (SiteMapNode node in fullSiteMap.RootNode.ChildNodes)
             {
-                string controller = node.ControllerName ?? node.Title;
-                string action = node.ActionName ?? "firstlook";
-                
-                productSiteMap.RootNode.ChildNodes.Add(new SiteMapNode
+                var controller = node.ControllerName ?? node.Title;
+                var action = node.ActionName ?? "firstlook";
+                var clone = new SiteMapNode
                 {
                     ActionName = action,
                     ControllerName = controller,
                     Title = node.Title
-                });
+                };
+
+                clone.Attributes.Merge(node.Attributes);
+                productSiteMap.RootNode.ChildNodes.Add(clone);
             }
 
             filterContext.Controller.ViewData["telerik.web.mvc.products"] = productSiteMap;
 
-            XmlSiteMap examplesSiteMap = new XmlSiteMap();
+            var examplesSiteMap = new XmlSiteMap();
             
-            string controllerName = (string)filterContext.RouteData.Values["controller"];
-            SiteMapNode productSiteMapNode = fullSiteMap.RootNode.ChildNodes
+            var controllerName = (string)filterContext.RouteData.Values["controller"];
+            var productSiteMapNode = fullSiteMap.RootNode.ChildNodes
                 .FirstOrDefault(node => controllerName.Equals(node.Title, StringComparison.OrdinalIgnoreCase));
 
             if (productSiteMapNode != null && !controllerName.Equals("Home", StringComparison.OrdinalIgnoreCase))

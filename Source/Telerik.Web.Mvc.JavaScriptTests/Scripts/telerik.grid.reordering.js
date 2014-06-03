@@ -1,6 +1,8 @@
 ﻿(function ($) {
     var $t = $.telerik;
 
+    $t.scripts.push("telerik.grid.reordering.js");
+
     $t.reordering = {};
 
     $t.reordering.initialize = function (grid) {

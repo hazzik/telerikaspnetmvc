@@ -207,6 +207,26 @@
             equal(comboBox.value(), '2');
         });
 
+        test('clicking tab should stop filtering', function () {
+            var isCalled = false;
+            var oldClear = window.clearTimeout;
+
+            try {
+                window.clearTimeout = function () { isCalled = true; };
+                comboBox._textChanged = true;
+                comboBox.text('Item2');
+
+                comboBox.$text.trigger({ type: "keydown", keyCode: 8 });
+                isCalled = false
+                comboBox.$text.trigger({ type: "keydown", keyCode: 9 });
+
+                ok(isCalled);
+
+            } finally {
+                window.clearTimeout = oldClear;
+            }
+        });
+
         test('clicking item from dropDownList should raise onClose when it is opened', function() {
 
             comboBox.$text.focus();

@@ -14,7 +14,7 @@
                         item.Add().Text("Child Item 1.1");
                         item.Add().Text("Child Item 1.2");
                         item.Add().Text("Child Item 1.3");
-                        item.Add().Text("Child Item 1.4");
+                        item.Add().Text("Child Item 1.4").Enabled(false);
                     });
                 items.Add().Text("Item 2")
                                   .ImageHtmlAttributes(new { alt = "testImage", height = "10px", width = "10px" })
@@ -136,6 +136,16 @@
             item.find('> .t-link').trigger('click');
 
             ok(isRaised);
+        });
+
+        test('clicking disabled item should not raise onSelect event on parent item', function() {
+            var item = getRootItem(0);
+
+            isRaised = false;
+
+            item.find('.t-item > .t-link').eq(3).trigger('click');
+
+            ok(!isRaised);
         });
 
         test('open should not open item is disabled', function() {

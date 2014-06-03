@@ -5,9 +5,9 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using System.Text.RegularExpressions;
     using System.Web.Mvc;
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
     
     public class WindowHtmlBuilder : IWindowHtmlBuilder
     {
@@ -15,6 +15,8 @@ namespace Telerik.Web.Mvc.UI
         {
             Window = window;
         }
+
+        private Regex RemoteUrlRegex = new Regex(@"^([a-z]+:)?\/\/", RegexOptions.IgnoreCase);
 
         public Window Window 
         { 
@@ -45,7 +47,7 @@ namespace Telerik.Web.Mvc.UI
         {
             return new HtmlElement("img", TagRenderMode.SelfClosing)
                     .Attribute("alt", Window.IconAlternativeText.HasValue() ? Window.IconAlternativeText : "icon", false)
-                    .AddClass(UIPrimitives.Image, "t-window-icon")
+                    .AddClass(UIPrimitives.Image)
                     .Attribute("src", Window.IconUrl);
         }
 
@@ -70,7 +72,7 @@ namespace Telerik.Web.Mvc.UI
         public IHtmlNode ButtonTag(IWindowButton button)
         {
             IHtmlNode linkTag = new HtmlElement("a")
-                                .AddClass("t-window-action", UIPrimitives.Link)
+                                .AddClass(UIPrimitives.Link)
                                 .Attribute("href", button.Url);
 
             linkTag.Children.Add(new HtmlElement("span")
@@ -98,9 +100,7 @@ namespace Telerik.Web.Mvc.UI
                 content.Css("height", Window.Height + "px");
             }
 
-            if (Window.ContentUrl.HasValue()
-                && (Window.ContentUrl.StartsWith("http", System.StringComparison.InvariantCultureIgnoreCase)
-                ||  Window.ContentUrl.StartsWith("https", System.StringComparison.InvariantCultureIgnoreCase)))
+            if (Window.ContentUrl.HasValue() && RemoteUrlRegex.IsMatch(Window.ContentUrl))
             {
                 new HtmlElement("iframe")
                     .Attributes(new {

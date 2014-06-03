@@ -19,9 +19,11 @@
                      {
                          Address = customer.Address,
                          ContactName = customer.ContactName,
+                         CompanyName = customer.CompanyName,
                          Country = customer.Country,
                          CustomerID = customer.CustomerID,
-                         BirthDay = DateTime.Now
+                         BirthDay = DateTime.Now,
+                         Phone = customer.Phone
                      }).ToList();
             }
 

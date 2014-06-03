@@ -3,6 +3,8 @@
         replaceUrlRegExp = /{0:?/,
         dateFormatRegExp = /{0:?(\S|\s)*}/;
 
+    $t.scripts.push("telerik.calendar.js");
+
     function defineViewedMonth(selectedValue, minValue, maxValue) {
         var today = new $t.datetime();
         if (selectedValue) {
@@ -30,14 +32,14 @@
             this.viewedMonth = defineViewedMonth(this.selectedDate, this.minDate, this.maxDate);
 
             var header = new $t.stringBuilder()
-                         .cat('<a href="#" class="t-link t-nav-prev ')
-                         .catIf('t-state-disabled', this.currentView.compare(this.viewedMonth, minDate, false) <= 0)
+                         .cat('<a href="#" class="t-link t-nav-prev')
+                         .catIf(' t-state-disabled', this.currentView.compare(this.viewedMonth, minDate, false) <= 0)
                          .cat('">')
 			             .cat('<span class="t-icon t-arrow-prev"></span></a><a href="#" class="t-link t-nav-fast">')
 			             .cat(this.currentView.title(this.viewedMonth))
 			             .cat('</a>')
-			             .cat('<a href="#" class="t-link t-nav-next ')
-                         .catIf('t-state-disabled', this.currentView.compare(this.viewedMonth, maxDate, true) >= 0)
+			             .cat('<a href="#" class="t-link t-nav-next')
+                         .catIf(' t-state-disabled', this.currentView.compare(this.viewedMonth, maxDate, true) >= 0)
                          .cat('"><span class="t-icon t-arrow-next"></span></a>');
 
             $('.t-header', this.element).html(header.string());
@@ -457,14 +459,16 @@
             },
             body: function (viewedMonth, minDate, maxDate, selectedDate, urlFormat, dates) {
                 var html = (new $t.stringBuilder())
-			               .cat('<thead><tr class="t-week-header">');
+			               .cat('<thead><tr>');
 
-                var firstDayIndex = $t.cultureInfo.firstDayOfWeek;
-                var days = $t.cultureInfo.days;
-                var abbrDays = $t.cultureInfo.abbrDays;
+                var firstDayIndex = $t.cultureInfo.firstDayOfWeek,
+                    days = $t.cultureInfo.days,
+                    abbrDays = $t.cultureInfo.abbrDays,
+                    shortestDays = $t.cultureInfo.shortestDays;
 
                 days = days.slice(firstDayIndex).concat(days.slice(0, firstDayIndex));
                 abbrDays = abbrDays.slice(firstDayIndex).concat(abbrDays.slice(0, firstDayIndex));
+                shortestDays = shortestDays.slice(firstDayIndex).concat(shortestDays.slice(0, firstDayIndex));
 
                 for (var i = 0; i < 7; i++) {
                     html.cat('<th scope="col" abbr="')
@@ -472,7 +476,7 @@
                         .cat('" title="')
                         .cat(days[i])
                         .cat('">')
-                        .cat(days[i].charAt(0))
+                        .cat(shortestDays[i])
                         .cat('</th>');
                 }
 
@@ -810,8 +814,5 @@
             return urlFormat;
         }
     });
-
-    $.extend($t.formatters, {
-        date: $t.datetime.format
-    });
+ 
 })(jQuery);

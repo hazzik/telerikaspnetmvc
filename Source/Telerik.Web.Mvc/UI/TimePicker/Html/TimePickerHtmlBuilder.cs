@@ -69,7 +69,7 @@ namespace Telerik.Web.Mvc.UI.Html
             }
 
             return new HtmlElement("input", TagRenderMode.SelfClosing)
-                .Attributes(new { id = Component.Id, name = Component.Name })
+                .Attributes(new { id = Component.Id, name = Component.Name, type = "text" })
                 .Attributes(Component.InputHtmlAttributes)
                 .Attributes(Component.GetUnobtrusiveValidationAttributes())
                 .PrependClass(UIPrimitives.Input)

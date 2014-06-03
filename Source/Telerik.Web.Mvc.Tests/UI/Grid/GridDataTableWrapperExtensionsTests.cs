@@ -40,6 +40,7 @@
             var firstHeaderItem = result.Cast<Dictionary<string, object>>().First();
 
             Assert.Null(firstHeaderItem["AggregateFunctionsProjection"]);
+            Assert.NotNull(firstHeaderItem["Aggregates"]);
             Assert.Equal(42, firstHeaderItem["Key"]);
             Assert.False((bool)firstHeaderItem["HasSubgroups"]);
             Assert.NotNull(firstHeaderItem["Items"]);

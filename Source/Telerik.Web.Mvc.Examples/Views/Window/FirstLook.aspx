@@ -25,6 +25,7 @@
                .MaxHeight(500)
                .MaxWidth(500)
             )
+           .Scrollable((bool)ViewData["scrolling"])
            .Modal((bool)ViewData["modal"])
            .Buttons(b => b.Maximize().Close())
            .Content(() =>
@@ -66,8 +67,8 @@
     <style type="text/css">
         .example form
         {
-            width: 430px;
-            height: 370px;
+            margin-bottom: 150px;
+            width: 350px;
             float: right;
         }
         

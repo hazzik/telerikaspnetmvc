@@ -27,6 +27,14 @@
         }
 
         [Fact]
+        public void Build_should_output_type_text_attribute()
+        {
+            IHtmlNode tag = renderer.Build();
+
+            Assert.Equal("text", tag.Attribute("type"));
+        }
+
+        [Fact]
         public void Build_should_output_input_with_id_attribute_same_as_component_id()
         {
             AutoComplete.Name = "test.test";

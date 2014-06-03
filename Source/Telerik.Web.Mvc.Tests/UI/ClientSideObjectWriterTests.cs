@@ -224,7 +224,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .AppendDateOnly("foo", new DateTime(2000, 1, 1, 23, 59, 59, 999));
 
-            _writer.Verify(w => w.Write("foo:new Date(2000,00,01)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,0,1)"));
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .AppendDateOnly("foo", date);
 
-            _writer.Verify(w => w.Write("foo:new Date(2000,00,01)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,0,1)"));
         }
 
         [Fact]
@@ -259,7 +259,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .Append("foo", (DateTime?) new DateTime(2000, 1, 1, 23, 59, 59, 999));
 
-            _writer.Verify(w => w.Write("foo:new Date(2000,00,01,23,59,59,999)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,0,1,23,59,59,999)"));
         }
 
         [Fact]
@@ -270,7 +270,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .Append("foo", new DateTime(2000, 1, 1, 23, 59, 59, 999));
 
-            _writer.Verify(w => w.Write("foo:new Date(2000,00,01,23,59,59,999)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,0,1,23,59,59,999)"));
         }
 
         [Fact]

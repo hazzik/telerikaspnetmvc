@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     using System.Linq;
     using Telerik.Web.Mvc.UI.Html;
+    using Telerik.Web.Mvc.Extensions;
 
     public class GridActionColumn<T> : GridColumnBase<T>, IGridActionColumn where T : class
     {
@@ -34,8 +35,11 @@ namespace Telerik.Web.Mvc.UI
             var urlBuilder = Grid.UrlBuilder;
 
             var buttons = Commands.SelectMany(command => command.CreateDisplayButtons(Grid.Localization, urlBuilder, htmlHelper));
-            
-            return new GridActionCellBuilder(buttons.Select(button => (Func<object, IHtmlNode>)button.Create));
+
+            GridActionCellBuilder builder = new GridActionCellBuilder(buttons.Select(button => (Func<object, IHtmlNode>)button.Create));
+            builder.HtmlAttributes.Merge(HtmlAttributes);
+
+            return builder;
         }
 
         protected override IGridDataCellBuilder CreateEditBuilderCore(IGridHtmlHelper htmlHelper)

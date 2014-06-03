@@ -4,10 +4,14 @@
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
-{
-    using System.Collections.Generic;
+{    
+    using System;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using System.Collections.Generic;
+    
+    using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.Extensions;
 
 
     public class TextBoxBase<T> : ViewComponentBase, ITextBox<T>, IInputComponent<T> where T : struct
@@ -128,13 +132,25 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
         
-#if MVC2 || MVC3
+
         public override void VerifySettings()
         {
+#if MVC2 || MVC3
             Name = Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
+#endif
             
+            if (MinValue.HasValue && MaxValue.HasValue && Nullable.Compare<T>(MinValue, MaxValue) == 1)
+            {
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
+            }
+
+            if (Value != null && ((MaxValue.HasValue && Nullable.Compare<T>(Value, MaxValue) == 1) || (MinValue.HasValue && Nullable.Compare<T>(Value, MinValue) == -1)))
+            {
+                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
+            }
+
             base.VerifySettings();
         }
-#endif
+
     }
 }

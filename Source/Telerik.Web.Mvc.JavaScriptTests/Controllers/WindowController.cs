@@ -13,5 +13,11 @@
         {
             return View();
         }
+
+        [HttpGet]
+        public ActionResult Blank()
+        {
+            return Content("");
+        }
     }
 }

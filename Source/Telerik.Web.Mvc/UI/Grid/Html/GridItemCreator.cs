@@ -81,6 +81,7 @@ namespace Telerik.Web.Mvc.UI.Html
                 return new GridItem
                 {
                     DataItem = creatorData.CreateNewDataItem(),
+                    GroupLevel = creatorData.GroupsCount,
                     Type = GridItemType.InsertRow
                 };
             }

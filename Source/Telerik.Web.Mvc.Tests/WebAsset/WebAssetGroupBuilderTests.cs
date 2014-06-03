@@ -98,6 +98,13 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void Should_add_item_with_protocol_less_url()
+        {
+            builder.Add("//www.example.com");
+            Assert.Equal("//www.example.com", group.Items[0].Source);
+        }
+
+        [Fact]
         public void Should_append_default_path()
         {
             builder.Add("script2.js");

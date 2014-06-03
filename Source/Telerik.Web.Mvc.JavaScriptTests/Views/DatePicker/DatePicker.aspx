@@ -16,7 +16,7 @@
 
      <%= Html.Telerik().DatePicker().Name("DatePickerWithInputAttr")
                 .Effects(e=>e.Toggle())
-                .InputHtmlAttributes(new {value = "10/20/2000"})
+                .InputHtmlAttributes(new {value = "12/12/2000"})
      %>
 </asp:Content>
 
@@ -171,7 +171,7 @@
 
             var day = datepicker.dateView.$calendar.find('.t-state-selected');
 
-            equal('20', day.text(), 'not correct day is selected');
+            equal('12', day.text(), 'not correct day is selected');
         });
 
     </script>

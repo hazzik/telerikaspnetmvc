@@ -86,6 +86,14 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void Should_be_able_to_exclude_jQuery_validation()
+        {
+            _builder.jQueryValidation(false);
+
+            Assert.True(_scriptRegistrar.ExcludeValidationScripts);
+        }
+
+        [Fact]
         public void OnDocumentReady_should_add_new_action_in_on_document_ready_action_collection()
         {
             Action onLoad = delegate { };

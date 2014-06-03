@@ -61,17 +61,6 @@
             equal(result.selectUrl, component.ws.selectUrl);
         });
 
-        test('isAjax method should return component onDataBinding method', function() {
-            component.onDataBinding = "dataBinding";
-
-            component.ajax = undefined;
-            component.ws = undefined;
-
-            var result = loader.isAjax();
-
-            equal(result, "dataBinding");
-        });
-
         test('ajaxRequest should raise dataBinding event', function() {
             isCalled = false;
             loader.ajaxRequest(function () { });
@@ -80,6 +69,7 @@
 
         test('ajaxRequest should create ajaxOptions and pass them to jQuery ajax method', function() {
             var ajaxOptions;
+            component.ajax = undefined;
             component.ws = { selectUrl: "testURL" };
             $.ajax = function (options) { ajaxOptions = options; }
             loader.ajaxRequest(function () { });

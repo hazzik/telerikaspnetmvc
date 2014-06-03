@@ -54,8 +54,8 @@ namespace Telerik.Web.Mvc.UI.Html
         public IHtmlNode CreateRow()
         {
             var tr = new HtmlElement("tr")
-                .AddClass("t-detail-row")
-                .Attributes(HtmlAttributes);
+                .Attributes(HtmlAttributes)
+                .PrependClass("t-detail-row");
 
             if (!Expanded)
             {

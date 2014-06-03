@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
 
-    public class DateTimePickerHtmlBuilder
+    public class DateTimePickerHtmlBuilder : IDateTimePickerHtmlBuilder
     {
         public DateTimePickerHtmlBuilder(DateTimePicker component)
         {
@@ -76,7 +76,7 @@ namespace Telerik.Web.Mvc.UI
             }
 
             return new HtmlElement("input", TagRenderMode.SelfClosing)
-                   .Attributes(new { id = Component.Id, name = Component.Name })
+                   .Attributes(new { id = Component.Id, name = Component.Name, type = "text" })
                    .Attributes(Component.InputHtmlAttributes)
                    .Attributes(Component.GetUnobtrusiveValidationAttributes())
                    .PrependClass(UIPrimitives.Input)

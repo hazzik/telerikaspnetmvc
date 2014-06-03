@@ -24,6 +24,8 @@
             }
         };    
     
+    $t.scripts.push("telerik.draganddrop.js");
+
     $t.droppable = function (options) {
        $.extend(this, droppableDefaults, options);
        $(this.owner).delegate(this.selector, 'mouseenter', $.proxy(this._over, this))
@@ -87,14 +89,25 @@
                 return callback($.extend(e, draggable));
         },
 
-        _wait: function (e) {
-            this.$target = $(e.currentTarget);
-            this._startPosition = { x: e.pageX, y: e.pageY };
+        _startDrag: function(target, position) {
+            target = $(target);
+            this.$target = target;
+            
+            if (position) {
+                this._startPosition = position;
+            } else {
+                var offset = target.offset();
+                this._startPosition = { x: offset.left, y: offset.top };
+            }
 
             $(document).bind( {
                 mousemove: this._startProxy,
                 mouseup: this._destroyProxy
             });
+        },
+
+        _wait: function (e) {
+            this._startDrag(e.currentTarget, { x: e.pageX, y: e.pageY });
 
             $(document.documentElement).trigger('mousedown', e); // manually triggering 'mousedown' because the next statement will prevent that.
 

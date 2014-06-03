@@ -359,7 +359,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(onDetailViewExpandCodeBlock, "onDetailViewExpandCodeBlock");
 
-            events.OnSave.CodeBlock = onDetailViewExpandCodeBlock;
+            events.OnDetailViewExpand.CodeBlock = onDetailViewExpandCodeBlock;
 
             return this;
         }
@@ -387,7 +387,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(onDetailViewExpandInlineCode, "onDetailViewExpandInlineCode");
 
-            events.OnSave.InlineCodeBlock = onDetailViewExpandInlineCode;
+            events.OnDetailViewExpand.InlineCodeBlock = onDetailViewExpandInlineCode;
 
             return this;
         }
@@ -437,7 +437,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(onDetailViewCollapseCodeBlock, "onDetailViewCollapseCodeBlock");
 
-            events.OnSave.CodeBlock = onDetailViewCollapseCodeBlock;
+            events.OnDetailViewCollapse.CodeBlock = onDetailViewCollapseCodeBlock;
 
             return this;
         }
@@ -465,7 +465,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(onDetailViewCollapseInlineCodeBlock, "onDetailViewCollapseInlineCodeBlock");
 
-            events.OnSave.InlineCodeBlock = onDetailViewCollapseInlineCodeBlock;
+            events.OnDetailViewCollapse.InlineCodeBlock = onDetailViewCollapseInlineCodeBlock;
 
             return this;
         }

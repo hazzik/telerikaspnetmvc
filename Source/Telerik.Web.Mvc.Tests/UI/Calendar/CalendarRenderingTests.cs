@@ -5,17 +5,19 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Threading;
-    using Telerik.Web.Mvc.Infrastructure;
     using Xunit;
 
-    public class CalendarRenderingTests
+    public class CalendarRenderingTests: IDisposable
     {
         private readonly Calendar calendar;
         private readonly Mock<ICalendarHtmlBuilder> tagBuilder;
         private readonly Mock<IHtmlNode> rootTag;
-        
+        System.Globalization.CultureInfo currentCulture;
+
         public CalendarRenderingTests()
         {
+            currentCulture = System.Globalization.CultureInfo.CurrentCulture;
+
             Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
@@ -25,6 +27,11 @@
 
             calendar = CalendarTestHelper.CreateCalendar(tagBuilder.Object);
             calendar.Name = "Calendar";
+        }
+
+        public void Dispose()
+        {
+            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = currentCulture;
         }
 
         [Fact]
@@ -85,13 +92,12 @@
             tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
             tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
-            tagBuilder.Setup(r => r.HeaderCellTag(It.IsAny<string>())).Verifiable();
+            tagBuilder.Setup(r => r.HeaderCellTag(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Verifiable();
 
             calendar.Render();
 
-            tagBuilder.Verify(r => r.HeaderCellTag(It.IsAny<string>()), Times.Exactly(7));
+            tagBuilder.Verify(r => r.HeaderCellTag(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(7));
         }
-
 
         [Fact]
         public void Render_should_output_Month_Body_Start_once()
@@ -386,6 +392,26 @@
             calendar.Render();
 
             tagBuilder.Verify(t => t.CellTag(new DateTime(2010, 7, 25), calendar.Value,It.IsAny<string>(), It.IsAny<bool>()), Times.Once());
+        }
+
+        [Fact]
+        public void CellTag_should_start_rendering_month_view_from_31_8_2011()
+        {
+            Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("sl-SI");
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("sl");
+
+            calendar.Value = new DateTime(2011, 8, 31);
+
+            tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td")).Verifiable();
+
+            calendar.Render();
+
+            tagBuilder.Verify(t => t.CellTag(new DateTime(2011, 7, 25), calendar.Value, It.IsAny<string>(), It.IsAny<bool>()), Times.Once());
         }
     }
 }

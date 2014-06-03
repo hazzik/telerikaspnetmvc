@@ -1,17 +1,17 @@
 ﻿
-<script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php" type="text/javascript"></script>
-
 <div class="fb-background">
     <div class="introduction">
+        <!-- initial screen before connecting to Facebook -->
         <h3>Binding to External Web Service: Facebook</h3>
         <p>
             To view this example, you need to connect with a <strong>Facebook application</strong>,
             which gives us access to your <strong>name and friends list</strong>.
         </p>
         <p>
-            <strong>We won't collect your information, nor write on your Wall!</strong><br />
+            <strong>We won't collect your information, nor write on your Wall.</strong><br />
             If you don't take our word for it, you can check the source code below.<br />
         </p>
+
         <p class="button-area">
             <a href="#" class="fb-connect">Connect to Facebook</a>
         </p>
@@ -20,9 +20,10 @@
     </div>
 
     <div class="profile">
+        <!-- showing facebook user info and a list of friends -->
         <div id="profile-info">
             Welcome, <span id="fb-name"></span>
-            <img src="@Url.Content("~/Content/Grid/ExternalServiceFacebook/fb_silhouette.png") "
+            <img src="@(Url.Content("~/Content/Grid/ExternalServiceFacebook/fb_silhouette.png"))"
                  id="fb-pic" width="50" height="50" alt="Welcome Screen Facebook" />
         </div>
 
@@ -37,108 +38,104 @@
                     .OnRowDataBound("onRowDataBound")
                     .OnDataBinding("onDataBinding")
                 )
-                .Pageable()
-        )
+                .Pageable())
     </div>
 </div>
 
 <p class="disclaimer">Facebook is a registered trademark of Facebook, Inc.</p>
 
 <script type="text/javascript">
-    var api_key = 'd04fba62ff27c6c84a6b767d404bcec3';
-    var channel_path = '@Url.Content("~/Content/Grid/ExternalServiceFacebook/xd_receiver.htm")';
-    var currentUserId = -1;
+    var appID = '172172924366';
+
+    function onPageLoad() {
+        if (window.location.hash.length == 0) {
+            // initial screen
+            $('.fb-connect').one("click", function(e) { 
+                e.preventDefault();
+
+                var path = 'https://www.facebook.com/dialog/oauth?',
+                    queryParams = ['client_id=' + appID, 'redirect_uri=' + window.location, 'response_type=token'],
+                    query = queryParams.join('&'),
+                    url = path + query;
+
+                location.href = url;
+            });
+        } else {
+            window.accessToken = window.location.hash.substring(1);
+            
+            // assume that page was redirected from facebook
+            var path = "https://graph.facebook.com/me?",
+                queryParams = [accessToken, 'callback=onUserInfoLoaded'],
+                query = queryParams.join('&'),
+                url = path + query,
+                script = document.createElement('script');
+    
+            $('.loading').show();
+
+            script.src = url;
+            document.body.appendChild(script);
+        }
+    }
+    
+    function onUserInfoLoaded(user) {
+        $('#fb-name').text(user.name);
+        $('#fb-pic').attr("src", "http://graph.facebook.com/" + user.username + "/picture");
+
+        window.user = user;
+
+        // show friends list, page 1
+        onDataBinding({ page: 1 });
+                
+        $('.introduction').hide();
+        $('.profile').show();
+    }
+
+    function onFriendsDataLoaded(data) {
+        var grid = $('#friend-list').data('tGrid');
+
+        data = data.data;
+
+        // necessary for first pager update,
+        //  but can be set each time (in case friends are added)
+        grid.total = data.length;
+        // show the data in the grid
+        grid.dataBind(data.slice((page - 1) * 10, page * 10));
+    }
     
     function onDataBinding(e) {
-    
-        // discard databinding prior to intialization
-        if (currentUserId == -1)
+
+        // discard databinding prior to intialization of Graph API
+        if (typeof user == "undefined")
             return;
-        
-        var grid = $('#friend-list').data('tGrid');
-        var api = FB.Facebook.apiClient;
-        
-        api.callMethod('Fql.multiquery', { queries: {
-                friends: [
-                    'SELECT uid2 FROM friend ',
-                    ' WHERE uid1 = ', currentUserId
-                ].join(''),
-                friends_info: [
-                    'SELECT name, pic_square FROM user ',
-                    'WHERE uid IN (SELECT uid2 FROM #friends) ',
-                    'LIMIT ', (e.page - 1) * 10, ', ', e.page * 10 /* sugary MySQL paging */
-                ].join('')
-            }},
-            function(multiQueryResult) {
-                // necessary for first pager update,
-                //  but can be set each time (in case friends are added)
-                grid.total = multiQueryResult[0].fql_result_set.length;
-                // show the data in the grid
-                grid.dataBind(multiQueryResult[1].fql_result_set);
-                
-                $('.introduction').hide();
-                $('.profile').show();
-            });
+
+        window.page = e.page;
+
+        // assume that page was redirected from facebook
+        var path = "https://graph.facebook.com/me/friends?",
+            queryParams = [accessToken, 'callback=onFriendsDataLoaded'],
+            query = queryParams.join('&'),
+            url = path + query,
+            script = document.createElement('script');
+
+        script.src = url;
+        document.body.appendChild(script);
     }
     
     function onRowDataBound(e) {
         var row = e.row;
         var dataItem = e.dataItem;
         
-        row.cells[0].innerHTML = 
-                        ['<img src="',
-                         dataItem['pic_square']
-                            || '@Url.Content("~/Content/Grid/ExternalServiceFacebook/fb_silhouette.png")',
-                         '" width="50" height="50" />'].join('');
+        row.cells[0].innerHTML = ['<img src="http://graph.facebook.com/' + dataItem.id + '/picture" width="50" height="50" />'].join('');
         row.cells[1].innerHTML = dataItem['name'];
     }
     
-    function showFacebookInfo() {
-        $('.loading').show();
-    
-        var api = FB.Facebook.apiClient;
-        
-        // require user login
-        api.requireLogin(function(exception){
-            api.users_getLoggedInUser(function(currentUserId, exception) {
-                window.currentUserId = currentUserId;
-                
-                // query profile info
-                api.users_getInfo(currentUserId, ['name', 'pic_square'], function(result) {
-                    $('#fb-name').text(result[0]['name']);
-                    
-                    if (result[0]['pic_square'])
-                        $('#fb-pic').attr('src', result[0]['pic_square']);
-                });
-                
-                // show friends list, page 1
-                onDataBinding({ page: 1 });
-            });
-        });
-    }
 </script>
 
 <div id="loading-overlay"></div>
+
 @{
     Html.Telerik().ScriptRegistrar()
-        .OnDocumentReady(@<text>
-        
-        $('.fb-connect').click(function(e) { 
-            e.preventDefault();
-            
-            alert("Facebook API not yet initialized. Please wait a moment.");
-        });
-        
-        /* initialize facebook API */
-        FB_RequireFeatures(['Api'], function() {
-            FB.Facebook.init(api_key, channel_path);
-            
-            if (/session=/.test(window.location.href))
-                showFacebookInfo();
-            else
-                $('.fb-connect').unbind('click').click(function(e) { e.preventDefault(); showFacebookInfo(); });
-        });
-    </text>);
+        .OnDocumentReady(@<text>onPageLoad();</text>);
 }
 
 
@@ -218,6 +215,4 @@
             margin: 20px auto 40px;
         }
     </style>
-
 }
-

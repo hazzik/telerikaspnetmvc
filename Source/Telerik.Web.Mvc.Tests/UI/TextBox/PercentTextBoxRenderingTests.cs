@@ -114,11 +114,11 @@
 
             input.Value = value;
 
-            TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.Append("val", value)).Verifiable();
+            TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendObject("val", value)).Verifiable();
 
             input.WriteInitializationScript(textWriter.Object);
 
-            TextBoxBaseTestHelper.clientSideObjectWriter.Verify(w => w.Append("val", value));
+            TextBoxBaseTestHelper.clientSideObjectWriter.Verify(w => w.AppendObject("val", value));
         }
 
         [Fact]
@@ -142,11 +142,11 @@
 
             input.MinValue = value;
 
-            TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.Append("minValue", value)).Verifiable();
+            TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendObject("minValue", value)).Verifiable();
 
             input.WriteInitializationScript(textWriter.Object);
 
-            TextBoxBaseTestHelper.clientSideObjectWriter.Verify(w => w.Append("minValue", value));
+            TextBoxBaseTestHelper.clientSideObjectWriter.Verify(w => w.AppendObject("minValue", value));
         }
 
         [Fact]
@@ -156,11 +156,11 @@
 
             input.MaxValue = value;
 
-            TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.Append("maxValue", value)).Verifiable();
+            TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendObject("maxValue", value)).Verifiable();
 
             input.WriteInitializationScript(textWriter.Object);
 
-            TextBoxBaseTestHelper.clientSideObjectWriter.Verify(w => w.Append("maxValue", value));
+            TextBoxBaseTestHelper.clientSideObjectWriter.Verify(w => w.AppendObject("maxValue", value));
         }
 
         [Fact]

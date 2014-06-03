@@ -160,6 +160,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot use PageOnScroll with Server binding..
+        /// </summary>
+        internal static string CannotUsePageOnScrollWithServerBinding {
+            get {
+                return ResourceManager.GetString("CannotUsePageOnScrollWithServerBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot use only server templates in Ajax or WebService binding mode. Please specify a client template as well..
         /// </summary>
         internal static string CannotUseTemplatesInAjaxOrWebService {
@@ -299,6 +308,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InCell editing mode is not supported when ClientRowTemplate is used.
+        /// </summary>
+        internal static string InCellModeNotSupportedWithRowTemplate {
+            get {
+                return ResourceManager.GetString("InCellModeNotSupportedWithRowTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Provided index is out of range..
         /// </summary>
         internal static string IndexOutOfRange {
@@ -407,6 +425,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Paging must be enabled to use PageOnScroll..
+        /// </summary>
+        internal static string PagingMustBeEnabledToUsePageOnScroll {
+            get {
+                return ResourceManager.GetString("PagingMustBeEnabledToUsePageOnScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The {0} must be begger then 0..
         /// </summary>
         internal static string PropertyMustBeBiggerThenZero {
@@ -439,6 +466,15 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string Rtl {
             get {
                 return ResourceManager.GetString("Rtl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scrolling must be enabled to use PageOnScroll..
+        /// </summary>
+        internal static string ScrollingMustBeEnabledToUsePageOnScroll {
+            get {
+                return ResourceManager.GetString("ScrollingMustBeEnabledToUsePageOnScroll", resourceCulture);
             }
         }
         

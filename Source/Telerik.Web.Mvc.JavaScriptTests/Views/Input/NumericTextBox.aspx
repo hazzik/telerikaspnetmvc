@@ -41,7 +41,7 @@
            }) %>
            <br />
 
-               <%= Html.Telerik().NumericTextBox()
+    <%= Html.Telerik().NumericTextBox()
            .Name("errorState") 
            .MaxValue(80)
     %>
@@ -62,6 +62,19 @@
 <asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
 <script type="text/javascript">
+
+    test("custom input CSS class should be copy to the DIV element which holds the formatted value", function () {
+        var cssClass = getInput("#DisabledNumeric").$text.attr("class");
+        
+        equal(cssClass, "t-formatted-value custom t-state-empty");
+    });
+
+    test("custom input CSS class should be copy to the DIV element which holds the formatted value", function () {
+        var textbox = getInput();
+
+        equal(textbox.$element.attr("class"), "t-input");
+        equal(textbox.$text.attr("class"), "t-formatted-value t-state-empty");
+    });
 
     test('focusing input should make div invisible and input visible', function () {
         var textbox = getInput();
@@ -107,7 +120,7 @@
         ok(!isDefaultPrevent);
     });
 
-    test('input should call _value method if element.value is not diff then this.val', function () {
+    test('input should not call _value method if element.value is not diff then this.val', function () {
         var $input = $('#numerictextbox');
         var input = $input.data("tTextBox");
         var called = false;
@@ -129,8 +142,8 @@
             input._value = oldValue;
             window.setTimeout = oldSetTimeout;
         }
-
     });
+
 
     test('input should increase value with one step when up arrow keyboard is clicked', function () {
         var keyCode = "38";
@@ -239,24 +252,40 @@
         ok(isDefaultPrevent);
     });
 
-    test('input should allow 110 as decimal separator', function () {
+    test('input should append correct decimal separator on key 110 (NumPad Del button)', function () {
         var keyCode = "110";  // 'DEL' button
-        var isDefaultPrevent = false;
         var $input = $('#numerictextbox');
 
         $input.val('1');
 
         getInput().separator = ',';
-        getInput().decimals['110'] = ',';
+        getInput().specialDecimals["110"] = ',';
 
         $input.trigger({ type: "keydown",
             keyCode: keyCode,
             preventDefault: function () {
-                isDefaultPrevent = true;
             }
         });
 
-        ok(!isDefaultPrevent);
+        equal($input.val(), "1,");
+    });
+
+    test('input should append correct decimal separator when special key is pressed', function () {
+        var keyCode = "191";  // 'DEL' button
+        var $input = $('#numerictextbox');
+
+        $input.val('1');
+
+        getInput().separator = ',';
+        getInput().specialDecimals["191"] = ',';
+
+        $input.trigger({ type: "keydown",
+            keyCode: keyCode,
+            preventDefault: function () {
+            }
+        });
+
+        equal($input.val(), "1,");
     });
 
     test('input should allow decimal separator', function () {
@@ -399,6 +428,28 @@
             equal(textbox.$text.html(), textbox.text);
         } finally {
             window.setTimeout = oldSetTimeOut;
+        }
+    });
+
+    test('_paste method should get input value and call _update method if value is correctly parsed', function () {
+        var textbox = getInput('#numerictextbox2');
+        var oldSetTimeOut = window.setTimeout;
+        var oldUpdate = textbox._update;
+        var parsedValue;
+
+        try {
+
+            window.setTimeout = function (callback, time) { callback(); }
+            textbox._update = function (v) { parsedValue = v; }
+            textbox.value(null);
+            textbox.$element.val(8);
+
+            textbox.$element.trigger({ type: "paste" });
+
+            equal(parsedValue, 8);
+        } finally {
+            window.setTimeout = oldSetTimeOut;
+            textbox._update = oldUpdate;
         }
     });
     

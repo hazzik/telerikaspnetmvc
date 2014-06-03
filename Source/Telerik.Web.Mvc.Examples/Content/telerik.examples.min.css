@@ -181,7 +181,7 @@ body, input, select, textarea, button
 #page .demos-navigation .t-item,
 #page .demos-navigation .t-group
 {
-    background-color: transparent;
+    background: none transparent; /*because of the Transparent skin*/
 }
 
 #page .demos-navigation .t-group
@@ -195,11 +195,23 @@ body, input, select, textarea, button
     border-color: #2c2c2c;
 }
 
+#page .demos-navigation .isNew
+{
+    display: inline-block;
+    margin-left: 6px;
+    overflow: hidden;
+    text-indent: -9999px;
+    width: 14px;
+    height: 7px;
+    vertical-align: middle;
+    background: transparent url('Images/sprite.png') no-repeat -150px -64px;
+}
+
 .tOverview,
 .tGrid, .tMenu, .tPanelBar, .tTabStrip,
 .tCalendar, .tDatePicker, .tTreeView, .tNumericTextBox,
 .tEditor, .tComboBox, .tWindow,
-.tUpload, .tSplitter, .tSlider
+.tUpload, .tSplitter, .tSlider, .tChart
 {
     background: transparent url('Images/sprite.png') no-repeat 0 0;
 }
@@ -218,6 +230,7 @@ body, input, select, textarea, button
 .tSlider { background-position: -192px 0 }
 .tSplitter { background-position: -208px 0 }
 .tUpload { background-position: -224px 0 }
+.tChart { background-position: -240px 0 }
 
 #page #navigation-product-examples
 {
@@ -233,6 +246,7 @@ body, input, select, textarea, button
 
 #navigation-product-examples .tCalendar { background-position: 0 -16px }
 #navigation-product-examples .tComboBox { background-position: -24px -16px }
+#navigation-product-examples .tChart { background-position: -150px -40px }
 #navigation-product-examples .tDatePicker { background-position: -48px -16px }
 #navigation-product-examples .tEditor { background-position: -72px -16px }
 #navigation-product-examples .tGrid { background-position: -96px -16px }
@@ -245,7 +259,6 @@ body, input, select, textarea, button
 #navigation-product-examples .tTreeView { background-position: -264px -16px }
 #navigation-product-examples .tUpload { background-position: -312px -16px }
 #navigation-product-examples .tWindow { background-position: -288px -16px }
-
 
 #page #navigation-product-examples .t-item .t-header
 {
@@ -566,7 +579,7 @@ body, input, select, textarea, button
 {
     right: 0;
     background: url('Images/menu.png') no-repeat 100% -164px;
-    padding-right: 17px;
+    padding-right: 8px;
     z-index: 302;
 }
 
@@ -578,7 +591,7 @@ body, input, select, textarea, button
     text-decoration: none;
     background: transparent url('Images/sprite.png') no-repeat -32px -94px;
     padding: 0 0 0 3px;
-    margin-top: 10px;
+    margin-top: 5px;
     
     display: inline-block;
     *display: inline;
@@ -587,10 +600,10 @@ body, input, select, textarea, button
 
 #call-to-action span
 {
-    line-height: 18px;
+    line-height: 26px;
     display: block;
-    padding: 0 7px 0 4px;
-    background: transparent url('Images/sprite.png') no-repeat 100% -112px;
+    padding: 0 13px 0 10px;
+    background: transparent url('Images/sprite.png') no-repeat 100% -94px;
 }
 
 #call-to-action a:hover
@@ -615,9 +628,9 @@ body, input, select, textarea, button
     color: #fff;
     right: 30px;
     z-index: 300;
-    line-height: 21px;
+    line-height: 23px;
     padding-right: 117px;
-    height: 21px;
+    height: 23px;
 }
 
 #theming .t-drop-down
@@ -745,6 +758,38 @@ body, input, select, textarea, button
     text-decoration: underline;
 }
 
+.theme-preview-office2010blue span,
+.theme-preview-office2010silver span,
+.theme-preview-transparent span
+{
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+.theme-preview-office2010blue span:after,
+.theme-preview-office2010silver span:after,
+.theme-preview-transparent span:after
+{
+	content: "NEW";
+	position: absolute;
+	z-index:1000;
+	top: 24px;
+	right: 4px;
+	padding: 1px 3px;
+	margin:0;
+	background: #000;
+	color: #b8f648;
+	font-size: 9px;
+	line-height: 1.7;
+	font-weight: bold;
+	text-align: center;
+	text-indent: 0;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
 .example
 {
     padding: 70px 30px 47px;
@@ -805,6 +850,11 @@ span.wave-logo
 {
     clear: both;
     margin-top: 1.3em;
+}
+
+.t-transparent
+{
+    background:url('Images/transparent-skin-bg.png');
 }
 
 .t-black .configurator,
@@ -895,6 +945,20 @@ h3 img
 {
     margin-top: 2em;
     width: 5em;
+}
+
+kbd
+{
+    display:inline-block;
+    background: #eee;
+    border-color: #ccc #aaa #888 #bbb;
+    border-style: solid;
+    border-width: 1px 3px 3px 1px;
+    color: #000000;
+    margin:2px 0;
+    padding: 0 4px;
+    white-space: nowrap;
+    font-size:120%;
 }
 
 /* skin-specific example styles */
@@ -1089,9 +1153,11 @@ h3 img
 .rc-topleft { background-position: -8px -94px; left: -2px; }
 .rc-topright { background-position: -14px -94px; right: -2px; }
 .t-black .rc-topleft,
-.t-office2010black .rc-topleft { background-position: -20px -94px; }
+.t-office2010black .rc-topleft,
+.t-transparent .rc-topleft { background-position: -20px -94px; }
 .t-black .rc-topright,
-.t-office2010black .rc-topright { background-position: -26px -94px; }
+.t-office2010black .rc-topright,
+.t-transparent .rc-topright { background-position: -26px -94px; }
 
 h2#big-logo
 {
@@ -1311,6 +1377,30 @@ h2#big-logo
 #terms a:hover
 {
     text-decoration: underline;
+}
+
+.t-transparent
+{
+    background: #014b7b url('images/transparent-skin-background.jpg') no-repeat 0 0;
+}
+
+.t-transparent .example-title,
+.t-transparent .event-log-wrap h3,
+.t-transparent h3,
+.t-transparent .event-log-wrap .t-link
+{
+    color: #fff;
+}
+
+.t-transparent .configurator h3
+{
+    color: #000;
+}
+
+.t-transparent .configurator,
+.t-transparent .accessibility-validation
+{
+    background: rgba(241, 241, 241, 0.7);
 }
 
 /* Code prettifier styles */

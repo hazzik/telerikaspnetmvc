@@ -3,6 +3,8 @@
         $t = $.telerik,
         rFileExtension = /\.([^\.]+)$/;
 
+    $t.scripts.push("telerik.upload.js");
+
     $t.upload = function (element, options) {
         $.extend(this, options);
 
@@ -101,13 +103,24 @@
         _onInputChange: function(e)
         {
             var input = $(e.target),
-                prevented =
-                    $t.trigger(this.wrapper, "select", {
-                        files: getInputFiles(input)
-                    });
+                prevented = $t.trigger(this.wrapper, "select", { files: getInputFiles(input) });
 
             if (!prevented) {
                 input.trigger("t:select");
+            }
+        },
+
+        _onDrop: function (e) {
+			var dt = e.originalEvent.dataTransfer,
+				droppedFiles = dt.files;
+				
+			stopEvent(e);
+
+            if (droppedFiles.length > 0) {
+                var prevented = $t.trigger(this.wrapper, "select", { files: getAllFileInfo(droppedFiles) });
+                if (!prevented) {
+                    $(".t-dropzone", this.wrapper).trigger("t:select", [ droppedFiles ]);
+                }
             }
         },
 
@@ -299,14 +312,20 @@
         },
 
         _onParentFormSubmit: function() {
-            this.element.trigger("t:abort");
+            var upload = this,
+                element = upload.element;
+            element.trigger("t:abort");
 
-            var upload = this;
-            if (!this.element.value) {
-                // Prevent submitting an empty input by clearing its name temporarily
-                var emptyInput = $(this.element).attr("name", "");
-                setTimeout(function() {
-                    emptyInput.attr("name", upload.name);
+            if (!element.value) {
+                var input = $(element);
+                
+                // Prevent submitting an empty input
+                input.attr("name", "");
+
+                window.setTimeout(function() {
+                    // Restore the input name so the Upload remains functional
+                    // in case the user cancels the form submit
+                    input.attr("name", upload.name);
                 }, 0);
             }
         },
@@ -329,7 +348,7 @@
                 isSafari = !isChrome && /safari/.test(userAgent),
                 isWindowsSafari = isSafari && /windows/.test(userAgent);
 
-            return !isWindowsSafari && this._getSupportsFormData();
+            return !isWindowsSafari && this._getSupportsFormData() && (this.async.saveUrl != undefined);
         },
 
         _getUserAgent: function() {
@@ -357,23 +376,12 @@
                 function() { dropZone.removeClass("t-dropzone-active"); });
         },
 
-        _onDrop: function (e) {
-			var dt = e.originalEvent.dataTransfer,
-				files = dt.files;
-				
-			stopEvent(e);
-
-            if (files.length > 0) {
-                $(".t-dropzone", this.wrapper).trigger("t:select", [ files ]);
-            }
-        },
-
         _supportsRemove: function() {
             return this.async.removeUrl != undefined;
         },
 
         _submitRemove: function(fileNames, onSuccess, onError) {
-            var params = {};
+            var params = $.extend({}, getAntiForgeryTokens());
             params["fileNames"] = fileNames;
 
             $.ajax({
@@ -530,9 +538,14 @@
                 var form = iframe.data("form")
                     .appendTo(document.body);
 
-                var saveUrl = upload.async.saveUrl;
-                if (e.data) {
-                    form[0].action = saveUrl + (/\?/.test(saveUrl) ? "&" : "?") + $.param(e.data);
+                e.data = $.extend({ }, e.data, getAntiForgeryTokens());
+                for (var key in e.data) {
+                    var dataInput = form.find("input[name='" + key + "']");
+                    if (dataInput.length == 0) {
+                        dataInput = $("<input>", { type: "hidden", name: key })
+                            .prependTo(form);
+                    }
+                    dataInput.val(e.data[key]);
                 }
 
                 upload._setFileAction(fileEntry, "cancel");
@@ -762,14 +775,14 @@
                 upload._setFileAction(fileEntry, "cancel");
                 upload._hideUploadButton();
 
-                var saveUrl = this.upload.async.saveUrl;
-                if (e.data) {
-                    saveUrl += (/\?/.test(saveUrl) ? "&" : "?") + $.param(e.data);
+                e.data = $.extend({ }, e.data, getAntiForgeryTokens());
+                for (var key in e.data) {
+                    formData.append(key, e.data[key]);
                 }
 
                 upload._setFileState(fileEntry, "uploading");
 
-                this.postFormData(saveUrl, formData, fileEntry);
+                this.postFormData(this.upload.async.saveUrl, formData, fileEntry);
             } else {
                 this.removeFileEntry(fileEntry);
             }
@@ -940,6 +953,10 @@
     }
 
     function removeUploadedFile(fileEntry, upload) {
+        if (!upload._supportsRemove()) {
+            return;
+        }
+
         var files = fileEntry.data("fileNames");
         var fileNames = $.map(files, function(file) { return file.name });
 
@@ -972,10 +989,12 @@
     function tryParseJSON(input, onSuccess, onError) {
         try {
             var json = $.parseJSON(input);
-            onSuccess(json);
         } catch (e) {
             onError();
+            return;
         }
+
+        onSuccess(json);
     }
 
     function stopEvent(e) {
@@ -1019,6 +1038,15 @@
 
     function getFileEntry(e) {
         return $(e.target).closest(".t-file");
+    }
+
+    function getAntiForgeryTokens() {
+        var tokens = { };
+        $("input[name^='__RequestVerificationToken']").each(function() {
+            tokens[this.name] = this.value;
+        });
+
+        return tokens;
     }
 
 })(jQuery);

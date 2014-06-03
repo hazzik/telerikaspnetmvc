@@ -1,0 +1,25 @@
+﻿<p>
+    This example shows how to configure Telerik Chart for ASP.NET MVC to bind to data returned from an Ajax request.
+    This operation mode is referred to as "Ajax binding".
+</p>
+<p>
+    The required steps are:
+</p>
+<ol>
+    <li>Configure the Chart to use Ajax binding via the <em>DataBinding</em> method:
+        <pre class="prettyprint">
+&lt;%= Html.Telerik().Chart&lt;SalesData&gt;()
+        <em>.DataBinding(dataBinding => dataBinding.Ajax().Select("_SalesData", "Chart"))</em>
+        .Name("Chart")
+%&gt;</pre>
+    </li>
+    <li>
+        The action specified by the <em>Select</em> method return <em>JsonResult</em>.
+        <pre class="prettyprint">
+public ActionResult _Select()
+{
+    return Json(<em>SalesDataBuilder.GetCollection()</em>);
+}
+        </pre>
+    </li>
+</ol>

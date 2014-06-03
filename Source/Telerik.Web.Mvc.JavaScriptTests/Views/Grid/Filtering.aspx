@@ -1,6 +1,9 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
+
+    <input type="text" id="NumericTextBoxStandalone" value="123" />
+
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .Columns(columns =>
@@ -80,6 +83,15 @@
 
         function getGrid(selector) {
             return $(selector || "#Grid1").data("tGrid");
+        }
+
+        function getNumericTextBox() {
+            if ($("#NumericTextBoxStandalone").data("tTextBox") === undefined) {
+                $(document.documentElement).css( {'font-size': '12px', 'line-height': 'normal', 'font-family': 'sans-serif' } );
+                $("#NumericTextBoxStandalone").tTextBox({ type: 'numeric', minValue: null, maxValue: null, numFormat: '', groupSeparator: '' });
+            }
+
+            return $("#NumericTextBoxStandalone").data("tTextBox");
         }
 
         module("Grid / Filtering", {
@@ -187,16 +199,26 @@
             equal(encoded, "datetime'2000-10-11T00-00-00'");
         });
         
-        test('validate number fails when string', function() {
+        test('validate Date fails when invalid date string', function() {
             var grid = getGrid();
-            ok(!grid.isValidFilterValue(grid.columns[2], "string"));
+            ok(!grid.isValidFilterValue(grid.columns[1], "string"));
         });
+
+        test('validate Date succeeds when valid date string', function() {
+            var grid = getGrid();
+            ok(grid.isValidFilterValue(grid.columns[1], "10/11/2000"));
+        });
+
+        test('validate Date succeeds when valid date literal', function() {
+            var grid = getGrid();
+            ok(grid.isValidFilterValue(grid.columns[1], "\/Date(1265752800000)\/"));
+        });        
         
         test('validate number succeeds when whole number', function() {
             var grid = getGrid();
             ok(grid.isValidFilterValue(grid.columns[2], "1"));
         });
-        
+
         test('validate number succeeds when decimal number', function() {
             var grid = getGrid();
             ok(grid.isValidFilterValue(grid.columns[2], "3.14"));
@@ -375,6 +397,18 @@
             grid.rebind();
 
             equal($('.t-filter-options .t-formatted-value', grid.element).html(), "");
+        });
+
+        test('numeric textbox in filter dropdown has correct font styles for its formatted value', function() {
+            var ntb = getNumericTextBox();
+            var grid = getGrid();
+
+            grid.$header.find("th:eq(2) .t-filter").click();
+
+            var filterntb = $("[id*='Grid1BirthDate']").data("tTextBox");
+
+            equal(filterntb.$text.css('font-size'), ntb.$text.css('font-size'), 'font size does not match');
+            equal(filterntb.$text.css('line-height'), ntb.$text.css('line-height'), 'line height does not match');
         });
 
 </script>

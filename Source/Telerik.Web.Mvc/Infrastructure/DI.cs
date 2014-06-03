@@ -19,8 +19,23 @@ namespace Telerik.Web.Mvc.Infrastructure
             set;
         }
 
+        public static bool IsDebug
+        {
+            get;
+            set;
+        }
+
         static DI()
         {
+            if (HttpContext.Current != null)
+            {
+                IsDebug = HttpContext.Current.IsDebuggingEnabled;
+            }
+            else
+            {
+                IsDebug = true;
+            }
+
             Current = new DependencyInjectionContainer();
             
             RegisterCoreDependencies();
@@ -82,7 +97,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         {
             Current.Register<IWebAssetExtensions>(() =>
             {
-                if (HttpContext.Current.IsDebuggingEnabled)
+                if (IsDebug)
                 {
                     return new DebugWebAssetExtensions();
                 }
@@ -127,14 +142,12 @@ namespace Telerik.Web.Mvc.Infrastructure
             Current.Register<ICalendarHtmlBuilderFactory>(() => new CalendarHtmlBuilderFactory());
 
             Current.Register<IWindowHtmlBuilderFactory>(() => new WindowHtmlBuilderFactory());
-
-            Current.Register<IGridActionResultAdapterFactory>(() => new GridActionResultAdapterFactory());
         }
         
         static void RegisterCacheDependencies()
         {
             Current.Register<ICacheProvider>(() => new CacheProvider());
-            Current.Register<ICacheFactory, ICacheProvider>((provider) => new CacheFactory(HttpContext.Current.IsDebuggingEnabled, provider));
+            Current.Register<ICacheFactory, ICacheProvider>((provider) => new CacheFactory(IsDebug, provider));
             Current.Register<IReflectedAuthorizeAttributeCache, ICacheFactory, IAuthorizeAttributeBuilder>((cacheFactory, authorizeAttributeBuilder) =>
                 new ReflectedAuthorizeAttributeCache(cacheFactory.Create("authorizeAttribute"), authorizeAttributeBuilder));
             Current.Register<IControllerTypeCache, ICacheFactory>((cacheFactory) => new ControllerTypeCache(cacheFactory.Create("controllerType")));

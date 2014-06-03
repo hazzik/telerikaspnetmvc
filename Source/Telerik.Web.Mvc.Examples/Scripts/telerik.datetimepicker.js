@@ -2,6 +2,8 @@
 
     var $t = $.telerik;
 
+    $t.scripts.push("telerik.datetimepicker.js");
+
     function getButtonHtml(type, titleText) {
         var builderHtml = new $t.stringBuilder();
         return builderHtml.cat('<span class="t-icon t-icon-')
@@ -15,7 +17,7 @@
 
     $t.datetimepicker = function (element, options) {
         $.extend(this, options);
-
+        
         if (element.nodeName.toLowerCase() !== "input" && element.type.toLowerCase() !== "text") {
             throw "Target element is not a INPUT";
         }
@@ -84,6 +86,14 @@
             }, this)
         });
 
+        this.dateView.$calendar
+            .bind("click", $.proxy(function(e) {
+                e.stopPropagation();
+                if (e.target.parentNode.className.indexOf("t-state-selected") != -1) {
+                    this._close("date");
+                }
+            }, this));
+
         this.inputValue = $element.val();
         var value = this.selectedValue || this.inputValue;
         if (value) {
@@ -127,7 +137,7 @@
     $t.datetimepicker.prototype = {
         _update: function (val) {
             val = this.parse(val);
-
+            
             if (val != null) {
                 if (val - this.minValue <= 0) {
                     val = this.minValue;
@@ -137,22 +147,22 @@
                 }
             }
 
-            var selectedValue = this.selectedValue,
-                formattedSelectedValue = selectedValue ? $t.datetime.format(selectedValue, this.format) : '',
+            var oldValue = this.selectedValue,
+                formattedSelectedValue = oldValue ? $t.datetime.format(oldValue, this.format) : '',
                 formattedValue = val ? $t.datetime.format(val, this.format) : '';
+
+            this._value(val);
 
             if (formattedValue != formattedSelectedValue) {
                 var data = {
-                    previousValue: selectedValue,
+                    previousValue: oldValue,
                     value: val
                 };
 
                 if ($t.trigger(this.element, 'valueChange', data)) {
-                    val = new Date(selectedValue);
+                    this._value(oldValue);
                 }
             }
-
-            this._value(val);
         },
 
         _value: function (value) {
@@ -160,10 +170,9 @@
             var isNull = value === null;
             var dateView = this.dateView;
             var associatedDateView = dateView.$calendar.data('associatedDateView');
-
             this.selectedValue = value;
             this.timeView.value(isNull ? null : $t.datetime.format(value, this.timeFormat));
-            if (associatedDateView && associatedDateView == dateView)
+            if (associatedDateView)
                 dateView.value(value);
 
             if (!isNull)
@@ -305,8 +314,8 @@
             format = format || this.format;
 
             var result = $t.datetime.parse({
-                AM: $t.cultureInfo.AM,
-                PM: $t.cultureInfo.PM,
+                AM: $t.cultureInfo.am,
+                PM: $t.cultureInfo.pm,
                 value: value,
                 format: format,
                 baseDate: this.selectedValue ? new $t.datetime(this.selectedValue) : new $t.datetime()

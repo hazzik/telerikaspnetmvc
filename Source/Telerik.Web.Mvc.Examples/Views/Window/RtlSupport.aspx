@@ -48,9 +48,9 @@
 <asp:content contentplaceholderid="HeadContent" runat="server">
     <style type="text/css">
         
-        .theme-agnostic
+        .example
         {
-            margin-top: 340px;
+            height: 340px;
         }
         
         #undo

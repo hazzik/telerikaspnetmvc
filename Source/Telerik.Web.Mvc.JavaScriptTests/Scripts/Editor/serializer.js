@@ -1,5 +1,7 @@
 var fontSizeMappings = 'xx-small,x-small,small,medium,large,x-large,xx-large'.split(','),
-    quoteRe = /"/g
+    quoteRe = /"/g,
+    brRe = /<br[^>]*>/i,
+    emptyPRe = /<p><\/p>/i;
 
 function domToXhtml(root) {
     var result = [];
@@ -190,5 +192,12 @@ function domToXhtml(root) {
 
     children(root);
 
-    return result.join('');
+    result = result.join('');
+
+    // if serialized dom contains only whitespace elements, consider it empty (required filed validation)
+    if (result.replace(brRe, "").replace(emptyPRe, "") == "") {
+        return "";
+    }
+
+    return result;
 }

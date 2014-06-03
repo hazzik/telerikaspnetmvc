@@ -67,7 +67,21 @@
 
 <script type="text/javascript">
 
+    test('pressing alt down arrow should open dropdown list', function () {
+        var ddl = getDropDownList();
+        ddl.effects = $.telerik.fx.toggle.defaults();
 
+        ddl.close();
+
+        ddl.dropDown.$items = null;
+
+        var $ddl = $('#DropDownList');
+        $ddl.focus();
+
+        $ddl.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+        ok(ddl.dropDown.$element.is(':visible'));
+    });
 
         test('DDL should tabindex 0 applied on client', function() {
             ok(getDropDownList().element.tabIndex == 0);
@@ -210,25 +224,20 @@
             equal(result, -1);
         });
 
-        test('hightlight method should call close and dataBind if correct index is passed', function() {
+        test('hightlight method should call close if correct index is passed', function () {
             var ddl = getDropDownList();
 
             var isCloseCalled = false;
-            var isDataBindCalled = false;
-
+            
             var close = ddl.close;
-            var dataBind = ddl.dropDown.dataBind;
 
             ddl.close = function () { isCloseCalled = true; };
-            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
 
             ddl.highlight(2);
 
             ok(isCloseCalled);
-            ok(isDataBindCalled);
 
             ddl.close = close;
-            ddl.dropDown.dataBind = dataBind;
         });
 
         test('highlight should higlight item found by predicate', function() {
@@ -253,28 +262,23 @@
             equal(result, -1);
         });
 
-        test('hightlight method should call close and dataBind if item is found by predicate', function() {
+        test('hightlight method should call close if item is found by predicate', function() {
             var ddl = getDropDownList();
             ddl.fill();
 
             var isCloseCalled = false;
-            var isDataBindCalled = false;
 
             var close = ddl.close;
-            var dataBind = ddl.dropDown.dataBind;
 
             ddl.close = function () { isCloseCalled = true; };
-            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
 
             ddl.highlight(function (dataItem) {
                 return dataItem.Value == 2;
             });
 
             ok(isCloseCalled);
-            ok(isDataBindCalled);
 
             ddl.close = close;
-            ddl.dropDown.dataBind = dataBind;
         });
 
         test('highlight method should return negative index if data is undefined', function() {
@@ -310,15 +314,15 @@
             equal(result, item.Text);
         });
 
-        test('value method should call select method and set previousSelected value if such item', function() {
+        test('value method should call select method and set previousSelected value if such item', function () {
             var item = { "Selected": false, "Text": "Item2", "Value": "2" };
             var isCalled = false;
 
             var ddl = getDropDownList();
             var select = ddl.select;
             ddl.previousValue = null;
-            ddl.select = function () { isCalled = true; return 2; }
-            
+            ddl.select = function () { isCalled = true; ddl.$element.val("2"); return 2; }
+
             ddl.value(2);
 
             equal(isCalled, true);
@@ -434,20 +438,6 @@
             ok(ddl.dropDown.$element.find('.t-item').last().text() == $nextSelectedItem.text());
         });
 
-        test('pressing alt down arrow should open dropdown list', function() {
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            ddl.close();
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-
-            $ddl.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            ok(ddl.dropDown.$element.is(':visible'));
-        });
-
         test('pressing escape should close dropdown list', function() {
             var ddl = getDropDownList();
             ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
@@ -552,12 +542,12 @@
                 { Text: decodedText, Value: decodedText },
                 { Text: "Product 2", Value: "2" }
             ];
-
+            
             ddl.dataBind(dataSource);
 
             ddl.loader.isAjax = old;
 
-            equal('&lt;&gt;&amp;Visit W3Schools!', ddl.data[0].Text, 'Text property is not encoded');
+            equal('&lt;&gt;&amp;Visit W3Schools!', ddl.dropDown.$items.eq(0).html(), 'Text property is not encoded');
             equal(dataSource[0].Value, ddl.data[0].Value);
         });
 
@@ -590,6 +580,25 @@
             ddl.dataBind(dataSource);
 
             equal('&lt;&gt;&amp;Visit W3Schools!', ddl.data[0].Text, 'Text property is encoded twice');
+        });
+
+        test('hightlight method should call dataBind dropDown.$items is undefined', function () {
+            var ddl = getDropDownList();
+
+            var isDataBindCalled = false;
+
+            var dataBind = ddl.dropDown.dataBind;
+
+            ddl.dropDown.dataBind = function () { ddl.dropDown.$items = $("<li><li>"); isDataBindCalled = true; };
+            ddl.dropDown.$items = null;
+            
+            ddl.highlight(function (dataItem) {
+                return dataItem.Value == 2;
+            });
+
+            ok(isDataBindCalled);
+
+            ddl.dropDown.dataBind = dataBind;
         });
 
 </script>

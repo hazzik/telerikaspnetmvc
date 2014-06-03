@@ -16,6 +16,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Script.Serialization;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
+    using System.Web.UI;
 
     /// <summary>
     /// Manages ASP.NET MVC javascript files and statements.
@@ -31,6 +32,7 @@ namespace Telerik.Web.Mvc.UI
         public static readonly string Key = typeof(ScriptRegistrar).AssemblyQualifiedName;
 
         private static readonly IList<string> frameworkScriptFileNames = new List<string> { jQuery };
+        private static readonly IList<string> validationScriptFileNames = new List<string> { jQueryValidation };
 
         private readonly IList<IScriptableComponent> scriptableComponents;
 
@@ -81,6 +83,14 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
+        public IList<IScriptableComponent> ScriptableComponents
+        {
+            get
+            {
+                return scriptableComponents;
+            }
+        }
+
         public static ScriptRegistrar Current
         {
             get
@@ -102,12 +112,36 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Gets the validation script file names.
+        /// </summary>
+        /// <value>The validation script file names.</value>
+        public static IList<string> ValidationScriptFileNames
+        {
+            get
+            {
+                return validationScriptFileNames;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether [exclude framework scripts].
         /// </summary>
         /// <value>
         /// <c>true</c> if [exclude framework scripts]; otherwise, <c>false</c>.
         /// </value>
         public bool ExcludeFrameworkScripts
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [exclude validation scripts].
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [exclude validation scripts]; otherwise, <c>false</c>.
+        /// </value>
+        public bool ExcludeValidationScripts
         {
             get;
             set;
@@ -250,8 +284,15 @@ namespace Telerik.Web.Mvc.UI
             {
                 throw new InvalidOperationException(Resources.TextResource.YouCannotCallRenderMoreThanOnce);
             }
-
-            Write(ViewContext.HttpContext.Response.Output);
+#if MVC1
+            var baseWriter = ViewContext.HttpContext.Response.Output;
+#else
+            var baseWriter = ViewContext.Writer;
+#endif
+            using (HtmlTextWriter textWriter = new HtmlTextWriter(baseWriter))
+            {
+                Write(baseWriter);
+            }
 
             hasRendered = true;
         }
@@ -458,7 +499,12 @@ namespace Telerik.Web.Mvc.UI
                     }
                 }
 
-                component.ScriptFileNames.Each(source => Scripts.Add(assetKey, PathHelper.CombinePath(filesPath, source)));
+                component.ScriptFileNames.Each(source => {
+                    if (!ValidationScriptFileNames.Contains(source) || !ExcludeValidationScripts)
+                    {
+                        Scripts.Add(assetKey, PathHelper.CombinePath(filesPath, source));
+                    }
+                });
             }
         }
 

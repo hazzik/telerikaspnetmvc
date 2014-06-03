@@ -29,6 +29,7 @@
             SelectedIndex = 0;
             Enabled = true;
             Encoded = true;
+            Delay = 500;
         }
 
         public bool Encoded
@@ -94,6 +95,12 @@
             set; 
         }
 
+        public int Delay
+        {
+            get;
+            set;
+        }
+
         public override void WriteInitializationScript(System.IO.TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tDropDownList", writer);
@@ -109,6 +116,8 @@
 
             DataBinding.Ajax.SerializeTo("ajax", objectWriter, this);
             DataBinding.WebService.SerializeTo("ws", objectWriter, this);
+
+            objectWriter.Append("delay", Delay, 500);
 
             if (Items.Any())
             {
@@ -138,11 +147,6 @@
         {
             if (Items.Any())
             {
-                if (Encoded)
-                {
-                    this.EncodeTextPropertyofItems();
-                }
-
                 this.SyncSelectedIndex();
             }
 

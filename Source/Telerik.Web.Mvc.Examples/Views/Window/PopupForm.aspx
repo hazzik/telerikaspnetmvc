@@ -23,7 +23,8 @@
                                     .Clear()
                                     .Bold().Italic().Separator()
                                     .InsertOrderedList().InsertUnorderedList().Separator()
-                                    .Indent().Outdent()
+                                    .Indent().Outdent().Separator()
+                                    .CreateLink()
                                 )%>
 
                         <div class="form-actions">
@@ -62,10 +63,6 @@
                         e.preventDefault();
                         $('#Window').data('tWindow').center().open();
                     });
-
-               // add button hovers
-               $('.t-button').live('mouseenter', $.telerik.buttonHover)
-                             .live('mouseleave', $.telerik.buttonLeave);
            <%}); %>
 
 </asp:Content>

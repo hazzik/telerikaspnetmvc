@@ -106,6 +106,11 @@
     <Compile Include="Controllers\Calendar\SelectActionController.cs" />
     <Compile Include="Controllers\Calendar\FirstLookController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\Chart\AjaxBindingController.cs" />
+    <Compile Include="Controllers\Chart\ClientSideApiController.cs" />
+    <Compile Include="Controllers\Chart\ClientSideEventsController.cs" />
+    <Compile Include="Controllers\Chart\CombinationChartController.cs" />
+    <Compile Include="Controllers\Chart\FirstLookController.cs" />
     <Compile Include="Controllers\ComboBoxController.cs" />
     <Compile Include="Controllers\ComboBox\AjaxLoadingController.cs" />
     <Compile Include="Controllers\ComboBox\AnimationEffectsController.cs" />
@@ -119,8 +124,14 @@
     <Compile Include="Controllers\ComboBox\FilteringClientController.cs" />
     <Compile Include="Controllers\ComboBox\FirstLookController.cs" />
     <Compile Include="Controllers\ComboBox\ServerValidationController.cs" />
+    <Compile Include="Controllers\ChartController.cs" />
     <Compile Include="Controllers\Editor\ImageToolController.cs" />
     <Compile Include="Controllers\Editor\ImageBrowserController.cs" />
+    <Compile Include="Controllers\Grid\ClientRowTemplateController.cs" />
+    <Compile Include="Controllers\Grid\PageOnScrollController.cs" />
+    <Compile Include="Controllers\Grid\KeyboardNavigationController.cs" />
+    <Compile Include="Controllers\Grid\OperationModeController.cs" />
+    <Compile Include="Controllers\Grid\ServerRowTemplateController.cs" />
     <Compile Include="Controllers\Slider\ClientSideApiController.cs" />
     <Compile Include="Controllers\Slider\ClientSideEventsController.cs" />
     <Compile Include="Controllers\Slider\ColorPickerController.cs" />
@@ -294,8 +305,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="ModelBinders\DateTimeModelBinder.cs" />
+    <Compile Include="ModelBinders\DecimalModelBinder.cs" />
     <Compile Include="Models\AggregatedOrder.cs" />
     <Compile Include="Models\ClientEditableOrder.cs" />
+    <Compile Include="Models\SalesData.cs" />
     <Compile Include="Models\OrderInfoDto.cs" />
     <Compile Include="Models\OrderInfo.cs" />
     <Compile Include="Models\EmployeeDto.cs" />
@@ -353,6 +367,7 @@
     <Compile Include="Models\SessionOrderRepository.cs" />
     <Compile Include="Models\TwitterItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\Razor\Views\Calendar\ClientSideApi.cshtml" />
@@ -404,8 +419,14 @@
     <Content Include="Areas\Razor\Views\Editor\Snippets.cshtml" />
     <Content Include="Areas\Razor\Views\Editor\Styles.cshtml" />
     <Content Include="Areas\Razor\Views\Editor\ImageTool.cshtml" />
+    <Content Include="Areas\Razor\Views\Chart\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Chart\AjaxBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\Chart\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Chart\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Chart\CombinationChart.cshtml" />
     <None Include="Areas\Razor\Views\Grid\AggregatesServerSide.cshtml" />
     <None Include="Areas\Razor\Views\Grid\AggregatesAjax.cshtml" />
+    <None Include="Areas\Razor\Views\Grid\ClientRowTemplate.cshtml" />
     <Content Include="Areas\Razor\Views\Grid\DisplayTemplates\Employee.cshtml">
       <SubType>Code</SubType>
     </Content>
@@ -452,6 +473,10 @@
     <Content Include="Areas\Razor\Views\Grid\SelectionServerSide.cshtml" />
     <Content Include="Areas\Razor\Views\Grid\ServerBinding.cshtml" />
     <Content Include="Areas\Razor\Views\Grid\ServerEditTemplates.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\OperationMode.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\KeyboardNavigation.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\PageOnScroll.cshtml" />
+    <None Include="Areas\Razor\Views\Grid\ServerRowTemplate.cshtml" />
     <Content Include="Areas\Razor\Views\Grid\Sorting.cshtml" />
     <Content Include="Areas\Razor\Views\Grid\TemplatesClientSide.cshtml" />
     <Content Include="Areas\Razor\Views\Grid\TemplatesServerSide.cshtml" />
@@ -491,9 +516,15 @@
     <Content Include="Areas\Razor\Views\PanelBar\SiteMapBinding.cshtml" />
     <Content Include="Areas\Razor\Views\PanelBar\Sprites.cshtml" />
     <Content Include="Areas\Razor\Views\PanelBar\Templates.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\EditingBatch.cshtml" />
     <None Include="Areas\Razor\Views\Shared\CodeFile.cshtml" />
     <Content Include="Content\Calendar\Descriptions\Accessibility.html" />
     <Content Include="Content\Calendar\Descriptions\RtlSupport.html" />
+    <Content Include="Content\Chart\Descriptions\AjaxBinding.html" />
+    <Content Include="Content\Chart\Descriptions\ClientSideApi.html" />
+    <Content Include="Content\Chart\Descriptions\ClientSideEvents.html" />
+    <Content Include="Content\Chart\Descriptions\CombinationChart.html" />
+    <Content Include="Content\Chart\Descriptions\FirstLook.html" />
     <Content Include="Content\ComboBox\Descriptions\Accessibility.html" />
     <Content Include="Content\ComboBox\Descriptions\AjaxLoading.html" />
     <Content Include="Content\ComboBox\Descriptions\AnimationEffects.html" />
@@ -533,6 +564,11 @@
     <Content Include="Content\Grid\Descriptions\ColumnReordering.html" />
     <Content Include="Content\Grid\Descriptions\AggregatesServerSide.html" />
     <Content Include="Content\Grid\Descriptions\AggregatesAjax.html" />
+    <Content Include="Content\Grid\Descriptions\ClientRowTemplate.html" />
+    <Content Include="Content\Grid\Descriptions\PageOnScroll.html" />
+    <Content Include="Content\Grid\Descriptions\KeyboardNavigation.html" />
+    <Content Include="Content\Grid\Descriptions\OperationMode.html" />
+    <Content Include="Content\Grid\Descriptions\ServerRowTemplate.html" />
     <Content Include="Content\Grid\Descriptions\EditingBatch.html" />
     <Content Include="Content\Grid\Descriptions\HeaderFooterTemplates.html" />
     <Content Include="Content\Grid\Descriptions\CustomToolBar.html" />
@@ -543,52 +579,97 @@
     <Content Include="Content\Images\overview-sprite.jpg" />
     <Content Include="Content\Images\telerik-logo.png" />
     <Content Include="Content\Images\Themes\Calendar\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Calendar\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Calendar\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\Calendar\Transparent.png" />
+    <Content Include="Content\Images\Themes\Chart\Black.png" />
+    <Content Include="Content\Images\Themes\Chart\Default.png" />
+    <Content Include="Content\Images\Themes\Chart\Forest.png" />
+    <Content Include="Content\Images\Themes\Chart\Hay.png" />
+    <Content Include="Content\Images\Themes\Chart\Office2007.png" />
+    <Content Include="Content\Images\Themes\Chart\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Chart\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Chart\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\Chart\Outlook.png" />
+    <Content Include="Content\Images\Themes\Chart\Simple.png" />
+    <Content Include="Content\Images\Themes\Chart\Sitefinity.png" />
+    <Content Include="Content\Images\Themes\Chart\Sunset.png" />
+    <Content Include="Content\Images\Themes\Chart\Telerik.png" />
+    <Content Include="Content\Images\Themes\Chart\Transparent.png" />
+    <Content Include="Content\Images\Themes\Chart\Vista.png" />
+    <Content Include="Content\Images\Themes\Chart\Web20.png" />
+    <Content Include="Content\Images\Themes\Chart\WebBlue.png" />
+    <Content Include="Content\Images\Themes\Chart\Windows7.png" />
     <Content Include="Content\Images\Themes\ComboBox\Black.png" />
     <Content Include="Content\Images\Themes\ComboBox\Default.png" />
     <Content Include="Content\Images\Themes\ComboBox\Forest.png" />
     <Content Include="Content\Images\Themes\ComboBox\Hay.png" />
     <Content Include="Content\Images\Themes\ComboBox\Office2007.png" />
     <Content Include="Content\Images\Themes\ComboBox\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\ComboBox\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\ComboBox\Office2010Silver.png" />
     <Content Include="Content\Images\Themes\ComboBox\Outlook.png" />
     <Content Include="Content\Images\Themes\ComboBox\Simple.png" />
     <Content Include="Content\Images\Themes\ComboBox\Sitefinity.png" />
     <Content Include="Content\Images\Themes\ComboBox\Sunset.png" />
     <Content Include="Content\Images\Themes\ComboBox\Telerik.png" />
+    <Content Include="Content\Images\Themes\ComboBox\Transparent.png" />
     <Content Include="Content\Images\Themes\ComboBox\Vista.png" />
     <Content Include="Content\Images\Themes\ComboBox\Web20.png" />
     <Content Include="Content\Images\Themes\ComboBox\WebBlue.png" />
     <Content Include="Content\Images\Themes\ComboBox\Windows7.png" />
     <Content Include="Content\Images\Themes\DatePicker\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\DatePicker\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\DatePicker\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\DatePicker\Transparent.png" />
     <Content Include="Content\Images\Themes\Editor\Black.png" />
     <Content Include="Content\Images\Themes\Editor\Default.png" />
     <Content Include="Content\Images\Themes\Editor\Forest.png" />
     <Content Include="Content\Images\Themes\Editor\Hay.png" />
     <Content Include="Content\Images\Themes\Editor\Office2007.png" />
     <Content Include="Content\Images\Themes\Editor\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Editor\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Editor\Office2010Silver.png" />
     <Content Include="Content\Images\Themes\Editor\Outlook.png" />
     <Content Include="Content\Images\Themes\Editor\Simple.png" />
     <Content Include="Content\Images\Themes\Editor\Sitefinity.png" />
     <Content Include="Content\Images\Themes\Editor\Sunset.png" />
     <Content Include="Content\Images\Themes\Editor\Telerik.png" />
+    <Content Include="Content\Images\Themes\Editor\Transparent.png" />
     <Content Include="Content\Images\Themes\Editor\Vista.png" />
     <Content Include="Content\Images\Themes\Editor\Web20.png" />
     <Content Include="Content\Images\Themes\Editor\WebBlue.png" />
     <Content Include="Content\Images\Themes\Editor\Windows7.png" />
     <Content Include="Content\Images\Themes\Grid\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Grid\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Grid\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\Grid\Transparent.png" />
     <Content Include="Content\Images\Themes\Menu\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Menu\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Menu\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\Menu\Transparent.png" />
     <Content Include="Content\Images\Themes\NumericTextBox\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\NumericTextBox\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\NumericTextBox\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\NumericTextBox\Transparent.png" />
     <Content Include="Content\Images\Themes\PanelBar\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\PanelBar\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\PanelBar\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\PanelBar\Transparent.png" />
     <Content Include="Content\Images\Themes\Slider\Black.png" />
     <Content Include="Content\Images\Themes\Slider\Default.png" />
     <Content Include="Content\Images\Themes\Slider\Forest.png" />
     <Content Include="Content\Images\Themes\Slider\Hay.png" />
     <Content Include="Content\Images\Themes\Slider\Office2007.png" />
     <Content Include="Content\Images\Themes\Slider\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Slider\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Slider\Office2010Silver.png" />
     <Content Include="Content\Images\Themes\Slider\Outlook.png" />
     <Content Include="Content\Images\Themes\Slider\Simple.png" />
     <Content Include="Content\Images\Themes\Slider\Sitefinity.png" />
     <Content Include="Content\Images\Themes\Slider\Sunset.png" />
     <Content Include="Content\Images\Themes\Slider\Telerik.png" />
+    <Content Include="Content\Images\Themes\Slider\Transparent.png" />
     <Content Include="Content\Images\Themes\Slider\Vista.png" />
     <Content Include="Content\Images\Themes\Slider\Web20.png" />
     <Content Include="Content\Images\Themes\Slider\WebBlue.png" />
@@ -599,28 +680,40 @@
     <Content Include="Content\Images\Themes\Splitter\Hay.png" />
     <Content Include="Content\Images\Themes\Splitter\Office2007.png" />
     <Content Include="Content\Images\Themes\Splitter\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Splitter\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Splitter\Office2010Silver.png" />
     <Content Include="Content\Images\Themes\Splitter\Outlook.png" />
     <Content Include="Content\Images\Themes\Splitter\Simple.png" />
     <Content Include="Content\Images\Themes\Splitter\Sitefinity.png" />
     <Content Include="Content\Images\Themes\Splitter\Sunset.png" />
     <Content Include="Content\Images\Themes\Splitter\Telerik.png" />
+    <Content Include="Content\Images\Themes\Splitter\Transparent.png" />
     <Content Include="Content\Images\Themes\Splitter\Vista.png" />
     <Content Include="Content\Images\Themes\Splitter\Web20.png" />
     <Content Include="Content\Images\Themes\Splitter\WebBlue.png" />
     <Content Include="Content\Images\Themes\Splitter\Windows7.png" />
     <Content Include="Content\Images\Themes\TabStrip\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\TabStrip\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\TabStrip\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\TabStrip\Transparent.png" />
     <Content Include="Content\Images\Themes\TreeView\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\TreeView\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\TreeView\Office2010Silver.png" />
+    <Content Include="Content\Images\Themes\TreeView\Transparent.png" />
     <Content Include="Content\Images\Themes\Upload\Black.png" />
     <Content Include="Content\Images\Themes\Upload\Default.png" />
     <Content Include="Content\Images\Themes\Upload\Forest.png" />
     <Content Include="Content\Images\Themes\Upload\Hay.png" />
     <Content Include="Content\Images\Themes\Upload\Office2007.png" />
     <Content Include="Content\Images\Themes\Upload\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Upload\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Upload\Office2010Silver.png" />
     <Content Include="Content\Images\Themes\Upload\Outlook.png" />
     <Content Include="Content\Images\Themes\Upload\Simple.png" />
     <Content Include="Content\Images\Themes\Upload\Sitefinity.png" />
     <Content Include="Content\Images\Themes\Upload\Sunset.png" />
     <Content Include="Content\Images\Themes\Upload\Telerik.png" />
+    <Content Include="Content\Images\Themes\Upload\Transparent.png" />
     <Content Include="Content\Images\Themes\Upload\Vista.png" />
     <Content Include="Content\Images\Themes\Upload\Web20.png" />
     <Content Include="Content\Images\Themes\Upload\WebBlue.png" />
@@ -631,15 +724,19 @@
     <Content Include="Content\Images\Themes\Window\Hay.png" />
     <Content Include="Content\Images\Themes\Window\Office2007.png" />
     <Content Include="Content\Images\Themes\Window\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Window\Office2010Blue.png" />
+    <Content Include="Content\Images\Themes\Window\Office2010Silver.png" />
     <Content Include="Content\Images\Themes\Window\Outlook.png" />
     <Content Include="Content\Images\Themes\Window\Simple.png" />
     <Content Include="Content\Images\Themes\Window\Sitefinity.png" />
     <Content Include="Content\Images\Themes\Window\Sunset.png" />
     <Content Include="Content\Images\Themes\Window\Telerik.png" />
+    <Content Include="Content\Images\Themes\Window\Transparent.png" />
     <Content Include="Content\Images\Themes\Window\Vista.png" />
     <Content Include="Content\Images\Themes\Window\Web20.png" />
     <Content Include="Content\Images\Themes\Window\WebBlue.png" />
     <Content Include="Content\Images\Themes\Window\Windows7.png" />
+    <Content Include="Content\Images\transparent-skin-background.jpg" />
     <Content Include="Content\Menu\Descriptions\Accessibility.html" />
     <Content Include="Content\NumericTextBox\Descriptions\Accessibility.html" />
     <Content Include="Content\NumericTextBox\Descriptions\RtlSupport.html" />
@@ -701,17 +798,22 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Views\Calendar\Accessibility.aspx" />
     <Content Include="Views\Calendar\RtlSupport.aspx" />
+    <Content Include="Views\Chart\AjaxBinding.aspx" />
+    <Content Include="Views\Chart\ClientSideApi.aspx" />
+    <Content Include="Views\Chart\ClientSideEvents.aspx" />
+    <Content Include="Views\Chart\CombinationChart.aspx" />
+    <Content Include="Views\Chart\FirstLook.aspx" />
+    <Content Include="Views\ComboBox\Accessibility.aspx" />
     <Content Include="Views\ComboBox\AjaxLoading.aspx" />
     <Content Include="Views\ComboBox\AnimationEffects.aspx" />
     <Content Include="Views\ComboBox\ClientSideApi.aspx" />
     <Content Include="Views\ComboBox\ClientSideBinding.aspx" />
     <Content Include="Views\ComboBox\ClientSideEvents.aspx" />
     <Content Include="Views\ComboBox\ClientValidation.aspx" />
-    <Content Include="Views\ComboBox\Accessibility.aspx" />
-    <Content Include="Views\ComboBox\RtlSupport.aspx" />
+    <Content Include="Views\ComboBox\FilteringClient.aspx" />
     <Content Include="Views\ComboBox\FilteringServer.aspx" />
     <Content Include="Views\ComboBox\FirstLook.aspx" />
-    <Content Include="Views\ComboBox\FilteringClient.aspx" />
+    <Content Include="Views\ComboBox\RtlSupport.aspx" />
     <Content Include="Views\ComboBox\ServerValidation.aspx" />
     <Content Include="Views\Editor\ImageTool.aspx" />
     <Content Include="Views\Grid\AggregatesServerSide.aspx" />
@@ -727,6 +829,11 @@
     <Content Include="Views\DatePicker\Globalization.aspx" />
     <Content Include="Views\DatePicker\RtlSupport.aspx" />
     <Content Include="Views\DatePicker\ServerValidation.aspx" />
+    <Content Include="Views\Grid\PageOnScroll.aspx" />
+    <Content Include="Views\Grid\KeyboardNavigation.aspx" />
+    <Content Include="Views\Grid\OperationMode.aspx" />
+    <Content Include="Views\Grid\ClientRowTemplate.aspx" />
+    <Content Include="Views\Grid\ServerRowTemplate.aspx" />
     <Content Include="Views\Grid\EditingBatch.aspx" />
     <Content Include="Views\Shared\GetMoreThanExpected.ascx" />
     <Content Include="Views\Slider\ClientSideApi.aspx" />
@@ -1531,6 +1638,34 @@
       <SubType>Designer</SubType>
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>UploadLocalization.bg-BG.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.pl-PL.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.pl-PL.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\EditorLocalization.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>EditorLocalization.designer.cs</LastGenOutput>
+    </Content>
+    <Content Include="App_GlobalResources\GridLocalization.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>GridLocalization.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.ru-RU.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.ru-RU.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\EditorLocalization.nl-NL.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>EditorLocalization.nl-NL.designer.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

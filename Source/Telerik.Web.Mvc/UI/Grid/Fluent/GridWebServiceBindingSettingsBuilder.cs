@@ -8,9 +8,9 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
     public class GridWebServiceBindingSettingsBuilder : IHideObjectMembers
     {
-        private GridBindingSettings settings;
+        private readonly GridClientBindingSettings settings;
 
-        public GridWebServiceBindingSettingsBuilder(GridBindingSettings settings)
+        public GridWebServiceBindingSettingsBuilder(GridClientBindingSettings settings)
         {
             this.settings = settings;
         }
@@ -46,6 +46,19 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public GridWebServiceBindingSettingsBuilder Enabled(bool value)
         {
             settings.Enabled = value;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Gets or sets the operation mode of the grid. By default the grid will make a request to the 
+        /// server when it needs data for paging, sorting, filtering or grouping. If you set the
+        /// operation mode to GridOperationMode.Client it will make only one request for all data. Any other
+        /// paging, sorting, filtering or grouping will be performed client-side.
+        /// </summary>
+        public GridWebServiceBindingSettingsBuilder OperationMode(GridOperationMode mode)
+        {
+            settings.OperationMode = mode;
 
             return this;
         }

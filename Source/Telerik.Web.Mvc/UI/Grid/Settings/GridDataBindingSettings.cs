@@ -7,14 +7,11 @@ namespace Telerik.Web.Mvc.UI
 {
     public class GridDataBindingSettings
     {
-        private readonly IGrid grid;
-
         public GridDataBindingSettings(IGrid grid)
         {
-            this.grid = grid;
             Server = new GridBindingSettings(grid);
-            Ajax = new GridBindingSettings(grid);
-            WebService = new GridBindingSettings(grid);
+            Ajax = new GridClientBindingSettings(grid);
+            WebService = new GridClientBindingSettings(grid);
         }
 
         public GridBindingSettings Server
@@ -23,16 +20,25 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public GridBindingSettings Ajax
+        public GridClientBindingSettings Ajax
         {
             get;
             private set;
         }
 
-        public GridBindingSettings WebService
+        public GridClientBindingSettings WebService
         {
             get;
             private set;
+        }
+
+        public bool IsClientOperationMode
+        {
+            get
+            {
+                return (Ajax.Enabled && Ajax.OperationMode == GridOperationMode.Client) ||
+                       (WebService.Enabled && WebService.OperationMode == GridOperationMode.Client);
+            }
         }
     }
 }

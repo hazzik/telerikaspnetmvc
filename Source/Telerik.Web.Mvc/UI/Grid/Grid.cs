@@ -20,11 +20,12 @@ namespace Telerik.Web.Mvc.UI
     using Telerik.Web.Mvc.Resources;
     using Telerik.Web.Mvc.UI.Fluent;
     using Telerik.Web.Mvc.UI.Html;
+    using System.Web;
 #if MVC3
     using Infrastructure.Implementation;
 #endif
 
-    /// <summary>
+    /// isummary>
     /// Telerik Grid for ASP.NET MVC is a view component for presenting tabular data.
     /// It supports the following features:
     /// <list type="bullet">
@@ -42,6 +43,8 @@ namespace Telerik.Web.Mvc.UI
 
         private IGridDataKeyStore dataKeyStore;
 
+        private string clientRowTemplate;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Grid{T}"/> class.
         /// </summary>
@@ -58,6 +61,7 @@ namespace Telerik.Web.Mvc.UI
             UrlGenerator = urlGenerator;
 
             PrefixUrlParameters = true;
+            RowTemplate = new HtmlTemplate<T>();
             DataProcessor = new GridDataProcessor(this);
             Columns = new List<GridColumnBase<T>>();
             DataKeys = new List<IGridDataKey<T>>();
@@ -65,6 +69,7 @@ namespace Telerik.Web.Mvc.UI
             Paging = new GridPagingSettings(this);
             Sorting = new GridSortSettings(this);
             Scrolling = new GridScrollingSettings();
+            KeyboardNavigation = new GridKeyboardNavigationSettings(this);
             Filtering = new GridFilteringSettings();
             Editing = new GridEditingSettings<T>(this)
             {
@@ -180,12 +185,92 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
+
+        private object Button<TButton>(T dataItem, GridButtonType buttonType, object htmlAttributes) 
+            where TButton : GridActionCommandBase, new()
+        {
+            var command = new TButton();
+
+            command.ButtonType = buttonType;
+            command.HtmlAttributes = htmlAttributes.ToDictionary();
+
+            var buttons = command.CreateDisplayButtons(Localization, UrlBuilder, new GridHtmlHelper<T>(ViewContext, DataKeyStore));
+
+            var fragment = new HtmlFragment();
+
+            buttons.Each(button => button.Create(dataItem).AppendTo(fragment));
+
+#if MVC3
+
+            return MvcHtmlString.Create(fragment.ToString());
+#else
+
+            return fragment.ToString();
+#endif
+        }
+#if MVC2 || MVC3
+        public object EditButton(T dataItem, GridButtonType buttonType, object htmlAttributes)
+        {
+            Editing.Enabled = true;
+
+            RegisterEditingScriptFiles();
+            return Button<GridEditActionCommand>(dataItem, buttonType, htmlAttributes);
+        }
+
+        public object EditButton(T dataItem, GridButtonType buttonType)
+        {
+            return EditButton(dataItem, buttonType, null);
+        }
+
+        public object EditButton(T dataItem)
+        {
+            return EditButton(dataItem, GridButtonType.Text, null);
+        }
+
+        public object DeleteButton(T dataItem, GridButtonType buttonType, object htmlAttributes)
+        {
+            Editing.Enabled = true;
+            RegisterEditingScriptFiles();
+            return Button<GridDeleteActionCommand>(dataItem, buttonType, htmlAttributes);
+        }
+
+        public object DeleteButton(T dataItem, GridButtonType buttonType)
+        {
+            return DeleteButton(dataItem, buttonType, null);
+        }
+
+        public object DeleteButton(T dataItem)
+        {
+            return DeleteButton(dataItem, GridButtonType.Text, null);
+        }
+#endif
+        public string ClientRowTemplate
+        {
+            get
+            {
+                return clientRowTemplate;
+            }
+            set
+            {
+                clientRowTemplate = HttpUtility.HtmlDecode(value);
+            }
+        }
+
         IEnumerable<IGridDataKey> IGrid.DataKeys
         {
             get
             {
                 return DataKeys.Cast<IGridDataKey>();
             }
+        }
+
+        /// <summary>
+        /// Gets the template which the grid will use to render a row
+        /// </summary>
+        public HtmlTemplate<T> RowTemplate
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -233,6 +318,15 @@ namespace Telerik.Web.Mvc.UI
         /// Gets the scrolling configuration.
         /// </summary>
         public GridScrollingSettings Scrolling
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the keyboard navigation configuration.
+        /// </summary>
+        public GridKeyboardNavigationSettings KeyboardNavigation
         {
             get;
             private set;
@@ -496,7 +590,35 @@ namespace Telerik.Web.Mvc.UI
                 return currentItemMode.ToEnum(GridItemMode.Default);
             }
         }
-        
+
+        public void SerializeDataSource(IClientSideObjectWriter writer)
+        {
+            IEnumerable dataSource = DataSource;
+            var dataTableEnumerable = DataSource as GridDataTableWrapper;
+
+            var serverOperationMode = !DataBinding.IsClientOperationMode;
+
+            if (serverOperationMode)
+            {
+                dataSource = DataProcessor.ProcessedDataSource;
+            }
+
+            if (dataTableEnumerable != null && dataTableEnumerable.Table != null)
+            {
+                dataSource = dataSource.SerializeToDictionary(dataTableEnumerable.Table);
+            }
+            else if (DataProcessor.ProcessedDataSource is IQueryable<AggregateFunctionsGroup>)
+            {
+                var grouppedDataSource = DataProcessor.ProcessedDataSource.Cast<IGroup>();
+
+                if (serverOperationMode) {
+                    dataSource = grouppedDataSource.Leaves();
+                }
+            }
+
+            writer.AppendCollection("data", dataSource);
+        }
+
         protected override void WriteHtml(HtmlTextWriter writer)
         {
             if (!Columns.Any() && AutoGenerateColumns)
@@ -686,6 +808,12 @@ namespace Telerik.Web.Mvc.UI
 #endif
                 Callback = RowActionCallback
             };
+
+            if (RowTemplate.HasValue())
+            {
+                renderingData.RowTemplate = (dataItem, container) => RowTemplate.Apply((T)dataItem, container);
+            }
+
             return renderingData;
         }
 
@@ -843,6 +971,38 @@ namespace Telerik.Web.Mvc.UI
 
 #endif
 
+        private void RegisterEditingScriptFiles()
+        {
+            ScriptFileNames.Add(ScriptRegistrar.jQueryValidation);
+            if (Editing.Mode == GridEditMode.PopUp)
+            {
+                ScriptFileNames.Add("telerik.draganddrop.js");
+                ScriptFileNames.Add("telerik.window.js");
+            }
+            ScriptFileNames.Add("telerik.grid.editing.js");
+
+            if (Editing.Mode != GridEditMode.InLine)
+            {
+                var properties = typeof(T).GetProperties();
+
+                if (properties.Where(p => p.PropertyType.IsDateTime()).Any())
+                {
+                    ScriptFileNames.Insert(1, "telerik.calendar.js");
+                    ScriptFileNames.Insert(2, "telerik.datepicker.js");
+                }
+
+                if (properties.Where(p => p.PropertyType.IsDateTime()).Any())
+                {
+                    ScriptFileNames.Insert(1, "telerik.calendar.js");
+                    ScriptFileNames.Insert(2, "telerik.datepicker.js");
+                }
+
+                if (properties.Where(p => p.PropertyType.IsNumericType()).Any())
+                {
+                    ScriptFileNames.Insert(1, "telerik.textbox.js");
+                }
+            }
+        }
         public void RegisterScriptFiles()
         {
             if (Filtering.Enabled)
@@ -852,35 +1012,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (Editing.Enabled)
             {
-                ScriptFileNames.Add("jquery.validate.js");
-                if (Editing.Mode == GridEditMode.PopUp)
-                {
-                    ScriptFileNames.Add("telerik.draganddrop.js");
-                    ScriptFileNames.Add("telerik.window.js");
-                }
-                ScriptFileNames.Add("telerik.grid.editing.js");
-
-                if (Editing.Mode != GridEditMode.InLine)
-                {
-                    var properties = typeof(T).GetProperties();
-
-                    if (properties.Where(p => p.PropertyType.IsDateTime()).Any())
-                    {
-                        ScriptFileNames.Insert(1, "telerik.calendar.js");
-                        ScriptFileNames.Insert(2, "telerik.datepicker.js");
-                    }
-
-                    if (properties.Where(p => p.PropertyType.IsDateTime()).Any())
-                    {
-                        ScriptFileNames.Insert(1, "telerik.calendar.js");
-                        ScriptFileNames.Insert(2, "telerik.datepicker.js");
-                    }
-
-                    if (properties.Where(p => p.PropertyType.IsNumericType()).Any())
-                    {
-                        ScriptFileNames.Insert(1, "telerik.textbox.js");
-                    }
-                }
+                RegisterEditingScriptFiles();
             }
 
             if (Grouping.Enabled)
@@ -950,7 +1082,30 @@ namespace Telerik.Web.Mvc.UI
                 {
                     throw new NotSupportedException(TextResource.CannotUseTemplatesInAjaxOrWebService);
                 }
+
+                if (DetailView != null && DetailView.Template.HasValue() && !DetailView.ClientTemplate.HasValue())
+                {
+                    throw new NotSupportedException(TextResource.CannotUseTemplatesInAjaxOrWebService);
+                }
             }
+
+            if (Paging.PageOnScroll)
+            {
+                if (!Paging.Enabled)
+                {
+                    throw new NotSupportedException(TextResource.PagingMustBeEnabledToUsePageOnScroll);
+                }
+
+                if (!Scrolling.Enabled)
+                {
+                    throw new NotSupportedException(TextResource.ScrollingMustBeEnabledToUsePageOnScroll);
+                }
+
+                if (!IsClientBinding)
+                {
+                    throw new NotSupportedException(TextResource.CannotUsePageOnScrollWithServerBinding);
+                }
+            }           
 
             if (WebService.Enabled && string.IsNullOrEmpty(WebService.Select.Url))
             {
@@ -1001,9 +1156,17 @@ namespace Telerik.Web.Mvc.UI
                     }
                 }
 #if MVC2 || MVC3
-                if (Editing.Mode == GridEditMode.InCell && (!Ajax.Enabled && !WebService.Enabled))
+                if (Editing.Mode == GridEditMode.InCell) 
                 {
-                    throw new NotSupportedException(TextResource.InCellModeNotSupportedInServerBinding);
+                    if (!Ajax.Enabled && !WebService.Enabled)
+                    {
+                        throw new NotSupportedException(TextResource.InCellModeNotSupportedInServerBinding);
+                    }
+
+                    if (ClientRowTemplate.HasValue() || RowTemplate.HasValue())
+                    {
+                        throw new NotSupportedException(TextResource.InCellModeNotSupportedWithRowTemplate);
+                    }
                 }
 
                 if(typeof(T) == typeof(System.Data.DataRowView) && Editing.Mode == GridEditMode.InLine 

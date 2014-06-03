@@ -100,6 +100,27 @@
         equal($ui.find(':input').val(), 'bar');
     });
     
+    test('bind with array access populates textbox', function() {
+        var $ui = $('<div><input type="text" name="foo[0]" /></div>');
+        
+        binder.bind($ui, {foo:[1,2] });
+
+        equal($ui.find(':input').val(), '1');
+    });    
+
+    test('bind with nested array populates textbox', function() {
+        var $ui = $('<div><input type="text" name="foo[0].bar[0].baz" /></div>');
+        
+        binder.bind($ui, { foo:[ { 
+            bar: [
+                { baz: "baz" }
+            ] 
+          } ]
+        });
+
+        equal($ui.find(':input').val(), 'baz');
+    });    
+
     test('bind checkes checkboxes', function() {
         var $ui = $('<div><input type="checkbox" name="foo" /></div>');
         

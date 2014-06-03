@@ -11,8 +11,7 @@
 	<p id="copyright">
         Copyright 2002-<%= DateTime.Now.Year %> &copy; Telerik. All rights reserved<br />Telerik Inc,
 		<span class="adr">
-		    <span class="street-address">460 Totten Pond Rd</span>,
-		    <span class="extended-address">Suite 640</span>,
+		    <span class="street-address">201 Jones Rd</span>,
 		    <span class="locality">Waltham</span>,
 		    <span class="region">MA</span>
 		    <span class="postal-code">02451</span>

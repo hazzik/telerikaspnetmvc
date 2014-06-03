@@ -1,9 +1,10 @@
 ﻿namespace Telerik.Web.Mvc.UI.Html.Tests
 {
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.UI;
     using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
-    using System.Collections.Generic;
     
     public class GridTemplateCellBuilderTests
     {
@@ -38,14 +39,9 @@
         [Fact]
         public void Should_apply_attributes()
         {
-            var attributes = new Dictionary<string, object>()
-            {
-                {"width", 100}
-            };
-
             builder = new GridTemplateCellBuilder<Customer>(new HtmlTemplate<Customer>());
             builder.Callback = delegate { };
-            builder.HtmlAttributes = attributes;
+            builder.HtmlAttributes.Merge(new { width = 100 });
 
             var td = builder.CreateCell(null);
 

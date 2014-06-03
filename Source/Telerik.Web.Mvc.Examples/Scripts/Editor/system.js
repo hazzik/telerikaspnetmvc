@@ -340,7 +340,9 @@ function Clipboard (editor) {
             if (clipboardNode.lastChild && dom.is(clipboardNode.lastChild, 'br'))
                 dom.remove(clipboardNode.lastChild);
                 
-            editor.clipboard.paste(clipboardNode.innerHTML);
+            var args = { html: clipboardNode.innerHTML };
+            $t.trigger(editor.element, "paste", args);
+            editor.clipboard.paste(args.html);
             editor.undoRedoStack.push(new GenericCommand(startRestorePoint, new RestorePoint(editor.getRange())));
         });
     }
@@ -361,13 +363,18 @@ function Clipboard (editor) {
     }
 
     this.paste = function (html) {
-        for (var i = 0, l = cleaners.length; i < l; i++)
+        var i, l;
+
+        for (i = 0, l = cleaners.length; i < l; i++)
             if (cleaners[i].applicable(html))
                 html = cleaners[i].clean(html);
             
         // It is possible in IE to copy just <li> tags
         html = html.replace(/^<li/i, '<ul><li').replace(/li>$/g, 'li></ul>');
-            
+        // Excel pastes <br> inside table tags
+        
+        html = html.replace(/<br.*?<col/ig, "<col").replace(/<br.*?<(\/?)t(able|r|d|body|h|head|foot)/ig, "<$1t$2");
+
         var block = isBlock(html);
 
         var range = editor.getRange();
@@ -389,6 +396,16 @@ function Clipboard (editor) {
         }
             
         var fragment = htmlToFragment(html);
+        
+        if (fragment.firstChild && fragment.firstChild.className === "t-paste-container") {
+            var fragmentsHtml = [];
+            for (i = 0, l = fragment.childNodes.length; i < l; i++) {
+                fragmentsHtml.push(fragment.childNodes[i].innerHTML);
+            }
+
+            fragment = htmlToFragment(fragmentsHtml.join('<br />'));
+        }
+
         range.insertNode(fragment);
                 
         parent = splittableParent(block, caret);

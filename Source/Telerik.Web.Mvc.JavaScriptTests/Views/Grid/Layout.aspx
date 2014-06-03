@@ -168,8 +168,7 @@
         });
         
         test('Grouping layout after ungroup is synced', function() {
-            var grid = getGrid('#Grouping_active');
-            
+            var grid = getGrid('#Grouping_active');            
             grid.unGroup('Name');
             grid.normalizeColumns();
             

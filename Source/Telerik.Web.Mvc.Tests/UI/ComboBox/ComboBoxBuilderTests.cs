@@ -143,5 +143,41 @@
 
             Assert.IsType(typeof(ComboBoxBuilder), returnedBuilder);
         }
+
+        [Fact]
+        public void InputHtmlAttributes_should_return_builder()
+        {
+            builder.InputHtmlAttributes(new { }).ShouldBeSameAs(builder);
+            builder.InputHtmlAttributes(new Dictionary<string, object>() { }).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void InputHtmlAttributes_merges_wight_InputHtmlAttributes_property()
+        {
+            builder.InputHtmlAttributes(new { required = "true" });
+
+            object value = "";
+
+            Assert.True(combobox.InputHtmlAttributes.TryGetValue("required", out value));
+            Assert.Equal("true", value);
+        }
+
+        [Fact]
+        public void HiddenInputHtmlAttributes_should_return_builder()
+        {
+            builder.HiddenInputHtmlAttributes(new { }).ShouldBeSameAs(builder);
+            builder.HiddenInputHtmlAttributes(new Dictionary<string, object>() { }).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void HiddenInputHtmlAttributes_merges_wight_InputHtmlAttributes_property()
+        {
+            builder.HiddenInputHtmlAttributes(new { required = "true" });
+
+            object value = "";
+
+            Assert.True(combobox.HiddenInputHtmlAttributes.TryGetValue("required", out value));
+            Assert.Equal("true", value);
+        }
     }
 }

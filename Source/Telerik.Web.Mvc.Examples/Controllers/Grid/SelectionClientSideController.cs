@@ -6,10 +6,10 @@ namespace Telerik.Web.Mvc.Examples
 
     public partial class GridController : Controller
     {
-        public ActionResult SelectionClientSide(string id)
+        public ActionResult SelectionClientSide()
         {
             ViewData["Customers"] = GetCustomers();
-            ViewData["Orders"] = GetOrdersForCustomer(id ?? "ALFKI");
+            ViewData["Orders"] = GetOrdersForCustomer("ALFKI");
             ViewData["id"] = "ALFKI";
             return View();
         }

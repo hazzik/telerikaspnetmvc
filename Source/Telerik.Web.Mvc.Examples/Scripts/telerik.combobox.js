@@ -1,6 +1,7 @@
 ﻿(function ($) {
 
     var $t = $.telerik;
+    $t.scripts.push("telerik.combobox.js");
 
     $t.combobox = function (element, options) {
         $.extend(this, options);
@@ -40,32 +41,24 @@
         var $wrapper = this.$wrapper = $element.closest('.t-combobox');
         var $selectIcon = this.$wrapper.find('.t-select');
 
-        var pasteMethod = $.browser.msie ? 'paste' : 'input';
         var $text = this.$text = this.$wrapper.find('> .t-dropdown-wrap > .t-input')
                                      .attr('autocomplete', 'off')
-                                     .bind(pasteMethod, $.proxy(function (e) {
-                                         var value = e.target.value;
-                                         if ($.browser.msie) {
-                                             var selectedText = element.document.selection.createRange().text;
-                                             var text = window.clipboardData.getData("Text");
-
-                                             if (selectedText && selectedText.length > 0) {
-                                                 value = value.replace(selectedText, text);
-                                             } else {
-                                                 value += text;
-                                             }
-                                         }
-
-                                         this.$element.val(value);
-                                         resetTimer(this);
+                                     .bind("paste", $.proxy(function (e) {
+                                         setTimeout($.proxy(function () {
+                                            this.$element.val(e.target.value);
+                                            resetTimer(this);
+                                         }, this), 0);
                                      }, this));
 
         var updateCssOnPropertyChange = function (e) {
             var attr = 'class',
                 classValue = $element.attr(attr)
-
-            if (classValue != $text.attr(attr))
-                $text.attr(attr, classValue).addClass('t-input');
+            
+            if ((e.attrName && e.attrName == "class") || (e.propertyName && e.propertyName == "className")) {
+                if (classValue != $text.attr(attr)) {
+                    $text.attr(attr, classValue).addClass('t-input');
+                }
+            }
         }
 
         if ($.browser.msie) {
@@ -75,10 +68,18 @@
             $element.bind("DOMAttrModified", updateCssOnPropertyChange);
         }
 
-        if (!$element.attr('disabled')) {
-            $selectIcon.bind('click', $.proxy(togglePopup, this));
-        }
-
+        $element.closest("form").bind("reset", $.proxy(function (e) {
+            var that = this;
+             window.setTimeout(function () {
+                if ($element.val() != "") {
+                    that.value($element.val());
+                } else {
+                    that.highlight(0);
+                    that.selectedIndex = 0;
+                }
+            }, 1);
+        }, this));
+        
         this.filtering = new $t.list.filtering(this);
         this.filtering.autoFill = function (component, itemText) {
             if (component.autoFill && (component.lastKeyCode != 8 && component.lastKeyCode != 46)) {
@@ -117,7 +118,9 @@
                     if (text == data[selectedIndex].Text) {
                         this.filteredDataIndexes = [];
                         dropDown.onItemCreate = null;
-                        dropDown.dataBind(this.data);
+                        if (this.filter) {
+                            dropDown.dataBind(this.data, this.encoded);
+                        }
                         this.select(dropDown.$items[selectedIndex]);
                     } else
                         this.filters[this.filter](this, this.data, text);
@@ -138,14 +141,20 @@
         this.enable = function () {
             $wrapper.removeClass('t-state-disabled');
             $text.removeAttr("disabled");
-            $selectIcon.bind('click', $.proxy(togglePopup, this));
+            $element.removeAttr("disabled");
+            if (!$selectIcon.data("events")) {
+                $selectIcon.bind('click', $.proxy(togglePopup, this));
+            }
         }
 
         this.disable = function () {
             $wrapper.addClass('t-state-disabled')
             $text.attr('disabled', 'disabled');
+            $element.attr('disabled', 'disabled');
             $selectIcon.unbind('click');
         }
+
+        this[this.enabled ? 'enable' : 'disable']();
 
         this.fill = function (callback) {
             function updateSelection(component) {
@@ -183,7 +192,7 @@
             var textValueLength = textValue.length;
 
             if (!dropDown.$items && !loader.ajaxError) {
-                if (loader.isAjax() && textValueLength >= minChars) {
+                if ((loader.isAjax() || this.onDataBinding) && textValueLength >= minChars) {
 
                     var postData = {};
                     postData[this.queryString.text] = textValue;
@@ -215,14 +224,18 @@
         this.select = function (item) {
             var index = this.highlight(item);
 
-            if (index == -1) return index;
+            if (index != -1) {
+                var filteredDataIndexes = this.filteredDataIndexes;
 
-            var filteredDataIndexes = this.filteredDataIndexes;
+                //set selected Index
+                this.selectedIndex = (filteredDataIndexes && filteredDataIndexes.length) > 0 ? filteredDataIndexes[index] : index;
 
-            //set selected Index
-            this.selectedIndex = (filteredDataIndexes && filteredDataIndexes.length) > 0 ? filteredDataIndexes[index] : index;
+                var dataItem = this.data[this.selectedIndex];
 
-            $t.list.updateTextAndValue(this, $(this.dropDown.$items[index]).text(), this.data[this.selectedIndex].Value);
+                $t.list.updateTextAndValue(this, dataItem.Text, dataItem.Value);
+            }
+
+            return index;
         }
 
         this.text = function () {
@@ -323,15 +336,14 @@
             var key = e.keyCode || e.which;
             this.lastKeyCode = key;
 
-            //close dropdown
-            if (e.altKey && key == 38) {
-                trigger.close();
-                return;
-            }
+            if (e.altKey && (key == 38 || key == 40)) {
+                var action = key == 38 ? trigger.close : trigger.open;
+                if (!dropDown.$items) {
+                    this.fill(action); //creates items 
+                } else {
+                    action();
+                }
 
-            //open dropdown
-            if (e.altKey && key == 40) {
-                trigger.open();
                 return;
             }
 
@@ -339,25 +351,38 @@
 
                 e.preventDefault();
 
-                if (!dropDown.$items) this.fill(); //creates items 
+                var selectItem = $.proxy(function () {
+                    var $items = dropDown.$items,
+                        $selectedItem = $items.filter('.t-state-selected:first');
 
-                var $items = dropDown.$items;
+                    var $item = $selectedItem.length == 0 || $items.length == 1 || this.selectedIndex == -1 ? $items.first()
+                                 : (key == 38) ? $selectedItem.prev() // up
+                                 : (key == 40) ? $selectedItem.next() // down
+                                 : [];
 
-                var $selectedItem = $items.filter('.t-state-selected:first');
+                    if ($item.length) {
+                        var item = $item[0];
 
-                var $item = $selectedItem.length == 0 || $items.length == 1 ? $items.first()
-                             : (key == 38) ? $selectedItem.prev() // up
-                             : (key == 40) ? $selectedItem.next() // down
-                             : [];
+                        this.select(item);
+                        dropDown.scrollTo(item);
 
-                if ($item.length) {
-                    var item = $item[0];
+                        if (!dropDown.isOpened()) {
+                            trigger.change();
+                        }
+                    }
+                }, this);
 
-                    this.select(item);
-                    dropDown.scrollTo(item);
+                if (!dropDown.$items) {
 
-                    if (!dropDown.isOpened()) trigger.change();
+                    if (this.index != -1 || this.value() || this.selectedValue) {
+                        selectItem = null;
+                    }
+
+                    this.fill(selectItem); //creates items 
+                    return;
                 }
+
+                selectItem();
             }
 
             if (key == 8 || key == 46) {
@@ -376,21 +401,24 @@
             }
 
             if (key == 13) {
-                if (dropDown.isOpened()) e.preventDefault();
+                if (dropDown.isOpened()) {
+                    e.preventDefault();
 
-                var $selectedItems = dropDown.$items.filter('.t-state-selected:first');
+                    var $selectedItems = dropDown.$items.filter('.t-state-selected:first');
 
-                if ($selectedItems.length > 0)
-                    this.select($selectedItems[0]);
-                else
-                    this.$element.val(this.$text.val());
+                    if ($selectedItems.length > 0)
+                        this.select($selectedItems[0]);
+                    else
+                        this.$element.val(this.$text.val());
 
-                trigger.change();
-                trigger.close();
-                $t.list.moveToEnd(this.$text[0]);
+                    trigger.change();
+                    trigger.close();
+                    $t.list.moveToEnd(this.$text[0]);
+                }
             }
 
             if (key == 27 || key == 9) {
+                clearTimeout(this.timeout);
                 var dataItem = findItemByText(this.data, this.$text.val());
                 if (dataItem) {
                     this.text(dataItem.Text);
@@ -434,7 +462,7 @@
             }
         }
     }
-    
+
     $.fn.tComboBox = function (options) {
         return $t.create(this, {
             name: 'tComboBox',
@@ -456,6 +484,7 @@
         filter: 0,
         delay: 200,
         minChars: 0,
+        enabled: true,
         cache: true,
         queryString: {
             text: 'text'

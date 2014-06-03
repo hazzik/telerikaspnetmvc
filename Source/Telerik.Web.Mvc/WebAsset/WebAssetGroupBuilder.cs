@@ -201,7 +201,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(source, "source");
 
-            if (source.IndexOf("://") < 0)
+            if (!source.Contains("//"))
             {
                 source = source.StartsWith("~/", StringComparison.OrdinalIgnoreCase) ? source : PathHelper.CombinePath(assetItemGroup.DefaultPath, source);
             }

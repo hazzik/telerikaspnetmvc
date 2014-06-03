@@ -1,6 +1,7 @@
 ﻿(function ($) {
 
     var $t = $.telerik;
+    $t.scripts.push("telerik.datepicker.js");
 
     var sharedCalendar = null;
 
@@ -170,8 +171,7 @@
             if (!sharedCalendar) {
                 sharedCalendar = $($t.calendar.html(new $t.datetime(this.focusedValue), this.selectedValue ? new $t.datetime(this.selectedValue) : null, new $t.datetime(this.minValue), new $t.datetime(this.maxValue)))
                                 .hide()
-                                .addClass('t-datepicker-calendar')
-                                .bind('click', function (e) { e.stopPropagation(); })
+                                .addClass('t-popup t-datepicker-calendar')
                                 .appendTo(document.body)
                                 .tCalendar({
                                     selectedValue: this.selectedValue,
@@ -492,6 +492,14 @@
             }, this)
         });
 
+        this.dateView.$calendar
+            .bind("click", $.proxy(function(e) {
+                e.stopPropagation();
+                if (e.target.parentNode.className.indexOf("t-state-selected") != -1) {
+                    this._close();
+                }
+            }, this));
+
         this.inputValue = $element.val();
         var value = this.selectedValue || this.inputValue;
         if (value) {
@@ -570,24 +578,24 @@
                 }
             }
 
-            var selectedValue = this.selectedValue,
-                formattedSelectedValue = selectedValue ? $t.datetime.format(selectedValue, this.format) : '',
+            var oldValue = this.selectedValue,
+                formattedSelectedValue = oldValue ? $t.datetime.format(oldValue, this.format) : '',
                 formattedValue = val ? $t.datetime.format(val, this.format) : '';
+
+            this._value(val);
 
             if (formattedValue != formattedSelectedValue) {
                 var data = {
-                    previousValue: selectedValue,
+                    previousValue: oldValue,
                     value: val,
-                    previousDate: selectedValue,
+                    previousDate: oldValue,
                     date: val
                 };
 
                 if ($t.trigger(this.element, 'valueChange', data)) {
-                    val = new Date(selectedValue);
+                    this._value(oldValue)
                 }
             }
-
-            this._value(val);
         },
 
         _keydown: function (e) {

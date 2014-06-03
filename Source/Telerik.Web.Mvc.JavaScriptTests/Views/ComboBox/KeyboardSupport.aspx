@@ -59,13 +59,50 @@
         })
         .Filterable(filtering => filtering.FilterMode(AutoCompleteFilterMode.StartsWith))
     %>
+
+           <%= Html.Telerik().ComboBox()
+            .Name("ComboBox3")
+            .Items(items =>
+            {
+                items.Add().Text("Item1").Value("1");
+                items.Add().Text("Item2").Value("2");
+                items.Add().Text("Item3").Value("3");
+            })
+            .OpenOnFocus(true)
+    %>
+
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
 <script type="text/javascript">
 
+    test('pressing alt down arrow should open dropdown list if LI items are not rendered', function () {
+        var combo = getComboBox();
+        combo.effects = $.telerik.fx.toggle.defaults();
 
+        combo.close();
+
+        combo.dropDown.$items = null;
+
+        combo.$text.focus();
+        combo.$text.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+        ok(combo.dropDown.isOpened());
+    });
+
+    test('pressing down arrow when is Ajax should not throw error', function () {
+        var combo = getComboBox();
+        var oldFill = combo.fill;
+        try {
+            combo.fill = function () { }
+            combo.dropDown.$items = null;
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+        } finally {
+            combo.fill = oldFill;
+        }
+    });
 
         test('pressing down arrow should select next item', function() {
             var combo = getComboBox();
@@ -96,17 +133,6 @@
 
             notEqual(combo.selectedIndex, -1);
             notEqual(combo.selectedIndex, initialSelectedIndex);
-        });
-
-        test('pressing alt down arrow should open dropdown list', function() {
-            var combo = getComboBox();
-            combo.effects = $.telerik.fx.toggle.defaults();
-
-            combo.close();
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            ok(combo.dropDown.isOpened());
         });
 
         test('keydown should create $items if they do not exist', function() {
@@ -265,6 +291,34 @@
             ok(isCalled);
 
             combo.filters[combo.filter] = oldFilter;
+        });
+
+        test('pressing down arrow should select first item if no selected, but first is highlighted', function () {
+            var combo = getComboBox();
+
+            combo.open();
+
+            combo.dropDown.$items.removeClass('t-state-selected').eq(0).addClass('t-state-selected');
+            combo.selectedIndex = -1;
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+
+            equal(combo.selectedIndex, 0)
+        });
+
+        test("drop-down list should close when close method is called even when it is still opening", function () {
+            var combo = $("#ComboBox3").data("tComboBox");
+            combo.openOnFocus = true;
+            combo.$element.bind("close", function () {
+                ok(true);
+                start();
+            });
+
+            combo.$text.focus();
+            $(document.documentElement).mousedown();
+
+            stop(500);
         });
 
 </script>

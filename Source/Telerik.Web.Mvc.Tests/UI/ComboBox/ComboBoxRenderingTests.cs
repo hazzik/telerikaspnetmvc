@@ -312,19 +312,5 @@
 
             ComboBoxTestHelper.clientSideObjectWriter.Verify(w => w.Append("encoded", It.IsAny<bool>(), true));
         }
-
-        [Fact]
-        public void WriteInitializationScript_should_encode_text_property_of_Items_collection_if_Encoded_true()
-        {
-            var decodedText = "Test<script>alert('i can haz your data');</script>";
-
-            comboBox.Items.Clear();
-            comboBox.Items.Add(new DropDownItem { Text = decodedText, Value = decodedText, Selected = true });
-
-            comboBox.Render();
-
-            Assert.Equal(comboBox.Items[0].Text, System.Web.HttpUtility.HtmlEncode(decodedText));
-            Assert.Equal(comboBox.Items[0].Value, "Test<script>alert('i can haz your data');</script>");
-        }
     }
 }

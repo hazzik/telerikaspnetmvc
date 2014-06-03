@@ -1,6 +1,8 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Culture="de-DE" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
+    <%= 10.ToString("N") %>
+
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .DataKeys(keys => keys.Add(c => c.Name))
@@ -259,6 +261,8 @@
             .Editable(editing => editing.Mode(GridEditMode.InLine))
             .Pageable(pager => pager.PageSize(10))
     %>
+
+    <% Html.Telerik().ScriptRegistrar().Globalization(true); %>
 </asp:Content>
 
 
@@ -306,8 +310,8 @@
 
         test('date is set according to format', function() {
             edit();
-            
-            equal($('#Grid1 tbody tr').find(':input').eq(1).val(), '1/1/1980');
+
+            equal($('#Grid1 tbody tr').find(':input').eq(1).val(), '01.01.1980');
         });
 
         test('clicking cancel restores original data', function() {
@@ -501,6 +505,20 @@
             equal($('#Grid4').data('tGrid').data[0], dataItem);
         });
 
+        test('cancelling insert does not raises row data bound', function() {
+            var wasCalled = false;
+            
+            addNew('#Grid4');
+            
+            $('#Grid4').bind('rowDataBound', function(e) {
+                wasCalled = true;
+            });
+            
+            cancel('#Grid4');
+
+            ok(!wasCalled);
+        });
+
         test('booleans are not validated', function() {
             getGrid('#Grid5').sendValues = function() { }
             $('#Grid5 tbody tr:eq(0)').find('.t-grid-edit').trigger('click');
@@ -569,10 +587,33 @@
             grid._convert(values);
 
             ok(!("foo" in values));
-            equal(values.bar, 0);
+            equal(values.bar, <%= 0 %>);
             equal(values.baz, "");
         });
 
+        test("_convert should format Date object", function () {
+            var grid = getGrid('#Grid6');
+            var date = new Date("10/10/2000");
+            var values = {
+                bar: date
+            };
+
+            grid._convert(values);
+
+            equal(values.bar, $t.formatString('{0:G}', date));
+        });
+
+        test("_convert should format Number object", function () {
+            var grid = getGrid('#Grid6');
+            var values = {
+                bar: 10.11
+            };
+
+            grid._convert(values);
+
+            equal(values.bar, '10,11');
+        });
+        
 </script>
 
 </asp:Content>

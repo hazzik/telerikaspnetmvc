@@ -18,11 +18,7 @@
         .Sortable()
         .Selectable()
         .ClientEvents(events => events.OnRowSelect("onRowSelected"))
-        .RowAction(row => 
-        {
-            row.Selected = row.DataItem.CustomerID.Equals(ViewData["id"]);
-        })
-        
+        .RowAction(row => row.Selected = row.DataItem.CustomerID.Equals(ViewData["id"]))        
 %>
 
 
@@ -38,22 +34,27 @@
             columns.Bound(c => c.ShipCity).Width(200);
         })
         .DataBinding(dataBinding => dataBinding.Ajax().Select("_SelectionClientSide_Orders", "Grid", new { customerID = "ALFKI" }))
+        .ClientEvents(clientEvents => clientEvents.OnDataBinding("onDataBinding"))
         .Pageable()
         .Sortable()
         
 %>
 <script type="text/javascript">
+    var customerID;
+
     function onRowSelected(e) {
         var ordersGrid = $('#Orders').data('tGrid');
-        var customerID = e.row.cells[0].innerHTML; 
+        customerID = e.row.cells[0].innerHTML; 
         
         // update ui text
         $('#customerID').text(customerID);
 
         // rebind the related grid
-        ordersGrid.rebind({
-            customerID: customerID
-        });
+        ordersGrid.rebind();
+    }
+
+    function onDataBinding(e) {
+        e.data = $.extend(e.data, { customerID: customerID });
     }
 </script>
 </asp:Content>

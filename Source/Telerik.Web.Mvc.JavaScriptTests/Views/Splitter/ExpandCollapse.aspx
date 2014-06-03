@@ -206,6 +206,43 @@
             ok(!called);
         });
 
+        test("expanding a resizable pane adds draggable class", function() {
+            var splitter = $(getSplitterHtml())
+                    .appendTo(document.body)
+                    .tSplitter({
+                        panes: [ { collapsible: false }, { collapsible: true, collapsed: true } ]
+                    });
+
+            splitter.data("tSplitter").expand(".t-pane:last");
+
+            ok(splitter.find(".t-splitbar").is(".t-splitbar-draggable-horizontal"))
+        });
+
+        test("expanding a non-resizable pane does not make it resizable", function() {
+            var splitter = $(getSplitterHtml())
+                    .appendTo(document.body)
+                    .tSplitter({
+                        panes: [ { resizable: false, collapsible: true, collapsed: true }, { collapsible: false } ]
+                    });
+
+            splitter.data("tSplitter").expand(".t-pane:first");
+
+            ok(splitter.find(".t-splitbar").is(":not(.t-splitbar-draggable-horizontal)"))
+        });
+
+        test("expanding a non-resizable pane does not modify more splitbars than necessary", function() {
+            var splitter = $(getSplitterHtml(3))
+                    .appendTo(document.body)
+                    .tSplitter({
+                        panes: [ { resizable: false, collapsible: true, collapsed: true }, { collapsible: false }, { collapsible: false } ]
+                    });
+
+            splitter.data("tSplitter").expand(".t-pane:first");
+
+            ok(splitter.find(".t-splitbar:first").is(":not(.t-splitbar-draggable-horizontal)"));
+            ok(splitter.find(".t-splitbar:last").is(".t-splitbar-draggable-horizontal"));
+        });
+
     </script>
 
 </asp:Content>

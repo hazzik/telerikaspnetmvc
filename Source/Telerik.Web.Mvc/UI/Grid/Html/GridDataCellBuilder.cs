@@ -9,7 +9,7 @@ namespace Telerik.Web.Mvc.UI.Html
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.UI;
 
-    public class GridDataCellBuilder<TModel, TValue> : GridDataCellBuilderBase
+    public class GridDataCellBuilder<TModel, TValue> : GridDataCellBuilderBase, IGridFormatableCellBuilder
         where TModel : class
     {
         public Func<TModel, TValue> Value

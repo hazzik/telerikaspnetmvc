@@ -81,6 +81,32 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private void AppendValidator(IHtmlNode container, HtmlHelper<TModel> htmlHelper)
         {
+            if (TemplateName.HasValue() && (typeof(TModel).IsDataRow() 
+#if MVC3
+                || typeof(TModel).IsDynamicObject()
+#endif
+                ))
+            {
+                AppendValidatorForTemplate(htmlHelper, container);
+            }
+            else
+            {
+                AppendValidatorFor(htmlHelper, container);
+            }
+        }
+
+        private void AppendValidatorForTemplate(HtmlHelper<TModel> htmlHelper, IHtmlNode container)
+        {
+            var message = htmlHelper.ValidationMessage(Member);
+
+            if (message != null)
+            {
+                container.Children.Add(new LiteralNode(message.ToHtmlString()));
+            }
+        }
+
+        private void AppendValidatorFor(HtmlHelper<TModel> htmlHelper, IHtmlNode container)
+        {
             var validator = htmlHelper.ValidationMessageFor(Expression);
 
             if (validator != null)

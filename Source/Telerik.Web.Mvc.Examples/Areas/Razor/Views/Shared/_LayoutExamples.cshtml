@@ -11,7 +11,8 @@
 	<h2 class="example-title">@Html.ExampleTitle()</h2>
 	<div id="theming"><a href="#" class="t-drop-down">@Html.GetCurrentTheme()</a></div>
 	<script type="text/javascript">
-	    var themePreviewsLocation = '@Url.Content(string.Format("~/Content/Images/Themes/{0}/", ViewContext.RouteData.Values["Controller"]))';
+	    var currentComponent = '@ViewContext.RouteData.Values["Controller"]',
+            themePreviewsLocation = '@Url.Content("~/Content/Images/Themes")';
 	</script>
 
 	@RenderBody()

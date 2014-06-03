@@ -17,6 +17,7 @@
      
      
      
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -132,6 +133,7 @@
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\ComboBoxController.cs" />
     <Compile Include="Controllers\AutoCompleteController.cs" />
+    <Compile Include="Controllers\ChartController.cs" />
     <Compile Include="Controllers\SplitterController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\SliderController.cs" />
@@ -181,6 +183,7 @@
     <Content Include="Views\Calendar\Navigation.aspx" />
     <Content Include="Views\Calendar\Rendering.aspx" />
     <Content Include="Views\Calendar\StaticMethods.aspx" />
+    <Content Include="Views\Chart\Configuration.aspx" />
     <Content Include="Views\ComboBox\ClientAPI.aspx" />
     <Content Include="Views\ComboBox\AjaxLoading.aspx" />
     <Content Include="Views\AutoComplete\ClientEvents.aspx" />
@@ -271,6 +274,7 @@
     <Content Include="Views\Grid\ButtonBuilders.aspx" />
     <Content Include="Views\Grid\CellEditor.aspx" />
     <Content Include="Views\Grid\ChangeSet.aspx" />
+    <Content Include="Views\Grid\Navigation.aspx" />
     <Content Include="Views\Grid\PopUpEditor.aspx" />
     <Content Include="Views\Grid\FormContainerBuilder.aspx" />
     <Content Include="Views\Grid\Editor.aspx" />
@@ -341,6 +345,7 @@
     <Content Include="Views\TreeView\ExpandCollapse.aspx" />
     <Content Include="Views\Upload\Common\Async.ascx" />
     <Content Include="Views\Upload\Common\AsyncNoAuto.ascx" />
+    <Content Include="Views\Upload\Common\AsyncNoMultiple.ascx" />
     <Content Include="Views\Upload\Common\Events\Cancel.ascx" />
     <Content Include="Views\Upload\Common\Events\Remove.ascx" />
     <Content Include="Views\Upload\Common\Events\Error.ascx" />
@@ -428,7 +433,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>38286</DevelopmentServerPort>
+          <DevelopmentServerPort>38521</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

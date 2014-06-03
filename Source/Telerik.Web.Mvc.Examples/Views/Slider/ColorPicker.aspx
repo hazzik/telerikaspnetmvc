@@ -19,7 +19,7 @@
         }
 
         function onBlueSliderEvent (e) {
-            var blue = e.value;
+            blue = e.value;
             changeBackgroundColor(red, green, blue)
         }
 

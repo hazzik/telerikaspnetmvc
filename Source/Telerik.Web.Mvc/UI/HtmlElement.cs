@@ -79,7 +79,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Attributes(object attributes)
         {
-            Attributes<string, object>(new RouteValueDictionary(attributes));
+            Attributes<string, object>(attributes.ToDictionary());
 
             return this;
         }

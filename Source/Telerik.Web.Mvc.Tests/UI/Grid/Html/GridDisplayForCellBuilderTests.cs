@@ -6,7 +6,7 @@
 namespace Telerik.Web.Mvc.UI.Html.Tests
 {
     using System;
-    using System.Collections.Generic;
+    using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
 
@@ -41,10 +41,7 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         public void Should_apply_html_attributes()
         {
             var builder = ArrangeBuilderForAddress();
-            builder.HtmlAttributes = new Dictionary<string, object>
-            {
-                { "foo", "bar" }
-            };
+            builder.HtmlAttributes.Merge(new { foo = "bar" });
             
             builder.CreateCell(customer).Attribute("foo").ShouldEqual("bar");
         }

@@ -82,6 +82,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
             settings.Height = value;
 
             return this;
-        }
+        }        
     }
 }

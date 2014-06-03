@@ -3,6 +3,8 @@
     var $t = $.telerik;
     var whiteSpaceRegExp = /\s+/;
 
+    $t.scripts.push("telerik.list.js");
+
     $t.list = {
         htmlBuilder: function (element, className, isSelect) {
             var val,
@@ -72,7 +74,9 @@
 
         common: function () {
             this.open = function () {
-                if (this.data.length == 0) return;
+                if (!this.loader.isAjax() && (!this.data || this.data.length == 0)) {
+                    return;
+                }
 
                 var $wrapper = this.$wrapper || this.$element,
                     dropDown = this.dropDown;
@@ -98,8 +102,7 @@
             this.dataBind = function (data, preserveStatus) {
                 this.data = data = (data || []);
 
-                var index = -1,
-                    isAjax = !!this.loader.isAjax();
+                var index = -1;
 
                 for (var i = 0, length = data.length; i < length; i++) {
                     var item = data[i];
@@ -107,13 +110,10 @@
                         if (item.Selected) {
                             index = i;
                         }
-                        if (this.encoded && isAjax && !this.onDataBinding) {
-                            data[i].Text = $t.encode(item.Text);
-                        }
                     }
                 }
 
-                this.dropDown.dataBind(data);
+                this.dropDown.dataBind(data, this.encoded);
 
                 if (index != -1) {
                     this.index = index;
@@ -123,17 +123,22 @@
                 if (!preserveStatus) {
                     this.text('');
                     this.$element.val('');
+                    if (this.filteredDataIndexes) {
+                        this.filteredDataIndexes = null;
+                    }
                 }
             }
 
             this.highlight = function (argument) {
 
                 var rebind = function (component) {
-                    var previousValue = component.previousValue;
                     var dropDown = component.dropDown;
+
                     component.close();
-                    dropDown.dataBind(component.data);
-                    component.previousValue = previousValue;
+                    if (!dropDown.$items) {
+                        dropDown.dataBind(component.data, component.encoded);
+                    }
+
                     dropDown.$items
                             .removeClass('t-state-selected')
                             .eq(index)
@@ -174,15 +179,14 @@
 
         filtering: function () {
             this.filter = function (component) {
-
                 component.isFiltered = true;
 
-                var performAjax = true;
-                var data = component.data;
-                var input = component.$text[0];
-                var text = input.value;
-                var trigger = component.trigger;
-                var dropDown = component.dropDown;
+                var performAjax = true,
+                    data = component.data,
+                    input = component.$text[0],
+                    text = input.value,
+                    trigger = component.trigger,
+                    dropDown = component.dropDown;
 
                 text = this.multiple(text);
 
@@ -215,16 +219,6 @@
                                 dropDown.close();
                                 dropDown.dataBind();
                                 return;
-                            }
-                            if (component.encoded && !component.onDataBinding) {
-                                for (var i = 0, length = data.length; i < length; i++) {
-                                    var item = data[i];
-                                    if (item.Text) {
-                                        data[i].Text = $t.encode(item.Text);
-                                    } else {
-                                        data[i] = $t.encode(item);
-                                    }
-                                }
                             }
 
                             component.data = data;
@@ -287,10 +281,10 @@
                     var $items = dropDown.$items;
 
                     if (!$items || $items.length == 0 || component.loader.isAjax()) {
-                        dropDown.dataBind(data);
+                        dropDown.dataBind(data, component.encoded);
                         $items = dropDown.$items;
                     }
-
+                    
                     for (var i = 0, length = data.length; i < length; i++) {
                         if (data[i].Text.slice(0, inputText.length).toLowerCase() == inputText.toLowerCase()) {
                             var item = $items[i];
@@ -406,13 +400,16 @@
 
             this.open = function () {
                 var dropDown = component.dropDown;
-                if ((dropDown.$items && dropDown.$items.length > 0) && !dropDown.isOpened() && !$t.trigger(component.element, 'open'))
+                if ((dropDown.$items && dropDown.$items.length > 0) && !dropDown.isOpened() && !$t.trigger(component.element, 'open')) {
                     component.open();
+                }
             }
 
             this.close = function () {
-                if (!component.dropDown.$element.is(':animated') && component.dropDown.isOpened() && !$t.trigger(component.element, 'close'))
+                var dropDown = component.dropDown;
+                if ((dropDown.$element.is(':animated') || dropDown.isOpened()) && !$t.trigger(component.element, 'close')) {
                     component.close();
+                }
             }
         },
 
@@ -487,28 +484,29 @@
                   39, // right arrow
                   40, // down arrow
                   35, // end
-                  36, // home
-                  46] // delete
+                  36] // home
     }
 
     function createItemsFilter(global, condition) {
         return function (component, data, inputText) {
-
             if (!data || data.length == 0) return;
-
+            
             var filteredDataIndexes = $.map(data, function (item, index) {
-                if (condition(inputText, item.Text || item)) return index;
+                var text = item.Text;
+                if (condition(inputText, text !== undefined ? text : item)) { 
+                    return index;
+                }
             });
 
             var formatRegExp = new RegExp("(?![^&;]+;)(?!<[^<>]*)(" + inputText.replace(/([\^\$\(\)\[\]\{\}\*\.\+\?\|\\])/gi, "\\$1") + ")(?![^<>]*>)(?![^&;]+;)", global ? 'ig' : 'i');
-
+            
             component.filteredDataIndexes = filteredDataIndexes;
             component.selectedIndex = -1;
-
+            
             component.dropDown.onItemCreate = function (e) { if (inputText) e.html = e.html.replace(formatRegExp, "<strong>$1</strong>"); }
             component.dropDown.dataBind($.map(filteredDataIndexes, function (item, index) {
                 return data[item];
-            }));
+            }), component.encoded);
 
             var $items = component.dropDown.$items;
             $items.removeClass('t-state-selected');
@@ -545,7 +543,7 @@
         this.loader = new $t.list.loader(this);
         this.trigger = new $t.list.trigger(this);
         this.$wrapper = $element.closest('.t-dropdown');
-        this.$text = this.$wrapper.find('> .t-dropdown-wrap > .t-input');
+        var $text = this.$text = this.$wrapper.find('> .t-dropdown-wrap > .t-input');
 
         //allow element to be focused
         if (!this.$wrapper.attr('tabIndex')) this.$wrapper.attr('tabIndex', 0);
@@ -562,6 +560,47 @@
         });
 
         this.dropDown.$element.css('direction', this.$wrapper.closest('.t-rtl').length ? 'rtl' : '');
+
+        var updateCssOnPropertyChange = function (e) {
+            var attr = 'class',
+                classValue = $element.attr(attr);
+
+            if ((e.attrName && e.attrName == "class") || (e.propertyName && e.propertyName == "className")) {
+            
+            var innerWrap = $element.prev(".t-dropdown-wrap");
+            
+                var stateClass = /\b(t-state-[\w]+)\b/.exec(innerWrap.attr(attr));
+                if (!(stateClass && stateClass[0])) {
+                    stateClass = "";
+                } else {
+                    stateClass = stateClass[0];
+                }
+            
+                if (classValue != innerWrap.attr(attr)) {
+                    innerWrap.attr(attr, classValue).addClass('t-dropdown-wrap ' + stateClass);
+                }
+            }
+        }
+
+        if ($.browser.msie) {
+            element.attachEvent("onpropertychange", updateCssOnPropertyChange);
+
+        } else {
+            $element.bind("DOMAttrModified", updateCssOnPropertyChange);
+        }
+
+        $element.closest("form").bind("reset", $.proxy(function (e) {
+            var that = this;
+             window.setTimeout(function () {
+                if ($element.val() != "") {
+                    that.value($element.val());
+                } else {
+                    that.text("");
+                    that.highlight(0);
+                    that.selectedIndex = 0;
+                }
+            }, 1);
+        }, this));
 
         this.fill = function (callback) {
             function updateSelectedItem(component) {
@@ -610,28 +649,35 @@
         }
 
         this.enable = function () {
-            this.$wrapper
-                .removeClass('t-state-disabled')
-                .bind({
-                    keydown: $.proxy(keydown, this),
-                    keypress: $.proxy(keypress, this),
-                    click: $.proxy(function (e) {
-                        var trigger = this.trigger;
-                        var dropDown = this.dropDown;
+            var wrapper = this.$wrapper.removeClass('t-state-disabled');
 
-                        this.$wrapper.focus();
+            if (!wrapper.data("events")) {
+                this.$wrapper
+                    .removeClass('t-state-disabled')
+                    .bind({
+                        keydown: $.proxy(keydown, this),
+                        keypress: $.proxy(keypress, this),
+                        click: $.proxy(function (e) {
+                            var trigger = this.trigger;
+                            var dropDown = this.dropDown;
 
-                        if (dropDown.isOpened())
-                            trigger.close();
-                        else if (!dropDown.$items)
-                            this.fill(trigger.open);
-                        else
-                            trigger.open();
-                    }, this)
-                });
+                            this.$wrapper.focus();
+
+                            if (dropDown.isOpened())
+                                trigger.close();
+                            else if (!dropDown.$items)
+                                this.fill(trigger.open);
+                            else
+                                trigger.open();
+                        }, this)
+                    });
+            }
+
+            $element.removeAttr("disabled");
         }
 
         this.disable = function () {
+            $element.attr("disabled", "disabled");
             this.$wrapper
                 .addClass('t-state-disabled')
                 .unbind();
@@ -645,16 +691,21 @@
         this.select = function (item) {
             var index = this.highlight(item);
 
-            if (index == -1) return index;
+            if (index != -1) {
+                this.selectedIndex = index;
+                
+                $t.list.updateTextAndValue(this, this.data[index].Text, this.data[index].Value);
+            }
 
-            this.selectedIndex = index;
-
-            $t.list.updateTextAndValue(this, this.data[index].Text, this.data[index].Value);
+            return index;
         }
 
         this.text = function (text) {
             if (text !== undefined) {
-                this.$text.html(text && text.replace(whiteSpaceRegExp, '') ? text : '&nbsp&nbsp');
+                if (this.encoded) {
+                    text = $t.encode(text);
+                }
+                this.$text.html(text && text.replace(whiteSpaceRegExp, '') ? text : '&nbsp;');
             } else {
                 return this.$text.html();
             }
@@ -672,9 +723,9 @@
                     });
                 }
 
-                if (index != -1)
-                    this.previousValue = value; //prevent change event
-
+                if (index != -1) {
+                    this.previousValue = this.$element.val(); //prevent change event
+                }
 
             } else {
                 return this.$element.val();
@@ -701,7 +752,7 @@
         // PRIVATE methods
         function resetTimer() {
             clearTimeout(this.timeout);
-            this.timeout = setTimeout($.proxy(function () { cachedInput = '' }, this), 1000);
+            this.timeout = setTimeout($.proxy(function () { cachedInput = '' }, this), this.delay);
         }
 
         function keydown(e) {
@@ -709,15 +760,14 @@
             var dropDown = this.dropDown;
             var key = e.keyCode || e.which;
 
-            // close dropdown
-            if (e.altKey && key == 38) {
-                trigger.close();
-                return;
-            }
+            if (e.altKey && (key == 38 || key == 40)) {
+                var action = key == 38 ? trigger.close : trigger.open;
+                if (!dropDown.$items) {
+                    this.fill(action); //creates items 
+                } else {
+                    action();
+                }
 
-            // open dropdown
-            if (e.altKey && key == 40) {
-                trigger.open();
                 return;
             }
 
@@ -751,7 +801,7 @@
             }
 
             if (key == 8) {
-                resetTimer();
+                $.proxy(resetTimer, this)();
                 e.preventDefault();
                 cachedInput = cachedInput.slice(0, -1);
             }
@@ -789,7 +839,7 @@
                 cachedInput = tempInputValue;
             }
 
-            resetTimer();
+            $.proxy(resetTimer, this)();
         }
     }
 
@@ -808,6 +858,7 @@
         effects: $t.fx.slide.defaults(),
         accessible: false,
         index: 0,
+        delay: 500,
         enabled: true,
         encoded: true
     };

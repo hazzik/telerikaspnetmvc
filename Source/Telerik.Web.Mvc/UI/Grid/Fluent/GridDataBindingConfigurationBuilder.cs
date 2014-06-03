@@ -39,9 +39,9 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual GridBindingSettingsBuilder Server()
+        public virtual GridServerBindingSettingsBuilder Server()
         {
-            return new GridBindingSettingsBuilder(configuration.Server);
+            return new GridServerBindingSettingsBuilder(configuration.Server);
         }
 
         /// <summary>
@@ -60,11 +60,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual GridBindingSettingsBuilder Ajax()
+        public virtual GridAjaxBindingSettingsBuilder Ajax()
         {
             configuration.Ajax.Enabled = true;
             
-            return new GridBindingSettingsBuilder(configuration.Ajax);
+            return new GridAjaxBindingSettingsBuilder(configuration.Ajax);
         }
 
         /// <summary>

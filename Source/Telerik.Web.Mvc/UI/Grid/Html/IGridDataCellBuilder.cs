@@ -21,7 +21,6 @@ namespace Telerik.Web.Mvc.UI.Html
         IDictionary<string, object> HtmlAttributes
         {
             get;
-            set;
         }
 
         Action<object> Callback

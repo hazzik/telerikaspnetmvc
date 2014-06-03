@@ -28,6 +28,27 @@
             .Pageable(pager => pager.PageSize(10))
     %>
 
+    <div id="date">
+        <%= Html.Telerik().DatePicker()
+                .Name("DatePicker")
+                .Value(DateTime.Today)
+        %>
+    </div>
+
+    <div id="time">
+        <%= Html.Telerik().TimePicker()
+                .Name("TimePicker")
+                .Value(DateTime.Today)
+        %>
+    </div>
+
+    <div id="datetime">
+        <%= Html.Telerik().DateTimePicker()
+                .Name("DateTimePicker")
+                .Value(DateTime.Today)
+        %>
+    </div>
+
     <div id="numeric">
         <%= Html.Telerik().NumericTextBox()
                 .Name("NumericTextBox")
@@ -75,6 +96,12 @@
             .Tools(tools => tools
                 .Clear()
                 .Bold())
+        %>
+    </div>
+     <div id="autocomplete">
+         <%= Html.Telerik().AutoComplete()
+            .Name("AutoComplete1")
+            .Value("foo")
         %>
     </div>
 </asp:Content>
@@ -162,6 +189,45 @@
         equal(model.foo, 'bar');
     });
 
+    test('bind populates datepicker', function () {
+        var $ui = $('#date');
+
+        var model = binder.bind($ui);
+        var date = new Date();
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        
+        equal(+model.DatePicker, +date);
+    });
+
+    test('bind populates datepicker', function () {
+        var $ui = $('#time');
+
+        var model = binder.bind($ui);
+        var date = new Date();
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+
+        equal(+model.TimePicker, +date);
+    });
+
+    test('bind populates datetimepicker', function () {
+        var $ui = $('#datetime');
+
+        var model = binder.bind($ui);
+        var date = new Date();
+        date.setHours(0);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+
+        equal(+model.DateTimePicker, +date);
+    });
+
     test('bind populates numeric text box', function() {
         var $ui = $('#numeric');
         
@@ -175,7 +241,7 @@
         
         var model = binder.bind($ui);
 
-        equal(model.IntegerTextBox, '<%= 1231234 %>');
+        deepEqual(model.IntegerTextBox, 1231234);
     }); 
 
     test('bind dropdownlist', function() {
@@ -206,6 +272,13 @@
         
         var model = binder.bind($ui);
         equal(model.Editor1, '&lt;strong&gt;foo&lt;/strong&gt;');
+    });
+
+     test('bind autocomplete', function() {
+        var $ui = $('#autocomplete');
+                
+        var model = binder.bind($ui);
+        equal(model.AutoComplete1, 'foo');
     });
 
 </script>

@@ -54,5 +54,10 @@
             Assert.True(checker.IsAbsolute(new WebAsset("http://www.example.com")));
         }
 
+        [Fact]
+        public void IsAbsolute_returns_true_for_protocol_less_urls()
+        {
+            Assert.True(checker.IsAbsolute(new WebAsset("//www.example.com")));
+        }
     }
 }

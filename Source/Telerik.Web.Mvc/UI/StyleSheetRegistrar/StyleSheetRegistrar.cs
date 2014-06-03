@@ -10,6 +10,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
+    using System.Web.UI;
 
     /// <summary>
     /// Manages ASP.NET MVC views style sheet files.
@@ -108,8 +109,15 @@ namespace Telerik.Web.Mvc.UI
             {
                 throw new InvalidOperationException(Resources.TextResource.YouCannotCallRenderMoreThanOnce);
             }
-
-            Write(ViewContext.HttpContext.Response.Output);
+#if MVC1
+            var baseWriter = ViewContext.HttpContext.Response.Output;
+#else
+            var baseWriter = ViewContext.Writer;
+#endif
+            using (HtmlTextWriter textWriter = new HtmlTextWriter(baseWriter))
+            {
+                Write(baseWriter);
+            }
  
             hasRendered = true;
         }

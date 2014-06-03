@@ -7,6 +7,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System.Globalization;
     using System.Resources;
+    using System;
 
     internal class EmbeddedResource : ResourceBase
     {
@@ -21,7 +22,16 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         protected override void Load()
         {
-            ResourceManager rm = new ResourceManager("Telerik.Web.Mvc.Resources." + resourceName, GetType().Assembly);
+            ResourceManager rm;
+            Type compiledResource = Type.GetType("Resources." + resourceName + ", App_GlobalResources");
+            if (compiledResource != null)
+            {
+                rm = new ResourceManager(compiledResource);
+            }
+            else
+            {
+                rm = new ResourceManager("Telerik.Web.Mvc.Resources." + resourceName, GetType().Assembly);
+            }
 
             using (ResourceSet set = rm.GetResourceSet(culture ?? CultureInfo.CurrentCulture, true, true))
             {

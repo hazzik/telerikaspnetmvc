@@ -1,14 +1,18 @@
 function createContentElement($textarea, stylesheets) {
     $textarea.hide();
-    var iframe = $('<iframe />', { src: 'javascript:"<html></html>"', frameBorder: '0', className: 't-content' })
+    var iframe = $('<iframe />', { src: 'javascript:"<html></html>"', frameBorder: '0' })
                     .css('display', '')
+                    .addClass("t-content")
                     .insertBefore($textarea)[0];
 
     var window = iframe.contentWindow || iframe;
     var document = window.document || iframe.contentDocument;
-        
-    // <img>\s+\w+ creates invalid nodes after cut in IE
-    var html = $textarea.val().replace(/(<\/?img[^>]*>)[\r\n\v\f\t ]+/ig, '$1');
+    
+    var html = $textarea.val()
+                // <img>\s+\w+ creates invalid nodes after cut in IE
+                .replace(/(<\/?img[^>]*>)[\r\n\v\f\t ]+/ig, '$1')
+                // indented HTML introduces problematic ranges in IE
+                .replace(/[\r\n\v\f\t ]+/ig, ' ');
 
     if (!html.length && $.browser.mozilla)
         html = '<br _moz_dirty="true" />';
@@ -39,10 +43,97 @@ function createContentElement($textarea, stylesheets) {
     document.close();
 
     return window;
-};
+}
 
 function selectionChanged(editor) {
     $t.trigger(editor.element, 'selectionChange');
+}
+
+function initializeContentElement(editor) {
+    var isFirstKeyDown = true;
+
+    editor.window = createContentElement($(editor.textarea), editor.stylesheets);
+    editor.document = editor.window.contentDocument || editor.window.document;
+    editor.body = editor.document.body;
+
+    $(editor.document)
+        .bind({
+            keydown: function (e) {
+                var toolName = editor.keyboard.toolFromShortcut(editor.tools, e);
+
+                if (toolName) {
+                    e.preventDefault();
+                    editor.exec(toolName);
+                    return false;
+                }
+
+                if (editor.keyboard.isTypingKey(e) && editor.pendingFormats.hasPending()) {
+                    if (isFirstKeyDown) {
+                        isFirstKeyDown = false;
+                    } else {
+                        var range = editor.getRange();
+                        editor.pendingFormats.apply(range);
+                        editor.selectRange(range);
+                    } 
+                }
+
+                editor.keyboard.clearTimeout();
+
+                editor.keyboard.keydown(e);
+            },
+            keyup: function (e) {
+                var selectionCodes = [8, 9, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+
+                if ($.browser.mozilla && e.keyCode == 8) {
+                    fixBackspace(editor, e);
+                }
+                
+                if ($.inArray(e.keyCode, selectionCodes) > -1 || (e.keyCode == 65 && e.ctrlKey && !e.altKey && !e.shiftKey)) {
+                    editor.pendingFormats.clear();
+                    selectionChanged(editor);
+                }
+                
+                if (editor.keyboard.isTypingKey(e)) {
+                    if (editor.pendingFormats.hasPending()) {
+                        var range = editor.getRange();
+                        editor.pendingFormats.apply(range);
+                        editor.selectRange(range);
+                    }
+                } else {
+                    isFirstKeyDown = true;
+                }
+
+                editor.keyboard.keyup(e);
+            },
+            mousedown: function(e) {
+                editor.pendingFormats.clear();
+
+                var target = $(e.target);
+
+                if (!$.browser.gecko && e.which == 2 && target.is('a[href]'))
+                window.open(target.attr('href'), '_new');
+            },
+            mouseup: function () {
+                selectionChanged(editor);
+            }
+        });
+
+    $(editor.window)
+        .bind('blur', function () {
+            var old = editor.textarea.value,
+            value = editor.encodedValue();
+
+            editor.update(value);
+
+            if (value != old) {
+                $t.trigger(editor.element, 'change');
+            }
+        });
+    
+    $(editor.body)
+        .bind('cut paste', function (e) {
+              editor.clipboard['on' + e.type](e);
+          });
 }
 
 $t.editor = function (element, options) {
@@ -67,16 +158,15 @@ $t.editor = function (element, options) {
         selectionChange: this.onSelectionChange,
         change: this.onChange,
         execute: this.onExecute,
-        error: this.onError
+        error: this.onError,
+        paste: this.onPaste
     });
 
     for (var id in this.tools)
         this.tools[id].name = id.toLowerCase();
         
     this.textarea = $element.find('textarea').attr('autocomplete', 'off')[0];
-    this.window = createContentElement($(this.textarea), this.stylesheets);
-    this.document = this.window.contentDocument || this.window.document;
-    this.body = this.document.body;
+    initializeContentElement(this);
     this.keyboard = new Keyboard([new TypingHandler(this), new SystemHandler(this)]);
         
     this.clipboard = new Clipboard(this);
@@ -107,15 +197,6 @@ $t.editor = function (element, options) {
             .string();
     }
 
-    $(this.window).bind('blur', function () {
-        var old = self.textarea.value,
-            value = self.encodedValue();
-        self.update(value);
-
-        if (value != old)
-            $t.trigger(self.element, 'change');
-    });
-
     var toolbarItems = '.t-editor-toolbar > li > *',
         buttons = '.t-editor-button .t-tool-icon',
         enabledButtons = buttons + ':not(.t-state-disabled)',
@@ -126,7 +207,6 @@ $t.editor = function (element, options) {
         .delegate(enabledButtons, 'mouseleave', $t.leave)
         .delegate(buttons, 'mousedown', $t.preventDefault)
         .delegate(enabledButtons, 'click', $t.stopAll(function (e) {
-            self.focus();
             self.exec(toolFromClassName(this));
         }))
         .delegate(disabledButtons, 'click', function(e) { e.preventDefault(); })
@@ -155,15 +235,21 @@ $t.editor = function (element, options) {
             }).end()
         .bind('selectionChange', function() {
             var range = self.getRange();
-            self.selectionRestorePoint = new RestorePoint(range);
-            var nodes = textNodes(range);
-            if (!nodes.length)
-                nodes = [range.startContainer];
 
-            $element.find(toolbarItems).each(function () {
+            self.selectionRestorePoint = new RestorePoint(range);
+
+            var nodes = textNodes(range);
+
+            if (!nodes.length) {
+                nodes = [range.startContainer];
+            }
+
+            $element.find(toolbarItems)
+                .each(function () {
                     var tool = self.tools[toolFromClassName(this)];
-                    if (tool)
+                    if (tool) {
                         tool.update($(this), nodes, self.pendingFormats);
+                    }
                 });
         });
 
@@ -171,86 +257,18 @@ $t.editor = function (element, options) {
         .bind('DOMNodeInserted', function(e) {
             if ($.contains(e.target, self.element) || self.element == e.target) {
                 $(self.element).find('iframe').remove();
-                self.window = createContentElement($(self.textarea), self.stylesheets);
-                self.document = self.window.contentDocument || self.window.document;
-                self.body = self.document.body;
+                initializeContentElement(self);
             }
-        });
-
-    var isFirstKeyDown = true;
-
-    $(this.document)
-        .bind({
-            keydown: function (e) {
-                var toolName = self.keyboard.toolFromShortcut(self.tools, e);
-                if (toolName) {
-                    e.preventDefault();
-                    self.exec(toolName);
-                    return false;
-                }
-
-                if (self.keyboard.isTypingKey(e) && self.pendingFormats.hasPending()) {
-                    if (isFirstKeyDown)
-                        isFirstKeyDown = false;
-                    else {
-                        var range = self.getRange();
-                        self.pendingFormats.apply(range);
-                        self.selectRange(range);
-                    } 
-                }
-
-                self.keyboard.clearTimeout();
-
-                self.keyboard.keydown(e);
-            },
-            keyup: function (e) {
-                var selectionCodes = [8, 9, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
-
-                if ($.browser.mozilla && e.keyCode == 8)
-                    fixBackspace(self, e);
-                
-                if ($.inArray(e.keyCode, selectionCodes) > -1 || (e.keyCode == 65 && e.ctrlKey && !e.altKey && !e.shiftKey)) {
-                    self.pendingFormats.clear();
-                    selectionChanged(self);
-                }
-                
-                if (self.keyboard.isTypingKey(e)) {
-                    var range = self.getRange();
-                    self.pendingFormats.apply(range);
-                    self.selectRange(range);
-                } else
-                    isFirstKeyDown = true;
-
-                self.keyboard.keyup(e);
-            },
-            mousedown: function(e) {
-                self.pendingFormats.clear();
-
-                var target = $(e.target);
-
-                if (!$.browser.gecko && e.which == 2 && target.is('a[href]'))
-                    window.open(target.attr('href'), '_new');
-            },
-            mouseup: function () {
-                selectionChanged(self);
-            }
-        });
-    
-    $(this.body)
-        .bind('focusout', function(e) {
-            if (self.keyboard.typingInProgress())
-                self.keyboard.endTyping(true);
+        })
+        .bind('mousedown', function(e) {
             try {
+                if (self.keyboard.typingInProgress())
+                    self.keyboard.endTyping(true);
+                
                 if (!self.selectionRestorePoint) {
                     self.selectionRestorePoint = new RestorePoint(self.getRange());
                 } 
-            }
-            catch (e) {
-                
-            }
-        })
-        .bind('cut paste', function (e) {
-            self.clipboard['on' + e.type](e);
+            } catch (e) { }
         });
 };
 
@@ -374,7 +392,8 @@ $t.editor.prototype = {
                 normalize(body);
             }
         }
-
+        
+        this.selectionRestorePoint = null;
         this.update();
     },
 
@@ -399,6 +418,7 @@ $t.editor.prototype = {
     },
         
     selectRange: function(range) {
+        this.focus();
         var selection = this.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
@@ -425,6 +445,15 @@ $t.editor.prototype = {
     },
 
     exec: function (name, params) {
+        if (!this.keyboard.typingInProgress()) {
+            this.focus();
+
+            if (this.selectionRestorePoint) {
+                this.selectRange(this.selectionRestorePoint.toRange());
+                this.selectionRestorePoint = null;
+            }
+        }
+
         name = name.toLowerCase();
         var tool = '';
 
@@ -541,13 +570,6 @@ function Tool(options) {
 }
 
 Tool.exec = function (editor, name, value) {
-    editor.focus();
-
-    if (editor.selectionRestorePoint) {
-        editor.selectRange(editor.selectionRestorePoint.toRange());
-        editor.selectionRestorePoint = null;
-    }
-                    
     editor.exec(name, { value: value });
 }
 

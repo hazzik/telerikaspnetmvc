@@ -327,7 +327,7 @@
 
                 filtering.filter(combobox);
 
-                equal('&lt;&gt;&amp;Visit W3Schools!', combobox.data[0].Text);
+                equal('&lt;&gt;&amp;Visit W3Schools!', combobox.dropDown.$items.eq(0).html());
                 equal(decodedText, combobox.data[0].Value);
 
             } finally {

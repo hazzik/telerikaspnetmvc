@@ -72,6 +72,12 @@ namespace Telerik.Web.Mvc.UI.Html
             set;
         }
 
+        public Action<object, IHtmlNode> RowTemplate
+        {
+            get;
+            set;
+        }
+
         public Action<GridItem> Callback
         {
             get;

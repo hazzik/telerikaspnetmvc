@@ -5,9 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using System;
     using System.Collections.Generic;
-    using System.Web;
+    using System.Text.RegularExpressions;
 
     public class GridBindingSettings : IClientSerializable
     {
@@ -51,35 +50,77 @@ namespace Telerik.Web.Mvc.UI
             get;
             private set;
         }
-        
+
+        private string Encode(string value)
+        {
+            if (grid.IsSelfInitialized)
+            {
+                value = Regex.Replace(value, "(%20)*%3C%23%3D(%20)*", "<#=", RegexOptions.IgnoreCase);
+                value = Regex.Replace(value, "(%20)*%23%3E(%20)*", "#>", RegexOptions.IgnoreCase);
+            }
+
+            return value;
+        }
+
+        protected virtual bool SerializeEmptySelectUrl
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public void SerializeTo(string key, IClientSideObjectWriter writer)
         {
             if (Enabled)
             {
-                Func<string,string> encoder = (string url) => grid.IsSelfInitialized ? HttpUtility.UrlDecode(url) : url;
-
                 var urlBuilder = grid.UrlBuilder;
-                
+
                 var urls = new Dictionary<string, string>();
 
-                urls["selectUrl"] = encoder(urlBuilder.Url(Select));
+                if (Select.HasValue() || (SerializeEmptySelectUrl && !Select.HasValue()))
+                {
+                    urls["selectUrl"] = Encode(urlBuilder.Url(Select));
+                }
 
                 if (Insert.HasValue())
                 {
-                    urls["insertUrl"] = encoder(urlBuilder.Url(Insert));
+                    urls["insertUrl"] = Encode(urlBuilder.Url(Insert));
                 }
 
                 if (Update.HasValue())
                 {
-                    urls["updateUrl"] = encoder(urlBuilder.Url(Update));
+                    urls["updateUrl"] = Encode(urlBuilder.Url(Update));
                 }
 
                 if (Delete.HasValue())
                 {
-                    urls["deleteUrl"] = encoder(urlBuilder.Url(Delete));
+                    urls["deleteUrl"] = Encode(urlBuilder.Url(Delete));
                 }
-                
+
                 writer.AppendObject(key, urls);
+            }
+        }
+    }
+
+    public class GridClientBindingSettings : GridBindingSettings
+    {
+        public GridClientBindingSettings(IGrid grid) : base(grid)
+        {
+            OperationMode = GridOperationMode.Server;
+        }
+
+        public GridOperationMode OperationMode
+        {
+            get;
+            set;
+        }
+
+        protected override bool SerializeEmptySelectUrl
+        {
+            get
+            {
+                return false;
             }
         }
     }

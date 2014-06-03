@@ -7,6 +7,7 @@ namespace Telerik.Web.Mvc.UI.Html
     using System.Collections.Generic;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
+    using System.Web.Mvc;
     
     public class GridTableBuilder : IGridTableBuilder
     {
@@ -38,7 +39,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private void AppendCol(HtmlElement colgroup, string columnWidth, bool hidden)
         {
-            var col = new HtmlElement("col");
+            var col = new HtmlElement("col",TagRenderMode.SelfClosing);
 
             if (hidden)
             {

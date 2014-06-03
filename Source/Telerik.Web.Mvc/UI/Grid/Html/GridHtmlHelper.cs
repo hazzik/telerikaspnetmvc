@@ -31,27 +31,29 @@ namespace Telerik.Web.Mvc.UI.Html
             var htmlHelper = CreateHtmlHelper(dataItem);
 
             var dataKeyValues = dataKeyStore.GetDataKeyValues(dataItem);
-
+            
             var fragment = new HtmlFragment();
 
-            foreach (var entry in dataKeyValues)
+            using (new ClientValidationManager(viewContext))
             {
-                var html = string.Empty;
-#if MVC2 || MVC3                    
-                html = htmlHelper.Hidden(entry.Key, entry.Value, new { id = "" }).ToHtmlString();
+                foreach (var entry in dataKeyValues)
+                {
+                    var html = string.Empty;
+#if MVC2 || MVC3
+                    html = htmlHelper.Hidden(entry.Key, entry.Value, new {id = ""}).ToHtmlString();
 #endif
-                var hidden = new LiteralNode(html);
-                hidden.AppendTo(fragment);
+                    var hidden = new LiteralNode(html);
+                    hidden.AppendTo(fragment);
+                }
             }
-
             return fragment;
         }
-        
+
         public IHtmlNode EditorForModel(object dataItem, string templateName)
         {
             var html = string.Empty;
 
-#if MVC2 || MVC3                    
+#if MVC2 || MVC3
             var htmlHelper = CreateHtmlHelper(dataItem);
             if (templateName.HasValue())
             {
@@ -64,5 +66,40 @@ namespace Telerik.Web.Mvc.UI.Html
 #endif
             return new LiteralNode(html);
         }
+
+#if MVC2 || MVC3
+        class ClientValidationManager : IDisposable
+        {
+            private readonly ViewContext viewContext;
+            private readonly bool clientValidation;
+
+            public ClientValidationManager(ViewContext viewContext)
+            {
+                this.viewContext = viewContext;
+                clientValidation = viewContext.ClientValidationEnabled;
+
+                if (typeof(T).IsDataRow()) // needed as the metadataprovider will throw if model is DataRow
+                {
+                    viewContext.ClientValidationEnabled = false;
+                }
+            }
+
+            public void Dispose()
+            {
+                viewContext.ClientValidationEnabled = clientValidation;
+            }
+        }
+#else
+        class ClientValidationManager : IDisposable
+        {
+            public ClientValidationManager(ViewContext viewContext)
+            {
+            }
+
+            public void Dispose()
+            {
+            }
+        }
+#endif
     }
 }

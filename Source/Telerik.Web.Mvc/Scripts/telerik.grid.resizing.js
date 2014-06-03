@@ -1,6 +1,8 @@
 ﻿(function ($) {
     var $t = $.telerik;
 
+    $t.scripts.push("telerik.grid.resizing.js");
+
     $t.resizing = {};
 
     $t.resizing.initialize = function (grid) {
@@ -109,7 +111,7 @@
                            .find('> .t-resize-handle')
                            .remove();
            
-           grid.$header.find('.t-header:visible:not(.t-group-cell)').each(function() {
+           grid.$header.find('.t-header:visible').each(function() {
                 left += this.offsetWidth;
                 var $th = $(this);
                 $('<div class="t-resize-handle" />')

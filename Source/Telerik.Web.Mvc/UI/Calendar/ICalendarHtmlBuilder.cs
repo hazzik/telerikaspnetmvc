@@ -15,7 +15,7 @@ namespace Telerik.Web.Mvc.UI
 
         IHtmlNode HeaderTag();
 
-        IHtmlNode HeaderCellTag(string dayOfWeek);
+        IHtmlNode HeaderCellTag(string dayName, string abbreviatedDayName, string shortestDayName);
 
         IHtmlNode MonthTag();
 

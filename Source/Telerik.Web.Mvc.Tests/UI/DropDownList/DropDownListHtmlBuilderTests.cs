@@ -260,16 +260,5 @@ using System.Collections.Generic;
 
             Assert.False(tag.Attributes().ContainsKey("name"));
         }
-
-        [Fact]
-        public void ComboBox_should_should_be_disabled()
-        {
-            dropDownList.Enabled = false;
-
-            IHtmlNode div = renderer.Build();
-
-            Assert.Equal("disabled", div.Attribute("disabled"));
-            Assert.Contains("t-state-disabled", div.Attribute("class"));
-        }
     }
 }

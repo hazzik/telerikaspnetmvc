@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Linq;
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
+using System.Collections.Generic;
     
     public class ComboBoxHtmlBuilder : IDropDownHtmlBuilder
     {
@@ -61,8 +62,15 @@ namespace Telerik.Web.Mvc.UI
 
             if (Component.Name.HasValue())
             {
-                input.Attributes(new { id = Component.Id + "-input", name = Component.Name + "-input" });
-                text = Component.ViewContext.Controller.ValueOf<string>(Component.Name + "-input") ?? text;
+                string name = GetName(Component.HiddenInputHtmlAttributes) ?? Component.Name + "-input";
+
+                input.Attributes(new
+                {
+                    id = Component.Id + "-input",
+                    name = name
+                });
+
+                text = Component.ViewContext.Controller.ValueOf<string>(name) ?? text;
             }
 
             input.ToggleAttribute("value", text, text.HasValue())
@@ -90,27 +98,43 @@ namespace Telerik.Web.Mvc.UI
             if (Component.Items.Any()) 
             {
                 value = Component.Value;
-                if (string.IsNullOrEmpty(value) && Component.SelectedIndex != -1) 
+                if (string.IsNullOrEmpty(value) && Component.SelectedIndex != -1)
                 {
                     DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
                     value = selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text;
                 }
             }
 
-            if (Component.Name.HasValue()) { 
+            if (Component.Name.HasValue()) {
+                string name = GetName(Component.HiddenInputHtmlAttributes) ?? Component.Name;
+
                 input.Attributes(Component.GetUnobtrusiveValidationAttributes())
                      .Attributes(new 
                      { 
-                         name = Component.Name,              
-                         id = Component.Id
+                         id = Component.Id,
+                         name = name
                      });
 
-                value = Component.ViewContext.Controller.ValueOf<string>(Component.Name) ?? value;
+                value = Component.ViewContext.Controller.ValueOf<string>(name) ?? value;
             }
 
-            input.ToggleAttribute("value", value, value.HasValue());
+            input.ToggleAttribute("value", value, value.HasValue())
+                 .Attributes(Component.HiddenInputHtmlAttributes);
             
             return input;
+        }
+
+        private string GetName(IDictionary<string, object> attributes)
+        {
+            object value = null;
+            string name = null; 
+
+            if (attributes.TryGetValue("name", out value) && value != null)
+            {
+                name = value.ToString();
+            }
+
+            return name;
         }
     }
 }

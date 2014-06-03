@@ -90,10 +90,44 @@
             equal($(".t-file", uploadInstance.wrapper).length, 1);
         });
 
+        test("select event fires on drop", 1, function() {
+            uploadInstance = createUpload({ "onSelect" : (function() { ok(true); }) });
+            simulateDrop([ { name: "first.txt", size: 1 } ]);
+        });
+
+        test("select event contains file extension", 1, function() {
+            uploadInstance = createUpload({ "onSelect" : (function(e) { equal(e.files[0].extension, ".txt"); }) });
+            simulateDrop([ { name: "first.txt", size: 1 } ]);
+        });
+
+        test("select event fired on drop can be cancelled", 1, function() {
+            uploadInstance = createUpload({ "onSelect" : (function(e) { e.preventDefault(); }) });
+            simulateDrop([ { name: "first.txt", size: 1 } ]);
+
+            equal($(".t-file", uploadInstance.wrapper).length, 0);
+        });
+
         test("dropping anything that is not a file is ignored", function () {
             simulateDrop([]);
                         
             equal($(".t-file", uploadInstance.wrapper).length, 0);
+        });
+
+        module("Upload / Drag and drop / Synchronous upload", {
+            setup: function() {
+                $.telerik.upload.prototype._getSupportsFormData = function() { return true; };
+                copyUploadPrototype();
+
+                $('#uploadInstance').tUpload();
+
+                uploadInstance = $('#uploadInstance').data("tUpload");
+            },
+            teardown: moduleTeardown
+        });
+        
+        test("disabled in synchronous mode", function() {
+            $.telerik.upload.prototype._getSupportsFormData = function() { return true; };            
+            ok(!uploadInstance._getSupportsDrop());
         });
 
 </script>

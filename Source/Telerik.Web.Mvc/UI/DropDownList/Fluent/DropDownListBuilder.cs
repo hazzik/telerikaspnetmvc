@@ -62,11 +62,23 @@
         /// <summary>
         /// Enables or disables the dropdownlist.
         /// </summary>
-        /// <param name="allowSpinner"></param>
+        /// <param name="value"></param>
         /// <returns></returns>
         public DropDownListBuilder Enable(bool value)
         {
             Component.Enabled = value;
+
+            return this;
+        }
+
+        // <summary>
+        /// Defines the delay (ms) after which filtering buffer is cleared.
+        /// </summary>
+        /// <param name="value">The delay in milliseconds.</param>
+        /// <returns></returns>
+        public DropDownListBuilder Delay(int value)
+        {
+            Component.Delay = value;
 
             return this;
         }

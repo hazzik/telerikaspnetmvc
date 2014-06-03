@@ -4,6 +4,8 @@
     var dropCueOffsetTop = 3;
     var dropCueOffsetLeft = 0;
 
+    $t.scripts.push("telerik.grid.grouping.js");
+
     $t.grouping = {};
 
     $t.grouping.initialize = function (grid) {
@@ -37,12 +39,17 @@
                 return;
             }
             
-            var top = $('> .t-grid-toolbar', grid.element).outerHeight() + dropCueOffsetTop;
-                
-            var state = groups();
+            var $grid = $(grid.element),
+                $toolbar = $grid.find('> .t-grid-toolbar'),
+                top = $toolbar.outerHeight() + dropCueOffsetTop,
+                state = groups(),
+                isRtl = $grid.closest('.t-rtl').length;
                 
             if (!state.all.length) {
-                grid.$groupDropCue.css({ top: top, left: dropCueOffsetLeft }).appendTo(grid.$groupHeader);
+                var left = isRtl ? $toolbar.width() - dropCueOffsetLeft : dropCueOffsetLeft;
+
+                grid.$groupDropCue.css({ top: top, left: left }).appendTo(grid.$groupHeader);
+
                 return;
             }
 
@@ -55,28 +62,43 @@
                 return e.pageX >= g.left - leftMargin - rightMargin && e.pageX <= g.right;
             })[0];
 
-            if (!currentGroupIndicator && firstGroupIndicator && e.pageX < firstGroupIndicator.left) {
-                currentGroupIndicator = firstGroupIndicator;
+            if (!currentGroupIndicator && firstGroupIndicator) {
+                if (!isRtl && e.pageX < firstGroupIndicator.left) {
+                    currentGroupIndicator = firstGroupIndicator;
+                } else if (isRtl && e.pageX < lastGroupIndicator.left) {
+                    currentGroupIndicator = lastGroupIndicator;
+                }
             }
 
-            if (currentGroupIndicator)
-                grid.$groupDropCue.css({ top: top, left: currentGroupIndicator.$group.position().left - leftMargin + dropCueOffsetLeft })
-                    .insertBefore(currentGroupIndicator.$group);
-            else
-                grid.$groupDropCue.css({ top: top, left: lastGroupIndicator.$group.position().left + lastGroupIndicator.$group.outerWidth() + rightMargin + dropCueOffsetLeft })
-                                .appendTo(grid.$groupHeader);
+            if (isRtl) {
+                if (currentGroupIndicator) {
+                    grid.$groupDropCue.css({ top: top, left: currentGroupIndicator.$group.position().left - leftMargin + dropCueOffsetLeft })
+                        .insertAfter(currentGroupIndicator.$group);
+                } else {
+                    grid.$groupDropCue.css({ top: top, left: $toolbar.width() - dropCueOffsetLeft })
+                        .prependTo(grid.$groupHeader);
+                }
+            } else {
+                if (currentGroupIndicator) {
+                    grid.$groupDropCue.css({ top: top, left: currentGroupIndicator.$group.position().left - leftMargin + dropCueOffsetLeft })
+                        .insertBefore(currentGroupIndicator.$group);
+                } else {
+                    grid.$groupDropCue.css({ top: top, left: lastGroupIndicator.$group.position().left + lastGroupIndicator.$group.outerWidth() + rightMargin + dropCueOffsetLeft })
+                        .appendTo(grid.$groupHeader);
+                }
+            }
         }
 
         function cue(e) {
             if (e.$draggable.hasClass('t-header')) {
                 var column = grid.columnFromTitle(e.$draggable.text());
-                return $t.dragCue(column.title);
+                return $t.dragCue(column ? column.title : "");
             } else {
                 // remove icons' hidden accessibility content first
                 var groupButtonLink = $('.t-link', e.$draggable);
                 var columnTitle = groupButtonLink.text().substr($('.t-icon', groupButtonLink).text().length);
                 var column = grid.columnFromTitle(columnTitle);
-                return $t.dragCue(column.title);
+                return $t.dragCue(column ? column.title : columnTitle);
             }
         }
         
@@ -134,9 +156,10 @@
                 var group = grid.groupFromTitle(title);
 
                 var groupIndex = $.inArray(group, grid.groups);
-
+                
                 var position = grid.$groupHeader.find('div').index(grid.$groupDropCue);
                 var delta = groupIndex - position;
+
                 if (!group || (grid.$groupDropCue.is(':visible') && delta != 0 && delta != -1))
                     grid.group(title, position);
                  
@@ -334,7 +357,7 @@
 
         grid.bindGroup = function (dataItem, colspan, html, level) {
             var group = grid.groups[level];
-            var key = dataItem.Key;
+            var key = dataItem.value;
             var column = $.grep(grid.columns, function (column) { return group.member == column.member })[0];
 
             if (column && (column.format || column.type == 'Date'))
@@ -347,17 +370,17 @@
                 .cat('"><p class="t-reset"><a class="t-icon t-collapse" href="#"></a>');
             
             if (column)                            
-                html.cat(column.groupHeader($.extend( { Title: group.title, Key: key }, dataItem.Aggregates[column.member] )));
+                html.cat(column.groupHeader($.extend( { Title: group.title, Key: key }, grid._mapAggregates(dataItem.aggregates[column.member]) )));
             else
                 html.cat(group.title + ': ' + key);
             
             html.cat('</p></td></tr>');
 
-            if (dataItem.HasSubgroups) {
-                for (var i = 0, l = dataItem.Items.length; i < l; i++)
-                    grid.bindGroup(dataItem.Items[i], colspan, html, level + 1);
+            if (dataItem.hasSubgroups) {
+                for (var i = 0, l = dataItem.items.length; i < l; i++)
+                    grid.bindGroup(dataItem.items[i], colspan, html, level + 1);
             } else {
-                grid.bindData(dataItem.Items, html, level + 1);
+                grid.bindData(dataItem.items, html, level + 1);
             }
             
             if (grid.showGroupFooter) {
@@ -367,12 +390,12 @@
                 $.each(grid.columns, function() {
                     html.cat('<td>');
                     if (this.groupFooter)
-                        html.cat(this.groupFooter(dataItem.Aggregates[this.member]));
+                        html.cat(this.groupFooter(grid._mapAggregates(dataItem.aggregates[this.member])));
                     html.cat('</td>');
                 });
 
                 html.cat('</tr>');
             }
         }
-    }
+    }    
 })(jQuery);

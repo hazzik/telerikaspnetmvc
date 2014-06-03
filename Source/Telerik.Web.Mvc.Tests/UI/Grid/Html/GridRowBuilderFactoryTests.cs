@@ -45,6 +45,15 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         }
 
         [Fact]
+        public void Should_return_template_row_builder_if_row_template_is_set()
+        {
+            renderingData.RowTemplate = delegate { };
+
+            var builder = factory.CreateBuilder(renderingData, new GridItem { Type = GridItemType.DataRow });
+            builder.ShouldBeType<GridTemplateRowBuilder>();
+        }
+
+        [Fact]
         public void Should_return_inline_edit_row_builder()
         {
             var builder = factory.CreateBuilder(renderingData, new GridItem { Type = GridItemType.EditRow });

@@ -41,9 +41,10 @@
         equal(1, $textbox.siblings().filter('div').length, 'div was not rendered')
     });
 
-    test('input value should be applied to the rendered span', function () {
+    test('input value should be applied to the rendered div', function () {
         var $textbox = $("#numerictextbox");
-        equal(getInput().value(), $textbox.siblings().filter('div').html(), 'div was not rendered')
+
+        equal(parseFloat(getInput().value()), parseFloat($textbox.siblings().filter('div').html()), 'parsed input and div values do not match')
     });
 
     test('On initialization tTextBox should render input numerictexbox wrapper if type is not defined', function () {

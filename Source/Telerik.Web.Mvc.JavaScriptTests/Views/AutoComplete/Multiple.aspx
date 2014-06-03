@@ -91,7 +91,7 @@
                 autocomplete.loader.ajaxRequest = function (callback) { callback(dataSource); };
                 autocomplete.filtering.filter(autocomplete);
 
-                equal(autocomplete.data[0], '&lt;&gt;&amp;Visit W3Schools!');
+                equal(autocomplete.dropDown.$items.eq(0).html(), '&lt;&gt;&amp;Visit W3Schools!');
             } finally {
                 autocomplete.data = oldData;
                 autocomplete.loader.isAjax = oldAjax;

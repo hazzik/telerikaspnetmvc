@@ -6,7 +6,6 @@ namespace Telerik.Web.Mvc.UI.Html
 {
     using System;
     using System.Collections.Generic;
-    using Telerik.Web.Mvc.Infrastructure;
 
     public class GridHeaderCellBuilder : IGridCellBuilder
     {
@@ -14,11 +13,26 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private readonly IDictionary<string, object> htmlAttributes;
 
+        private readonly bool hasTemplate;
+
+        public GridHeaderCellBuilder(IDictionary<string, object> htmlAttributes, Action<IHtmlNode> appendContent, bool hasTemplate)
+        {
+            this.htmlAttributes = htmlAttributes;
+
+            this.appendContent = appendContent;
+
+            this.hasTemplate = hasTemplate;
+
+            Decorators = new List<IGridCellBuilderDecorator>();
+        }
+
         public GridHeaderCellBuilder(IDictionary<string, object> htmlAttributes, Action<IHtmlNode> appendContent)
         {
             this.htmlAttributes = htmlAttributes;
             
             this.appendContent = appendContent;
+
+            this.hasTemplate = false;
 
             Decorators = new List<IGridCellBuilderDecorator>();
         }
@@ -27,7 +41,16 @@ namespace Telerik.Web.Mvc.UI.Html
         {
             var th = CreateContainer();
 
-            AppendContent(th);
+            if (!hasTemplate)
+            {
+                var innerWrap = new HtmlElement("span").AddClass(UIPrimitives.Link);
+                innerWrap.AppendTo(th);
+                AppendContent(innerWrap);
+            }
+            else
+            {
+                AppendContent(th);
+            }
 
             Decorate(th);
 
@@ -47,9 +70,10 @@ namespace Telerik.Web.Mvc.UI.Html
         
         protected IHtmlNode CreateContainer()
         {
-            var th = new HtmlElement("th").AddClass(UIPrimitives.Header)
-                                      .Attribute("scope", "col")
-                                      .Attributes(htmlAttributes);
+            var th = new HtmlElement("th")
+                    .Attribute("scope", "col")
+                    .Attributes(htmlAttributes)
+                    .PrependClass(UIPrimitives.Header);
             
             return th;
         }

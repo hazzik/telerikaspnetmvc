@@ -36,6 +36,7 @@ namespace Telerik.Web.Mvc.UI.Html
                                 name = editor.Name,
                                 id = editor.Id + "-value"
                             })
+                            .Attributes(editor.GetUnobtrusiveValidationAttributes())
                             .PrependClass(UIPrimitives.Content, UIPrimitives.Editor.RawContent);
 
             var value = editor.ViewContext.ViewData.Eval(editor.Name) ?? editor.Value;

@@ -1,7 +1,9 @@
 ﻿(function($, undefined){
     
     var $t = $.telerik, q = $.telerik.query;
-    
+
+    $t.scripts.push("telerik.imagebrowser.js"); 
+
     $t.imageBrowser = function(element, options) {
         this.element = element;
         this.wrapper = $(element);
@@ -199,8 +201,8 @@
             addFolder = !canAddFolder ? "" : '<button type="button" class="t-button t-button-icon t-button-bare"><span class="t-icon t-addfolder"></span></button>',
             remove = !canRemove ? "" : '<button type="button" class="t-button t-button-icon t-button-bare t-state-disabled"><span class="t-icon t-delete"></span></button>&nbsp;';
         
-        return '<div class="t-tiles-toolbar t-floatwrap">' +
-                        '<div class="t-tiles-buttons">' + upload + addFolder + remove +
+        return '<div class="t-widget t-toolbar t-floatwrap">' +
+                        '<div class="t-toolbar-wrap">' + upload + addFolder + remove +
                         '</div>' +
                         '<div class="t-tiles-arrange">' +
                                 localization.orderBy + ' <a href="#" class="t-link"><span>' + localization.orderByName + '</span><span class="t-icon t-arrow-down"></span></a>' +
@@ -335,7 +337,7 @@
             })
             .hide()
             .bind("load", function() {
-                $(this).prev().remove().end().fadeIn();
+                $(this).prev().remove().end().addClass("t-image").fadeIn();
             });
                     
         element.find(".t-loading").after(img);
@@ -371,10 +373,8 @@
             var files = q(this._reader.files(data) || []);
             
             if (filter) {
-                var regex = wildcardToRegExp(filter);
-
                 var where = function(item){
-                    return regex.test(reader.name(item));
+                    return wildcardToRegExp(filter).test(reader.name(item));
                 };
 
                 directories = directories.where(where);

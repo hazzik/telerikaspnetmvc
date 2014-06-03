@@ -241,6 +241,54 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void InnerContentTag_should_not_render_value_if_no_item_has_Component_value()
+        {
+            combobox.Name = "combobox";
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+
+            combobox.InputHtmlAttributes.Add("ID", "1");
+
+            combobox.SelectedIndex = -1;
+            combobox.Value = "0";
+
+            combobox.SyncSelectedIndex();
+
+            IHtmlNode tag = renderer.InnerContentTag();
+            Assert.Throws(typeof(System.Collections.Generic.KeyNotFoundException), () => tag.Children[0].Attribute("value"));
+        }
+
+        [Fact]
+        public void InnerContentTag_should_output_html_attributes()
+        {
+            combobox.InputHtmlAttributes.Add("height", "100px");
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            Assert.Equal("100px", tag.Children[0].Attribute("height"));
+        }
+
+        [Fact]
+        public void InnerContentTag_should_set_id_from_inputHtmlAttr()
+        {
+            combobox.InputHtmlAttributes.Add("id", "test");
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            tag.Children[0].Attribute("id").ShouldEqual("test");
+        }
+
+        [Fact]
+        public void InnerContentTag_should_set_auto_name_if_not_set()
+        {
+            combobox.Name = "test";
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            tag.Children[0].Attribute("name").ShouldEqual(combobox.Name + "-input");
+        }
+
+        [Fact]
         public void HiddenInputTag_should_render_input()
         {
             IHtmlNode tag = renderer.HiddenInputTag();
@@ -297,6 +345,36 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void HiddenInputTag_should_not_render_value_if_no_item_has_Component_value()
+        {
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+
+            combobox.SelectedIndex = -1;
+            combobox.Value = "0";
+
+            combobox.SyncSelectedIndex();
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+            Assert.Throws(typeof(System.Collections.Generic.KeyNotFoundException), () => tag.Attribute("value"));
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_not_render_value_of_the_selected_item_if_no_item_with_component_value()
+        {
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+
+            combobox.SelectedIndex = 1;
+            combobox.Value = "0";
+
+            combobox.SyncSelectedIndex();
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+            tag.Attribute("value").ShouldEqual("2");
+        }
+
+        [Fact]
         public void HiddenInputTag_should_add_attr_value_with_selected_item_value()
         {
             combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
@@ -320,21 +398,6 @@ namespace Telerik.Web.Mvc.UI.Tests
             IHtmlNode tag = renderer.HiddenInputTag();
 
             Assert.Equal("Item2", tag.Attribute("value"));
-        }
-
-        [Fact]
-        public void HiddenInputTag_should_add_attr_value_with_Value_property_if_selectedIndex_is_negative_but_there_are_items()
-        {
-            combobox.Name = "Combo";
-            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
-            combobox.Items.Add(new DropDownItem { Text = "Item2" });
-
-            combobox.SelectedIndex = 1;
-            combobox.Value = "Test";
-
-            IHtmlNode tag = renderer.HiddenInputTag();
-
-            Assert.Equal("Test", tag.Attribute("value"));
         }
 
 #if MVC2 || MVC3
@@ -362,6 +425,36 @@ namespace Telerik.Web.Mvc.UI.Tests
             IHtmlNode tag = renderer.HiddenInputTag();
 
             Assert.False(tag.Attributes().ContainsKey("name"));
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_output_html_attributes()
+        {
+            combobox.HiddenInputHtmlAttributes.Add("height", "100px");
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            Assert.Equal("100px", tag.Attribute("height"));
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_set_id_from_inputHtmlAttr()
+        {
+            combobox.HiddenInputHtmlAttributes.Add("id", "test");
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            tag.Attribute("id").ShouldEqual("test");
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_set_auto_name_if_not_set()
+        {
+            combobox.Name = "test";
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            tag.Attribute("name").ShouldEqual(combobox.Name);
         }
 
         [Fact]

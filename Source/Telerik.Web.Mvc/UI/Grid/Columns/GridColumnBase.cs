@@ -173,6 +173,14 @@ namespace Telerik.Web.Mvc.UI
             }
             set
             {
+                if (value)
+                {
+                    HtmlAttributes["style"] += "display:none;width:0;";
+                }
+                else if (HtmlAttributes.ContainsKey("style"))
+                {
+                   HtmlAttributes["style"] = ((string)HtmlAttributes["style"]).Replace("display:none;width:0;", "");                
+                }
                 Settings.Hidden = value;
             }
         }
@@ -262,7 +270,7 @@ namespace Telerik.Web.Mvc.UI
         {
             get
             {
-                return Grid.VisibleColumns.LastOrDefault() == this;
+                return Grid.VisibleColumns.Where(c => !c.Hidden).LastOrDefault() == this;
             }
         }
 
@@ -308,14 +316,14 @@ namespace Telerik.Web.Mvc.UI
 
                     Grid.CellAction(cell);
 
-                    if (builder.HtmlAttributes != null)
+                    var formatableBuilder = builder as IGridFormatableCellBuilder;
+                    if (formatableBuilder != null)
                     {
-                        builder.HtmlAttributes.Merge(cell.HtmlAttributes);
+                        formatableBuilder.Format = Format;
+                        formatableBuilder.Encoded = Encoded;
                     }
-                    else
-                    {
-                        builder.HtmlAttributes = cell.HtmlAttributes;
-                    }
+                    
+                    builder.HtmlAttributes.Merge(cell.HtmlAttributes);
                     
                     builder.Html = cell.Text;
                 }
@@ -347,10 +355,9 @@ namespace Telerik.Web.Mvc.UI
                 template.InlineTemplate = InlineTemplate;
             }
 
-            return new GridTemplateCellBuilder<T>(template)
-            {
-                HtmlAttributes = HtmlAttributes
-            };
+            var builder = new GridTemplateCellBuilder<T>(template);
+            builder.HtmlAttributes.Merge(HtmlAttributes);
+            return builder;
         }
 
         public IGridDataCellBuilder CreateEditBuilder(IGridHtmlHelper htmlHelper)
@@ -390,7 +397,7 @@ namespace Telerik.Web.Mvc.UI
 
         protected virtual IGridCellBuilder CreateHeaderBuilderCore()
         {
-            return new GridHeaderCellBuilder(HeaderHtmlAttributes, AppendHeaderContent);
+            return new GridHeaderCellBuilder(HeaderHtmlAttributes, AppendHeaderContent, HeaderTemplate.HasValue());
         }
 
         public IGridCellBuilder CreateFooterBuilder(IEnumerable<AggregateResult> aggregateResults)

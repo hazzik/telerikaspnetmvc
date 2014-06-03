@@ -74,6 +74,7 @@ namespace Telerik.Web.Mvc.UI
             if (aggregateGroup != null)
             {
                 result.Add("AggregateFunctionsProjection", aggregateGroup.AggregateFunctionsProjection);
+                result.Add("Aggregates", aggregateGroup.Aggregates);
             }
             return result;
         }

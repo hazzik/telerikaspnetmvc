@@ -6,6 +6,9 @@
     <input id="slider1" />
     <input id="slider2" />
     <input id="slider3" />
+    <div id="hiddenDiv" style="display: none;">
+        <input id="slider4" />
+    </div>
 
     <% Html.Telerik().ScriptRegistrar().DefaultGroup(group => group
            .Add("telerik.common.js")
@@ -78,6 +81,15 @@
             var step = 2 * (144 / 10);
 
             equal($t.slider.getValueFromPosition(dragableArea.startPoint + step, dragableArea, slider), 2);
+        });
+
+        test("slider in hidden area should select maxValue", function () {
+            var slider = $("#slider4").tSlider({ val: 10, smallStep: 2 }).data("tSlider");
+
+            var trackDivWidth = slider.wrapper.find(".t-slider-track").width();
+            var selectionDivWidth = slider.wrapper.find(".t-slider-selection").width();
+
+            equal(trackDivWidth, selectionDivWidth);
         });
 
     </script>

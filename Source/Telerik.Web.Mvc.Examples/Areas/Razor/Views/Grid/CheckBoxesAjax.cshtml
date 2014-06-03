@@ -1,8 +1,5 @@
 ﻿@model IEnumerable<Order>
 
-
-
-
 @{ Html.Telerik().Grid(Model)
         .Name("Grid")
         .Columns(columns =>
@@ -36,7 +33,7 @@
                 return;
             }
 
-           $('#result').load('<%= Url.Action("DisplayCheckedOrders", "Grid") %>', $checkedRecords);
+           $('#result').load('@Url.Action("DisplayCheckedOrders", "Grid")', $checkedRecords);
         }
     </script>
 </p>

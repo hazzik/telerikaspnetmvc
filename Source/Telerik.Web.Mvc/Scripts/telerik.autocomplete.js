@@ -1,15 +1,15 @@
 ﻿(function ($) {
-
     var $t = $.telerik;
+
+    $t.scripts.push("telerik.autocomplete.js");
 
     $t.autocomplete = function (element, options) {
         $.extend(this, options);
 
-        var pasteMethod = $.browser.msie ? 'paste' : 'input';
         var $element = this.$element = $(element)
                                     .addClass('t-widget t-autocomplete t-input')
                                     .attr('autocomplete', 'off')
-                                    .bind(pasteMethod, $.proxy(function (e) {
+                                    .bind("paste", $.proxy(function (e) {
                                         resetTimer(this);
                                     }, this));
 
@@ -41,27 +41,31 @@
         this.filtering.autoFill = function (component, itemText) {
             if (component.autoFill && (component.lastKeyCode != 8 && component.lastKeyCode != 46)) {
 
-                var input = component.$text[0];
-                var textBoxValue = input.value;
-                var separator = component.separator;
+                var input = component.$text[0],
+                    textBoxValue = input.value,
+                    separator = component.separator,
+                    endIndex = $t.caretPos(input),
+                    multiple = component.multiple;
 
-                var endIndex = $t.caretPos(input);
-
-                var lastSeparatorIndex = separator ? $t.lastIndexOf(textBoxValue.substring(0, endIndex), separator) : -1;
-
+                var lastSeparatorIndex = multiple && separator ? $t.lastIndexOf(textBoxValue.substring(0, endIndex), separator) : -1;
                 var startIndex = lastSeparatorIndex != -1 ? lastSeparatorIndex + separator.length : 0;
 
                 var filterString = textBoxValue.substring(startIndex, endIndex);
-
                 var matchIndex = itemText.toLowerCase().indexOf(filterString.toLowerCase());
 
                 if (matchIndex != -1) {
 
                     var stringToAppend = itemText.substring(matchIndex + filterString.length);
-                    var wordIndex = valueArrayIndex(input, separator);
-                    var split = textBoxValue.split(separator);
-                    split[wordIndex] = filterString + stringToAppend;
-                    input.value = split.join(separator) + (component.multiple && wordIndex != 0 && wordIndex == split.length - 1 ? separator : '');
+
+                    if (multiple) {
+                        var split = textBoxValue.split(separator),
+                            wordIndex = valueArrayIndex(input, separator);
+
+                        split[wordIndex] = filterString + stringToAppend;
+                        input.value = split.join(separator) + (component.multiple && wordIndex != 0 && wordIndex == split.length - 1 ? separator : '');
+                    } else {
+                        input.value = filterString + stringToAppend;
+                    }
 
                     $t.list.selection(input, endIndex, endIndex + stringToAppend.length);
                 }
@@ -113,7 +117,7 @@
             var textValueLength = textValue.length;
 
             if (!dropDown.$items && !loader.ajaxError) {
-                if (loader.isAjax() && textValueLength >= minChars) {
+                if ((loader.isAjax() || this.onDataBinding) && textValueLength >= minChars) {
 
                     var postData = {};
                     postData[this.queryString.text] = textValue;
@@ -182,24 +186,10 @@
         //overrides common.databind method
         this.dataBind = function (data, preserveStatus) {
             this.data = data = (data || []);
-
-            var isAjax = !!this.loader.isAjax();
-            if (this.encoded && isAjax) {
-                for (var i = 0, length = data.length; i < length; i++) {
-                    var item = data[i];
-                    if (item) {
-                        if (item.Text) {
-                            data[i].Text = $t.encode(item.Text);
-                        } else {
-                            data[i] = $t.encode(item);
-                        }
-                    }
-                }
-            }
-
-            this.dropDown.dataBind(data);
-            if (!preserveStatus)
+            this.dropDown.dataBind(data, this.encoded);
+            if (!preserveStatus) {
                 this.$text.val('');
+            }
         }
 
         $element
@@ -304,6 +294,7 @@
             }
 
             if (key == 27 || key == 9) {
+                clearTimeout(this.timeout);
                 trigger.change();
                 trigger.close();
             }

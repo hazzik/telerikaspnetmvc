@@ -1,8 +1,9 @@
 (function($) {
 
-
 var $t = $.telerik;
-    
+
+$t.scripts.push("telerik.editor.js");
+
 function makeMap(items) {
     var obj = {};
         

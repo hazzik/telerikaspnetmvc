@@ -91,5 +91,11 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
 
             Assert.False(_controllerAuthorization.IsAccessibleToUser(TestHelper.CreateRequestContext(), "Product", "Detail"));
         }
+
+        [Fact]
+        public void IsAccessibleToUser_route_should_not_throw_exception_if_RouteDate_of_the_route_is_null()
+        {
+            Assert.DoesNotThrow(() => _controllerAuthorization.IsAccessibleToUser(TestHelper.CreateRequestContext(), "ProductList"));
+        }
     }
 }
