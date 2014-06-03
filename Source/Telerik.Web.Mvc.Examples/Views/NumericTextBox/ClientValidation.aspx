@@ -8,7 +8,7 @@
         <ul id="field-list">
             <li>
                 <%= Html.LabelFor(x => x.OrderID)%>
-                <%= Html.Telerik().NumericTextBox().Name("OrderID").Value(Model.OrderID)%>
+                <%= Html.Telerik().NumericTextBoxFor(m => m.OrderID)%>
                 <span class="error"><%= Html.ValidationMessageFor(x => x.OrderID)%></span>
             </li>
             <li>
@@ -22,7 +22,7 @@
                 <span class="error"><%= Html.ValidationMessageFor(x => x.ShipAddress)%></span>
             </li>
             <li>
-                <button class="t-button t-state-default" type="submit">Post</button>
+                <button class="t-button t-state-default" type="submit">Save</button>
             </li>
         </ul>
     <% } %> 
@@ -37,7 +37,7 @@
                          .Add("MicrosoftMvcValidation.js")); %>
                          
     <style type="text/css">
-        .error { color: red; position: absolute; margin: 0 0 0 5px; }
+        .error { color: red; margin: 0 0 0 5px; }
         
         #field-list
         {

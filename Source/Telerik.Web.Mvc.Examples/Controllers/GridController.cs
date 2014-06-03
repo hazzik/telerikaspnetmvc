@@ -11,10 +11,11 @@ namespace Telerik.Web.Mvc.Examples
     [PopulateProductSiteMap(SiteMapName = "examples", ViewDataKey = "telerik.mvc.examples")]
     public partial class GridController : Controller
     {
-        private static IEnumerable<Order> GetOrders()
-        {
-            NorthwindDataContext northwind = new NorthwindDataContext();
 
+        NorthwindDataContext northwind = new NorthwindDataContext();
+        
+        private IEnumerable<Order> GetOrders()
+        {
             DataLoadOptions loadOptions = new DataLoadOptions();
 
             loadOptions.LoadWith<Order>(o => o.Customer);
@@ -22,7 +23,13 @@ namespace Telerik.Web.Mvc.Examples
 
             return northwind.Orders;
         }
-        
+
+        protected override void Dispose(bool disposing)
+        {
+            northwind.Dispose();
+            base.Dispose(disposing);
+        }
+
         private static IEnumerable<OrderDto> GetOrderDto()
         {
             NorthwindDataContext northwind = new NorthwindDataContext();

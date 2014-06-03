@@ -22,6 +22,13 @@ namespace Telerik.Web.Mvc
             return Lambda<T>(memberName, false);
         }
 
+        public static LambdaExpression Lambda<T>(Type memberType, string memberName, bool checkForNull)
+        {
+            MemberAccessExpressionBuilderBase expressionBuilder = ExpressionBuilderFactory.MemberAccess(typeof(T), memberType, memberName, checkForNull);
+
+            return expressionBuilder.CreateLambdaExpression();
+        }
+
         public static LambdaExpression Lambda<T>(string memberName, bool checkForNull)
         {
             MemberAccessExpressionBuilderBase expressionBuilder = ExpressionBuilderFactory.MemberAccess(typeof(T),  memberName, checkForNull);

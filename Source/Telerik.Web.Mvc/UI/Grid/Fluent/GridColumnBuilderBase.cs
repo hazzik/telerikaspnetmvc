@@ -34,7 +34,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Gets or sets the column.
         /// </summary>
         /// <value>The column.</value>
-        protected TColumn Column
+        public TColumn Column
         {
             get;
             private set;

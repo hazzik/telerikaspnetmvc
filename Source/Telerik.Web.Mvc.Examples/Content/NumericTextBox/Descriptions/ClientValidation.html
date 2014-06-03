@@ -7,7 +7,7 @@
     if <strong>OrderID</strong> is a property of the Model, numeric input should be named "OrderID".
 </p>
 <p>
-    Here is the definition of the <i>OrderID</i> property, which is validated in this demo:
+    Here is the definition of the <em>OrderID</em> property, which is validated in this demo:
 </p>
 <pre class="prettyprint">
         [Range(1, 10)]
@@ -19,4 +19,8 @@
 </pre>
 <p>
     The <strong>[Range(...)]</strong> attribute comes from the <em>System.ComponentModel.DataAnnotations</em>.
+</p>
+<p>
+    Additionally you can use NumericTextBoxFor extension in order to create NumericTextBox for a concrete <em>Model property</em>.
+    If it has <strong>Range</strong> attribute, NumericTextBox component will use it to define min and max value contraints.
 </p>

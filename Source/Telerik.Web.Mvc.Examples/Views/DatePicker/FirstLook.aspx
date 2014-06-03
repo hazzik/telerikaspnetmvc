@@ -20,13 +20,13 @@
                 <label for="ShowButton">show a popup button</label>
 		    </li>
 		    <li>
-			    <label for="MaxDate-text">show dates between</label>
+			    <label for="MaxDate-input">show dates between</label>
                 <%= Html.Telerik().DatePicker()
                         .Name("MinDate")
                         .Value(Model.MinDate.Value)
                         .MinDate(new DateTime(999, 1, 1))
                 %>
-			    <label for="MinDate-text">and</label>
+			    <label for="MinDate-input">and</label>
                 <%= Html.Telerik().DatePicker()
                         .Name("MaxDate")
                         .Value(Model.MaxDate.Value)
@@ -34,7 +34,7 @@
                 %>
 		    </li>
 		    <li>
-			    <label for="SelectedDate-text">have pre-selected</label>
+			    <label for="SelectedDate-input">have pre-selected</label>
                 <%= Html.Telerik().DatePicker()
                         .Name("SelectedDate")
                         .Value(Model.SelectedDate.Value)

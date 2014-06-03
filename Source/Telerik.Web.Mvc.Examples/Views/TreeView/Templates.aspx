@@ -13,23 +13,23 @@
                 {%>
                     <ul>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/AJAX.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/AJAX.png") %>" alt="Ajax" />
                             RadControls for ASP.NET AJAX
                         </li>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/MVC.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/MVC.png") %>" alt="MVC" />
                             Telerik Extensions for ASP.NET MVC
                         </li>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/SL.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/SL.png") %>" alt="SL" />
                             RadControls for Silverlight
                         </li>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/WinForms.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/WinForms.png") %>" alt="WinForms" />
                             RadControls for WinForms
                         </li>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/WPF.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/WPF.png") %>" alt="WPF" />
                             RadControls for WPF
                         </li>
                     </ul>
@@ -41,7 +41,7 @@
                 {%>
                     <ul>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/JustCode.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/JustCode.png") %>" alt="JustCode Icon" />
                             JustCode
                         </li>
                     </ul>
@@ -53,11 +53,11 @@
                 {%>
                     <ul>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/ORM.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/ORM.png") %>" alt="ORM" />
                             OpenAccess ORM
                         </li>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/REP.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/REP.png") %>" alt="REP" />
                             Reporting
                         </li>
                     </ul>
@@ -69,11 +69,11 @@
                 {%>
                     <ul>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/TFS.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/TFS.png") %>" alt="TFS" />
                             Work Item Manager
                         </li>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/PD.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/PD.png") %>" alt="PD" />
                             Project Dashboard
                         </li>
                     </ul>
@@ -85,7 +85,7 @@
                 {%>
                     <ul>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/Test.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/Test.png") %>" alt="Test" />
                             Web Testing Tools
                         </li>
                     </ul>
@@ -97,7 +97,7 @@
                 {%>
                     <ul>
                         <li>
-                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/CMS.png") %>" />
+                            <img src="<%= Url.Content("~/Content/Common/Icons/Suites_32/CMS.png") %>" alt="CMS" />
                             Sitefinity CMS
                         </li>
                     </ul>

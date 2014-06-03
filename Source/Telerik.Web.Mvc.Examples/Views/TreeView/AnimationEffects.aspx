@@ -44,16 +44,14 @@
    { %>
     <ul>
          <li>
-            <%= Html.RadioButton("animation", "toggle", new { id = "toggle" }) %>
+            <%= Html.RadioButton("animation", "toggle", new { id = "toggle", title = "toggle" }) %>
             <label for="toggle"><strong>toggle</strong> animation</label>
             <br />
-            <%= Html.RadioButton("animation", "expand", new { id = "expand" })%>
+            <%= Html.RadioButton("animation", "expand", new { id = "expand", title = "expand" })%>
             <label for="toggle"><strong>expand</strong> animation</label>
             <br />
-            <%= Html.CheckBox(
-                    "enableOpacityAnimation",
-                    (bool)ViewData["enableOpacityAnimation"],
-                    "&nbsp;<strong>opacity</strong> animation")%>
+            <%= Html.CheckBox("enableOpacityAnimation", ( bool )ViewData[ "enableOpacityAnimation" ], new { title = "enableOpacityAnimation" })%>
+            <label for="toggle"><strong>opacity</strong> animation</label>
         </li>
         <li>
             <ul>

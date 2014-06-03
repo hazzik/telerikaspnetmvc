@@ -6,17 +6,12 @@
         .HtmlAttributes(new { style = "width: 300px; float: left; margin-bottom: 30px;" })
         .Effects(fx =>
         {
-            if (ViewData["animation"].ToString() == "slide")
-            {
-                fx.Slide();
-            }
-            else if (ViewData["animation"].ToString() == "expand")
+            if (ViewData["animation"].ToString() == "expand")
             {
                 fx.Expand();
             }
             else
             {
-                /* activate only toggle, so that the items show */
                 fx.Toggle();
             }
 
@@ -76,11 +71,8 @@
             <%= Html.RadioButton("animation", "toggle", new { id = "toggle" }) %>
             <label for="toggle"><strong>toggle</strong> animation</label>
             <br />
-            <%= Html.RadioButton("animation", "slide", new { id = "slide" }) %>
-            <label for="toggle"><strong>slide</strong> animation</label>
-            <br />
             <%= Html.RadioButton("animation", "expand", new { id = "expand" })%>
-            <label for="toggle"><strong>expand</strong> animation</label>
+            <label for="expand"><strong>expand</strong> animation</label>
             <br />
             <%= Html.CheckBox(
                     "enableOpacityAnimation",

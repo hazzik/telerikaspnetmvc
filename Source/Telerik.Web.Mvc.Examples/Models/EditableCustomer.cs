@@ -1,6 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.Examples.Models
 {
     using System;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
     using System.Runtime.Serialization;
@@ -35,6 +36,7 @@
             set;
         }
 
+        [DisplayName("Birthday")]
         [DataType(DataType.Date)]
         public DateTime BirthDay
         {

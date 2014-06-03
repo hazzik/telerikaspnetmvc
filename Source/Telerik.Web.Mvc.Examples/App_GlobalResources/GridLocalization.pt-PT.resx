@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>   
+<root> 
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">  
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" /> 
+    <xsd:element name="root" msdata:IsDataSet="true">  
+      <xsd:complexType> 
+        <xsd:choice maxOccurs="unbounded">  
+          <xsd:element name="metadata">  
+            <xsd:complexType> 
+              <xsd:sequence> 
+                <xsd:element name="value" type="xsd:string" minOccurs="0" /> 
+              </xsd:sequence> 
+              <xsd:attribute name="name" use="required" type="xsd:string" /> 
+              <xsd:attribute name="type" type="xsd:string" /> 
+              <xsd:attribute name="mimetype" type="xsd:string" /> 
+              <xsd:attribute ref="xml:space" /> 
+            </xsd:complexType> 
+          </xsd:element> 
+          <xsd:element name="assembly">  
+            <xsd:complexType> 
+              <xsd:attribute name="alias" type="xsd:string" /> 
+              <xsd:attribute name="name" type="xsd:string" /> 
+            </xsd:complexType> 
+          </xsd:element> 
+          <xsd:element name="data">  
+            <xsd:complexType> 
+              <xsd:sequence> 
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" /> 
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" /> 
+              </xsd:sequence> 
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" /> 
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" /> 
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" /> 
+              <xsd:attribute ref="xml:space" /> 
+            </xsd:complexType> 
+          </xsd:element> 
+          <xsd:element name="resheader">  
+            <xsd:complexType> 
+              <xsd:sequence> 
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" /> 
+              </xsd:sequence> 
+              <xsd:attribute name="name" type="xsd:string" use="required" /> 
+            </xsd:complexType> 
+          </xsd:element> 
+        </xsd:choice> 
+      </xsd:complexType> 
+    </xsd:element> 
+  </xsd:schema> 
+  <resheader name="resmimetype">  
+    <value>text/microsoft-resx</value> 
+  </resheader> 
+  <resheader name="version">  
+    <value>2.0</value> 
+  </resheader> 
+  <resheader name="reader">  
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>  
+  </resheader> 
+  <resheader name="writer">  
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>  
+  </resheader> 
+  <data name="AddNew" xml:space="preserve">  
+    <value>Novo</value> 
+  </data> 
+  <data name="Cancel" xml:space="preserve">  
+    <value>Cancelar</value> 
+  </data> 
+  <data name="Delete" xml:space="preserve">  
+    <value>Apagar</value> 
+  </data> 
+  <data name="DeleteConfirmation" xml:space="preserve">  
+    <value>Pretende remover o registo?</value> 
+  </data> 
+  <data name="DisplayingItems" xml:space="preserve">  
+    <value>Registos {0} - {1} de {2}</value> 
+  </data> 
+  <data name="Edit" xml:space="preserve">  
+    <value>Editar</value> 
+  </data> 
+  <data name="Filter" xml:space="preserve">  
+    <value>Filtro</value> 
+  </data> 
+  <data name="FilterAnd" xml:space="preserve">  
+    <value>e</value> 
+  </data> 
+  <data name="FilterClear" xml:space="preserve">  
+    <value>Limpar</value> 
+  </data> 
+  <data name="FilterDateEq" xml:space="preserve">  
+    <value>Igual</value> 
+  </data> 
+  <data name="FilterDateGe" xml:space="preserve">  
+    <value>Maior ou igual que</value> 
+  </data> 
+  <data name="FilterDateGt" xml:space="preserve">  
+    <value>Maior que</value> 
+  </data> 
+  <data name="FilterDateLe" xml:space="preserve">  
+    <value>Menor ou igual que</value> 
+  </data> 
+  <data name="FilterDateLt" xml:space="preserve">  
+    <value>Menor que</value> 
+  </data> 
+  <data name="FilterDateNe" xml:space="preserve">  
+    <value>Diferente</value> 
+  </data> 
+  <data name="FilterEnumEq" xml:space="preserve">  
+    <value>Igual</value> 
+  </data> 
+  <data name="FilterEnumNe" xml:space="preserve">  
+    <value>Diferente</value> 
+  </data> 
+  <data name="FilterNumberEq" xml:space="preserve">  
+    <value>Igual</value> 
+  </data> 
+  <data name="FilterNumberGe" xml:space="preserve">  
+    <value>Maior ou igual que</value> 
+  </data> 
+  <data name="FilterNumberGt" xml:space="preserve">  
+    <value>Maior que</value> 
+  </data> 
+  <data name="FilterNumberLe" xml:space="preserve">  
+    <value>Menor ou igual que</value> 
+  </data> 
+  <data name="FilterNumberLt" xml:space="preserve">  
+    <value>Menor que</value> 
+  </data> 
+  <data name="FilterNumberNe" xml:space="preserve">  
+    <value>Diferente</value> 
+  </data> 
+  <data name="FilterSelectValue" xml:space="preserve">  
+    <value>-Seleccione um item-</value> 
+  </data> 
+  <data name="FilterShowRows" xml:space="preserve">  
+    <value>Motrar as linhas com o valor</value> 
+  </data> 
+  <data name="FilterStringEndsWith" xml:space="preserve">  
+    <value>A acabar em</value> 
+  </data> 
+  <data name="FilterStringEq" xml:space="preserve">  
+    <value>Igual</value> 
+  </data> 
+  <data name="FilterStringNe" xml:space="preserve">  
+    <value>Diferente</value> 
+  </data> 
+  <data name="FilterStringStartsWith" xml:space="preserve">  
+    <value>A comecar com</value> 
+  </data> 
+  <data name="FilterStringSubstringOf" xml:space="preserve">  
+    <value>Contem</value> 
+  </data> 
+  <data name="GroupHint" xml:space="preserve">  
+    <value>Arraste uma coluna para este espaco para agrupar pelo valor da mesma...</value> 
+  </data> 
+  <data name="Insert" xml:space="preserve">  
+    <value>Inserir</value> 
+  </data> 
+  <data name="Page" xml:space="preserve">  
+    <value>Pagina</value> 
+  </data> 
+  <data name="PageOf" xml:space="preserve">  
+    <value>de {0}</value> 
+  </data> 
+  <data name="Select" xml:space="preserve">  
+    <value>Seleccionar</value> 
+  </data> 
+  <data name="Update" xml:space="preserve">  
+    <value>Actualizar</value> 
+  </data> 
+</root> 

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Northwind">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.625" name="Northwind">
   <DataContextMoniker Name="/NorthwindDataContext" />
   <nestedChildShapes>
     <classShape Id="9fe0d006-4cca-42de-a165-3690e5eb080b" absoluteBounds="1.75, 1.5, 2, 2.9247054036458326">
@@ -58,6 +58,26 @@
       <nodes>
         <classShapeMoniker Id="8529d120-b42f-4c87-be9b-2462031b9976" />
         <classShapeMoniker Id="8529d120-b42f-4c87-be9b-2462031b9976" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="2584c37e-958d-476b-9815-f16a77427300" absoluteBounds="7.625, 6.625, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/NorthwindDataContext/Order_Detail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fc021173-677b-47ce-9a2f-fff765bd26f3" absoluteBounds="7.6400000000000006, 7.085, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.25 : 5.00160970052083); (6.625 : 5.37660970052083); (6.625 : 7.51044840494792); (7.625 : 7.51044840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/NorthwindDataContext/Order/Order_Order_Detail" />
+      <nodes>
+        <classShapeMoniker Id="2fe8607d-4543-41cb-ac65-c932d6977477" />
+        <classShapeMoniker Id="2584c37e-958d-476b-9815-f16a77427300" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.25 : 7.00522420247396); (7.625 : 7.00522420247396)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/NorthwindDataContext/Product/Product_Order_Detail" />
+      <nodes>
+        <classShapeMoniker Id="96118bb6-e0a8-498d-9596-29bac71d7e06" />
+        <classShapeMoniker Id="2584c37e-958d-476b-9815-f16a77427300" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

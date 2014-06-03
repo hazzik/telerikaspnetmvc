@@ -225,4 +225,10 @@
   <data name="DeleteConfirmation" xml:space="preserve">
     <value>Sind Sie sicher, dass Sie diesen Datensatz löschen wollen?</value>
   </data>
+  <data name="FilterBoolIsFalse" xml:space="preserve">
+    <value>ist falsch</value>
+  </data>
+  <data name="FilterBoolIsTrue" xml:space="preserve">
+    <value>ist richtig</value>
+  </data>
 </root>

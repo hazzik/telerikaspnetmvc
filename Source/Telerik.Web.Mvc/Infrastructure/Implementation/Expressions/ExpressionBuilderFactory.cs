@@ -8,10 +8,9 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
     using System;
     using System.ComponentModel;
     using System.Data;
-    using System.Xml;
-
-    using Extensions;
     using System.Linq;
+    using System.Xml;
+    using Extensions;
 
     internal static class ExpressionBuilderFactory
     {
@@ -45,7 +44,15 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             
             return builder;
         }
+        
+        public static MemberAccessExpressionBuilderBase MemberAccess(Type elementType, Type memberType, string memberName, bool liftMemberAccess)
+        {
+            var builder = MemberAccess(elementType, memberType, memberName);
 
+            builder.Options.LiftMemberAccessToNull = liftMemberAccess;
+
+            return builder;
+        }
         public static MemberAccessExpressionBuilderBase MemberAccess(IQueryable source, Type memberType, string memberName)
         {
             var builder = MemberAccess(source.ElementType, memberType, memberName);

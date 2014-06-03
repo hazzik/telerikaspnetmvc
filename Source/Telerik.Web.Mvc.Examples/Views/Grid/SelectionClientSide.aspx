@@ -17,7 +17,7 @@
         .Pageable()
         .Sortable()
         .Selectable()
-        .ClientEvents(events => events.OnRowSelected("onRowSelected"))
+        .ClientEvents(events => events.OnRowSelect("onRowSelected"))
         .RowAction(row => 
         {
             row.Selected = row.DataItem.CustomerID.Equals(ViewData["id"]);

@@ -22,7 +22,7 @@
                 <%= Html.ValidationMessageFor(x => x.ShipAddress)%>
             </li>
             <li>
-                <button class="t-button t-state-default" type="submit">Post</button>
+                <button class="t-button t-state-default" type="submit">Save</button>
             </li>
         </ul>
     <% } %>   
@@ -41,6 +41,7 @@
         #field-list
         {
             display: inline-block; *display: inline; zoom: 1;
+            overflow: hidden;
         }
         
         #field-list li
@@ -66,7 +67,8 @@
         
         #field-list button
         {
-            margin: 0 19px 0 auto;
+            margin: 19px 0 0 205px;
+            width: 60px;
         }
     </style>
 </asp:content>

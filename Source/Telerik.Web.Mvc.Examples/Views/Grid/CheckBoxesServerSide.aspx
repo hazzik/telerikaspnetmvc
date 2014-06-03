@@ -15,7 +15,7 @@
             columns.Template(o =>
             {
                 %>
-                    <input name="checkedRecords" type="checkbox" value="<%= o.OrderID %>" 
+                    <input name="checkedRecords" type="checkbox" value="<%= o.OrderID %>" title="checkedRecords" 
                     <% if (checkedRecords.Contains(o.OrderID)) {
                         
                         %> checked="checked" <%
@@ -33,7 +33,7 @@
 %>
 
 <p>
-    <button class="t-button t-state-default">Display checked orders</button>
+    <button type="submit" class="t-button t-state-default">Display checked orders</button>
 </p>
 
 <% Html.EndForm(); %>

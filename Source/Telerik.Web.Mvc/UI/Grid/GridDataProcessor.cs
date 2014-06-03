@@ -62,7 +62,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        public IList<GroupDescriptor> GroupDescriptors
+        public virtual IList<GroupDescriptor> GroupDescriptors
         {
             get
             {
@@ -161,7 +161,7 @@ namespace Telerik.Web.Mvc.UI
                 IQueryable dataSource = bindingContext.DataSource.AsQueryable();
                 GridModel model = dataSource.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);
                 totalCount = model.Total;
-                processedDataSource = model.Data;
+                processedDataSource = model.Data.AsGenericEnumerable();
             }
             else
             {

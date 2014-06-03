@@ -15,12 +15,12 @@
 						    clear separation of concerns, easy testability - while helping make you more
 						    productive building MVC views.
 					    </p>
-					<%});
+					<%})
+                    .Selected(true);
 
 				parent.Add()
                     .Text("Completely Open Source")
-					.LoadContentFrom("AjaxView_OpenSource", "TabStrip")
-                    .Selected(true);
+					.LoadContentFrom("AjaxView_OpenSource", "TabStrip");
 				
                 parent.Add()
                     .Text("Exceptional Performance")

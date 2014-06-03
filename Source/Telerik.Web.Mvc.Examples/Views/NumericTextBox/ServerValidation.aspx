@@ -8,15 +8,15 @@
     <% using (Html.BeginForm("servervalidation", "numerictextbox")) { %>
 
         <div>
-            <label for="NumericTextBox-input">Pieces of cake (required):</label>
+            <label for="piecesOfCake-input">Pieces of cake (required):</label>
             <%= Html.Telerik().NumericTextBox()
-                    .Name("piecesOfCake")
+                              .Name("piecesOfCake")
             %>
             <%= Html.ValidationMessage("piecesOfCake", "*")%>
         </div>
 
         <p>
-            <button class="t-button t-state-default" type="submit">Post</button>
+            <button class="t-button t-state-default" type="submit">Save</button>
         </p>
     
     <% } %>
@@ -29,8 +29,9 @@
 </asp:content>
 
 <asp:content contentPlaceHolderId="HeadContent" runat="server">
-   
     <style type="text/css">
+      
         .field-validation-error { color: red; position: absolute; margin: 0 0 0 5px; }
+   
     </style>
 </asp:content>

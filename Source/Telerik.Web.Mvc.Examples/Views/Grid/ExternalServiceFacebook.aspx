@@ -6,7 +6,7 @@
 
 <div class="fb-background">
     <div class="introduction">
-        <h4>Binding to External Web Service: Facebook</h4>
+        <h3>Binding to External Web Service: Facebook</h3>
         <p>
             To view this example, you need to connect with a <strong>Facebook application</strong>,
             which gives us access to your <strong>name and friends list</strong>.
@@ -26,7 +26,7 @@
         <div id="profile-info">
             Welcome, <span id="fb-name"></span>
             <img src="<%= ResolveUrl("~/Content/Grid/ExternalServiceFacebook/fb_silhouette.png") %>"
-                 id="fb-pic" width="50" height="50" />
+                 id="fb-pic" width="50" height="50" alt="Welcome Screen Facebook" />
         </div>
 
         <%= Html.Telerik().Grid<object>()

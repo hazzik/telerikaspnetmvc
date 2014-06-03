@@ -6,6 +6,10 @@ namespace Telerik.Web.Mvc.Examples.Models
     [TypeConverter(typeof(EmployeeConverter))]
     public partial class Employee
     {
+        public override string ToString()
+        {
+            return FirstName + " " + LastName;
+        }
     }
 
     public class EmployeeConverter : TypeConverter

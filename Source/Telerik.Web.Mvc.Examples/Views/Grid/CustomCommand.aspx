@@ -39,7 +39,7 @@
         href = href.replace(/orderBy=([^&]*)/, 'orderBy=' + (grid.orderBy || '~'));
         
         // Update the 'filter' parameter with the grids' current filtering state
-        href = href.replace(/filter=(.*)/, 'filter=' + (grid.filterExpression || '~'));
+        href = href.replace(/filter=(.*)/, 'filter=' + (grid.filterBy || '~'));
         
         // Update the 'href' attribute
         $exportLink.attr('href', href);

@@ -16,6 +16,8 @@
         .DataBinding(dataBinding => dataBinding.Ajax().Select("_RtlSupport", "Grid"))
         .Scrollable()
         .Sortable()
+        .Groupable()
+        .ToolBar(toolbar => toolbar.Insert())
         .Pageable()
         .Filterable()
 %>

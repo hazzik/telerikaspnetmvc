@@ -225,4 +225,10 @@
   <data name="DeleteConfirmation" xml:space="preserve">
     <value>Сигурни ли сте, че искате да изтриете записа?</value>
   </data>
+  <data name="FilterBoolIsFalse" xml:space="preserve">
+    <value>не е вярно</value>
+  </data>
+  <data name="FilterBoolIsTrue" xml:space="preserve">
+    <value>е вярно</value>
+  </data>
 </root>

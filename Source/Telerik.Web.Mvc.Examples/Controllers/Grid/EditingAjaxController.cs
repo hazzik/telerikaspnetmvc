@@ -5,70 +5,74 @@
     
     using Models;
     using System;
+    using Telerik.Web.Mvc.UI;
 
     public partial class GridController : Controller
     {
-        [SourceCodeFile("EditableCustomer (model)", "~/Models/EditableCustomer.cs")]
-        [SourceCodeFile("SessionCustomerRepository", "~/Models/SessionCustomerRepository.cs")]
+        [SourceCodeFile("EditableProduct (model)", "~/Models/EditableProduct.cs")]
+        [SourceCodeFile("SessionProductRepository", "~/Models/SessionProductRepository.cs")]
         [SourceCodeFile("Date.ascx (editor)", "~/Views/Shared/EditorTemplates/Date.ascx")]
-        public ActionResult EditingAjax()
+        public ActionResult EditingAjax(GridEditMode? mode, GridButtonType? type)
         {
+            ViewData["mode"] = mode ?? GridEditMode.InLine;
+            ViewData["type"] = type ?? GridButtonType.Text;
             return View();
         }
 
         [GridAction]
         public ActionResult _SelectAjaxEditing()
         {
-            return View(new GridModel(SessionCustomerRepository.All()));
+            return View(new GridModel(SessionProductRepository.All()));
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        [CultureAwareAction]
         [GridAction]
-        public ActionResult _SaveAjaxEditing(string id)
+        public ActionResult _SaveAjaxEditing(int id)
         {
-            EditableCustomer customer = SessionCustomerRepository.One(c => c.CustomerID == id);
+            EditableProduct product = SessionProductRepository.One(p => p.ProductID == id);
             
-            TryUpdateModel(customer);
+            TryUpdateModel(product);
 
-            SessionCustomerRepository.Update(customer);
+            SessionProductRepository.Update(product);
 
-            return View(new GridModel(SessionCustomerRepository.All()));
+            return View(new GridModel(SessionProductRepository.All()));
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        [CultureAwareAction]
         [GridAction]
         public ActionResult _InsertAjaxEditing()
         {
-            //Create a new instance of the EditableCustomer class.
-            EditableCustomer customer = new EditableCustomer();
+            //Create a new instance of the EditableProduct class.
+            EditableProduct product = new EditableProduct();
 
-            //Perform model binding (fill the customer properties and validate it).
-            if (TryUpdateModel(customer))
+            //Perform model binding (fill the product properties and validate it).
+            if (TryUpdateModel(product))
             {
-                //The model is valid - insert the customer.
-
-                SessionCustomerRepository.Insert(customer);
+                //The model is valid - insert the product.
+                SessionProductRepository.Insert(product);
             }
 
             //Rebind the grid
-            return View(new GridModel(SessionCustomerRepository.All()));
+            return View(new GridModel(SessionProductRepository.All()));
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
         [GridAction]
-        public ActionResult _DeleteAjaxEditing(string id)
+        public ActionResult _DeleteAjaxEditing(int id)
         {
-            //Find a customer with CustomerID equal to the id action parameter
-            EditableCustomer customer = SessionCustomerRepository.One(c => c.CustomerID == id);
+            //Find a customer with ProductID equal to the id action parameter
+            EditableProduct product = SessionProductRepository.One(p => p.ProductID == id);
 
-            if (customer != null)
+            if (product != null)
             {
                 //Delete the record
-                SessionCustomerRepository.Delete(customer);
+                SessionProductRepository.Delete(product);
             }
             
             //Rebind the grid
-            return View(new GridModel(SessionCustomerRepository.All()));
+            return View(new GridModel(SessionProductRepository.All()));
         }
     }
 }

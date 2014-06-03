@@ -5,7 +5,6 @@ namespace Telerik.Web.Mvc.Examples
     using System.Collections.Generic;
 
     using Telerik.Web.Mvc.Examples.Models;
-    using System.Collections;
     using Telerik.Web.Mvc.UI;
 
     [AutoPopulateSourceCode]
@@ -18,12 +17,12 @@ namespace Telerik.Web.Mvc.Examples
             return northwind.Categories;
         }
 
-        private IEnumerable<TreeViewItemModel> GetCategoryTreeViewItemModel()
+        private IEnumerable<TreeViewItem> GetCategoryTreeViewItem()
         {
             NorthwindDataContext northwind = new NorthwindDataContext();
 
             return from item in northwind.Categories
-                                select new TreeViewItemModel
+                                select new TreeViewItem
                                 {
                                     Text = item.CategoryName,
                                     Value = item.CategoryID.ToString()

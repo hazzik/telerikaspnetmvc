@@ -33,11 +33,14 @@
     <li><strong>OnNodeDragCancelled</strong> - raised when the user cancels a drag by hitting
         the Esc key. Used for cleaning up any artifacts from the dragging.</li>
 </ul>
-
-<p>You can subscribe to each of the events in the following ways:</p>
+<p>
+    Also, when checkboxes are enabled, the <strong>OnChecked</strong> <span class="cancellable">(cancellable)</span>
+    event is raised, when a checkbox is being checked.</p>
+<p>
+    You can subscribe to each of the events in the following ways:</p>
 <ul>
     <li>With a pre-defined javascript function
-<pre class="prettyprint">
+        <pre class="prettyprint">
 &lt;%= Html.Telerik().TreeView()
         .Name("TreeView")
         .ClientEvents(events => events
@@ -53,29 +56,22 @@
 </pre>
     </li>
     <li>With an inline function, serialized from the server
-<pre class="prettyprint">
+        <pre class="prettyprint">
 &lt;% Html.Telerik().TreeView()
        .Name("TreeView")
        .ClientEvents(events => events
-       <em>.OnLoad(() => 
-       {%&gt;
-            function(e) {
-                // your code
-            }
-       &lt;%})</em>
+       <em>.OnLoad(() => {%&gt; function(e) { // your code } &lt;%})</em>
        .Render();
 %&gt;
 </pre>
     </li>
     <li>Purely client-side event registration
-<pre class="prettyprint">
+        <pre class="prettyprint">
 &lt;%= Html.Telerik().TreeView().Name("TreeView") %&gt;
 
 &lt;script type="text/javascript"&gt;
     $(document).ready(function() {
-        <em>$('#TreeView').bind('select', function(e) {
-            // your code
-        });</em>
+        <em>$('#TreeView').bind('select', function(e) { // your code });</em>
     });
 &lt;/script&gt;
 </pre>

@@ -14,7 +14,7 @@
     public class Employees : System.Web.Services.WebService
     {
         [WebMethod]
-        public IEnumerable GetEmployees(TreeViewItemModel node)
+        public IEnumerable GetEmployees(TreeViewItem node)
         {
             NorthwindDataContext northwind = new NorthwindDataContext();
 
@@ -22,7 +22,7 @@
 
             IEnumerable nodes = from item in northwind.Employees
                                 where item.ReportsTo == parentId || (parentId == null && item.ReportsTo == null)
-                                select new TreeViewItemModel
+                                select new TreeViewItem
                                 {
                                     Text = item.FirstName + " " + item.LastName,
                                     Value = item.EmployeeID.ToString(),

@@ -10,20 +10,8 @@
                    {
                        item.Text = navigationData.Text;
                        item.ImageUrl = navigationData.ImageUrl;
-                       item.Url = navigationData.NavigateUrl;
+                       // item.Url = navigationData.NavigateUrl;
                    })
-           .ClientEvents(events =>
-               events
-                   .OnSelect(() =>
-                   {%>
-                       function(e) {
-                           /* 
-                               do not navigate
-                               URLs are set only for the sake of the example
-                           */
-                           e.preventDefault();
-                       }<%
-                   } ))
            .Render();
     %>
 

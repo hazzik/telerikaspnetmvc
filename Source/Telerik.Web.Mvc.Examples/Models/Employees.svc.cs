@@ -14,7 +14,7 @@
     public class EmployeesWcf
     {
         [OperationContract]
-        public IEnumerable<TreeViewItemModel> GetEmployees(TreeViewItemModel node)
+        public IEnumerable<TreeViewItem> GetEmployees(TreeViewItem node)
         {
             NorthwindDataContext northwind = new NorthwindDataContext();
 
@@ -22,14 +22,14 @@
 
             IEnumerable nodes = from item in northwind.Employees
                                 where item.ReportsTo == parentId || (parentId == null && item.ReportsTo == null)
-                                select new TreeViewItemModel
+                                select new TreeViewItem
                                 {
                                     Text = item.FirstName + " " + item.LastName,
                                     Value = item.EmployeeID.ToString(),
                                     LoadOnDemand = item.Employees.Count > 0
                                 };
 
-            return nodes.Cast<TreeViewItemModel>();
+            return nodes.Cast<TreeViewItem>();
         }
     }
 

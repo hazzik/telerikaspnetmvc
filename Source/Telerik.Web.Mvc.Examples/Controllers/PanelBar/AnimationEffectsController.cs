@@ -10,7 +10,7 @@ namespace Telerik.Web.Mvc.Examples
              int? openDuration,
              int? closeDuration)
         {
-            ViewData["animation"] = animation ?? "slide";
+            ViewData["animation"] = animation ?? "expand";
             ViewData["enableOpacityAnimation"] = enableOpacityAnimation ?? true;
             ViewData["openDuration"] = openDuration ?? 200;
             ViewData["closeDuration"] = closeDuration ?? 200;

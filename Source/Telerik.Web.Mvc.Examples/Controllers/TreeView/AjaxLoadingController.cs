@@ -15,7 +15,7 @@ namespace Telerik.Web.Mvc.Examples
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult _AjaxLoading(TreeViewItemModel node)
+        public ActionResult _AjaxLoading(TreeViewItem node)
         {
             NorthwindDataContext northwind = new NorthwindDataContext();
 
@@ -23,7 +23,7 @@ namespace Telerik.Web.Mvc.Examples
             
             IEnumerable nodes = from item in northwind.Employees
                                 where item.ReportsTo == parentId || (parentId == null && item.ReportsTo == null)
-                                select new TreeViewItemModel
+                                select new TreeViewItem
                                 {
                                     Text = item.FirstName + " " + item.LastName,
                                     Value = item.EmployeeID.ToString(),

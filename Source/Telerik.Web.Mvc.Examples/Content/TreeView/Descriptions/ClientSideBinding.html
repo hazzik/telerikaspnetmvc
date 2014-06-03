@@ -23,16 +23,16 @@
         var treeview = $('#TreeView').data('tTreeView');
 
         <em>var jsonObject = [
-            { Value: "1", Text: "Product 1", Expanded: true,
+            { Text: "Product 1", Expanded: true,
                 Items: [
-                  { Value: "4", Text: "Product 4" },
-                  { Value: "5", Text: "Product 5" },
-                  { Value: "6", Text: "Product 6" },
-                  { Value: "7", Text: "Product 7" }
+                  { Text: "Product 4" },
+                  { Text: "Product 5" },
+                  { Text: "Product 6" },
+                  { Text: "Other products", LoadOnDemand: true, Value: "other" }
               ]
             },
-            { Value: "2", Text: "Product 2 (unavailable)", Enabled: false },
-            { Value: "3", Text: "Product 3" }
+            {  Text: "Product 2 (unavailable)", Enabled: false },
+            {  Text: "Product 3" }
         ]</em>;
 
         treeview.bindTo(jsonObject);

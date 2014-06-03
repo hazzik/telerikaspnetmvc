@@ -17,7 +17,7 @@
     <button class="t-button t-state-default" type="submit">Apply</button>
 <% } %>
 
-<%= Html.Telerik().Grid<OrderDto>(Model)
+<%= Html.Telerik().Grid(Model)
         .Name("Grid")
         .Columns(columns =>
 		{
@@ -38,5 +38,4 @@
         .Groupable(grouping => grouping.Enabled((bool)ViewData["grouping"]))
         .Footer((bool)ViewData["showFooter"])
 %>
-
 </asp:content>

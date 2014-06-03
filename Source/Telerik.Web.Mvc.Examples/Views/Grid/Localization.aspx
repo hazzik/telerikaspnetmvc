@@ -3,11 +3,11 @@
 
 <% Html.RenderPartial("CulturePicker"); %>
 
-<%= Html.Telerik().Grid<EditableCustomer>()
+<%= Html.Telerik().Grid<EditableProduct>()
         .Name("Grid")
         .DataKeys(keys => 
         {
-            keys.Add(c => c.CustomerID);
+            keys.Add(p => p.ProductID);
         })
         .ToolBar(commands => commands.Insert())
         .DataBinding(dataBinding =>
@@ -20,20 +20,20 @@
         })
         .Columns(columns =>
         {
-            columns.Bound(c => c.ContactName);
-            columns.Bound(c => c.Country).Width(170);
-            columns.Bound(c => c.Address).Width(200);
-            columns.Bound(c => c.BirthDay).Width(130).Format("{0:d}");
+            columns.Bound(p => p.ProductName);
+            columns.Bound(p => p.UnitPrice).Width(130).Format("{0:C}");
+            columns.Bound(p => p.UnitsInStock).Width(130);
+            columns.Bound(p => p.Discontinued).Width(100).ClientTemplate("<input type='checkbox' disabled='disabled' name='Discontinued' <#= Discontinued? \"checked='checked'\" : \"\" #> />");
+            columns.Bound(p => p.LastSupply).Width(130).Format("{0:d}");
             columns.Command(commands =>
             {
                 commands.Edit();
                 commands.Delete();
-            }).Width(180);
+            }).Width(180).Title("Commands");
         })
         .Pageable()
-        .Sortable()
-        .Filterable()
         .Scrollable()
+        .Sortable()
         .Groupable()
 %>
 

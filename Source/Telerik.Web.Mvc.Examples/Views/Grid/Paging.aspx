@@ -10,6 +10,9 @@
         <li><%= Html.CheckBox("nextPrevious", true, "<strong>next page / previous page</strong> buttons")%></li>
         <li><%= Html.CheckBox("numeric", true, "a <strong>numeric pager</strong>")%></li>
     </ul>
+    
+    <label for="position">Pager position</label>
+    <%= Html.DropDownList("position", new SelectList(new[] { GridPagerPosition.Bottom, GridPagerPosition.Top, GridPagerPosition.Both }))%>
     <button class="t-button t-state-default" type="submit">Apply</button>
 <% } %>
 
@@ -36,6 +39,8 @@
         }
     }
 
+    var position = (GridPagerPosition)ViewData["position"];
+
     Html.Telerik().Grid(Model)
         .Name("Grid")
         .Columns(columns =>
@@ -46,7 +51,9 @@
             columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
         })
         .DataBinding(dataBinding => dataBinding.Ajax().Select("_Paging", "Grid"))
-        .Pageable(paging => paging.Style(pagerStyles))
+        .Pageable(paging => paging.Style(pagerStyles).Position(position))
+        .Scrollable()
         .Render();
+        
 %>
 </asp:content>

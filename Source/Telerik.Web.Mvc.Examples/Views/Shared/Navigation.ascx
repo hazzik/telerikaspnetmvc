@@ -6,7 +6,14 @@
         Html.Telerik().PanelBar()
             .Name("navigation-product-examples")
             .HtmlAttributes(new { @class = "demos-navigation" })
-            .BindTo("telerik.web.mvc.products.examples")
+            .BindTo("telerik.web.mvc.products.examples", (item, node) => 
+            {
+                if (!string.IsNullOrEmpty(node.ControllerName) && !string.IsNullOrEmpty(node.ActionName))
+                {
+                    item.ControllerName = node.ControllerName.ToLower();
+                    item.ActionName = node.ActionName.ToLower();
+                }
+            })
             .HighlightPath(true)
             .ItemAction(item =>
             {
@@ -31,7 +38,15 @@
     Html.Telerik().PanelBar()
         .Name("navigation-controls")
         .HtmlAttributes(new { @class = "demos-navigation" })
-        .BindTo("telerik.web.mvc.products")
+        .BindTo("telerik.web.mvc.products", (item, node) =>
+        {
+            if (!string.IsNullOrEmpty(node.ControllerName) && !string.IsNullOrEmpty(node.ActionName))
+            {
+                item.ControllerName = node.ControllerName.ToLower();
+                item.ActionName = node.ActionName.ToLower();
+            }
+        })
+        
         .ItemAction(item =>
         {
             if (!item.Items.Any() && !string.IsNullOrEmpty(Request.QueryString["theme"]))

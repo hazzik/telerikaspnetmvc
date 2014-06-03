@@ -17,20 +17,20 @@ namespace Telerik.Web.Mvc.Examples
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult CheckBoxSupport(List<TreeViewItemModel> checkedNodes)
+        public ActionResult CheckBoxSupport(List<TreeViewItem> TreeView1_checkedNodes)
         {
             string message = string.Empty;
 
-            if (checkedNodes != null)
+            if (TreeView1_checkedNodes != null)
             {
-                foreach (TreeViewItemModel node in checkedNodes)
+                foreach (TreeViewItem node in TreeView1_checkedNodes)
                 {
                     message += node.Text + "<br/>";
                 }
             }
 
             ViewData["message"] = message;
-            ViewData["checkedNodes"] = checkedNodes;
+            ViewData["TreeView1_checkedNodes"] = TreeView1_checkedNodes;
             return View(GetRootEmployees());
         }
     }

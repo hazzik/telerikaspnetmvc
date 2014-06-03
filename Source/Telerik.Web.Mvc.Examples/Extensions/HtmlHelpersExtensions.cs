@@ -102,7 +102,7 @@ namespace Telerik.Web.Mvc.Examples
             this.writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
             this.writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass + "-legend");
-            this.writer.RenderBeginTag(HtmlTextWriterTag.H4);
+            this.writer.RenderBeginTag(HtmlTextWriterTag.H3);
             this.writer.Write(this.title);
             this.writer.RenderEndTag();
 

@@ -10,6 +10,8 @@ namespace Telerik.Web.Mvc.Examples
 
     public partial class GridController : Controller
     {
+        private static int count;
+
         public ActionResult CustomBinding()
         {
             IEnumerable<Order> data = GetData(new GridCommand());
@@ -28,7 +30,7 @@ namespace Telerik.Web.Mvc.Examples
             return View(new GridModel
                             {
                                 Data = data,
-                                Total = data.Count()
+                                Total = count
                             });
         }
 
@@ -90,7 +92,8 @@ namespace Telerik.Web.Mvc.Examples
                     }
                 }
             }
-            
+
+            count = data.Count();
 
             // ... and paging
             if (command.PageSize > 0)

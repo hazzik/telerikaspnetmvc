@@ -19,6 +19,7 @@ namespace Telerik.Web.Mvc
 
             SortDescriptors = new List<SortDescriptor>();
             FilterDescriptors = new List<IFilterDescriptor>();
+            GroupDescriptors = new List<GroupDescriptor>();
         }
 
         public int Page

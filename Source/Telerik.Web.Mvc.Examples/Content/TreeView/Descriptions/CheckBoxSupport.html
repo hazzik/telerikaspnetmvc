@@ -4,20 +4,20 @@
 
 <pre class="prettyprint">
 &lt;%= Html.Telerik().TreeView()
-         .Name("TreeView")
+         .Name("TreeView1")
          <em>.ShowCheckBox(true)</em>
 %&gt;
 </pre>
 
-<p>When the form is posted, the checked nodes will be posted to the server in a List&lt;TreeViewItemModel&gt;:</p>
+<p>When the form is posted, the checked nodes will be posted to the server in a List&lt;TreeViewItem&gt;:</p>
 
 <pre class="prettyprint">
 [AcceptVerbs(HttpVerbs.Post)]
-public ActionResult ProcessCheckedNodes(List&lt;TreeViewItemModel&gt; checkedNodes)
+public ActionResult ProcessCheckedNodes(List&lt;TreeViewItem&gt; TreeView1_checkedNodes)
 {
     if (checkedNodes != null)
     {
-        foreach (TreeViewItemModel node in checkedNodes)
+        foreach (TreeViewItem node in checkedNodes)
         {
             // process checked node
         }

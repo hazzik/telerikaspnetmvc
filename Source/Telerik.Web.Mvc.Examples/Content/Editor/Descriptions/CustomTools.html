@@ -1,0 +1,76 @@
+﻿<p>
+    This example shows how to create a custom tool in Telerik Editor for ASP.NET MVC.
+</p>
+<p>
+To define a custom tool use the <code>Custom</code> method:
+</p>
+<pre class="prettyprint">
+&lt;%= Html.Telerik().Editor()
+        .Name("Editor")
+        .Tools(tools =&gt; tools
+                .Clear()
+                <em>.Custom(settings => settings.HtmlAttributes(new { @class = "t-html", onclick = "viewSource(event)" }))</em>
+        )
+%&gt;
+</pre>
+<p>
+    You can then use the editor client-side API and modify the content.
+</p>
+<pre class="prettyprint">
+&lt;script type="text/javascript"&gt;
+    var htmlSourcePopup;
+
+    function viewSource(e) {
+        e = $.Event(e);
+        
+        e.stopPropagation();
+        e.preventDefault();
+        
+        var editor = $('#Editor').data('tEditor');s
+        var html = editor.value();
+
+        if (!htmlSourcePopup) {
+            htmlSourcePopup = $('&lt;div&gt;' +
+                    '&lt;textarea style="width:700px;height:400px;font: normal 12px Consolas,Courier New,monospace"&gt;&lt;/textarea&gt;' +
+                    '&lt;div class="t-button-wrapper"&gt;' + 
+                        '&lt;button id="htmlCancel" class="t-button t-state-default" style="float:right"&gt;Cancel&lt;/button&gt;' +
+                        '&lt;button id="htmlUpdate" class="t-button t-state-default"&gt;Update&lt;/button&gt;' +
+                    '&lt;/div&gt;' +
+                '&lt;/div&gt;')
+                .css('display', 'none')
+                .tWindow({
+                    title: 'View Generated HTML',
+                    modal: true, 
+                    resizable: false, 
+                    draggable: true,
+                    onLoad: function() {
+                        var $popup = $(this);
+                        $popup.find('textarea')
+                                .focus()
+                                .end()
+                                .find('#htmlCancel')
+                                .click(function() {
+                                    htmlSourcePopup.close();
+                                })
+                                .end()
+                                .find('#htmlUpdate')
+                                .click(function() {
+                                    var value = $popup.find('textarea').val();
+                                    editor.value(value);
+                                    htmlSourcePopup.close();
+                                });
+                    },
+                    onClose: function() {
+                        editor.focus();
+                    },
+                    effects: $.telerik.fx.toggle.defaults()
+            })
+            .data('tWindow');
+        }
+
+        $(htmlSourcePopup.element).find('textarea').text(html);
+
+        htmlSourcePopup.center().open();
+    }
+&lt;/script&gt;
+</pre>

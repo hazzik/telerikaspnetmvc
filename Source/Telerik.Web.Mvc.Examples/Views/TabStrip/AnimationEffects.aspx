@@ -1,9 +1,52 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
 
+<% using (Html.Configurator("Animate with...")
+              .PostTo("AnimationEffects", "TabStrip")
+              .Begin())
+   { %>
+   <ul>
+         <li>
+            <%= Html.RadioButton("animation", "toggle", new { id = "toggle", title = "toggle" })%>
+            <label for="toggle"><strong>toggle</strong> animation</label>
+            <br />
+            <%= Html.RadioButton("animation", "expand", new { id = "expand", title = "expand" })%>
+            <label for="toggle"><strong>expand</strong> animation</label>
+            <br />
+            <%= Html.CheckBox("enableOpacityAnimation", ( bool )ViewData[ "enableOpacityAnimation" ], new { title = "enableOpacityAnimation" })%>
+            <label for="toggle"><strong>opacity</strong> animation</label>
+        </li>
+        <li>
+            <ul>
+                <li>
+                    <label for="openDuration">open for</label>
+                    <%= Html.Telerik().NumericTextBox()
+                            .Name("openDuration")
+                            .DecimalDigits(0)
+                            .NumberGroupSeparator("")
+                            .MinValue(0).MaxValue(10000)
+                            .Value(Convert.ToDouble(ViewData["openDuration"]))
+                    %> ms
+                </li>
+                <li>
+                    <label for="closeDuration">close for</label>
+                    <%= Html.Telerik().NumericTextBox()
+                            .Name("closeDuration")
+                            .DecimalDigits(0)
+                            .NumberGroupSeparator("")
+                            .MinValue(0).MaxValue(10000)
+                            .Value(Convert.ToDouble(ViewData["closeDuration"]))
+                    %> ms
+                </li>
+            </ul>
+        </li>
+    </ul>
+    
+    <button class="t-button t-state-default" type="submit">Apply</button>
+<% } %>
 <% Html.Telerik().TabStrip()
         .Name("TabStrip")
-        .HtmlAttributes(new { style = "margin-top: 200px; height: 163px;" })
+        .HtmlAttributes(new { style = "height: 163px;" })
         .Effects(fx =>
         {
             if (ViewData["animation"].ToString() == "expand")
@@ -82,51 +125,7 @@
         })
         .Render(); %>
 
-<% using (Html.Configurator("Animate with...")
-              .PostTo("AnimationEffects", "TabStrip")
-              .Begin())
-   { %>
-   <ul>
-         <li>
-            <%= Html.RadioButton("animation", "toggle", new { id = "toggle" }) %>
-            <label for="toggle"><strong>toggle</strong> animation</label>
-            <br />
-            <%= Html.RadioButton("animation", "expand", new { id = "expand" })%>
-            <label for="toggle"><strong>expand</strong> animation</label>
-            <br />
-            <%= Html.CheckBox(
-                    "enableOpacityAnimation",
-                    (bool)ViewData["enableOpacityAnimation"],
-                    "&nbsp;<strong>opacity</strong> animation")%>
-        </li>
-        <li>
-            <ul>
-                <li>
-                    <label for="openDuration">open for</label>
-                    <%= Html.Telerik().NumericTextBox()
-                            .Name("openDuration")
-                            .DecimalDigits(0)
-                            .NumberGroupSeparator("")
-                            .MinValue(0).MaxValue(10000)
-                            .Value(Convert.ToDouble(ViewData["openDuration"]))
-                    %> ms
-                </li>
-                <li>
-                    <label for="closeDuration">close for</label>
-                    <%= Html.Telerik().NumericTextBox()
-                            .Name("closeDuration")
-                            .DecimalDigits(0)
-                            .NumberGroupSeparator("")
-                            .MinValue(0).MaxValue(10000)
-                            .Value(Convert.ToDouble(ViewData["closeDuration"]))
-                    %> ms
-                </li>
-            </ul>
-        </li>
-    </ul>
-    
-    <button class="t-button t-state-default" type="submit">Apply</button>
-<% } %>
+
 
 <% Html.Telerik().ScriptRegistrar().OnDocumentReady(() => {%>
 	/* client-side validation */
@@ -147,10 +146,8 @@
 	<style type="text/css">
 	    .example .configurator
 	    {
-	        width: 500px;
-	        position: absolute;
-	        top: 0;
-	        right: 40px;
+	        width: 300px;
+	        margin: 0 0 10px auto;
 	    }
 	    
 	    .configurator li { padding: 3px 0 .5em; margin: 0; }

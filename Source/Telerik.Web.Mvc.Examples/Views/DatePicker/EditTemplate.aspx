@@ -7,7 +7,7 @@
             <h3>Product Details</h3>
             <ul>
                 <li>
-                    <span class="label">Product ID</span><%= Html.DisplayFor(m => m.ProductID) %>
+                    <span class="label">Product ID:</span><%= Html.DisplayFor(m => m.ProductID) %>
                     <%= Html.HiddenFor(m => m.ProductID) %>
                 </li>
                 <li>
@@ -18,6 +18,19 @@
                 </li>
             </ul>
             <button type="submit" class="t-button t-state-default">Save</button>
+            <% if (ViewData["ProductJson"] != null)
+           { %>
+                <ul>
+                    <li>
+                         <h4>Product saved</h4>
+                    </li>
+                    <li>
+                        <div id="jsonResult" class="prettyprint">
+                            <strong>JSON</strong><br /><%= ViewData["ProductJson"] %>
+                        </div>
+                    </li>
+                </ul>
+           <% } %>
         </div>
     <% } %>
 </asp:content>
@@ -54,7 +67,7 @@
         #field-list .label
         {
             display: inline-block; *display: inline; zoom: 1;
-            width: 80px; text-align: right; padding-right: 5px;
+            width: 100px; text-align: right; padding-right: 5px;
             padding-top: 2px;
         }
         
@@ -72,8 +85,13 @@
         
         #field-list button
         {
-            margin: 19px 0 0 160px;
+            margin: 19px 0 0 180px;
             width: 60px;
+        }
+        
+        #jsonResult
+        {
+            width:230px;    
         }
     </style>
 </asp:content>

@@ -6,7 +6,7 @@
 %>
 
 <% using (Html.Configurator("Client API").Begin()) { %>
-    <%= Html.TextBox("newValue").ToHtmlString() %><br />
+    <%= Html.TextBox("newValue", "", new { title = "newValue" }).ToHtmlString()%><br />
     <button onclick="setValue()">Set Value</button> / <button onclick="getValue()">Get Value</button>
 <% } %>
         

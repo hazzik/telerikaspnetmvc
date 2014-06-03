@@ -8,7 +8,7 @@
     <% using (Html.BeginForm("servervalidation", "datepicker")) { %>
 
         <div>
-            <label for="DatePicker-input">Cake delivery date (required):</label>
+            <label for="deliveryDate-input">Cake delivery date (required):</label>
             <%= Html.Telerik()
                     .DatePicker()
                     .Name("deliveryDate")
@@ -17,7 +17,7 @@
         </div>
 
         <p>
-            <button class="t-button t-state-default" type="submit">Post</button>
+            <button class="t-button t-state-default" type="submit">Save</button>
         </p>
     
     <% } %>
@@ -29,8 +29,9 @@
 </asp:content>
 
 <asp:content contentPlaceHolderId="HeadContent" runat="server">
-   
     <style type="text/css">
+        
         .field-validation-error { color: red; position: absolute; margin: 0 0 0 5px; }
+   
     </style>
 </asp:content>

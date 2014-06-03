@@ -2,10 +2,10 @@
 <asp:content contentPlaceHolderID="maincontent" runat="server">
 <% using (Html.BeginForm("CheckBoxSupport", "TreeView", FormMethod.Post))
 { %>
-        <% List<TreeViewItemModel> checkedNodes = ViewData["checkedNodes"] as List<TreeViewItemModel>; %>
+        <% List<TreeViewItem> checkedNodes = ViewData["TreeView1_checkedNodes"] as List<TreeViewItem>; %>
         
         <%= Html.Telerik().TreeView()
-            .Name("TreeView")
+            .Name("TreeView1")
             .ShowCheckBox(true)
             .BindTo(Model, mappings =>
             {
@@ -45,7 +45,7 @@
             })
         %>
     <p>
-        <button type="submit" class="t-button t-state-default">Post!</button>
+        <button type="submit" class="t-button t-state-default">Save</button>
     </p>
     
     <% if (checkedNodes != null && checkedNodes.Count > 0){%>
