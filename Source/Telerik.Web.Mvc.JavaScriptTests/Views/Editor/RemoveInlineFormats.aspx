@@ -11,7 +11,18 @@
         var impl;
         var editor;
 
-        function setUp() {
+
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             impl = {
                 formatRange: function(range, format) {
                     var command = new $.telerik.editor.FormatCommand({
@@ -27,7 +38,7 @@
             editor = getEditor();
         }
 
-        function test_removeFormat_removes_format_from_text_range() {
+        test('removeFormat removes format from text range', function() {
             editor.value('<p><strong>golgafrincham</strong> telephone sanitisers</p>');
 
             var strongContent = $('strong', editor.document)[0].firstChild;
@@ -37,11 +48,11 @@
             
             impl.formatRange(range, editor.formats.bold);
             
-            assertEquals('<p>golgafrincham telephone sanitisers</p>', editor.value());
-            assertEquals(1, editor.body.firstChild.childNodes.length);
-        }
+            equal(editor.value(), '<p>golgafrincham telephone sanitisers</p>');
+            equal(editor.body.firstChild.childNodes.length, 1);
+        });
         
-        function test_removeFormat_removes_format_from_selected_node_contents() {
+        test('removeFormat removes format from selected node contents', function() {
             editor.value('<strong>golga<em>fr</em>in</strong>');
 
             var strong = $('strong', editor.document)[0];
@@ -50,10 +61,10 @@
             range.selectNodeContents(strong);
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('golga<em>fr</em>in', editor.value());
-        }
+            equal(editor.value(), 'golga<em>fr</em>in');
+        });
 
-        function test_removeFormat_removes_format_from_complete_tags_across_paragraphs() {
+        test('removeFormat removes format from complete tags across paragraphs', function() {
             editor.value('<p>golgafrin<strong>cham</strong></p><p><strong>tele</strong>phone</p>');
 
             var $strongs = $('strong', editor.document);
@@ -64,10 +75,10 @@
 
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<p>golgafrincham</p><p>telephone</p>', editor.value().replace(/\s+/gi, ''));
-        }
+            equal(editor.value().replace(/\s+/gi, ''), '<p>golgafrincham</p><p>telephone</p>');
+        });
 
-        function test_removeFormat_when_formatted_and_unformatted_nodes_are_selected() {
+        test('removeFormat when formatted and unformatted nodes are selected', function() {
             editor.value('<strong>f</strong>oo');
             var range = editor.createRange();
             range.setStart(editor.body, 0);
@@ -75,30 +86,30 @@
 
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_removeFormat_when_there_is_unformatted_content_before_formatted() {
+        test('removeFormat when there is unformatted content before formatted', function() {
             editor.value('fo<strong>o</strong>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 0);
             range.setEnd(editor.body.childNodes[1].firstChild, 1);
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
         
-        function test_removeFormat_when_there_is_unformatted_content_after_formatted() {
+        test('removeFormat when there is unformatted content after formatted', function() {
             editor.value('<strong>fo</strong>ob');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild, 0);
             range.setEnd(editor.body.lastChild, 1);
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('foob', editor.value());
-        }
+            equal(editor.value(), 'foob');
+        });
 
-        function test_remove_styled_format_from_selection() {
+        test('remove styled format from selection', function() {
             editor.value('<span style="text-decoration:underline;">foo</span>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild, 1);
@@ -106,9 +117,9 @@
             
             impl.formatRange(range, editor.formats.underline);
             
-            assertEquals('<span style="text-decoration:underline;">f</span>o<span style="text-decoration:underline;">o</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="text-decoration:underline;">f</span>o<span style="text-decoration:underline;">o</span>');
+        });
 
+</script>
 
-    </script>
 </asp:Content>

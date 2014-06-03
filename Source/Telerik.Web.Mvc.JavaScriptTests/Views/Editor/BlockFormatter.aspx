@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
@@ -12,96 +12,105 @@
         var BlockFormatter;
         var TextNodeEnumerator;
         var enumerator;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             BlockFormatter = $.telerik.editor.BlockFormatter;
             TextNodeEnumerator = $.telerik.editor.TextNodeEnumerator;
         }
 
-        function test_apply_format_on_suitable_block_node() {
+        test('apply format on suitable block node', function() {
             editor.value('<div>foo</div>');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.apply([editor.body.firstChild.firstChild]);
 
-            assertEquals('<div style="text-align:center;">foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo</div>');
+        });
 
-        function test_apply_wraps_single_node() {
+        test('apply wraps single node', function() {
             editor.value('foo');
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             
             formatter.apply([editor.body.firstChild]);
 
-            assertEquals('<div style="text-align:center;">foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo</div>');
+        });
 
-        function test_apply_wraps_all_inline_nodes() {
+        test('apply wraps all inline nodes', function() {
             editor.value('<span>foo</span><span>bar</span>');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.apply([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]);
-            assertEquals('<div style="text-align:center;"><span>foo</span><span>bar</span></div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;"><span>foo</span><span>bar</span></div>');
+        });
 
-        function test_apply_wraps_block_and_inline_nodes() {
+        test('apply wraps block and inline nodes', function() {
             editor.value('<div>foo</div><span>bar</span>');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
 
             formatter.apply([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]);
-            assertEquals('<div style="text-align:center;">foo</div><div style="text-align:center;"><span>bar</span></div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo</div><div style="text-align:center;"><span>bar</span></div>');
+        });
 
-        function test_apply_for_block_nodes() {
+        test('apply for block nodes', function() {
             editor.value('<div>foo</div><div>bar</div>');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
 
             formatter.apply([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]);
-            assertEquals('<div style="text-align:center;">foo</div><div style="text-align:center;">bar</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo</div><div style="text-align:center;">bar</div>');
+        });
 
-        function test_apply_for_text_and_block() {
+        test('apply for text and block', function() {
             editor.value('foo<div>bar</div>baz');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.apply([editor.body.firstChild, editor.body.childNodes[1].firstChild, editor.body.lastChild]);
-            assertEquals('<div style="text-align:center;">foo</div><div style="text-align:center;">bar</div><div style="text-align:center;">baz</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo</div><div style="text-align:center;">bar</div><div style="text-align:center;">baz</div>');
+        });
 
-        function test_apply_text_node_and_inline_elements() {
+        test('apply text node and inline elements', function() {
             editor.value('foo<span></span>bar<span></span>baz');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.apply([editor.body.childNodes[2]]);
-            assertEquals('<div style="text-align:center;">foo<span></span>bar<span></span>baz</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo<span></span>bar<span></span>baz</div>');
+        });
 
-        function test_remove_unwraps_text_node() {
+        test('remove unwraps text node', function() {
             editor.value('<div style="text-align:center">foo</div>');
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.remove([editor.body.firstChild.firstChild]);
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_remove_preserves_paragraphs() {
+        test('remove preserves paragraphs', function() {
             editor.value('<p style="text-align:center">foo</p>');
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.remove([editor.body.firstChild.firstChild]);
-            assertEquals('<p>foo</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p>');
+        });
 
-        function test_remove_unwraps_block_nodes() {
+        test('remove unwraps block nodes', function() {
             editor.value('<div style="text-align:center">foo</div><div style="text-align:center">bar</div>');
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.remove([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]);
-            assertEquals('foobar', editor.value());
-        }
+            equal(editor.value(), 'foobar');
+        });
 
 
-        function test_toggle_applies_format_if_format_is_not_found() {
+        test('toggle applies format if format is not found', function() {
             var range = createRangeFromText(editor, '|fo|');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
@@ -110,10 +119,10 @@
                 argument = arguments[0];
             }
             formatter.toggle(range);
-            assertTrue($.isArray(argument));
-        }
+            ok($.isArray(argument));
+        });
 
-        function test_toggle_removes_format_if_format_is_found() {
+        test('toggle removes format if format is found', function() {
             var range = createRangeFromText(editor, '<div style="text-align:center">|fo|</div>');
 
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
@@ -122,10 +131,10 @@
                 argument = arguments[0];
             }
             formatter.toggle(range);
-            assertTrue($.isArray(argument));
-        }
+            ok($.isArray(argument));
+        });
 
-        function test_toggle_and_empty_range() {
+        test('toggle and empty range', function() {
             editor.value('foo');
 
             var range = editor.createRange();
@@ -133,10 +142,10 @@
             range.setEnd(editor.body.firstChild, 0);
             var formatter = new BlockFormatter(editor.formats.justifyCenter);
             formatter.toggle(range);
-            assertEquals('<div style="text-align:center;">foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">foo</div>');
+        });
 
-        function test_toggle_on_image() {
+        test('toggle on image', function() {
             editor.value('<img src="foo" />');
 
             var range = editor.createRange();
@@ -145,10 +154,10 @@
             var formatter = new BlockFormatter(editor.formats.justifyRight);
             formatter.toggle(range);
             
-            assertEquals('<img src="foo" style="float:right;" />', editor.value());
-        }
+            equal(editor.value(), '<img src="foo" style="float:right;" />');
+        });
 
-        function test_toggle_on_image_in_paragarph() {
+        test('toggle on image in paragarph', function() {
             editor.value('<p><img src="foo" /></p>');
 
             var range = editor.createRange();
@@ -157,72 +166,74 @@
             var formatter = new BlockFormatter(editor.formats.justifyRight);
             formatter.toggle(range);
             
-            assertEquals('<p><img src="foo" style="float:right;" /></p>', editor.value());
-        }
+            equal(editor.value(), '<p><img src="foo" style="float:right;" /></p>');
+        });
 
-        function test_remove_on_image() {
+        test('remove on image', function() {
             editor.value('<img style="float:right" src="foo" />');
 
             var formatter = new BlockFormatter(editor.formats.justifyRight);
             
             formatter.remove([editor.body.firstChild]);
             
-            assertEquals('<img src="foo" />', editor.value());
-        }
+            equal(editor.value(), '<img src="foo" />');
+        });
         
-        function test_apply_attribute_on_td() {
+        test('apply attribute on td', function() {
             editor.value('<table><tr><td>foo</td></tr></table>');
             var td = $('td', editor.body)[0];
             var formatter = new BlockFormatter(editor.formats.justifyRight);
             
             formatter.apply([td.firstChild]);
             
-            assertEquals('<table><tbody><tr><td style="text-align:right;">foo</td></tr></tbody></table>', editor.value());
-        }
+            equal(editor.value(), '<table><tbody><tr><td style="text-align:right;">foo</td></tr></tbody></table>');
+        });
 
-        function test_apply_wrap_in_td() {
+        test('apply wrap in td', function() {
             editor.value('<table><tr><td>foo</td></tr></table>');
             var td = $('td', editor.body)[0];
             var formatter = new BlockFormatter([{tags:['p']}]);
             
             formatter.apply([td.firstChild]);
             
-            assertEquals('<table><tbody><tr><td><p>foo</p></td></tr></tbody></table>', editor.value());
-        }
+            equal(editor.value(), '<table><tbody><tr><td><p>foo</p></td></tr></tbody></table>');
+        });
         
-        function test_apply_to_selection_of_block_elements() {
+        test('apply to selection of block elements', function() {
             editor.value('<div>foo</div><div>bar</div><div>baz</div>');
             var formatter = new BlockFormatter(editor.formats.justifyRight);
             formatter.apply([editor.body.firstChild.firstChild, editor.body.firstChild.nextSibling.firstChild]);
-            assertEquals('<div style="text-align:right;">foo</div><div style="text-align:right;">bar</div><div>baz</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:right;">foo</div><div style="text-align:right;">bar</div><div>baz</div>');
+        });
 
-        function test_apply_wraps_in_div() {
+        test('apply wraps in div', function() {
             editor.value('<div>foo</div>');
             var formatter = new BlockFormatter([{tags:['p']}]);
             
             formatter.apply([editor.body.firstChild.firstChild]);
             
-            assertEquals('<div><p>foo</p></div>', editor.value());
-        }
+            equal(editor.value(), '<div><p>foo</p></div>');
+        });
 
-        function test_apply_empty_container() {
+        test('apply empty container', function() {
             editor.value('');
             editor.focus();
             editor.exec('justifyRight');
             var range = editor.getRange();
             range.insertNode(editor.document.createElement('a'));
-            assertEquals('<div style="text-align:right;"><a></a></div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:right;"><a></a></div>');
+        });
 
 
-        function test_apply_text_nodes_in_inline_element() {
+        test('apply text nodes in inline element', function() {
             editor.value('<span>foo<strong>bar</strong></span>');
             var formatter = new BlockFormatter(editor.formats.justifyRight);
             
             formatter.apply([editor.body.firstChild.firstChild, editor.body.firstChild.lastChild.firstChild]);
             
-            assertEquals('<div style="text-align:right;"><span>foo<strong>bar</strong></span></div>', editor.value());
-        }
-    </script>
+            equal(editor.value(), '<div style="text-align:right;"><span>foo<strong>bar</strong></span></div>');
+        });
+
+</script>
+
 </asp:Content>

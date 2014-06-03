@@ -2,9 +2,21 @@
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-<h2>Date parsing</h2>
+
+    <input id="testInput" />
+
+     <% Html.Telerik().ScriptRegistrar()
+            .DefaultGroup(group => group.Add("telerik.common.js")
+                                        .Add("telerik.calendar.js")
+                                        .Add("telerik.datepicker.js")); 
+     %>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
 
 <script type="text/javascript">
+
+
     var views = {
         Month: 0,
         Year: 1,
@@ -12,53 +24,121 @@
         Century: 3
     }
 
-    var $t;
     var dv;
     var isRtl;
     var $input;
     var position;
 
-    function setUp() {
 
-        $t = $.telerik;
-        $input = $('#testInput');
-        isRtl = $('#testInput').closest('.t-rtl').length;
+    function configureCalendar(viewedMonth, currentView) {
+        var calendar = dv._getCalendar();
 
-        dv = new $t.dateView({
-            minValue: new $t.datetime(1800, 10, 10),
-            maxValue: new $t.datetime(2100, 10, 10),
+        if (viewedMonth) calendar.viewedMonth = new $.telerik.datetime(viewedMonth.value ? viewedMonth.value : viewedMonth);
+        calendar.currentView = $.telerik.calendar.views[currentView];
+        calendar.stopAnimation = true;
+
+        return calendar;
+    }
+
+    module("DatePicker / DateView", {
+        setup: function () {
+            $input = $('#testInput');
+            isRtl = $('#testInput').closest('.t-rtl').length;
+
+            dv = new $t.dateView({
+                minValue: new Date(1800, 10, 10),
+                maxValue: new Date(2100, 10, 10),
+                selectedValue: null,
+                effects: $t.fx.toggle.defaults(),
+                isRtl: isRtl
+            });
+
+            dv.$calendar.data('tCalendar').stopAnimation = true;
+
+            position = {
+                offset: $input.offset(),
+                outerHeight: $input.outerHeight(),
+                outerWidth: $input.outerWidth(),
+                zIndex: $t.getElementZIndex($input[0])
+            }
+        }
+    });
+
+    test('initializing dateview with selectedValue should set focusedValue to it', function () {
+        var selectedDate = new Date(2010, 10, 10);
+        var dateView = new $t.dateView({
+            minValue: new Date(1800, 10, 10),
+            maxValue: new Date(2100, 10, 10),
+            selectedValue: selectedDate,
+            effects: $t.fx.toggle.defaults(),
+            isRtl: isRtl
+        });
+
+        equal(dateView.focusedValue.getFullYear(), selectedDate.getFullYear(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getMonth(), selectedDate.getMonth(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getDate(), selectedDate.getDate(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getHours(), selectedDate.getHours(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getMinutes(), selectedDate.getMinutes(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getSeconds(), selectedDate.getSeconds(), 'focusedValue was not defined correctly');
+    });
+
+    test('initializing dateview should set focusedValue to minDate if minDate is bigger then today', function () {
+        var minDate = new $t.datetime();
+        minDate = $t.datetime.add(minDate, 10000);
+
+        var dateView = new $t.dateView({
+            minValue: minDate.toDate(),
+            maxValue: new Date(2100, 10, 10),
             selectedValue: null,
             effects: $t.fx.toggle.defaults(),
             isRtl: isRtl
         });
 
-        dv.$calendar.data('tCalendar').stopAnimation = true;
+        equal(dateView.focusedValue.getFullYear(), minDate.year(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getMonth(), minDate.month(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getDate(), minDate.date(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getHours(), minDate.hours(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getMinutes(), minDate.minutes(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getSeconds(), minDate.seconds(), 'focusedValue was not defined correctly');
+    });
 
-        position = {
-            offset: $input.offset(),
-            outerHeight: $input.outerHeight(),
-            outerWidth: $input.outerWidth(),
-            zIndex: $t.getElementZIndex($input[0])
-        }
-    }
+    test('initializing dateview should set focusedValue to maxDate if maxDate is less then today', function () {
+        var maxDate = new $t.datetime();
+        $t.datetime.modify(maxDate, -10000);
 
-    function test_creating_dateView_will_create_sharedCalendar_if_it_is_not_created_yet() {
         var dateView = new $t.dateView({
-            minValue: new $t.datetime(2000,10,10),
-            maxValue: new $t.datetime(2010, 10, 10),
+            minValue: new Date(1800, 10, 10),
+            maxValue: maxDate.toDate(),
+            selectedValue: null,
+            effects: $t.fx.toggle.defaults(),
+            isRtl: isRtl
+        });
+
+        equal(dateView.focusedValue.getFullYear(), maxDate.year(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getMonth(), maxDate.month(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getDate(), maxDate.date(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getHours(), maxDate.hours(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getMinutes(), maxDate.minutes(), 'focusedValue was not defined correctly');
+        equal(dateView.focusedValue.getSeconds(), maxDate.seconds(), 'focusedValue was not defined correctly');
+    });
+
+    test('creating dateView will create sharedCalendar if it is not created yet', function () {
+        var dateView = new $t.dateView({
+            minValue: new Date(2000, 10, 10),
+            maxValue: new Date(2010, 10, 10),
             selectedValue: null,
             effects: $t.fx.toggle.defaults(),
             isRtl: $('#testInput').closest('.t-rtl').length
         });
 
-        assertNotEquals('$calendar is undefined', undefined, dateView.$calendar);
-    }
-    
-    function test_second_dateView_should_use_shared_calendar() {
+        notEqual(dateView.$calendar, undefined, '$calendar is undefined');
+    });
+
+    test('second dateView should use shared calendar', function () {
         var options = {
-            minValue: new $t.datetime(2000, 10, 10),
-            maxValue: new $t.datetime(2010, 10, 10),
-            selectedValue: new $t.datetime(2005, 10, 10),
+            minValue: new Date(2000, 10, 10),
+            maxValue: new Date(2010, 10, 10),
+            selectedValue: new Date(2005, 10, 10),
             effects: $t.fx.toggle.defaults(),
             isRtl: $('#testInput').closest('.t-rtl').length
         };
@@ -66,28 +146,26 @@
         var dateView = new $t.dateView(options);
         var dateView2 = new $t.dateView(options);
 
-        assertEquals(dateView.$calendar, dateView2.$calendar);
-    }
+        equal(dateView2.$calendar, dateView.$calendar);
+    });
 
-    function test_open_method_should_show_calendar_on_correct_position() {
+    test('open method should show calendar on correct position', function () {
         dv.open(position);
 
         var $animationContainer = dv.$calendar.parent();
 
-        assertEquals('position', 'absolute', $animationContainer.css('position'));
-        assertEquals('direction','ltr', $animationContainer.css('direction'));
-        assertEquals('display', 'block', $animationContainer.css('display'));
-        assertEquals('top', position.offset.top, $animationContainer.offset().top);
-        assertEquals('left', position.offset.left, $animationContainer.offset().left);
-        assertEquals('zindex', position.zIndex, $animationContainer.css('zIndex'));
-    }
+        equal($animationContainer.css('position'), 'absolute', 'position');
+        equal($animationContainer.css('direction'), 'ltr', 'direction');
+        equal($animationContainer.css('display'), 'block', 'display');
+        equal($animationContainer.css('zIndex'), position.zIndex, 'zindex');
+    });
 
-    function test_assignToNewDateView_should_update_sharedCalendar() {
+    test('assignToNewDateView should update sharedCalendar', function () {
         var isCalled = false;
         var options = {
-            minValue: new $t.datetime(1900, 10, 10),
-            maxValue: new $t.datetime(2100, 10, 10),
-            selectedValue: new $t.datetime(2000, 0, 1),
+            minValue: new Date(1900, 10, 10),
+            maxValue: new Date(2100, 10, 10),
+            selectedValue: new Date(2000, 0, 1),
             effects: $t.fx.toggle.defaults(),
             isRtl: $('#testInput').closest('.t-rtl').length
         };
@@ -96,56 +174,58 @@
 
         var oldFunc = calendar.updateSelection;
         calendar.updateSelection = function () { isCalled = true; };
-        
+
         var dateView = new $t.dateView(options);
 
         dateView._reassignSharedCalendar();
 
-        assertTrue('Calendar update selection is not called', isCalled);
-        assertEquals('selectedValue is not equal', 0, calendar.selectedValue.value - options.selectedValue.value);
-        assertEquals('minValue is not equal', 0, calendar.minDate.value - options.minValue.value);
-        assertEquals('maxValue is not equal', 0, calendar.maxDate.value - options.maxValue.value);
+        ok(isCalled, 'Calendar update selection is not called');
+        equal(calendar.selectedValue - options.selectedValue, 0, 'selectedValue is not equal');
+        equal(calendar.minDate - options.minValue, 0, 'minValue is not equal');
+        equal(calendar.maxDate - options.maxValue, 0, 'maxValue is not equal');
 
         calendar.updateSelection = oldFunc;
-    }
+    });
 
-    function test_isOpened_should_return_true_if_calendar_visible() {
+    test('isOpened should return true if calendar visible', function () {
         dv.close();
         dv.open(position);
 
-        assertTrue(dv.isOpened());
-    }
+        ok(dv.isOpened());
+    });
 
-    function test_isOpened_should_return_false_if_calendar_is_not_visible() {
+    test('isOpened should return false if calendar is not visible', function () {
         dv.open(position);
-        
+
         dv.close();
 
-        assertFalse(dv.isOpened());
-    }
+        ok(!dv.isOpened());
+    });
 
-    function test_value_method_should_set_selectedValue_of_dateView() {
+    test('value method should set selectedValue of dateView', function () {
         var date = new Date(2007, 7, 7);
 
         dv.value(date);
 
-        assertEquals('selectedValue was not updated', 0, dv.selectedValue.value - date);
-        assertEquals('focusedValue was not updated', 0, dv.focusedValue.value - date);
-    }
+        equal(dv.selectedValue - date, 0, 'selectedValue was not updated');
+        equal(dv.focusedValue - date, 0, 'focusedValue was not updated');
+    });
 
-    function test_value_method_should_set_selectedValue_to_null_if_value_is_null() {
+    test('value method should set selectedValue to null if value is null', function () {
         dv.value(null);
 
         var today = new $t.datetime();
 
-        assertEquals('selectedValue is not set to null', null, dv.selectedValue);
-        assertEquals('focusedValue is not set to today', today.year(), dv.focusedValue.year());
-        assertEquals('focusedValue is not set to today', today.month(), dv.focusedValue.month());
-        assertEquals('focusedValue is not set to today', today.date(), dv.focusedValue.date());
-        assertEquals('calendar was not updated', null, dv._getCalendar().value());
-    }
+        var focusedValue = new $.telerik.datetime(dv.focusedValue);
 
-    function test_value_method_should_call_calendar_value_method_and_focusDate() {
+        equal(dv.selectedValue, null, 'selectedValue is not set to null');
+        equal(focusedValue.year(), today.year(), 'focusedValue is not set to today');
+        equal(focusedValue.month(), today.month(), 'focusedValue is not set to today');
+        equal(focusedValue.date(), today.date(), 'focusedValue is not set to today');
+        equal(dv._getCalendar().value(), null, 'calendar was not updated');
+    });
+
+    test('value method should call calendar value method and focusDate', function () {
         var isCalled = false;
         var isMethodCalled = false;
         var date = new Date(2007, 7, 7);
@@ -159,16 +239,16 @@
 
         dv.value(date);
 
-        assertTrue('value method is not called', isCalled);
-        assertTrue('focus method is not called', isMethodCalled);
+        ok(isCalled, 'value method is not called');
+        ok(isMethodCalled, 'focus method is not called');
 
         calendar.value = oldValue;
         $t.calendar.focusDate = oldFunc;
-    }
+    });
 
-    function test_minValue_method_should_set_minValue_close_and_null_sharedCalendar() {
+    test('minValue method should set minValue close and null sharedCalendar', function () {
         var isCalled = false;
-        
+
         var date = new Date(1907, 7, 7);
 
         var method = dv._reassignSharedCalendar;
@@ -176,110 +256,110 @@
         dv._reassignSharedCalendar = function () { isCalled = true; }
         dv.open(position);
         dv.min(date);
-        
-        assertTrue('create calendar was not called', isCalled);
-        assertEquals('minValue is not set', 0, dv.minValue.value - date);
-        
-        dv._reassignSharedCalendar = method;
-    }
 
-    function test_page_down_should_navigate_to_future() {
-        
+        ok(isCalled, 'create calendar was not called');
+        equal(+dv.minValue, +date, 'minValue is not set');
+
+        dv._reassignSharedCalendar = method;
+    });
+
+    test('page down should navigate to future', function () {
+
         var date = new Date(2004, 6, 28);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         dv.navigate({ keyCode: 34, preventDefault: function () { } });
 
-        assertEquals('focused date is not one month in the futute', 0, dv.focusedValue.toDate() - new Date(2004, 7, 28));
-    }
+        equal(dv.focusedValue - new Date(2004, 7, 28), 0, 'focused date is not one month in the futute');
+    });
 
-    function test_page_up_should_navigate_to_past() {
+    test('page up should navigate to past', function () {
 
         var date = new Date(2004, 6, 28);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
-        
+
         dv.navigate({ keyCode: 33, preventDefault: function () { } });
 
-        assertEquals('focused date is not one month earlier', 0, dv.focusedValue.toDate() - new Date(2004, 5, 28));
-    }
+        equal(dv.focusedValue - new Date(2004, 5, 28), 0, 'focused date is not one month earlier');
+    });
 
-    function test_home_button_should_focus_first_day_of_month() {
+    test('home button should focus first day of month', function () {
 
         var date = new Date(2004, 6, 28);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         dv.navigate({ keyCode: 36, preventDefault: function () { } });
 
-        assertEquals('first day of the month is not focused', 0, dv.focusedValue.toDate() - new Date(2004, 6, 1));
-    }
+        equal(dv.focusedValue - new Date(2004, 6, 1), 0, 'first day of the month is not focused');
+    });
 
-    function test_end_button_should_focus_last_day_of_month() {
+    test('end button should focus last day of month', function () {
 
         var date = new Date(2004, 6, 28);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         dv.navigate({ keyCode: 35, preventDefault: function () { } });
 
-        assertEquals('last day of the month is not focused', 0, dv.focusedValue.toDate() - new Date(2004, 6, 31));
-    }
+        equal(dv.focusedValue - new Date(2004, 6, 31), 0, 'last day of the month is not focused');
+    });
 
-    function test_alt_and_down_arrow_should_open_calendar() {
+    test('alt and down arrow should open calendar', function () {
 
         var date = new Date(2004, 6, 28);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         dv.navigate({ keyCode: 35, altKey: true, preventDefault: function () { } });
 
-        assertTrue(dv.$calendar.is(':visible'));
-    }
+        ok(dv.$calendar.is(':visible'));
+    });
 
-    function test_if_datepicker_focused_ctrl_and_left_arrow_should_navigate_to_passed_month() {
+    test('if datepicker focused ctrl and left arrow should navigate to passed month', function () {
 
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(2000, 5, 1);
-        
+
         var calendar = configureCalendar(date, views.Month);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
         dv.navigate({ keyCode: 37, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past month', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past month');
+    });
 
 
-    function test_if_datepicker_focused_ctrl_and_left_arrow_should_navigate_to_passed_year() {
+    test('if datepicker focused ctrl and left arrow should navigate to passed year', function () {
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(1999, 6, 1);
-        
-        dv.focusedValue = new $.telerik.datetime(date);
-        
+
+        dv.focusedValue = new Date(date);
+
         dv.open(position);
 
         var calendar = configureCalendar(date, views.Year);
 
         dv.navigate({ keyCode: 37, ctrlKey: true, preventDefault: function () { } });
-        
-        assertEquals('does not navigate to the past year', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
 
-    function test_if_datepicker_focused_ctrl_and_left_arrow_should_navigate_to_passed_decade() {
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past year');
+    });
+
+    test('if datepicker focused ctrl and left arrow should navigate to passed decade', function () {
 
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(1990, 6, 1);
-       
-        dv.focusedValue = new $.telerik.datetime(date);
+
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -287,16 +367,16 @@
 
         dv.navigate({ keyCode: 37, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past decade', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past decade');
+    });
 
 
-    function test_if_datepicker_focused_ctrl_and_left_arrow_should_navigate_to_passed_century() {
+    test('if datepicker focused ctrl and left arrow should navigate to passed century', function () {
 
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(1900, 6, 1);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -304,16 +384,16 @@
 
         dv.navigate({ keyCode: 37, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past century', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past century');
+    });
 
 
-    function test_if_datepicker_focused_ctrl_and_right_arrow_should_navigate_to_future_month() {
+    test('if datepicker focused ctrl and right arrow should navigate to future month', function () {
 
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(2000, 7, 1);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -321,15 +401,15 @@
 
         dv.navigate({ keyCode: 39, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past century', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past century');
+    });
 
-    function test_if_datepicker_focused_ctrl_and_right_arrow_should_navigate_to_passed_year() {
+    test('if datepicker focused ctrl and right arrow should navigate to passed year', function () {
 
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(2001, 6, 1);
-        
-        dv.focusedValue = new $.telerik.datetime(date);
+
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -337,15 +417,15 @@
 
         dv.navigate({ keyCode: 39, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past century', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past century');
+    });
 
-    function test_if_datepicker_focused_ctrl_and_right_arrow_should_navigate_to_passed_decade() {
+    test('if datepicker focused ctrl and right arrow should navigate to passed decade', function () {
 
         var date = new Date(2000, 6, 1);
         var resultDate = new Date(2010, 6, 1);
-        
-        dv.focusedValue = new $.telerik.datetime(date);
+
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -353,15 +433,15 @@
 
         dv.navigate({ keyCode: 39, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past century', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past century');
+    });
 
-    function test_if_datepicker_focused_ctrl_and_right_arrow_should_navigate_to_passed_century() {
+    test('if datepicker focused ctrl and right arrow should navigate to passed century', function () {
 
         var date = new Date(1999, 6, 1);
         var resultDate = new Date(2099, 6, 1);
-        
-        dv.focusedValue = new $.telerik.datetime(date);
+
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -369,14 +449,14 @@
 
         dv.navigate({ keyCode: 39, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('does not navigate to the past century', 0, calendar.viewedMonth.toDate() - resultDate);
-    }
+        equal(calendar.viewedMonth.toDate() - resultDate, 0, 'does not navigate to the past century');
+    });
 
-    function test_if_datepicker_focused_ctrl_and_down_arrow_change_centuryView_to_decadeView() {
+    test('if datepicker focused ctrl and down arrow change centuryView to decadeView', function () {
 
         var date = new Date(2000, 6, 1);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -384,14 +464,14 @@
 
         dv.navigate({ keyCode: 40, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('currentView is not Decade', views.Decade, calendar.currentView.index);
-    }
+        equal(calendar.currentView.index, views.Decade, 'currentView is not Decade');
+    });
 
-    function test_if_datepicker_focused_ctrl_and_down_arrow_change_decadeView_to_yearView() {
+    test('if datepicker focused ctrl and down arrow change decadeView to yearView', function () {
 
         var date = new Date(2000, 6, 1);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -399,13 +479,13 @@
 
         dv.navigate({ keyCode: 40, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('currentView is not Year', views.Year, calendar.currentView.index);
-    }
+        equal(calendar.currentView.index, views.Year, 'currentView is not Year');
+    });
 
-    function test_if_datepicker_focused_ctrl_and_up_arrow_change_view_to_wider_range() {
+    test('if datepicker focused ctrl and up arrow change view to wider range', function () {
 
         var date = new Date(2000, 6, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -413,12 +493,12 @@
 
         dv.navigate({ keyCode: 38, ctrlKey: true, preventDefault: function () { } });
 
-        assertEquals('currentView is not Year', views.Year, calendar.currentView.index);
-    }
+        equal(calendar.currentView.index, views.Year, 'currentView is not Year');
+    });
 
-    function test_left_key_should_focus_previous_date() {
+    test('left key should focus previous date', function () {
         var date = new Date(2000, 10, 10);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
 
         dv.open(position);
 
@@ -428,15 +508,15 @@
 
         var $element = $('.t-state-focus', dv.$calendar);
 
-        assertEquals('focused date is not correct', '9', $element.find('.t-link').html());
-        assertEquals(9, dv.focusedValue.date());
-    }
+        equal($element.find('.t-link').html(), '9', 'focused date is not correct');
+        equal(dv.focusedValue.getDate(), 9);
+    });
 
-    function test_right_key_should_focus_next_date() {
+    test('right key should focus next date', function () {
 
         var date = new Date(2000, 10, 10);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
@@ -445,14 +525,14 @@
 
         var $element = $('.t-state-focus', dv.$calendar);
 
-        assertEquals('focused date is not correct', '11', $element.find('.t-link').html());
-        assertEquals(11, dv.focusedValue.date());
-    }
+        equal($element.find('.t-link').html(), '11', 'focused date is not correct');
+        equal(dv.focusedValue.getDate(), 11);
+    });
 
-    function test_down_key_should_focus_next_week_day() {
+    test('down key should focus next week day', function () {
 
         var date = new Date(2000, 10, 10);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
@@ -461,14 +541,14 @@
 
         var $element = $('.t-state-focus', dv.$calendar);
 
-        assertEquals('focused date is not correct', '17', $element.find('.t-link').html());
-        assertEquals(17, dv.focusedValue.date());
-    }
+        equal($element.find('.t-link').html(), '17', 'focused date is not correct');
+        equal(dv.focusedValue.getDate(), 17);
+    });
 
-    function test_up_key_should_focus_previous_week_day() {
+    test('up key should focus previous week day', function () {
 
         var date = new Date(2000, 10, 10);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
@@ -477,265 +557,264 @@
 
         var $element = $('.t-state-focus', dv.$calendar);
 
-        assertEquals('focused date is not correct', '3', $element.find('.t-link').html());
-        assertEquals(3, dv.focusedValue.date());
-    }
+        equal($element.find('.t-link').html(), '3', 'focused date is not correct');
+        equal(dv.focusedValue.getDate(), 3);
+    });
 
-    function test_left_key_should_navigate_to_prev_month_day() {
+    test('left key should navigate to prev month day', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
 
         dv.navigate({ keyCode: 37, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 9, dv.focusedValue.month());
-        assertEquals('day is not correct', 31, dv.focusedValue.date());
-    }
+        equal(dv.focusedValue.getMonth(), 9, 'month is not correct');
+        equal(dv.focusedValue.getDate(), 31, 'day is not correct');
+    });
 
-    function test_right_key_should_navigate_to_next_month_day() {
+    test('right key should navigate to next month day', function () {
         var date = new Date(2000, 10, 30);
 
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
 
         dv.navigate({ keyCode: 39, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 11, dv.focusedValue.month());
-        assertEquals('day is not correct', 1, dv.focusedValue.date());
-    }
+        equal(dv.focusedValue.getMonth(), 11, 'month is not correct');
+        equal(dv.focusedValue.getDate(), 1, 'day is not correct');
+    });
 
-    function test_up_key_should_navigate_to_prev_week_and_navigate() {
+    test('up key should navigate to prev week and navigate', function () {
         var date = new Date(2000, 10, 4);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
 
         dv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 9, dv.focusedValue.month());
-        assertEquals('day is not correct', 28, dv.focusedValue.date());
-    }
+        equal(dv.focusedValue.getMonth(), 9, 'month is not correct');
+        equal(dv.focusedValue.getDate(), 28, 'day is not correct');
+    });
 
-    function test_down_key_should_navigate_to_next_week_and_navigate() {
+    test('down key should navigate to next week and navigate', function () {
 
         var date = new Date(2000, 10, 28);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
 
         dv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 11, dv.focusedValue.month());
-        assertEquals('day is not correct', 5, dv.focusedValue.date());
-    }
+        equal(dv.focusedValue.getMonth(), 11, 'month is not correct');
+        equal(dv.focusedValue.getDate(), 5, 'day is not correct');
+    });
 
-    function test_left_key_should_navigate_to_prev_month() {
+    test('left key should navigate to prev month', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
 
         dv.navigate({ keyCode: 37, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 9, dv.focusedValue.month());
-    }
+        equal(dv.focusedValue.getMonth(), 9, 'month is not correct');
+    });
 
-    function test_right_key_should_navigate_to_next_month() {
+    test('right key should navigate to next month', function () {
         var date = new Date(2000, 10, 31);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Month);
 
         dv.navigate({ keyCode: 39, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 11, dv.focusedValue.month());
-    }
+        equal(dv.focusedValue.getMonth(), 11, 'month is not correct');
+    });
 
-    function test_up_key_should_focus_july() {
+    test('up key should focus july', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Year);
 
         dv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 6, dv.focusedValue.month());
-    }
+        equal(dv.focusedValue.getMonth(), 6, 'month is not correct');
+    });
 
-    function test_down_key_should_focus_november() {
+    test('down key should focus november', function () {
 
         var date = new Date(2000, 6, 28);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Year);
 
         dv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 10, dv.focusedValue.month());
-    }
+        equal(dv.focusedValue.getMonth(), 10, 'month is not correct');
+    });
 
-    function test_up_key_should_focus_prev_november() {
+    test('up key should focus prev november', function () {
         var date = new Date(2000, 2, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Year);
 
         dv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 10, dv.focusedValue.month());
-        assertEquals('year is not correct', 1999, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getMonth(), 10, 'month is not correct');
+        equal(dv.focusedValue.getFullYear(), 1999, 'year is not correct');
+    });
 
-    function test_down_key_should_focus_next_march() {
+    test('down key should focus next march', function () {
 
         var date = new Date(2000, 10, 28);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Year);
 
         dv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-        assertEquals('month is not correct', 2, dv.focusedValue.month());
-        assertEquals('year is not correct', 2001, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getMonth(), 2, 'month is not correct');
+        equal(dv.focusedValue.getFullYear(), 2001, 'year is not correct');
+    });
 
-    function test_left_key_should_navigate_to_prev_year() {
+    test('left key should navigate to prev year', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Decade);
 
         dv.navigate({ keyCode: 37, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 1999, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 1999, 'year is not correct');
+    });
 
-    function test_right_key_should_navigate_to_next_year() {
+    test('right key should navigate to next year', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Decade);
 
         dv.navigate({ keyCode: 39, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2001, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2001, 'year is not correct');
+    });
 
-    function test_up_key_should_focus_2000() {
+    test('up key should focus 2000', function () {
         var date = new Date(2004, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Decade);
 
         dv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2000, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2000, 'year is not correct');
+    });
 
-    function test_down_key_should_focus_2004() {
+    test('down key should focus 2004', function () {
 
         var date = new Date(2000, 6, 28);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Decade);
 
         dv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2004, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2004, 'year is not correct');
+    });
 
-    function test_up_key_should_focus_prev_1996() {
+    test('up key should focus prev 1996', function () {
         var date = new Date(2000, 2, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Decade);
 
         dv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 1996, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 1996, 'year is not correct');
+    });
 
-    function test_down_key_should_focus_next_2014() {
+    test('down key should focus next 2014', function () {
 
         var date = new Date(2010, 10, 28);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Decade);
 
         dv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2014, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2014, 'year is not correct');
+    });
 
-    function test_left_key_should_navigate_to_prev_decade() {
+    test('left key should navigate to prev decade', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Century);
 
         dv.navigate({ keyCode: 37, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 1990, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 1990, 'year is not correct');
+    });
 
-    function test_right_key_should_navigate_to_next_decade() {
+    test('right key should navigate to next decade', function () {
         var date = new Date(2000, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Century);
 
         dv.navigate({ keyCode: 39, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2010, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2010, 'year is not correct');
+    });
 
-    function test_up_key_should_focus_2004_in_century_view() {
+    test('up key should focus 2004 in century view', function () {
         var date = new Date(2044, 10, 1);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Century);
 
         dv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2004, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2004, 'year is not correct');
+    });
 
-    function test_down_key_should_focus_2044() {
+    test('down key should focus 2044', function () {
 
         var date = new Date(2004, 6, 28);
-        dv.focusedValue = new $.telerik.datetime(date);
+        dv.focusedValue = new Date(date);
         dv.open(position);
 
         configureCalendar(date, views.Century);
 
         dv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-        assertEquals('year is not correct', 2044, dv.focusedValue.year());
-    }
+        equal(dv.focusedValue.getFullYear(), 2044, 'year is not correct');
+    });
 
-    function test_enter_key_should_call_onChage_callback_if_view_is_month() {
-        var passedValue;
+    test('enter key should call onChage callback if view is month', function () {
         var isCalled = false;
 
         dv.onChange = function (value) { isCalled = true; }
@@ -743,27 +822,9 @@
 
         dv.navigate({ keyCode: 13, preventDefault: function () { }, stopPropagation: function () { } });
 
-        assertTrue(isCalled);
-    }
-
-
-    function configureCalendar(viewedMonth, currentView) {
-        var calendar = dv._getCalendar();
-
-        if (viewedMonth) calendar.viewedMonth = new $.telerik.datetime(viewedMonth);
-        calendar.currentView = $.telerik.calendar.views[currentView];
-        calendar.stopAnimation = true;
-
-        return calendar;
-    }
+        ok(isCalled);
+    });
 
 </script>
 
-<input id="testInput" />
-
- <% Html.Telerik().ScriptRegistrar()
-        .DefaultGroup(group => group.Add("telerik.common.js")
-                                    .Add("telerik.calendar.js")
-                                    .Add("telerik.datepicker.js")); 
- %>
 </asp:Content>

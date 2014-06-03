@@ -48,6 +48,23 @@
 
             Assert.Equal(1, dropdownlist.SelectedIndex);
         }
+
+        [Fact]
+        public void Render_method_should_set_selectedIndex_depending_on_Selected_property_if_viewData_has_incorrect_value()
+        {
+            dropdownlist.Name = "DropDownList1";
+            dropdownlist.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            dropdownlist.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            dropdownlist.Items.Add(new DropDownItem { Text = "Item3", Value = "3", Selected = true });
+            dropdownlist.Items.Add(new DropDownItem { Text = "Item4", Value = "4" });
+            dropdownlist.SelectedIndex = 0;
+
+            DropDownListTestHelper.valueProvider.Setup(v => v.GetValue("DropDownList1")).Returns(new System.Web.Mvc.ValueProviderResult("15", "15", CultureInfo.CurrentCulture));
+
+            dropdownlist.Render();
+
+            Assert.Equal(2, dropdownlist.SelectedIndex);
+        }
 #endif
         [Fact]
         public void Render_method_should_set_selectedIndex_depending_on_ViewData_value()
@@ -160,12 +177,12 @@
             dropdownlist.WriteInitializationScript(textWriter.Object);
 
             DropDownListTestHelper.clientSideObjectWriter.Verify(w => w.Append("index", It.IsAny<int>(), 0));
-        }
-
+        }        
+        
         [Fact]
         public void ObjectWriter_should_append_Load_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnLoad.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnLoad.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", dropdownlist.ClientEvents.OnLoad)).Verifiable();
 
@@ -177,7 +194,7 @@
         [Fact]
         public void ObjectWriter_should_append_Select_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnChange.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnChange.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onChange", dropdownlist.ClientEvents.OnChange)).Verifiable();
 
@@ -189,7 +206,7 @@
         [Fact]
         public void ObjectWriter_should_append_PopUpOpen_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnOpen.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnOpen.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onOpen", dropdownlist.ClientEvents.OnOpen)).Verifiable();
 
@@ -201,7 +218,7 @@
         [Fact]
         public void ObjectWriter_should_append_PopUpClose_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnClose.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnClose.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onClose", dropdownlist.ClientEvents.OnClose)).Verifiable();
 
@@ -213,7 +230,7 @@
         [Fact]
         public void ObjectWriter_should_append_databinding_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnDataBinding.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnDataBinding.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onDataBinding", dropdownlist.ClientEvents.OnDataBinding)).Verifiable();
 
@@ -225,7 +242,7 @@
         [Fact]
         public void ObjectWriter_should_append_databound_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnDataBound.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnDataBound.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onDataBound", dropdownlist.ClientEvents.OnDataBound)).Verifiable();
 
@@ -237,7 +254,7 @@
         [Fact]
         public void ObjectWriter_should_append_error_property_of_clientEvents()
         {
-            dropdownlist.ClientEvents.OnError.InlineCode = () => { };
+            dropdownlist.ClientEvents.OnError.CodeBlock = () => { };
 
             DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onError", dropdownlist.ClientEvents.OnError)).Verifiable();
 
@@ -256,6 +273,30 @@
             dropdownlist.WriteInitializationScript(textWriter.Object);
 
             DropDownListTestHelper.clientSideObjectWriter.Verify(w => w.Append("dropDownAttr", It.IsAny<string>()));
+        }
+
+        [Fact]
+        public void ObjectWriter_should_call_append_for_Encoded_property()
+        {
+            DropDownListTestHelper.clientSideObjectWriter.Setup(w => w.Append("encoded", It.IsAny<bool>(), true));
+
+            dropdownlist.WriteInitializationScript(textWriter.Object);
+
+            DropDownListTestHelper.clientSideObjectWriter.Verify(w => w.Append("encoded", It.IsAny<bool>(), true));
+        }
+
+        [Fact]
+        public void Render_should_encode_text_property_of_Items_collection_if_Encoded_true()
+        {
+            var decodedText = "Test<script>alert('i can haz your data');</script>";
+
+            dropdownlist.Items.Clear();
+            dropdownlist.Items.Add(new DropDownItem { Text = decodedText, Value = decodedText, Selected = true });
+                        
+            dropdownlist.Render();
+
+            Assert.Equal(dropdownlist.Items[0].Text, System.Web.HttpUtility.HtmlEncode(decodedText));
+            Assert.Equal(dropdownlist.Items[0].Value, "Test<script>alert('i can haz your data');</script>");
         }
     }
 }

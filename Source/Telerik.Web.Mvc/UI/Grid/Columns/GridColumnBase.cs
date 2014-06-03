@@ -9,6 +9,8 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.UI.Html;
 
     /// <summary>
@@ -17,6 +19,7 @@ namespace Telerik.Web.Mvc.UI
     /// <typeparam name="T">The type of the data item</typeparam>
     public abstract class GridColumnBase<T> : IGridColumn where T : class
     {
+
         public string Format
         {
             get
@@ -41,7 +44,7 @@ namespace Telerik.Web.Mvc.UI
             Settings = new GridColumnSettings();
             Visible = true;
             HeaderTemplate = new HtmlTemplate();
-            FooterTemplate = new HtmlTemplate();
+            FooterTemplate = new HtmlTemplate<GridAggregateResult>();
         }
 
         /// <summary>
@@ -92,7 +95,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Gets the footer template of the column.
         /// </summary>
-        public HtmlTemplate FooterTemplate
+        public HtmlTemplate<GridAggregateResult> FooterTemplate
         {
             get; 
             set;
@@ -147,6 +150,14 @@ namespace Telerik.Web.Mvc.UI
                 Settings.ClientTemplate = value;
             }
         }
+
+        public string ClientFooterTemplate
+        {
+            get;
+            set;
+        }
+
+
         /// <summary>
         /// Gets or sets a value indicating whether this column is hidden.
         /// </summary>
@@ -222,70 +233,6 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        public virtual IHtmlBuilder CreateDisplayHtmlBuilder(GridCell<T> cell)
-        {
-            return CreateCellBuilder(CreateDisplayHtmlBuilderCore, cell);
-        }
-
-        public virtual IHtmlBuilder CreateEditorHtmlBuilder(GridCell<T> cell)
-        {
-            return CreateCellBuilder(CreateEditorHtmlBuilderCore, cell);
-        }
-
-        private IHtmlBuilder CreateCellBuilder(Func<GridCell<T>, IHtmlBuilder> creator, GridCell<T> cell)
-        {
-            var builder = creator(cell);
-
-            CellAction(cell);
-
-            Decorate(builder);
-
-            return builder;
-        }
-
-        private void CellAction(GridCell<T> cell)
-        {
-            if (Grid.CellAction != null)
-            {
-                Grid.CellAction(cell);
-            }
-        }
-
-        private void Decorate(IHtmlBuilder builder)
-        {
-            if (builder != null)
-            {
-                if (Hidden)
-                {
-                    builder.Adorners.Add(new GridHiddenColumnAdorner());
-                }
-
-                if (IsLast)
-                {
-                    builder.Adorners.Add(new GridCssClassAdorner
-                    {
-                        CssClasses = { UIPrimitives.Last }
-                    });
-                }
-            }
-        }
-
-
-        protected virtual IHtmlBuilder CreateEditorHtmlBuilderCore(GridCell<T> cell)
-        {
-            return CreateDisplayHtmlBuilderCore(cell);
-        }
-
-        protected virtual IHtmlBuilder CreateDisplayHtmlBuilderCore(GridCell<T> cell)
-        {
-            if (Template != null || InlineTemplate != null)
-            {
-                return new GridTemplateCellHtmlBuilder<T>(cell);
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Gets the HTML attributes of the cell rendered for the column
         /// </summary>
@@ -323,6 +270,167 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
             set;
+        }
+
+        protected void Decorate(IGridDecoratableCellBuilder cellBuilder, string lastCssClass)
+        {
+            if (IsLast && lastCssClass.HasValue())
+            {
+                cellBuilder.Decorators.Add(new GridLastCellBuilderDecorator(lastCssClass));
+            }
+
+            if (Hidden)
+            {
+                cellBuilder.Decorators.Add(new GridHiddenCellBuilderDecorator());
+            }
+        }
+
+        private Action<object> CreateCallback(IGridDataCellBuilder builder, bool insert, bool edit)
+        {
+            return (dataItem) =>
+            {
+                if (Grid.CellAction != null)
+                {
+                    var cell = new GridCell<T>(this, (T)dataItem);
+#if MVC2 || MVC3                    
+                    cell.InEditMode = edit;
+                    cell.InInsertMode = insert;
+#endif
+                    if (Template != null)
+                    {
+                        cell.Template.CodeBlockTemplate = Template;
+                    }
+
+                    if (InlineTemplate != null)
+                    {
+                        cell.Template.InlineTemplate = InlineTemplate;
+                    }
+
+                    Grid.CellAction(cell);
+
+                    if (builder.HtmlAttributes != null)
+                    {
+                        builder.HtmlAttributes.Merge(cell.HtmlAttributes);
+                    }
+                    else
+                    {
+                        builder.HtmlAttributes = cell.HtmlAttributes;
+                    }
+                    
+                    builder.Html = cell.Text;
+                }
+            };
+        }
+
+        public virtual IGridDataCellBuilder CreateDisplayBuilder(IGridHtmlHelper htmlHelper)
+        {
+            var builder = CreateDisplayBuilderCore(htmlHelper);
+            
+            Decorate(builder, UIPrimitives.Last);
+
+            builder.Callback = CreateCallback(builder, false, false);
+            
+            return builder;
+        }
+
+        protected virtual IGridDataCellBuilder CreateDisplayBuilderCore(IGridHtmlHelper htmlHelper)
+        {
+            var template = new HtmlTemplate<T>();
+
+            if (Template != null)
+            {
+                template.CodeBlockTemplate = Template;
+            }
+
+            if (InlineTemplate != null)
+            {
+                template.InlineTemplate = InlineTemplate;
+            }
+
+            return new GridTemplateCellBuilder<T>(template)
+            {
+                HtmlAttributes = HtmlAttributes
+            };
+        }
+
+        public IGridDataCellBuilder CreateEditBuilder(IGridHtmlHelper htmlHelper)
+        {
+            var builder = CreateEditBuilderCore(htmlHelper);
+
+            Decorate(builder, UIPrimitives.Last);
+
+            builder.Callback = CreateCallback(builder, false, true);
+
+            return builder;
+        }
+
+        protected abstract IGridDataCellBuilder CreateEditBuilderCore(IGridHtmlHelper htmlHelper);
+        
+        protected abstract IGridDataCellBuilder CreateInsertBuilderCore(IGridHtmlHelper htmlHelper);
+
+        public IGridDataCellBuilder CreateInsertBuilder(IGridHtmlHelper htmlHelper)
+        {
+            var builder = CreateInsertBuilderCore(htmlHelper);
+
+            Decorate(builder, UIPrimitives.Last);
+
+            builder.Callback = CreateCallback(builder, true, false);
+
+            return builder;
+        }
+        
+        public IGridCellBuilder CreateHeaderBuilder()
+        {
+            var builder = CreateHeaderBuilderCore();
+            
+            Decorate(builder, UIPrimitives.LastHeader);
+
+            return builder;
+        }
+
+        protected virtual IGridCellBuilder CreateHeaderBuilderCore()
+        {
+            return new GridHeaderCellBuilder(HeaderHtmlAttributes, AppendHeaderContent);
+        }
+
+        public IGridCellBuilder CreateFooterBuilder(IEnumerable<AggregateResult> aggregateResults)
+        {
+            var builder = CreateFooterBuilderCore(aggregateResults);
+            
+            Decorate(builder, string.Empty);
+
+            return builder;
+        }
+        
+        public IGridCellBuilder CreateGroupFooterBuilder(IEnumerable<AggregateResult> aggregateResults)
+        {
+            var builder = CreateGroupFooterBuilderCore(aggregateResults);
+
+            Decorate(builder, UIPrimitives.Last);
+
+            return builder;
+        }
+
+        protected virtual IGridCellBuilder CreateFooterBuilderCore(IEnumerable<AggregateResult> aggregateResults)
+        {
+            return new GridFooterCellBuilder(FooterHtmlAttributes, FooterTemplate);
+        }
+        
+        protected virtual IGridCellBuilder CreateGroupFooterBuilderCore(IEnumerable<AggregateResult> aggregateResults)
+        {
+            return new GridFooterCellBuilder(FooterHtmlAttributes, FooterTemplate);
+        }
+
+        protected void AppendHeaderContent(IHtmlNode container)
+        {
+            if (HeaderTemplate != null && HeaderTemplate.HasValue())
+            {
+                HeaderTemplate.Apply(container);
+            }
+            else
+            {
+                container.Html(Title.HasValue() ? Title : "&nbsp;");
+            }
         }
     }
 }

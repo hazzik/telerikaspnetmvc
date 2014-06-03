@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -12,13 +12,24 @@
 
     <script type="text/javascript">
         var editor;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
         }
 
-        function test_content_iframe_inherits_rtl_direction() {
-            assertEquals('rtl', $(editor.body, editor.document).css('direction'));
-        }
-    </script>
+        test('content iframe inherits rtl direction', function() {
+            equal($(editor.body, editor.document).css('direction'), 'rtl');
+        });
+
+</script>
+
 </asp:Content>

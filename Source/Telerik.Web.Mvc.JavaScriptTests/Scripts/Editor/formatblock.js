@@ -13,7 +13,7 @@ function BlockFormatFinder(format) {
         var suitable = [];
 
         for (var i = 0; i < nodes.length; i++) {
-            var candidate = dom.parentOfType(nodes[i], format[0].tags);
+            var candidate = dom.ofType(nodes[i], format[0].tags) ? nodes[i] : dom.parentOfType(nodes[i], format[0].tags);
             if (!candidate)
                 return [];
             if ($.inArray(candidate, suitable) < 0)

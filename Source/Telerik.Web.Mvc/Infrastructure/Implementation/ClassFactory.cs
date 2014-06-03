@@ -20,9 +20,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         ModuleBuilder module;
         Dictionary<Signature, Type> classes;
         int classCount;
-#if WPF || TELERIK_DATA
         ReaderWriterLock rwLock;
-#endif
+        
         private ClassFactory()
         {
             AssemblyName name = new AssemblyName("DynamicClasses");
@@ -41,16 +40,12 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 #endif
             }
             classes = new Dictionary<Signature, Type>();
-#if WPF || TELERIK_DATA
             rwLock = new ReaderWriterLock();
-#endif
         }
 
         public Type GetDynamicClass(IEnumerable<DynamicProperty> properties)
         {
-#if WPF || TELERIK_DATA
             rwLock.AcquireReaderLock(Timeout.Infinite);
-#endif
             try
             {
                 Signature signature = new Signature(properties);
@@ -64,17 +59,13 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             }
             finally
             {
-#if WPF || TELERIK_DATA
                 rwLock.ReleaseReaderLock();
-#endif
             }
         }
 
         Type CreateDynamicClass(DynamicProperty[] properties)
         {
-#if WPF || TELERIK_DATA
             LockCookie cookie = rwLock.UpgradeToWriterLock(Timeout.Infinite);
-#endif
             try
             {
                 string typeName = "DynamicClass" + (classCount + 1);
@@ -101,9 +92,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             }
             finally
             {
-#if WPF || TELERIK_DATA
                 rwLock.DowngradeFromWriterLock(ref cookie);
-#endif
             }
         }
 

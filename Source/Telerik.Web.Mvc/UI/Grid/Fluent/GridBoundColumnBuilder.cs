@@ -7,8 +7,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
     using System.Web;
-
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Defines the fluent interface for configuring bound columns
@@ -38,7 +37,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>        
-        public virtual GridBoundColumnBuilder<T> Format(string value)
+        public GridBoundColumnBuilder<T> Format(string value)
         {
             // Doing the UrlDecode to allow {0} in ActionLink e.g. Html.ActionLink("Index", "Home", new { id = "{0}" })
             Column.Format = HttpUtility.UrlDecode(value);
@@ -62,7 +61,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual GridBoundColumnBuilder<T> ReadOnly(bool value)
+        public GridBoundColumnBuilder<T> ReadOnly(bool value)
         {
             Column.ReadOnly = value;
             return this;
@@ -82,7 +81,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual GridBoundColumnBuilder<T> ReadOnly()
+        public GridBoundColumnBuilder<T> ReadOnly()
         {
             return ReadOnly(true);
         }
@@ -110,7 +109,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>        
-        public virtual GridBoundColumnBuilder<T> Sortable(bool value)
+        public GridBoundColumnBuilder<T> Sortable(bool value)
         {
             Column.Sortable = value;
 
@@ -128,7 +127,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>        
-        public virtual GridBoundColumnBuilder<T> Groupable(bool value)
+        public GridBoundColumnBuilder<T> Groupable(bool value)
         {
             Column.Groupable = value;
 
@@ -146,7 +145,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>        
-        public virtual GridBoundColumnBuilder<T> Filterable(bool value)
+        public GridBoundColumnBuilder<T> Filterable(bool value)
         {
             Column.Filterable = value;
 
@@ -164,7 +163,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>        
-        public virtual GridBoundColumnBuilder<T> Encoded(bool value)
+        public GridBoundColumnBuilder<T> Encoded(bool value)
         {
             Column.Encoded = value;
 
@@ -194,16 +193,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual GridBoundColumnBuilder<T> Template(Action<T> templateAction)
+        public GridBoundColumnBuilder<T> Template(Action<T> templateAction)
         {
             Guard.IsNotNull(templateAction, "templateAction");
 
             (Column as GridColumnBase<T>).Template = templateAction;
 
             return this;
-        }        
-        
-        public virtual GridBoundColumnBuilder<T> Template(Func<T, object> inlineTemplate)
+        }
+
+        public GridBoundColumnBuilder<T> Template(Func<T, object> inlineTemplate)
         {
             Guard.IsNotNull(inlineTemplate, "inlineTemplate");
 
@@ -212,11 +211,112 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual GridBoundColumnBuilder<T> ClientTemplate(string value)
+        public GridBoundColumnBuilder<T> ClientTemplate(string value)
         {
             Column.ClientTemplate = value;
 
             return this;
         }
+
+        public GridBoundColumnBuilder<T> ClientGroupHeaderTemplate(string value)
+        {
+            Column.ClientGroupHeaderTemplate = value;
+
+            return this;
+        }        
+        
+        public GridBoundColumnBuilder<T> ClientGroupFooterTemplate(string value)
+        {
+            Column.ClientGroupFooterTemplate = value;
+
+            return this;
+        }
+
+        public GridBoundColumnBuilder<T> Aggregate(Action<GridAggregatesFactory> aggregates)
+        {
+            var factory = new GridAggregatesFactory(Column.Aggregates, Column.Member);
+
+            aggregates(factory);
+
+            return this;
+        }
+        /// <summary>
+        /// Sets the footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public GridBoundColumnBuilder<T> FooterTemplate(Action<GridAggregateResult> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.FooterTemplate.CodeBlockTemplate = template;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public GridBoundColumnBuilder<T> FooterTemplate(Func<GridAggregateResult, object> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.FooterTemplate.InlineTemplate = template;
+
+            return this;
+        }        
+        
+        /// <summary>
+        /// Sets the group footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public GridBoundColumnBuilder<T> GroupFooterTemplate(Action<GridAggregateResult> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.GroupFooterTemplate.CodeBlockTemplate = template;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the group footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public GridBoundColumnBuilder<T> GroupFooterTemplate(Func<GridAggregateResult, object> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.GroupFooterTemplate.InlineTemplate = template;
+
+            return this;
+        }        
+        
+        
+        /// <summary>
+        /// Sets the group footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public GridBoundColumnBuilder<T> GroupHeaderTemplate(Action<GridGroupAggregateResult> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.GroupHeaderTemplate.CodeBlockTemplate = template;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the group footer template for the column.
+        /// </summary>
+        /// <param name="template">The action defining the template.</param>
+        public GridBoundColumnBuilder<T> GroupHeaderTemplate(Func<GridGroupAggregateResult, object> template)
+        {
+            Guard.IsNotNull(template, "template");
+
+            Column.GroupHeaderTemplate.InlineTemplate = template;
+
+            return this;
+        }        
     }
 }

@@ -110,7 +110,7 @@ function LinkCommand(options) {
                         .cat('<li class="t-form-checkbox-row"><input type="checkbox" id="t-editor-link-target"/><label for="t-editor-link-target">Open link in new window</label></li>')
                     .cat('</ol>')
                     .cat('<div class="t-button-wrapper">')
-                        .cat('<button class="t-dialog-insert t-button t-state-default">Insert</button>')
+                        .cat('<button class="t-dialog-insert t-button">Insert</button>')
                         .cat('&nbsp;or&nbsp;')
                         .cat('<a href="#" class="t-dialog-close t-link">Close</a>')
                     .cat('</div>')
@@ -127,8 +127,6 @@ function LinkCommand(options) {
                 else if (e.keyCode == 27)
                     close(e);
             }).end()
-            .delegate('.t-button', 'mouseenter', $t.buttonHover)
-            .delegate('.t-button', 'mouseleave', $t.buttonLeave)
             // IE < 8 returns absolute url if getAttribute is not used
             .find('#t-editor-link-url').val(a ? a.getAttribute('href', 2) : 'http://').end()
             .find('#t-editor-link-text').val(nodes.length > 0 ? (nodes.length == 1 ? nodes[0].nodeValue : nodes[0].nodeValue + nodes[1].nodeValue) : '').end()

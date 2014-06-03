@@ -6,7 +6,10 @@
     public partial class GridController : Controller
     {
         [SourceCodeFile("EditableProduct (model)", "~/Models/EditableProduct.cs")]
-        [SourceCodeFile("Date.ascx (editor)", "~/Views/Shared/EditorTemplates/Date.ascx")]
+        [SourceCodeFile(
+            Caption = "Date (editor)",
+            FileName = "~/Views/Shared/EditorTemplates/Date.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/Date.cshtml")]
         [SourceCodeFile("WCF", "~/Models/Products.svc.cs")]
         public ActionResult EditingWebService(GridEditMode? mode, GridButtonType? type)
         {

@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -10,13 +10,22 @@
 
         var editor;
         var InsertHtmlCommand;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             InsertHtmlCommand = $.telerik.editor.InsertHtmlCommand;
         }
 
-        function test_exec_calls_clipboard_paste() {
+        test('exec calls clipboard paste', function() {
             var range = createRangeFromText(editor, 'f|o|o');
 
             var oldPaste = editor.clipboard.paste;
@@ -28,21 +37,23 @@
                 var command = new InsertHtmlCommand({ range:range, value: '<span class="test-icon"></span>' });
                 command.editor = editor;
                 command.exec();
-                assertEquals('<span class="test-icon"></span>', argument);
+                equal(argument, '<span class="test-icon"></span>');
 
            } finally {
                 editor.clipboard.paste = oldPaste;
            }
-        }
+        });
 
-        function test_exec_inserts_html_parameter() {
+        test('exec inserts html parameter', function() {
             var range = createRangeFromText(editor, 'fo||o');
             editor.selectRange(range);
 
             var command = new InsertHtmlCommand({ range:range, value: '<span class="test-icon"></span>' });
             command.editor = editor;
             command.exec();
-            assertEquals('fo<span class="test-icon"></span>o', editor.value());
-        }
-    </script>
+            equal(editor.value(), 'fo<span class="test-icon"></span>o');
+        });
+
+</script>
+
 </asp:Content>

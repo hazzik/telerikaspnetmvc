@@ -37,14 +37,6 @@
         }
 
         [Fact]
-        public void DatePickerStart_should_render_id()
-        {
-            IHtmlNode tag = renderer.Build();
-
-            Assert.Equal(datePicker.Id, tag.Attribute("id"));
-        }
-
-        [Fact]
         public void Input_should_render_input_control()
         {
             IHtmlNode tag = renderer.InputTag();
@@ -58,8 +50,8 @@
         {
             IHtmlNode tag = renderer.InputTag();
 
-            Assert.Equal(datePicker.Id + "-input", tag.Attribute("id"));
-            Assert.Equal(datePicker.Id, tag.Attribute("name"));
+            Assert.Equal(datePicker.Id, tag.Attribute("id"));
+            Assert.Equal(datePicker.Name, tag.Attribute("name"));
         }
 
         [Fact]
@@ -129,10 +121,24 @@
         }
 
         [Fact]
+        public void Input_value_method_should_set_attempedValue_if_GetValue_returns_null()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            datePicker.Name = "DatePicker1";
+            datePicker.ViewContext.ViewData.ModelState.Add("DatePicker1", state);
+            datePicker.ViewContext.ViewData.ModelState.AddModelError("DatePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+           
+            tag.Attribute("value").ShouldEqual("s");
+        }
+
+        [Fact]
         public void Button_should_render_icon_with_default_title_and_class()
         {
-            datePicker.ButtonTitle = string.Empty;
-
             IHtmlNode tag = renderer.ButtonTag().Children[0];
 
             Assert.Equal("Open the calendar", tag.Attribute("title"));

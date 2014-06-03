@@ -8,7 +8,9 @@
     public partial class EditorController : Controller
     {
         [SourceCodeFile("EditableEmployee (model)", "~/Models/EditableEmployee.cs")]
-        [SourceCodeFile("Editor.ascx (Editor)", "~/Views/Editor/EditorTemplates/Editor.ascx")]
+        [SourceCodeFile(
+            FileName = "~/Views/Editor/EditorTemplates/Editor.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Editor/EditorTemplates/Editor.cshtml")]
         public ActionResult EditorInGrid()
         {
             return View(SessionEmployeeRepository.All());

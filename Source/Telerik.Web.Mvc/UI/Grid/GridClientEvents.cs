@@ -22,9 +22,16 @@ namespace Telerik.Web.Mvc.UI
             OnDetailViewExpand = new ClientEvent();
             OnDetailViewCollapse = new ClientEvent();
             OnColumnReorder = new ClientEvent();
+            OnSubmitChanges = new ClientEvent();
         }
         
         public ClientEvent OnDetailViewCollapse
+        {
+            get;
+            private set;
+        }        
+        
+        public ClientEvent OnSubmitChanges
         {
             get;
             private set;
@@ -117,6 +124,7 @@ namespace Telerik.Web.Mvc.UI
             writer.AppendClientEvent("onRowDataBound", OnRowDataBound);
             writer.AppendClientEvent("onRowSelect", OnRowSelect);
             writer.AppendClientEvent("onSave", OnSave);
+            writer.AppendClientEvent("onSubmitChanges", OnSubmitChanges);
         }
     }
 }

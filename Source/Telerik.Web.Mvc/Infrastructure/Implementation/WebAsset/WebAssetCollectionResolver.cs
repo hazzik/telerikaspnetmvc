@@ -31,7 +31,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
             return resolvedUrls
                 .Distinct(StringComparer.OrdinalIgnoreCase)
-                .Select(urlResolver.Resolve);
+                .Select((url) => urlResolver.Resolve(url));
         }
     }
 }

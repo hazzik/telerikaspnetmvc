@@ -5,16 +5,16 @@
 <% 
     GridEditMode mode = (GridEditMode)ViewData["mode"];
     GridButtonType type = (GridButtonType)ViewData["type"];
-    
+
     using (Html.Configurator("Edit mode")
               .PostTo("EditingWebService", "Grid")
               .Begin())
-   { 
+    { 
 %>
     <ul>
-        <li><%= Html.RadioButton("mode", "InLine", mode == GridEditMode.InLine, new { id = "inLine" }) %><label for="inLine">In-line</label></li>
-        <li><%= Html.RadioButton("mode", "InForm", mode == GridEditMode.InForm, new { id = "inForm" }) %><label for="inForm">In-form</label></li>
-        <li><%= Html.RadioButton("mode", "PopUp", mode == GridEditMode.PopUp, new { id = "popUp" }) %><label for="popUp">Pop-up</label></li>
+        <li><%= Html.RadioButton("mode", "InLine", mode == GridEditMode.InLine, new { id = "inLine" })%><label for="inLine">In-line</label></li>
+        <li><%= Html.RadioButton("mode", "InForm", mode == GridEditMode.InForm, new { id = "inForm" })%><label for="inForm">In-form</label></li>
+        <li><%= Html.RadioButton("mode", "PopUp", mode == GridEditMode.PopUp, new { id = "popUp" })%><label for="popUp">Pop-up</label></li>
     </ul>
     <br />
     <h3 class="configurator-legend">
@@ -24,17 +24,18 @@
         <li><%= Html.RadioButton("type", "Text", type == GridButtonType.Text, new { id = "text" })%><label for="text">Text</label></li>
         <li><%= Html.RadioButton("type", "Image", type == GridButtonType.Image, new { id = "image" })%><label for="image">Image</label></li>
         <li><%= Html.RadioButton("type", "ImageAndText", type == GridButtonType.ImageAndText, new { id = "imageAndText" })%><label for="imageAndText">Image and text</label></li>
+        <li><%= Html.RadioButton("type", "BareImage", type == GridButtonType.BareImage, new { id = "bareImage" })%><label for="bareImage">Bare Image (no button borders)</label></li>
     </ul>
-    <button type="submit" class="t-button t-state-default">Apply</button>
+    <button type="submit" class="t-button">Apply</button>
 <% 
-   }
+    }
 %>
 
 <h3>Bound to WCF Web Service</h3>
 <%= Html.Telerik().Grid<EditableProduct>()
         .Name("WcfGrid")
         .ToolBar(commands => commands.Insert().ButtonType(type))
-        .DataKeys(keys => 
+        .DataKeys(keys =>
         {
             keys.Add(p => p.ProductID);
         })
@@ -47,19 +48,19 @@
                 .Delete("~/Models/Products.svc/Delete");
         })
         .Columns(columns =>
+        {
+            columns.Bound(p => p.ProductName).Width(210);
+            columns.Bound(p => p.UnitPrice).Width(130).Format("{0:C}");
+            columns.Bound(p => p.UnitsInStock).Width(130);
+            columns.Bound(p => p.LastSupply).Width(130).Format("{0:d}");
+            columns.Bound(p => p.Discontinued)
+                   .ClientTemplate("<input type='checkbox' disabled='disabled' name='Discontinued' <#= Discontinued? \"checked='checked'\" : \"\" #> />");
+            columns.Command(commands =>
             {
-                columns.Bound(p => p.ProductName).Width(210);
-                columns.Bound(p => p.UnitPrice).Width(130).Format("{0:C}");
-                columns.Bound(p => p.UnitsInStock).Width(130);
-                columns.Bound(p => p.LastSupply).Width(130).Format("{0:d}");
-                columns.Bound(p => p.Discontinued)
-                       .ClientTemplate("<input type='checkbox' disabled='disabled' name='Discontinued' <#= Discontinued? \"checked='checked'\" : \"\" #> />");
-                columns.Command(commands =>
-                {
-                    commands.Edit().ButtonType(type);
-                    commands.Delete().ButtonType(type);
-                }).Width(180).Title("Commands");
-            })
+                commands.Edit().ButtonType(type);
+                commands.Delete().ButtonType(type);
+            }).Width(180).Title("Commands");
+        })
         .Editable(editing => editing.Mode(mode))
         .Scrollable()
         .Pageable()

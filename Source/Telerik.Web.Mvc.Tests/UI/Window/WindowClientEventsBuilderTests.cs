@@ -26,7 +26,7 @@
 
             builder.OnLoad(param);
 
-            Assert.NotNull(clientEvents.OnLoad.InlineCode);
+            Assert.NotNull(clientEvents.OnLoad.CodeBlock);
         }
 
         [Fact]
@@ -66,7 +66,7 @@
 
             builder.OnOpen(param);
 
-            Assert.NotNull(clientEvents.OnOpen.InlineCode);
+            Assert.NotNull(clientEvents.OnOpen.CodeBlock);
         }
 
         [Fact]
@@ -106,7 +106,7 @@
 
             builder.OnClose(param);
 
-            Assert.NotNull(clientEvents.OnClose.InlineCode);
+            Assert.NotNull(clientEvents.OnClose.CodeBlock);
         }
 
         [Fact]
@@ -146,7 +146,7 @@
 
             builder.OnMove(param);
 
-            Assert.NotNull(clientEvents.OnMove.InlineCode);
+            Assert.NotNull(clientEvents.OnMove.CodeBlock);
         }
 
         [Fact]
@@ -186,7 +186,7 @@
 
             builder.OnResize(param);
 
-            Assert.NotNull(clientEvents.OnResize.InlineCode);
+            Assert.NotNull(clientEvents.OnResize.CodeBlock);
         }
 
         [Fact]
@@ -226,7 +226,7 @@
 
             builder.OnRefresh(param);
 
-            Assert.NotNull(clientEvents.OnRefresh.InlineCode);
+            Assert.NotNull(clientEvents.OnRefresh.CodeBlock);
         }
 
         [Fact]
@@ -266,7 +266,7 @@
 
             builder.OnError(param);
 
-            Assert.NotNull(clientEvents.OnError.InlineCode);
+            Assert.NotNull(clientEvents.OnError.CodeBlock);
         }
 
         [Fact]

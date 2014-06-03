@@ -11,7 +11,7 @@
             <li><%= Html.CheckBox("resizable", true, "allow to be <strong>resized</strong>")%></li>
             <li><%= Html.CheckBox("movable", true, "allow to be <strong>moved</strong>")%></li>
         </ul>
-        <button class="t-button t-state-default" type="submit">Apply</button>
+        <button class="t-button" type="submit">Apply</button>
     <% } %>
     
     <% Html.Telerik().Window()
@@ -44,16 +44,16 @@
     
     <% Html.Telerik().ScriptRegistrar()
            .OnDocumentReady(() => {%>
-                var lovelyWindow = $('#Window');
+                var windowElement = $('#Window');
                 var undoButton = $('#undo');
                 undoButton
                     .bind('click', function(e) {
-                        lovelyWindow.data('tWindow').open();
+                        windowElement.data('tWindow').open();
                         undoButton.hide();
                     })
-                    .toggle(!lovelyWindow.is(':visible'));
+                    .toggle(!windowElement.is(':visible'));
                 
-                lovelyWindow.bind('close', function() {
+                windowElement.bind('close', function() {
                     undoButton.show();
                 });
            <%}); %>

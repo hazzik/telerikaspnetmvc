@@ -2,157 +2,178 @@
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-<h2>Date parsing</h2>
 
-<script type="text/javascript">
-    var views = {
-        Month: 0,
-        Year: 1,
-        Decade: 2,
-        Century: 3
-    }
+     <%= Html.Telerik().DatePicker().Name("DatePicker")
+                       .Effects(e=>e.Toggle())
+                       .Min(new DateTime(1600, 1, 1))
+                       .Max(new DateTime(2400, 1, 1))
+     %>
 
-    function getDatePicker() {
-        return $('#DatePicker').data('tDatePicker');
-    }
+     <%= Html.Telerik().DatePicker().Name("DatePicker2")
+                       .Effects(e=>e.Toggle())
+                       .Value(new DateTime(2000,10,10))
+     %>
 
-    function test_calendar_with_toggle_animation_should_hide_animation_container() {
-        getDatePicker().open();
+     <%= Html.Telerik().DatePicker().Name("DatePickerWithInputAttr")
+                .Effects(e=>e.Toggle())
+                .InputHtmlAttributes(new {value = "10/20/2000"})
+     %>
+</asp:Content>
 
-        $(document.documentElement).mousedown();
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
+    <script type="text/javascript">
+
+        var views = {
+            Month: 0,
+            Year: 1,
+            Decade: 2,
+            Century: 3
+        }
+
+        function getDatePicker() {
+            return $('#DatePicker').data('tDatePicker');
+        }
+
+        function isValidDate(year, month, day, date) {
+            var isValid = true;
+
+            if (year != date.getFullYear())
+                isValid = false;
+            else if (month != date.getMonth() + 1)
+                isValid = false;
+            else if (day != date.getDate())
+                isValid = false;
+
+            return isValid;
+        }
+
+        test('animation wrapper should be hidden on load', function () {
+            ok($('.t-animation-container').is(':hidden'));
+        });
+
+
+        test('calendar with toggle animation should hide animation container', function () {
+            getDatePicker().open();
+
+            $(document.documentElement).mousedown();
+
+            ok(!getDatePicker().dateView.isOpened());
+        });
+
+        test('parse date less than min date should return null', function () {
+            var datepicker = getDatePicker()
+            datepicker.format = "MM/dd/yyyy";
+
+            datepicker.value("01/23/1400");
+            ok(null === datepicker.selectedValue);
+        });
+
+        test('parse date bigger than min date should return null', function () {
+            var datepicker = getDatePicker()
+            datepicker.format = "MM/dd/yyyy";
+
+            datepicker.value("01/23/2500");
+            ok(null === datepicker.selectedValue);
+        });
+
+        test('parse date equal to min should parsed correctly', function () {
+            var datepicker = getDatePicker()
+            datepicker.format = "MM/dd/yyyy";
+
+            datepicker.value("1/1/1900"); //in FF new Date(1899, 11, 31) == 1.1.1900
+            ok(isValidDate(1900, 1, 1, datepicker.selectedValue));
+        });
+
+        test('parse date equal to max should parsed correctly', function () {
+
+            var datepicker = getDatePicker()
+            datepicker.format = "MM/dd/yyyy";
+
+            datepicker.value("1/1/2100");
+            ok(isValidDate(2100, 1, 1, datepicker.selectedValue));
+        });
+
+        test('if input value is bigger then maxValue blur event should change input value to maxValue', function () {
+            var $input = $('#DatePicker');
+            var datepicker = getDatePicker();
+
+            datepicker._update('1/1/2410');
+
+            equal(+datepicker.maxValue, +datepicker.parse($input.val()));
+        });
+
+        test('if input value is bigger then maxValue blur event should change remove error class', function () {
+            var $input = $('#DatePicker');
+            var datepicker = getDatePicker();
+
+            datepicker._update('1/1/2410');
+            
+            ok(!$input.hasClass('t-state-error'));
+        });
+
+        test('if input value is smaller then minValue blur event should change input value to minValue', function () {
+            var $input = $('#DatePicker');
+            var datepicker = getDatePicker();
+
+            datepicker._update('1/1/1500');
+
+            equal(+datepicker.minValue, +datepicker.parse($input.val()));
+        });
+
+        test('if input value is smaller then minValue blur event should change remove error class', function () {
+            var $input = $('#DatePicker');
+            var datepicker = getDatePicker();
+
+            datepicker._update('1/1/1500');
+
+            ok(!$input.hasClass('t-state-error'));
+        });
+
+        test('datepicker should close internal methods if document mousedown', function () {
+            var isCloseCalled = false;
+            var datepicker = getDatePicker();
+
+            var oldClose = datepicker._close;
+
+            datepicker._close = function () { isCloseCalled = true; };
+
+            datepicker.open();
+
+            $(document.documentElement).trigger('mousedown');
+
+            ok(isCloseCalled, '_close was not called');
+
+            datepicker._close = oldClose;
+        });
+
+        test('dateView value should be called if input has value ot selectedValue is not null', function () {
+            var datepicker = $('#DatePicker2').data('tDatePicker');
+            datepicker.open();
+
+            var day = datepicker.dateView.$calendar.find('.t-state-selected');
+
+            equal('10', day.text(), 'not correct day is selected');
+        });
+
+        test('dateView value should be called if selectedValue is not null', function () {
+            var datepicker = $('#DatePicker2').data('tDatePicker');
+            datepicker.open();
+
+            var day = datepicker.dateView.$calendar.find('.t-state-selected');
+
+            equal('10', day.text(), 'not correct day is selected');
+        });        
         
-        assertFalse(getDatePicker().dateView.isOpened());
-    }
-    
-    function test_parse_date_less_than_min_date_should_return_null() {
-        var datepicker = getDatePicker()
-        datepicker.format = "MM/dd/yyyy";
+        test('dateView value should be called if input has value', function () {
+            var datepicker = $('#DatePickerWithInputAttr').data('tDatePicker');
+            datepicker.open();
 
-        datepicker.value("01/23/1400");
-        assertNull(datepicker.selectedValue);
-    }
+            var day = datepicker.dateView.$calendar.find('.t-state-selected');
 
-    function test_parse_date_bigger_than_min_date_should_return_null() {
-        var datepicker = getDatePicker()
-        datepicker.format = "MM/dd/yyyy";
+            equal('20', day.text(), 'not correct day is selected');
+        });
 
-        datepicker.value("01/23/2500");
-        assertNull(datepicker.selectedValue);
-    }
+    </script>
 
-    function test_parse_date_equal_to_min_should_parsed_correctly() {
-        var datepicker = getDatePicker()
-        datepicker.format = "MM/dd/yyyy";
-
-        datepicker.value("1/1/1900"); //in FF new Date(1899, 11, 31) == 1.1.1900
-        assertTrue(isValidDate(1900, 1, 1, datepicker.selectedValue.toDate()));
-    }
-
-    function test_parse_date_equal_to_max_should_parsed_correctly() {
-
-        var datepicker = getDatePicker()
-        datepicker.format = "MM/dd/yyyy";
-
-        datepicker.value("1/1/2100");
-        assertTrue(isValidDate(2100, 1, 1, datepicker.selectedValue.toDate()));
-    }
-
-    function test_should_parse_input_value_even_calendar_is_opened() {
-        var datepicker = getDatePicker();
-        var date = new Date(2004, 6, 28);
-
-        datepicker.format = 'M/d/yyyy';
-        datepicker.dateView.focusedValue = new $.telerik.datetime(date);
-        datepicker.open();
-
-        var input = $('#DatePicker').find('.t-input');
-        input.val("10/10/2000");
-        
-        input.trigger({ type: "keydown", keyCode: 13 }); //trigger enter to parse value.
-
-        assertEquals(2000, datepicker.dateView.focusedValue.year());
-    }
-
-    function test_if_input_value_is_bigger_then_maxDate_blur_event_should_change_input_value_to_maxDate() {
-        var $input = $('#DatePicker').find('.t-input');
-        var datepicker = getDatePicker();
-        
-        $input.val('1/1/2410');;
-        datepicker._change($input.val());
-        
-        assertEquals(datepicker.parse($input.val()).toDate(), datepicker.maxDate.toDate());
-    }
-
-    function test_if_input_value_is_bigger_then_maxDate_blur_event_should_change_remove_error_class() {
-        var $input = $('#DatePicker').find('.t-input');
-        var datepicker = getDatePicker();
-
-        $input.val('1/1/2410');
-        datepicker._change('1/1/2410');
-
-        assertFalse($input.hasClass('t-state-error'));
-    }
-
-    function test_if_input_value_is_smaller_then_minDate_blur_event_should_change_input_value_to_minDate() {
-        var $input = $('#DatePicker').find('.t-input');
-        var datepicker = getDatePicker();
-        
-        $input.val('1/1/1500');
-        datepicker._change($input.val());
-
-        assertEquals(datepicker.parse($input.val()).toDate(), datepicker.minDate.toDate());
-    }
-
-    function test_if_input_value_is_smaller_then_minDate_blur_event_should_change_remove_error_class() {
-        var $input = $('#DatePicker').find('.t-input');
-        var datepicker = getDatePicker();
-
-        $input.val('1/1/1500');
-        datepicker._change('1/1/1500');
-
-        assertFalse($input.hasClass('t-state-error'));
-    }
-
-    function test_datepicker_should_call_change_and_close_internal_methods_if_document_mousedown() {
-        var isCloseCalled = false;
-        var isChangeCalled = false;
-        var datepicker = getDatePicker();
-
-        var oldClose = datepicker._close;
-        var oldChange = datepicker._change;
-
-        datepicker._close = function () { isCloseCalled = true; };
-        datepicker._change = function () { isChangeCalled = true; };
-
-        datepicker.open();
-
-        $(document.documentElement).trigger('mousedown');
-
-        assertTrue('_close was not called', isCloseCalled);
-        assertTrue('_change was not called', isChangeCalled);
-
-        datepicker._close = oldClose;
-        datepicker._change = oldChange;
-    }
-
-    function isValidDate(year, month, day, date) {
-        var isValid = true;
-
-        if (year != date.getFullYear())
-            isValid = false;
-        else if (month != date.getMonth() + 1)
-            isValid = false;
-        else if (day != date.getDate())
-            isValid = false;
-
-        return isValid;
-    }  
-        
-</script>
-
- <%= Html.Telerik().DatePicker().Name("DatePicker")
-                   .Effects(e=>e.Toggle())
-                   .MinDate(new DateTime(1600, 1, 1))
-                   .MaxDate(new DateTime(2400, 1, 1))
- %>
 </asp:Content>

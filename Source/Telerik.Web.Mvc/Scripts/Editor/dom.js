@@ -18,9 +18,27 @@ var block = makeMap(blockElements);
 var inline = makeMap('a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var'.split(','));
 var fillAttrs = makeMap('checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected'.split(','));
 
-function normalize(node) {
+
+var normalize = function (node) {
     if (node.nodeType == 1)
         node.normalize();
+}
+
+if ($.browser.msie && parseInt($.browser.version) > 8) {
+    normalize = function(parent) {
+        if (parent.nodeType == 1 && parent.firstChild) {
+            var prev = parent.firstChild,
+                node = prev;
+            
+            while (node = node.nextSibling) {
+                if (node.nodeType == 3 && prev.nodeType == 3) {
+                    node.nodeValue = prev.nodeValue + node.nodeValue;
+                    dom.remove(prev);
+                }
+                prev = node;
+            }
+        }
+    }
 }
 
 function findNodeIndex(node) {
@@ -96,7 +114,7 @@ var dom = {
     blockParentOrBody: function(node) {
         return dom.parentOfType(node, blockElements) || node.ownerDocument.body;
     },
-    
+    normalize: normalize,
     toHex: function (color) {
         var matches = rgb.exec(color);
 
@@ -170,7 +188,10 @@ var dom = {
     },
 
     insertBefore: function (newElement, referenceElement) {
-        return referenceElement.parentNode.insertBefore(newElement, referenceElement);
+        if (referenceElement.parentNode)
+            return referenceElement.parentNode.insertBefore(newElement, referenceElement);
+        else
+            return referenceElement;
     },
 
     insertAfter: function (newElement, referenceElement) {
@@ -290,7 +311,10 @@ var dom = {
         var $span = $(span);
                 
         var style = $.map(cssAttributes, function(value) {
-            return value + ':' + $span.css(value);
+            if ($.browser.msie && value == 'line-height' && $span.css(value) == "1px")
+                return 'line-height:1.5';
+            else
+                return value + ':' + $span.css(value);
         }).join(';');
                 
         $span.remove();

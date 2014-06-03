@@ -2,6 +2,7 @@
 namespace Telerik.Web.Mvc.UI.Tests
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
     
     public class Customer
     {
@@ -16,7 +17,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             get;
             set;
         }
-
+        [Required]
         public string Address
         {
             get;

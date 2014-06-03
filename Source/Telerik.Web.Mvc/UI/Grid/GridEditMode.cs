@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     {
         InLine,
         InForm,
-        PopUp
+        PopUp,
+        InCell
     }
 }

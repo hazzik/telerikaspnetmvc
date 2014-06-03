@@ -20,6 +20,21 @@
         }
 
         [Fact]
+        public void PrepareItemsAndDefineSelectedIndex_should_select_item_if_value_is_defined()
+        {
+            dropdownlist.Value = "item1";
+            dropdownlist.SelectedIndex = 3;
+
+            dropdownlist.Items[0].Selected = true;
+            dropdownlist.Items[2].Selected = true;
+
+            dropdownlist.SyncSelectedIndex();
+
+            Assert.Equal(true, dropdownlist.Items[0].Selected);
+            Assert.Equal(0, dropdownlist.SelectedIndex);
+        }
+
+        [Fact]
         public void PrepareItemsAndDefineSelectedIndex_should_preserve_last_selected_item_even_selectedIndex_is_set()
         {
             dropdownlist.SelectedIndex = 3;
@@ -27,7 +42,7 @@
             dropdownlist.Items[0].Selected = true;
             dropdownlist.Items[2].Selected = true;
 
-            dropdownlist.PrepareItemsAndDefineSelectedIndex();
+            dropdownlist.SyncSelectedIndex();
 
             Assert.Equal(true, dropdownlist.Items[2].Selected);
             Assert.Equal(2, dropdownlist.SelectedIndex);
@@ -38,15 +53,45 @@
         {
             dropdownlist.SelectedIndex = 3;
 
-            dropdownlist.PrepareItemsAndDefineSelectedIndex();
+            dropdownlist.SyncSelectedIndex();
 
             Assert.Equal(true, dropdownlist.Items[3].Selected);
+        }        
+        
+        [Fact]
+        public void PrepareItemsAndDefineSelectedIndex_should_select_second_item_if_SelectedValue_is_empty_string_and_GetValueFromViewDataByName_returns_value()
+        {
+            var value = "item2";
+            dropdownlist.Name = "DDL";
+            dropdownlist.ViewContext.ViewData["DDL"] = value;
+            dropdownlist.Value = "";
+
+            dropdownlist.SyncSelectedIndex();
+
+            Assert.Equal(true, dropdownlist.Items[1].Selected);
         }
 
         [Fact]
+        public void GetValueFromViewDataByName_should_not_throw_exception_find_value_but_is_not_from_correct_type()
+        {
+            dropdownlist.Name = "DDL";
+            dropdownlist.ViewContext.ViewData["DDL"] = new System.Collections.Generic.List<DropDownItem> { new DropDownItem { Text = "item1" } };
+            Assert.DoesNotThrow(() => dropdownlist.GetValueFromViewDataByName());
+        }
+
+        [Fact]
+        public void GetValueFromViewDataByName_should_return_value_even_it_is_not_of_T_but_can_be_converted()
+        {
+            var value = 1;
+            dropdownlist.Name = "DDL";
+            dropdownlist.ViewContext.ViewData["DDL"] = value;
+            dropdownlist.GetValueFromViewDataByName().ShouldEqual(value.ToString());
+        }
+        
+        [Fact]
         public void PrepareItemsAndDefineSelectedIndex_should_select_first_item_if_no_selected_items()
         {
-            dropdownlist.PrepareItemsAndDefineSelectedIndex();
+            dropdownlist.SyncSelectedIndex();
 
             Assert.Equal(true, dropdownlist.Items[0].Selected);
         }
@@ -56,14 +101,14 @@
         {
             var combobox = ComboBoxTestHelper.CreateComboBox();
 
+            combobox.Name = "Combo";
+
             combobox.Items.Add(new DropDownItem { Text = "item1", Value = "item1" });
             combobox.Items.Add(new DropDownItem { Text = "item2", Value = "item2" });
             combobox.Items.Add(new DropDownItem { Text = "item3", Value = "item3" });
             combobox.Items.Add(new DropDownItem { Text = "item4", Value = "item4" });
 
-            combobox.PrepareItemsAndDefineSelectedIndex();
-
-            combobox.Items.Where(i => i.Selected == true);
+            combobox.SyncSelectedIndex();
 
             Assert.Equal(0, combobox.Items.Where(i => i.Selected == true).Count());
         }

@@ -1,14 +1,21 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content contentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <% Html.BeginForm(); %>
     <% Html.Telerik().Editor()
            .Name("editor")
+           .Encode(false)
            .HtmlAttributes(new { style = "height:400px" })
+           .FileBrowser(t => t.Browse("Browse", "ImageBrowser")
+               .Thumbnail("Thumbnail", "ImageBrowser")
+               .Upload("Upload", "ImageBrowser")
+               .DeleteFile("DeleteFile", "ImageBrowser")
+               .DeleteDirectory("DeleteDirectory", "ImageBrowser")
+               .CreateDirectory("CreateDirectory", "ImageBrowser"))
            .Value(() =>
            { %>
-                &lt;p&gt;
-                    &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png")%>&quot;
+                &lt;p&gt;&nbsp;
+                    &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png") %>&quot;
                             alt=&quot;Editor for ASP.NET MVC logo&quot;
                             style=&quot;display:block;margin-left:auto;margin-right:auto;&quot; /&gt;
 
@@ -38,22 +45,22 @@
                     or send us your
                     &lt;a href=&quot;http://www.telerik.com/community/forums/aspnet-mvc.aspx&quot;&gt;feedback&lt;/a&gt;!
                 &lt;/p&gt;
-            <% })
+    <% })
                .Render();
     %>
     <p>
-        <button type="submit" class="t-button t-state-default">Post to see the generated HTML</button>
+        <button type="submit" class="t-button">
+            Post to see the generated HTML</button>
     </p>
     <% Html.EndForm(); %>
-
-    <% if (ViewData.ContainsKey("value")) { %>
-        <h3>Editor Value</h3>
-
-        <pre class="prettyprint editor-output"><%= ViewData["value"] %></pre>
+    <% if (ViewData.ContainsKey("value"))
+       { %>
+    <h3>
+        Editor Value</h3>
+    <pre class="prettyprint editor-output"><%= ViewData["value"] %></pre>
     <% } %>
 </asp:Content>
-
-<asp:Content runat="server" contentPlaceHolderID="HeadContent">
+<asp:Content runat="server" ContentPlaceHolderID="HeadContent">
     <style type="text/css">
         .editor-output
         {

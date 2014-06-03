@@ -1,87 +1,104 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>Exec</h2>
 
     <%= Html.Telerik().Editor().Name("Editor1") %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
     <script type="text/javascript">
         var RestorePoint;
         var editor;
         var htmlTagIsFirstChild;
+
         function getEditor() {
             return $('#Editor1').data("tEditor");
         }
 
-        function setUp() {
-            RestorePoint = $.telerik.editor.RestorePoint;
-            editor = getEditor();
-
-            htmlTagIsFirstChild = editor.document.firstChild == editor.body.parentNode;
-        }
-        
-        function test_restorePoint_initializes_for_body() {
-            editor.value('<p>foo</p>');
-
-            var range = editor.createRange();
-            range.selectNode(editor.body.firstChild);
-            
-            var restorePoint = new RestorePoint(range);
-            
-            assertEquals(2, restorePoint.startContainer.length);
-            assertEquals(0, restorePoint.startOffset);
-            assertEquals(2, restorePoint.endContainer.length);
-            assertEquals(1, restorePoint.endOffset);
-        }
-        
-        function test_restorePoint_initializes_for_root_node() {
-            editor.value('<p>foo</p>');
-
-            var range = editor.createRange();
-            range.selectNodeContents(editor.body.firstChild);
-            
-            var restorePoint = new RestorePoint(range);
-            
-            assertEquals(crossBrowserOffset('0,1,0'), restorePoint.startContainer.toString());
-            assertEquals(0, restorePoint.startOffset);
-            assertEquals(crossBrowserOffset('0,1,0'), restorePoint.endContainer.toString());
-            assertEquals(1, restorePoint.endOffset);
-        }
-        
-        function test_restorePoint_initializes_for_root_node_contents() {
-            editor.value('<p>foo</p>');
-
-            var range = editor.createRange();
-            range.setStart(editor.body.firstChild.firstChild, 0);
-            range.setEnd(editor.body.firstChild.firstChild, 3);
-            
-            var restorePoint = new RestorePoint(range);
-            
-            assertEquals(crossBrowserOffset('0,0,1,0'), restorePoint.startContainer.toString());
-            assertEquals(0, restorePoint.startOffset);
-            assertEquals(crossBrowserOffset('0,0,1,0'), restorePoint.endContainer.toString());
-            assertEquals(3, restorePoint.endOffset);
-        }
-        
-        function test_restorePoint_initializes_for_different_start_and_end_containers() {
-
-            editor.value('<p>foo</p><p>bar</p>');
-
-            var range = editor.createRange();
-            range.setStart(editor.body.firstChild.firstChild, 1);
-            range.setEnd(editor.body.lastChild.firstChild, 2);
-            
-            var restorePoint = new RestorePoint(range);
-            
-            assertEquals(crossBrowserOffset('0,0,1,0'), restorePoint.startContainer.toString());
-            assertEquals(1, restorePoint.startOffset);
-            assertEquals(crossBrowserOffset('0,1,1,0'), restorePoint.endContainer.toString());
-            assertEquals(2, restorePoint.endOffset);
-        }
-
         /***************************************************************************/
+
+        function crossBrowserOffset(offset) {
+            if (htmlTagIsFirstChild)
+                return offset;
+            
+            var indices = offset.split(',');
+            indices.pop(); 
+            indices.push(1); // in IE the <html> element is not the first child but the second (after the DOCTYPE)
+            return indices.join(',');
+        }
+
+        module("Editor / RestorePoint", {
+            setup: function() {
+                RestorePoint = $.telerik.editor.RestorePoint;
+                editor = getEditor();
+
+                htmlTagIsFirstChild = editor.document.firstChild == editor.body.parentNode;
+            }
+        });
         
-        function test_toRange_returns_body_range() {
+        test('restorePoint initializes for body', function() {
+            editor.value('<p>foo</p>');
+
+            var range = editor.createRange();
+            range.selectNode(editor.body.firstChild);
+            
+            var restorePoint = new RestorePoint(range);
+            
+            equal(restorePoint.startContainer.length, 2);
+            equal(restorePoint.startOffset, 0);
+            equal(restorePoint.endContainer.length, 2);
+            equal(restorePoint.endOffset, 1);
+        });
+        
+        test('restorePoint initializes for root node', function() {
+            editor.value('<p>foo</p>');
+
+            var range = editor.createRange();
+            range.selectNodeContents(editor.body.firstChild);
+            
+            var restorePoint = new RestorePoint(range);
+            
+            equal(restorePoint.startContainer.toString(), crossBrowserOffset('0,1,0'));
+            equal(restorePoint.startOffset, 0);
+            equal(restorePoint.endContainer.toString(), crossBrowserOffset('0,1,0'));
+            equal(restorePoint.endOffset, 1);
+        });
+        
+        test('restorePoint initializes for root node contents', function() {
+            editor.value('<p>foo</p>');
+
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 0);
+            range.setEnd(editor.body.firstChild.firstChild, 3);
+            
+            var restorePoint = new RestorePoint(range);
+            
+            equal(restorePoint.startContainer.toString(), crossBrowserOffset('0,0,1,0'));
+            equal(restorePoint.startOffset, 0);
+            equal(restorePoint.endContainer.toString(), crossBrowserOffset('0,0,1,0'));
+            equal(restorePoint.endOffset, 3);
+        });
+        
+        test('restorePoint initializes for different start and end containers', function() {
+
+            editor.value('<p>foo</p><p>bar</p>');
+
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 1);
+            range.setEnd(editor.body.lastChild.firstChild, 2);
+            
+            var restorePoint = new RestorePoint(range);
+            
+            equal(restorePoint.startContainer.toString(), crossBrowserOffset('0,0,1,0'));
+            equal(restorePoint.startOffset, 1);
+            equal(restorePoint.endContainer.toString(), crossBrowserOffset('0,1,1,0'));
+            equal(restorePoint.endOffset, 2);
+        });
+        
+        test('toRange returns body range', function() {
 
             editor.value('<p>foo</p>');
 
@@ -94,13 +111,13 @@
             
             var restorePointRange = restorePoint.toRange();
             
-            assertEquals(editor.body, restorePointRange.startContainer);
-            assertEquals(0, restorePointRange.startOffset);
-            assertEquals(editor.body, restorePointRange.endContainer);
-            assertEquals(1, restorePointRange.endOffset);
-        }
+            equal(restorePointRange.startContainer, editor.body);
+            equal(restorePointRange.startOffset, 0);
+            equal(restorePointRange.endContainer, editor.body);
+            equal(restorePointRange.endOffset, 1);
+        });
         
-        function test_toRange_returns_root_node() {
+        test('toRange returns root node', function() {
             editor.value('<p>foo</p>');
 
             var range = editor.createRange();
@@ -112,13 +129,13 @@
             
             var restorePointRange = restorePoint.toRange();
             
-            assertEquals(editor.body.firstChild, restorePointRange.startContainer);
-            assertEquals(0, restorePointRange.startOffset);
-            assertEquals(editor.body.firstChild, restorePointRange.endContainer);
-            assertEquals(1, restorePointRange.endOffset);
-        }
+            equal(restorePointRange.startContainer, editor.body.firstChild);
+            equal(restorePointRange.startOffset, 0);
+            equal(restorePointRange.endContainer, editor.body.firstChild);
+            equal(restorePointRange.endOffset, 1);
+        });
         
-        function test_toRange_returns_root_node_contents() {
+        test('toRange returns root node contents', function() {
             editor.value('<p>foo</p>');
 
             var range = editor.createRange();
@@ -131,13 +148,13 @@
             
             var restorePointRange = restorePoint.toRange();
             
-            assertEquals(editor.body.firstChild.firstChild, restorePointRange.startContainer);
-            assertEquals(0, restorePointRange.startOffset);
-            assertEquals(editor.body.firstChild.firstChild, restorePointRange.endContainer);
-            assertEquals(3, restorePointRange.endOffset);
-        }
+            equal(restorePointRange.startContainer, editor.body.firstChild.firstChild);
+            equal(restorePointRange.startOffset, 0);
+            equal(restorePointRange.endContainer, editor.body.firstChild.firstChild);
+            equal(restorePointRange.endOffset, 3);
+        });
         
-        function test_toRange_returns_different_start_and_end_containers() {
+        test('toRange returns different start and end containers', function() {
 
             editor.value('<p>foo</p><p>bar</p>');
 
@@ -151,13 +168,13 @@
             
             var restorePointRange = restorePoint.toRange();
             
-            assertEquals(editor.body.firstChild.firstChild, restorePointRange.startContainer);
-            assertEquals(1, restorePointRange.startOffset);
-            assertEquals(editor.body.lastChild.firstChild, restorePointRange.endContainer);
-            assertEquals(2, restorePointRange.endOffset);
-        }
+            equal(restorePointRange.startContainer, editor.body.firstChild.firstChild);
+            equal(restorePointRange.startOffset, 1);
+            equal(restorePointRange.endContainer, editor.body.lastChild.firstChild);
+            equal(restorePointRange.endOffset, 2);
+        });
         
-        function test_toRange_does_not_modify_restore_point() {
+        test('toRange does not modify restore point', function() {
             editor.value('<p>foo</p><p>bar</p>');
 
             var range = editor.createRange();
@@ -168,37 +185,27 @@
             
             restorePoint.toRange();
             
-            assertEquals(crossBrowserOffset('0,0,1,0'), restorePoint.startContainer.toString());
-            assertEquals(1, restorePoint.startOffset);
-            assertEquals(crossBrowserOffset('0,1,1,0'), restorePoint.endContainer.toString());
-            assertEquals(2, restorePoint.endOffset);
-        }
+            equal(restorePoint.startContainer.toString(), crossBrowserOffset('0,0,1,0'));
+            equal(restorePoint.startOffset, 1);
+            equal(restorePoint.endContainer.toString(), crossBrowserOffset('0,1,1,0'));
+            equal(restorePoint.endOffset, 2);
+        });
 
-        function test_denormalized_content() {
+        test('denormalized content', function() {
             editor.value('');
             var node = editor.document.createTextNode('foo');
             editor.body.appendChild(node);
             node = editor.document.createTextNode('foo');
             editor.body.appendChild(node);
-            var range = editor.createRange(true);
+            var range = editor.createRange();
             range.setStart(node, 3);
             range.collapse(true);
             var restorePoint = new RestorePoint(range);
-            assertEquals(crossBrowserOffset('0,1,0'), restorePoint.startContainer.toString());
-            assertEquals(6, restorePoint.startOffset);
+            equal(restorePoint.startContainer.toString(), crossBrowserOffset('0,1,0'));
+            equal(restorePoint.startOffset, 6);
             
-        }
-
-        function crossBrowserOffset(offset) {
-            if (htmlTagIsFirstChild)
-                return offset;
-            
-            var indices = offset.split(',');
-            indices.pop(); 
-            indices.push(1); //in IE the <html> element is not the first child bu the second (after the DOCTYPE)
-            return indices.join(',');
-        }
-
+        });
 
     </script>
+
 </asp:Content>

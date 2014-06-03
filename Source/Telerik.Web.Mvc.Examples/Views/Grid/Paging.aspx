@@ -9,6 +9,7 @@
         <li><%= Html.CheckBox("pageInput", false, "have an <strong>input box</strong> for the page number")%></li>
         <li><%= Html.CheckBox("nextPrevious", true, "have <strong>next page / previous page</strong> buttons")%></li>
         <li><%= Html.CheckBox("numeric", true, "have a <strong>numeric pager</strong>")%></li>
+        <li><%= Html.CheckBox("pageSize", false, "have a <strong>drop down</strong> as page size selector")%></li>
     </ul>
     <div>
         <label for="position">be located at</label>
@@ -23,7 +24,7 @@
                 .Value(1)
          %>
      </div>
-    <button class="t-button t-state-default" type="submit">Apply</button>
+    <button class="t-button" type="submit">Apply</button>
 <% } %>
 
 <% 
@@ -31,7 +32,8 @@
     { 
         new { Key = "pageInput", Value = GridPagerStyles.PageInput },
         new { Key = "nextPrevious", Value = GridPagerStyles.NextPrevious },
-        new { Key = "numeric", Value = GridPagerStyles.Numeric }
+        new { Key = "numeric", Value = GridPagerStyles.Numeric },
+        new { Key = "pageSize", Value = GridPagerStyles.PageSizeDropDown }
     };
 
     GridPagerStyles pagerStyles = GridPagerStyles.NextPreviousAndNumeric;

@@ -56,6 +56,11 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
+        IEnumerable<AggregateDescriptor> Aggregates
+        {
+            get;
+        }
+
         string Prefix(string parameter);
     }
 }

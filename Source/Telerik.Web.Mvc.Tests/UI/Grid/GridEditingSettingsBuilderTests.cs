@@ -5,16 +5,17 @@ namespace Telerik.Web.Mvc.UI.Fluent.Tests
     using Moq;
     using Mvc.Tests;
     using Xunit;
+    using Telerik.Web.Mvc.UI.Tests;
 
     public class GridEditingSettingsBuilderTests
     {
-        private readonly GridEditingSettings settings;
-        private readonly GridEditingSettingsBuilder builder;
+        private readonly GridEditingSettings<Customer> settings;
+        private readonly GridEditingSettingsBuilder<Customer> builder;
 
         public GridEditingSettingsBuilderTests()
         {
-            settings = new GridEditingSettings(new Mock<IGrid>().Object);
-            builder = new GridEditingSettingsBuilder(settings);
+            settings = new GridEditingSettings<Customer>(new Mock<IGrid>().Object);
+            builder = new GridEditingSettingsBuilder<Customer>(settings);
         }
 
         [Fact]

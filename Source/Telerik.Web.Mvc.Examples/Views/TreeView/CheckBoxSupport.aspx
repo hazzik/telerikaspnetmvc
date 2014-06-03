@@ -17,10 +17,11 @@
 
                             if (checkedNodes != null)
                             {
-                                item.Checked =
-                                    checkedNodes
-                                        .Where(e => e.Value.Equals(employee.EmployeeID.ToString()))
-                                        .FirstOrDefault() != null;
+                                var checkedNode = checkedNodes
+                                                    .Where(e => e.Value.Equals(employee.EmployeeID.ToString()))
+                                                    .FirstOrDefault();
+
+                                item.Checked = checkedNode != null ? checkedNode.Checked : false;
                             }
 
                             item.Expanded = true;
@@ -35,17 +36,18 @@
 
                             if (checkedNodes != null)
                             {
-                                item.Checked =
-                                    checkedNodes
-                                        .Where(e => e.Value.Equals(employee.EmployeeID.ToString()))
-                                        .FirstOrDefault() != null;
+                                var checkedNode = checkedNodes
+                                                    .Where(e => e.Value.Equals(employee.EmployeeID.ToString()))
+                                                    .FirstOrDefault();
+
+                                item.Checked = checkedNode != null ? checkedNode.Checked : false;
                             }
                             
                         }));
             })
         %>
     <p>
-        <button type="submit" class="t-button t-state-default">Save</button>
+        <button type="submit" class="t-button">Save</button>
     </p>
     
     <% if (checkedNodes != null && checkedNodes.Count > 0){%>

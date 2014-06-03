@@ -67,11 +67,23 @@
             return $(selector || "#myTreeView").data("tTreeView");
         }
         
-        function setUp() {
-            treeView = getTreeView();
-        }
         
-        function test_clicking_collapsed_item_not_expand_if_it_is_disabled() {
+    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        module("TreeView / ExpandCollapse", {
+            setup: function() {
+                treeView = getTreeView();
+            }
+        });
+        
+        test('clicking collapsed item not expand if it is disabled', function() {
 
             var item = $("ul li:nth-child(1)", treeView.element);
 
@@ -79,55 +91,54 @@
                 .toggleClass('t-plus-disabled', true)
                 .trigger('click');
 
-            assertEquals("none", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "none");
+        });
 
-        function test_clicking_plus_icon_should_toggle_minus() {
+        test('clicking plus icon should toggle minus', function() {
             var item = $("ul li:nth-child(2)", treeView.element);
 
             item.find('.t-plus')
                 .trigger('click');
 
-            assertTrue(item.find('.t-icon').hasClass('t-minus'));
-        }
+            ok(item.find('.t-icon').hasClass('t-minus'));
+        });
 
-        function test_clicking_plus_items_should_expand_them() {
+        test('clicking plus items should expand them', function() {
             var item = $("ul li:nth-child(3)", treeView.element);
 
             item.find('.t-plus')
                 .trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "block");
+        });
 
-        function test_clicking_minus_icon_should_toggle_plus() {
+        test('clicking minus icon should toggle plus', function() {
             var item = $("ul li:nth-child(4)", treeView.element);
 
             item.find('.t-minus')
                 .trigger('click');
 
-            assertTrue(item.find('.t-icon').hasClass('t-plus'));
-        }
+            ok(item.find('.t-icon').hasClass('t-plus'));
+        });
 
-        function test_clicking_minus_on_expanded_items_should_collaspe_them() {
+        test('clicking minus on expanded items should collaspe them', function() {
             var item = $("ul li:nth-child(5)", treeView.element);
 
             item.find('.t-minus')
                 .trigger('click');
 
-            assertEquals("none", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "none");
+        });
 
-        function test_double_clicking_disabled_items_does_not_expand_them() {
+        test('double clicking disabled items does not expand them', function() {
             var item = $("ul li:nth-child(6)", treeView.element);
 
             item.find('.t-in.t-state-disabled')
                 .trigger('dblclick');
             
-            assertEquals("none", item.find('.t-group').css("display"));
-        }
-        
-        
-    </script>
+            equal(item.find('.t-group').css("display"), "none");
+        });
+
+</script>
 
 </asp:Content>

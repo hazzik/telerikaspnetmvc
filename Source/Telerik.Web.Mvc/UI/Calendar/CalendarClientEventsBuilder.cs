@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public CalendarClientEventsBuilder OnChange(Action onChangeInlineCode)
+        public CalendarClientEventsBuilder OnChange(Action onChangeCodeBlock)
         {
-            Guard.IsNotNull(onChangeInlineCode, "onChangeInlineCode");
+            Guard.IsNotNull(onChangeCodeBlock, "onChangeCodeBlock");
 
-            clientEvents.OnChange.InlineCode = onChangeInlineCode;
+            clientEvents.OnChange.CodeBlock = onChangeCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnSelect client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Calendar()
+        ///            .Name("Calendar")
+        ///            .ClientEvents(events => events.OnChange(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public CalendarClientEventsBuilder OnChange(Func<object, object> onChangeInlineCodeBlock)
+        {
+            Guard.IsNotNull(onChangeInlineCodeBlock, "onChangeInlineCodeBlock");
+
+            clientEvents.OnChange.InlineCodeBlock = onChangeInlineCodeBlock;
 
             return this;
         }
@@ -102,11 +130,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public CalendarClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public CalendarClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Calendar()
+        ///            .Name("Calendar")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public CalendarClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }

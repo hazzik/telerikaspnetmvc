@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnExpand(Action onExpandInlineCode)
+        public TreeViewClientEventsBuilder OnExpand(Action onExpandCodeBlock)
         {
-            Guard.IsNotNull(onExpandInlineCode, "onExpandInlineCode");
+            Guard.IsNotNull(onExpandCodeBlock, "onExpandCodeBlock");
 
-            clientEvents.OnExpand.InlineCode = onExpandInlineCode;
+            clientEvents.OnExpand.CodeBlock = onExpandCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnExpand client-side event
+        /// </summary>
+        /// <param name="onExpandAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnExpand(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnExpand(Func<object, object> onExpandInlineCodeBlock)
+        {
+            Guard.IsNotNull(onExpandInlineCodeBlock, "onExpandInlineCodeBlock");
+
+            clientEvents.OnExpand.InlineCodeBlock = onExpandInlineCodeBlock;
 
             return this;
         }
@@ -102,11 +130,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnCollapse(Action onCollapseInlineCode)
+        public TreeViewClientEventsBuilder OnCollapse(Action onCollapseCodeBlock)
         {
-            Guard.IsNotNull(onCollapseInlineCode, "onCollapseInlineCode");
+            Guard.IsNotNull(onCollapseCodeBlock, "onCollapseCodeBlock");
 
-            clientEvents.OnCollapse.InlineCode = onCollapseInlineCode;
+            clientEvents.OnCollapse.CodeBlock = onCollapseCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnCollapse client-side event
+        /// </summary>
+        /// <param name="onCollapseAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnCollapse(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnCollapse(Func<object, object> onCollapseInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCollapseInlineCodeBlock, "onCollapseInlineCodeBlock");
+
+            clientEvents.OnCollapse.InlineCodeBlock = onCollapseInlineCodeBlock;
 
             return this;
         }
@@ -152,11 +208,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnSelect(Action onSelectInlineCode)
+        public TreeViewClientEventsBuilder OnSelect(Action onSelectCodeBlock)
         {
-            Guard.IsNotNull(onSelectInlineCode, "onSelectInlineCode");
+            Guard.IsNotNull(onSelectCodeBlock, "onSelectCodeBlock");
 
-            clientEvents.OnSelect.InlineCode = onSelectInlineCode;
+            clientEvents.OnSelect.CodeBlock = onSelectCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnSelect client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnSelect(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnSelect(Func<object, object> onSelectInlineCodeBlock)
+        {
+            Guard.IsNotNull(onSelectInlineCodeBlock, "onSelectInlineCodeBlock");
+
+            clientEvents.OnSelect.InlineCodeBlock = onSelectInlineCodeBlock;
 
             return this;
         }
@@ -202,11 +286,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public TreeViewClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadInlineCode");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -252,11 +364,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnError(Action onErrorInlineCode)
+        public TreeViewClientEventsBuilder OnError(Action onErrorCodeBlock)
         {
-            Guard.IsNotNull(onErrorInlineCode, "onErrorInlineCode");
+            Guard.IsNotNull(onErrorCodeBlock, "onErrorCodeBlock");
 
-            clientEvents.OnError.InlineCode = onErrorInlineCode;
+            clientEvents.OnError.CodeBlock = onErrorCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnError client-side event
+        /// </summary>
+        /// <param name="onErrorAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnError(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnError(Func<object, object> onErrorInlineCodeBlock)
+        {
+            Guard.IsNotNull(onErrorInlineCodeBlock, "onErrorInlineCodeBlock");
+
+            clientEvents.OnError.InlineCodeBlock = onErrorInlineCodeBlock;
 
             return this;
         }
@@ -302,11 +442,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnNodeDragStart(Action onNodeDragStartInlineCode)
+        public TreeViewClientEventsBuilder OnNodeDragStart(Action onNodeDragStartCodeBlock)
         {
-            Guard.IsNotNull(onNodeDragStartInlineCode, "onNodeDragStartInlineCode");
+            Guard.IsNotNull(onNodeDragStartCodeBlock, "onNodeDragStartCodeBlock");
 
-            clientEvents.OnNodeDragStart.InlineCode = onNodeDragStartInlineCode;
+            clientEvents.OnNodeDragStart.CodeBlock = onNodeDragStartCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnNodeDragStart client-side event
+        /// </summary>
+        /// <param name="onNodeDragAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnNodeDragStart(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnNodeDragStart(Func<object, object> onNodeDragStartInlineCodeBlock)
+        {
+            Guard.IsNotNull(onNodeDragStartInlineCodeBlock, "onNodeDragStartInlineCodeBlock");
+
+            clientEvents.OnNodeDragStart.InlineCodeBlock = onNodeDragStartInlineCodeBlock;
 
             return this;
         }
@@ -352,11 +520,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnNodeDrop(Action onNodeDropInlineCode)
+        public TreeViewClientEventsBuilder OnNodeDrop(Action onNodeDropCodeBlock)
         {
-            Guard.IsNotNull(onNodeDropInlineCode, "onNodeDropInlineCode");
+            Guard.IsNotNull(onNodeDropCodeBlock, "onNodeDropCodeBlock");
 
-            clientEvents.OnNodeDrop.InlineCode = onNodeDropInlineCode;
+            clientEvents.OnNodeDrop.CodeBlock = onNodeDropCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnNodeDrop client-side event
+        /// </summary>
+        /// <param name="onNodeDropAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnNodeDrop(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnNodeDrop(Func<object, object> onNodeDropInlineCodeBlock)
+        {
+            Guard.IsNotNull(onNodeDropInlineCodeBlock, "onNodeDropInlineCodeBlock");
+
+            clientEvents.OnNodeDrop.InlineCodeBlock = onNodeDropInlineCodeBlock;
 
             return this;
         }
@@ -402,11 +598,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnNodeDropped(Action onNodeDroppedInlineCode)
+        public TreeViewClientEventsBuilder OnNodeDropped(Action onNodeDroppedCodeBlock)
         {
-            Guard.IsNotNull(onNodeDroppedInlineCode, "onNodeDroppedInlineCode");
+            Guard.IsNotNull(onNodeDroppedCodeBlock, "onNodeDroppedCodeBlock");
 
-            clientEvents.OnNodeDropped.InlineCode = onNodeDroppedInlineCode;
+            clientEvents.OnNodeDropped.CodeBlock = onNodeDroppedCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnNodeDropped client-side event
+        /// </summary>
+        /// <param name="onNodeDroppedAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnNodeDropped(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnNodeDropped(Func<object, object> onNodeDroppedCodeBlock)
+        {
+            Guard.IsNotNull(onNodeDroppedCodeBlock, "onNodeDroppedCodeBlock");
+
+            clientEvents.OnNodeDropped.InlineCodeBlock = onNodeDroppedCodeBlock;
 
             return this;
         }
@@ -452,11 +676,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnNodeDragCancelled(Action onNodeDragCancelledInlineCode)
+        public TreeViewClientEventsBuilder OnNodeDragCancelled(Action onNodeDragCancelledCodeBlock)
         {
-            Guard.IsNotNull(onNodeDragCancelledInlineCode, "onNodeDragCancelledInlineCode");
+            Guard.IsNotNull(onNodeDragCancelledCodeBlock, "onNodeDragCancelledCodeBlock");
 
-            clientEvents.OnNodeDragCancelled.InlineCode = onNodeDragCancelledInlineCode;
+            clientEvents.OnNodeDragCancelled.CodeBlock = onNodeDragCancelledCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnNodeDragCancelled client-side event
+        /// </summary>
+        /// <param name="onNodeDragCancelledAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnNodeDragCancelled(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnNodeDragCancelled(Func<object, object> onNodeDragCancelledInlineCodeBlock)
+        {
+            Guard.IsNotNull(onNodeDragCancelledInlineCodeBlock, "onNodeDragCancelledInlineCodeBlock");
+
+            clientEvents.OnNodeDragCancelled.InlineCodeBlock = onNodeDragCancelledInlineCodeBlock;
 
             return this;
         }
@@ -502,11 +754,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnNodeDragging(Action onNodeDraggingInlineCode)
+        public TreeViewClientEventsBuilder OnNodeDragging(Action onNodeDraggingCodeBlock)
         {
-            Guard.IsNotNull(onNodeDraggingInlineCode, "onNodeDraggingInlineCode");
+            Guard.IsNotNull(onNodeDraggingCodeBlock, "onNodeDraggingCodeBlock");
 
-            clientEvents.OnNodeDragging.InlineCode = onNodeDraggingInlineCode;
+            clientEvents.OnNodeDragging.CodeBlock = onNodeDraggingCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnNodeDragging client-side event
+        /// </summary>
+        /// <param name="onNodeDragging">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnNodeDragging(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnNodeDragging(Func<object, object> onNodeDraggingInlineCodeBlock)
+        {
+            Guard.IsNotNull(onNodeDraggingInlineCodeBlock, "onNodeDraggingInlineCodeBlock");
+
+            clientEvents.OnNodeDragging.InlineCodeBlock = onNodeDraggingInlineCodeBlock;
 
             return this;
         }
@@ -552,11 +832,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnDataBinding(Action onDataBindingInlineCode)
+        public TreeViewClientEventsBuilder OnDataBinding(Action onDataBindingCodeBlock)
         {
-            Guard.IsNotNull(onDataBindingInlineCode, "onDataBindingInlineCode");
+            Guard.IsNotNull(onDataBindingCodeBlock, "onDataBindingCodeBlock");
 
-            clientEvents.OnDataBinding.InlineCode = onDataBindingInlineCode;
+            clientEvents.OnDataBinding.CodeBlock = onDataBindingCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnDataBinding client-side event
+        /// </summary>
+        /// <param name="onDataBindingAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnDataBinding(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnDataBinding(Func<object, object> onDataBindingInlineCodeBlock)
+        {
+            Guard.IsNotNull(onDataBindingInlineCodeBlock, "onDataBindingInlineCodeBlock");
+
+            clientEvents.OnDataBinding.InlineCodeBlock = onDataBindingInlineCodeBlock;
 
             return this;
         }
@@ -602,11 +910,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnDataBound(Action onDataBoundInlineCode)
+        public TreeViewClientEventsBuilder OnDataBound(Action onDataBoundCodeBlock)
         {
-            Guard.IsNotNull(onDataBoundInlineCode, "onDataBoundInlineCode");
+            Guard.IsNotNull(onDataBoundCodeBlock, "onDataBoundCodeBlock");
 
-            clientEvents.OnDataBound.InlineCode = onDataBoundInlineCode;
+            clientEvents.OnDataBound.CodeBlock = onDataBoundCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnDataBound client-side event
+        /// </summary>
+        /// <param name="onDataBoundAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnDataBound(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnDataBound(Func<object, object> onDataBoundInlineCodeBlock)
+        {
+            Guard.IsNotNull(onDataBoundInlineCodeBlock, "onDataBoundInlineCode");
+
+            clientEvents.OnDataBound.InlineCodeBlock = onDataBoundInlineCodeBlock;
 
             return this;
         }
@@ -652,11 +988,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public TreeViewClientEventsBuilder OnChecked(Action onCheckedInlineCode)
+        public TreeViewClientEventsBuilder OnChecked(Action onCheckedCodeBlock)
         {
-            Guard.IsNotNull(onCheckedInlineCode, "onCheckedInlineCode");
+            Guard.IsNotNull(onCheckedCodeBlock, "onCheckedCodeBlock");
 
-            clientEvents.OnChecked.InlineCode = onCheckedInlineCode;
+            clientEvents.OnChecked.CodeBlock = onCheckedCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnChecked client-side event. Requires ShowCheckBox to be true.
+        /// </summary>
+        /// <param name="onDataBoundAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TreeView()
+        ///            .Name("TreeView")
+        ///            .ClientEvents(events => events.OnChecked(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     // event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewClientEventsBuilder OnChecked(Func<object, object> onCheckedInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCheckedInlineCodeBlock, "onCheckedInlineCodeBlock");
+
+            clientEvents.OnChecked.InlineCodeBlock = onCheckedInlineCodeBlock;
 
             return this;
         }

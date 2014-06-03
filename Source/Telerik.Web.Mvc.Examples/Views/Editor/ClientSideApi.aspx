@@ -6,7 +6,7 @@
            .Name("Editor")
            .Value(() =>
            { %>
-                &lt;p&gt;
+                &lt;p&gt;&nbsp;
                     &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png") %>&quot;
                             alt=&quot;Editor for ASP.NET MVC logo&quot;
                             style=&quot;display:block;margin-left:auto;margin-right:auto;&quot; /&gt;
@@ -124,42 +124,42 @@
 
         <ul class="funtionList">
             <li>
-                <button class="t-button t-state-default" onclick="selectAll()">
+                <button class="t-button" onclick="selectAll()">
                     Select All</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textBold()">
+                <button class="t-button" onclick="textBold()">
                     Bold</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textItalic()">
+                <button class="t-button" onclick="textItalic()">
                     Italic</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textUnderline()">
+                <button class="t-button" onclick="textUnderline()">
                     Underline</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textStrikethrough()">
+                <button class="t-button" onclick="textStrikethrough()">
                     Strikethrough</button>
             </li>
         </ul>
 
         <ul class="funtionList">
             <li>
-                <button class="t-button t-state-default" onclick="textJustifyLeft()">
+                <button class="t-button" onclick="textJustifyLeft()">
                     Justify left</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textJustifyCenter()">
+                <button class="t-button" onclick="textJustifyCenter()">
                     Justify center</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textJustifyRight()">
+                <button class="t-button" onclick="textJustifyRight()">
                     Justify right</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="textJustifyFull()">
+                <button class="t-button" onclick="textJustifyFull()">
                     Justify full</button>
             </li>
         </ul>
@@ -167,7 +167,7 @@
         <ul class="funtionList">
             <li>
                 <input type="text" id="TextBoxColor" title="" />
-                <button class="t-button t-state-default" onclick="textForeColor()">
+                <button class="t-button" onclick="textForeColor()">
                         Change Fore Color</button>
             </li>
         </ul>

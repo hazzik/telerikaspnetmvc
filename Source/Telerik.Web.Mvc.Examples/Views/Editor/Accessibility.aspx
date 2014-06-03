@@ -4,11 +4,12 @@
     <% Html.BeginForm(); %>
     <% Html.Telerik().Editor()
            .Name("editor")
+           .Encode(false)
            .HtmlAttributes(new { style = "height:400px" })
            .Value(() =>
            { %>
-                &lt;p&gt;
-                    &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png")%>&quot;
+                &lt;p&gt;&nbsp;
+                    &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png") %>&quot;
                             alt=&quot;Editor for ASP.NET MVC logo&quot;
                             style=&quot;display:block;margin-left:auto;margin-right:auto;&quot; /&gt;
 
@@ -42,7 +43,7 @@
                .Render();
     %>
     <p>
-        <button type="submit" class="t-button t-state-default">Post to see the generated HTML</button>
+        <button type="submit" class="t-button">Post to see the generated HTML</button>
     </p>
     <% Html.EndForm(); %>
 
@@ -51,6 +52,10 @@
 
         <pre class="prettyprint editor-output"><%= ViewData["value"] %></pre>
     <% } %>
+
+    <noscript>
+        <p>Your browsing experience on this page will be better if you visit it with a JavaScript-enabled browser / if you enable JavaScript.</p>
+    </noscript>
 
     <% Html.RenderPartial("AccessibilityValidation"); %>
 </asp:Content>

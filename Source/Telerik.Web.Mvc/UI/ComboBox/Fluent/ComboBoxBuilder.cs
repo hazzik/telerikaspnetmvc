@@ -150,11 +150,20 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Enables or disables the combobox.
         /// </summary>
-        /// <param name="allowSpinner"></param>
-        /// <returns></returns>
         public ComboBoxBuilder Enable(bool value)
         {
             Component.Enabled = value;
+
+            return this;
+        }
+
+
+        /// <summary>
+        /// Sets whether to open items list on focus.
+        /// </summary>
+        public ComboBoxBuilder OpenOnFocus(bool value)
+        {
+            Component.OpenOnFocus = value;
 
             return this;
         }

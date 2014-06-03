@@ -1,9 +1,10 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Moq;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Moq;
+    using System.Threading;
     using Telerik.Web.Mvc.Infrastructure;
     using Xunit;
 
@@ -15,6 +16,9 @@
         
         public CalendarRenderingTests()
         {
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
             tagBuilder = new Mock<ICalendarHtmlBuilder>();
             rootTag = new Mock<IHtmlNode>();
             rootTag.SetupGet(t => t.Children).Returns(() => new List<IHtmlNode>());
@@ -27,11 +31,11 @@
         public void Render_should_output_Calendar_start_only_once()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
             calendar.Render();
 
@@ -42,12 +46,12 @@
         public void Render_should_output_Content_tag()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
-            tagBuilder.Setup(r => r.ContentTag()).Returns(new HtmlTag("table")).Verifiable();
+            tagBuilder.Setup(r => r.ContentTag()).Returns(new HtmlElement("table")).Verifiable();
 
             calendar.Render();
 
@@ -58,13 +62,13 @@
         public void Render_should_output_Header_Start_once()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
-            tagBuilder.Setup(r => r.HeaderTag()).Returns(new HtmlTag("thead")).Verifiable();
+            tagBuilder.Setup(r => r.HeaderTag()).Returns(new HtmlElement("thead")).Verifiable();
 
             calendar.Render();
 
@@ -75,11 +79,11 @@
         public void Render_should_output_Header_day_seven_times()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
             tagBuilder.Setup(r => r.HeaderCellTag(It.IsAny<string>())).Verifiable();
 
@@ -93,12 +97,12 @@
         public void Render_should_output_Month_Body_Start_once()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody")).Verifiable();
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody")).Verifiable();
 
             calendar.Render();
 
@@ -109,12 +113,12 @@
         public void Render_should_output_Month_Row_Start_once()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr")).Verifiable();
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr")).Verifiable();
 
             calendar.Render();
 
@@ -125,16 +129,16 @@
         public void Render_should_output_42_days()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
 
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td")).Verifiable();
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td")).Verifiable();
 
             calendar.Render();
 
-            tagBuilder.Verify(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Exactly(42));
+            tagBuilder.Verify(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>()), Times.Exactly(42));
 
         }
 
@@ -167,7 +171,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            calendar.ClientEvents.OnLoad.InlineCode = () => { };
+            calendar.ClientEvents.OnLoad.CodeBlock = () => { };
 
             CalendarTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", calendar.ClientEvents.OnLoad)).Verifiable();
 
@@ -181,7 +185,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            calendar.ClientEvents.OnChange.InlineCode = () => { };
+            calendar.ClientEvents.OnChange.CodeBlock = () => { };
 
             CalendarTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onChange", calendar.ClientEvents.OnChange)).Verifiable();
 
@@ -279,11 +283,11 @@
         public void Render_should_not_throw_exception_if_selectedDate_is_null()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), calendar.Value, It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
             calendar.MinDate = DateTime.Now.AddMonths(-1);
             calendar.Value = null;
@@ -316,11 +320,11 @@
         public void Render_should_not_throw_exception_if_value_is_equal_to_maxDate()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
             rootTag.Setup(tag => tag.WriteTo(It.IsAny<TextWriter>())).Verifiable();
 
@@ -335,11 +339,11 @@
         public void Render_should_not_throw_exception_if_value_is_equal_to_minDate()
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
             rootTag.Setup(tag => tag.WriteTo(It.IsAny<TextWriter>())).Verifiable();
 
@@ -354,11 +358,11 @@
         public void rootTag_should_call_writeTo_method() 
         {
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td"));
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), calendar.Value, It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td"));
 
             rootTag.Setup(tag=>tag.WriteTo(It.IsAny<TextWriter>())).Verifiable();
 
@@ -373,16 +377,15 @@
             calendar.Value = new DateTime(2010, 8, 1);
 
             tagBuilder.Setup(t => t.Build()).Returns(rootTag.Object);
-            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlTag("table"));
-            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlTag("thead"));
-            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlTag("tbody"));
-            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlTag("tr"));
-            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlTag("td")).Verifiable();
+            tagBuilder.Setup(t => t.ContentTag()).Returns(new HtmlElement("table"));
+            tagBuilder.Setup(t => t.HeaderTag()).Returns(new HtmlElement("thead"));
+            tagBuilder.Setup(t => t.MonthTag()).Returns(new HtmlElement("tbody"));
+            tagBuilder.Setup(t => t.RowTag()).Returns(new HtmlElement("tr"));
+            tagBuilder.Setup(t => t.CellTag(It.IsAny<DateTime>(), It.IsAny<DateTime?>(), It.IsAny<string>(), It.IsAny<bool>())).Returns(new HtmlElement("td")).Verifiable();
             
             calendar.Render();
 
-            tagBuilder.Verify(t => t.CellTag(new DateTime(2010, 7, 25), It.IsAny<string>(), It.IsAny<bool>()));
-
+            tagBuilder.Verify(t => t.CellTag(new DateTime(2010, 7, 25), calendar.Value,It.IsAny<string>(), It.IsAny<bool>()), Times.Once());
         }
     }
 }

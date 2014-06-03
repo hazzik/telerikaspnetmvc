@@ -1,169 +1,175 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>Paragraph</h2>
      <%= Html.Telerik().Editor().Name("Editor") %>
+
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
-    <script type="text/javascript">
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
 
         var editor;
 
         var ParagraphCommand;
-        var enumerator;
 
-        function setUp() {
-            editor = getEditor();
-            ParagraphCommand = $.telerik.editor.ParagraphCommand;
-        }
-
-        function test_exec_wraps_the_node_in_paragraph_and_creates_a_new_paragraph() {
+        module("Editor / Paragraph", {
+            setup: function() {
+                editor = getEditor();
+                ParagraphCommand = $.telerik.editor.ParagraphCommand;
+            }
+        });
+        
+        test('exec wraps the node in paragraph and creates a new paragraph', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>f</p><p>oo</p>', editor.value());
-        }
+            equal(editor.value(), '<p>f</p><p>oo</p>');
+        });
 
-        function test_exec_splits_paragraph() {
+        test('exec splits paragraph', function() {
             editor.value('<p>foo</p>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>f</p><p>oo</p>', editor.value());
-        }
+            equal(editor.value(), '<p>f</p><p>oo</p>');
+        });
 
-        function test_exec_splits_inline_elements() {
+        test('exec splits inline elements', function() {
             editor.value('fo<em>ob</em>ar');
             var range = editor.createRange();
             range.setStart(editor.body.childNodes[1].firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>fo<em>o</em></p><p><em>b</em>ar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>fo<em>o</em></p><p><em>b</em>ar</p>');
+        });
 
-        function test_exec_deletes_selected_content() {
+        test('exec deletes selected content', function() {
             editor.value('foobar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.setEnd(editor.body.firstChild, 5)
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>f</p><p>r</p>', editor.value());
-        }
+            equal(editor.value(), '<p>f</p><p>r</p>');
+        });
 
-        function test_exec_adds_paragraph_around_inline_content() {
+        test('exec adds paragraph around inline content', function() {
             editor.value('foo<p>bar</p>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>f</p><p>oo</p><p>bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>f</p><p>oo</p><p>bar</p>');
+        });
 
-        function test_exec_creates_new_li_when_inside_ul() {
+        test('exec creates new li when inside ul', function() {
             editor.value('<ul><li>foo</li></ul>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild.firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<ul><li>f</li><li>oo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>f</li><li>oo</li></ul>');
+        });
 
-        function test_exec_when_inside_empty_li() {
+        test('exec when inside empty li', function() {
             editor.value('<ul><li></li></ul>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild.firstChild);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p></p>', editor.value());
-        }
+            equal(editor.value(), '<p></p>');
+        });
         
-        function test_exec_when_inside_empty_li_and_p() {
+        test('exec when inside empty li and p', function() {
             editor.value('<ul><li><p></p></li></ul>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild.firstChild.firstChild);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<p></p>', editor.value());
-        }
+            equal(editor.value(), '<p></p>');
+        });
         
-        function test_exec_creates_new_li_when_inside_ul_and_p() {
+        test('exec creates new li when inside ul and p', function() {
             editor.value('<ul><li><p>foo</p></li></ul>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild.firstChild.firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<ul><li><p>f</p></li><li><p>oo</p></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li><p>f</p></li><li><p>oo</p></li></ul>');
+        });
         
-        function test_exec_when_in_last_li_and_it_is_empty() {
+        test('exec when in last li and it is empty', function() {
             editor.value('<ul><li>foo</li><li></li></ul>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild.lastChild);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<ul><li>foo</li></ul><p></p>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul><p></p>');
+        });
         
-        function test_exec_in_empty_list_item_preserves_line_breaks_in_others() {
+        test('exec in empty list item preserves line breaks in others', function() {
             editor.value('<ul><li>fo<br />o</li><li></li><li>ba<br />r</li></ul>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild.childNodes[1]);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<ul><li>fo<br />o</li></ul><p></p><ul><li>ba<br />r</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>fo<br />o</li></ul><p></p><ul><li>ba<br />r</li></ul>');
+        });
         
-        function test_exec_when_there_is_empty_li() {
+        test('exec when there is empty li', function() {
             editor.value('<ul><li>foo</li><li></li></ul>');
             var range = editor.createRange();
             range.setStartAfter(editor.body.firstChild.firstChild.firstChild);
             range.setEndAfter(editor.body.firstChild.firstChild.firstChild);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<ul><li>foo</li><li></li><li></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li><li></li><li></li></ul>');
+        });
 
-        function test_exec_handles_li_containing_br() {
+        test('exec handles li containing br', function() {
             editor.value('<ul><li><br/></li></ul>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild.firstChild, 1);
             range.collapse(true);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<p></p>', editor.value());
-        }
+            equal(editor.value(), '<p></p>');
+        });
 
-        function test_exec_removes_br() {
+        test('exec removes br', function() {
             editor.value('foo<br/>bar');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
             range.collapse(false);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            assertEquals('<p>foo</p><p>bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p>bar</p>');
+        });
 
-        function test_exec_deletes_selected_inline_content() {
+        test('exec deletes selected inline content', function() {
             editor.value('foo<p>bar</p>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.setEnd(editor.body.lastChild.firstChild, 1);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>f</p><p>ar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>f</p><p>ar</p>');
+        });
 
-        function test_exec_deletes_all_contents() {
+        test('exec deletes all contents', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.selectNodeContents(editor.body);
@@ -171,20 +177,20 @@
             var command = new ParagraphCommand({range:range});
             
             command.exec();
-            assertEquals('<p></p><p></p>', editor.value());
-        }
+            equal(editor.value(), '<p></p><p></p>');
+        });
 
-        function test_exec_caret_at_end_of_content() {
+        test('exec caret at end of content', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 3);
             range.setEnd(editor.body.firstChild, 3);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>foo</p><p></p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p></p>');
+        });
 
-        function test_undo_reverts_content() {
+        test('undo reverts content', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -192,10 +198,10 @@
             var command = new ParagraphCommand({range:range});
             command.exec();
             command.undo();
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_redo() {
+        test('redo', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -206,10 +212,10 @@
             command.undo();
             command.exec();
 
-            assertEquals('<p>f</p><p>oo</p>', editor.value());
-        }
+            equal(editor.value(), '<p>f</p><p>oo</p>');
+        });
 
-        function test_exec_moves_caret() {
+        test('exec moves caret', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -220,30 +226,30 @@
             range = editor.getRange();
             range.insertNode(editor.document.createElement('span'));
             
-            assertEquals('<p>f</p><p><span></span>oo</p>', editor.value());            
-        }
+            equal(editor.value(), '<p>f</p><p><span></span>oo</p>');            
+        });
 
-        function test_exec_at_end_of_text_node_wraps_with_paragraph_and_inserts_new_paragraph() {
+        test('exec at end of text node wraps with paragraph and inserts new paragraph', function() {
             editor.value('<p>foo</p>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild, 3);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>foo</p><p></p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p></p>');
+        });
 
-        function test_exec_in_empty_paragraph_at_middle_of_text_adds_more_paragraphs() {
+        test('exec in empty paragraph at middle of text adds more paragraphs', function() {
             editor.value('<p>foo</p><p></p><p>bar</p>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.childNodes[1]);
             range.collapse(true);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            assertEquals('<p>foo</p><p></p><p></p><p>bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p></p><p></p><p>bar</p>');
+        });
 
-        function test_exec_at_start_of_paragraph_leaves_selection_in_paragraph() {
+        test('exec at start of paragraph leaves selection in paragraph', function() {
             editor.value('<p>foo</p><p>bar</p>');
             var range = editor.createRange();
             range.setStart(editor.body.lastChild, 0);
@@ -255,15 +261,81 @@
             
             range.insertNode(editor.document.createElement('a'));
             
-            assertEquals('<p>foo</p><p></p><p><a></a>bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p></p><p><a></a>bar</p>');
+        });
 
-        function test_exec_in_td() {
+        test('exec in td', function() {
             var range =  createRangeFromText(editor, '<table><tr><td>|f|oo</td></tr></table>');
             var command = new ParagraphCommand({range:range});
             command.exec();
             
-            assertEquals('<table><tbody><tr><td><p></p><p>oo</p></td></tr></tbody></table>', editor.value());
-        }
-    </script>
+            equal(editor.value(), '<table><tbody><tr><td><p></p><p>oo</p></td></tr></tbody></table>');
+        });
+        
+        test('exec in header goes in new paragraph', function() {
+            editor.value('<h1>foo</h1>');
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 3);
+            range.collapse(true);
+            var command = new ParagraphCommand({range:range});
+            
+            command.exec();
+
+            range = editor.getRange();
+            
+            range.insertNode(editor.document.createElement('a'));
+            
+            equal(editor.value(), '<h1>foo</h1><p><a></a></p>');
+        });
+        
+        test('exec in midst of header splits it in two', function() {
+            editor.value('<h1>foo</h1>');
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 2);
+            range.collapse(true);
+            var command = new ParagraphCommand({range:range});
+
+            command.exec();
+
+            range = editor.getRange();
+            
+            range.insertNode(editor.document.createElement('a'));
+            
+            equal(editor.value(), '<h1>fo</h1><h1><a></a>o</h1>');
+        });
+        
+        test('exec at beginning of header adds header above', function() {
+            editor.value('<h1>foo</h1>');
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 0);
+            range.collapse(true);
+            var command = new ParagraphCommand({range:range});
+
+            command.exec();
+
+            range = editor.getRange();
+            
+            range.insertNode(editor.document.createElement('a'));
+            
+            equal(editor.value(), '<h1></h1><h1><a></a>foo</h1>');
+        });
+        
+        test('exec in list before image', function() {
+            editor.value('<ul><li><img src="foo" /></li></ul>');
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 0);
+            range.collapse(true);
+            var command = new ParagraphCommand({range:range});
+
+            command.exec();
+
+            range = editor.getRange();
+            
+            range.insertNode(editor.document.createElement('a'));
+            
+            equal(editor.value(), '<ul><li></li><li><a></a><img src="foo" /></li></ul>');
+        });
+
+</script>
+
 </asp:Content>

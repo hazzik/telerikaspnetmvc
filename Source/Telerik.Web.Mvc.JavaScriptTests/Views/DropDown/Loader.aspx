@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -10,62 +10,6 @@
         var $component;
         var $t;
         var isCalled = false;
-
-        function setUp() {
-            $t = $.telerik;
-
-            $component = $('#DDL');
-            component = $component.data('tDropDownList')
-            component.onDataBinding = "dataBinding";
-            loader = new $t.list.loader(component);
-        }
-
-        function test_isAjax_method_should_return_component_ajax_method() {
-            component.ajax = { selectUrl: "selectUrl" };
-
-            var result = loader.isAjax();
-
-            assertEquals(component.ajax, result);
-        }
-
-        function test_isAjax_method_should_return_component_ws_method() {
-            component.ws = { selectUrl: "selectUrl" };
-
-            var result = loader.isAjax();
-
-            assertEquals(component.ws.selectUrl, result.selectUrl);
-        }
-
-        function test_isAjax_method_should_return_component_onDataBinding_method() {
-            component.onDataBinding = "dataBinding";
-
-            component.ajax = undefined;
-            component.ws = undefined;
-
-            var result = loader.isAjax();
-
-            assertEquals("dataBinding", result);
-        }
-
-        function test_ajaxRequest_should_raise_dataBinding_event() {
-            isCalled = false;
-            loader.ajaxRequest(function () { });
-            assertTrue(isCalled);
-        }
-
-        function test_ajaxRequest_should_create_ajaxOptions_and_pass_them_to_jQuery_ajax_method() {
-            var ajaxOptions;
-            component.ws = { selectUrl: "testURL" };
-            $.ajax = function (options) { ajaxOptions = options; }
-            loader.ajaxRequest(function () { });
-
-            assertEquals('testURL', ajaxOptions.url);
-            assertEquals('POST', ajaxOptions.type);
-            assertEquals('text', ajaxOptions.dataType);
-            assertEquals('application/json; charset=utf-8', ajaxOptions.contentType);
-
-            component.ajax = undefined;
-        }
 
         //event handler
         function dataBinding(e) {
@@ -84,4 +28,70 @@
            .Scripts(scripts => scripts
                .Add("telerik.common.js")
                .Add("telerik.list.js")); %>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            $t = $.telerik;
+
+            $component = $('#DDL');
+            component = $component.data('tDropDownList')
+            component.onDataBinding = "dataBinding";
+            loader = new $t.list.loader(component);
+        }
+
+        test('isAjax method should return component ajax method', function() {
+            component.ajax = { selectUrl: "selectUrl" };
+
+            var result = loader.isAjax();
+
+            equal(result, component.ajax);
+        });
+
+        test('isAjax method should return component ws method', function() {
+            component.ws = { selectUrl: "selectUrl" };
+
+            var result = loader.isAjax();
+
+            equal(result.selectUrl, component.ws.selectUrl);
+        });
+
+        test('isAjax method should return component onDataBinding method', function() {
+            component.onDataBinding = "dataBinding";
+
+            component.ajax = undefined;
+            component.ws = undefined;
+
+            var result = loader.isAjax();
+
+            equal(result, "dataBinding");
+        });
+
+        test('ajaxRequest should raise dataBinding event', function() {
+            isCalled = false;
+            loader.ajaxRequest(function () { });
+            ok(isCalled);
+        });
+
+        test('ajaxRequest should create ajaxOptions and pass them to jQuery ajax method', function() {
+            var ajaxOptions;
+            component.ws = { selectUrl: "testURL" };
+            $.ajax = function (options) { ajaxOptions = options; }
+            loader.ajaxRequest(function () { });
+
+            equal(ajaxOptions.url, 'testURL');
+            equal(ajaxOptions.type, 'POST');
+            equal(ajaxOptions.dataType, 'text');
+            equal(ajaxOptions.contentType, 'application/json; charset=utf-8');
+
+            component.ajax = undefined;
+        });
+
+</script>
+
 </asp:Content>

@@ -6,6 +6,8 @@
 namespace Telerik.Web.Mvc
 {
     using System.ComponentModel;
+    using System.Linq;
+    using Telerik.Web.Mvc.Extensions;
     /// <summary>
     /// Represents declarative sorting.
     /// </summary>
@@ -30,6 +32,25 @@ namespace Telerik.Web.Mvc
         {
             get;
             set;
+        }
+
+        public void Deserialize(string source)
+        {
+            var parts = source.Split(new [] { '-' });
+            
+            if (parts.Length > 1)
+            {
+                Member = parts[0];
+            }
+
+            var sortDirection = parts.Last();
+            
+            SortDirection = sortDirection == "desc" ? ListSortDirection.Descending : ListSortDirection.Ascending;
+        }
+        
+        public string Serialize()
+        {
+            return "{0}-{1}".FormatWith(Member, SortDirection == ListSortDirection.Ascending ? "asc" : "desc");
         }
     }
 }

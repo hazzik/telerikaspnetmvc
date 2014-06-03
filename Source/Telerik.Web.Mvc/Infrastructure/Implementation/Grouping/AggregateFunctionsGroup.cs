@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.Infrastructure
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.Serialization;
+    using System.Web.Script.Serialization;
     using Telerik.Web.Mvc.Extensions;
 
     [KnownType(typeof(AggregateFunctionsGroup))]
@@ -19,7 +20,24 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// This projection is used to generate aggregate functions results for this group.
         /// </summary>
         /// <value>The aggregate functions projection.</value>
+        [ScriptIgnore]
         public object AggregateFunctionsProjection { get; set; }
+
+        public IDictionary<string, object> Aggregates
+        {
+            get
+            {
+                if (AggregateFunctionsProjection != null)
+                {
+                    var values = ExtractPropertyValues(AggregateFunctionsProjection);
+
+                    return values.GroupBy(entry => entry.Key.Split('_')[1])
+                        .ToDictionary(g => g.Key, g => (object)g.ToDictionary(entry => entry.Key.Split('_')[0], entry => entry.Value));
+                }
+
+                return new Dictionary<string, object>();
+            }
+        }
 
         /// <summary>
         /// Gets the aggregate results generated for the given aggregate functions.

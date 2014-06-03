@@ -1,8 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-
-    <h2>ClientSideApi</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
     
     <%= Html.Telerik().Window()
             .Name("Window")
@@ -19,76 +17,104 @@
             .Visible(false)
             .Effects(fx => fx.Toggle()) 
     %>
-    
-    <script type="text/javascript">
+
+    <div id="test" style="padding:50px;margin:50px"><div id="Window1" class="t-widget t-window"></div></div>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">    
 
     var oWindow;
 
     function getWindow(selector) {
         return $(selector || '#Window').data('tWindow');
     }
-
-    function setUp() {
-        oWindow = getWindow();
-    }
     
-    function test_title_gets_title() {
-        assertEquals('Title', oWindow.title());
-    }
+    module("Window / ClientSideApi", {
+        setup: function() {
+            oWindow = getWindow();
+        },
+        teardown: function() {
+        }
+    });
     
-    function test_title_sets_title() {
+    test('title gets title', function() {
+        equal(oWindow.title(), 'Title');
+    });
+    
+    test('title sets title', function() {
         var oldTitle = oWindow.title();
         var titleElement = $('.t-window-title', oWindow.element);
 
         oWindow.title('Title is the new title!');
 
-        assertEquals('Title is the new title!', titleElement.text());
+        equal(titleElement.text(), 'Title is the new title!');
 
         oWindow.title(oldTitle);
 
-        assertEquals(oldTitle, titleElement.text());
-    }
+        equal(titleElement.text(), oldTitle);
+    });
     
-    function test_content_gets_content() {
-        assertEquals('Content', oWindow.content());
-    }
+    test('content gets content', function() {
+        equal(oWindow.content(), 'Content');
+    });
     
-    function test_content_sets_content() {
+    test('content sets content', function() {
         var oldContent = oWindow.content();
         var contentElement = $('.t-window-content', oWindow.element);
 
         oWindow.content('Content is the new content!');
 
-        assertEquals('Content is the new content!', contentElement.text());
+        equal(contentElement.text(), 'Content is the new content!');
 
         oWindow.content(oldContent);
         
-        assertEquals(oldContent, contentElement.text());
-    }
+        equal(contentElement.text(), oldContent);
+    });
 
-    function test_open_of_modal_window_adds_overlay_if_it_does_not_exist() {
+    test('open of modal window adds overlay if it does not exist', function() {
         $('body > .t-overlay').remove();
 
         getWindow('#ModalWindow').open();
 
-        assertEquals(1, $('body > .t-overlay').length);
-    }
+        equal($('body > .t-overlay').length, 1);
+    });
 
-    function test_dblclick_on_resizable_window_title_maximizes_window() {
+    test('dblclick on resizable window title maximizes window', function() {
         var $window = $('<div />').tWindow();
 
         $window.find('.t-window-titlebar').trigger('dblclick');
 
-        assertTrue($window.data('tWindow').isMaximized);
-    }
+        ok($window.data('tWindow').isMaximized);
+    });
 
-    function test_dblclick_on_non_resizable_window_title_does_not_maximize_window() {
+    test('dblclick on non resizable window title does not maximize window', function() {
         var $window = $('<div />').tWindow({ resizable: false });
 
         $window.find('.t-window-titlebar').trigger('dblclick');
 
-        assertTrue(!$window.data('tWindow').isMaximized);
-    }
-    
-    </script>
+        ok(!$window.data('tWindow').isMaximized);
+    });
+
+    test('open method set offset left and top to auto', function() {
+        var $window = $('#Window1');
+        $.telerik.window.create($window[0], {});
+       
+        var initialOffset = $window.show().offset();
+        $window.hide();
+
+        $window.tWindow().data('tWindow').open();
+
+        var afterOpenOffset = $window.offset();
+        
+        equal(afterOpenOffset.left - 20, parseInt(initialOffset.left));
+        equal(afterOpenOffset.top - 20, parseInt(initialOffset.top));
+        $window.tWindow().data('tWindow').close();
+    });
+
+</script>
+
 </asp:Content>

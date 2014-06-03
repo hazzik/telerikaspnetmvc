@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -7,23 +7,41 @@
 
     <script type="text/javascript">
         var editor;
+
+        function makeEvent(keyCode) {
+            var e = new $.Event();
+            e.keyCode = keyCode ? keyCode : 'B'.charCodeAt(0);
+            e.shiftKey = false;
+            e.ctrlKey = false;
+            e.altKey = false;
+            return e;
+        }
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
         
-        function setUp() {
+        QUnit.testStart = function() {
             editor = $('#Editor').data('tEditor')
         }
 
 
-        function test_find_shorcut_by_single_character() {
+        test('find shorcut by single character', function() {
             var commands = {bold:{key:'B'}}
 
             var e = makeEvent();
                 
             var command = editor.keyboard.toolFromShortcut(commands, e);
 
-            assertEquals('bold', command);
-        }
+            equal(command, 'bold');
+        });
 
-        function test_find_shorcut_with_ctrl() {
+        test('find shorcut with ctrl', function() {
             var commands = { bold: { ctrl: true, key: 'B' } };
 
             var e = makeEvent();
@@ -31,20 +49,20 @@
             
             var command = editor.keyboard.toolFromShortcut(commands, e);
 
-            assertEquals('bold', command);
-        }
+            equal(command, 'bold');
+        });
 
-        function test_should_not_find_shorcut_with_ctrl_when_ctrl_is_not_pressed() {
+        test('should not find shorcut with ctrl when ctrl is not pressed', function() {
             var commands = { bold: { ctrl: true, key: 'B'} };
 
             var e = makeEvent();
 
             var command = editor.keyboard.toolFromShortcut(commands, e);
 
-            assertUndefined(command);
-        }
+            ok(undefined === command);
+        });
         
-        function test_should_find_shortcut_with_alt() {
+        test('should find shortcut with alt', function() {
             var commands = { bold: { alt: true, key: 'B' } };
 
             var e = makeEvent();
@@ -52,10 +70,10 @@
 
             var command = editor.keyboard.toolFromShortcut(commands, e);
 
-            assertEquals('bold', command);
-        }
+            equal(command, 'bold');
+        });
         
-        function test_should_find_shortcut_with_shift() {
+        test('should find shortcut with shift', function() {
             var commands = { bold: { shift: true, key: 'B'} };
 
             var e = makeEvent();
@@ -63,10 +81,10 @@
 
             var command = editor.keyboard.toolFromShortcut(commands, e);
 
-            assertEquals('bold', command);
-        }
+            equal(command, 'bold');
+        });
 
-        function test_should_find_shortcut_with_all_modifiers_shift() {
+        test('should find shortcut with all modifiers shift', function() {
             var commands = { bold: { shift: true, alt: true, ctrl: true, key: 'B'} };
 
             var e = makeEvent();
@@ -77,10 +95,10 @@
 
             var command = editor.keyboard.toolFromShortcut(commands, e);
 
-            assertEquals('bold', command);
-        }
+            equal(command, 'bold');
+        });
 
-        function test_editor_dispatches_shortcuts_to_exec() {
+        test('editor dispatches shortcuts to exec', function() {
             var command = null;
             
             editor.exec = function() {
@@ -93,10 +111,10 @@
             
             $(editor.document).trigger(e);
 
-            assertEquals('bold', command);
-        }
+            equal(command, 'bold');
+        });
 
-        function test_ctrl_z_calls_undo() {
+        test('ctrl z calls undo', function() {
             var command = null;
 
             editor.exec = function () {
@@ -109,10 +127,10 @@
 
             $(editor.document).trigger(e);
 
-            assertEquals('undo', command);
-        }
+            equal(command, 'undo');
+        });
         
-        function test_ctrl_y_calls_redo() {
+        test('ctrl y calls redo', function() {
             var command = null;
 
             editor.exec = function() {
@@ -125,10 +143,10 @@
 
             $(editor.document).trigger(e);
 
-            assertEquals('redo', command);
-        }
+            equal(command, 'redo');
+        });
         
-        function test_shift_enter_calls_new_line() {
+        test('shift enter calls new line', function() {
             var command = null;
 
             editor.exec = function () {
@@ -141,10 +159,10 @@
 
             $(editor.document).trigger(e);
 
-            assertEquals('insertLineBreak', command);
-        }
+            equal(command, 'insertLineBreak');
+        });
 
-        function test_enter_calls_paragraph() {
+        test('enter calls paragraph', function() {
             var command = null;
 
             editor.exec = function () {
@@ -156,10 +174,10 @@
 
             $(editor.document).trigger(e);
 
-            assertEquals('insertParagraph', command);
-        }
+            equal(command, 'insertParagraph');
+        });
 
-        function test_editor_prevents_default_if_shortcut_is_known() {
+        test('editor prevents default if shortcut is known', function() {
             editor.exec = function() {};
             var e = makeEvent();
             e.ctrlKey = true;
@@ -167,16 +185,9 @@
             
             $(editor.document).trigger(e);
 
-            assertTrue(e.isDefaultPrevented());
-        }
+            ok(e.isDefaultPrevented());
+        });
 
-        function makeEvent(keyCode) {
-            var e = new $.Event();
-            e.keyCode = keyCode ? keyCode : 'B'.charCodeAt(0);
-            e.shiftKey = false;
-            e.ctrlKey = false;
-            e.altKey = false;
-            return e;
-        }
-    </script>
+</script>
+
 </asp:Content>

@@ -1,8 +1,7 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        Binding</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .Columns(columns =>columns.Bound(c => c.Name))
@@ -68,149 +67,167 @@
             .Ajax(settings => { })
             .Pageable(pager => pager.PageSize(10))
     %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript">
-        
-        function tearDown() {
-            var grid = getGrid();
-            
-            $("tbody tr", grid.element).remove();
-            for (var i = 0; i < 10; i++)
-                $("<tr><td/></tr>").appendTo($("tbody", grid.element));
-        }
 
         function getGrid(selector) {
             return $(selector || "#Grid1").data("tGrid");
         }
 
-        function test_should_removes_rows_when_data_length_is_less_than_page_size() {
+        module("Grid / Binding", {
+            teardown: function() {
+                var grid = getGrid();
+            
+                $("tbody tr", grid.element).remove();
+                for (var i = 0; i < 10; i++)
+                    $("<tr><td/></tr>").appendTo($("tbody", grid.element));
+            }
+        });
+        
+        test('should removes rows when data length is less than page size', function() {
             var grid = getGrid();
             grid.dataBind([{}, {}]);
 
-            assertEquals(2, $("tbody tr", grid.element).length);
-        }
+            equal($("tbody tr", grid.element).length, 2);
+        });
 
-        function test_should_create_rows_up_to_page_size_when_they_dont_exist() {
+        test('should create rows up to page size when they dont exist', function() {
             var grid = getGrid();
             $("tbody tr", grid.element).remove();
             grid.dataBind([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
-            assertEquals(10, $("tbody tr", grid.element).length);
-        }
+            equal($("tbody tr", grid.element).length, 10);
+        });
         
-        function test_should_bind_columns_with_same_name() {
+        test('should bind columns with same name', function() {
             var grid = getGrid("#Grid2");
 
             grid.dataBind([{ Name: "Test"}]);
             
-            assertEquals("Test", $("tbody tr td:last", grid.element).html());
-            assertEquals("Test", $("tbody tr:last td:first", grid.element).html());
-        }
+            equal($("tbody tr td:last", grid.element).html(), "Test");
+            equal($("tbody tr:last td:first", grid.element).html(), "Test");
+        });
         
-        function test_should_apply_alt_style() {
+        test('should apply alt style', function() {
             var grid = getGrid();
             $("tbody tr", grid.element).remove();
             grid.dataBind([{}, {}]);
-            assertEquals(2, $("tbody tr", grid.element).length);
-            assertEquals("t-alt", $("tbody tr:nth-child(2)", grid.element).attr("class"));
-        }
+            equal($("tbody tr", grid.element).length, 2);
+            equal($("tbody tr:nth-child(2)", grid.element).attr("class"), "t-alt");
+        });
         
-        function test_should_serialize_attributes() {
+        test('should serialize attributes', function() {
             var grid = getGrid("#Grid2");
             
-            assertEquals(' dir="rtl"', grid.columns[0].attr);
-        }
+            equal(grid.columns[0].attr, ' dir="rtl"');
+        });
         
-        function test_should_apply_column_html_attributes() {
+        test('should apply column html attributes', function() {
             var grid = getGrid('#Grid2');
             $('tbody tr', grid.element).remove();
             grid.dataBind([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
-            assertEquals('rtl', $('#Grid2 tbody tr:first td:first').attr('dir'));
-        }
+            equal($('#Grid2 tbody tr:first td:first').attr('dir'), 'rtl');
+        });
 
-        function test_rebind_multiple_arguments() {
+        test('rebind multiple arguments', function() {
             var grid = getGrid('#Grid2');
-            grid.ajaxRequest = function() { }
+            var data;
+            grid.ajaxRequest = function(additionalData) { data = additionalData; }
             grid.rebind({a:1,b:2});
-            assertEquals(location.href.replace(/(http:\/\/.*?\/)/, "/").toLowerCase() + '&a=1&b=2', grid.ajax.selectUrl.toLowerCase());
-        }
+            equal(data.a, 1);
+            equal(data.b, 2);
+        });
 
-        function test_binding_to_empty_result_clears_the_grid() {
+        test('binding to empty result clears the grid', function() {
             var grid = getGrid('#Grid3');
             grid.dataBind([]);
-            assertEquals(1, $('tbody tr', grid.element).length);
-        }
+            equal($('tbody tr', grid.element).length, 1);
+        });
 
-        function test_binding_to_empty_result_should_return_noRecords_form_localization() {
+        test('binding to empty result should return noRecords form localization', function() {
             var grid = getGrid('#Grid3');
             grid.dataBind([]);
-            assertEquals(grid.localization.noRecords, $('tbody td', grid.element).text());
-        }
+            equal($('tbody td', grid.element).text(), grid.localization.noRecords);
+        });
 
-        function test_binding_to_empty_result_should_serialize_noRecords() {
+        test('binding to empty result should serialize noRecords', function() {
             var grid = getGrid('#Grid3');
             grid.dataBind([]);
-            assertTrue(grid.localization.noRecords != null);
-        }
+            ok(grid.localization.noRecords != null);
+        });
 
-        function test_binding_to_null_result_clears_the_grid() {
+        test('binding to null result clears the grid', function() {
             var grid = getGrid('#Grid4');
             grid.dataBind(null);
-            assertEquals(1, $('tbody tr', grid.element).length);
-        }
+            equal($('tbody tr', grid.element).length, 1);
+        });
 
-        function test_date_time_null_binding() {
+        test('date time null binding', function() {
             var grid = getGrid('#Grid5');
-            assertNull(grid.columns[0].value({BirthDate:null}));
-        }
+            ok(null === grid.columns[0].value({BirthDate:null}));
+        });
 
-        function test_binding_to_null_shows_empty_string() {
+        test('binding to null shows empty string', function() {
             var grid = getGrid('#Grid6');
             $("tbody tr", grid.element).remove();
 
             grid.dataBind([{ BirthDate: null}]);
-            assertEquals('', $('tbody tr:first td:first', grid.element).html());
-        }
+            equal($('tbody tr:first td:first', grid.element).html(), '');
+        });
 
-        function test_encoded_is_serialized() {
+        test('encoded is serialized', function() {
             var grid = getGrid('#Grid7');
 
-            assertUndefined(grid.columns[0].encoded);
-            assertFalse(grid.columns[1].encoded);
-        }        
+            ok(undefined === grid.columns[0].encoded);
+            ok(!grid.columns[1].encoded);
+        });        
         
-        function test_should_encode_html_when_binding() {
+        test('should encode html when binding', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('&lt;strong&gt;foo&lt;/strong&gt;', grid.displayFor(grid.columns[0])({Address:'<strong>foo</strong>'}));
-        }        
+            equal(grid.displayFor(grid.columns[0])({Address:'<strong>foo</strong>'}), '&lt;strong&gt;foo&lt;/strong&gt;');
+        });        
 
-        function test_should_not_encode_html_when_column_is_not_encoded() {
+        test('should not encode html when column is not encoded', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('<strong>foo</strong>', grid.displayFor(grid.columns[1])({Name:'<strong>foo</strong>'}));
-        }
+            equal(grid.displayFor(grid.columns[1])({Name:'<strong>foo</strong>'}), '<strong>foo</strong>');
+        });
         
-        function test_encoding_and_numeric_columns() {
+        test('encoding and numeric columns', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('1', grid.displayFor(grid.columns[2])({IntegerValue:1}));
-        }        
+            equal(grid.displayFor(grid.columns[2])({IntegerValue:1}), '1');
+        });        
         
-        function test_encoding_and_zero() {
+        test('encoding and zero', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('0', grid.displayFor(grid.columns[2])({IntegerValue:0}));
-        }        
+            equal(grid.displayFor(grid.columns[2])({IntegerValue:0}), '0');
+        });        
         
-        function test_encoding_and_null() {
+        test('encoding and null', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('', grid.displayFor(grid.columns[0])({Address:null}));
-        }        
+            equal(grid.displayFor(grid.columns[0])({Address:null}), '');
+        });        
         
-        function test_encoding_and_undefined() {
+        test('encoding and undefined', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('', grid.displayFor(grid.columns[0])({}));
-        }
+            equal(grid.displayFor(grid.columns[0])({}), '');
+        });
 
-        function test_should_encode_html_when_format_is_set() {
+        test('should encode html when format is set', function() {
             var grid = getGrid('#Grid7');
-            assertEquals('&lt;strong&gt;foo&lt;/strong&gt;', grid.displayFor(grid.columns[3])({Name:'foo'}));
-        }        
+            equal(grid.displayFor(grid.columns[3])({Name:'foo'}), '&lt;strong&gt;foo&lt;/strong&gt;');
+        });
+
+        test('dataBind should raise repaint event', function() {
+            var grid = getGrid('#Grid6');
+            var raised = false;
+            $(grid.element).bind('repaint', function() { raised = true; });
+            grid.dataBind([{ BirthDate: null}]);
+            equal(raised, true);
+        });
 
     </script>
 

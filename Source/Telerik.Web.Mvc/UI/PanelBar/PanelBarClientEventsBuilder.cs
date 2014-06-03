@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public PanelBarClientEventsBuilder OnExpand(Action onExpandInlineCode)
+        public PanelBarClientEventsBuilder OnExpand(Action onExpandCodeBlock)
         {
-            Guard.IsNotNull(onExpandInlineCode, "onExpandInlineCode");
+            Guard.IsNotNull(onExpandCodeBlock, "onExpandCodeBlock");
 
-            clientEvents.OnExpand.InlineCode = onExpandInlineCode;
+            clientEvents.OnExpand.CodeBlock = onExpandCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnExpand client-side event
+        /// </summary>
+        /// <param name="onExpandAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().PanelBar()
+        ///            .Name("PanelBar")
+        ///            .ClientEvents(events => events.OnExpand(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public PanelBarClientEventsBuilder OnExpand(Func<object, object> onExpandInlineCodeBlock)
+        {
+            Guard.IsNotNull(onExpandInlineCodeBlock, "onExpandInlineCodeBlock");
+
+            clientEvents.OnExpand.InlineCodeBlock = onExpandInlineCodeBlock;
 
             return this;
         }
@@ -102,11 +130,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public PanelBarClientEventsBuilder OnCollapse(Action onCollapseInlineCode)
+        public PanelBarClientEventsBuilder OnCollapse(Action onCollapseCodeBlock)
         {
-            Guard.IsNotNull(onCollapseInlineCode, "onCollapseInlineCode");
+            Guard.IsNotNull(onCollapseCodeBlock, "onCollapseCodeBlock");
 
-            clientEvents.OnCollapse.InlineCode = onCollapseInlineCode;
+            clientEvents.OnCollapse.CodeBlock = onCollapseCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnCollapse client-side event
+        /// </summary>
+        /// <param name="onCollapseAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().PanelBar()
+        ///            .Name("PanelBar")
+        ///            .ClientEvents(events => events.OnCollapse(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public PanelBarClientEventsBuilder OnCollapse(Func<object, object> onCollapseInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCollapseInlineCodeBlock, "onCollapseInlineCodeBlock");
+
+            clientEvents.OnCollapse.InlineCodeBlock = onCollapseInlineCodeBlock;
 
             return this;
         }
@@ -152,11 +208,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public PanelBarClientEventsBuilder OnSelect(Action onSelectInlineCode)
+        public PanelBarClientEventsBuilder OnSelect(Action onSelectCodeBlock)
         {
-            Guard.IsNotNull(onSelectInlineCode, "onSelectInlineCode");
+            Guard.IsNotNull(onSelectCodeBlock, "onSelectCodeBlock");
 
-            clientEvents.OnSelect.InlineCode = onSelectInlineCode;
+            clientEvents.OnSelect.CodeBlock = onSelectCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnSelect client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().PanelBar()
+        ///            .Name("PanelBar")
+        ///            .ClientEvents(events => events.OnSelect(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public PanelBarClientEventsBuilder OnSelect(Func<object, object> onSelectInlineCodeBlock)
+        {
+            Guard.IsNotNull(onSelectInlineCodeBlock, "onSelectInlineCodeBlock");
+
+            clientEvents.OnSelect.InlineCodeBlock = onSelectInlineCodeBlock;
 
             return this;
         }
@@ -202,11 +286,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public PanelBarClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public PanelBarClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().PanelBar()
+        ///            .Name("PanelBar")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public PanelBarClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -252,11 +364,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public PanelBarClientEventsBuilder OnError(Action onErrorInlineCode)
+        public PanelBarClientEventsBuilder OnError(Action onErrorCodeBlock)
         {
-            Guard.IsNotNull(onErrorInlineCode, "onErrorInlineCode");
+            Guard.IsNotNull(onErrorCodeBlock, "onErrorCodeBlock");
 
-            clientEvents.OnError.InlineCode = onErrorInlineCode;
+            clientEvents.OnError.CodeBlock = onErrorCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnError client-side event
+        /// </summary>
+        /// <param name="onErrorAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().PanelBar()
+        ///            .Name("PanelBar")
+        ///            .ClientEvents(events => events.OnError(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public PanelBarClientEventsBuilder OnError(Func<object, object> onErrorInlineCodeBlock)
+        {
+            Guard.IsNotNull(onErrorInlineCodeBlock, "onErrorInlineCodeBlock");
+
+            clientEvents.OnError.InlineCodeBlock = onErrorInlineCodeBlock;
 
             return this;
         }

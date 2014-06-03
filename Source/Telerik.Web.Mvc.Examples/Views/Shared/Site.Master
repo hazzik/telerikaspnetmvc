@@ -1,6 +1,6 @@
 ﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
 <html lang="en-US" xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Telerik Extensions for ASP.NET MVC Demos</title>
@@ -19,13 +19,15 @@
 <body>
     <div id="page">
         <h1 id="title"><%= Html.ActionLink("Telerik Extensions for ASP.NET MVC", "FirstLook", "Home") %></h1>
+        <a id="version" href="http://www.telerik.com/products/aspnet-mvc/whats-new/release-history.aspx"><%= Html.ProductVersion() %></a>
         <div id="main">
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+		
+		    <div class="corner rc-bottomleft"></div>
+		    <div class="corner rc-bottomright"></div>
         </div>
-        <% Html.RenderPartial("Navigation"); %>
-        <% Html.RenderPartial("Resources"); %>
-        <% Html.RenderPartial("ProductLines"); %>
-        <% Html.RenderPartial("Search"); %>
+        <% Html.RenderPartial("LeftNavigation"); %>
+        <% Html.RenderPartial("TopNavigation"); %>
         <% Html.RenderPartial("Footer"); %>
     </div>
     <% Html.Telerik().ScriptRegistrar()

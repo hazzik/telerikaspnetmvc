@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TabStripClientEventsBuilder OnSelect(Action onSelectInlineCode)
+        public TabStripClientEventsBuilder OnSelect(Action onSelectCodeBlock)
         {
-            Guard.IsNotNull(onSelectInlineCode, "onSelectInlineCode");
+            Guard.IsNotNull(onSelectCodeBlock, "onSelectCodeBlock");
 
-            clientEvents.OnSelect.InlineCode = onSelectInlineCode;
+            clientEvents.OnSelect.CodeBlock = onSelectCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnSelect client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TabStrip()
+        ///            .Name("TabStrip")
+        ///            .ClientEvents(events => events.OnSelect(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TabStripClientEventsBuilder OnSelect(Func<object, object> onSelectInlineCodeBlock)
+        {
+            Guard.IsNotNull(onSelectInlineCodeBlock, "onSelectInlineCodeBlock");
+
+            clientEvents.OnSelect.InlineCodeBlock = onSelectInlineCodeBlock;
 
             return this;
         }
@@ -83,6 +111,84 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Defines the inline handler of the OnContentLoad client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The action defining the inline handler.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TabStrip()
+        ///            .Name("TabStrip")
+        ///            .ClientEvents(events => events.OnContentLoad(() =>
+        ///            {
+        ///                 %&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;%
+        ///            }))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TabStripClientEventsBuilder OnContentLoad(Action onContentLoadCodeBlock)
+        {
+            Guard.IsNotNull(onContentLoadCodeBlock, "onContentLoadCodeBlock");
+
+            clientEvents.OnContentLoad.CodeBlock = onContentLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnContentLoad client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TabStrip()
+        ///            .Name("TabStrip")
+        ///            .ClientEvents(events => events.OnContentLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TabStripClientEventsBuilder OnContentLoad(Func<object, object> onContentLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onContentLoadInlineCodeBlock, "onContentLoadInlineCodeBlock");
+
+            clientEvents.OnContentLoad.InlineCodeBlock = onContentLoadInlineCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        ///  Defines the name of the JavaScript function that will handle the the OnContentLoad client-side event.
+        /// </summary>
+        /// <param name="onSelectHandlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TabStrip()
+        ///             .Name("TabStrip")
+        ///             .ClientEvents(events => events.OnContentLoad("onContentLoad"))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TabStripClientEventsBuilder OnContentLoad(string onContentLoadHandlerName)
+        {
+            Guard.IsNotNullOrEmpty(onContentLoadHandlerName, "onContentLoadHandlerName");
+
+            clientEvents.OnContentLoad.HandlerName = onContentLoadHandlerName;
+
+            return this;
+        }
+
+        /// <summary>
         /// Defines the inline handler of the OnLoad client-side event
         /// </summary>
         /// <param name="onLoadAction">The action defining the inline handler.</param>
@@ -102,11 +208,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TabStripClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public TabStripClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TabStrip()
+        ///            .Name("TabStrip")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TabStripClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -152,11 +286,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TabStripClientEventsBuilder OnError(Action onErrorInlineCode)
+        public TabStripClientEventsBuilder OnError(Action onErrorCodeBlock)
         {
-            Guard.IsNotNull(onErrorInlineCode, "onErrorInlineCode");
+            Guard.IsNotNull(onErrorCodeBlock, "onErrorCodeBlock");
 
-            clientEvents.OnError.InlineCode = onErrorInlineCode;
+            clientEvents.OnError.CodeBlock = onErrorCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnError client-side event
+        /// </summary>
+        /// <param name="onErrorAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().TabStrip()
+        ///            .Name("TabStrip")
+        ///            .ClientEvents(events => events.OnError(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TabStripClientEventsBuilder OnError(Func<object, object> onErrorInlineCodeBlock)
+        {
+            Guard.IsNotNull(onErrorInlineCodeBlock, "onErrorInlineCodeBlock");
+
+            clientEvents.OnError.InlineCodeBlock = onErrorInlineCodeBlock;
 
             return this;
         }

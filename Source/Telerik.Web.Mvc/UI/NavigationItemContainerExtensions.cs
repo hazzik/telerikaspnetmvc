@@ -63,6 +63,13 @@ namespace Telerik.Web.Mvc.UI
             where TComponent : ViewComponentBase, INavigationItemComponent<TItem>
             where TItem : NavigationItem<TItem>, IContentContainer
         {
+            string url = item.GenerateUrl(component.ViewContext, component.UrlGenerator);
+
+            if (url != null)
+            {
+                return url;
+            }
+
             IAsyncContentContainer asyncContentContainer = item as IAsyncContentContainer;
 
             if (asyncContentContainer != null && asyncContentContainer.ContentUrl.HasValue())
@@ -77,8 +84,42 @@ namespace Telerik.Web.Mvc.UI
                 return "#" + component.GetItemContentId(item);
             }
 
-            return item.GenerateUrl(component.ViewContext, component.UrlGenerator) ?? defaultValue;
+            return defaultValue;
         }
+
+        public static void AppendContentUrls<TItem>(this IClientSideObjectWriter objectWriter, string identifier, IList<TItem> items, bool isSelfInitialized)
+            where TItem : NavigationItem<TItem>, IAsyncContentContainer
+        {
+            var contentUrls = new List<string>();
+            var hasVisibleAsyncItems = false;
+
+            items.Each(item =>
+            {
+                if (item.Visible)
+                {
+                    if (!string.IsNullOrEmpty(item.ContentUrl))
+                    {
+                        var url = isSelfInitialized
+                                      ? System.Web.HttpUtility.UrlDecode(item.ContentUrl)
+                                      : item.ContentUrl;
+
+                        contentUrls.Add(url);
+                        hasVisibleAsyncItems = true;
+                    }
+                    else
+                    {
+                        contentUrls.Add("");
+                    }
+                }
+            });
+
+            if (hasVisibleAsyncItems)
+            {
+                objectWriter.AppendCollection(identifier, contentUrls);
+            }
+        }
+
+            
 
         public static string GetImageUrl<T>(this T item, ViewContext viewContext) where T : NavigationItem<T>
         {

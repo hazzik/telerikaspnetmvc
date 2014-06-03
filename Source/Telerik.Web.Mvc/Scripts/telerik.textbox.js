@@ -10,57 +10,123 @@
                     46, // delete
                     35, // end
                     36, // home
-                    44]; //","
+                    44], //","
+        styles = ["font-family",
+                  "font-size",
+                  "font-stretch",
+                  "font-style",
+                  "font-weight",
+                  "letter-spacing",
+                  "line-height",
+                  "color",
+                  "text-align",
+                  "text-decoration",
+                  "text-indent",
+                  "text-transform"];
+
+    function getStyles(input) {
+        var retrievedStyles = {};
+        for (var i = 0, length = styles.length; i < length; i++) {
+            var style = styles[i],
+                value = input.css(style);
+
+            if (value) {
+                if (styles[i] != "font-style" && value != "normal") {
+                    retrievedStyles[style] = value;
+                }
+            }
+        }
+        return retrievedStyles;
+    }
 
     $t.textbox = function (element, options) {
-        this.element = element;
+        if (element.nodeName.toLowerCase() !== "input" && element.type.toLowerCase() !== "text") {
+            throw "Target element is not a INPUT";
+        }
+
         $.extend(this, options);
 
-        var input = $('.t-input', element);
-
-        this.enabled = !input.is('[disabled]');
+        this.element = element;
+        var $element = this.$element = $(element)
+            .bind({
+                focus: function (e) {
+                    var input = e.target;
+                    setTimeout(function () {
+                        if ($.browser.msie) {
+                            input.select();
+                        } else {
+                            input.selectionStart = 0;
+                            input.selectionEnd = input.value.length;
+                        }
+                    }, 0);
+                },
+                keydown: $.proxy(this._keydown, this),
+                keypress: $.proxy(this._keypress, this)
+            })
+            .bind("paste", $.proxy(this._paste, this));
 
         var builder = new $t.stringBuilder();
+
+        if (element.parentNode.nodeName.toLowerCase() !== "div") {
+            $element.addClass('t-input')
+                    .wrap($('<div class="t-widget t-numerictextbox"></div>'));
+
+            if (this.showIncreaseButton) {
+                builder.cat('<a class="t-link t-icon t-arrow-up" href="#" tabindex="-1" title="')
+                       .cat(this.increaseButtonTitle)
+                       .cat('">Increment</a>');
+            }
+
+            if (this.showDecreaseButton) {
+                builder.cat('<a class="t-link t-icon t-arrow-down" href="#" tabindex="-1" title="')
+                       .cat(this.decreaseButtonTitle)
+                       .cat('">Decrement</a>');
+            }
+
+            if (builder.buffer.length > 0) {
+                $(builder.string()).insertAfter($element);
+            }
+        }
+
+        this.$wrapper = $element.closest('.t-numerictextbox')
+            .find('.t-arrow-up, .t-arrow-down')
+                .bind({
+                    click: $t.preventDefault,
+                    dragstart: $t.preventDefault
+                })
+            .end()
+            .bind({
+                focusin: $.proxy(this._focus, this),
+                focusout: $.proxy(this._blur, this)
+            });
+
+        this.enabled = !$element.is('[disabled]');
+
+        builder.buffer = [];
         builder.cat('[ |')
                .cat(this.groupSeparator)
                .catIf('|' + this.symbol, this.symbol)
                .cat(']');
         this.replaceRegExp = new RegExp(builder.string(), 'g');
 
-        var pasteMethod = $.browser.msie ? 'paste' : 'input';
+        var inputValue = $element.attr('value');
 
-        var inputValue = input.attr('value');
-        var inputText = $('<input />', $.extend({
-            id: input.attr('id') + "-text",
-            name: input.attr('name') + "-text",
-            value: (inputValue || this.enabled ? this.text : ''),
-            'class': input.attr('class'),
-            style: input.attr('style')
-        }, this.inputAttributes));
+        builder.buffer = [];
+        builder.cat('<div class="t-formatted-value')
+               .cat((inputValue == '' && this.enabled) ? ' t-state-empty' : '')
+               .cat('">')
+               .cat(inputValue || (this.enabled ? this.text : ''))
+               .cat('</div>');
 
-        if (this.enabled)
-            inputText.attr('disabled', true);
+        this.$text = $(builder.string())
+                        .insertBefore($element)
+                        .css(getStyles($element))
+                        .click(function (e) {
+                            element.focus();
+                        });
 
-        inputText
-            .bind({
-                blur: $.proxy(this.blur, this),
-                focus: $.proxy(this.focus, this),
-                keydown: $.proxy(this.keydown, this),
-                keypress: $.proxy(this.keypress, this),
-                change: function (e) { e.stopPropagation(); }
-            })
-            .bind(pasteMethod, $.proxy(this[pasteMethod], this))
-            .insertBefore(input);
-
-        input.hide().appendTo(element);
-
-        var buttons =
-                $('.t-arrow-up, .t-arrow-down', element)
-                    .bind({
-                        click: $t.preventDefault,
-                        dragstart: $t.preventDefault
-                    });
-
+        //set text color to the background-color.
+        this._blur();
         this[this.enabled ? 'enable' : 'disable']();
 
         this.numFormat = this.numFormat === undefined ? this.type.charAt(0) : this.numFormat;
@@ -71,205 +137,159 @@
         this.maxValue = this.parse(this.maxValue, separator);
         this.decimals = { '190': '.', '188': ',', '110': separator };
 
-        if (inputValue != '') //format the input value if it exists.
-            this.value(inputValue);
+        this.value(inputValue || this.val);
 
         $t.bind(this, {
-            change: this.onChange,
-            load: this.onLoad
+            load: this.onLoad,
+            valueChange: this.onChange
         });
     }
 
     $t.textbox.prototype = {
-        enable: function () {
-            var $element = $(this.element),
-                $input = $element.find('.t-input'),
-                buttons = $element.find('.t-arrow-up, .t-arrow-down'),
-                clearTimerProxy = $.proxy(this.clearTimer, this);
+        _paste: function (e) {
+            var val = this.$element.val();
+            if ($.browser.msie) {
+                var selectedText = this.element.document.selection.createRange().text;
+                var text = window.clipboardData.getData("Text");
 
-            this.enabled = true;
-
-            $element.removeClass('t-state-disabled');
-            $input.removeAttr("disabled");
-
-            if (!this.val && this.val != 0)
-                $input.eq(0).val(this.text);
-
-            buttons.unbind('mouseup').unbind('mouseout').unbind('dblclick')
-                   .bind({
-                       mouseup: clearTimerProxy,
-                       mouseout: clearTimerProxy,
-                       dblclick: clearTimerProxy
-                   });
-
-            $(buttons[0]).unbind('mousedown').mousedown($.proxy(function (e) {
-                this.updateState();
-                this.stepper(e, 1);
-            }, this));
-
-            $(buttons[1]).unbind('mousedown').mousedown($.proxy(function (e) {
-                this.updateState();
-                this.stepper(e, -1);
-            }, this));
-        },
-
-        disable: function () {
-            var $element = $(this.element);
-
-            this.enabled = false;
-
-            $element
-                .addClass('t-state-disabled')
-                .find('.t-input')
-                    .attr('disabled', 'disabled')
-                .end()
-                .find('.t-icon')
-                    .unbind('mousedown')
-                    .bind('mousedown', $t.preventDefault);
-
-            if (!this.val && this.val != 0)
-                $element.find('.t-input:first').val('');
-        },
-
-        updateState: function () {
-            var value = $('> .t-input:first', this.element).val();
-
-            if (this.val != this.parse(value, this.separator))
-                this.parseTrigger(value)
-        },
-
-        input: function (e, element) {
-
-            var val = $(element).val();
+                if (selectedText && selectedText.length > 0) {
+                    val = val.replace(selectedText, text);
+                } else {
+                    val += text;
+                }
+            }
 
             if (val == '-') return true;
 
             var parsedValue = this.parse(val, this.separator);
-
-            if (parsedValue || parsedValue == 0)
-                this.trigger(this.round(parsedValue, this.digits));
-        },
-
-        paste: function (e, element) {
-
-            var $input = $(element);
-            var val = $input.val();
-
-            var selectedText = element.document.selection.createRange().text;
-            var text = window.clipboardData.getData("Text");
-
-            if (selectedText > 0) val = val.replace(selectedText, text);
-            else val += text;
-
-
-            var parsedValue = this.parse(val, this.separator);
-            if (parsedValue || parsedValue == 0)
-                this.trigger(this.round(parsedValue, this.digits));
-        },
-
-        focus: function (e) {
-            this.focused = true;
-            this.updateState();
-
-            var value = this.formatEdit(this.val);
-            $(e.target).val(value || (value == 0 ? 0 : ''));
-
-            if (!$.browser.safari) e.target.select();
-        },
-
-        blur: function (e) {
-            this.focused = false;
-
-            var min = this.minValue;
-            var max = this.maxValue;
-            var $input = $(e.target);
-            var inputValue = this.parse($input.val(), this.separator);
-
-            if (inputValue != null) {
-                if (min != null && inputValue < min)
-                    inputValue = min
-                else if (max != null && inputValue > max)
-                    inputValue = max
+            if (parsedValue || parsedValue == 0) {
+                this._update(parsedValue);
             }
-
-            $input.removeClass('t-state-error');
-            this.parseTrigger(inputValue);
-            this.value(inputValue);
         },
 
-        keydown: function (e) {
+        _keydown: function (e) {
             var key = e.keyCode,
-                $input = $(e.target),
-                separator = this.separator;
+                $element = this.$element,
+                separator = this.separator,
+                value = $element.val();
 
             setTimeout($.proxy(function () {
-                $input.toggleClass('t-state-error', !this.inRange(this.parse($input.val(), this.separator), this.minValue, this.maxValue));
+                $element.toggleClass('t-state-error', !this.inRange(this.parse($element.val(), this.separator), this.minValue, this.maxValue));
             }, this));
 
             // Allow decimal
             var decimalSeparator = this.decimals[key];
             if (decimalSeparator) {
-                if (decimalSeparator == separator && this.digits > 0
-                    && $t.caretPos($input[0]) != 0 && $input.val().indexOf(separator) == -1) {
+                if (decimalSeparator == separator
+                && this.digits > 0
+                && value.indexOf(separator) == -1) {
                     return true;
                 } else {
                     e.preventDefault();
                 }
+
             }
 
             if (key == 8 || key == 46) { //backspace and delete
                 setTimeout($.proxy(function () {
-                    this.parseTrigger($input.val())
+                    this._update(this.parse($element.val()));
                 }, this));
                 return true;
             }
 
             if (key == 38 || key == 40) {
-                this.modifyInput($input, this.step * (key == 38 ? 1 : -1));
+                var direction = key == 38 ? 1 : -1;
+                this._modify(direction * this.step);
                 return true;
             }
 
             if (key == 222) e.preventDefault();
         },
 
-        keypress: function (e) {
-            var $input = $(e.target),
+        _keypress: function (e) {
+            var $element = $(e.target),
                 key = e.keyCode || e.which;
+
+            if (e.shiftKey && key != 45) {
+                return false;
+            }
 
             if (key == 0 || $.inArray(key, keycodes) != -1 || e.ctrlKey || (e.shiftKey && key == 45))
                 return true;
 
             if (((this.minValue !== null ? this.minValue < 0 : true)
                     && String.fromCharCode(key) == "-"
-                    && $t.caretPos($input[0]) == 0
-                    && $input.val().indexOf("-") == -1)
+                    && $t.caretPos($element[0]) == 0
+                    && $element.val().indexOf("-") == -1)
                 || this.inRange(key, 48, 57)) {
+
                 setTimeout($.proxy(function () {
-                    this.parseTrigger($input.val());
+                    var parsedValue = this.parse($element.val());
+                    if (parsedValue != null && this.digits) {
+                        var factor = Math.pow(10, this.digits);
+                        parsedValue = parseInt(parsedValue * factor) / factor;
+                    }
+                    if (this.val != parsedValue) {
+                        if ($t.trigger(this.element, 'valueChange', { oldValue: this.val, newValue: parsedValue })) {
+                            parsedValue = this.val; //revert changes
+                        }
+                        this._value(parsedValue);
+                    }
                 }, this));
+
                 return true;
             }
 
             e.preventDefault();
         },
 
-        clearTimer: function (e) {
+        _focus: function () {
+            this.$element
+                .css('color', this.$text.css("color"));
+
+            this.$text.hide();
+        },
+
+        _blur: function () {
+            this.$element
+                .css('color', this.$element.css('background-color'))
+                .removeClass('t-state-error');
+
+            if (this.enabled) {
+                this.$text.show();
+            }
+
+            var min = this.minValue,
+                max = this.maxValue,
+                parsedValue = this.parse(this.$element.val());
+
+            if (parsedValue != null) {
+                if (min != null && parsedValue < min) {
+                    parsedValue = min;
+                } else if (max != null && parsedValue > max) {
+                    parsedValue = max;
+                }
+                parsedValue = parseFloat(parsedValue.toFixed(this.digits));
+            }
+            this._update(parsedValue);
+        },
+
+        _clearTimer: function (e) {
             clearTimeout(this.timeout);
             clearInterval(this.timer);
             clearInterval(this.acceleration);
         },
 
-        stepper: function (e, stepMod) {
+        _stepper: function (e, stepMod) {
             if (e.which == 1) {
 
-                var input = $('.t-input:first', this.element),
-                    step = this.step;
+                var step = this.step;
 
-                this.modifyInput(input, stepMod * step);
+                this._modify(stepMod * step);
 
                 this.timeout = setTimeout($.proxy(function () {
                     this.timer = setInterval($.proxy(function () {
-                        this.modifyInput(input, stepMod * step);
+                        this._modify(stepMod * step);
                     }, this), 80);
 
                     this.acceleration = setInterval(function () { step += 1; }, 1000);
@@ -277,38 +297,120 @@
             }
         },
 
-        value: function (value) {
-            if (arguments.length == 0) return this.val;
-
-            var parsedValue = (typeof value === typeof 1) ? value : this.parse(value, this.separator);
-            if (!this.inRange(parsedValue, this.minValue, this.maxValue))
-                parsedValue = null;
-
-            var isNull = parsedValue === null;
-
-            var text = this.enabled ? this.text : '';
-            this.val = parsedValue;
-            $(this.element)
-                .find('.t-input:last').val(isNull ? '' : this.formatEdit(parsedValue)).end()
-                .find('.t-input:first').val(isNull ? text : this.format(parsedValue));
-            return this;
-        },
-
-        modifyInput: function ($input, step) {
-            var value = this.val,
+        _modify: function (step) {
+            var value = this.parse(this.element.value),
                 min = this.minValue,
                 max = this.maxValue;
 
             value = value ? value + step : step;
-            value = (min !== null && value < min) ? min : (max !== null && value > max) ? max : value;
 
-            var fixedValue = this.round(value, this.digits);
+            if (min !== null && value < min) {
+                value = min;
+            } else if (max !== null && value > max) {
+                value = max;
+            }
 
-            this.trigger(fixedValue);
+            this._update(parseFloat(value.toFixed(this.digits)));
+        },
 
-            var formatedValue = this.focused ? this.formatEdit(fixedValue) : this.format(fixedValue);
+        _update: function (val) {
+            if (this.val != val) {
+                if ($t.trigger(this.element, 'valueChange', { oldValue: this.val, newValue: val })) {
+                    val = this.val; //revert changes
+                }
+            }
+            this._value(val);
+        },
 
-            $input.removeClass('t-state-error').val(formatedValue);
+        _value: function (value) {
+            var parsedValue = (typeof value === "number") ? value : this.parse(value, this.separator),
+                text = this.enabled ? this.text : '',
+                isNull = parsedValue === null;
+
+            if (parsedValue != null) {
+                parsedValue = parseFloat(parsedValue.toFixed(this.digits));
+            }
+
+            this.val = parsedValue;
+            this.$element.val(isNull ? '' : this.formatEdit(parsedValue));
+            this.$text.html(isNull ? text : this.format(parsedValue));
+            if (isNull) {
+                this.$text.addClass('t-state-empty');
+            } else {
+                this.$text.removeClass('t-state-empty');
+            }
+        },
+
+        enable: function () {
+            var $buttons = this.$wrapper.find('.t-arrow-up, .t-arrow-down'),
+                clearTimerProxy = $.proxy(this._clearTimer, this);
+
+            this.enabled = true;
+            this.$element.removeAttr("disabled");
+
+            if (!this.val && this.val != 0) {
+                this.$text
+                    .addClass('t-state-empty')
+                    .html(this.text);
+            } else if (true == $.browser.msie) {
+                this.$text.show();
+            } else {
+                this.$element.css('color', this.$element.css('background-color'))
+            }
+
+            this.$wrapper.removeClass('t-state-disabled');
+            $buttons.unbind('mouseup').unbind('mouseout').unbind('dblclick')
+                    .bind({
+                        mouseup: clearTimerProxy,
+                        mouseout: clearTimerProxy,
+                        dblclick: clearTimerProxy
+                    });
+
+            var eventName = "mousedown";
+            $buttons.eq(0)
+                    .unbind(eventName)
+                    .bind(eventName, $.proxy(function (e) {
+                        this._stepper(e, 1);
+                    }, this));
+
+            $buttons.eq(1)
+                    .unbind(eventName)
+                    .bind(eventName, $.proxy(function (e) {
+                        this._stepper(e, -1);
+                    }, this));
+        },
+
+        disable: function () {
+            this.enabled = false;
+
+            this.$wrapper
+                .addClass('t-state-disabled')
+                .find('.t-icon')
+                    .unbind('mousedown')
+                    .bind('mousedown', $t.preventDefault);
+
+            this.$element
+                .attr('disabled', 'disabled')
+
+            if (!this.val && this.val != 0)
+                this.$text.html('');
+            else if (true == $.browser.msie)
+                this.$text.hide();
+            else
+                this.$element.css('color', this.$element.css('background-color'))
+        },
+
+        value: function (value) {
+            if (value === undefined) {
+                return this.val;
+            }
+
+            var parsedValue = (typeof value === "number") ? value : this.parse(value, this.separator);
+            if (!this.inRange(parsedValue, this.minValue, this.maxValue)) {
+                parsedValue = null;
+            }
+
+            this._value(parsedValue);
         },
 
         formatEdit: function (value) {
@@ -329,18 +431,6 @@
                                            this.negative,
                                            this.symbol,
                                            true);
-        },
-
-        trigger: function (newValue) {
-            if (this.val != newValue) {
-                if ($t.trigger(this.element, 'change', { oldValue: this.val, newValue: newValue })) return;
-                $('.t-input:last', this.element).val(this.formatEdit(newValue));
-                this.val = newValue;
-            }
-        },
-
-        parseTrigger: function (value) {
-            this.trigger(this.round(this.parse(value, this.separator), this.digits));
         },
 
         inRange: function (key, min, max) {
@@ -366,19 +456,16 @@
                     result = parseFloat(value);
             }
             return isNaN(result) ? null : result;
-        },
-
-        round: function (value, digits) {
-            if (value || value == 0)
-                return parseFloat(value.toFixed(digits || 2));
-            return null;
         }
     }
 
     $.fn.tTextBox = function (options) {
-        var type = options.type,
-            defaults = $.fn.tTextBox.defaults[type];
+        var type = 'numeric';
+        if (options && options.type) {
+            type = options.type;
+        }
 
+        var defaults = $.fn.tTextBox.defaults[type];
         defaults.digits = $t.cultureInfo[type + 'decimaldigits'];
         defaults.separator = $t.cultureInfo[type + 'decimalseparator'];
         defaults.groupSeparator = $t.cultureInfo[type + 'groupseparator'];
@@ -388,6 +475,7 @@
         defaults.symbol = $t.cultureInfo[type + 'symbol'];
 
         options = $.extend({}, defaults, options);
+        options.type = type;
 
         return this.each(function () {
             var $element = $(this);
@@ -404,7 +492,11 @@
         val: null,
         text: '',
         step: 1,
-        inputAttributes: ''
+        inputAttributes: '',
+        increaseButtonTitle: "Increase value",
+        decreaseButtonTitle: "Decrease value",
+        showIncreaseButton: true,
+        showDecreaseButton: true
     };
 
     $.fn.tTextBox.defaults = {
@@ -557,7 +649,7 @@
         }
 
         var addGroupSeparator = function (number, groupSeperator, groupSize) {
-            if (groupSeparator) {
+            if (groupSeparator && groupSize != 0) {
                 var regExp = new RegExp('(-?[0-9]+)([0-9]{' + groupSize + '})');
                 while (regExp.test(number)) {
                     number = number.replace(regExp, '$1' + groupSeperator + '$2');
@@ -582,12 +674,12 @@
         var exponent, left, right;
 
         if (isCustomFormat) {
-            var splits = (sign && negativeFormat ? negativeFormat : customFormat).split('.');
-            var leftF = splits[0];
-            var rightF = splits.length > 1 ? splits[1] : '';
-            var lastIndexZero = $t.lastIndexOf(rightF, '0');
-            var lastIndexSharp = $t.lastIndexOf(rightF, '#');
-            var digits = (lastIndexSharp > lastIndexZero ? lastIndexSharp : lastIndexZero) + 1;
+            var splits = (sign && negativeFormat ? negativeFormat : customFormat).split('.'),
+                leftF = splits[0],
+                rightF = splits.length > 1 ? splits[1] : '',
+                lastIndexZero = $t.lastIndexOf(rightF, '0'),
+                lastIndexSharp = $t.lastIndexOf(rightF, '#');
+            digits = (lastIndexSharp > lastIndexZero ? lastIndexSharp : lastIndexZero) + 1;
         }
 
         var factor = Math.pow(10, digits);

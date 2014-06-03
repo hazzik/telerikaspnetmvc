@@ -17,10 +17,10 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            var li = new HtmlTag("li")
+            var li = new HtmlElement("li")
                     .AddClass(UIPrimitives.Editor.ToolbarButton);
 
-            var a = new HtmlTag("a")
+            var a = new HtmlElement("a")
                     .Attribute("href", "#")
                     .AddClass(UIPrimitives.Editor.ToolIcon)
                     .AddClass(button.CssClass)

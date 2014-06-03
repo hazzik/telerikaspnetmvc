@@ -44,19 +44,24 @@ namespace Telerik.Web.Mvc
 
         internal static WebAssetGroup FindStyleSheetGroup(string name)
         {
-            return FindInternal(styleSheets, name);
+            return FindInternal(styleSheets, name, "text/css");
         }
 
         internal static WebAssetGroup FindScriptGroup(string name)
         {
-            return FindInternal(scripts, name);
+            return FindInternal(scripts, name, "text/javascript");
         }
 
-        private static WebAssetGroup FindInternal(IDictionary<string, WebAssetGroup> lookup, string name)
+        private static WebAssetGroup FindInternal(IDictionary<string, WebAssetGroup> lookup, string name, string contentType)
         {
             WebAssetGroup group;
 
-            return lookup.TryGetValue(name, out group) ? group : null;
+            if (lookup.TryGetValue(name, out group))
+            {
+                group.ContentType = contentType;
+            }
+            
+            return group;
         }
 
         private static void Configure(string defaultPath, IDictionary<string, WebAssetGroup> target, Action<SharedWebAssetGroupBuilder> configureAction)

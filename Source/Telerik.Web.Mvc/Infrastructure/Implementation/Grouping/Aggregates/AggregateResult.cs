@@ -6,9 +6,9 @@
 namespace Telerik.Web.Mvc.Infrastructure
 {
     using System;
-    using System.ComponentModel;
     using System.Globalization;
-    public class AggregateResult : INotifyPropertyChanged
+
+    public class AggregateResult
     {
         private object aggregateValue;
         private int itemCount;
@@ -28,8 +28,8 @@ namespace Telerik.Web.Mvc.Infrastructure
                 throw new ArgumentNullException("function");
             }
 
-            this.aggregateValue = value;
-            this.itemCount = count;
+            aggregateValue = value;
+            itemCount = count;
             this.function = function;
         }
 
@@ -53,10 +53,6 @@ namespace Telerik.Web.Mvc.Infrastructure
         {
         }
 
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets or sets the value of the result.
@@ -70,12 +66,16 @@ namespace Telerik.Web.Mvc.Infrastructure
             }
             internal set
             {
-                {
-                    this.aggregateValue = value;
 
-                    this.OnPropertyChanged("Value");
-                    this.OnPropertyChanged("FormattedValue");
-                }
+                this.aggregateValue = value;
+            }
+        }
+
+        public string Member
+        {
+            get
+            {
+                return function.SourceField;
             }
         }
 
@@ -135,6 +135,14 @@ namespace Telerik.Web.Mvc.Infrastructure
             }
         }
 
+        public string AggregateMethodName
+        {
+            get
+            {
+                return function.AggregateMethodName;
+            }
+        }
+
         /// <summary>
         /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
         /// </summary>
@@ -150,14 +158,14 @@ namespace Telerik.Web.Mvc.Infrastructure
             return base.ToString();
         }
 
-        /// <summary>
-        /// Called when a property has changed.
-        /// </summary>
-        /// <param name="propertyName">Name of the property.</param>
-        protected void OnPropertyChanged(string propertyName)
+        public string Format(string format)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            if (Value != null)
+            {
+                return string.Format(format, Value);
+            }
+
+            return ToString();
         }
     }
 }

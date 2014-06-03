@@ -1,4 +1,5 @@
-var fontSizeMappings = 'xx-small,x-small,small,medium,large,x-large,xx-large'.split(',');
+var fontSizeMappings = 'xx-small,x-small,small,medium,large,x-large,xx-large'.split(','),
+    quoteRe = /"/g
 
 function domToXhtml(root) {
     var result = [];
@@ -99,6 +100,10 @@ function domToXhtml(root) {
 
                         if (property.indexOf('color') >= 0)
                             value = dom.toHex(value);
+                        
+                        if (property.indexOf('font-family') >= 0) {
+                            value = value.replace(quoteRe, "'");
+                        }
 
                         result.push(property);
                         result.push(':');

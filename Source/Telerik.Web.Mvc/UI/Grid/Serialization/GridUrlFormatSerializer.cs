@@ -42,9 +42,13 @@ namespace Telerik.Web.Mvc.UI
                 {
                     grid.Server.Select.RouteValues[grid.Prefix(GridUrlParameters.Filter)] = "{3}";
                 }
-                
-                GridUrlBuilder urlBuilder = new GridUrlBuilder(grid);
-                writer.Append("urlFormat", urlBuilder.Url(grid.Server.Select));
+
+                if (grid.Paging.Enabled && (grid.Paging.Style & GridPagerStyles.PageSizeDropDown) == GridPagerStyles.PageSizeDropDown)
+                {
+                    grid.Server.Select.RouteValues[grid.Prefix(GridUrlParameters.PageSize)] = "{4}";
+                }
+
+                writer.Append("urlFormat", grid.UrlBuilder.Url(grid.Server.Select));
             }
         }
     }

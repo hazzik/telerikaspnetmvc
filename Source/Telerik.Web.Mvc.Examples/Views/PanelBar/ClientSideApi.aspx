@@ -52,11 +52,9 @@
     </p>
     
     <p>
-        <button onclick="ExpandItem()">Expand</button> / <button onclick="CollpaseItem()">Collapse</button>
-    </p>
-    
-    <p>
-        <button onclick="EnableItem()">Enable</button> / <button onclick="DisableItem()">Disable</button>
+        <button onclick="ExpandItem()" class="t-button">Expand</button> / <button onclick="CollpaseItem()" class="t-button">Collapse</button>
+		<br />
+        <button onclick="EnableItem()" class="t-button">Enable</button> / <button onclick="DisableItem()" class="t-button">Disable</button>
     </p>
 <% } %>
         
@@ -109,5 +107,12 @@
 	        margin: 0;
 	        padding: .4em 0;
 	    }
+	    
+	    .configurator .t-button
+	    {
+	    	display:inline-block;
+	    	width:auto;
+	    }
+	    
     </style>
 </asp:Content>

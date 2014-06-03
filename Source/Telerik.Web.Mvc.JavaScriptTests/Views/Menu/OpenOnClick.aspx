@@ -2,8 +2,7 @@
     Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        CollapseDelay Tests</h2>
+
     <% Html.Telerik().Menu()
             .Name("myMenu")
             .OpenOnClick(true)
@@ -37,12 +36,17 @@
 
                         item.Add().Text("Child Item 4.2");
                     });
-                menu.Add().Text("Item 5");
+                menu.Add().Text("Item 5").Action("Index", "Home").Enabled(false);
             }
             )
             .Render(); %>
 
-    <script type="text/javascript">
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
 
         function getMenu(selector) {
             return $(selector || "#myMenu").data("tMenu");
@@ -51,70 +55,69 @@
         var open;
         var close;
         var menu;
+        
+        module("Menu / OpenOnClick", {
+            setup: function() {
+                menu = getMenu();
+                open = menu.open;
+                close = menu.close;
+            },
+            teardown: function() {
+                menu.clicked = false;
+                menu.open = open;
+                menu.close = close;
+            }
+        });
 
-        function setUp() {
-            menu = getMenu();
-            open = menu.open;
-            close = menu.close;
-        }
+        test('open on click is serialized', function() {
+            ok(menu.openOnClick);
+        });
 
-        function tearDown() {
-            menu.clicked = false;
-            menu.open = open;
-            menu.close = close;
-        }
-
-
-        function test_open_on_click_is_serialized() {
-            assertTrue(menu.openOnClick);
-        }
-
-        function test_hovering_root_item_does_not_open_it() {
+        test('hovering root item does not open it', function() {
             var opend = false;
 
             menu.open = function() { opend = true }
             menu.mouseenter({}, $("li:first", menu.element)[0]);
 
-            assertFalse(opend);
-        }
+            ok(!opend);
+        });
 
-        function test_clicking_root_item_should_open_it() {
+        test('clicking root item should open it', function() {
             var opend = false;
             menu.open = function() { opend = true }
             menu.click({ preventDefault: function () { }, stopPropagation: function () { } }, $("li:first", menu.element)[0]);
-            assertTrue(opend);
-            assertTrue(menu.clicked);
-        }
+            ok(opend);
+            ok(menu.clicked);
+        });
 
-        function test_leaving_opened_item_does_not_close_it() {
+        test('leaving opened item does not close it', function() {
             var opend = false;
             menu.clicked = true;
             menu.open = function() { opend = true }
 
             menu.mouseleave({}, $("li:first", menu.element)[0]);
 
-            assertFalse(opend);
-        }
+            ok(!opend);
+        });
 
-        function test_leaving_opened_and_hovering_a_sibling_closes_it_and_opens_the_sibling() {
-            var opened = false;
+        test('leaving opened and hovering a sibling closes it and opens the sibling', function() {
             menu.clicked = true;
             menu.open = function() { opend = true }
 
             var element = $("li:first", menu.element)[0];
             menu.mouseenter({ relatedTarget: element, indexOf: function() { }, type:'mouseenter' }, element.nextSibling);
 
-            assertTrue(opend);
-        }
+            ok(opend);
+        });
 
-        function test_clicking_the_document_closes_the_open_item() {
+        test('clicking the document closes the open item', function() {
             var closed = false;
             menu.clicked = true;
             menu.close = function() { closed = true }
             menu.documentClick({ target: document.body}, document);
-            assertTrue(closed);
-        }
-	
-    </script>
+            ok(closed);
+        });
+
+</script>
 
 </asp:Content>

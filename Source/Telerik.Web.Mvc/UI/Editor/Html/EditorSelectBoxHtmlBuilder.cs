@@ -5,7 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI.Html
 {
-    using Telerik.Web.Mvc.Infrastructure;
+    using Infrastructure;
     
     public class EditorSelectBoxHtmlBuilder : HtmlBuilderBase
     {
@@ -18,14 +18,14 @@ namespace Telerik.Web.Mvc.UI.Html
 
         public new IHtmlNode Build()
         {
-            return new HtmlTag("div")
+            return new HtmlElement("div")
                     .Attributes(selectBox.HtmlAttributes)
                     .PrependClass("t-selectbox", UIPrimitives.Header);
         }
 
         protected override IHtmlNode BuildCore()
         {
-            var li = new HtmlTag("li")
+            var li = new HtmlElement("li")
                     .AddClass("t-editor-selectbox");
 
 
@@ -40,16 +40,19 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private IHtmlNode InnerContentTag() 
         {
-            IHtmlNode root = new HtmlTag("div").AddClass("t-dropdown-wrap", UIPrimitives.DefaultState);
+            IHtmlNode root = new HtmlElement("div").AddClass("t-dropdown-wrap", UIPrimitives.DefaultState);
 
-            new HtmlTag("span")
+            var items = selectBox.Items;
+            string text = items.Count > 0 && !(string.IsNullOrEmpty(items[0].Text) || items[0].Text.Trim().Length == 0) ? items[0].Text : "&nbsp;";
+
+            new HtmlElement("span")
                 .AddClass("t-input")
-                .Html(selectBox.Items.Count > 0 ? selectBox.Items[0].Text : "&nbsp;")
+                .Html(text)
                 .AppendTo(root);
 
-            IHtmlNode link = new HtmlTag("span").AddClass("t-select");
+            IHtmlNode link = new HtmlElement("span").AddClass("t-select");
 
-            new HtmlTag("span")
+            new HtmlElement("span")
                 .AddClass(UIPrimitives.Icon, "t-arrow-down")
                 .Html("select")
                 .AppendTo(link);

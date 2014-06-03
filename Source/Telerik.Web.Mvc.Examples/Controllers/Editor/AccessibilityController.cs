@@ -8,13 +8,11 @@ namespace Telerik.Web.Mvc.Examples
         [ValidateInput(false)]
         public ActionResult Accessibility(string editor)
         {
-            // The HTML comes encoded so we should decode it first
-            var html = HttpUtility.HtmlDecode(editor);
-            if (html != null)
+            if (editor != null)
             {
-                ViewData["editor"] = html;
+                ViewData["editor"] = editor;
 
-                ViewData["value"] = HttpUtility.HtmlEncode(html.IndentHtml());
+                ViewData["value"] = HttpUtility.HtmlEncode(editor.IndentHtml());
             }
             return View();
         }

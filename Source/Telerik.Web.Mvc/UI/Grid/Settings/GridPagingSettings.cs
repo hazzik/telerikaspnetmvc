@@ -5,6 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using System.Globalization;
+    using System.Linq;
     using Telerik.Web.Mvc.Infrastructure;
 
     public class GridPagingSettings : IClientSerializable
@@ -19,6 +21,7 @@ namespace Telerik.Web.Mvc.UI
             this.grid = grid;
             Style = GridPagerStyles.NextPreviousAndNumeric;
             CurrentPage = 1;
+            PageSizesInDropDown = new[] {5, 10, 20, 50};
         }
         
         public int CurrentPage
@@ -59,6 +62,11 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
+        public int[] PageSizesInDropDown
+        {
+            get; set;
+        }
+
         public int Total
         {
             get
@@ -80,6 +88,7 @@ namespace Telerik.Web.Mvc.UI
                 writer.Append("pageSize", PageSize, 10);
                 writer.Append("total", grid.DataProcessor.Total);
                 writer.Append("currentPage", grid.DataProcessor.CurrentPage);
+                writer.AppendCollection("pageSizesInDropDown", PageSizesInDropDown.Select(v => v.ToString(CultureInfo.InvariantCulture)));
             }
             else
             {

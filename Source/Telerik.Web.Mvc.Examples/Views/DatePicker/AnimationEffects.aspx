@@ -48,7 +48,7 @@
         <li>
             <ul>
                 <li>
-                    <label for="openDuration-input-text">open for</label>
+                    <label for="openDuration">open for</label>
                     <%= Html.Telerik().NumericTextBox()
                             .Name("openDuration")
                             .DecimalDigits(0)
@@ -58,7 +58,7 @@
                     %> ms
                 </li>
                 <li>
-                    <label for="closeDuration-input-text">close for</label>
+                    <label for="closeDuration">close for</label>
                     <%= Html.Telerik().NumericTextBox()
                             .Name("closeDuration")
                             .DecimalDigits(0)
@@ -71,7 +71,7 @@
         </li>
     </ul>
     
-    <button class="t-button t-state-default" type="submit">Apply</button>
+    <button class="t-button" type="submit">Apply</button>
 <% } %>
 
 <% Html.Telerik().ScriptRegistrar().OnDocumentReady(() => {%>
@@ -91,6 +91,11 @@
 
 <asp:Content contentPlaceHolderID="HeadContent" runat="server">
 	<style type="text/css">
+	    .t-datepicker
+	    {
+	        float: left;
+	    }
+	    
 	    .example .configurator
 	    {
 	        width: 300px;

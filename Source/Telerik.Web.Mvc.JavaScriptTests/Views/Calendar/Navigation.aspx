@@ -1,450 +1,518 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>Fast navigation</h2>
-    
-    <script type="text/javascript">
-        var calendarObject;
-        var $t;
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+    <% Html.Telerik().ScriptRegistrar()
+           .Scripts(scripts => scripts
+               .Add("telerik.common.js")
+               .Add("telerik.calendar.js")); %>
+</asp:Content>
 
-        function setUp() {
-            $t = $.telerik;
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+    var calendarObject;
+
+    module("Calendar / Navigation", {
+        setup: function () {
             calendarObject =
-                $($.telerik.calendar.html(new $t.datetime(), new $t.datetime()))
-                    .appendTo(document.body)
-                    .tCalendar()
-                    .data('tCalendar');
-                    
+                    $($.telerik.calendar.html(new $t.datetime(), new $t.datetime()))
+                        .appendTo(document.body)
+                        .tCalendar()
+                        .data('tCalendar');
+
             calendarObject.stopAnimation = true;
+        },
+        teardown: function () {
+            $(calendarObject.element).remove();
+            calendarObject = null;
         }
+    });
 
-        function test_goToView_updates_viewedMonth() {
-            calendarObject.goToView(0, new $t.datetime(2010, 3, 1));
-            
-            assertEquals(2010, calendarObject.viewedMonth.year());
-            assertEquals(3, calendarObject.viewedMonth.month());
-        }
-        
-        function test_getFirstVisibleDay_honors_DST() {
-            
-            // 28. March will be skipped if the DST isn't honored
-            assertTrue(28 == $t.datetime.firstVisibleDay(new $t.datetime(2010, 3, 1)).date());
-        }
+    test('goToView updates viewedMonth', function () {
+        calendarObject.goToView(0, new Date(2010, 3, 1));
 
-        function test_buildDateRows_honors_DST() {
-            
-            // DST on october 2009 will produce the 25th twice, if calcluations are wrong
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
-                                                        calendarObject.minDate,
-                                                        calendarObject.maxDate, 
+        equal(calendarObject.viewedMonth.year(), 2010);
+        equal(calendarObject.viewedMonth.month(), 3);
+    });
+
+    test('getFirstVisibleDay honors DST', function () {
+
+        // 28. March will be skipped if the DST isn't honored
+        ok(28 == $t.datetime.firstVisibleDay(new $t.datetime(2010, 3, 1)).date());
+    });
+
+    test('buildDateRows honors DST', function () {
+
+        // DST on october 2009 will produce the 25th twice, if calcluations are wrong
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+                                                        new $t.datetime(calendarObject.minDate),
+                                                        new $t.datetime(calendarObject.maxDate),
                                                         new $t.datetime(2009, 9, 26));
-            
-            var temporaryDom =
+
+        var temporaryDom =
                 $(html)
                     .appendTo(document.body)
                     .find('.t-link')
-                    .filter(function() {
-                        return parseInt($(this).text(), 10) == 25; 
+                    .filter(function () {
+                        return parseInt($(this).text(), 10) == 25;
                     });
-            
-            assertTrue(temporaryDom.length == 1);
-            
-            temporaryDom.remove();
-        }
 
-        function test_buildDateRows_should_render_days_without_links_if_they_are_out_of_range() {
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+        ok(temporaryDom.length == 1);
+
+        temporaryDom.remove();
+    });
+
+    test('buildDateRows should render days without links if they are out of range', function () {
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
                                                         new $t.datetime(2009, 9, 10),
                                                         new $t.datetime(2009, 9, 30),
                                                         new $t.datetime(2009, 9, 26));
 
-            var renderedDays = $('.t-link', html).length;
-            
-            assertTrue(renderedDays == 21);
-        }
+        var renderedDays = $('.t-link', html).length;
 
-        function test_buildDateRows_should_render_days_with_URL_to_Action_if_dates_are_in_the_current_month() {
+        ok(renderedDays == 21);
+    });
 
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+    test('buildDateRows should render days with URL to Action if dates are in the current month', function () {
+
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
                                                         new $t.datetime(2009, 9, 10),
                                                         new $t.datetime(2009, 9, 30),
                                                         new $t.datetime(2009, 9, 26),
                                                         '/aspnet-mvc-beta/calendar/selectaction?date={0}',
                                                         { '2009': { '9': [15, 21, 22]} });
 
-            var renderedDays = $('.t-link', html).filter(function(index) {
-                return $(this).attr('href').indexOf('selectaction') != -1;
-            })
-            assertTrue(renderedDays.length == 3)
-        }
+        var renderedDays = $('.t-link', html).filter(function (index) {
+            return $(this).attr('href').indexOf('selectaction') != -1;
+        })
+        ok(renderedDays.length == 3)
+    });
 
-        function test_buildDateRows_should_render_all_days_with_Url_to_Action_if_no_dates_passed() {
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+    test('buildDateRows should render all days with Url to Action if no dates passed', function () {
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
                                                         new $t.datetime(2009, 9, 10),
                                                         new $t.datetime(2009, 9, 30),
                                                         new $t.datetime(2009, 9, 26),
                                                         '/aspnet-mvc-beta/calendar/selectaction?date={0}');
-            var renderedDays = $('.t-link', html);
+        var renderedDays = $('.t-link', html);
 
-            var days_with_URL = renderedDays.filter(function(index) {
-                                    return $(this).attr('href') != '#';
-                                })
+        var days_with_URL = renderedDays.filter(function (index) {
+            return $(this).attr('href') != '#';
+        })
 
-            assertTrue(renderedDays.length == days_with_URL.length)
-        }
+        ok(renderedDays.length == days_with_URL.length)
+    });
 
-        function test_buildDateRows_should_render_all_days_with_Url_and_t_action_link_class() {
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
-                                                        new $t.datetime(2009, 9, 10),
-                                                        new $t.datetime(2009, 9, 30),
-                                                        new $t.datetime(2009, 9, 26),
-                                                        '/aspnet-mvc-beta/calendar/selectaction?date={0}');
-
-            var days_with_URL = $('.t-link', html).filter(function(index) {
-                return $(this).attr('href') != '#';
-            })
-
-            assertTrue($(days_with_URL[0]).hasClass('t-action-link'))
-        }
-
-        function test_buildDateRows_should_render_title_attribute() {
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+    test('buildDateRows should render all days with Url and t action link class', function () {
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
                                                         new $t.datetime(2009, 9, 10),
                                                         new $t.datetime(2009, 9, 30),
                                                         new $t.datetime(2009, 9, 26),
                                                         '/aspnet-mvc-beta/calendar/selectaction?date={0}');
 
-            var days_with_title = $('.t-link', html).filter(function (index) {
-                
-                return $(this).attr('title') == '';
-            })
+        var days_with_URL = $('.t-link', html).filter(function (index) {
+            return $(this).attr('href') != '#';
+        })
 
-            assertEquals(0, days_with_title.length);
-        }
+        ok($(days_with_URL[0]).hasClass('t-action-link'))
+    });
 
-        function test_if_focusedDate_has_same_month_as_min_date_prev_arrow_should_be_disabled() {
+    test('buildDateRows should render title attribute', function () {
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+                                                        new $t.datetime(2009, 9, 10),
+                                                        new $t.datetime(2009, 9, 30),
+                                                        new $t.datetime(2009, 9, 26),
+                                                        '/aspnet-mvc-beta/calendar/selectaction?date={0}');
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(0, new $t.datetime(2009, 9, 1));
+        var days_with_title = $('.t-link', html).filter(function (index) {
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        
-        function test_if_focusedDate_has_same_month_as_min_date_prev_arrow_should_be_disabled_year_view() {
+            return $(this).attr('title') == '';
+        })
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(1, new $t.datetime(2009, 9, 1));
+        equal(days_with_title.length, 0);
+    });
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        
-        function test_if_focusedDate_has_same_month_as_min_date_prev_arrow_should_be_disabled_decade_view() {
+    test('Rendering of week headers should depend on firstDayOfWeek', function () {
+        $.telerik.cultureInfo.firstDayOfWeek = 2; //Tuesday
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+                                                        new $t.datetime(2009, 9, 10),
+                                                        new $t.datetime(2009, 9, 30),
+                                                        new $t.datetime(2009, 9, 26),
+                                                        '/aspnet-mvc-beta/calendar/selectaction?date={0}');
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(2, new $t.datetime(2009, 9, 1));
+        var firsDayOfWeek = $(html).find('th').eq(0);
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        
-        function test_if_focusedDate_has_same_month_as_min_date_prev_arrow_should_be_disabled_century_view() {
+        equal(firsDayOfWeek.html(), "T", "FirstDayOfWeek is not get into account");
+        equal(firsDayOfWeek.attr('title'), "Tuesday", "FirstDayOfWeek is not get into account");
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(3, new $t.datetime(2009, 9, 1));
+        $.telerik.cultureInfo.firstDayOfWeek = 0; //Tuesday
+    });
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
+    test('Rendering of week headers should be 7 and start with FirstDayOfWeek', function () {
+        $.telerik.cultureInfo.firstDayOfWeek = 2; //Tuesday
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+                                                        new $t.datetime(2009, 9, 10),
+                                                        new $t.datetime(2009, 9, 30),
+                                                        new $t.datetime(2009, 9, 26),
+                                                        '/aspnet-mvc-beta/calendar/selectaction?date={0}');
 
-        function test_if_focusedDate_has_same_month_as_max_date_next_arrow_should_be_disabled() {
+        var weekHeaders = $(html).find('th');
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(0, new $t.datetime(2009, 9, 1));
+        equal(weekHeaders.length, 7, "not wall day headers of the week are rendered");
+        equal(weekHeaders.eq(5).attr('title'), "Sunday", "cultureInfo.days are not concat correctly");
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        
-        function test_if_focusedDate_has_same_month_as_max_date_next_arrow_should_be_disabled_year_view() {
+        $.telerik.cultureInfo.firstDayOfWeek = 0; //Tuesday
+    });
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(1, new $t.datetime(2009, 9, 1));
+    test('if focusedDate has same month as min date prev arrow should be disabled', function () {
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        function test_if_focusedDate_has_same_month_as_max_date_next_arrow_should_be_disabled_decade_view() {
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(0, new Date(2009, 9, 1));
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(2, new $t.datetime(2009, 9, 1));
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        function test_if_focusedDate_has_same_month_as_max_date_next_arrow_should_be_disabled_century_view() {
+    test('if focusedDate has same month as min date prev arrow should be disabled year view', function () {
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.goToView(3, new $t.datetime(2009, 9, 1));
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(1, new Date(2009, 9, 1));
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-        function test_if_viewMonth_has_same_month_as_min_date_prev_arrow_should_be_disabled() {
+    test('if focusedDate has same month as min date prev arrow should be disabled decade view', function () {
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(0, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
-            
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = Date(2009, 9, 11);
+        calendarObject.goToView(2, new Date(2009, 9, 1));
 
-        function test_if_viewMonth_has_same_month_as_min_date_prev_arrow_should_be_disabled_year_view() {
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(1, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+    test('if focusedDate has same month as min date prev arrow should be disabled century view', function () {
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(3, new Date(2009, 9, 1));
 
-        function test_if_viewMonth_has_same_month_as_min_date_prev_arrow_should_be_disabled_decade_view() {
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(2, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+    test('if focusedDate has same month as max date next arrow should be disabled', function () {
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(0, new Date(2009, 9, 1));
 
-        function test_if_viewMonth_has_same_month_as_min_date_prev_arrow_should_be_disabled_century_view() {
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-            calendarObject.minDate = new $t.datetime(2009, 9, 10);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(3, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+    test('if focusedDate has same month as max date next arrow should be disabled year view', function () {
 
-            assertTrue($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(1, new Date(2009, 9, 1));
 
-        function test_if_viewMonth_has_same_month_as_max_date_next_arrow_should_be_disabled() {
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(0, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
+    test('if focusedDate has same month as max date next arrow should be disabled decade view', function () {
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(2, new Date(2009, 9, 1));
 
-        function test_if_viewMonth_has_same_month_as_max_date_next_arrow_should_be_disabled_year_view() {
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
+    test('if focusedDate has same month as max date next arrow should be disabled century view', function () {
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(1, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.goToView(3, new Date(2009, 9, 1));
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-        function test_if_viewMonth_has_same_month_as_max_date_next_arrow_should_be_disabled_decade_view() {
+    test('if viewMonth has same month as min date prev arrow should be disabled', function () {
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(2, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(0, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
 
-        function test_if_viewMonth_has_same_month_as_max_date_next_arrow_should_be_disabled_century_view() {
+    test('if viewMonth has same month as min date prev arrow should be disabled year view', function () {
 
-            calendarObject.maxDate = new $t.datetime(2009, 9, 30);
-            calendarObject.selectedDate = new $t.datetime(2009, 9, 11);
-            calendarObject.navigateVertically(3, new $t.datetime(2009, 9, 1), false, $('<a class="t-link"></a>'));
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(1, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
 
-            assertTrue($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
-        }
-        
-        function test_selected_date_should_render_with_selected_state() {
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
-                                                        calendarObject.minDate,
-                                                        calendarObject.maxDate, 
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('if viewMonth has same month as min date prev arrow should be disabled decade view', function () {
+
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(2, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
+
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('if viewMonth has same month as min date prev arrow should be disabled century view', function () {
+
+        calendarObject.minDate = new Date(2009, 9, 10);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(3, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
+
+        ok($('.t-nav-prev', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('if viewMonth has same month as max date next arrow should be disabled', function () {
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(0, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
+
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('if viewMonth has same month as max date next arrow should be disabled year view', function () {
+
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(1, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
+
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('if viewMonth has same month as max date next arrow should be disabled decade view', function () {
+
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(2, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
+
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('if viewMonth has same month as max date next arrow should be disabled century view', function () {
+
+        calendarObject.maxDate = new Date(2009, 9, 30);
+        calendarObject.selectedDate = new Date(2009, 9, 11);
+        calendarObject.navigateVertically(3, new Date(2009, 9, 1), false, $('<a class="t-link"></a>'));
+
+        ok($('.t-nav-next', calendarObject.element).hasClass('t-state-disabled'));
+    });
+
+    test('selected date should render with selected state', function () {
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2009, 9, 26),
+                                                        new $t.datetime(calendarObject.minDate),
+                                                        new $t.datetime(calendarObject.maxDate),
                                                         new $t.datetime(2009, 9, 26));
 
-            assertTrue($(html).find('.t-state-selected').length == 1);
-        }
-        
-        function test_date_selection_within_current_month_sets_selected_date_correctly() {
-            calendarObject.goToView(0, new $t.datetime(2009, 10, 26));
-            
-            $(calendarObject.element).find('.t-content td:not(.t-other-month) .t-link').filter(function() {
-                return $(this).text() == '3';
-            }).eq(0).trigger('click');
-            
-            assertEquals(2009, calendarObject.selectedDate.year());
-            assertEquals(10, calendarObject.selectedDate.month());
-            assertEquals(3, calendarObject.selectedDate.date());
-        }
-        
-        function test_date_selection_within_previous_month_sets_selected_date_correctly() {
-            calendarObject.goToView(0, new $t.datetime(2009, 10, 26));
-            
-            $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function() {
-                return $(this).text() == '29';
-            }).eq(0).trigger('click');
-            
-            assertEquals(2009, calendarObject.selectedDate.year());
-            assertEquals(9, calendarObject.selectedDate.month());
-            assertEquals(29, calendarObject.selectedDate.date());
-        }
-        
-        function test_date_selection_within_next_month_sets_selected_date_correctly() {
-            calendarObject.goToView(0, new $t.datetime(2009, 10, 26));
-            
-            $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function() {
-                return $(this).text() == '1';
-            }).eq(0).trigger('click');
-            
-            assertEquals(2009, calendarObject.selectedDate.year());
-            assertEquals(11, calendarObject.selectedDate.month());
-            assertEquals(1, calendarObject.selectedDate.date());
-        }
-        
-        function test_date_selection_within_next_month_of_next_year_sets_selected_date_correctly() {
-            calendarObject.goToView(0, new $t.datetime(2009, 11, 26));
-            
-            $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function() {
-                return $(this).text() == '1';
-            }).eq(0).trigger('click');
+        ok($(html).find('.t-state-selected').length == 1);
+    });
 
-            assertEquals(2010, calendarObject.selectedDate.year());
-            assertEquals(0, calendarObject.selectedDate.month());
-            assertEquals(1, calendarObject.selectedDate.date());
-        }
-        
-        function test_date_selection_within_previous_month_of_previous_year_sets_selected_date_correctly() {
-            calendarObject.goToView(0, new $t.datetime(2009, 0, 1));
-            
-            $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function() {
-                return $(this).text() == '29';
-            }).eq(0).trigger('click');
+    test('date selection within current month sets selected date correctly', function () {
+        calendarObject.goToView(0, new Date(2009, 10, 26));
 
-            assertEquals(2008, calendarObject.selectedDate.year());
-            assertEquals(11, calendarObject.selectedDate.month());
-            assertEquals(29, calendarObject.selectedDate.date());
-        }
+        $(calendarObject.element).find('.t-content td:not(.t-other-month) .t-link').filter(function () {
+            return $(this).text() == '3';
+        }).eq(0).trigger('click');
 
-        function test_date_selection_does_not_overflow_when_selecting_previous_month() {
-            calendarObject.goToView(0, new $t.datetime(2010, 1, 1));
-            
-            $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function() {
-                return $(this).text() == '31';
-            }).eq(0).trigger('click');
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
 
-            assertEquals(2010, calendarObject.selectedDate.year());
-            assertEquals(0, calendarObject.selectedDate.month());
-            assertEquals(31, calendarObject.selectedDate.date());
-        }
-        
-        function test_date_selection_does_not_change_selected_date_when_cancelled() {
-            calendarObject.value(new $t.datetime(1987, 3, 21));
+        equal(selectedDate.year(), 2009);
+        equal(selectedDate.month(), 10);
+        equal(selectedDate.date(), 3);
+    });
 
-            $(calendarObject.element).bind('change', function(e) {
-                e.preventDefault();
-            });
-            
-            $(calendarObject.element).find('.t-content td .t-link').filter(function() {
-                return $(this).text() == '22';
-            }).eq(0).trigger('click');
+    test('date selection within previous month sets selected date correctly', function () {
+        calendarObject.goToView(0, new Date(2009, 10, 26));
 
-            assertEquals(1987, calendarObject.selectedDate.year());
-            assertEquals(3, calendarObject.selectedDate.month());
-            assertEquals(21, calendarObject.selectedDate.date());
-        }
-        
-        //viewedMonth, selectedDate, minDate, maxDate
-        function test_date_less_than_min_date_should_not_be_rendered() {
+        $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function () {
+            return $(this).text() == '29';
+        }).eq(0).trigger('click');
 
-            var minDate = new $t.datetime(2000, 1, 1);
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
 
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(1999, 9, 26),
+        equal(selectedDate.year(), 2009);
+        equal(selectedDate.month(), 9);
+        equal(selectedDate.date(), 29);
+    });
+
+    test('date selection within next month sets selected date correctly', function () {
+        calendarObject.goToView(0, new Date(2009, 10, 26));
+
+        $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function () {
+            return $(this).text() == '1';
+        }).eq(0).trigger('click');
+
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
+
+        equal(selectedDate.year(), 2009);
+        equal(selectedDate.month(), 11);
+        equal(selectedDate.date(), 1);
+    });
+
+    test('date selection within next month of next year sets selected date correctly', function () {
+        calendarObject.goToView(0, new Date(2009, 11, 26));
+
+        $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function () {
+            return $(this).text() == '1';
+        }).eq(0).trigger('click');
+
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
+
+        equal(selectedDate.year(), 2010);
+        equal(selectedDate.month(), 0);
+        equal(selectedDate.date(), 1);
+    });
+
+    test('date selection within previous month of previous year sets selected date correctly', function () {
+        calendarObject.goToView(0, new Date(2009, 0, 1));
+
+        $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function () {
+            return $(this).text() == '29';
+        }).eq(0).trigger('click');
+
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
+
+        equal(selectedDate.year(), 2008);
+        equal(selectedDate.month(), 11);
+        equal(selectedDate.date(), 29);
+    });
+
+    test('date selection does not overflow when selecting previous month', function () {
+        calendarObject.goToView(0, new Date(2010, 1, 1));
+
+        $(calendarObject.element).find('.t-content td.t-other-month .t-link').filter(function () {
+            return $(this).text() == '31';
+        }).eq(0).trigger('click');
+
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
+
+        equal(selectedDate.year(), 2010);
+        equal(selectedDate.month(), 0);
+        equal(selectedDate.date(), 31);
+    });
+
+    test('date selection does not change selected date when cancelled', function () {
+        calendarObject.value(new $t.datetime(1987, 3, 21));
+
+        $(calendarObject.element).bind('change', function (e) {
+            e.preventDefault();
+        });
+
+        $(calendarObject.element).find('.t-content td .t-link').filter(function () {
+            return $(this).text() == '22';
+        }).eq(0).trigger('click');
+
+        var selectedDate = new $t.datetime(calendarObject.selectedDate);
+
+        equal(selectedDate.year(), 1987);
+        equal(selectedDate.month(), 3);
+        equal(selectedDate.date(), 21);
+    });
+    test('date less than min date should not be rendered', function () {
+
+        var minDate = new $t.datetime(2000, 1, 1);
+
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(1999, 9, 26),
                                                         minDate,
-                                                        calendarObject.maxDate, 
+                                                        new $t.datetime(calendarObject.maxDate),
                                                         new $t.datetime(2009, 9, 26));
 
-            assertTrue($(html).find('> .t-link').length == 0);
-        }
+        ok($(html).find('> .t-link').length == 0);
+    });
 
-        function test_date_bigger_than_max_date_should_not_be_rendered() {
-            
-            var maxDate = new Date(2010, 1, 1);
+    test('date bigger than max date should not be rendered', function () {
 
-            var html = $.telerik.calendar.views[0].body(new $t.datetime(2019, 9, 26),
-                                                        calendarObject.minDate,
+        var maxDate = new $t.datetime(2010, 1, 1);
+
+        var html = $.telerik.calendar.views[0].body(new $t.datetime(2019, 9, 26),
+                                                        new $t.datetime(calendarObject.minDate),
                                                         maxDate,
                                                         new $t.datetime(2009, 9, 26));
 
-            assertTrue($(html).find('> .t-link').length == 0);
-        }
+        ok($(html).find('> .t-link').length == 0);
+    });
 
 
-        function test_goToView_with_date_with_same_month_as_maxdate_should_disable_rightArrow() {
+    test('goToView with date with same month as maxdate should disable rightArrow', function () {
 
-            calendarObject.maxDate = new $t.datetime(2000, 2, 30);
-            calendarObject.selectedDate = new $t.datetime(2000, 2, 23);
+        calendarObject.maxDate = new Date(2000, 2, 30);
+        calendarObject.selectedDate = new Date(2000, 2, 23);
 
-            calendarObject.goToView(0, $t.datetime.firstDayOfMonth(new $t.datetime(2000, 2, 24)));
+        calendarObject.goToView(0, $t.datetime.firstDayOfMonth(new $t.datetime(2000, 2, 24)).toDate());
 
-            assertTrue($(calendarObject.element).find('.t-nav-next').hasClass('t-state-disabled'));
-        }
+        ok($(calendarObject.element).find('.t-nav-next').hasClass('t-state-disabled'));
+    });
 
-        function test_buildYearView_should_not_render_months_less_than_min_date() {
-            var html = $.telerik.calendar.views[1].body(new $t.datetime(2009, 9, 1), new $t.datetime(2009, 9, 10), calendarObject.maxDate);
-            
-            assertTrue($('.t-link', html).length == 3);
-        }
+    test('buildYearView should not render months less than min date', function () {
+        var html = $.telerik.calendar.views[1].body(new $t.datetime(2009, 9, 1), new $t.datetime(2009, 9, 10), new $t.datetime(calendarObject.maxDate));
 
-        function test_buildYearView_should_not_render_months_bigger_than_max_date() {
-            var html = $.telerik.calendar.views[1].body(new $t.datetime(2009, 9, 1), calendarObject.minDate, new $t.datetime(2009, 9, 10));
+        ok($('.t-link', html).length == 3);
+    });
 
-            assertTrue($('.t-link', html).length == 10);
-        }
+    test('buildYearView should not render months bigger than max date', function () {
+        var html = $.telerik.calendar.views[1].body(new $t.datetime(2009, 9, 1), new $t.datetime(calendarObject.minDate), new $t.datetime(2009, 9, 10));
 
-        function test_buildDecadeView_should_not_render_months_less_than_min_date() {
+        ok($('.t-link', html).length == 10);
+    });
 
-            var html = $.telerik.calendar.views[2].body(new $t.datetime(2005, 9, 1), new $t.datetime(2002, 9, 10), calendarObject.maxDate);
+    test('buildDecadeView should not render months less than min date', function () {
 
-            assertTrue($('.t-link', html).length == 9);
-        }
+        var html = $.telerik.calendar.views[2].body(new $t.datetime(2005, 9, 1), new $t.datetime(2002, 9, 10), new $t.datetime(calendarObject.maxDate));
 
-        function test_buildDecadeView_should_not_render_months_bigger_than_max_date() {
+        ok($('.t-link', html).length == 9);
+    });
 
-            var html = $.telerik.calendar.views[2].body(new $t.datetime(2005, 9, 1), calendarObject.minDate, new $t.datetime(2008, 9, 10));
+    test('buildDecadeView should not render months bigger than max date', function () {
 
-            assertTrue($('.t-link', html).length == 10);
-        }
+        var html = $.telerik.calendar.views[2].body(new $t.datetime(2005, 9, 1), new $t.datetime(calendarObject.minDate), new $t.datetime(2008, 9, 10));
 
-        function test_buildCenturyView_should_not_render_months_less_than_min_date() {
+        ok($('.t-link', html).length == 10);
+    });
 
-            var html = $.telerik.calendar.views[3].body(new $t.datetime(2005, 9, 1), new $t.datetime(2002, 9, 10), calendarObject.maxDate);
+    test('buildCenturyView should not render months less than min date', function () {
 
-            assertTrue($('.t-link', html).length == 11);
-        }
+        var html = $.telerik.calendar.views[3].body(new $t.datetime(2005, 9, 1), new $t.datetime(2002, 9, 10), new $t.datetime(calendarObject.maxDate));
 
-        function test_buildCenturyView_should_not_render_months_bigger_than_max_date() {
+        ok($('.t-link', html).length == 11);
+    });
 
-            var html = $.telerik.calendar.views[3].body(new $t.datetime(2005, 9, 1), calendarObject.minDate, new $t.datetime(2008, 9, 10));
+    test('buildCenturyView should not render months bigger than max date', function () {
 
-            assertTrue($('.t-link', html).length == 2);
-        }
-        
-        function tearDown() {
-            $(calendarObject.element).remove();
-            calendarObject = null;
-        }
-    </script>
-    
-    <% Html.Telerik().ScriptRegistrar()
-           .Scripts(scripts => scripts
-               .Add("telerik.common.js")
-               .Add("telerik.calendar.js")); %>
+        var html = $.telerik.calendar.views[3].body(new $t.datetime(2005, 9, 1), new $t.datetime(calendarObject.minDate), new $t.datetime(2008, 9, 10));
+
+        ok($('.t-link', html).length == 2);
+    });
+
+    test("Month's navCheck should return false if date1 and date2 had equal date part and isBigger is false", function () {
+        var IsBigger = false;
+        var date1 = new $.telerik.datetime(2010, 1, 1, 10, 10, 10);
+        var date2 = new $.telerik.datetime(2010, 1, 1, 20, 10, 10);
+        ok(!$.telerik.calendar.views[0].navCheck(date1, date2, IsBigger))
+    });
+
+    test("Month's navCheck should return false if date1=end of the month and the date2=is first day of the month. IsBigger is true", function () {
+        var IsBigger = true;
+        var date1 = new $.telerik.datetime(2010, 0, 31, 10, 10, 10);
+        var date2 = new $.telerik.datetime(2010, 0, 1, 20, 10, 10);
+        ok(!$.telerik.calendar.views[0].navCheck(date1, date2, IsBigger))
+    });
+
+    test("Month's navCheck should return true if date1 is 01/02/2010 and the date2=01/02/2010. IsBigger is true", function () {
+        var IsBigger = true;
+        var date1 = new $.telerik.datetime(2010, 1, 1, 10, 10, 10);
+        var date2 = new $.telerik.datetime(2010, 0, 1, 20, 10, 10);
+        ok($.telerik.calendar.views[0].navCheck(date1, date2, IsBigger))
+    });
+
+</script>
+
 </asp:Content>

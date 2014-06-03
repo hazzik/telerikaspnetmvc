@@ -20,6 +20,7 @@ namespace Telerik.Web.Mvc
             SortDescriptors = new List<SortDescriptor>();
             FilterDescriptors = new List<IFilterDescriptor>();
             GroupDescriptors = new List<GroupDescriptor>();
+            Aggregates = new List<AggregateDescriptor>();
         }
 
         public int Page
@@ -47,6 +48,12 @@ namespace Telerik.Web.Mvc
         }
 
         public IList<GroupDescriptor> GroupDescriptors
+        {
+            get;
+            private set;
+        }
+
+        public IList<AggregateDescriptor> Aggregates
         {
             get;
             private set;

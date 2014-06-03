@@ -7,8 +7,10 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
     using System.Web.Routing;
-    
-    public abstract class GridToolBarCommandBase<T> where T : class
+    using Telerik.Web.Mvc.UI.Html;
+
+    public abstract class GridToolBarCommandBase<T> : IGridActionCommand
+        where T : class
     {
         public GridButtonType ButtonType
         {
@@ -34,7 +36,23 @@ namespace Telerik.Web.Mvc.UI
             HtmlAttributes = new RouteValueDictionary();
             ImageHtmlAttributes = new RouteValueDictionary();
         }
+
+        public string Name
+        {
+            get;
+            set;
+        }
+
+        public abstract IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper);
+
+        public virtual IEnumerable<IGridButtonBuilder> CreateEditButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
+        {
+            return new IGridButtonBuilder[0];
+        }        
         
-        public abstract void Html(Grid<T> context, IHtmlNode parent);
+        public virtual IEnumerable<IGridButtonBuilder> CreateInsertButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
+        {
+            return new IGridButtonBuilder[0];
+        }
     }
 }

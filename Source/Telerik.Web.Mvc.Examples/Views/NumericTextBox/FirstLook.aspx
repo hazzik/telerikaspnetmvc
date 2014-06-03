@@ -15,7 +15,7 @@
    { %>
        <ul>
 		    <li>
-		        <label for="NumericMinValue-input">limit the <strong>minimum</strong> value to</label>
+		        <label for="NumericMinValue">limit the <strong>minimum</strong> value to</label>
                 <%=  Html.Telerik().NumericTextBox()
                                    .Name("NumericMinValue")
                                    .MinValue(-100000)
@@ -24,7 +24,7 @@
                 %>
 		    </li>
 		    <li>
-		        <label for="NumericMaxValue-input">limit the <strong>maximum</strong> value to</label>
+		        <label for="NumericMaxValue">limit the <strong>maximum</strong> value to</label>
                 <%=  Html.Telerik().NumericTextBox()
                                    .Name("NumericMaxValue")
                                    .MinValue(-100000)
@@ -38,7 +38,7 @@
 		    </li>
 		</ul>
 		
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
 </div>
 
@@ -56,7 +56,7 @@
    { %>
        <ul>
 		    <li>
-		        <label for="CurrencyMinValue-input">limit the <strong>minimum</strong> value to</label>
+		        <label for="CurrencyMinValue">limit the <strong>minimum</strong> value to</label>
                 <%=  Html.Telerik().CurrencyTextBox()
                                    .Name("CurrencyMinValue")
                                    .MinValue(-100000)
@@ -65,7 +65,7 @@
                 %>
 		    </li>
 		    <li>
-		        <label for="CurrencyMaxValue-input">limit the <strong>maximum</strong> value to</label>
+		        <label for="CurrencyMaxValue">limit the <strong>maximum</strong> value to</label>
                 <%=  Html.Telerik().CurrencyTextBox()
                                    .Name("CurrencyMaxValue")
                                    .MinValue(-100000)
@@ -74,12 +74,12 @@
                 %>
             </li>
 		    <li>
-			    <%= Html.CheckBox("CurrencyShowSpinners", Model.CurrencyShowSpinners.Value)%>
+			    <%= Html.CheckBox("CurrencyShowSpinners", Model.CurrencyShowSpinners.Value) %>
 			    <label for="CurrencyShowSpinners">show <strong>spin buttons</strong></label>
 		    </li>
 		</ul>
 		
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
     
 </div>
@@ -99,7 +99,7 @@
    { %>
        <ul>
 		    <li>
-		        <label for="PercentMinValue-input">limit the <strong>minimum</strong> value to</label>
+		        <label for="PercentMinValue">limit the <strong>minimum</strong> value to</label>
                 <%=  Html.Telerik().NumericTextBox()
                                    .Name("PercentMinValue")
                                    .MinValue(-100000)
@@ -108,7 +108,7 @@
                 %>
 		    </li>
 		    <li>
-		        <label for="PercentMaxValue-input">limit the <strong>maximum</strong> value to</label>
+		        <label for="PercentMaxValue">limit the <strong>maximum</strong> value to</label>
                 <%=  Html.Telerik().NumericTextBox()
                                    .Name("PercentMaxValue")
                                    .MinValue(-100000)
@@ -122,7 +122,7 @@
 		    </li>
 		</ul>
 		
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
 </div>
 
@@ -141,7 +141,7 @@
    { %>
        <ul>
 		    <li>
-		        <label for="IntegerMinValue-input">limit the <strong>minimum</strong> value to</label>
+		        <label for="IntegerMinValue">limit the <strong>minimum</strong> value to</label>
                 <%=  Html.Telerik().IntegerTextBox()
                                    .Name("IntegerMinValue")
                                    .MinValue(-100000)
@@ -150,7 +150,7 @@
                 %>
 		    </li>
 		    <li>
-		        <label for="IntegerMaxValue-input">limit the <strong>maximum</strong> value to</label>
+		        <label for="IntegerMaxValue">limit the <strong>maximum</strong> value to</label>
                 <%=  Html.Telerik().IntegerTextBox()
                                    .Name("IntegerMaxValue")
                                    .MinValue(-100000)
@@ -164,7 +164,7 @@
 		    </li>
 		</ul>
 		
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
 </div>
 

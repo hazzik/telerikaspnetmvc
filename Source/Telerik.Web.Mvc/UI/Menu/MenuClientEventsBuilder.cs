@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual MenuClientEventsBuilder OnOpen(Action onOpenInlineCode)
+        public virtual MenuClientEventsBuilder OnOpen(Action onOpenCodeBlock)
         {
-            Guard.IsNotNull(onOpenInlineCode, "onOpenInlineCode");
+            Guard.IsNotNull(onOpenCodeBlock, "onOpenCodeBlock");
 
-            clientEvents.OnOpen.InlineCode = onOpenInlineCode;
+            clientEvents.OnOpen.CodeBlock = onOpenCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnOpen client-side event
+        /// </summary>
+        /// <param name="onOpenAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Menu()
+        ///            .Name("Menu")
+        ///            .ClientEvents(events => events.OnOpen(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual MenuClientEventsBuilder OnOpen(Func<object, object> onOpenInlineCodeBlock)
+        {
+            Guard.IsNotNull(onOpenInlineCodeBlock, "onOpenInlineCodeBlock");
+
+            clientEvents.OnOpen.InlineCodeBlock = onOpenInlineCodeBlock;
 
             return this;
         }
@@ -102,11 +130,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual MenuClientEventsBuilder OnClose(Action onCloseInlineCode)
+        public virtual MenuClientEventsBuilder OnClose(Action onCloseCodeBlock)
         {
-            Guard.IsNotNull(onCloseInlineCode, "onCloseInlineCode");
+            Guard.IsNotNull(onCloseCodeBlock, "onCloseCodeBlock");
 
-            clientEvents.OnClose.InlineCode = onCloseInlineCode;
+            clientEvents.OnClose.CodeBlock = onCloseCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnClose client-side event
+        /// </summary>
+        /// <param name="onCloseAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Menu()
+        ///            .Name("Menu")
+        ///            .ClientEvents(events => events.OnClose(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual MenuClientEventsBuilder OnClose(Func<object, object> onCloseInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCloseInlineCodeBlock, "onCloseInlineCodeBlock");
+
+            clientEvents.OnClose.InlineCodeBlock = onCloseInlineCodeBlock;
 
             return this;
         }
@@ -152,11 +208,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual MenuClientEventsBuilder OnSelect(Action onSelectInlineCode)
+        public virtual MenuClientEventsBuilder OnSelect(Action onSelectCodeBlock)
         {
-            Guard.IsNotNull(onSelectInlineCode, "onSelectInlineCode");
+            Guard.IsNotNull(onSelectCodeBlock, "onSelectCodeBlock");
 
-            clientEvents.OnSelect.InlineCode = onSelectInlineCode;
+            clientEvents.OnSelect.CodeBlock = onSelectCodeBlock;
+
+            return this;
+        }
+        
+        /// <summary>
+        /// Defines the inline handler of the OnSelect client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Menu()
+        ///            .Name("Menu")
+        ///            .ClientEvents(events => events.OnSelect(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual MenuClientEventsBuilder OnSelect(Func<object, object> onSelectInlineCodeBlock)
+        {
+            Guard.IsNotNull(onSelectInlineCodeBlock, "onSelectInlineCodeBlock");
+
+            clientEvents.OnSelect.InlineCodeBlock = onSelectInlineCodeBlock;
 
             return this;
         }
@@ -202,11 +286,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual MenuClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public virtual MenuClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+        
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onSelectAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Menu()
+        ///            .Name("Menu")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual MenuClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }

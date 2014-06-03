@@ -131,6 +131,8 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Append("expandMode", (int) ExpandMode);
 
+            objectWriter.AppendContentUrls("contentUrls", Items, IsSelfInitialized);
+
             objectWriter.Complete();
 
             base.WriteInitializationScript(writer);

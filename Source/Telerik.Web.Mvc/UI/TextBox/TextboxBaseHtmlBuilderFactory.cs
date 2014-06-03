@@ -5,11 +5,11 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    public class TextboxBaseHtmlBuilderFactory<T> : ITextboxBaseHtmlBuilderFactory<T> where T : struct
+    public class TextBoxBaseHtmlBuilderFactory<T> : ITextBoxBaseHtmlBuilderFactory<T> where T : struct
     {
         public ITextBoxBaseHtmlBuilder Create(TextBoxBase<T> input)
         {
-            return new TextboxBaseHtmlBuilder<T>(input);
+            return new TextBoxBaseHtmlBuilder<T>(input);
         }
     }
 }

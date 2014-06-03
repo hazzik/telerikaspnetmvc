@@ -334,8 +334,8 @@ namespace Telerik.Web.Mvc.UI.Tests
         {
             var builder = factory.DatePickerFor(m => m.DateTimeProperty);
 
-            Assert.Equal(new DateTime(2000, 10, 10), builder.ToComponent().Min);
-            Assert.Equal(new DateTime(2020, 10, 10), builder.ToComponent().Max);
+            Assert.Equal(new DateTime(2000, 10, 10), builder.ToComponent().MinValue);
+            Assert.Equal(new DateTime(2020, 10, 10), builder.ToComponent().MaxValue);
         }
 
         [Fact]
@@ -463,6 +463,14 @@ namespace Telerik.Web.Mvc.UI.Tests
             var builder = factory.AutoCompleteFor(m => m.ID);
 
             Assert.Equal("ID", builder.ToComponent().Name);
+        }
+
+        [Fact]
+        public void AutoCompleteFor_should_return_new_instance_with_value_from_expression_null()
+        {
+            var builder = factory.AutoCompleteFor(m => m.NullableInt);
+
+            Assert.Equal(string.Empty, builder.ToComponent().Value);
         }
 
         public class TestModel

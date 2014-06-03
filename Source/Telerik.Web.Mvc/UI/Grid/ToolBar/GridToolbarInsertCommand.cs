@@ -5,25 +5,24 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using Infrastructure;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.UI.Html;
 
     public class GridToolBarInsertCommand<T> : GridToolBarCommandBase<T> where T : class
     {
-        public override void Html(Grid<T> context, IHtmlNode parent)
+        public override IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            #if MVC2 || MVC3
-            GridUrlBuilder urlBuilder = new GridUrlBuilder(context);
+            var factory = new GridButtonFactory();
+            var button = factory.CreateButton<GridLinkButtonBuilder>(ButtonType);
 
-            new HtmlTag("a")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Add)
-                .Attribute("href", urlBuilder.Url(context.Server.Select, routeValues =>
-                {
-                    routeValues[context.Prefix(GridUrlParameters.Mode)] = "insert";
-                }))
-                .Html(this.ButtonContent<T>(context.Localization.AddNew, "t-add"))
-                .AppendTo(parent);
-            #endif
+            button.CssClass += " " + UIPrimitives.Grid.Add;
+            button.SpriteCssClass = "t-add";
+            button.Text = localization.AddNew;
+            button.HtmlAttributes = HtmlAttributes;
+            button.ImageHtmlAttributes = ImageHtmlAttributes;
+            button.Url = urlBuilder.AddUrl;
+
+            return new[] { button };
         }
     }
 }

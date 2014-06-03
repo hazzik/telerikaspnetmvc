@@ -6,6 +6,7 @@
     } catch (e) { }
 
     var dateCheck = /\d/;
+    var whiteSpaceRegExp = /\s+/;
     var version = parseInt($.browser.version.substring(0, 5).replace('.', ''));
     var geckoFlicker = $.browser.mozilla && version >= 180 && version <= 191;
     var dateFormatTokenRegExp = /d{1,4}|M{1,4}|yy(?:yy)?|([Hhmstf])\1*|"[^"]*"|'[^']*'/g;
@@ -33,15 +34,30 @@
         },
 
         toJson: function (o) {
-            var result = [];
-            for (var key in o) {
-                var value = o[key];
-                if (typeof value != 'object')
-                    result.push('"' + key + '":"' + value + '"');
-                else
-                    result.push('"' + key + '":' + this.toJson(value));
+            function serializeArray(array) {
+                return '[' + $.map(array, serialize).join(',') + ']';
             }
-            return '{' + result.join(',') + '}';
+
+            function serialize(obj) {
+                var result = [];
+                for (var key in obj) {
+                    var value = obj[key];
+                    if ($.isArray(value)) {
+                        result.push('"' + key + '":' + serializeArray(value));
+                    } else if (typeof value != 'object') {
+                        result.push('"' + key + '":"' + (value == null ? "" : value) + '"');
+                    } else {
+                        result.push('"' + key + '":' + serialize(value));
+                    }
+                }
+                return '{' + result.join(',') + '}';
+            }
+
+            if ($.isArray(o)) {
+                return serializeArray(o);
+            } else {
+                return serialize(o);
+            }
         },
 
         delegate: function (context, handler) {
@@ -66,7 +82,7 @@
         },
 
         bind: function (context, events) {
-            var $element = $(context.element);
+            var $element = $(context.element ? context.element : context);
             $.each(events, function (eventName) {
                 if ($.isFunction(this)) $element.bind(eventName, this);
             });
@@ -182,6 +198,13 @@
             return pos;
         },
 
+        encode: function (value) {
+            return value.replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\u00a0/g, '&nbsp;');
+        },
+
         formatters: {},
 
         fx: {},
@@ -214,18 +237,119 @@
             am: 'AM',
             pm: 'PM',
             dateSeparator: '/',
-            timeSeparator: ':'
+            timeSeparator: ':',
+            firstDayOfWeek: 0
         }
     };
 
-    /*
-    options = {
-    attr: component.dropDownAttr,
-    effects: component.effects,
-    onClick: function,
-    onItemCreate: function
+    var filter, map;
+
+    if (Array.prototype.filter !== undefined) {
+        filter = function (array, predicate) {
+            return array.filter(predicate);
+        }
+    } else {
+        filter = function (array, predicate) {
+            var result = [], length = array.length;
+
+            for (var i = 0; i < length; i++) {
+                var value = array[i];
+
+                if (predicate(value, i, array)) {
+                    result[result.length] = value;
+                }
+            }
+
+            return result;
+        }
     }
-    */
+
+    if (Array.prototype.map !== undefined) {
+        map = function (array, callback) {
+            return array.map(callback);
+        }
+    } else {
+        map = function (array, callback) {
+            var length = array.length, result = new Array(length);
+
+            for (var i = 0; i < length; i++) {
+                result[i] = callback(array[i], i, array);
+            }
+
+            return result;
+        }
+    }
+
+    var query = function (data) {
+        return new query.fn.init(data);
+    }
+
+    $t.query = query;
+
+    query.fn = query.prototype = {
+        init: function (data) {
+            this.data = data;
+
+            return this;
+        },
+        toArray: function () {
+            return this.data;
+        },
+        where: function (predicate) {
+            return query(filter(this.data, predicate));
+        },
+        select: function (selector) {
+            return query(map(this.data, selector));
+        },
+        skip: function (count) {
+            return query(this.data.slice(count));
+        },
+        take: function (count) {
+            return query(this.data.slice(0, count));
+        },
+        orderBy: function (selector) {
+            var result = this.data.slice(0);
+
+            return query(result.sort(function (a, b) {
+                a = selector(a);
+                b = selector(b);
+
+                return a > b ? 1 : (a < b ? -1 : 0);
+            }));
+        },
+        orderByDescending: function (selector) {
+            var result = this.data.slice(0);
+
+            return query(result.sort(function (a, b) {
+                a = selector(a);
+                b = selector(b);
+
+                return a < b ? 1 : (a > b ? -1 : 0);
+            }));
+        },
+        concat: function (value) {
+            return query(this.data.concat(value.data));
+        },
+        count: function () {
+            return this.data.length;
+        },
+        any: function (predicate) {
+            if ($.isFunction(predicate)) {
+                for (var index = 0, length = this.data.length; index < length; index++) {
+                    if (predicate(this.data[index], index)) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            return !!this.data.length;
+        }
+    }
+
+    query.fn.init.prototype = query.fn;
+
+
 
     $t.dropDown = function (options) {
         $.extend(this, options);
@@ -244,10 +368,23 @@
             if (data) {
                 for (var i = 0, length = data.length; i < length; i++) {
 
-                    var dataItem = data[i];
+                    var text = "&nbsp;",
+                        dataItem = data[i];
+
+                    if (dataItem) {
+                        if (dataItem.Text !== undefined) {
+                            text = dataItem.Text;
+                        } else {
+                            text = dataItem;
+                        }
+
+                        if (!text || !text.replace(whiteSpaceRegExp, '')) {
+                            text = '&nbsp;';
+                        }
+                    }
 
                     var e = {
-                        html: dataItem.Text || dataItem,
+                        html: text,
                         dataItem: dataItem
                     };
 
@@ -264,11 +401,20 @@
 
             if (this.isOpened() || !this.$items) return;
 
-            var $element = this.$element;
-            var selector = '.t-reset > .t-item';
+            var $element = this.$element,
+                selector = '.t-reset > .t-item';
 
-            $element.css('overflowY', 'auto');
-            $element.css('width', position.outerWidth ? position.outerWidth - 2 : 0);
+            $element.appendTo(document.body)
+
+            var width;
+
+            if ($element[0].style.width == '')
+                width = position.outerWidth ? position.outerWidth - 2 : 0;
+            else
+                width = parseInt(this.attr ? $('<div' + this.attr + '></div>')[0].style.width : $element[0].style.width);
+
+            $element.css('overflowY', 'auto')
+                    .css('width', width);
 
             $element.delegate(selector, 'mouseenter', $t.hover)
                     .delegate(selector, 'mouseleave', $t.leave)
@@ -276,8 +422,7 @@
                         $.proxy(function (e) {
                             if (this.onClick)
                                 this.onClick($.extend(e, { item: $(e.target).closest('.t-item')[0] }));
-                        }, this))
-                        .appendTo(document.body);
+                        }, this));
 
             var elementPosition = position.offset;
             elementPosition.top += position.outerHeight;
@@ -401,8 +546,9 @@
         },
 
         firstVisibleDay: function (date) {
+            var firstDayOfWeek = $t.cultureInfo.firstDayOfWeek;
             var firstVisibleDay = new $t.datetime(date.year(), date.month(), 0, date.hours(), date.minutes(), date.seconds(), date.milliseconds());
-            while (firstVisibleDay.day() != 0) {
+            while (firstVisibleDay.day() != firstDayOfWeek) {
                 $t.datetime.modify(firstVisibleDay, -1 * $t.datetime.msPerDay)
             }
             return firstVisibleDay;
@@ -500,6 +646,7 @@
             var value = options.value;
             var format = options.format;
 
+            if (value && value.value) return value;
 
             format = $t.datetime.standardFormat(format) ? $t.datetime.standardFormat(format) : format;
             if (dateCheck.test(value))
@@ -517,77 +664,66 @@
 
         parseMachineDate: function (options) {
 
-            var AM = options.AM;
-            var PM = options.PM;
-            var value = options.value;
-            var format = options.format;
-            var baseDate = options.baseDate;
-            var shortYearCutOff = options.shortYearCutOff || 30;
-
-            var year = -1;
-            var month = -1;
-            var day = -1;
-            var hours = 0;
-            var minutes = 0;
-            var seconds = 0;
-            var milliseconds = 0;
-            var isAM;
-            var isPM;
-            var literal = false;
-
-            // Returns count of the format character in the date format string
-            var lookAhead = function (match) {
-                var index = 0;
-                while (Matches(match)) {
-                    index++;
-                    formatPosition++
-                }
-                return index;
-            };
-            var lookForLiteral = function () {
-                var matches = Matches("'");
-                if (matches)
-                    formatPosition++;
-                return matches;
-            };
-            var Matches = function (match) {
-                return (formatPosition + 1 < format.length && format.charAt(formatPosition + 1) == match);
-            }
-            // Extract a number from the string value
-            var getNumber = function (size) {
-                var digits = new RegExp('^\\d{1,' + size + '}');
-                var num = value.substr(currentTokenIndex).match(digits);
-                if (num) {
-                    currentTokenIndex += num[0].length;
-                    return parseInt(num[0], 10);
-                } else {
-                    return -1;
-                }
-            };
-            // Extract a name from the string value and convert to an index
-            var getName = function (names) {
-                for (var i = 0; i < names.length; i++) {
-                    if (value.substr(currentTokenIndex, names[i].length) == names[i]) {
-                        currentTokenIndex += names[i].length;
-                        return i + 1;
+            var AM = options.AM,
+                PM = options.PM,
+                value = options.value,
+                format = options.format,
+                baseDate = options.baseDate,
+                shortYearCutOff = options.shortYearCutOff || 30,
+                year = -1,
+                month = -1,
+                day = -1,
+                hours = 0,
+                minutes = 0,
+                seconds = 0,
+                milliseconds = 0,
+                isAM,
+                isPM,
+                literal = false,
+                matches = function (match) {
+                    return (formatPosition + 1 < format.length && format.charAt(formatPosition + 1) == match);
+                },
+                // Returns count of the format character in the date format string
+                lookAhead = function (match) {
+                    var index = 0;
+                    while (matches(match)) {
+                        index++;
+                        formatPosition++
                     }
-                }
-                return -1;
-            };
-
-            var checkLiteral = function () {
-                if (value.charAt(currentTokenIndex) == format.charAt(formatPosition)) {
-                    currentTokenIndex++;
-                }
-            };
-
-            var normalizeTime = function (value) {
-                return value === -1 ? 0 : value;
-            }
-
-            var count = 0;
-            var currentTokenIndex = 0;
-            var valueLength = value.length;
+                    return index;
+                },
+                // Extract a number from the string value
+                getNumber = function (size) {
+                    var digits = new RegExp('^\\d{1,' + size + '}');
+                    var num = value.substr(currentTokenIndex).match(digits);
+                    if (num) {
+                        currentTokenIndex += num[0].length;
+                        return parseInt(num[0], 10);
+                    } else {
+                        return -1;
+                    }
+                },
+                // Extract a name from the string value and convert to an index
+                getName = function (names) {
+                    for (var i = 0; i < names.length; i++) {
+                        if (value.substr(currentTokenIndex, names[i].length) == names[i]) {
+                            currentTokenIndex += names[i].length;
+                            return i + 1;
+                        }
+                    }
+                    return -1;
+                },
+                checkLiteral = function () {
+                    if (value.charAt(currentTokenIndex) == format.charAt(formatPosition)) {
+                        currentTokenIndex++;
+                    }
+                },
+                normalizeTime = function (val) {
+                    return val === -1 ? 0 : val;
+                },
+                count = 0,
+                currentTokenIndex = 0,
+                valueLength = value.length;
 
             for (var formatPosition = 0, flength = format.length; formatPosition < flength; formatPosition++) {
                 if (currentTokenIndex == valueLength) break;
@@ -753,14 +889,164 @@
             return this;
         },
 
-        catIf: function (what, condition) {
-            if (condition)
-                this.cat(what);
+        catIf: function () {
+            var args = arguments;
+            if (args[args.length - 1])
+                for (var i = 0, length = args.length - 1; i < length; i++)
+                    this.cat(args[i]);
+
             return this;
         },
 
         string: function () {
             return this.buffer.join('');
+        }
+    }
+
+    var isTouch = (/iphone|ipad|android/gi).test(navigator.appVersion);
+    
+    if (isTouch) {
+        var moveEvent = "touchmove",
+            startEvent = "touchstart",
+            endEvent = "touchend";
+    } else {
+        var moveEvent = "mousemove",
+            startEvent = "mousedown",
+            endEvent = "mouseup";
+    }
+
+    $.extend($.fn, {
+        tScrollable: function (options) {
+            $(this).each(function() {
+                if (isTouch || (options && options.force) ) {
+                    new Scroller(this);
+                }
+            });
+        }
+    });
+
+    function Scroller (element) {
+        this.element = element;
+        this.wrapper = $(element);
+    
+        this._horizontalScrollbar = $('<div class="t-touch-scrollbar" />');
+        this._verticalScrollbar = this._horizontalScrollbar.clone();
+        this._scrollbars = this._horizontalScrollbar.add(this._verticalScrollbar);
+    
+        this._startProxy = $.proxy(this._start, this);
+        this._stopProxy = $.proxy(this._stop, this);
+        this._dragProxy = $.proxy(this._drag, this);
+    
+        this._create();
+    }
+
+    function touchLocation(e) {
+        var changedTouches = e.originalEvent.changedTouches;
+
+        if (changedTouches && changedTouches.length < 2) {
+            return {
+                x: changedTouches[0].pageX,
+                y: changedTouches[0].pageY
+            };
+        }
+
+        return {
+            x: e.pageX,
+            y: e.pageY
+        };
+    }
+
+    Scroller.prototype = {
+        _create: function () {
+            this.wrapper
+                .css("overflow", "hidden")
+                .bind(startEvent, $.proxy(this._wait, this));
+            
+        },
+        _wait: function (e) {
+            var startLocation = touchLocation(e);
+        
+            this.start = { 
+                x: startLocation.x + this.wrapper.scrollLeft(), 
+                y: startLocation.y + this.wrapper.scrollTop()
+            };
+        
+            $(document)
+                .bind(moveEvent, this._startProxy)
+                .bind(endEvent, this._stopProxy);
+        },
+        _start: function (e) {
+            e.preventDefault();
+        
+            var currentLocation = touchLocation(e);
+        
+            if (this.start.x - currentLocation.x > 10 || this.start.y - currentLocation.y > 10) {
+            
+                $(document).unbind(moveEvent, this._startProxy)
+                           .bind(moveEvent, this._dragProxy);
+        
+                var width = this.wrapper.innerWidth(),
+                    height = this.wrapper.innerHeight()
+                    offset = this.wrapper.offset(),
+                    scrollWidth = this.wrapper.attr("scrollWidth"),
+                    scrollHeight = this.wrapper.attr("scrollHeight");
+                    
+                if (scrollWidth > width) {
+                    this._horizontalScrollbar
+                        .appendTo(document.body)
+                        .css({
+                            width: Math.floor((width / scrollWidth) * width),
+                            left: this.wrapper.scrollLeft() + offset.left + parseInt(this.wrapper.css("borderLeftWidth")),
+                            top: offset.top + this.wrapper.innerHeight() + parseInt(this.wrapper.css("borderTopWidth")) - this._horizontalScrollbar.outerHeight()
+                        });
+                }
+                
+                if (scrollHeight > height) {
+                    this._verticalScrollbar
+                        .appendTo(document.body)
+                        .css({
+                            height: Math.floor((height / scrollHeight) * height),
+                            top: this.wrapper.scrollTop() + offset.top + parseInt(this.wrapper.css("borderTopWidth")),
+                            left: offset.left + this.wrapper.innerWidth() + parseInt(this.wrapper.css("borderLeftWidth")) - this._verticalScrollbar.outerWidth()
+                        });
+                }
+                
+                this._scrollbars
+                    .stop()
+                    .fadeTo(200, 0.5);
+            }
+        },
+    
+        _drag: function (e) {
+            e.preventDefault();
+        
+            var currentLocation = touchLocation(e),
+                offset = this.wrapper.offset(),
+                startLeft = offset.left + parseInt(this.wrapper.css("borderLeftWidth")),
+                startTop = offset.top + parseInt(this.wrapper.css("borderTopWidth")),
+                horizontalDifference = this.start.x - currentLocation.x,
+                verticalDifference = this.start.y - currentLocation.y,
+                left = Math.max(startLeft, startLeft + horizontalDifference),
+                top = Math.max(startTop, startTop + verticalDifference);
+        
+            left = Math.min(startLeft + this.wrapper.innerWidth() - this._horizontalScrollbar.outerWidth() - this._horizontalScrollbar.outerHeight(), left);
+            top = Math.min(startTop + this.wrapper.innerHeight() - this._verticalScrollbar.outerHeight() - this._verticalScrollbar.outerWidth(), top);
+        
+            this._horizontalScrollbar.css("left", left);
+            this._verticalScrollbar.css("top", top);
+        
+            this.wrapper
+                .scrollLeft(horizontalDifference)
+                .scrollTop(verticalDifference);
+        },
+        _stop: function (e) {
+            $(document).unbind(moveEvent, this._startProxy)
+                       .unbind(moveEvent, this._dragProxy)
+                       .unbind(endEvent, this._stopProxy);
+    
+            this._scrollbars
+                .stop()
+                .fadeTo(400, 0);
         }
     }
 
@@ -1024,7 +1310,8 @@
                 });
             };
 
-            Sys.Mvc.FormContext.$F = Sys.Mvc.FormContext._getFormElementsWithName = patch;
+            if (Sys.Mvc.FormContext)
+                Sys.Mvc.FormContext.$F = Sys.Mvc.FormContext._getFormElementsWithName = patch;
         }
 
     });

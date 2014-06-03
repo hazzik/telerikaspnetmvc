@@ -57,8 +57,9 @@
                     
                     $dropTarget = $(e.target);
 
-                    $t.trigger(this.element, 'nodeDragging', {
+                    $t.trigger(treeview.element, 'nodeDragging', {
                         pageY: e.pageY,
+                        pageX: e.pageX,
                         dropTarget: e.target,
                         setStatusClass: function (value) { status = value },
                         item: e.$draggable.closest('.t-item')[0]
@@ -348,12 +349,14 @@
         },
 
         nodeToggle: function (e, $item, suppressAnimation) {
+            if ($item.find('.t-minus').length == 0 && $item.find('.t-plus').length == 0) {
+                return;
+            }
 
             if (e != null)
                 e.preventDefault();
-
+                
             if ($item.data('animating')
-             || !$item.find("> div > .t-icon").is(":visible")
              || $item.find('> div > .t-in').hasClass('t-state-disabled'))
                 return;
 
@@ -425,6 +428,10 @@
             if ($item.hasClass('t-item')) {
                 node[this.queryString.value] = this.getItemValue($item);
                 node[this.queryString.text] = this.getItemText($item);
+
+                var itemCheckbox = $item.find('.t-checkbox:first :checkbox');
+                if (itemCheckbox.length)
+                    node[this.queryString.checked] = itemCheckbox.is(':checked');
             }
 
             if (this.ws) {
@@ -439,7 +446,9 @@
 
             $item = $item || $(this.element);
 
-            if ($t.trigger(this.element, 'dataBinding', { item: $item[0] }) || (!this.ajax && !this.ws))
+            var e = { item: $item[0] };
+
+            if ($t.trigger(this.element, 'dataBinding', e) || (!this.ajax && !this.ws))
                 return;
 
             $item.data('loadingIconTimeout', setTimeout(function () {
@@ -447,7 +456,7 @@
             }, 100));
 
             $.ajax(this.ajaxOptions($item, {
-                data: {},
+                data: $.extend({}, e.data),
                 url: this.url('selectUrl')
             }));
         },
@@ -535,7 +544,11 @@
                 $checkboxHolder.find(':input[name="' + arrayName + '[' + index + '].Text"]').remove();
                 $checkboxHolder.find(':input[name="' + arrayName + '[' + index + '].Value"]').remove();
 
-                $checkboxHolder.find(':checkbox').attr('checked', isChecked ? 'checked' : '');
+                $checkboxHolder.find(':checkbox')
+                               .attr({
+                                   checked: isChecked ? 'checked' : '',
+                                   value: isChecked
+                               });
 
                 if (isChecked)
                     $($t.treeview.getNodeInputsHtml(this.getItemValue($item), this.getItemText($item), arrayName, index))
@@ -625,9 +638,10 @@
                 .cat('">');
 
             if (item.ImageUrl != null)
-                html.cat('<img class="t-image" alt="" src="')
-                    .cat(item.ImageUrl)
-                    .cat('" />');
+                html.cat('<img class="t-image" alt="" src="').cat(item.ImageUrl).cat('" />');
+
+            if (item.SpriteCssClasses != null)
+                html.cat('<span class="t-sprite ').cat(item.SpriteCssClasses).cat('"></span>');
 
             html.catIf(item.Text, item.Encoded === false)
                 .catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded !== false)
@@ -708,7 +722,8 @@
         effects: $t.fx.property.defaults('height'),
         queryString: {
             text: 'Text',
-            value: 'Value'
+            value: 'Value',
+            checked: 'Checked'
         }
     };
 })(jQuery);

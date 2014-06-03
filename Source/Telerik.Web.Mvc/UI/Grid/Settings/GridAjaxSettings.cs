@@ -5,7 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    public class GridAjaxSettings : GridRequestSettings
+    public class GridAjaxSettings : RequestSettings
     {
         public bool Enabled
         {

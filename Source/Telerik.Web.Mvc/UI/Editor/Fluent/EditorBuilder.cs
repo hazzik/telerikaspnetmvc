@@ -136,5 +136,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        public EditorBuilder FileBrowser(Action<EditorFileBrowserSettingsBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            var builder = new EditorFileBrowserSettingsBuilder(Component.FileBrowserSettings);
+            
+            configurator(builder);
+
+            return this;
+        }
     }
 }

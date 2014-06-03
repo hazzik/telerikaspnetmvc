@@ -6,9 +6,7 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
-    using System;
 
-    [Obsolete("Use TreeViewItem class instead")]
     public class TreeViewItemModel : ITreeViewItem
     {
         public TreeViewItemModel()

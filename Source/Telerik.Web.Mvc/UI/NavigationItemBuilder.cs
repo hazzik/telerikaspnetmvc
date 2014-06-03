@@ -6,12 +6,13 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Web.Mvc;
     using System.Web.Routing;
-    using Extensions;
-    using Infrastructure;
-    using Resources;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Telerik.Web.Mvc.UI;
 
     /// <summary>
     /// Defines the fluent interface for configuring navigation items
@@ -69,6 +70,15 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public TBuilder HtmlAttributes(object attributes)
         {
+            return HtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes applied to the outer HTML element rendered for the item
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        public TBuilder HtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
             item.HtmlAttributes.Clear();
@@ -79,7 +89,13 @@ namespace Telerik.Web.Mvc.UI
 
         public TBuilder LinkHtmlAttributes(object attributes)
         {
+            return LinkHtmlAttributes(attributes.ToDictionary());
+        }
+
+        public TBuilder LinkHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
+
             item.LinkHtmlAttributes.Clear();
             item.LinkHtmlAttributes.Merge(attributes);
 
@@ -324,12 +340,6 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public TBuilder Url(string value)
         {
-            if (item is IAsyncContentContainer) 
-            {   
-                if(!string.IsNullOrEmpty((item as IAsyncContentContainer).ContentUrl))
-                    throw new NotSupportedException(TextResource.UrlAndContentUrlCannotBeSet);
-            }
-
             item.Url(value);
 
             return this as TBuilder;
@@ -373,10 +383,19 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public TBuilder ImageHtmlAttributes(object attributes)
         {
+            return ImageHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes for the item image.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        public TBuilder ImageHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
-            Item.ImageHtmlAttributes.Clear();
-            Item.ImageHtmlAttributes.Merge(attributes);
+            item.ImageHtmlAttributes.Clear();
+            item.ImageHtmlAttributes.Merge(attributes);
 
             return this as TBuilder;
         }
@@ -430,6 +449,25 @@ namespace Telerik.Web.Mvc.UI
             return this as TBuilder;
         }
 
+        /// <summary>
+        /// Sets the HTML content which the item should display.
+        /// </summary>
+        /// <param name="value">The content wrapped in a regular HTML tag or text tag (Razor syntax).</param>
+        /// <code lang="CS">
+        ///  @(Html.Telerik().Menu()
+        ///       .Name("Menu")
+        ///       .Items(items => items
+        ///                .Add()
+        ///                .Text("First Item")
+        ///                .Content(
+        ///                     @&lt;text&gt;
+        ///                             Some text
+        ///                             &lt;strong&gt; First Item Content&lt;/strong&gt;
+        ///                     &lt;/text&gt;
+        ///                );
+        ///       )
+        ///  )
+        /// </code>  
         public TBuilder Content(Func<object,object> value)
         {
             Guard.IsNotNull(value, "value");
@@ -462,7 +500,7 @@ namespace Telerik.Web.Mvc.UI
 
             return this as TBuilder;
         }
-
+                
         /// <summary>
         /// Sets the HTML attributes of the content element of the item.
         /// </summary>
@@ -480,13 +518,22 @@ namespace Telerik.Web.Mvc.UI
         /// </example>        
         public TBuilder ContentHtmlAttributes(object attributes)
         {
+            return ContentHtmlAttributes(attributes.ToDictionary());
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes of the content element of the item.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>     
+        public TBuilder ContentHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
-            Item.ContentHtmlAttributes.Clear();
-            Item.ContentHtmlAttributes.Merge(attributes);
+            item.ContentHtmlAttributes.Clear();
+            item.ContentHtmlAttributes.Merge(attributes);
 
             return this as TBuilder;
-        }
+        }        
 
         /// <summary>
         /// Makes the item navigate to the specified controllerAction method.

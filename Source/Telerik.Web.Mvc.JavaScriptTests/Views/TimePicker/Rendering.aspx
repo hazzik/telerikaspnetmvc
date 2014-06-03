@@ -1,58 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        Ajax loading</h2>
-    <script type="text/javascript">
-        var $t;
-        function setUp() {
-            $t = $.telerik;
-        }
-
-        function getTimePicker(selector) {
-            return $('#TimePicker1' || selector).data('tTimePicker');
-        }
-
-        function test_open_method_should_fill_list() {
-            var timePicker = getTimePicker();
-
-            timePicker.timeView.dropDown.$items = null;
-
-            timePicker.open();
-
-            assertTrue(timePicker.timeView.dropDown.$items.length != 0);
-        }
-
-        function test_max_method_should_rebind_items_list() {
-            var timepicker = getTimePicker();
-
-            timepicker.max(new $t.datetime(2000, 1, 1, 3, 0, 0))
-
-            var $items = timepicker.timeView.dropDown.$items;
-
-            assertEquals($t.datetime.format(timepicker.maxValue.toDate(), timepicker.format), $($items[$items.length - 1]).text());
-        }
-
-        function test_min_method_should_rebind_items_list() {
-            var timepicker = getTimePicker();
-            
-            timepicker.min(new $t.datetime(2000, 1, 1, 10, 0, 0))
-
-            var $items = timepicker.timeView.dropDown.$items;
-
-            assertEquals($t.datetime.format(timepicker.minValue.toDate(), timepicker.format), $($items[0]).text());
-        }
-
-        function test_open_method_with_empty_input_should_open_dropDownList() {
-            var timePicker = getTimePicker();
-
-            timePicker.open();
-
-            assertTrue(timePicker.timeView.dropDown.isOpened());
-        }
-
-    </script>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <%= Html.Telerik().TimePicker()
             .Name("TimePicker1")
@@ -63,5 +12,84 @@
             .Effects(e => e.Toggle())
             .Value(new DateTime(2010, 1, 1, 10, 0, 0))
     %>
+
+    <%= Html.Telerik().TimePicker().Name("TimePicker2")
+            .Effects(e=>e.Toggle())
+            .Value(new DateTime(2000, 10, 10, 10, 0, 0))
+    %>
+
+    <%= Html.Telerik().TimePicker().Name("TimePickerWithInputAttr")
+            .Effects(e=>e.Toggle())
+            .InputHtmlAttributes(new {value = "11:00 AM"})
+    %>
+
+</asp:Content>
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+    function getTimePicker(selector) {
+        return $('#TimePicker1' || selector).data('tTimePicker');
+    }
+
+    test('open method should fill list', function () {
+        var timePicker = getTimePicker();
+
+        timePicker.timeView.dropDown.$items = null;
+
+        timePicker.open();
+
+        ok(timePicker.timeView.dropDown.$items.length != 0);
+    });
+
+    test('max method should rebind items list', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.max(new Date(2000, 1, 1, 3, 0, 0))
+
+        var $items = timepicker.timeView.dropDown.$items;
+
+        equal($($items[$items.length - 1]).text(), $t.datetime.format(timepicker.maxValue, timepicker.format));
+    });
+
+    test('min method should rebind items list', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.min(new Date(2000, 1, 1, 10, 0, 0))
+
+        var $items = timepicker.timeView.dropDown.$items;
+
+        equal($($items[0]).text(), $t.datetime.format(timepicker.minValue, timepicker.format));
+    });
+
+    test('open method with empty input should open dropDownList', function () {
+        var timePicker = getTimePicker();
+
+        timePicker.open();
+
+        ok(timePicker.timeView.dropDown.isOpened());
+    });
+
+        test('timeView value should be called if selectedValue is not null', function () {
+            var timepicker = $('#TimePicker2').data('tTimePicker');
+            timepicker.open();
+
+            var time = timepicker.timeView.dropDown.$items.filter('.t-state-selected');
+
+            equal('10:00 AM', time.text(), 'not correct day is selected');
+        });
+
+        test('timeView value should be called if input has value', function () {
+            var timepicker = $('#TimePickerWithInputAttr').data('tTimePicker');
+            timepicker.open();
+
+            var time = timepicker.timeView.dropDown.$items.filter('.t-state-selected');
+
+            equal('11:00 AM', time.text(), 'not correct day is selected');
+        });
+
+</script>
 
 </asp:Content>

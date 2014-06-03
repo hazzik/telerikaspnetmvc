@@ -8,7 +8,7 @@
 <% Html.BeginForm("columnreordering", "grid"); %>    
 <p>
     <%= Html.Hidden("positions", String.Join(",", columnSettings.Select(c => c.Member).ToArray())) %>
-    <button class="t-button t-state-default" type="submit">Save Column Positions</button>
+    <button class="t-button" type="submit">Save Column Positions</button>
 </p>
 <% Html.EndForm(); %>
 

@@ -35,6 +35,12 @@ namespace Telerik.Web.Mvc.Examples
             get; 
             set; 
         }
+
+        public bool? OpenOnFocus
+        {
+            get;
+            set;
+        }
     }
 
     public class TimePickerAttributes
@@ -67,6 +73,12 @@ namespace Telerik.Web.Mvc.Examples
         { 
             get; 
             set; 
+        }
+
+        public bool? OpenOnFocus
+        {
+            get;
+            set;
         }
     }
 

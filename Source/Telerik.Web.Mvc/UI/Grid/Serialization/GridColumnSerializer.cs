@@ -23,16 +23,25 @@ namespace Telerik.Web.Mvc.UI
         {
             IDictionary<string, object> result = new Dictionary<string, object>();
             FluentDictionary.For(result)
-                  .Add("attr", column.HtmlAttributes.ToAttributeString(), () => column.HtmlAttributes.Any());
-            
-            if (column.ClientTemplate.HasValue() && column.Grid.IsClientBinding)                  
+                  .Add("attr", column.HtmlAttributes.ToAttributeString(), () => column.HtmlAttributes.Any())
+                  .Add("title", column.Title);
+
+            if (column.ClientTemplate.HasValue())                  
             {
-                string template = column.Grid.IsSelfInitialized ? column.ClientTemplate.Replace("<", "%3c").Replace(">", "%3e") : column.ClientTemplate;
-                
-                result.Add("template", template);
+                result.Add("template", Encode(column, column.ClientTemplate));
+            }
+
+            if (column.ClientFooterTemplate.HasValue())
+            {
+                result.Add("footerTemplate", Encode(column, column.ClientFooterTemplate));
             }
 
             return result;
+        }
+
+        protected string Encode(IGridColumn column, string template)
+        {
+            return column.Grid.IsSelfInitialized ? template.Replace("<", "%3c").Replace(">", "%3e") : template;
         }
     }
 }

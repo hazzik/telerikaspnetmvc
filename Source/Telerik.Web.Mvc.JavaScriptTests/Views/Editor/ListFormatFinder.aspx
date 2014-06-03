@@ -1,72 +1,82 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        ListFormatFinder</h2>
+
     <%= Html.Telerik().Editor().Name("Editor") %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
+
     <script type="text/javascript">
+
         var editor;
         var ListFormatFinder;
-        
-        function setUp() {
-            editor = getEditor();
-            ListFormatFinder = $.telerik.editor.ListFormatFinder;
-        }
 
-        function test_isFormatted_returns_false_for_text_node() {
+        module("Editor / ListFormatFinder", {
+            setup: function() {
+                editor = getEditor();
+                ListFormatFinder = $.telerik.editor.ListFormatFinder;
+            }
+        });
+
+        test('isFormatted returns false for text node', function() {
             editor.value('test');
             var finder = new ListFormatFinder('ul');
-            assertFalse(finder.isFormatted([editor.body.firstChild]));
-        }
+            ok(!finder.isFormatted([editor.body.firstChild]));
+        });
 
-        function test_isFormatted_returns_true_for_list() {
+        test('isFormatted returns true for list', function() {
             editor.value('<ul><li>foo</li></ul>');
             var finder = new ListFormatFinder('ul');
-            assertTrue(finder.isFormatted([editor.body.firstChild.firstChild.firstChild]));
-        }
+            ok(finder.isFormatted([editor.body.firstChild.firstChild.firstChild]));
+        });
 
-        function test_isFormatted_returns_true_for_partial_selection() {
+        test('isFormatted returns true for partial selection', function() {
             editor.value('<ul><li>foo</li></ul>bar');
             var finder = new ListFormatFinder('ul');
-            assertTrue(finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild]));
-        }
+            ok(finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild]));
+        });
 
-        function test_isFormatted_returns_false_for_two_lists() {
+        test('isFormatted returns false for two lists', function() {
             editor.value('<ul><li>foo</li></ul><ul><li>bar</li></ul>');
             var finder = new ListFormatFinder('ul');
-            assertFalse(finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]));
-        }
+            ok(!finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]));
+        });
 
-        function test_findSuitable_returns_ul() {
+        test('findSuitable returns ul', function() {
             editor.value('<ul><li>foo</li></ul>bar');
             var finder = new ListFormatFinder('ul');
-            assertEquals(editor.body.firstChild, finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild]));
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild]), editor.body.firstChild);
+        });
         
-        function test_findSuitable_returns_first_ul_for_adjacent_lists() {
+        test('findSuitable returns first ul for adjacent lists', function() {
             editor.value('<ul><li>foo</li></ul><ul><li>bar</li></ul>');
             var finder = new ListFormatFinder('ul');
-            assertEquals(editor.body.firstChild, finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]));
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]), editor.body.firstChild);
+        });
 
-        function test_findSuitable_returns_null_when_ul_is_not_fist_sibling() {
+        test('findSuitable returns null when ul is not fist sibling', function() {
             editor.value('<ol><li>foo</li></ol><ul><li>bar</li></ul>');
             var finder = new ListFormatFinder('ul');
-            assertNull(finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]));
-        }
+            ok(null === finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]));
+        });
 
-        function test_isFormatted_returns_false_in_mixed_list_scenario() {
+        test('isFormatted returns false in mixed list scenario', function() {
             editor.value('<ol><li>foo<ul><li>bar</li></ul></li></ol>');
             var finder = new ListFormatFinder('ol');
-            assertFalse(finder.isFormatted([$(editor.body).find('ul li')[0].firstChild]));
-        }
+            ok(!finder.isFormatted([$(editor.body).find('ul li')[0].firstChild]));
+        });
 
-        function test_findSuitable_returns_null_when_ul_is_nested_in_ol() {
+        test('findSuitable returns null when ul is nested in ol', function() {
             editor.value('<ol><li>foo<ul><li>bar</li></ul></li></ol>');
             var finder = new ListFormatFinder('ol');
-            assertNull(finder.findSuitable([$(editor.body).find('ul li')[0].firstChild]));
-        }
+            ok(null === finder.findSuitable([$(editor.body).find('ul li')[0].firstChild]));
+        });
 
     </script>
+
 </asp:Content>

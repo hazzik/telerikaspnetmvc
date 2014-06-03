@@ -1,443 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    
-    <h2>Client API</h2>
-    
-    <script type="text/javascript">
-        var $t;
-
-        function setUp() {
-            $t = $.telerik;
-        }
-
-        function getTimePicker(selector) {
-            return $(selector || '#TimePicker').data('tTimePicker');
-        }
-
-        function test_value_method_should_return_selectedValue_property() {
-            var date = new $t.datetime(2000, 10, 10, 4, 0, 0, 909);
-            var timepicker = getTimePicker();
-            
-            timepicker.selectedValue = date;
-
-            var result = timepicker.value();
-
-            assertEquals(0, date.value - result);
-        }
-
-        function test_value_method_should_set_internal_value_property_to_passed_Date_object() {
-            var date = new Date(2000, 10, 10, 14, 0, 0);
-            var timepicker = getTimePicker();
-            
-            timepicker.value(date);
-
-            assertEquals(0, date - timepicker.selectedValue.toDate());
-        }
-
-        function test_value_method_should_set_internal_value_property_passed_datetime_object() {
-            
-            var date = new $t.datetime(2000, 10, 10, 14, 0, 0, 909);
-            var timepicker = getTimePicker();
-
-            timepicker.value(date);
-
-            assertEquals(0, date.toDate() - timepicker.selectedValue.toDate());
-        }
-
-        function test_value_method_should_set_internal_selectedValue_property_to_parsed_string() {
-            
-            var date = new $t.datetime();         
-
-            var timepicker = getTimePicker();
-            timepicker.selectedValue = date;
-            
-            timepicker.value("2:20 PM");
-
-            var result = timepicker.selectedValue;
-
-            assertEquals("hours", 14, result.hours());
-            assertEquals("minutes", 20, result.minutes());
-            assertEquals("seconds", 0, result.seconds());
-        }
-
-        function test_value_method_should_set_value_if_min_is_less_then_max() {
-
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 1, 1, 10, 0, 0)
-
-            timepicker.$input.val('');
-            timepicker.selectedValue = null;
-            timepicker.minValue = new $t.datetime(2000, 1, 1, 6, 0, 0)
-            timepicker.maxValue = new $t.datetime(2000, 1, 1, 18, 0, 0)
-
-            timepicker.value(date);
-
-            var result = timepicker.selectedValue;
-            assertNotEquals("", timepicker.$input.val());
-            assertEquals("hours", 10, result.hours());
-            assertEquals("minutes", 0, result.minutes());
-            assertEquals("seconds", 0, result.seconds());
-        }
-
-        function test_value_method_should_set_value_if_max_is_less_then_min() {
-
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 1, 1, 4, 0, 0)
-
-            timepicker.$input.val('');
-            timepicker.selectedValue = null;
-            timepicker.minValue = new $t.datetime(2000, 1, 1, 18, 0, 0)
-            timepicker.maxValue = new $t.datetime(2000, 1, 1, 6, 0, 0)
-            
-            timepicker.value(date);
-
-            var result = timepicker.selectedValue;
-            assertEquals($t.datetime.format(date.toDate(), timepicker.format), timepicker.$input.val());
-            assertEquals("hours", 4, result.hours());
-            assertEquals("minutes", 0, result.minutes());
-            assertEquals("seconds", 0, result.seconds());
-        }
-
-        function test_value_method_should_no_set_value_if_is_not_in_range_and_if_max_is_less_then_min() {
-
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 1, 1, 10, 0, 0)
-
-            timepicker.$input.val('');
-            timepicker.selectedValue = null;
-            timepicker.minValue = new $t.datetime(2000, 1, 1, 18, 0, 0)
-            timepicker.maxValue = new $t.datetime(2000, 1, 1, 6, 0, 0)
-            
-            timepicker.value(date);
-
-            assertEquals("", timepicker.$input.val());
-            assertEquals(null, timepicker.selectedValue);
-        }
-
-        function test_value_method_should_no_set_value_if_is_not_in_range_and_if_min_is_less_then_max() {
-
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 1, 1, 4, 0, 0)
-            
-            timepicker.$input.val('');
-            timepicker.selectedValue = null;
-            timepicker.minValue = new $t.datetime(2000, 1, 1, 6, 0, 0)
-            timepicker.maxValue = new $t.datetime(2000, 1, 1, 18, 0, 0)
-
-            timepicker.value(date);
-
-            assertEquals("", timepicker.$input.val());
-            assertEquals(null, timepicker.selectedValue);
-        }
-
-        function test_value_method_should_update_input_val() {
-
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 1, 1, 16, 0, 0)
-
-            timepicker.$input.val('');
-            timepicker.selectedValue = null;
-            timepicker.minValue = new $t.datetime(2000, 1, 1, 6, 0, 0)
-            timepicker.maxValue = new $t.datetime(2000, 1, 1, 18, 0, 0)
-
-            timepicker.value(date);
-
-            assertEquals($t.datetime.format(date.toDate(), timepicker.format), timepicker.$input.val());
-        }
-
-        function test_parse_method_should_return_null_if_passed_value_is_null() {
-            var timepicker = getTimePicker();
-
-            var result = timepicker.parse(null);
-
-            assertEquals(null, result);
-        }
-
-        function test_parse_method_should_return_datetime_object_created_from_passed_Date() {
-            var timepicker = getTimePicker();
-
-            var date = new Date(2000, 10, 10, 14, 14, 9);
-
-            var result = timepicker.parse(date);
-
-            assertEquals(date, result.toDate());
-        }
-
-        function test_parse_method_should_return_passed_datetime() {
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 10, 10, 14, 14, 9);
-
-            var result = timepicker.parse(date);
-
-            assertEquals(date, result);
-        }
-
-        function test_parse_method_should_parse_passed_string() {
-            var timepicker = getTimePicker();
-
-            var date = "10:25 PM";
-
-            var result = timepicker.parse(date);
-
-            assertEquals("hours", 22, result.hours());
-            assertEquals("minutes", 25, result.minutes());
-            assertEquals("seconds", 0, result.seconds());
-        }
-
-        function test_value_method_should_select_item_depending_on_passed_date_object() {
-            var timepicker = getTimePicker('#TimePicker2');
-
-            timepicker.timeView.dropDown.$items = null;
-            var date = new Date(1900, 10, 10, 8, 15, 0);
-            
-            timepicker.value(date);
-
-            assertTrue(timepicker.timeView.dropDown.$items.eq(1).hasClass('t-state-selected'));
-        }
-
-        function test_value_method_should_set_value_10_if_minValue_4AM_and_max_time_3AM() {
-
-            var timepicker = getTimePicker();
-
-            var date = new $t.datetime(2000, 1, 1, 10, 0, 0)
-
-            timepicker.$input.val('');
-            timepicker.selectedValue = null;
-            timepicker.minValue = new $t.datetime(2000, 1, 1, 4, 0, 0)
-            timepicker.maxValue = new $t.datetime(2000, 1, 1, 3, 0, 0)
-
-            timepicker.value(date);
-
-            assertEquals($t.datetime.format(date.toDate(), timepicker.format), timepicker.$input.val());
-        }
-
-        function test_open_method_should_open_dropDown_and_call_value_method_input_val() {
-
-            var timepicker = getTimePicker();
-            
-            timepicker.close();
-            
-            timepicker.open();
-
-            assertTrue(timepicker.timeView.dropDown.isOpened());
-        }
-
-        function test_close_method_should_close_dropDown() {
-            var timepicker = getTimePicker();
-
-            timepicker.open();
-
-            timepicker.close();
-
-            assertFalse(timepicker.timeView.dropDown.isOpened());
-        }
-
-        function test_value_method_should_set_empty_string_to_input_and_deselect_items() {
-            var timepicker = getTimePicker();
-            timepicker.open();
-
-            timepicker.value('10:30');
-
-            timepicker.value(null);
-
-            assertEquals('', timepicker.$input.val());
-            assertEquals(0, timepicker.timeView.dropDown.$items.filter('t-state-selected').length);
-        }
-
-        function test_disable_method_should_disable_input() {
-            var timepicker = getTimePicker();
-
-            timepicker.enable();
-            timepicker.disable();
-
-            assertTrue($('#TimePicker').find('.t-input').attr('disabled'));
-        }
-
-        function test_disable_method_should_unbind_click_event_of_toggle_button() {
-            var timepicker = getTimePicker();
-
-            timepicker.enable();
-            timepicker.disable();
-
-            var $icon = $('#TimePicker').find('.t-icon');
-            assertEquals(-1, $icon.data('events').click.toString().indexOf('e.preventDefault();'));
-        }
-
-        function test_enable_method_should_enable_input() {
-            var timepicker = getTimePicker();
-
-            timepicker.disable();
-            timepicker.enable();
-
-            assertFalse($('#TimePicker').find('.t-input').attr('disabled'));
-        }
-
-        function test_enable_method_should_bind_click_event_of_toggle_button() {
-            var timepicker = getTimePicker();
-
-            timepicker.disable();
-            timepicker.enable();
-
-            var $icon = $('#TimePicker').find('.t-icon');
-            
-            assertNotNull($icon.data('events').click);
-        }
-
-        function test_disable_method_should_add_state_disabled() {
-            var timepicker = getTimePicker();
-
-            timepicker.enable();
-            timepicker.disable();
-
-            assertTrue($('#TimePicker').hasClass('t-state-disabled'));
-        }
-
-        function test_enable_method_should_remove_state_disabled() {
-            var timepicker = getTimePicker();
-
-            timepicker.disable();
-            timepicker.enable();
-
-            assertFalse($('#TimePicker').hasClass('t-state-disabled'));
-        }
-
-        function test_internal_change_method_should_set_value_to_minValue_if_parsedValue_close_to_min() {
-            var timepicker = getTimePicker();
-            var oldMinValue = timepicker.minValue;
-            var oldMaxValue = timepicker.maxValue;
-            
-            timepicker.minValue = new $t.datetime(2000, 10, 10, 13, 30, 0);
-            timepicker.maxValue = new $t.datetime(2000, 10, 10, 18, 0, 0);
-            
-            timepicker._change('10:10 AM');
-
-            assertEquals('selectedDate is not equal to MinValue', 0, timepicker.selectedValue.value - timepicker.minValue.value);
-
-            timepicker.minValue = oldMinValue;
-            timepicker.maxValue = oldMaxValue;
-        }
-
-        function test_internal_change_method_should_set_value_to_maxValue_if_parsedValue_close_to_max() {
-            var timepicker = getTimePicker();
-            var oldMinValue = timepicker.minValue;
-            var oldMaxValue = timepicker.maxValue;
-
-            timepicker.minValue = new $t.datetime(2000, 10, 10, 13, 30, 0);
-            timepicker.maxValue = new $t.datetime(2000, 10, 10, 18, 0, 0);
-
-            timepicker._change('7:10 PM');
-
-            assertEquals('selectedDate is not equal to MaxValue', 0, timepicker.selectedValue.value - timepicker.maxValue.value);
-
-            timepicker.minValue = oldMinValue;
-            timepicker.maxValue = oldMaxValue;
-        }
-
-        function test_internal_change_method_should_set_value_to_maxValue_if_parsedValue_close_to_max_and_max_is_less_then_minValue() {
-            var timepicker = getTimePicker();
-            var oldMinValue = timepicker.minValue;
-            var oldMaxValue = timepicker.maxValue;
-            
-            timepicker.minValue = new $t.datetime(2000, 10, 10, 22, 30, 0);
-            timepicker.maxValue = new $t.datetime(2000, 10, 10, 10, 0, 0);
-            
-            timepicker._change('11:10 AM');
-
-            assertEquals('selectedDate is not equal to MaxValue', 0, timepicker.selectedValue.value - timepicker.maxValue.value);
-
-            timepicker.minValue = oldMinValue;
-            timepicker.maxValue = oldMaxValue;
-        }
-
-        function test_internal_change_method_should_set_value_to_minValue_if_parsedValue_close_to_min_and_max_is_less_then_minValue() {
-            var timepicker = getTimePicker();
-            var oldMinValue = timepicker.minValue;
-            var oldMaxValue = timepicker.maxValue;
-
-            timepicker.minValue = new $t.datetime(2000, 10, 10, 22, 30, 0);
-            timepicker.maxValue = new $t.datetime(2000, 10, 10, 10, 0, 0);
-
-            timepicker._change('9:10 PM');
-
-            assertEquals('selectedDate is not equal to MinValue', 0, timepicker.selectedValue.value - timepicker.minValue.value);
-
-            timepicker.minValue = oldMinValue;
-            timepicker.maxValue = oldMaxValue;
-        }
-
-        function test_internal_value_method_should_set_selectedValue_to_passed_val() {
-            var timepicker = getTimePicker();
-
-            var value = new $t.datetime(2000, 10, 10, 14, 14, 0);
-
-            timepicker._value(value);
-
-            assertEquals('selectedValue was not set', 0, value.value - timepicker.selectedValue.value);
-        }
-
-        function test_internal_value_method_should_set_selectedValue_to_null() {
-            var timepicker = getTimePicker();
-
-            timepicker._value(null);
-
-            assertNull(timepicker.selectedValue);
-        }
-
-        function test_internal_value_method_should_call_timeView_value_method() {
-            var passed;
-            var timepicker = getTimePicker();
-            var oldM = timepicker.timeView.value;
-            var value = new $t.datetime(2000, 10, 10, 14, 14, 0);
-
-            timepicker.timeView.value = function (val) { passed = val };
-
-            timepicker._value(value);
-
-            assertNotUndefined(passed);
-
-            timepicker.timeView.value = oldM;
-        }
-
-        function test_internal_value_method_should_set_error_state_if_parameter_is_null_and_input_is_not_empty() {
-            var timepicker = getTimePicker();
-
-            timepicker.$input.val('invalid');
-
-            timepicker._value(null);
-
-            assertTrue('t-error-state is not applied', timepicker.$input.hasClass('t-state-error'));
-        }
-
-        function test_internal_value_method_should_remove_error_if_input_is_empty() {
-            var timepicker = getTimePicker();
-
-            timepicker.$input.val('');
-
-            timepicker._value(null);
-
-            assertFalse('t-error-state is not applied', timepicker.$input.hasClass('t-state-error'));
-        }
-
-        function test_internal_value_method_should_remove_error_if_correct_date_is_passed() {
-            var timepicker = getTimePicker();
-
-            var value = new $t.datetime(2000, 10, 10, 14, 14, 0);
-            
-            timepicker._value(value);
-
-            assertFalse('t-error-state is not applied', timepicker.$input.hasClass('t-state-error'));
-        }
-
-    </script>
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <%= Html.Telerik().TimePicker()
             .Name("TimePicker")
@@ -452,5 +17,462 @@
             .Min(new DateTime(2000,10,10, 8, 0, 0))
             .Max(new DateTime(2000, 10, 10, 18, 0, 0))
     %>
+
+</asp:Content>
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+    function getTimePicker(selector) {
+        return $(selector || '#TimePicker').data('tTimePicker');
+    }
+
+    test('value method should return selectedValue property', function () {
+        var date = new Date(2000, 10, 10, 4, 0, 0, 909);
+        var timepicker = getTimePicker();
+
+        timepicker.selectedValue = date;
+
+        var result = timepicker.value();
+
+        equal(date - result, 0);
+    });
+
+    test('value method should set internal value property to passed Date object', function () {
+        var date = new Date(2000, 10, 10, 14, 0, 0);
+        var timepicker = getTimePicker();
+
+        timepicker.value(date);
+
+        equal(+date, +timepicker.selectedValue);
+    });
+
+    test('value method should set internal value property passed datetime object', function () {
+
+        var date = new Date(2000, 10, 10, 14, 0, 0, 909);
+        var timepicker = getTimePicker();
+
+        timepicker.value(date);
+
+        equal(+date, +timepicker.selectedValue);
+    });
+
+    test('value method should set internal selectedValue property to parsed string', function () {
+
+        var date = new Date();
+
+        var timepicker = getTimePicker();
+        timepicker.selectedValue = date;
+
+        timepicker.value("2:20 PM");
+
+        var result = new $t.datetime(timepicker.selectedValue);
+
+        equal(result.hours(), 14, "hours");
+        equal(result.minutes(), 20, "minutes");
+        equal(result.seconds(), 0, "seconds");
+    });
+
+    test('value method should set value if min is less then max', function () {
+
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 1, 1, 10, 0, 0)
+
+        timepicker.$element.val('');
+        timepicker.selectedValue = null;
+        timepicker.minValue = new Date(2000, 1, 1, 6, 0, 0)
+        timepicker.maxValue = new Date(2000, 1, 1, 18, 0, 0)
+
+        timepicker.value(date);
+
+        var result = new $t.datetime(timepicker.selectedValue);
+        notEqual(timepicker.$element.val(), "");
+        equal(result.hours(), 10, "hours");
+        equal(result.minutes(), 0, "minutes");
+        equal(result.seconds(), 0, "seconds");
+    });
+
+    test('value method should set value if max is less then min', function () {
+
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 1, 1, 4, 0, 0)
+
+        timepicker.$element.val('');
+        timepicker.selectedValue = null;
+        timepicker.minValue = new Date(2000, 1, 1, 18, 0, 0)
+        timepicker.maxValue = new Date(2000, 1, 1, 6, 0, 0)
+
+        timepicker.value(date);
+
+        var result = new $t.datetime(timepicker.selectedValue);
+
+        equal(timepicker.$element.val(), $t.datetime.format(date, timepicker.format));
+        equal(result.hours(), 4, "hours");
+        equal(result.minutes(), 0, "minutes");
+        equal(result.seconds(), 0, "seconds");
+    });
+
+    test('value method should no set value if is not in range and if max is less then min', function () {
+
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 1, 1, 10, 0, 0)
+
+        timepicker.$element.val('');
+        timepicker.selectedValue = null;
+        timepicker.minValue = new Date(2000, 1, 1, 18, 0, 0)
+        timepicker.maxValue = new Date(2000, 1, 1, 6, 0, 0)
+
+        timepicker.value(date);
+
+        equal(timepicker.$element.val(), "");
+        equal(timepicker.selectedValue, null);
+    });
+
+    test('value method should no set value if is not in range and if min is less then max', function () {
+
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 1, 1, 4, 0, 0)
+
+        timepicker.$element.val('');
+        timepicker.selectedValue = null;
+        timepicker.minValue = new Date(2000, 1, 1, 6, 0, 0)
+        timepicker.maxValue = new Date(2000, 1, 1, 18, 0, 0)
+
+        timepicker.value(date);
+
+        equal(timepicker.$element.val(), "");
+        equal(timepicker.selectedValue, null);
+    });
+
+    test('value method should update input val', function () {
+
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 1, 1, 16, 0, 0)
+
+        timepicker.$element.val('');
+        timepicker.selectedValue = null;
+        timepicker.minValue = new Date(2000, 1, 1, 6, 0, 0)
+        timepicker.maxValue = new Date(2000, 1, 1, 18, 0, 0)
+
+        timepicker.value(date);
+
+        equal(timepicker.$element.val(), $t.datetime.format(date, timepicker.format));
+    });
+
+    test('parse method should return null if passed value is null', function () {
+        var timepicker = getTimePicker();
+
+        var result = timepicker.parse(null);
+
+        equal(result, null);
+    });
+
+    test('parse method should return datetime object created from passed Date', function () {
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 10, 10, 14, 14, 9);
+
+        var result = timepicker.parse(date);
+
+        equal(+result, +date);
+    });
+
+    test('parse method should return passed datetime', function () {
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 10, 10, 14, 14, 9);
+
+        var result = timepicker.parse(date);
+
+        equal(result, date);
+    });
+
+    test('parse method should parse passed string', function () {
+        var timepicker = getTimePicker();
+
+        var date = "10:25 PM";
+
+        var result = new $t.datetime(timepicker.parse(date));
+
+        equal(result.hours(), 22, "hours");
+        equal(result.minutes(), 25, "minutes");
+        equal(result.seconds(), 0, "seconds");
+    });
+
+    test('value method should select item depending on passed date object', function () {
+        var timepicker = getTimePicker('#TimePicker2');
+
+        timepicker.timeView.dropDown.$items = null;
+        var date = new Date(1900, 10, 10, 8, 15, 0);
+
+        timepicker.value(date);
+
+        ok(timepicker.timeView.dropDown.$items.eq(1).hasClass('t-state-selected'));
+    });
+
+    test('value method should set value 10 if minValue 4AM and max time 3AM', function () {
+
+        var timepicker = getTimePicker();
+
+        var date = new Date(2000, 1, 1, 10, 0, 0)
+
+        timepicker.$element.val('');
+        timepicker.selectedValue = null;
+        timepicker.minValue = new Date(2000, 1, 1, 4, 0, 0)
+        timepicker.maxValue = new Date(2000, 1, 1, 3, 0, 0)
+
+        timepicker.value(date);
+
+        equal(timepicker.$element.val(), $t.datetime.format(date, timepicker.format));
+    });
+
+    test('open method should open dropDown and call value method input val', function () {
+
+        var timepicker = getTimePicker();
+
+        timepicker.close();
+
+        timepicker.open();
+
+        ok(timepicker.timeView.dropDown.isOpened());
+    });
+
+    test('close method should close dropDown', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.open();
+
+        timepicker.close();
+
+        ok(!timepicker.timeView.dropDown.isOpened());
+    });
+
+    test('value method should set empty string to input and deselect items', function () {
+        var timepicker = getTimePicker();
+        timepicker.open();
+
+        timepicker.value('10:30');
+
+        timepicker.value(null);
+
+        equal(timepicker.$element.val(), '');
+        equal(timepicker.timeView.dropDown.$items.filter('t-state-selected').length, 0);
+    });
+
+    test('disable method should disable input', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.enable();
+        timepicker.disable();
+
+        ok($('#TimePicker').attr('disabled'));
+    });
+
+    test('disable method should unbind click event of toggle button', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.enable();
+        timepicker.disable();
+
+        var $icon = $('#TimePicker').closest('.t-timepicker').find('.t-icon');
+        equal($icon.data('events').click.toString().indexOf('e.preventDefault();'), -1);
+    });
+
+    test('enable method should enable input', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.disable();
+        timepicker.enable();
+
+        ok(!$('#TimePicker').attr('disabled'));
+    });
+
+    test('enable method should bind click event of toggle button', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.disable();
+        timepicker.enable();
+
+        var $icon = $('#TimePicker').closest('.t-timepicker').find('.t-icon');
+
+        ok(null !== $icon.data('events').click);
+    });
+
+    test('disable method should add state disabled', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.enable();
+        timepicker.disable();
+
+        ok($('#TimePicker').closest('.t-timepicker').hasClass('t-state-disabled'));
+    });
+
+    test('enable method should remove state disabled', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.disable();
+        timepicker.enable();
+
+        ok(!$('#TimePicker').closest('.t-timepicker').hasClass('t-state-disabled'));
+    });
+
+    test('internal change method should set value to minValue if parsedValue close to min', function () {
+        var timepicker = getTimePicker();
+        var oldMinValue = timepicker.minValue;
+        var oldMaxValue = timepicker.maxValue;
+
+        timepicker.minValue = new Date(2000, 10, 10, 13, 30, 0);
+        timepicker.maxValue = new Date(2000, 10, 10, 18, 0, 0);
+
+        timepicker._update('10:10 AM');
+
+        equal(+timepicker.selectedValue, +timepicker.minValue, 'selectedDate is not equal to MinValue');
+
+        timepicker.minValue = oldMinValue;
+        timepicker.maxValue = oldMaxValue;
+    });
+
+    test('internal change method should set value to maxValue if parsedValue close to max', function () {
+        var timepicker = getTimePicker();
+        var oldMinValue = timepicker.minValue;
+        var oldMaxValue = timepicker.maxValue;
+
+        timepicker.minValue = new Date(2000, 10, 10, 13, 30, 0);
+        timepicker.maxValue = new Date(2000, 10, 10, 18, 0, 0);
+
+        timepicker._update('7:10 PM');
+        
+        equal(+timepicker.selectedValue, +timepicker.maxValue, 'selectedDate is not equal to MaxValue');
+
+        timepicker.minValue = oldMinValue;
+        timepicker.maxValue = oldMaxValue;
+    });
+
+    test('internal change method should set value to maxValue if parsedValue close to max and max is less then minValue', function () {
+        var timepicker = getTimePicker();
+        var oldMinValue = timepicker.minValue;
+        var oldMaxValue = timepicker.maxValue;
+
+        timepicker.minValue = new Date(2000, 10, 10, 22, 30, 0);
+        timepicker.maxValue = new Date(2000, 10, 10, 10, 0, 0);
+
+        timepicker._update('10:10 AM');
+
+        equal(+timepicker.selectedValue, +timepicker.maxValue, 'selectedDate is not equal to MaxValue');
+
+        timepicker.minValue = oldMinValue;
+        timepicker.maxValue = oldMaxValue;
+    });
+
+    test('internal change method should set value to minValue if parsedValue close to min and max is less then minValue', function () {
+        var timepicker = getTimePicker();
+        var oldMinValue = timepicker.minValue;
+        var oldMaxValue = timepicker.maxValue;
+
+        timepicker.minValue = new Date(2000, 10, 10, 22, 30, 0);
+        timepicker.maxValue = new Date(2000, 10, 10, 10, 0, 0);
+
+        timepicker._update('9:10 PM');
+
+        equal(+timepicker.selectedValue, +timepicker.minValue, 'selectedDate is not equal to MinValue');
+
+        timepicker.minValue = oldMinValue;
+        timepicker.maxValue = oldMaxValue;
+    });
+
+    test('internal value method should set selectedValue to passed val', function () {
+        var timepicker = getTimePicker();
+
+        var value = new Date(2000, 10, 10, 14, 14, 0);
+
+        timepicker._value(value);
+
+        equal(+value, +timepicker.selectedValue, 'selectedValue was not set');
+    });
+
+    test('internal value method should set selectedValue to null', function () {
+        var timepicker = getTimePicker();
+
+        timepicker._value(null);
+
+        ok(null === timepicker.selectedValue);
+    });
+
+    test('internal value method should call timeView value method', function () {
+        var passed;
+        var timepicker = getTimePicker();
+        var oldM = timepicker.timeView.value;
+        var value = new Date(2000, 10, 10, 14, 14, 0);
+
+        timepicker.timeView.value = function (val) { passed = val };
+
+        timepicker._value(value);
+
+        ok(undefined !== passed);
+
+        timepicker.timeView.value = oldM;
+    });
+
+    test('internal value method should set error state if parameter is null and input is not empty', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.$element.val('invalid');
+
+        timepicker._value(null);
+
+        ok(timepicker.$element.hasClass('t-state-error'), 't-error-state is not applied');
+    });
+
+    test('internal value method should remove error if input is empty', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.$element.val('');
+
+        timepicker._value(null);
+
+        ok(!timepicker.$element.hasClass('t-state-error'), 't-error-state is not applied');
+    });
+
+    test('internal value method should remove error if correct date is passed', function () {
+        var timepicker = getTimePicker();
+
+        var value = new Date(2000, 10, 10, 14, 14, 0);
+
+        timepicker._value(value);
+
+        ok(!timepicker.$element.hasClass('t-state-error'), 't-error-state is not applied');
+    });
+
+    test('min method should set value to minValue if value is not in range', function () {
+        var timepicker = getTimePicker();
+        timepicker.max("10:00 PM");
+        timepicker.value("10:00 AM");
+
+        timepicker.min("11:00 AM");
+
+        equal(timepicker.value().getHours(), timepicker.min().getHours(), "hours were not updated");
+        equal(timepicker.value().getMinutes(), timepicker.min().getMinutes(), "minutes were not updated");
+    });
+
+    test('max method should set value to maxValue if value is not in range', function () {
+        var timepicker = getTimePicker();
+
+        timepicker.min("8:00 AM");
+        timepicker.value("10:00 AM");
+
+        timepicker.max("9:00 AM");
+
+        equal(timepicker.value().getHours(), timepicker.max().getHours(), "hours were not updated");
+        equal(timepicker.value().getMinutes(), timepicker.max().getMinutes(), "minutes were not updated");
+    });
+        
+</script>
 
 </asp:Content>

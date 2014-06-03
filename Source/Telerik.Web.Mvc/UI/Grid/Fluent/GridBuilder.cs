@@ -30,6 +30,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
         public GridBuilder<T> TableHtmlAttributes(object attributes)
         {
+            return TableHtmlAttributes(attributes.ToDictionary());
+        }
+
+        public GridBuilder<T> TableHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
             Component.TableHtmlAttributes.Clear();
@@ -125,11 +130,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridBuilder<T> Editable(Action<GridEditingSettingsBuilder> configurator)
+        public GridBuilder<T> Editable(Action<GridEditingSettingsBuilder<T>> configurator)
         {
             Guard.IsNotNull(configurator, "configurator");
 
-            configurator(new GridEditingSettingsBuilder(Component.Editing));
+            configurator(new GridEditingSettingsBuilder<T>(Component.Editing));
 
             return this;
         }
@@ -716,7 +721,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(configurator, "configurator");
 
-            configurator(new GridClientEventsBuilder(Component.ClientEvents, Component.ViewContext));
+            configurator(new GridClientEventsBuilder(Component.ClientEvents));
 
             return this;
         }

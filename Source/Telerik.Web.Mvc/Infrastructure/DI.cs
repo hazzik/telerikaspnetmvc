@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.Infrastructure
     using System.Web.Routing;
     using Telerik.Web.Mvc.Infrastructure.Implementation;
     using Telerik.Web.Mvc.UI;
+    using Telerik.Web.Mvc.UI.Html;
     
     public static class DI
     {
@@ -29,6 +30,9 @@ namespace Telerik.Web.Mvc.Infrastructure
             RegisterCacheDependencies();
 
             RegisterComponentDependencies();
+
+            GridDependencyBootstrapper.Setup();
+            ImageBrowserDependencyBootstrapper.Setup();
         }
 
         private static void RegisterCoreDependencies()
@@ -54,6 +58,10 @@ namespace Telerik.Web.Mvc.Infrastructure
             Current.Register<IHttpResponseCompressor>(() => new HttpResponseCompressor());
 
             Current.Register<IUrlAuthorization>(() => new UrlAuthorization());
+
+            Current.Register<ISliderHtmlBuilderFactory>(() => new SliderHtmlBuilderFactory());
+
+            Current.Register<IRangeSliderHtmlBuilderFactory>(() => new RangeSliderHtmlBuilderFactory());
 
             Current.Register<ScriptWrapperBase>(() => new ScriptWrapper());
         }
@@ -115,9 +123,7 @@ namespace Telerik.Web.Mvc.Infrastructure
                 new TreeViewHtmlBuilderFactory(actionMethodCache));
 
             Current.Register<IClientSideObjectWriterFactory>(() => new ClientSideObjectWriterFactory());
-
-            Current.Register<IDatePickerHtmlBuilderFactory>(() => new DatePickerHtmlBuilderFactory());
-
+            
             Current.Register<ICalendarHtmlBuilderFactory>(() => new CalendarHtmlBuilderFactory());
 
             Current.Register<IWindowHtmlBuilderFactory>(() => new WindowHtmlBuilderFactory());

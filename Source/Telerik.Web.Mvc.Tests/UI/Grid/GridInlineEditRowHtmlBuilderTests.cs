@@ -1,128 +1,107 @@
-﻿#if MVC2 || MVC3
+﻿// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
+// All other rights reserved.
+#if MVC2 || MVC3
 namespace Telerik.Web.Mvc.UI.Html.Tests
 {
     using Moq;
-    using Infrastructure;
-    using UI;
-    using UI.Tests;
+    using Telerik.Web.Mvc.Infrastructure;
     using Xunit;
 
     public class GridInlineEditRowHtmlBuilderTests
     {
-        private readonly GridRow<Customer> row;
-        private readonly GridEditRowHtmlBuilder<Customer> builder;
+        private readonly Mock<IGridTableBuilder> tableBuilder;
+        private readonly Mock<IGridFormBuilder> formBuilder;
+        private readonly Mock<IGridDataCellBuilder> dataCellBuilder;
+        private GridInLineEditRowBuilder builder;
 
         public GridInlineEditRowHtmlBuilderTests()
         {
-            var grid = GridTestHelper.CreateGrid<Customer>();
-            grid.Columns.Add(new GridTemplateColumn<Customer>(grid, c => { }));
-
-            row = new GridRow<Customer>(grid, new Customer(), 0);
-            builder = new GridEditRowHtmlBuilder<Customer>(row);
+            tableBuilder = new Mock<IGridTableBuilder>();
+            tableBuilder.Setup(t => t.CreateTable()).Returns(new HtmlElement("table"));
+            
+            formBuilder = new Mock<IGridFormBuilder>();
+            formBuilder.Setup(t => t.CreateForm()).Returns(new HtmlElement("form"));
+            
+            dataCellBuilder = new Mock<IGridDataCellBuilder>();
+            dataCellBuilder.Setup(t => t.CreateCell(It.IsAny<object>())).Returns(new HtmlElement("td"));
+            
+            builder = new GridInLineEditRowBuilder(tableBuilder.Object, formBuilder.Object, 0, null, new[] { dataCellBuilder.Object });
         }
 
         [Fact]
         public void Should_create_td_with_colspan()
         {
-            builder.Colspan = 1;
+            var colspan = 1;
 
-            var td = builder.Build().Children[0];
+            builder = new GridInLineEditRowBuilder(tableBuilder.Object, formBuilder.Object, colspan, null, new[] { dataCellBuilder.Object });
 
-            Assert.Equal("td", td.TagName);
-            Assert.Equal("1", td.Attribute("colspan"));
+            var tr = builder.CreateRow();
+
+            var td = tr.Children[0];
+
+            td.Attribute("colspan").ShouldEqual(colspan.ToString());
         }
 
         [Fact]
-        public void Should_set_class()
+        public void Should_set_td_class()
         {
-            var td = builder.Build().Children[0];
-            Assert.Equal(UIPrimitives.Grid.EditingContainer, td.Attribute("class"));
+            var tr = builder.CreateRow();
+
+            var td = tr.Children[0];
+            td.Attribute("class").ShouldEqual(UIPrimitives.Grid.EditingContainer);
         }
 
         [Fact]
         public void Should_create_form_inside_td()
         {
-            builder.ActionUrl = "test";
-            builder.ID = "test";
-            var td = builder.Build().Children[0];
-            var form = td.Children[0];
+            var form = new HtmlElement("form");
 
-            Assert.Equal("form", form.TagName);
-            Assert.Equal("test", form.Attribute("id"));
-            Assert.Equal("post", form.Attribute("method"));
-            Assert.Equal("test", form.Attribute("action"));
-            Assert.Equal(UIPrimitives.Grid.EditingForm, form.Attribute("class"));
+            formBuilder.Setup(f => f.CreateForm()).Returns(form);
+            
+            var tr = builder.CreateRow();
+
+            var td = tr.Children[0];
+
+            td.Children[0].ShouldBeSameAs(form);
         }
 
         [Fact]
         public void Should_create_table_inside_form()
         {
-            var td = builder.Build().Children[0];
-            var form = td.Children[0];
-            var table = form.Children[0];
+            var table = new HtmlElement("form");
 
-            Assert.Equal("table", table.TagName);
-            Assert.Equal("0", table.Attribute("cellspacing"));
+            tableBuilder.Setup(f => f.CreateTable()).Returns(table);
+            
+            var td = builder.CreateRow().Children[0];
+            
+            var form = td.Children[0];
+            form.Children[0].ShouldBeSameAs(table);
         }
 
         [Fact]
-        public void Should_create_colgoup_inside_table()
+        public void Should_create_tr_inside_table()
         {
-            var td = builder.Build().Children[0];
-            var form = td.Children[0];
-            var table = form.Children[0];
-            var colgroup = table.Children[0];
+            var table = builder.CreateRow().Children[0].Children[0].Children[0];
 
-            Assert.Equal("colgroup", colgroup.TagName);
-        }
+            var tr = table.Children[0];
 
-        [Fact]
-        public void Should_create_tbody_inside_table()
-        {
-            var td = builder.Build().Children[0];
-            var form = td.Children[0];
-            var table = form.Children[0];
-            var tbody = table.Children[1];
-
-            Assert.Equal("tbody", tbody.TagName);
-        }
-
-        [Fact]
-        public void Should_create_tr_inside_tbody()
-        {
-            var td = builder.Build().Children[0];
-            var form = td.Children[0];
-            var table = form.Children[0];
-            var tbody = table.Children[1];
-            var tr = tbody.Children[0];
-
-            Assert.Equal("tr", tr.TagName);
+            tr.TagName.ShouldEqual("tr");
         }
 
         [Fact]
         public void Should_create_cells_inside_row()
         {
-            var column = new Mock<GridColumnBase<Customer>>(GridTestHelper.CreateGrid<Customer>());
-            var cellBuilder = new Mock<IHtmlBuilder>();
-            cellBuilder.Setup(b => b.Build()).Returns(new HtmlTag("td"));
-            column.Setup(c => c.CreateEditorHtmlBuilder(It.IsAny<GridCell<Customer>>())).Returns(cellBuilder.Object);
-            row.Grid.Columns.Clear();
-            row.Grid.Columns.Add(column.Object);
+            var td = new HtmlElement("td");
             
-            builder.Build();
+            dataCellBuilder.Setup(d => d.CreateCell(It.IsAny<object>())).Returns(td);
 
-            column.VerifyAll();
-        }
+            var table = builder.CreateRow().Children[0].Children[0].Children[0];
 
-        [Fact]
-        public void Should_append_custom_form_attributes_if_set()
-        {
-            const string attributeName = "att";
-            const string attributeValue = "val";
+            var tr = table.Children[0];
 
-            row.Grid.Editing.FormHtmlAttributes.Add(attributeName, attributeValue);
-            var form = builder.Build().Children[0].Children[0];
-            Assert.Equal(attributeValue, form.Attribute(attributeName));
+            tr.Children[0].ShouldBeSameAs(td);
         }
     }
 }

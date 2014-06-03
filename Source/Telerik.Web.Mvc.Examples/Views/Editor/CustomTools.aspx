@@ -6,7 +6,7 @@
             .Name("Editor")
             .Value(() =>
             {   %>
-                &lt;p&gt;
+                &lt;p&gt;&nbsp;
                     &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png")%>&quot;
                             alt=&quot;Editor for ASP.NET MVC logo&quot;
                             style=&quot;display:block;margin-left:auto;margin-right:auto;&quot; /&gt;
@@ -23,7 +23,7 @@
             })
             .Tools(tools => tools
                 .Clear()
-                .Custom(settings => settings.HtmlAttributes(new { @class = "t-html", onclick = "viewSource(event)" }))
+                .Custom(settings => settings.HtmlAttributes(new { @class = "t-html" }))
                 .Separator()
                 .Custom(settings => settings.Template(() =>
                     {
@@ -81,9 +81,7 @@
 
         var htmlSourcePopup;
 
-        function viewSource(e) {
-            e = $.Event(e);
-        
+        function showHtml(e) {
             e.stopPropagation();
             e.preventDefault();
         
@@ -95,8 +93,8 @@
                     $('<div class="html-view">' +
                           '<div class="textarea t-state-default"><textarea></textarea></div>' +
                           '<div class="t-button-wrapper">' + 
-                              '<button id="htmlCancel" class="t-button t-state-default">Cancel</button>' +
-                              '<button id="htmlUpdate" class="t-button t-state-default">Update</button>' +
+                              '<button id="htmlCancel" class="t-button">Cancel</button>' +
+                              '<button id="htmlUpdate" class="t-button">Update</button>' +
                           '</div>' +
                       '</div>')
                     .css('display', 'none')
@@ -140,6 +138,11 @@
         }
 
     </script>
+
+    <%-- attach handler for html viewer --%>
+    <% Html.Telerik().ScriptRegistrar().OnDocumentReady(() => { %>
+            $('.t-html').click(showHtml);
+    <% }); %>
 
 </asp:content>
 

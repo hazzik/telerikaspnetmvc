@@ -1,6 +1,7 @@
 namespace Telerik.Web.Mvc.Examples
 {
     using System.Web.Mvc;
+    using System.ComponentModel;
     
     [AutoPopulateSourceCode]
     [PopulateProductSiteMap(SiteMapName = "examples", ViewDataKey = "telerik.mvc.examples")]
@@ -28,6 +29,7 @@ namespace Telerik.Web.Mvc.Examples
         public bool? AutoFill { get; set; }
 
         public bool? AllowMultipleValues { get; set; }
+
         public string MultipleSeparator { get; set; }
     }
 
@@ -38,10 +40,17 @@ namespace Telerik.Web.Mvc.Examples
         public int? FilterMode { get; set; }
 
         public int? MinimumChars { get; set; }
+
+        [DisplayName("<strong>highlight</strong> its first item")]
         public bool? HighlightFirst { get; set; }
+
+        [DisplayName("<strong>auto-fill</strong> text")]
         public bool? AutoFill { get; set; }
 
+        [DisplayName("allow <strong>multiple</strong> values")]
         public bool? AllowMultipleValues { get; set; }
+
+        [DisplayName("separated by")]
         public string MultipleSeparator { get; set; }
     }
 
@@ -55,6 +64,7 @@ namespace Telerik.Web.Mvc.Examples
         public int? MinimumChars { get; set; }
         public bool? HighlightFirst { get; set; }
         public bool? AutoFill { get; set; }
+        public bool? OpenOnFocus { get; set; }
     }
 
     public class DropDownListAttributes

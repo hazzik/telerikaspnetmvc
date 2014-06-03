@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -23,37 +23,47 @@
         function getCalendar(selector) {
             return $(selector || "#Calendar1").data("tCalendar");
         }
-
-        function test_calendar_should_render_previous_button() {
-            var calendar = getCalendar();
-            
-            assertTrue($('.t-header .t-link', calendar.element).hasClass('t-nav-prev'));
-        }
-
-        function test_calendar_should_render_disable_previous_button() {
-            var calendar = getCalendar("#Calendar2");
-
-            assertTrue($('.t-header .t-nav-prev', calendar.element).hasClass('t-state-disabled'));
-        }
-
-        function test_calendar_should_render_navigation_button() {
-            var calendar = getCalendar();
-
-            assertTrue($('.t-header .t-link', calendar.element).hasClass('t-nav-fast'));
-        }
-
-        function test_calendar_should_render_next_button() {
-            var calendar = getCalendar();
-
-            assertTrue($('.t-header .t-link', calendar.element).hasClass('t-nav-next'));
-        }
-
-        function test_calendar_should_render_disable_next_button() {
-            var calendar = getCalendar("#Calendar3");
-
-            assertTrue($('.t-header .t-nav-next', calendar.element).hasClass('t-state-disabled'));
-        }
     
     </script>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('calendar should render previous button', function() {
+            var calendar = getCalendar();
+            
+            ok($('.t-header .t-link', calendar.element).hasClass('t-nav-prev'));
+        });
+
+        test('calendar should render disable previous button', function() {
+            var calendar = getCalendar("#Calendar2");
+
+            ok($('.t-header .t-nav-prev', calendar.element).hasClass('t-state-disabled'));
+        });
+
+        test('calendar should render navigation button', function() {
+            var calendar = getCalendar();
+
+            ok($('.t-header .t-link', calendar.element).hasClass('t-nav-fast'));
+        });
+
+        test('calendar should render next button', function() {
+            var calendar = getCalendar();
+
+            ok($('.t-header .t-link', calendar.element).hasClass('t-nav-next'));
+        });
+
+        test('calendar should render disable next button', function() {
+            var calendar = getCalendar("#Calendar3");
+
+            ok($('.t-header .t-nav-next', calendar.element).hasClass('t-state-disabled'));
+        });
+
+</script>
 
 </asp:Content>

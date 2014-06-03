@@ -1,8 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-
-    <h2>ModelState</h2>
 
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
@@ -27,31 +25,37 @@
             )
             .Pageable()
     %>
+</asp:Content>
 
-    <script type="text/javascript">
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
     var grid;
     var originalHasErrors;
     var originalAjax;
     var originalDisplayErrors;
 
-    function setUp() {
-        grid = getGrid();
-        originalHasErrors = grid.hasErrors;
-        originalAjax = $.ajax;
-        originalDisplayErrors = grid.displayErrors;
-    }
-
-    function tearDown() {
-        grid.hasErrors = originalHasErrors;
-        $.ajax = originalAjax;
-        grid.displayErrors = originalDisplayErrors;
-    }
-
     function getGrid(selector) {
         return $(selector || "#Grid1").data("tGrid");
-    }    
+    }
+
+    module("Grid / ModelStateErrors", {
+        setup: function() {
+            grid = getGrid();
+            originalHasErrors = grid.hasErrors;
+            originalAjax = $.ajax;
+            originalDisplayErrors = grid.displayErrors;
+        },
+        teardown: function() {
+            grid.hasErrors = originalHasErrors;
+            $.ajax = originalAjax;
+            grid.displayErrors = originalDisplayErrors;
+        }
+    });
     
-    function test_grid_does_not_bind_if_hasErrors_returns_true() {
+    test('grid does not bind if hasErrors returns true', function() {
         $.ajax = function(options) {
             options.success('{data:[], modelState:{foo:{errors:[]}}}')
         }
@@ -66,10 +70,10 @@
 
         grid.sendValues({}, 'updateUrl');
 
-        assertFalse(dataBound);
-    }     
+        ok(!dataBound);
+    });     
     
-    function test_grid_displays_errors_if_hasErrors_returns_true() {
+    test('grid displays errors if hasErrors returns true', function() {
         $.ajax = function(options) {
             options.success('{data:[], modelState:{foo:{errors:[]}}}')
         }
@@ -79,10 +83,10 @@
         grid.displayErrors = function() { displayed = true };
         grid.sendValues({}, 'updateUrl');
 
-        assertTrue(displayed);
-    }    
+        ok(displayed);
+    });    
     
-    function test_grid_does_not_display_errors_if_hasErrors_returns_false() {
+    test('grid does not display errors if hasErrors returns false', function() {
         $.ajax = function(options) {
             options.success('{data:[]}')
         }
@@ -92,10 +96,10 @@
         grid.displayErrors = function() { displayed = true };
         grid.sendValues({}, 'updateUrl');
 
-        assertFalse(displayed);
-    }    
+        ok(!displayed);
+    });    
     
-    function test_grid_binds_if_hasErrors_returns_false() {
+    test('grid binds if hasErrors returns false', function() {
         $.ajax = function(options) {
             options.success('{data:[]}')
         }
@@ -109,20 +113,21 @@
 
         grid.sendValues({}, 'updateUrl');
 
-        assertTrue(dataBound);
-    }
+        ok(dataBound);
+    });
 
-    function test_hasErrors_returns_true_if_modelState_has_errors() {
-        assertTrue(grid.hasErrors({modelState:{foo:{errors:[]}}}));
-    }
+    test('hasErrors returns true if modelState has errors', function() {
+        ok(grid.hasErrors({modelState:{foo:{errors:[]}}}));
+    });
 
-    function test_hasErrors_returns_false_if_modelState_has_no_errors() {
-        assertFalse(grid.hasErrors({modelState:{}}));
-    }
+    test('hasErrors returns false if modelState has no errors', function() {
+        ok(!grid.hasErrors({modelState:{}}));
+    });
 
-    function test_hasErrors_returns_false_if_modelState_is_not_present() {
-        assertFalse(grid.hasErrors({}));
-    }
+    test('hasErrors returns false if modelState is not present', function() {
+        ok(!grid.hasErrors({}));
+    });
 
-    </script>
+</script>
+
 </asp:Content>

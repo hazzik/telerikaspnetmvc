@@ -10,21 +10,37 @@
 
 <script type="text/javascript">
     //<![CDATA[
+    (function() {
+        var count = 0,
+            oldMsg;
 
-	window.$console = {
-		log: function(msg) {
-			$('<div />')
-				.html(msg)
-				.css({
-					'margin-top': -24,
-					'background-color': '#ffffd0'
-				})
-				.prependTo('.event-log')
-				.animate({ marginTop: 0 }, 'fast')
-				.animate({ backgroundColor: '#ffffff' }, 800);
-		}
-	};
-	
+	    window.$console = {
+		    log: function(msg) {
+                if (msg != oldMsg) {
+                    oldMsg = msg;
+                    count = 1;
+                    $('<div />')
+				        .css({
+					        'margin-top': -24,
+					        'background-color': '#ffffd0'
+				        })
+				        .animate({ marginTop: 0 }, 'fast')
+				        .animate({ backgroundColor: '#ffffff' }, 800).html(msg)
+                        .prependTo('.event-log');
+                } else {
+                    count++;
+                    var oldDiv = $('.event-log div:first');
+                    
+                    if (oldDiv.find(".call-count").length != 0) {
+                        oldDiv.find(".call-count").html(count);
+                    } else {
+                        oldDiv.html(oldMsg)
+                              .append("<span class='call-count'>" + count + "</span>");
+                    }
+                }
+		    }
+	    };
+	})();
 	//]]>
 </script>
 

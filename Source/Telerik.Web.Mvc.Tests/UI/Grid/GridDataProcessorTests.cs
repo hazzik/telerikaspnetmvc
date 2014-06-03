@@ -35,6 +35,8 @@
             context.Setup(c => c.Prefix(GridUrlParameters.GroupBy)).Returns(GridUrlParameters.GroupBy);
             context.Setup(c => c.Prefix(GridUrlParameters.CurrentPage)).Returns(GridUrlParameters.CurrentPage);
             context.Setup(c => c.Prefix(GridUrlParameters.Filter)).Returns(GridUrlParameters.Filter);
+            context.Setup(c => c.Prefix(GridUrlParameters.Aggregates)).Returns(GridUrlParameters.Aggregates);
+            context.Setup(c => c.Prefix(GridUrlParameters.PageSize)).Returns(GridUrlParameters.PageSize);
             context.Setup(c => c.GroupDescriptors).Returns(() => new List<GroupDescriptor>());
             context.Setup(c => c.SortDescriptors).Returns(() => new List<SortDescriptor>());
             context.Setup(c => c.FilterDescriptors).Returns(() => new CompositeFilterDescriptor[] { });
@@ -170,8 +172,6 @@
         [Fact]
         public void Should_create_correct_groups_if_grouped_by_one_field_and_bound_to_DataTable()
         {
-            var dataSource = GetDataTable();
-
             dataProcessor.GroupDescriptors.Add(new GroupDescriptor { 
                 Member = field1Name
             });
@@ -221,7 +221,7 @@
 
             Assert.Equal(10, processedDataSource.Count());
         }
-        
+
         [Fact]
         public void CurrentPage_should_fallback_to_binding_context()
         {
@@ -237,6 +237,33 @@
             context.SetupGet(c => c.CurrentPage).Returns(2);
 
             Assert.Equal(3, dataProcessor.CurrentPage);
+        }
+
+        [Fact]
+        public void PageSize_should_fallback_to_binding_context()
+        {
+            context.SetupGet(c => c.PageSize).Returns(2);
+
+            Assert.Equal(2, dataProcessor.PageSize);
+        } 
+
+        [Fact]
+        public void PageSize_should_read_from_value_provider_to_binding_context()
+        {
+            valueProvider.Add(GridUrlParameters.PageSize, 3);
+            context.SetupGet(c => c.PageSize).Returns(2);
+
+            Assert.Equal(3, dataProcessor.PageSize);
+        }
+
+        [Fact]
+        public void PageCount_should_use_page_size_form_value_provider()
+        {
+            valueProvider.Add(GridUrlParameters.PageSize, 3);
+            
+            context.SetupGet(c => c.DataSource).Returns(DataSource(10));
+
+            dataProcessor.PageCount.ShouldEqual(4);
         }
 
         [Fact]
@@ -269,6 +296,21 @@
 
             IEnumerable result;
             Assert.Throws<InvalidOperationException>(() => result = dataProcessor.ProcessedDataSource);
+        }
+
+        [Fact]
+        public void Should_calculate_aggregates()
+        {
+            const int expectedCount = 8;
+            context.SetupGet(c => c.DataSource).Returns(DataSource(expectedCount));
+
+            var descriptor = new AggregateDescriptor();
+            descriptor.Aggregates.Add(new CountFunction { ResultFormatString = field2Name });
+            
+            context.SetupGet(c => c.Aggregates).Returns(new[]{ descriptor });
+            var aggregatesResults = dataProcessor.AggregatesResults;
+
+            aggregatesResults.First().Value.ShouldEqual(expectedCount);
         }
 
 #if MVC3

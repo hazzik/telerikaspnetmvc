@@ -29,10 +29,11 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public object GetValue(DataRowView dataItem)
+        public object GetValue(object dataItem)
         {
-            return dataItem[Name];
+            return ((DataRowView)dataItem)[Name];
         }
+
 
 #if MVC2 || MVC3
         public string HiddenFieldHtml(HtmlHelper<DataRowView> htmlHelper)

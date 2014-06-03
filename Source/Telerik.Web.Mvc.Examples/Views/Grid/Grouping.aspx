@@ -11,7 +11,7 @@
         <li><%= Html.CheckBox("orderDate", false, "Order Date")%></li>
         <li><%= Html.CheckBox("shipAddress", false, "Ship Address")%></li>
     </ul>
-    <button class="t-button t-state-default" type="submit">Apply</button>
+    <button class="t-button" type="submit">Apply</button>
 <%} %>
 
 <%= Html.Telerik().Grid<Order>(Model)

@@ -113,5 +113,15 @@
 
             Assert.Equal("Item3", tag.Attribute("value"));
         }
+
+        [Fact]
+        public void AutoComplete_should_set_value_from_extenssion_for()
+        {
+            AutoComplete.Value = "value";
+
+            IHtmlNode tag = renderer.Build();
+
+            Assert.Equal("value", tag.Attribute("value"));
+        }
     }
 }

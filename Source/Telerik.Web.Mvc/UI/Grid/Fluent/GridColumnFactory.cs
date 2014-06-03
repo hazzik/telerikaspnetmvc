@@ -94,14 +94,9 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         public virtual GridBoundColumnBuilder<TModel> Bound(Type memberType, string memberName)
         {
-            bool liftMemberAccess = false;
+            const bool liftMemberAccess = false;
 
-            if (Container.DataSource != null)
-            {
-                liftMemberAccess = Container.DataSource.AsQueryable().Provider.IsLinqToObjectsProvider();
-            }
-
-            LambdaExpression lambdaExpression = ExpressionBuilder.Lambda<TModel>(memberType, memberName, liftMemberAccess);
+            var lambdaExpression = ExpressionBuilder.Lambda<TModel>(memberType, memberName, liftMemberAccess);
 
 #if MVC3
             if (typeof(TModel).IsDynamicObject() && memberType != null && lambdaExpression.Body.Type.GetNonNullableType() != memberType.GetNonNullableType())
@@ -109,11 +104,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
                 lambdaExpression = Expression.Lambda(Expression.Convert(lambdaExpression.Body, memberType), lambdaExpression.Parameters);
             }
 #endif
-            Type columnType = typeof(GridBoundColumn<,>).MakeGenericType(new[] { typeof(TModel), lambdaExpression.Body.Type });
+            var columnType = typeof(GridBoundColumn<,>).MakeGenericType(new[] { typeof(TModel), lambdaExpression.Body.Type });
 
-            ConstructorInfo constructor = columnType.GetConstructor(new[] { Container.GetType(), lambdaExpression.GetType() });
+            var constructor = columnType.GetConstructor(new[] { Container.GetType(), lambdaExpression.GetType() });
 
-            IGridBoundColumn column = (IGridBoundColumn)constructor.Invoke(new object[] { Container, lambdaExpression });
+            var column = (IGridBoundColumn)constructor.Invoke(new object[] { Container, lambdaExpression });
             
             column.Member = memberName;
             column.Title = memberName.AsTitle();

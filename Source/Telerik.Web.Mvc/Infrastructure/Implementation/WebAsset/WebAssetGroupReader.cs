@@ -39,6 +39,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 }
 
                 result.Append(text);
+                result.AppendLine();
             }
 
             return result.ToString();

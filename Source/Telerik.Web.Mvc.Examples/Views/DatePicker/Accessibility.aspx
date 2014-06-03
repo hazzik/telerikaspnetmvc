@@ -1,25 +1,25 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
 <asp:content contentPlaceHolderID="MainContent" runat="server">
     <% Html.BeginForm(); %>
-        <label for="delay-input">Delay:</label>
+        <label for="delay">Delay:</label>
         <%= Html.Telerik().TimePicker()
                 .Name("delay")
                 .Value(DateTime.Now)
         %>
         <br />
-        <label for="deliveryDate-input">Delivery date:</label>
+        <label for="deliveryDate">Delivery date:</label>
         <%= Html.Telerik().DatePicker()
                 .Name("deliveryDate")
                 .Value(DateTime.Now)
         %>
         <br />
-        <label for="orderDateTime-input">Order date time:</label>
+        <label for="orderDateTime">Order date time:</label>
         <%= Html.Telerik().DateTimePicker()
                 .Name("orderDateTime")
                 .Value(DateTime.Now)
         %>
         <p>
-            <button class="t-button t-state-default" type="submit">Save</button>
+            <button class="t-button" type="submit">Save</button>
         </p>
 
     <% Html.EndForm(); %>
@@ -38,6 +38,10 @@
        { %>
             <p><strong>Posted value from DateTimePicker is : <%= ViewData["orderDateTime"] %></strong></p>
     <% } %>	
+
+    <noscript>
+        <p>Your browsing experience on this page will be better if you visit it with a JavaScript-enabled browser / if you enable JavaScript.</p>
+    </noscript>
 
     <% Html.RenderPartial("AccessibilityValidation"); %>
 </asp:content>

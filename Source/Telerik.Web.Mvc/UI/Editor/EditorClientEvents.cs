@@ -12,9 +12,16 @@ namespace Telerik.Web.Mvc.UI
             OnSelectionChange = new ClientEvent();
             OnChange = new ClientEvent();
             OnExecute = new ClientEvent();
+            OnError = new ClientEvent();
         }
 
         public ClientEvent OnChange
+        {
+            get;
+            private set;
+        }
+        
+        public ClientEvent OnError
         {
             get;
             private set;
@@ -44,6 +51,7 @@ namespace Telerik.Web.Mvc.UI
             writer.AppendClientEvent("onSelectionChange", OnSelectionChange);
             writer.AppendClientEvent("onChange", OnChange);
             writer.AppendClientEvent("onExecute", OnExecute);
+            writer.AppendClientEvent("onError", OnError);
         }
     }
 }

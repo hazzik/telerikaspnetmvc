@@ -1,20 +1,10 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
-
-    using System.Web.Mvc;
     using System.Collections.Generic;
+    using System.Web.Mvc;
 
     public class ComboBoxController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewData["controllerName"] = "ComboBox";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
-        }
-
         public ActionResult Rendering()
         {
             return View();
@@ -36,6 +26,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         }
 
         public ActionResult ClientEvents()
+        {
+            return View();
+        }
+
+        public ActionResult ClientSideRendering()
         {
             return View();
         }

@@ -7,18 +7,13 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.Linq;
+    using Telerik.Web.Mvc.Extensions;
 
-    using Extensions;
-
-    public static class GridDescriptorSerializer
+    public class GridDescriptorSerializer
     {
         private const string ColumnDelimiter = "~";
-        private const string DirectionDelimiter = "-";
-        private const string Ascending = "asc";
-        private const string Descending = "desc";
-
+        
         public static string Serialize<T>(IEnumerable<T> descriptors)
             where T : IDescriptor
         {
@@ -27,73 +22,33 @@ namespace Telerik.Web.Mvc.UI
                 return "~";
             }
 
-            List<string> expressions = new List<string>();
+            var expressions = descriptors.Select(d => d.Serialize()).ToArray();
 
-            foreach (T descriptor in descriptors)
-            {
-                expressions.Add(Serialize(descriptor));
-            }
-
-            return string.Join(ColumnDelimiter, expressions.ToArray());
+            return string.Join(ColumnDelimiter, expressions);
         }
 
         public static IList<T> Deserialize<T>(string from)
             where T : IDescriptor, new()
         {
-            IList<T> result = new List<T>();
+            var result = new List<T>();
 
-            if (!string.IsNullOrEmpty(from))
+            if (!from.HasValue())
             {
-                string[] components = from.Split(ColumnDelimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                return result;
+            }
 
-                if (components.Length > 0)
-                {
-                    foreach (string component in components)
-                    {
-                        string[] parts = component.Split(DirectionDelimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var components = from.Split(ColumnDelimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 
-                        if (parts.Length == 2)
-                        {
-                            T descriptor = Deserialize<T>(parts);
-                            result.Add(descriptor);
-                        }
-                        else if (parts.Length == 1)
-                        {
-                            if (parts[0] == "asc" || parts[0] == "desc")
-                            {
-                                T descriptor = new T
-                                {
-                                    SortDirection = parts[0].IsCaseInsensitiveEqual(Descending) ? ListSortDirection.Descending : ListSortDirection.Ascending
-                                };
+            foreach (string component in components)
+            {
+                var descriptor = new T();
 
-                                result.Add(descriptor);
-                            }
-                        }
-                    }
-                }
+                descriptor.Deserialize(component);
+
+                result.Add(descriptor);
             }
 
             return result;
-        }
-
-        private static string Serialize<T>(T descriptor)
-            where T : IDescriptor
-        {
-            return "{0}{1}{2}".FormatWith(descriptor.Member,
-                            DirectionDelimiter,
-                            descriptor.SortDirection == ListSortDirection.Ascending ? Ascending : Descending);
-        }
-
-        private static T Deserialize<T>(string[] from)
-            where T : IDescriptor, new()
-        {
-            T descriptor = new T
-            {
-                Member = from[0],
-                SortDirection = from[1].IsCaseInsensitiveEqual(Descending) ? ListSortDirection.Descending : ListSortDirection.Ascending
-            };
-
-            return descriptor;
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Telerik.Web.Mvc.Examples
 
     public partial class ComboBoxController : Controller
     {
-        [SourceCodeFile("_AjaxLoading (Action method)", "~/Controllers/ComboBox/AjaxLoadingController.cs")]
         public ActionResult AjaxLoading()
         {
             return View();

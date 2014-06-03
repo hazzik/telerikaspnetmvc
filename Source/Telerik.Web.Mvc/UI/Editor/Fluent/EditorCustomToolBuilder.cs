@@ -6,6 +6,7 @@
 namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
+    using System.Collections.Generic;
     using Telerik.Web.Mvc.Extensions;
     
     public class EditorCustomToolBuilder : IHideObjectMembers
@@ -18,6 +19,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         public EditorCustomToolBuilder HtmlAttributes(object attributes)
+        {
+            return HtmlAttributes(attributes.ToDictionary());
+        }
+
+        public EditorCustomToolBuilder HtmlAttributes(IDictionary<string, object> attributes)
         {
             tool.HtmlAttributes.Merge(attributes);
             return this;

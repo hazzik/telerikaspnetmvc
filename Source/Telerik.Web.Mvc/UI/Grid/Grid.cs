@@ -18,6 +18,7 @@ namespace Telerik.Web.Mvc.UI
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.UI.Fluent;
     using Telerik.Web.Mvc.UI.Html;
 #if MVC3
     using Infrastructure.Implementation;
@@ -35,6 +36,12 @@ namespace Telerik.Web.Mvc.UI
     /// <typeparam name="T">The type of the data item which the grid is bound to.</typeparam>
     public class Grid<T> : ViewComponentBase, IGridColumnContainer<T>, IGrid where T : class
     {
+        private readonly IGridHtmlBuilderFactory htmlBuilderFactory;
+
+        private IGridUrlBuilder urlBuilder;
+
+        private IGridDataKeyStore dataKeyStore;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Grid{T}"/> class.
         /// </summary>
@@ -43,10 +50,10 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="urlGenerator">The URL generator.</param>
         /// <param name="builderFactory">The builder factory.</param>
         public Grid(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator,
-            ILocalizationService localizationService)
+            ILocalizationService localizationService, IGridHtmlBuilderFactory htmlBuilderFactory)
             : base(viewContext, clientSideObjectWriterFactory)
         {
-            Guard.IsNotNull(urlGenerator, "urlGenerator");
+            this.htmlBuilderFactory = htmlBuilderFactory;
 
             UrlGenerator = urlGenerator;
 
@@ -59,7 +66,7 @@ namespace Telerik.Web.Mvc.UI
             Sorting = new GridSortSettings(this);
             Scrolling = new GridScrollingSettings();
             Filtering = new GridFilteringSettings();
-            Editing = new GridEditingSettings(this)
+            Editing = new GridEditingSettings<T>(this)
             {
                 PopUp = new Window(viewContext, clientSideObjectWriterFactory, new WindowHtmlBuilderFactory())
                 {
@@ -146,7 +153,7 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public GridEditingSettings Editing
+        public GridEditingSettings<T> Editing
         {
             get;
             private set;
@@ -429,6 +436,24 @@ namespace Telerik.Web.Mvc.UI
             return PrefixUrlParameters ? Id + "-" + parameter : parameter;
         }
 
+        public IEnumerable<AggregateDescriptor> Aggregates
+        {
+            get 
+            {
+                return VisibleColumns.OfType<IGridBoundColumn>().Select(c => 
+                {
+                    var descriptor = new AggregateDescriptor
+                    {
+                        Member = c.Member
+                    };
+                    
+                    descriptor.Aggregates.AddRange(c.Aggregates);
+                    
+                    return descriptor;
+                });
+            }
+        }
+
         public override void WriteInitializationScript(TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tGrid", writer);
@@ -457,11 +482,34 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        private string currentItemMode;
+
+        private GridItemMode CurrentItemMode
+        {
+            get
+            {
+                if (currentItemMode == null)
+                {
+                    currentItemMode = this.GetGridParameter<string>(GridUrlParameters.Mode);
+                }
+
+                return currentItemMode.ToEnum(GridItemMode.Default);
+            }
+        }
+        
         protected override void WriteHtml(HtmlTextWriter writer)
         {
+            if (!Columns.Any() && AutoGenerateColumns)
+            {
+                foreach (GridColumnBase<T> column in new GridColumnGenerator<T>(this).GetColumns())
+                {
+                    Columns.Add(column);
+                }
+            }
+
 #if MVC2 || MVC3
-            bool orignalClientValidationEnabled = ViewContext.ClientValidationEnabled;
-            FormContext originalFormContext = ViewContext.FormContext;
+            var orignalClientValidationEnabled = ViewContext.ClientValidationEnabled;
+            var originalFormContext = ViewContext.FormContext;
 
             try
             {
@@ -475,26 +523,32 @@ namespace Telerik.Web.Mvc.UI
                 {
                     InitializeEditors();
                 }
-
 #endif
-                if (!Columns.Any() && AutoGenerateColumns) 
-                {
-                    foreach (GridColumnBase<T> column in new GridColumnGenerator<T>(this).GetColumns())
-                    {
-                        Columns.Add(column);
-                    }
-                }
+                
 #if MVC3
                 AdjustColumnsTypesFromDynamic();
 #endif
-
-
                 RegisterScriptFiles();
 
-                var builder = new GridHtmlBuilder<T>(this);
+                if (!HtmlAttributes.ContainsKey("id"))
+                {
+                    HtmlAttributes["id"] = Id;
+                }
 
-                builder.Build()
-                       .WriteTo(writer);
+                var builder = htmlBuilderFactory.CreateBuilder(Scrolling.Enabled);
+
+                var renderingData = CreateRenderingData();
+
+                var functionalData = CreateFunctionalData();
+
+                var container = builder.CreateGrid(HtmlAttributes, functionalData, renderingData);
+
+                if (Editing.Mode == GridEditMode.PopUp && (CurrentItemMode == GridItemMode.Insert || CurrentItemMode == GridItemMode.Edit))
+                {
+                    AppendPopupEditor(container, renderingData);
+                }
+
+                container.WriteTo(writer);
 
 #if MVC2 || MVC3
                 if (ViewContext.FormContext != null)
@@ -513,17 +567,208 @@ namespace Telerik.Web.Mvc.UI
 #endif
             base.WriteHtml(writer);
         }
+
+        private GridFunctionalData CreateFunctionalData()
+        {
+            return new GridFunctionalData
+            {
+                ShowTopPager = Paging.Enabled && (Paging.Position == GridPagerPosition.Top || Paging.Position == GridPagerPosition.Both),
+                ShowBottomPager = Paging.Enabled && (Paging.Position == GridPagerPosition.Bottom || Paging.Position == GridPagerPosition.Both),
+                ShowTopToolBar = ToolBar.Enabled && (ToolBar.Position == GridToolBarPosition.Top || ToolBar.Position == GridToolBarPosition.Both),
+                ShowBottomToolBar = ToolBar.Enabled && (ToolBar.Position == GridToolBarPosition.Bottom || ToolBar.Position == GridToolBarPosition.Both),
+                ShowGroupHeader = Grouping.Enabled && Grouping.Visible,
+                PagerData = CreatePagerData(),
+                GroupingData = CreateGroupingData(),
+                ToolBarData = CreateToolbarData(),
+                ShowFooter = Footer
+            };
+        }
+        
+        private GridToolBarData CreateToolbarData()
+        {
+            return new GridToolBarData
+            {
+                Commands = ToolBar.Commands.Cast<IGridActionCommand>(),
+                UrlBuilder = UrlBuilder,
+                Localization = Localization,
+                Template = ToolBar.Template
+            };
+        }
+
+        private GridGroupingData CreateGroupingData()
+        {
+            return new GridGroupingData
+            {
+                GetTitle = VisibleColumns.Cast<IGridColumn>().GroupTitleForMember,
+                GroupDescriptors = DataProcessor.GroupDescriptors,
+                Hint = Localization.GroupHint,
+                UrlBuilder = UrlBuilder,
+                SortedAscText = Localization.SortedAsc,
+                SortedDescText = Localization.SortedDesc,
+                UnGroupText = Localization.UnGroup
+            };
+        }
+
+        private GridPagerData CreatePagerData()
+        {
+            return new GridPagerData
+            {
+                CurrentPage = DataProcessor.CurrentPage,
+                PageCount = DataProcessor.PageCount,
+                Style = Paging.Style,
+                UrlBuilder = UrlBuilder,
+                Total = DataProcessor.Total,
+                PageOfText = Localization.PageOf,
+                PageText = Localization.Page,
+                Colspan = Colspan,
+                DisplayingItemsText = Localization.DisplayingItems,
+                PageSize = DataProcessor.PageSize,
+                RefreshText = Localization.Refresh
+            };
+        }
+
+        private void AppendPopupEditor(IHtmlNode container, GridRenderingData renderingData)
+        {
+            var popup = Editing.PopUp;
+
+            new WindowBuilder(popup)
+                .Content(renderingData.PopUpContainer.InnerHtml)
+                .HtmlAttributes(new { style = "top:10%;left:50%;margin-left: -" + (popup.Width == 0 ? 360 : popup.Width) / 4 + "px" })
+                .Buttons(buttons => buttons
+                    .Close(renderingData.UrlBuilder.CancelUrl(null))
+                );
+
+            if (!popup.Name.HasValue())
+            {
+                popup.Name = Name + "PopUp";
+            }
+
+            if (!popup.Title.HasValue())
+            {
+                popup.Title = CurrentItemMode == GridItemMode.Edit ? Localization.Edit : Localization.AddNew;
+            }
+
+            ScriptRegistrar.Current.Register(popup);
+
+            new LiteralNode(popup.ToHtmlString()).AppendTo(container);
+        }
+
+        private GridRenderingData CreateRenderingData()
+        {
+            var renderingData = new GridRenderingData
+            {
+                TableHtmlAttributes = TableHtmlAttributes,
+                DataKeyStore = DataKeyStore,
+                HtmlHelper = new GridHtmlHelper<T>(ViewContext, DataKeyStore),
+                UrlBuilder = UrlBuilder,
+                DataSource = DataProcessor.ProcessedDataSource,
+                Columns = VisibleColumns.Cast<IGridColumn>(),
+                GroupMembers = DataProcessor.GroupDescriptors.Select(g => g.Member),
+                Mode = CurrentItemMode,
+                EditMode = Editing.Mode,
+                HasDetailView = HasDetailView,
+                Colspan = Colspan,
+                DetailViewTemplate = MapDetailViewTemplate(HasDetailView ? DetailView.Template : null),
+                NoRecordsTemplate = FormatNoRecordsTemplate(),
+                Localization = Localization,
+                ScrollingHeight = Scrolling.Height,
+                EditFormHtmlAttributes = Editing.FormHtmlAttributes,
+                ShowFooter = Footer && VisibleColumns.Any(c => c.FooterTemplate.HasValue() || c.ClientFooterTemplate.HasValue()),
+                AggregateResults = DataProcessor.AggregatesResults,
+                Aggregates = Aggregates.SelectMany(aggregate => aggregate.Aggregates),
+                GroupsCount = DataProcessor.GroupDescriptors.Count,
+                ShowGroupFooter = Aggregates.Any() && VisibleColumns.OfType<IGridBoundColumn>().Any(c => c.GroupFooterTemplate.HasValue()),
+                PopUpContainer = new HtmlFragment(),
+#if MVC2 || MVC3    
+                CreateNewDataItem = () => Editing.DefaultDataItem(),
+                EditTemplateName = Editing.TemplateName,
+                FormId = ViewContext.FormContext.FormId,
+#endif
+                Callback = RowActionCallback
+            };
+            return renderingData;
+        }
+
+        private void RowActionCallback(GridItem item)
+        {
+            IsEmpty = false;
+
+            if (RowAction != null)
+            {
+                var row = new GridRow<T>(this, (T)item.DataItem, item.Index);
+                if (HasDetailView)
+                {
+                    row.DetailRow = new GridDetailRow<T>
+                    {
+                        Html = item.DetailRowHtml
+                    };
+                }
+#if MVC2 || MVC3
+                row.InEditMode = item.Type == GridItemType.EditRow;
+                row.InInsertMode = item.Type == GridItemType.InsertRow;
+                row.Selected = (item.State & GridItemStates.Selected) == GridItemStates.Selected;
+#endif
+                RowAction(row);
+
+                if (HasDetailView)
+                {
+                    item.Expanded = row.DetailRow.Expanded;
+                    item.DetailRowHtml = row.DetailRow.Html;
+                    item.DetailRowHtmlAttributes = row.DetailRow.HtmlAttributes;
+                }
+
+                if (row.Selected)
+                {
+                    item.State |= GridItemStates.Selected;
+                }
+#if MVC2 || MVC3
+                if (row.InEditMode)
+                {
+                    item.Type = GridItemType.EditRow;
+                }
+                else if (row.InInsertMode)
+                {
+                    item.Type = GridItemType.InsertRow;
+                }
+                else
+#endif
+                {
+                    item.Type = GridItemType.DataRow;
+                }
+
+                item.HtmlAttributes = row.HtmlAttributes;
+            }
+        }
+
+        private Action<object, IHtmlNode> MapDetailViewTemplate(HtmlTemplate<T> detailViewTemplate)
+        {
+            return (dataItem, container) =>
+            {
+                if (detailViewTemplate != null && detailViewTemplate.HasValue())
+                    detailViewTemplate.Apply((T)dataItem, container);
+            };
+        }
+
+        private HtmlTemplate FormatNoRecordsTemplate()
+        {
+            if (!NoRecordsTemplate.HasValue())
+                NoRecordsTemplate.Html = Localization.NoRecords;
+
+            return NoRecordsTemplate;
+        }
+
 #if MVC2 || MVC3
         private IEnumerable<FieldValidationMetadata> ProcessValidationMetadata()
         {
             var validators = ViewContext.FormContext
                               .FieldValidators
                               .Values
-                              .Where(IsBooleanField);
+                              .Where(IsBooleanField)
+                              .ToArray();
 
-            if (Name.Contains("<#="))
+            if (Name != null && Name.Contains("<#="))
             {
-                validators = validators.Select(EncodeRegularExpressionValidators);
+                validators = validators.Select((metadata) => EncodeRegularExpressionValidators(metadata)).ToArray();
             }
             
             return validators;
@@ -533,7 +778,7 @@ namespace Telerik.Web.Mvc.UI
         {
             metadata.ValidationRules.Each(validationRule =>
             {
-                if (validationRule.ValidationType == "regularExpression")
+                if (validationRule.ValidationType == "regularExpression" || validationRule.ValidationType == "regex")
                 {
                     if (validationRule.ValidationParameters.ContainsKey("pattern"))
                     {
@@ -588,7 +833,7 @@ namespace Telerik.Web.Mvc.UI
         {
             get
             {
-                return (this.IsInInsertMode() || this.IsInEditMode() || (Editing.Enabled && IsClientBinding))
+                return (CurrentItemMode == GridItemMode.Insert || CurrentItemMode == GridItemMode.Edit || (Editing.Enabled && IsClientBinding))
 #if MVC3
                        && !ViewContext.UnobtrusiveJavaScriptEnabled
 #endif
@@ -729,7 +974,7 @@ namespace Telerik.Web.Mvc.UI
 
                 if (HasCommandOfType<GridDeleteActionCommand>())
                 {
-                    if (!CurrrentBinding.Delete.HasValue())
+                    if (!CurrrentBinding.Delete.HasValue() && Editing.Mode != GridEditMode.InCell)
                     {
                         throw new NotSupportedException(TextResource.DeleteCommandRequiresDelete);
                     }
@@ -737,12 +982,30 @@ namespace Telerik.Web.Mvc.UI
 
                 if (HasCommandOfType<GridToolBarInsertCommand<T>>())
                 {
-                    if (!CurrrentBinding.Insert.HasValue())
+                    if (!CurrrentBinding.Insert.HasValue() && Editing.Mode != GridEditMode.InCell)
                     {
                         throw new NotSupportedException(TextResource.InsertCommandRequiresInsert);
                     }
                 }
+
+                if (HasCommandOfType<GridToolBarSubmitChangesCommand<T>>())
+                {
+                    if (Editing.Mode != GridEditMode.InCell)
+                    {
+                        throw new NotSupportedException(TextResource.BatchUpdatesRequireInCellMode);
+                    }
+
+                    if (!CurrrentBinding.Update.HasValue())
+                    {
+                        throw new NotSupportedException(TextResource.BatchUpdatesRequireUpdate);
+                    }
+                }
 #if MVC2 || MVC3
+                if (Editing.Mode == GridEditMode.InCell && (!Ajax.Enabled && !WebService.Enabled))
+                {
+                    throw new NotSupportedException(TextResource.InCellModeNotSupportedInServerBinding);
+                }
+
                 if(typeof(T) == typeof(System.Data.DataRowView) && Editing.Mode == GridEditMode.InLine 
                     && Columns.OfType<IGridBoundColumn>().Where(c => c.EditorTemplateName.HasValue()).Any())
                 {
@@ -776,119 +1039,35 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        public IHtmlBuilder CreateBuilderFor(GridRow<T> row)
-        {
-            IHtmlBuilder builder = new GridRowHtmlBuilder<T>(row);
-#if MVC2 || MVC3
-            if (row.InEditMode || row.InInsertMode)
-            {
-                var editorBuilder = Editing.Mode != GridEditMode.InLine ? new GridFormEditRowHtmlBuilder<T>(row) : new GridEditRowHtmlBuilder<T>(row);
-
-                editorBuilder.Colspan = Colspan;
-                editorBuilder.ID = Name + "form";
-                editorBuilder.ActionUrl = new GridUrlBuilder(this).Url(row.InInsertMode ? Server.Insert : Server.Update);
-
-                if (Editing.Mode != GridEditMode.PopUp)
-                {
-                    builder = editorBuilder;
-                }
-                else
-                {
-                    var popup = Editing.PopUp;
-
-                    popup.Html = editorBuilder.Build().ToString();
-
-                    if (!popup.Name.HasValue())
-                    {
-                        popup.Name = Name + "PopUp";
-                    }
-
-                    if (!popup.Title.HasValue())
-                    {
-                        popup.Title = row.InEditMode ? Localization.Edit : Localization.AddNew;
-                    }
-
-                    popup.HtmlAttributes["style"] = "top:10%;left:50%;margin-left: -" + (popup.Width == 0 ? 360 : popup.Width) / 4 + "px";
-
-                    ScriptRegistrar.Current.Register(popup);
-                }
-            }
-#endif
-            if (HasDetailView)
-            {
-#if MVC2 || MVC3
-                if (!(row.InEditMode || row.InInsertMode))
-#endif
-                {
-                    var detailViewAdorner = new GridToggleDetailViewAdorner
-                    {
-                        Expanded = row.DetailRow.Expanded
-                    };
-
-                    builder.Adorners.Add(detailViewAdorner);
-                }
-
-                var masterRowAdorner = new GridMasterRowAdorner();
-
-                builder.Adorners.Add(masterRowAdorner);
-            }
-
-            if (DataProcessor.GroupDescriptors.Any())
-            {
-#if MVC2 || MVC3
-                if (!(row.InEditMode || row.InInsertMode))
-#endif
-                {
-                    var repeatingAdorner = new GridTagRepeatingAdorner(DataProcessor.GroupDescriptors.Count)
-                    {
-                        CssClasses = 
-                    { 
-                        UIPrimitives.Grid.GroupCell 
-                    },
-                        Nbsp = true
-                    };
-
-                    builder.Adorners.Add(repeatingAdorner);
-                }
-            }
-
-            return builder;
-        }
-
 #if MVC2 || MVC3
         private void InitializeEditors()
         {
             ViewContext.HttpContext.Items["$SelfInitialize$"] = true;
-            T dataItem;
-            if (typeof(T) == typeof(System.Data.DataRowView))
+            
+            var dataItem = Editing.DefaultDataItem();
+
+            var htmlHelper = new GridHtmlHelper<T>(ViewContext, DataKeyStore);
+
+            if (Editing.Mode != GridEditMode.InLine && Editing.Mode != GridEditMode.InCell)
             {
-                dataItem = (T)((object)new System.Data.DataTable().DefaultView.AddNew());
+                var container = new HtmlElement("div").AddClass(UIPrimitives.Grid.InFormContainer);
+
+                htmlHelper.EditorForModel(dataItem, Editing.TemplateName).AppendTo(container);
+
+                EditorHtml = container.InnerHtml;
             }
             else
             {
-                dataItem = Activator.CreateInstance<T>();
-            }
-             
+                var cellBuilderFactory = new GridCellBuilderFactory();
 
-            var row = new GridRow<T>(this, dataItem, 0);
-
-            if (Editing.Mode != GridEditMode.InLine)
-            {
-                var formBuilder = new GridFormEditRowHtmlBuilder<T>(row);
-
-                EditorHtml = formBuilder.CreateEditorHtml();
-            }
-            else
-            {
+                
                 VisibleColumns.Each(column =>
                 {
-                    var context = new GridCell<T>(column, dataItem)
-                    {
-                        InEditMode = true,
-                    };
-                    IHtmlNode td = column.CreateEditorHtmlBuilder(context).Build();
+                    var cellBuilder = cellBuilderFactory.CreateEditCellBuilder(column, htmlHelper);
+                    
+                    var editor = cellBuilder.CreateCell(dataItem);
 
-                    column.EditorHtml = td.InnerHtml;
+                    column.EditorHtml = editor.InnerHtml;
                 });
             }
 
@@ -902,6 +1081,42 @@ namespace Telerik.Web.Mvc.UI
             get
             {
                 return DetailView != null;
+            }
+        }
+
+        private IGridDataKeyStore DataKeyStore
+        {
+            get
+            {
+                if (dataKeyStore == null)
+                {
+                    var dataKeys = DataKeys.Cast<IGridDataKey>();
+                    var currentKeyValues = DataKeys.Select(key => key.GetCurrentValue(ViewContext.Controller.ValueProvider)).ToArray();
+
+                    dataKeyStore = new GridDataKeyStore(dataKeys, currentKeyValues);
+                }
+                return dataKeyStore;
+            }
+        }
+
+        public IGridUrlBuilder UrlBuilder
+        {
+            get
+            {
+                if (urlBuilder == null)
+                {
+                    urlBuilder = new GridUrlBuilder(this, DataKeyStore);
+                }
+
+                return urlBuilder;   
+            }
+        }
+
+        IGridEditingSettings IGrid.Editing
+        {
+            get
+            {
+                return this.Editing;
             }
         }
     }

@@ -18,15 +18,12 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            var li = new HtmlTag("li")
+            var li = new HtmlElement("li")
                     .AddClass("t-editor-dropdown");
 
             var builder = new DropDownListHtmlBuilder(dropDown);
 
             IHtmlNode rootTag = builder.Build();
-
-            builder.InnerContentTag().AppendTo(rootTag);
-            builder.HiddenInputTag().AppendTo(rootTag);
 
             rootTag.AppendTo(li);
             

@@ -69,30 +69,6 @@
         function getPanelBar() {
             return $("#myPanelBar").data("tPanelBar");
         }
-        
-        function test_expand_should_collapse_other_opened_items() {
-           
-            var panel = getPanelBar();
-
-            var item = getRootItem(0);
-            var item2 = getRootItem(2);
-
-            panel.expand(item2);
-
-            assertEquals("none", item.find('> .t-group').css("display"));
-        }
-
-        function test_expand_should_not_collapse_item_which_is_already_expanded() {
-        
-            var panel = getPanelBar();
-
-            var item = getRootItem(2);
-
-            panel.expand(item);
-            panel.expand(item);
-
-            assertEquals("block", item.find('> .t-group').css("display"));
-        }
 
         //handlers
         function Expand(sender, args) {
@@ -111,5 +87,40 @@
             isRaised = true;
         }
    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+        
+        test('expand should collapse other opened items', function() {
+           
+            var panel = getPanelBar();
+
+            var item = getRootItem(0);
+            var item2 = getRootItem(2);
+
+            panel.expand(item2);
+
+            equal(item.find('> .t-group').css("display"), "none");
+        });
+
+        test('expand should not collapse item which is already expanded', function() {
+        
+            var panel = getPanelBar();
+
+            var item = getRootItem(2);
+
+            panel.expand(item);
+            panel.expand(item);
+
+            equal(item.find('> .t-group').css("display"), "block");
+        });
+
+</script>
 
 </asp:Content>

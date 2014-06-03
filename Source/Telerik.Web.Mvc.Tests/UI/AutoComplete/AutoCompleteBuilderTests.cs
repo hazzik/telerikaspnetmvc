@@ -177,5 +177,37 @@
 
             Assert.True(fxFacCreated);
         }
+
+        [Fact]
+        public void Encoded_method_be_able_to_set_Encoded_property()
+        {
+            builder.Encode(false);
+
+            Assert.False(AutoComplete.Encoded);
+        }
+
+        [Fact]
+        public void Encoded_method_should_return_builder()
+        {
+            var returnedBuilder = builder.Encode(true);
+
+            Assert.IsType(typeof(AutoCompleteBuilder), returnedBuilder);
+        }
+
+        [Fact]
+        public void Value_method_should_set_Value_property()
+        {
+            builder.Value("test");
+
+            AutoComplete.Value.ShouldEqual("test");
+        }
+
+        [Fact]
+        public void Value_method_should_return_builder()
+        {
+            var returnedBuilder = builder.Value("test");
+
+            Assert.IsType(typeof(AutoCompleteBuilder), returnedBuilder);
+        }
     }
 }

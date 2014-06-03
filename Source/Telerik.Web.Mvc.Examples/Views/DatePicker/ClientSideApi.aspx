@@ -3,7 +3,8 @@
     
     <h3>DatePicker</h3>
     <%= Html.Telerik().DatePicker()
-            .Name("DatePicker") 
+            .Name("DatePicker")
+            .HtmlAttributes(new { id = "DatePicker_wrapper" })
     %>
 
 	<script type="text/javascript">
@@ -64,33 +65,34 @@
                         .Name("DatePickerValue")
                         .Value(new DateTime(2010, 1, 1)) 
                 %>
-                <button class="t-button t-state-default" onclick="updateValue()">Select</button>
+                <button class="t-button" onclick="updateValue()">Select</button>
             </li>
             
             <li>
-                <button class="t-button t-state-default" onclick="getValue()" style="width: 100px;">Get Value</button>
+                <button class="t-button" onclick="getValue()" style="width: 100px;">Get Value</button>
             </li>
             <li>
-                <button id="ShowCalendar" class="t-button t-state-default" onclick="showCalendar(event)">Open</button> /
-                <button id="HideCalendar" class="t-button t-state-default" onclick="hideCalendar()">Close</button>
+                <button id="ShowCalendar" class="t-button" onclick="showCalendar(event)">Open</button> /
+                <button id="HideCalendar" class="t-button" onclick="hideCalendar()">Close</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="enableDatePicker()">Enable</button> /
-                <button class="t-button t-state-default" onclick="disableDatePicker()">Disable</button>
+                <button class="t-button" onclick="enableDatePicker()">Enable</button> /
+                <button class="t-button" onclick="disableDatePicker()">Disable</button>
             </li>
             <li>
                 <%= Html.Telerik().DatePicker()
-                        .Name("DatePickerMinOrMax") 
+                        .Name("DatePickerMinOrMax")
                 %>
-                <button id="SetMinDate" class="t-button t-state-default" onclick="minDatePicker()">Set Min date</button> /
-                <button id="SetMaxDate" class="t-button t-state-default" onclick="maxDatePicker()">Set Max date</button>
+                <button id="SetMinDate" class="t-button" onclick="minDatePicker()">Set Min date</button> /
+                <button id="SetMaxDate" class="t-button" onclick="maxDatePicker()">Set Max date</button>
             </li>
         </ul>
     <% } %>
 
     <h3>TimePicker</h3>
     <%= Html.Telerik().TimePicker()
-            .Name("TimePicker") 
+            .Name("TimePicker")
+            .HtmlAttributes(new { id = "TimePicker_wrapper" })
     %>
 
 	<script type="text/javascript">
@@ -149,35 +151,37 @@
             <li>
                 <%= Html.Telerik().TimePicker()
                         .Name("TimePickerValue")
+                        .HtmlAttributes(new { id = "TimePickerValue_wrapper" })
                         .Value(DateTime.Now)
                 %>
-                <button class="t-button t-state-default" onclick="updateTimePickerValue()">Select</button>
+                <button class="t-button" onclick="updateTimePickerValue()">Select</button>
             </li>
             
             <li>
-                <button class="t-button t-state-default" onclick="getTimePickerValue()" style="width: 100px;">Get Value</button>
+                <button class="t-button" onclick="getTimePickerValue()" style="width: 100px;">Get Value</button>
             </li>
             <li>
-                <button id="OpenTimePicker" class="t-button t-state-default" onmousedown="openTimePicker(event)">Open</button> /
-                <button id="CloseTimePicker" class="t-button t-state-default" onclick="closeTimePicker()">Close</button>
+                <button id="OpenTimePicker" class="t-button" onmousedown="openTimePicker(event)">Open</button> /
+                <button id="CloseTimePicker" class="t-button" onclick="closeTimePicker()">Close</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="enableTimePicker()">Enable</button> /
-                <button class="t-button t-state-default" onclick="disableTimePicker()">Disable</button>
+                <button class="t-button" onclick="enableTimePicker()">Enable</button> /
+                <button class="t-button" onclick="disableTimePicker()">Disable</button>
             </li>
             <li>
                 <%= Html.Telerik().TimePicker()
-                        .Name("TimePickerMinOrMax") 
+                        .Name("TimePickerMinOrMax")
                 %>
-                <button id="SetMinTime" class="t-button t-state-default" onclick="minTimePicker()">Set Min time</button> /
-                <button id="SetMaxTime" class="t-button t-state-default" onclick="maxTimePicker()">Set Max time</button>
+                <button id="SetMinTime" class="t-button" onclick="minTimePicker()">Set Min time</button> /
+                <button id="SetMaxTime" class="t-button" onclick="maxTimePicker()">Set Max time</button>
             </li>
         </ul>
     <% } %>
 
     <h3>DateTimePicker</h3>
     <%= Html.Telerik().DateTimePicker()
-            .Name("DateTimePicker") 
+            .Name("DateTimePicker")
+            .HtmlAttributes(new { id = "DateTimePicker_wrapper" })      
     %>
 
 	<script type="text/javascript">
@@ -248,34 +252,34 @@
                         .Name("DateTimePickerValue")
                         .Value(new DateTime(2010, 1, 1, 10, 0, 0))
                 %>
-                <button class="t-button t-state-default" onclick="updateDateTimePickerValue()">Select</button>
+                <button class="t-button" onclick="updateDateTimePickerValue()">Select</button>
             </li>
             
             <li>
-                <button class="t-button t-state-default" onclick="getDateTimePickerValue()" style="width: 100px;">Get Value</button>
+                <button class="t-button" onclick="getDateTimePickerValue()" style="width: 100px;">Get Value</button>
             </li>
             <li>
-                <button id="OpenDateTimeCalendarPicker" class="t-button t-state-default" onmousedown="openDateTimePicker(event, 'date')">Open Calendar</button> /
-                <button id="OpenDateTimeTimePicker" class="t-button t-state-default" onmousedown="openDateTimePicker(event, 'time')">Open TimePicker</button> /
-                <button id="CloseDateTimePicker" class="t-button t-state-default" onclick="closeDateTimePicker()">Close</button>
+                <button id="OpenDateTimeCalendarPicker" class="t-button" onmousedown="openDateTimePicker(event, 'date')">Open Calendar</button> /
+                <button id="OpenDateTimeTimePicker" class="t-button" onmousedown="openDateTimePicker(event, 'time')">Open TimePicker</button> /
+                <button id="CloseDateTimePicker" class="t-button" onclick="closeDateTimePicker()">Close</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="enableDateTimePicker()">Enable</button> /
-                <button class="t-button t-state-default" onclick="disableDateTimePicker()">Disable</button>
+                <button class="t-button" onclick="enableDateTimePicker()">Enable</button> /
+                <button class="t-button" onclick="disableDateTimePicker()">Disable</button>
             </li>
             <li>
                 <%= Html.Telerik().DatePicker()
                         .Name("DatePickerMinOrMaxValue")
                 %>
-                <button id="SetMinDateTime" class="t-button t-state-default" onclick="minDateTimePicker()">Set Min date</button> /
-                <button id="SetMaxDateTime" class="t-button t-state-default" onclick="maxDateTimePicker()">Set Max date</button>
+                <button id="SetMinDateTime" class="t-button" onclick="minDateTimePicker()">Set Min date</button> /
+                <button id="SetMaxDateTime" class="t-button" onclick="maxDateTimePicker()">Set Max date</button>
             </li>
             <li>
                 <%= Html.Telerik().TimePicker()
                         .Name("TimePickerMinOrMaxValue")
                 %>
-                <button id="SetStartTime" class="t-button t-state-default" onclick="startTimeDateTimePicker()">Set Start time</button> /
-                <button id="SetEndTime" class="t-button t-state-default" onclick="endTimeDateTimePicker()">Set End time</button>
+                <button id="SetStartTime" class="t-button" onclick="startTimeDateTimePicker()">Set Start time</button> /
+                <button id="SetEndTime" class="t-button" onclick="endTimeDateTimePicker()">Set End time</button>
             </li>
         </ul>
     <% } %>
@@ -300,31 +304,28 @@
 	    .configurator .t-button
 	    {
 	        margin: 0 0 1em;
-	        display: inline-block;
-	        *display: inline;
-	        zoom: 1;
 	    }
 	    
-        #DatePicker, #TimePicker, #DateTimePicker
+        #DatePicker_wrapper, #TimePicker_wrapper, #DateTimePicker_wrapper
         {
             margin: 0 250px 230px 0;
             float: left;
             width: 100px;
         }
 		
-		#TimePicker,
-		#DateTimePicker
+		#TimePicker_wrapper,
+		#DateTimePicker_wrapper
         {
             clear: both;
         }
 		
-		#DateTimePicker
+		#DateTimePicker_wrapper
         {
             margin-right: 200px;
             width: 150px;
         }
 	    
-	    #timePickerValue
+	    #TimePickerValue_wrapper
 	    {
 	        width: 100px;
 	    }

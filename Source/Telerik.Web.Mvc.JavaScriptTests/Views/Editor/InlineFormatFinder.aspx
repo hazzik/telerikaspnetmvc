@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -14,119 +14,130 @@
 
     var InlineFormatFinder;
     var enumerator;
+    </script>
+</asp:Content>
 
-    function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+    QUnit.testStart = function() {
         editor = getEditor();
         InlineFormatFinder = $.telerik.editor.InlineFormatFinder;
     }
 
-    function test_find_suitable_does_not_return_for_single_text_node() {
+    test('find suitable does not return for single text node', function() {
         editor.value('foo');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
-        assertNull(finder.findSuitable(editor.body.firstChild));
-    }
+        ok(null === finder.findSuitable(editor.body.firstChild));
+    });
 
-    function test_find_suitable_returns_matching_tag() {
+    test('find suitable returns matching tag', function() {
         editor.value('<span>foo</span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
-        assertEquals(editor.body.firstChild, finder.findSuitable(editor.body.firstChild.firstChild));
-    }
+        equal(finder.findSuitable(editor.body.firstChild.firstChild), editor.body.firstChild);
+    });
 
-    function test_find_suitable_returns_closest() {
+    test('find suitable returns closest', function() {
         editor.value('<span><span>foo</span></span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
-        assertEquals(editor.body.firstChild.firstChild, finder.findSuitable(editor.body.firstChild.firstChild.firstChild));
-    }
+        equal(finder.findSuitable(editor.body.firstChild.firstChild.firstChild), editor.body.firstChild.firstChild);
+    });
 
-    function test_find_suitable_does_not_return_in_case_of_partial_selection() {
+    test('find suitable does not return in case of partial selection', function() {
         editor.value('<span>foo<em>bar</em></span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
-        assertNull(finder.findSuitable(editor.body.firstChild.firstChild));
-    }
+        ok(null === finder.findSuitable(editor.body.firstChild.firstChild));
+    });
 
-    function test_findSuitable_and_caret() {
+    test('findSuitable and caret', function() {
         editor.value('<span>foo<span class="t-marker"></span>bar</span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
-        assertEquals(editor.body.firstChild, finder.findSuitable(editor.body.firstChild.firstChild));
-    }
+        equal(finder.findSuitable(editor.body.firstChild.firstChild), editor.body.firstChild);
+    });
 
-    function test_find_suitable_skips_markers() {
+    test('find suitable skips markers', function() {
         editor.value('<span>foo<span class="t-marker"></span></span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
-        assertEquals(editor.body.firstChild, finder.findSuitable(editor.body.firstChild.firstChild));
-    }
+        equal(finder.findSuitable(editor.body.firstChild.firstChild), editor.body.firstChild);
+    });
 
-    function test_find_format_finds_formatted_node_by_tag() {
+    test('find format finds formatted node by tag', function() {
         editor.value('<strong>foo</strong>');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
 
-        assertEquals(editor.body.firstChild, finder.findFormat(editor.body.firstChild.firstChild));
-    }
+        equal(finder.findFormat(editor.body.firstChild.firstChild), editor.body.firstChild);
+    });
 
-    function test_find_format_finds_formatterd_node_by_tag_and_style() {
+    test('find format finds formatterd node by tag and style', function() {
         editor.value('<span style="text-decoration:underline">foo</span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
 
-        assertEquals(editor.body.firstChild, finder.findFormat(editor.body.firstChild.firstChild));
-    }
+        equal(finder.findFormat(editor.body.firstChild.firstChild), editor.body.firstChild);
+    });
     
-    function test_find_format_returns_null_if_node_does_not_match_tag_and_style() {
+    test('find format returns null if node does not match tag and style', function() {
         editor.value('<span>foo</span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
 
-        assertNull(finder.findFormat(editor.body.firstChild.firstChild));
-    }
+        ok(null === finder.findFormat(editor.body.firstChild.firstChild));
+    });
 
-    function test_find_format_returns_parent_element() {
+    test('find format returns parent element', function() {
         editor.value('<span style="text-decoration:underline"><span>foo</span></span>');
 
         var finder = new InlineFormatFinder(editor.formats.underline);
-        assertEquals(editor.body.firstChild, finder.findFormat(editor.body.firstChild.firstChild.firstChild));
-    }
+        equal(finder.findFormat(editor.body.firstChild.firstChild.firstChild), editor.body.firstChild);
+    });
 
-    function test_find_format_checks_all_formats() {
+    test('find format checks all formats', function() {
         editor.value('<span style="font-weight:bold">foo</span>');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
 
-        assertEquals(editor.body.firstChild, finder.findFormat(editor.body.firstChild.firstChild));
-    }
+        equal(finder.findFormat(editor.body.firstChild.firstChild), editor.body.firstChild);
+    });
 
-    function test_is_formatted_returns_true_if_at_least_one_node_has_format() {
+    test('is formatted returns true if at least one node has format', function() {
         editor.value('<span style="font-weight:bold">foo</span>');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
-        assertTrue(finder.isFormatted([editor.body.firstChild.firstChild]));
-    }
+        ok(finder.isFormatted([editor.body.firstChild.firstChild]));
+    });
 
-    function test_is_formatted_returns_false_if_all_nodes_dont_have_format() {    
+    test('is formatted returns false if all nodes dont have format', function() {    
         editor.value('foo');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
-        assertFalse(finder.isFormatted([editor.body.firstChild]));
-    }
+        ok(!finder.isFormatted([editor.body.firstChild]));
+    });
 
-    function test_is_formatted_returns_true_for_formatted_and_unformatted_nodes() {
+    test('is formatted returns true for formatted and unformatted nodes', function() {
         editor.value('<strong>foo</strong>bar');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
-        assertTrue(finder.isFormatted([editor.body.firstChild.firstChild, editor.body.lastChild]));
-    }
+        ok(finder.isFormatted([editor.body.firstChild.firstChild, editor.body.lastChild]));
+    });
 
-    function test_is_formatted_returns_true_when_the_format_node_is_the_argument() {
+    test('is formatted returns true when the format node is the argument', function() {
         editor.value('<strong>foo</strong>');
 
         var finder = new InlineFormatFinder(editor.formats.bold);
-        assertTrue(finder.isFormatted([editor.body.firstChild]));
-    }
-    </script>
+        ok(finder.isFormatted([editor.body.firstChild]));
+    });
+
+</script>
+
 </asp:Content>

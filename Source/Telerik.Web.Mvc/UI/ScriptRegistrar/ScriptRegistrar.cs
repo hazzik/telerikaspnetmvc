@@ -22,7 +22,7 @@ namespace Telerik.Web.Mvc.UI
     /// </summary>
     public class ScriptRegistrar : IScriptableComponentContainer
     {
-        internal const string jQuery = "jquery-1.4.3.js";
+        internal const string jQuery = "jquery-1.5.1.js";
         internal const string jQueryValidation = "jquery.validate.js";
 
         /// <summary>
@@ -57,6 +57,8 @@ namespace Telerik.Web.Mvc.UI
             }
 
             viewContext.HttpContext.Items[Key] = this;
+            
+            OutputScriptFiles = true;
 
             DefaultGroup = new WebAssetGroup("default", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
             Scripts = scripts;
@@ -71,6 +73,12 @@ namespace Telerik.Web.Mvc.UI
             OnDocumentReadyStatements = new List<string>();
             OnWindowUnloadActions = new List<Action>();
             OnWindowUnloadStatements = new List<string>();
+        }
+
+        public bool OutputScriptFiles 
+        { 
+            get; 
+            set; 
         }
 
         public static ScriptRegistrar Current
@@ -254,7 +262,10 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="writer">The writer.</param>
         protected virtual void Write(TextWriter writer)
         {
-            WriteScriptSources(writer);
+            if (OutputScriptFiles)
+            {
+                WriteScriptSources(writer);
+            }
             WriteScriptStatements(writer);
         }
 

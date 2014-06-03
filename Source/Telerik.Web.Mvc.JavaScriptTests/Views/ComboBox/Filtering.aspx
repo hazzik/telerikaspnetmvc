@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -12,225 +12,6 @@
 
         function getComboBox(id) {
             return $(id || '#ComboBox').data('tComboBox');
-        }
-
-        function setUp() {
-            $t = $.telerik;
-            combobox = getComboBox();
-            filtering = combobox.filtering;
-            combobox.scrollTo = function () { };
-        }
-
-        function test_filter_method_should_pass_first_item_text_to_the_autoFill_method() {
-
-            var oldAutoFill = filtering.autoFill;
-            var text;
-
-            try {
-                combobox.$text.val('boy');
-                filtering.autoFill = function (component, itemText) { text = itemText; };
-                filtering.filter(combobox);
-
-                assertEquals("Boysenberry", text);
-            } finally {
-                filtering.autoFill = oldAutoFill;
-                combobox.$text.val('');
-                filtering.filter(combobox);
-            }
-        }
-
-        function test_filter_method_should_pass_Tofu_text_to_the_autoFill_method_if_filter_mode_is_None() {
-
-            var oldAutoFill = filtering.autoFill;
-            var text;
-            
-            try {
-                combobox.filter = 0;
-                filtering.autoFill = function (component, itemText) { text = itemText; };
-                combobox.$text.val('tofu');
-
-                filtering.filter(combobox);
-
-                assertEquals("Tofu", text);
-            } finally {
-                filtering.autoFill = oldAutoFill;
-                combobox.filter = 1;
-            }
-        }
-
-        function test_filter_method_should_return_if_text_length_is_less_than_minChars() {
-            var oldFilter = combobox.filters[combobox.filter];
-            var isCalled = false;
-            
-            try {
-                combobox.minChars = 10;
-                combobox.$text.val('12345');
-                combobox.filters[combobox.filter] = function () { isCalled = true; };
-                
-                filtering.filter(combobox);
-
-                assertFalse(isCalled);
-            } finally {
-                combobox.minChars = 0;
-                combobox.$text.val('');
-                combobox.filters[combobox.filter] = oldFilter;
-            }
-        }
-
-        function test_filter_should_call_startsWith_filter_method() {
-            var oldFilter = combobox.filters[combobox.filter];
-            var isCalled = false;
-
-            combobox.dropDown.$items = null;
-            combobox.fill();
-            
-            try {
-                combobox.filters[combobox.filter] = function () { isCalled = true; };
-                combobox.selectedIndex = -1;
-
-                filtering.filter(combobox);
-
-                assertTrue(isCalled);
-            } finally {
-                combobox.filters[combobox.filter] = oldFilter;
-            }
-        }
-
-        function test_filter_method_should_call_ajaxRequest_method_if_isAjax_and_no_cache_or_no_items_after_filtering() {
-            var oldAjaxRequest = combobox.ajaxRequest;
-            var oldAjax = combobox.loader.isAjax;
-            var isCalled = false;
-            
-            combobox.filteredDataIndexes = [];
-            combobox.cache = false;
-
-            try {
-                combobox.loader.ajaxRequest = function () { isCalled = true; };
-                combobox.loader.isAjax = function () { return true; };
-            
-                filtering.filter(combobox);
-
-                assertTrue(isCalled);
-            } finally {
-                combobox.loader.isAjax = oldAjax;
-                combobox.loader.ajaxRequest = oldAjaxRequest;
-            }
-        }
-
-        function test_filter_method_should_call_startsWith_method_if_isAjax_and_cache_is_enabled() {
-
-            var oldFilter = combobox.filters[combobox.filter];
-            var oldAjax = combobox.loader.isAjax;
-            var oldData = combobox.data;
-            var oldCache = combobox.cache;
-            var oldFilteredDataIndexes = combobox.filteredDataIndexes;
-            var isCalled = false;
-            
-            try {
-                combobox.data = [{ "Text": "Chai", "Value": "1", "Selected": true}];
-                combobox.filteredDataIndexes = [];
-                combobox.cache = true;
-
-                combobox.filters[combobox.filter] = function () { isCalled = true; };
-                combobox.loader.isAjax = function () { return true; }; //predefining isAjax method to return 'true';
-            
-                filtering.filter(combobox);
-
-                assertTrue(isCalled);
-            } catch(e) {
-            } finally {
-                combobox.data = oldData;
-                combobox.cache = oldCache;
-                combobox.loader.isAjax = oldAjax;
-                combobox.filteredDataIndexes = oldFilteredDataIndexes;
-                combobox.filters[combobox.filter] = oldFilter;
-            }
-        }
-
-        function test_filter_method_should_rebind_and_close_dropDown_if_no_data_after_ajax_request() {
-
-            var oldAjax = combobox.loader.isAjax;
-            var oldData = combobox.data;
-            var ajaxRequest = combobox.loader.ajaxRequest;
-
-            combobox.open();
-
-            combobox.cache = false;
-
-            try {
-                combobox.loader.isAjax = function () { return true; };
-                combobox.loader.ajaxRequest = function (callback) { callback([]); };
-            
-                filtering.filter(combobox);
-
-                assertEquals(0, combobox.dropDown.$items.length);
-                assertTrue(combobox.dropDown.$element.attr('style').indexOf('none') != -1);
-                
-            } finally {
-                combobox.data = oldData;
-                combobox.loader.isAjax = oldAjax;
-                combobox.loader.ajaxRequest = ajaxRequest;
-            }
-        }
-
-        function test_filter_method_should_rebind_and_close_items_list_and_open_after_filtering() {
-            var oldAjax = combobox.loader.isAjax;
-            var oldData = combobox.data;
-            var ajaxRequest = combobox.loader.ajaxRequest;
-
-            combobox.close();
-
-            combobox.cache = false;
-
-            try {
-                combobox.loader.isAjax = function () { return true; };
-                combobox.loader.ajaxRequest = function (callback) { callback([{ "Text": "Chai", "Value": "1" }, { "Text": "Chang", "Value": "2"}]); };
-
-                combobox.dropDown.$items = [];
-            
-                filtering.filter(combobox);
-
-                assertEquals(2, combobox.dropDown.$items.length);
-                assertTrue(combobox.dropDown.isOpened());
-
-            } finally {
-                combobox.data = oldData;
-                combobox.loader.isAjax = oldAjax;
-                combobox.loader.ajaxRequest = ajaxRequest;
-            }
-        }
-
-        function test_selecting_items_after_filtering_selects_correct_item() {
-            var oldAjax = combobox.loader.isAjax;
-            var oldData = combobox.data;
-            var ajaxRequest = combobox.loader.ajaxRequest;
-
-            combobox.close();
-
-            combobox.cache = false;
-
-            try {
-                combobox.loader.isAjax = function () { return true; };
-                combobox.loader.ajaxRequest = function (callback) { callback([
-                    { "Text": "Chai", "Value": "1" },
-                    { "Text": "Tofu", "Value": "3" },
-                    { "Text": "Chang", "Value": "2"}]); };
-
-                combobox.dropDown.$items = [];
-                combobox.$text.val('C');
-            
-                filtering.filter(combobox);
-
-                combobox.dropDown.$element.find('.t-item').eq(1).click();
-
-                assertEquals('Chang', combobox.$text.val());
-
-            } finally {
-                combobox.data = oldData;
-                combobox.$text.val('');
-                combobox.loader.isAjax = oldAjax;
-                combobox.loader.ajaxRequest = ajaxRequest;
-            }
         }
 
     </script>
@@ -254,4 +35,308 @@
         .Effects(fx => fx.Toggle())
         .Filterable(filtering => filtering.FilterMode(AutoCompleteFilterMode.StartsWith))
     %>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            $t = $.telerik;
+            combobox = getComboBox();
+            filtering = combobox.filtering;
+            combobox.scrollTo = function () { };
+        }
+
+        test('filter method should pass first item text to the autoFill method', function() {
+
+            var oldAutoFill = filtering.autoFill;
+            var text;
+
+            try {
+                combobox.$text.val('boy');
+                filtering.autoFill = function (component, itemText) { text = itemText; };
+                filtering.filter(combobox);
+
+                equal(text, "Boysenberry");
+            } finally {
+                filtering.autoFill = oldAutoFill;
+                combobox.$text.val('');
+                filtering.filter(combobox);
+            }
+        });
+
+        test('filter method should pass Tofu text to the autoFill method if filter mode is None', function() {
+
+            var oldAutoFill = filtering.autoFill;
+            var text;
+            
+            try {
+                combobox.filter = 0;
+                filtering.autoFill = function (component, itemText) { text = itemText; };
+                combobox.$text.val('tofu');
+
+                filtering.filter(combobox);
+
+                equal(text, "Tofu");
+            } finally {
+                filtering.autoFill = oldAutoFill;
+                combobox.filter = 1;
+            }
+        });
+
+        test('filter method should return if text length is less than minChars', function() {
+            var oldFilter = combobox.filters[combobox.filter];
+            var isCalled = false;
+            
+            try {
+                combobox.minChars = 10;
+                combobox.$text.val('12345');
+                combobox.filters[combobox.filter] = function () { isCalled = true; };
+                
+                filtering.filter(combobox);
+
+                ok(!isCalled);
+            } finally {
+                combobox.minChars = 0;
+                combobox.$text.val('');
+                combobox.filters[combobox.filter] = oldFilter;
+            }
+        });
+
+        test('filter should call startsWith filter method', function() {
+            var oldFilter = combobox.filters[combobox.filter];
+            var isCalled = false;
+
+            combobox.dropDown.$items = null;
+            combobox.fill();
+            
+            try {
+                combobox.filters[combobox.filter] = function () { isCalled = true; };
+                combobox.selectedIndex = -1;
+
+                filtering.filter(combobox);
+
+                ok(isCalled);
+            } finally {
+                combobox.filters[combobox.filter] = oldFilter;
+            }
+        });
+
+        test('filter should not raise error if no data', function () {
+            var oldFilter = combobox.filters[combobox.filter];
+            combobox.dropDown.$items = null;
+
+            try {
+                combobox.filters[combobox.filter] = function () { isCalled = true; };
+                combobox.selectedIndex = -1;
+
+                filtering.filter(combobox);
+            } finally {
+                combobox.filters[combobox.filter] = oldFilter;
+            }
+        });
+
+        test('filter method should call ajaxRequest method if isAjax and no cache or no items after filtering', function() {
+            var oldAjaxRequest = combobox.ajaxRequest;
+            var oldAjax = combobox.loader.isAjax;
+            var isCalled = false;
+            
+            combobox.filteredDataIndexes = [];
+            combobox.cache = false;
+
+            try {
+                combobox.loader.ajaxRequest = function () { isCalled = true; };
+                combobox.loader.isAjax = function () { return true; };
+            
+                filtering.filter(combobox);
+
+                ok(isCalled);
+            } finally {
+                combobox.loader.isAjax = oldAjax;
+                combobox.loader.ajaxRequest = oldAjaxRequest;
+            }
+        });
+
+        test('filter method should call startsWith method if isAjax and cache is enabled', function() {
+
+            var oldFilter = combobox.filters[combobox.filter];
+            var oldAjax = combobox.loader.isAjax;
+            var oldData = combobox.data;
+            var oldCache = combobox.cache;
+            var oldFilteredDataIndexes = combobox.filteredDataIndexes;
+            var isCalled = false;
+            
+            try {
+                combobox.data = [{ "Text": "Chai", "Value": "1", "Selected": true}];
+                combobox.filteredDataIndexes = [];
+                combobox.cache = true;
+
+                combobox.filters[combobox.filter] = function () { isCalled = true; };
+                combobox.loader.isAjax = function () { return true; }; //predefining isAjax method to return 'true';
+            
+                filtering.filter(combobox);
+
+                ok(isCalled);
+            } catch(e) {
+            } finally {
+                combobox.data = oldData;
+                combobox.cache = oldCache;
+                combobox.loader.isAjax = oldAjax;
+                combobox.filteredDataIndexes = oldFilteredDataIndexes;
+                combobox.filters[combobox.filter] = oldFilter;
+            }
+        });
+
+        test('filter method should rebind and close dropDown if no data after ajax request', function() {
+
+            var oldAjax = combobox.loader.isAjax;
+            var oldData = combobox.data;
+            var ajaxRequest = combobox.loader.ajaxRequest;
+
+            combobox.open();
+
+            combobox.cache = false;
+
+            try {
+                combobox.loader.isAjax = function () { return true; };
+                combobox.loader.ajaxRequest = function (callback) { callback([]); };
+            
+                filtering.filter(combobox);
+
+                equal(combobox.dropDown.$items.length, 0);
+                ok(combobox.dropDown.$element.attr('style').indexOf('none') != -1);
+                
+            } finally {
+                combobox.data = oldData;
+                combobox.loader.isAjax = oldAjax;
+                combobox.loader.ajaxRequest = ajaxRequest;
+            }
+        });
+
+        test('filter method should not encode data everytime on databinding if DataBinding is wired and isAjax', function () {
+            var isCalled = false;
+            var oldData = combobox.data;
+            var encode = $t.encode;
+            var ajaxRequest = combobox.loader.ajaxRequest;
+
+            var filter = combobox.filters[combobox.filter];
+
+            combobox.open();
+            combobox.cache = false;
+            combobox.filters[combobox.filter] = function () { }
+            combobox.onDataBinding = true;
+
+            combobox.$items = [];
+
+            try {
+                combobox.onDataBinding = true;
+                $t.encode = function () { isCalled = true; }
+                combobox.loader.ajaxRequest = function (callback) { callback(oldData); };
+                filtering.filter(combobox);
+
+                ok(!isCalled, "encode was called");
+            } finally {
+                combobox.data = oldData;
+                $t.encode = encode;
+                combobox.onDataBinding = undefined;
+                combobox.loader.ajaxRequest = ajaxRequest;
+                combobox.filters[combobox.filter] = filter;
+            }
+        });
+
+        test('filter method should rebind and close items list and open after filtering', function() {
+            var oldAjax = combobox.loader.isAjax;
+            var oldData = combobox.data;
+            var ajaxRequest = combobox.loader.ajaxRequest;
+
+            combobox.close();
+
+            combobox.cache = false;
+
+            try {
+                combobox.loader.isAjax = function () { return true; };
+                combobox.loader.ajaxRequest = function (callback) { callback([{ "Text": "Chai", "Value": "1" }, { "Text": "Chang", "Value": "2"}]); };
+
+                combobox.dropDown.$items = [];
+            
+                filtering.filter(combobox);
+
+                equal(combobox.dropDown.$items.length, 2);
+                ok(combobox.dropDown.isOpened());
+
+            } finally {
+                combobox.data = oldData;
+                combobox.loader.isAjax = oldAjax;
+                combobox.loader.ajaxRequest = ajaxRequest;
+            }
+        });
+
+        test('selecting items after filtering selects correct item', function() {
+            var oldAjax = combobox.loader.isAjax;
+            var oldData = combobox.data;
+            var ajaxRequest = combobox.loader.ajaxRequest;
+
+            combobox.close();
+
+            combobox.cache = false;
+
+            try {
+                combobox.loader.isAjax = function () { return true; };
+                combobox.loader.ajaxRequest = function (callback) { callback([
+                    { "Text": "Chai", "Value": "1" },
+                    { "Text": "Tofu", "Value": "3" },
+                    { "Text": "Chang", "Value": "2"}]); };
+
+                combobox.dropDown.$items = [];
+                combobox.$text.val('C');
+            
+                filtering.filter(combobox);
+
+                combobox.dropDown.$element.find('.t-item').eq(1).click();
+
+                equal(combobox.$text.val(), 'Chang');
+
+            } finally {
+                combobox.data = oldData;
+                combobox.$text.val('');
+                combobox.loader.isAjax = oldAjax;
+                combobox.loader.ajaxRequest = ajaxRequest;
+            }
+        });
+
+        test('filter method should encode newly retrieved data if encoded true', function () {
+            var oldData = combobox.data;
+            var oldAjax = combobox.loader.isAjax;            
+            var decodedText = '<>&Visit W3Schools!';
+            var ajaxRequest = combobox.loader.ajaxRequest;
+
+            var dataSource = [
+                { Text: decodedText, Value: decodedText },
+                { Text: "Product 2", Value: "2" }
+            ];
+
+            combobox.close();
+            combobox.cache = false;
+
+            try {
+                combobox.loader.isAjax = function () { return true; };
+                combobox.loader.ajaxRequest = function (callback) { callback(dataSource); };
+
+                filtering.filter(combobox);
+
+                equal('&lt;&gt;&amp;Visit W3Schools!', combobox.data[0].Text);
+                equal(decodedText, combobox.data[0].Value);
+
+            } finally {
+                combobox.data = oldData;
+                combobox.loader.isAjax = oldAjax;
+                combobox.loader.ajaxRequest = ajaxRequest;
+            }
+        });
+
+</script>
+
 </asp:Content>

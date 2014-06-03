@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -8,206 +8,6 @@
 
         function getComboBox() {
             return $('#ComboBox').data('tComboBox');
-        }
-
-        function test_pressing_down_arrow_should_select_next_item() {
-            var combo = getComboBox();
-
-            combo.fill();
-
-            var $initialSelectedItem = combo.dropDown.$items.first();
-            var initialSelectedIndex = $initialSelectedItem.index();
-            combo.select($initialSelectedItem);
-
-            
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 40 });
-
-            assertNotEquals(-1, combo.selectedIndex);
-            assertNotEquals(initialSelectedIndex, combo.selectedIndex);
-        }
-
-        function test_pressing_up_arrow_should_select_prev_item() {
-            var combo = getComboBox();
-
-            combo.select(combo.dropDown.$items[1]);
-
-            var initialSelectedIndex = $(combo.dropDown.$element.find('.t-state-selected')[0]).index();
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 38 });
-
-            assertNotEquals(-1, combo.selectedIndex);
-            assertNotEquals(initialSelectedIndex, combo.selectedIndex);
-        }
-
-        function test_pressing_alt_down_arrow_should_open_dropdown_list() {
-            var combo = getComboBox();
-            combo.effects = $.telerik.fx.toggle.defaults();
-
-            combo.close();
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            assertTrue(combo.dropDown.isOpened());
-        }
-
-        function test_keydown_should_create_$items_if_they_do_not_exist() {
-            var combo = getComboBox();
-            combo.dropDown.$items = null;
-
-            combo.$text.focus();
-
-            combo.$text.trigger({ type: "keydown", keyCode: 38 });
-
-            assertTrue(combo.dropDown.$items.length > 0);
-        }
-
-        function test_down_arrow_should_select_next_item() {
-            var combo = getComboBox();
-
-            combo.open();
-
-            combo.select(combo.dropDown.$items[0]);
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 40 });
-
-            assertEquals(1, combo.selectedIndex)
-        }
-
-        function test_down_arrow_should_select_first_item_if_no_selected() {
-            var combo = getComboBox();
-            
-            combo.open();
-
-            combo.dropDown.$items.removeClass('t-state-selected');
-            combo.selectedIndex = -1;
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 40 });
-
-            assertEquals(0, combo.selectedIndex)
-        }
-
-        function test_up_arrow_should_select_previous_item() {
-            var combo = getComboBox();
-            
-            combo.open();
-
-            combo.select(combo.dropDown.$items[4]);
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 38 });
-
-            assertEquals(3, combo.selectedIndex)
-        }
-
-        function test_clicking_up_arrow_should_select_first_item_if_no_selected_item() {
-            var combo = getComboBox();
-            
-            combo.open();
-            combo.selectedIndex = -1;
-            combo.dropDown.$items.removeClass('t-state-selected');
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 38});
-
-            assertEquals(0, combo.selectedIndex)
-        }
-
-        function test_pressing_Enter_should_close_dropdown_list() {
-            var isCalled = false;
-            var combo = getComboBox();
-            combo.effects = $.telerik.fx.toggle.defaults();
-
-            combo.$text.focus();
-
-            var old = combo.trigger.close;
-
-            combo.trigger.close = function () { isCalled = true; }
-
-            combo.$text.trigger({ type: "keydown", keyCode: 40 });
-            combo.$text.trigger({ type: "keydown", keyCode: 13 });
-
-            assertTrue(isCalled);
-
-            combo.trigger.close = old;
-        }
-
-        function test_pressing_Enter_should_change_hidden_input_value() {
-            var combo = getComboBox();
-            combo.effects = $.telerik.fx.toggle.defaults();
-
-            combo.$text.focus();
-
-            combo.dropDown.$items.removeClass('t-state-selected');
-
-            combo.$text.val('test');
-            combo.$text.trigger({ type: "keydown", keyCode: 13 });
-
-            assertEquals('test', combo.value());
-        }
-
-        function test_pressing_Enter_should_not_post_if_items_list_is_opened() {
-            var combo = getComboBox();
-            combo.effects = $.telerik.fx.toggle.defaults();
-
-            var isPreventCalled = false;
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keydown", keyCode: 40 });
-            combo.$text.trigger({ type: "keydown", keyCode: 13, preventDefault: function () { isPreventCalled = true } });
-
-            assertTrue(isPreventCalled);
-        }
-
-        function test_pressing_escape_should_call_trigger_close() {
-            var isCalled = false;
-            var combo = getComboBox();
-            combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
-
-            combo.open();
-            combo.$text.focus();
-            var old = combo.trigger.close;
-
-            combo.trigger.close = function () { isCalled = true; }
-
-            combo.$text.trigger({ type: "keydown", keyCode: 27 });
-
-            assertTrue(isCalled);
-
-            combo.trigger.close = old;
-        }
-
-        function test_pressing_escape_should_blur_input() {
-            var combo = getComboBox();
-
-            var isFocused = true;
-
-            combo.$text.focus();
-            combo.$text.blur(function () { isFocused = false });
-
-            combo.$text.trigger({ type: "keydown", keyCode: 27 });
-
-            assertFalse(isFocused);
-        }
-
-        function test_if_pressed_key_is_part_of_keyCodes_collection_do_not_continue() {
-            var combo = getComboBox();
-            
-            var oldFilter = combo.filters[combo.filter];
-
-            var isCalled = true;
-
-            combo.filters[combo.filter] = function () { isCalled = false; };
-
-            combo.$text.focus();
-            combo.$text.trigger({ type: "keypress", keyCode: 38 });
-
-            assertTrue(isCalled);
-
-            combo.filters[combo.filter] = oldFilter;
         }
 
     </script>
@@ -259,4 +59,214 @@
         })
         .Filterable(filtering => filtering.FilterMode(AutoCompleteFilterMode.StartsWith))
     %>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('pressing down arrow should select next item', function() {
+            var combo = getComboBox();
+
+            combo.fill();
+
+            var $initialSelectedItem = combo.dropDown.$items.first();
+            var initialSelectedIndex = $initialSelectedItem.index();
+            combo.select($initialSelectedItem);
+
+            
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+
+            notEqual(combo.selectedIndex, -1);
+            notEqual(combo.selectedIndex, initialSelectedIndex);
+        });
+
+        test('pressing up arrow should select prev item', function() {
+            var combo = getComboBox();
+
+            combo.select(combo.dropDown.$items[1]);
+
+            var initialSelectedIndex = $(combo.dropDown.$element.find('.t-state-selected')[0]).index();
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 38 });
+
+            notEqual(combo.selectedIndex, -1);
+            notEqual(combo.selectedIndex, initialSelectedIndex);
+        });
+
+        test('pressing alt down arrow should open dropdown list', function() {
+            var combo = getComboBox();
+            combo.effects = $.telerik.fx.toggle.defaults();
+
+            combo.close();
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(combo.dropDown.isOpened());
+        });
+
+        test('keydown should create $items if they do not exist', function() {
+            var combo = getComboBox();
+            combo.dropDown.$items = null;
+
+            combo.$text.focus();
+
+            combo.$text.trigger({ type: "keydown", keyCode: 38 });
+
+            ok(combo.dropDown.$items.length > 0);
+        });
+
+        test('down arrow should select next item', function() {
+            var combo = getComboBox();
+
+            combo.open();
+
+            combo.select(combo.dropDown.$items[0]);
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+
+            equal(combo.selectedIndex, 1)
+        });
+
+        test('down arrow should select first item if no selected', function() {
+            var combo = getComboBox();
+            
+            combo.open();
+
+            combo.dropDown.$items.removeClass('t-state-selected');
+            combo.selectedIndex = -1;
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+
+            equal(combo.selectedIndex, 0)
+        });
+
+        test('up arrow should select previous item', function() {
+            var combo = getComboBox();
+            
+            combo.open();
+
+            combo.select(combo.dropDown.$items[4]);
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 38 });
+
+            equal(combo.selectedIndex, 3)
+        });
+
+        test('clicking up arrow should select first item if no selected item', function() {
+            var combo = getComboBox();
+            
+            combo.open();
+            combo.selectedIndex = -1;
+            combo.dropDown.$items.removeClass('t-state-selected');
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 38});
+
+            equal(combo.selectedIndex, 0)
+        });
+
+        test('pressing Enter should close dropdown list', function() {
+            var isCalled = false;
+            var combo = getComboBox();
+            combo.effects = $.telerik.fx.toggle.defaults();
+
+            combo.$text.focus();
+
+            var old = combo.trigger.close;
+
+            combo.trigger.close = function () { isCalled = true; }
+
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+            combo.$text.trigger({ type: "keydown", keyCode: 13 });
+
+            ok(isCalled);
+
+            combo.trigger.close = old;
+        });
+
+        test('pressing Enter should change hidden input value', function() {
+            var combo = getComboBox();
+            combo.effects = $.telerik.fx.toggle.defaults();
+
+            combo.$text.focus();
+
+            combo.dropDown.$items.removeClass('t-state-selected');
+
+            combo.$text.val('test');
+            combo.$text.trigger({ type: "keydown", keyCode: 13 });
+
+            equal(combo.value(), 'test');
+        });
+
+        test('pressing Enter should not post if items list is opened', function() {
+            var combo = getComboBox();
+            combo.effects = $.telerik.fx.toggle.defaults();
+
+            var isPreventCalled = false;
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keydown", keyCode: 40 });
+            combo.$text.trigger({ type: "keydown", keyCode: 13, preventDefault: function () { isPreventCalled = true } });
+
+            ok(isPreventCalled);
+        });
+
+        test('pressing escape should call trigger close', function() {
+            var isCalled = false;
+            var combo = getComboBox();
+            combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
+
+            combo.open();
+            combo.$text.focus();
+            var old = combo.trigger.close;
+
+            combo.trigger.close = function () { isCalled = true; }
+
+            combo.$text.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(isCalled);
+
+            combo.trigger.close = old;
+        });
+
+        test('pressing escape should blur input', function() {
+            var combo = getComboBox();
+
+            var isFocused = true;
+
+            combo.$text.focus();
+            combo.$text.blur(function () { isFocused = false });
+
+            combo.$text.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(!isFocused);
+        });
+
+        test('if pressed key is part of keyCodes collection do not continue', function() {
+            var combo = getComboBox();
+            
+            var oldFilter = combo.filters[combo.filter];
+
+            var isCalled = true;
+
+            combo.filters[combo.filter] = function () { isCalled = false; };
+
+            combo.$text.focus();
+            combo.$text.trigger({ type: "keypress", keyCode: 38 });
+
+            ok(isCalled);
+
+            combo.filters[combo.filter] = oldFilter;
+        });
+
+</script>
+
 </asp:Content>

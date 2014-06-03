@@ -14,7 +14,7 @@ namespace Telerik.Web.Mvc.UI
 
     public class PercentTextBox : TextBoxBase<double>
     {
-        public PercentTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<double> rendererFactory)
+        public PercentTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextBoxBaseHtmlBuilderFactory<double> rendererFactory)
             : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
@@ -100,12 +100,12 @@ namespace Telerik.Web.Mvc.UI
 
             if (MinValue > MaxValue)
             {
-                throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
             }
 
             if ((Value != null) && (MinValue > Value || Value > MaxValue))
             {
-                throw new ArgumentOutOfRangeException(TextResource.ValueOutOfRange);
+                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
             }
 
             if (PositivePatternIndex < 0 || PositivePatternIndex > 2) //currency positive patterns are 3.

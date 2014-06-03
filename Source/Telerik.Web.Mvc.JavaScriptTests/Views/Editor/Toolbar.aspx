@@ -1,27 +1,38 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>Toolbar</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 
     <%= Html.Telerik().Editor().Name("Editor") %>
+    
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
     <script type="text/javascript">
         
+        var componentType = $.browser.msie ? 'tSelectBox' : 'tComboBox';
 
-        function getEditor() {
-            return $('#Editor').data("tEditor");
-        }
-        
         function value($ui) {
             return $.browser.msie ? $.trim($ui.text()) : $ui.val();
         }
-        
-        function setUp() {
-            window.editor = getEditor();
-        }
-        
-        function test_exec_with_node_parameter_calls_exec() {
+
+        module("Editor / Toolbar", {
+            setup: function() {
+                window.editor = getEditor();
+            }
+        });
+
+        test('initially fontName should have "inherit" value', function () {
+
+            var component = $('.t-fontSize', editor.element).data(componentType);
+
+            equal(component.value(), 'inherit');
+        });
+
+        test('exec with node parameter calls exec', function() {
             var editor = getEditor();
 
             var execArgs = [];
@@ -30,11 +41,11 @@
 
             $('.t-bold', editor.element).click();
 
-            assertEquals(1, execArgs.length);
-            assertEquals('bold', execArgs[0]);
-        }
+            equal(execArgs.length, 1);
+            equal(execArgs[0], 'bold');
+        });
 
-        function test_handle_carret_selection() {
+        test('handle carret selection', function() {
             editor.value('<strong>foo</strong>')
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild, 1);
@@ -45,10 +56,10 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertTrue($('.t-bold', editor.element).hasClass('t-state-active'));
-        }
+            ok($('.t-bold', editor.element).hasClass('t-state-active'));
+        });
 
-        function test_handle_word_selection() {
+        test('handle word selection', function() {
             editor.value('<strong>foo</strong>')
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild);
@@ -58,10 +69,10 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertTrue($('.t-bold', editor.element).hasClass('t-state-active'));
-        }
+            ok($('.t-bold', editor.element).hasClass('t-state-active'));
+        });
 
-        function test_handle_mixed_selection() {
+        test('handle mixed selection', function() {
             editor.value('<ul><li>foo</li></ul><ul><li>bar</li></ul>')
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild.firstChild, 1);
@@ -72,10 +83,10 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertFalse($('t-insertUnorderedList', editor.element).hasClass('t-state-active'));
-        }
+            ok(!$('t-insertUnorderedList', editor.element).hasClass('t-state-active'));
+        });
 
-        function test_handle_image_selection() {
+        test('handle image selection', function() {
             editor.value('<img style="float:right" src="foo" />');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
@@ -85,40 +96,101 @@
 
             $(editor.element).trigger('selectionChange');
 
-            assertTrue($('.t-justifyRight', editor.element).hasClass('t-state-active'));
-        }
+            ok($('.t-justifyRight', editor.element).hasClass('t-state-active'));
+        });
 
-        function test_font_size_combobox_on_mixed_content() {
+        test('font size combobox on mixed content', function() {
             editor.selectRange(createRangeFromText(editor, '|foo<span style="font-size:8px;">bar|</span>'));
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals('', value($('.t-fontSize .t-input', editor.element)));
-        }
+            equal(value($('.t-fontSize .t-input', editor.element)), '');
+        });
 
-        function test_font_size_combobox_on_custom_font_size() {
+        test('font size combobox on custom font size', function() {
             editor.selectRange(createRangeFromText(editor, '<span style="font-size:8px;">f|o|o</span>'));
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals('8px', value($('.t-fontSize .t-input', editor.element)));
-        }        
+            equal(value($('.t-fontSize .t-input', editor.element)), '8px');
+        });        
         
-        function test_inherited_font_size() {
+        test('inherited font size', function() {
             editor.selectRange(createRangeFromText(editor, '<span>f|o|o</span>'));
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals(editor.localization.fontSizeInherit, value($('.t-fontSize .t-input', editor.element)));
-        }
+            equal(value($('.t-fontSize .t-input', editor.element)), editor.localization.fontSizeInherit);
+        });
 
-        function test_font_size_combobox_on_relative_font_size() {
+        test('font size combobox on relative font size', function() {
             editor.selectRange(createRangeFromText(editor, '<span style="font-size:x-small;">f|o|o</span>'));
 
             $(editor.element).trigger('selectionChange');
 
-            assertEquals('2 (10pt)', value($('.t-fontSize .t-input', editor.element)));
-        }
+            equal(value($('.t-fontSize .t-input', editor.element)), '2 (10pt)');
+        });
+
+        test('clicking disabled links should not navigate', function() {
+            var isDefaultPrevented = false,
+                navigationListener = function(e) {
+                    isDefaultPrevented = e.isDefaultPrevented();
+                };
+
+            $(editor.element).bind('click', navigationListener);
+
+            $('.t-editor-button .t-tool-icon.t-state-disabled').trigger('click');
+
+            $(editor.element).unbind('click', navigationListener);
+
+            ok(isDefaultPrevented);
+        });
+
+        test('buttons honor to-be-applied pending formats', function() {
+            editor.value('foo')
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild, 1);
+            range.collapse(true);
+
+            editor.selectRange(range);
+
+            editor.pendingFormats.toggle({ name: 'bold', params: undefined, command: editor.tools.bold.command });
+
+            $(editor.element).trigger('selectionChange');
+            
+            ok($('.t-bold', editor.element).hasClass('t-state-active'));
+        });
+
+        test('buttons honor to-be-removed pending formats', function() {
+            editor.value('<strong>foo</strong>')
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild.firstChild, 1);
+            range.collapse(true);
+
+            editor.selectRange(range);
+            
+            editor.pendingFormats.toggle({ name: 'bold', params: undefined, command: editor.tools.bold.command });
+
+            $(editor.element).trigger('selectionChange');
+            
+            ok(!$('.t-bold', editor.element).hasClass('t-state-active'));
+        });
+
+        test('combos honor to-be-applied pending formats', function() {
+            editor.value('foo')
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild, 1);
+            range.collapse(true);
+
+            editor.selectRange(range);
+
+            editor.pendingFormats.toggle({ name: 'fontsize', params: { value: 'xx-large' }, command: editor.tools.fontSize.command });
+
+            $(editor.element).trigger('selectionChange');
+            
+            equals($('.t-fontSize', editor.element).data(componentType).value(), 'xx-large');
+        });
 
     </script>
+
 </asp:Content>

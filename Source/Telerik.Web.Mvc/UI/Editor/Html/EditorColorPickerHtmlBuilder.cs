@@ -19,19 +19,19 @@ namespace Telerik.Web.Mvc.UI.Html
         public new IHtmlNode Build()
         {
             IHtmlNode root =
-                new HtmlTag("div")
+                new HtmlElement("div")
                     .Attributes(colorPicker.HtmlAttributes)
                     .PrependClass(UIPrimitives.Widget, "t-colorpicker", UIPrimitives.Header);
 
-            IHtmlNode tool = new HtmlTag("span")
+            IHtmlNode tool = new HtmlElement("span")
                 .AddClass(UIPrimitives.Editor.ToolIcon)
                 .AppendTo(root);
 
-            new HtmlTag("span")
+            new HtmlElement("span")
                 .AddClass("t-selected-color")
                 .AppendTo(tool);
 
-            new HtmlTag("span")
+            new HtmlElement("span")
                 .AddClass(UIPrimitives.Icon, "t-arrow-down")
                 .AppendTo(root);
 
@@ -40,7 +40,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            var li = new HtmlTag("li")
+            var li = new HtmlElement("li")
                     .AddClass(UIPrimitives.Editor.ToolbarColorPicker);
 
             IHtmlNode rootTag = Build();

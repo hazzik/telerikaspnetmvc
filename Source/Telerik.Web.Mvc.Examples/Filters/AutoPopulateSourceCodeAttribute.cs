@@ -10,9 +10,11 @@ namespace Telerik.Web.Mvc.Examples
     public class AutoPopulateSourceCodeAttribute : FilterAttribute, IResultFilter
     {
         private const string ViewPath = "~/Views/";
+        private const string RazorViewPath = "~/Areas/Razor/Views/";
         private const string ControllerPath = "~/Controllers/";
         private const string DescriptionPath = "~/Content/";
-        private const string MasterPagePath = "~/Views/Shared/Site.Master";
+        private const string MasterPagePath = ViewPath + "Shared/Site.Master";
+        private const string LayoutPagePath = RazorViewPath + "Shared/_Layout.cshtml";
 
         public void OnResultExecuting(ResultExecutingContext filterContext)
         {
@@ -29,7 +31,9 @@ namespace Telerik.Web.Mvc.Examples
                         ? viewResult.ViewName
                         : filterContext.RouteData.GetRequiredString("action");
 
-                string viewPath = ViewPath + controllerName + Path.AltDirectorySeparatorChar + viewName + ".aspx";
+                string baseViewPath = filterContext.IsRazorView() ? RazorViewPath : ViewPath;
+                string viewExtension = filterContext.IsRazorView() ? ".cshtml" : ".aspx";
+                string currentViewPath = baseViewPath + controllerName + Path.AltDirectorySeparatorChar + viewName + viewExtension;
 
                 string exampleControllerPath = ControllerPath + controllerName + Path.AltDirectorySeparatorChar + viewName + "Controller.cs";
 
@@ -38,22 +42,36 @@ namespace Telerik.Web.Mvc.Examples
                     Path.AltDirectorySeparatorChar + "Descriptions" + 
                     Path.AltDirectorySeparatorChar + viewName + ".html");
 
-                string masterPagePath = MasterPagePath;
-
-                var codeFiles = new Dictionary<string, string>();
-
                 var viewData = filterContext.Controller.ViewData;
 
                 if (System.IO.File.Exists(descriptionPath))
                 {
-                    viewData["Description"] = System.IO.File.ReadAllText(descriptionPath);
+                    var descriptionText = System.IO.File.ReadAllText(descriptionPath);
+#if MVC3
+                    viewData["Description"] = new HtmlString(descriptionText);
+#else
+                    viewData["Description"] = descriptionText;
+#endif
                 }
 
-                codeFiles["View"] = viewPath;
-
+                var codeFiles = new Dictionary<string, string>();
+                codeFiles["View"] = currentViewPath;
                 codeFiles["Controller"] = exampleControllerPath;
-                codeFiles["Site.Master"] = masterPagePath;
+                RegisterLayoutPages(filterContext, codeFiles);
+
                 viewData["codeFiles"] = codeFiles;
+            }
+        }
+
+        private void RegisterLayoutPages(ResultExecutingContext filterContext, Dictionary<string, string> codeFiles)
+        {
+            if (filterContext.IsRazorView())
+            {
+                codeFiles["_Layout.cshtml"] = LayoutPagePath;
+            }
+            else
+            {
+                codeFiles["Site.Master"] = MasterPagePath;
             }
         }
 

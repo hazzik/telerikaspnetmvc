@@ -55,11 +55,11 @@ namespace Telerik.Web.Mvc.UI
 
         IHtmlNode ToggleCss(string key, string value, bool condition);
 
-        IHtmlNode Template(Action value);
+        IHtmlNode Template(Action<TextWriter> value);
 
         IHtmlNode Css(string key, string value);
 
-        Action Template();
+        Action<TextWriter> Template();
 
         IHtmlNode Html(string value);
 

@@ -9,26 +9,35 @@
     
     <script type="text/javascript">
         var FormatCommand, impl, editor;
+    </script>
+</asp:Content>
 
 
-        function setUp() {
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             FormatCommand = $.telerik.editor.FormatCommand;
         }
         
-        function test_undo_restores_original_content() {
+        test('undo restores original content', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
 
             var command = editor.tools['bold'].command({range:range});
             command.exec();
-            assertEquals('<strong>foo</strong>', editor.value());
+            equal(editor.value(), '<strong>foo</strong>');
             command.undo();
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_undo_restores_selection() {
+        test('undo restores selection', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -39,52 +48,54 @@
             command.undo();
 
             var selectionRange = editor.getRange();
-            assertEquals(1, selectionRange.startOffset);
-            assertEquals(2, selectionRange.endOffset);
-            assertEquals(editor.body.firstChild, selectionRange.startContainer);
-            assertEquals(editor.body.firstChild, selectionRange.endContainer);
-        }
+            equal(selectionRange.startOffset, 1);
+            equal(selectionRange.endOffset, 2);
+            equal(selectionRange.startContainer, editor.body.firstChild);
+            equal(selectionRange.endContainer, editor.body.firstChild);
+        });
 
-        function test_redo_executes_the_command() {
+        test('redo executes the command', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
 
             var command = editor.tools['bold'].command({range:range});
             command.exec();
-            assertEquals('<strong>foo</strong>', editor.value());
+            equal(editor.value(), '<strong>foo</strong>');
             command.undo();
-            assertEquals('foo', editor.value());
+            equal(editor.value(), 'foo');
             command.exec();
-            assertEquals('<strong>foo</strong>', editor.value());
-        }
+            equal(editor.value(), '<strong>foo</strong>');
+        });
 
-        function test_fontName_exec() {
+        test('fontName exec', function() {
             var range = createRangeFromText(editor, '|foo|');
             editor.selectRange(range);
             editor.exec('fontName', {value: 'Arial'});
-            assertEquals('<span style="font-family:Arial;">foo</span>', editor.value());
-        }        
+            equal(editor.value(), '<span style="font-family:Arial;">foo</span>');
+        });        
         
-        function test_fontSize_exec() {
+        test('fontSize exec', function() {
             var range = createRangeFromText(editor, '|foo|');
             editor.selectRange(range);
             editor.exec('fontSize', {value: '8pt'});
-            assertEquals('<span style="font-size:8pt;">foo</span>', editor.value());
-        }        
+            equal(editor.value(), '<span style="font-size:8pt;">foo</span>');
+        });        
         
-        function test_foreColor_exec() {
+        test('foreColor exec', function() {
             var range = createRangeFromText(editor, '|foo|');
             editor.selectRange(range);
             editor.exec('foreColor', {value: '#a0b0c0'});
-            assertEquals('<span style="color:#a0b0c0;">foo</span>', editor.value());
-        }        
+            equal(editor.value(), '<span style="color:#a0b0c0;">foo</span>');
+        });        
         
-        function test_backColor_exec() {
+        test('backColor exec', function() {
             var range = createRangeFromText(editor, '|foo|');
             editor.selectRange(range);
             editor.exec('backColor', {value: '#a0b0c0'});
-            assertEquals('<span style="background-color:#a0b0c0;">foo</span>', editor.value());
-        }
-    </script>
+            equal(editor.value(), '<span style="background-color:#a0b0c0;">foo</span>');
+        });
+
+</script>
+
 </asp:Content>

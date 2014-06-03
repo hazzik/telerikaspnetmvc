@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -19,103 +19,6 @@
             return $('#DateTimePicker').data('tDateTimePicker');
         }
 
-        function test_pressing_alt_down_arrow_should_open_dateView() {
-            var dateTimePicker = getDateTimePicker();
-            dateTimePicker.effects = $.telerik.fx.toggle.defaults();
-
-            dateTimePicker.$input.focus();
-            dateTimePicker.close();
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            assertTrue(dateTimePicker.dateView.isOpened());
-        }
-
-        function test_pressing_Enter_should_close_dropdown_list() {
-            var isCalled = false;
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.$input.focus();
-
-            dateTimePicker.open('date');
-
-            var old = dateTimePicker.close;
-
-            dateTimePicker.close = function () { isCalled = true; }
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 13 });
-            assertTrue(isCalled);
-
-            dateTimePicker.close = old;
-        }
-
-        function test_pressing_Enter_should_call_value_method() {
-            var isCalled = false;
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.$input.focus();
-
-            var old = dateTimePicker._change;
-
-            dateTimePicker._change = function () { isCalled = true; }
-
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 40 });
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 13 });
-
-            assertTrue(isCalled);
-
-            dateTimePicker._change = old;
-        }
-
-        function test_pressing_escape_should_call_close() {
-            var isCalled = false;
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.open();
-            dateTimePicker.$input.focus();
-            var old = dateTimePicker.close;
-
-            dateTimePicker.close = function () { isCalled = true; }
-
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 27 });
-
-            assertTrue(isCalled);
-
-            dateTimePicker.close = old;
-        }
-
-        function test_if_dateView_is_opened_and_no_important_key_pressed_should_call_navigate() {
-            var isCalled = false;
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.open('date');
-            dateTimePicker.$input.focus();
-            var old = dateTimePicker.dateView.navigate;
-
-            dateTimePicker.dateView.navigate = function () { isCalled = true; }
-
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 40 });
-
-            assertTrue(isCalled);
-
-            dateTimePicker.dateView.navigate = old;
-        }
-
-        function test_if_timeView_is_opened_and_no_important_key_pressed_should_call_navigate() {
-            var isCalled = false;
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.open('time');
-            dateTimePicker.$input.focus();
-            var old = dateTimePicker.timeView.navigate;
-
-            dateTimePicker.timeView.navigate = function () { isCalled = true; }
-
-            dateTimePicker.$input.trigger({ type: "keydown", keyCode: 40 });
-
-            assertTrue(isCalled);
-
-            dateTimePicker.timeView.navigate = old;
-        }
-
     </script>
     
     <%= Html.Telerik().DateTimePicker()
@@ -124,5 +27,136 @@
             .Value(new Nullable<DateTime>())
             .Effects(e => e.Toggle())
     %>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        test('pressing alt down arrow should open dateView if no view is opened', function() {
+            var dateTimePicker = getDateTimePicker();
+            dateTimePicker.effects = $.telerik.fx.toggle.defaults();
+
+            dateTimePicker.$element.focus();
+            dateTimePicker.close();
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(dateTimePicker.dateView.isOpened());
+        });
+
+        test('pressing alt down arrow should open timeView and close dateView if dateView is already opened', function () {
+            var dateTimePicker = getDateTimePicker();
+            dateTimePicker.effects = $.telerik.fx.toggle.defaults();
+
+            dateTimePicker.$element.focus();
+            dateTimePicker.close();
+            dateTimePicker.open('date');
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(dateTimePicker.timeView.isOpened());
+            ok(!dateTimePicker.dateView.isOpened());
+        });
+
+        test('pressing alt down arrow should open dateView and close timeView if timeView is already opened', function () {
+            var dateTimePicker = getDateTimePicker();
+            dateTimePicker.effects = $.telerik.fx.toggle.defaults();
+
+            dateTimePicker.$element.focus();
+            dateTimePicker.close();
+            dateTimePicker.open('time');
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(!dateTimePicker.timeView.isOpened());
+            ok(dateTimePicker.dateView.isOpened());
+        });
+
+        test('pressing Enter should close dropdown list', function() {
+            var isCalled = false;
+            var dateTimePicker = getDateTimePicker();
+
+            dateTimePicker.$element.focus();
+
+            dateTimePicker.open('date');
+
+            var old = dateTimePicker.close;
+
+            dateTimePicker.close = function () { isCalled = true; }
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 13 });
+            ok(isCalled);
+
+            dateTimePicker.close = old;
+        });
+
+        test('pressing Enter should call _change method', function () {
+            var isCalled = false;
+            var dateTimePicker = getDateTimePicker();          
+
+            dateTimePicker.close();
+            dateTimePicker.open('date');
+            dateTimePicker.$element.focus();
+            dateTimePicker.open('date');
+            var old = dateTimePicker._change;
+            dateTimePicker.dateView.$calendar.data('tCalendar').stopAnimation = true;
+            dateTimePicker._change = function () { isCalled = true; }
+
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 13 });
+
+            dateTimePicker._change = old;
+        });
+
+        test('pressing escape should call close', function() {
+            var isCalled = false;
+            var dateTimePicker = getDateTimePicker();
+
+            dateTimePicker.open();
+            dateTimePicker.$element.focus();
+            var old = dateTimePicker.close;
+
+            dateTimePicker.close = function () { isCalled = true; }
+
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(isCalled);
+
+            dateTimePicker.close = old;
+        });
+
+        test('if dateView is opened and no important key pressed should call navigate', function() {
+            var isCalled = false;
+            var dateTimePicker = getDateTimePicker();
+
+            dateTimePicker.open('date');
+            dateTimePicker.$element.focus();
+            var old = dateTimePicker.dateView.navigate;
+
+            dateTimePicker.dateView.navigate = function () { isCalled = true; }
+
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 40 });
+
+            ok(isCalled);
+
+            dateTimePicker.dateView.navigate = old;
+        });
+
+        test('if timeView is opened and no important key pressed should call navigate', function() {
+            var isCalled = false;
+            var dateTimePicker = getDateTimePicker();
+
+            dateTimePicker.open('time');
+            dateTimePicker.close('date');
+            dateTimePicker.$element.focus();
+            var old = dateTimePicker.timeView.navigate;
+
+            dateTimePicker.timeView.navigate = function () { isCalled = true; }
+
+            dateTimePicker.$element.trigger({ type: "keydown", keyCode: 40 });
+
+            ok(isCalled);
+
+            dateTimePicker.timeView.navigate = old;
+        });
+
+</script>
 
 </asp:Content>

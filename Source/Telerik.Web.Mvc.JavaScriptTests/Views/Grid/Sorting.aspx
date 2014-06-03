@@ -1,8 +1,7 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        Sorting</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .Columns(columns => {
@@ -37,19 +36,34 @@
                 .Select("foo", "bar"))
     %>
 
-    <script type="text/javascript">
-        var gridElement;
+</asp:Content>
 
-        function setUp() {
-            gridElement = document.createElement("div");
-            gridElement.id = "tempGrid";
-        }
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+    <script type="text/javascript">
+
+        var gridElement;
 
         function getGrid(selector) {
             return $(selector).data("tGrid");
         }
 
-        function test_clicking_the_header_calls_order_by() {
+        function createGrid(gridElement, options) {
+            options = $.extend({}, $.fn.tGrid.defaults, options);
+            return new $.telerik.grid(gridElement, options);
+        }
+
+        
+        module("Grid / Sorting", {
+            setup: function() {
+                gridElement = document.createElement("div");
+                gridElement.id = "tempGrid";
+            }
+        });
+
+
+        test('clicking the header calls order by', function() {
             var grid = getGrid("#Grid1");
             var columnIndex = 0;
             var orderBy = grid.sort;
@@ -59,83 +73,87 @@
 
             $("th:nth-child(1)", grid.element).trigger("click");
 
-            assertEquals(0, columnIndex);
+            equal(columnIndex, 0);
 
             grid.sort = orderBy;
-        }
+        });
 
-        function test_sort_expression_should_return_column() {
+        test('sort expression should return column', function() {
             var grid = createGrid(gridElement, { columns: [{ member: "c1", order: 'asc' }, { member: "c2"}] });
 
-            assertEquals("c1-asc", grid.sortExpr());
-        }
+            equal(grid.sortExpr(), "c1-asc");
+        });
 
-        function test_sort_expression_multiple_columns() {
+        test('sort expression multiple columns', function() {
             var grid = createGrid(gridElement, { columns: [{ member: "c1" }, { member: "c2"}] });
             grid.toggleOrder(1);
             grid.toggleOrder(0);
 
-            assertEquals("c2-asc~c1-asc", grid.sortExpr());
-        }
+            equal(grid.sortExpr(), "c2-asc~c1-asc");
+        });
 
-        function test_sort_expression_correctly_updates_sorting_order() {
+        test('sort expression correctly updates sorting order', function() {
             var grid = createGrid(gridElement, { columns: [{ member: "c1" }, { member: "c2"}] });
             grid.toggleOrder(0);
-            assertEquals("c1-asc", grid.sortExpr());
+            equal(grid.sortExpr(), "c1-asc");
             
             grid.toggleOrder(0);
-            assertEquals("c1-desc", grid.sortExpr());
+            equal(grid.sortExpr(), "c1-desc");
             
             grid.toggleOrder(0);
             
-            assertEquals("", grid.sortExpr());
-        }
+            equal(grid.sortExpr(), "");
+        });
 
-        function test_sort_is_undefined_by_default() {
+        test('sort is undefined by default', function() {
             var grid = createGrid(gridElement, { columns: [{ member: "c1" }, { member: "c2"}] });
-            assertUndefined(grid.sortMode);
-        }
+            ok(undefined === grid.sortMode);
+        });
 
-        function test_sort_is_serialized() {
+        test('sort is serialized', function() {
             var grid = getGrid("#Grid1");
-            assertEquals("single", grid.sortMode);
-        }
+            equal(grid.sortMode, "single");
+        });
 
-        function test_sort_expression_supports_single_sort_mode() {
+        test('sort expression supports single sort mode', function() {
             var grid = createGrid(gridElement, { sortMode: "single", columns: [{ member: "c1" }, { member: "c2"}] });
             grid.toggleOrder(0);
             grid.toggleOrder(1);
-            assertEquals("c2-asc", grid.sortExpr());
-            assertEquals(null, grid.columns[0].order);
-        }
+            equal(grid.sortExpr(), "c2-asc");
+            equal(grid.columns[0].order, null);
+        });
 
-        function test_sort_expression_changes_sort_direction_in_single_sort_mode() {
+        test('sort expression changes sort direction in single sort mode', function() {
             var grid = createGrid(gridElement, { sortMode: "single", columns: [{ member: "c1" }, { member: "c2"}] });
 
             grid.toggleOrder(0);
             grid.toggleOrder(0);
             
-            assertEquals("c1-desc", grid.sortExpr());
-        }
+            equal(grid.sortExpr(), "c1-desc");
+        });
 
-        function createGrid(gridElement, options) {
-            options = $.extend({}, $.fn.tGrid.defaults, options);
-            return new $.telerik.grid(gridElement, options);
-        }
-
-        function test_order_serialized_for_sorted_columns() {
+        test('order serialized for sorted columns', function() {
             var grid = getGrid("#Grid2");
-            assertEquals("asc", grid.columns[0].order);
-        }
+            equal(grid.columns[0].order, "asc");
+        });
+        
+        test('rebind clears sort order', function() {
+            var grid = getGrid("#Grid3");
+            grid.ajaxRequest = function() {};
+                
+            grid.rebind();
+            equal(grid.orderBy, '');
+        });
 
-        function test_duplicate_column_icon_cleared() {
+        test('duplicate column icon cleared', function() {
 //            var grid = getGrid("#Grid3");
 //            grid.ajaxRequest = function() {
 //            }
 //            grid.sort('BirthDate.Day-asc');
 //            grid.updateSorting();
-//            assertEquals(1, $('#Grid3 .t-arrow-up').length);
-        }
+//            equal($('#Grid3 .t-arrow-up').length, 1);
+        });
+
     </script>
 
 </asp:Content>

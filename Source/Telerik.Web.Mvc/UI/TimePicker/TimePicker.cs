@@ -12,9 +12,10 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     
     using Extensions;
+    using Telerik.Web.Mvc.UI.Html;
     using Telerik.Web.Mvc.Resources;
 
-    public class TimePicker : ViewComponentBase, IEffectEnabled
+    public class TimePicker : DatePickerBase
     {
         private readonly IList<IEffect> defaultEffects = new List<IEffect> { new SlideAnimation() };
 
@@ -23,14 +24,10 @@ namespace Telerik.Web.Mvc.UI
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.timepicker.js" });
 
-            ClientEvents = new TimePickerClientEvents();
-            Effects = new Effects();
             defaultEffects.Each(el => Effects.Container.Add(el));
 
-            Enabled = true;
             Format = CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern;
             
-            InputHtmlAttributes = new Dictionary<string, object>();
             DropDownHtmlAttributes = new Dictionary<string, object>();
 
             MinValue = DateTime.Today;
@@ -42,23 +39,7 @@ namespace Telerik.Web.Mvc.UI
             ShowButton = true;
         }
 
-        public TimePickerClientEvents ClientEvents { get; private set; }
-
-        public Effects Effects { get; set; }
-
-        public string Format { get; set; }
-
-        public bool Enabled { get; set; }
-
-        public IDictionary<string, object> InputHtmlAttributes { get; private set; }
-
         public IDictionary<string, object> DropDownHtmlAttributes { get; private set; }
-
-        public DateTime? Value { get; set; }
-
-        public DateTime MinValue { get; set; }
-
-        public DateTime MaxValue { get; set; }
 
         public int Interval { get; set; }
 
@@ -82,8 +63,10 @@ namespace Telerik.Web.Mvc.UI
             objectWriter.Append("format", this.Format);
             objectWriter.Append("minValue", this.MinValue);
             objectWriter.Append("maxValue", this.MaxValue);
-            objectWriter.Append("interval", this.Interval);            
+            objectWriter.Append("interval", this.Interval);
             objectWriter.Append("selectedValue", this.Value);
+            objectWriter.Append("enabled", this.Enabled, true);
+            objectWriter.Append("openOnFocus", this.OpenOnFocus, false);
 
             if (DropDownHtmlAttributes.Any())
             {

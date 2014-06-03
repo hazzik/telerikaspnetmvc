@@ -1,7 +1,5 @@
 namespace Telerik.Web.Mvc.Examples
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
@@ -13,7 +11,10 @@ namespace Telerik.Web.Mvc.Examples
     public partial class GridController : Controller
     {
         [SourceCodeFile("EditableProduct (model)", "~/Models/EditableProduct.cs")]
-        [SourceCodeFile("Date.ascx (editor)", "~/Views/Shared/EditorTemplates/Date.ascx")]
+        [SourceCodeFile(
+            Caption = "Date (editor)",
+            FileName = "~/Views/Shared/EditorTemplates/Date.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/Date.cshtml")]
         [SourceCodeFile("SessionProductRepository", "~/Models/SessionProductRepository.cs")]
         public ActionResult EditingServerSide(GridEditMode? mode, GridButtonType? type)
         {

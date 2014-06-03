@@ -1,19 +1,15 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
     using System.Web.Mvc;
 
     public class CalendarController : Controller
     {
-        public ActionResult Index()
+        public ActionResult Navigation()
         {
-            ViewData["controllerName"] = "Calendar";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
+            return View();
         }
 
-        public ActionResult Navigation()
+        public ActionResult ClientAPI()
         {
             return View();
         }
@@ -24,6 +20,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         }
 
         public ActionResult Rendering()
+        {
+            return View();
+        }        
+        
+        public ActionResult StaticMethods()
         {
             return View();
         }

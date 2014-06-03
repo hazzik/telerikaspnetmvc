@@ -9,8 +9,14 @@ namespace Telerik.Web.Mvc.Examples
     {
         [SourceCodeFile("EditableOrder (model)", "~/Models/EditableOrder.cs")]
         [SourceCodeFile("Employee (model)", "~/Models/Employee.cs")]
-        [SourceCodeFile("Employee.ascx (Display)", "~/Views/Grid/DisplayTemplates/Employee.ascx")]
-        [SourceCodeFile("Employee.ascx (Editor)", "~/Views/Grid/EditorTemplates/Employee.ascx")]
+        [SourceCodeFile(
+            Caption = "Employee (Display)",
+            FileName = "~/Views/Grid/DisplayTemplates/Employee.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Grid/DisplayTemplates/Employee.cshtml")]
+        [SourceCodeFile(
+            Caption = "Employee (Editor)",
+            FileName = "~/Views/Grid/EditorTemplates/Employee.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Grid/EditorTemplates/Employee.cshtml")]
         public ActionResult ServerEditTemplates()
         {
             PopulateEmployees();

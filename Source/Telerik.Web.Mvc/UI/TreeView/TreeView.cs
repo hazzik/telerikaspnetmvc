@@ -61,7 +61,7 @@ namespace Telerik.Web.Mvc.UI
             Items = new LinkedObjectCollection<TreeViewItem>(null);
 
             ShowLines = true;
-            
+
             SelectedIndex = -1;
         }
 
@@ -188,7 +188,7 @@ namespace Telerik.Web.Mvc.UI
             get;
             set;
         }
-        
+
         public override void WriteInitializationScript(TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tTreeView", writer);
@@ -251,7 +251,7 @@ namespace Telerik.Web.Mvc.UI
             objectWriter.AppendClientEvent("onNodeDropped", ClientEvents.OnNodeDropped);
             objectWriter.AppendClientEvent("onDataBinding", ClientEvents.OnDataBinding);
             objectWriter.AppendClientEvent("onDataBound", ClientEvents.OnDataBound);
-            
+
             objectWriter.Complete();
             base.WriteInitializationScript(writer);
         }
@@ -304,8 +304,8 @@ namespace Telerik.Web.Mvc.UI
 
                     if (ExpandAll)
                     {
-                        item.Expanded = true;
-                    }                    
+                        ExpandAllChildrens(item);
+                    }
 
                     if (string.IsNullOrEmpty(item.Value))
                     {
@@ -315,10 +315,20 @@ namespace Telerik.Web.Mvc.UI
                     WriteItem(item, treeViewTag.Children[0], builder);
                 });
             }
-            
+
             treeViewTag.WriteTo(writer);
 
             base.WriteHtml(writer);
+        }
+
+        private void ExpandAllChildrens(TreeViewItem treeViewItem)
+        {
+            treeViewItem.Expanded = true;
+
+            foreach (var item in treeViewItem.Items)
+            {
+                ExpandAllChildrens(item);
+            }
         }
 
         private void WriteItem(TreeViewItem item, IHtmlNode parentTag, ITreeViewHtmlBuilder builder)
@@ -327,7 +337,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 ItemAction(item);
             }
-            
+
             if (item.Visible)
             {
                 if (item.IsAccessible(Authorization, ViewContext))
@@ -340,7 +350,7 @@ namespace Telerik.Web.Mvc.UI
 
                     if (item.LoadOnDemand || ShowCheckBox || item.Value.HasValue())
                     {
-                        builder.ItemHiddenInputValue(item).AppendTo(itemTag.Children[0]);   
+                        builder.ItemHiddenInputValue(item).AppendTo(itemTag.Children[0]);
                     }
 
                     if (item.Template.HasValue())

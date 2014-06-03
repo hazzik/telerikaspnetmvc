@@ -6,10 +6,11 @@
 namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
+    using System.Collections.Generic;
     using System.Web.Mvc;
     using System.Web.Routing;
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class WindowBuilder : ViewComponentBuilderBase<Window, WindowBuilder>, IHideObjectMembers
     {
@@ -157,6 +158,15 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </example>        
         public WindowBuilder ContentHtmlAttributes(object attributes)
         {
+            return ContentHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes of the content element of the item.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>    
+        public WindowBuilder ContentHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
             Component.ContentHtmlAttributes.Clear();
@@ -216,9 +226,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </example>
         public WindowBuilder LoadContentFrom(string actionName, string controllerName, object routeValues)
         {
-            UrlHelper urlHelper = new UrlHelper(Component.ViewContext.RequestContext);
-
-            return LoadContentFrom(urlHelper.Action(actionName, controllerName, routeValues));
+            return LoadContentFrom(actionName, controllerName, new RouteValueDictionary(routeValues));
         }
 
         public WindowBuilder LoadContentFrom(string actionName, string controllerName, RouteValueDictionary routeValues)

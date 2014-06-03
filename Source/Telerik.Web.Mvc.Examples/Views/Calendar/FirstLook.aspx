@@ -14,26 +14,26 @@
        { %>
 	    <ul id="calendar-options">
 		    <li>
-			    <label for="minDate-input">show dates between</label>
+			    <label for="minDate">show dates between</label>
                 <%= Html.Telerik().DatePicker()
                         .Name("minDate")
                         .Value((DateTime)ViewData["minDate"])
                 %>
-                <label for="maxDate-input">and</label>
+                <label for="maxDate">and</label>
                 <%= Html.Telerik().DatePicker()
                         .Name("maxDate")
                         .Value((DateTime)ViewData["maxDate"])
                 %>
 		    </li>
 		    <li>
-			    <label for="selectedDate-input">have pre-selected</label>
+			    <label for="selectedDate">have pre-selected</label>
                 <%= Html.Telerik().DatePicker()
                         .Name("selectedDate")
                         .Value((DateTime)ViewData["selectedDate"])
                 %>
 		    </li>
 	    </ul>
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
 </asp:Content>
 

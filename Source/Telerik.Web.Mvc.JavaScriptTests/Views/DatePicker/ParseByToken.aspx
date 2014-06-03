@@ -7,10 +7,6 @@
     <script type="text/javascript">
         var $t;
 
-        function setUp() {
-            $t = $.telerik;
-        }
-
         function compareDates(expected, returned) {
             var isValid = true;
 
@@ -24,34 +20,65 @@
             return isValid;
         }
 
-        function test_parseByToken_should_return_today_date_token_today() {
+        //short names
+       
+    </script>
+    
+    
+    
+    <%= Html.Telerik().DatePicker()
+            .Name("DatePicker")
+            .Min(new DateTime(1900, 01, 01))
+            .Max(new DateTime(2100, 01, 01))
+    %>
+    
+    <% Html.Telerik().ScriptRegistrar()
+           .Scripts(scripts => scripts
+               .Add("telerik.common.js")
+               .Add("telerik.calendar.js")
+               .Add("telerik.datepicker.js")); %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            $t = $.telerik;
+        }
+
+        test('parseByToken should return today date token today', function() {
            
             var expectedDate = new Date();
 
             var returnedDate = $t.datetime.parseByToken("today");
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_yesterday_date_token_yesterday() {
+        test('parseByToken should return yesterday date token yesterday', function() {
             var expectedDate = new Date();
             expectedDate.setDate(expectedDate.getDate() -1);
 
             var returnedDate = $t.datetime.parseByToken("yesterday");
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_tomorrow_date_token_tomorrow() {
+        test('parseByToken should return tomorrow date token tomorrow', function() {
             var expectedDate = new Date();
             expectedDate.setDate(expectedDate.getDate() + 1);
 
             var returnedDate = $t.datetime.parseByToken("tomorrow");
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_monday_of_current_week() {
+        test('parseByToken should return monday of current week', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //friday
             var expectedDate = new Date(2009, 10, 27); //friday
@@ -60,19 +87,19 @@
 
             expectedDate.setDate(expectedDate.getDate() - 4); //set the expected date
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_friday_of_current_week() {
+        test('parseByToken should return friday of current week', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //friday
             var expectedDate = new Date(2009, 10, 27); //friday
 
             var returnedDate = $t.datetime.parseByToken("friday", tmpDate);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_sunday_of_current_week() {
+        test('parseByToken should return sunday of current week', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //friday
             var expectedDate = new Date(2009, 10, 27); //friday
@@ -81,10 +108,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 2); //set the expected date
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_march_of_current_year() {
+        test('parseByToken should return march of current year', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -92,10 +119,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() - 8);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_December_of_current_year() {
+        test('parseByToken should return December of current year', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -103,19 +130,19 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 1);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_November_of_current_year() {
+        test('parseByToken should return November of current year', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
             var returnedDate = $t.datetime.parseByToken("november", tmpDate);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_friday() {
+        test('parseByToken should return next friday', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
@@ -124,10 +151,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 7);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_friday() {
+        test('parseByToken should return last friday', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -135,10 +162,10 @@
 
             expectedDate.setDate(expectedDate.getDate() - 7);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_monday() {
+        test('parseByToken should return next monday', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -146,10 +173,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 3);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_monday() {
+        test('parseByToken should return last monday', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -157,10 +184,10 @@
 
             expectedDate.setDate(expectedDate.getDate() - 11);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_sunday() {
+        test('parseByToken should return next sunday', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -168,10 +195,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 9);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_November() {
+        test('parseByToken should return next November', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -179,10 +206,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 12);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_november() {
+        test('parseByToken should return last november', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -190,10 +217,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() - 12);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_february() {
+        test('parseByToken should return next february', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -201,10 +228,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 3);
             
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_february() {
+        test('parseByToken should return last february', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -212,10 +239,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() - 21);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_december() {
+        test('parseByToken should return next december', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -223,11 +250,9 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 13);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
-
-        //short names
-        function test_parseByToken_should_return_next_fri() {
+            ok(compareDates(expectedDate, returnedDate));
+        });
+        test('parseByToken should return next fri', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -235,10 +260,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 7);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_fri() {
+        test('parseByToken should return last fri', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -246,10 +271,10 @@
 
             expectedDate.setDate(expectedDate.getDate() - 7);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_mon() {
+        test('parseByToken should return next mon', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -257,10 +282,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 3);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_mon() {
+        test('parseByToken should return last mon', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
 
@@ -268,10 +293,10 @@
 
             expectedDate.setDate(expectedDate.getDate() - 11);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_sun() {
+        test('parseByToken should return next sun', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //friday
@@ -280,10 +305,10 @@
 
             expectedDate.setDate(expectedDate.getDate() + 9);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_Nov() {
+        test('parseByToken should return next Nov', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -291,10 +316,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 12);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_Nov() {
+        test('parseByToken should return last Nov', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -302,10 +327,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() - 12);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_feb() {
+        test('parseByToken should return next feb', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -313,10 +338,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 3);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_feb() {
+        test('parseByToken should return last feb', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -324,10 +349,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() - 21);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_dec() {
+        test('parseByToken should return next dec', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27); //November
             var expectedDate = new Date(2009, 10, 27); //November
 
@@ -335,10 +360,10 @@
 
             expectedDate.setMonth(expectedDate.getMonth() + 13);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_year() {
+        test('parseByToken should return next year', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -347,10 +372,10 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear() + 1, expectedDate.getMonth(), expectedDate.getDate());
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_year() {
+        test('parseByToken should return last year', function() {
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
 
@@ -358,10 +383,10 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear() - 1, expectedDate.getMonth(), expectedDate.getDate());
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_month() {
+        test('parseByToken should return next month', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -370,10 +395,10 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth() + 1, expectedDate.getDate());
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_month() {
+        test('parseByToken should return last month', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -382,10 +407,10 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth() - 1, expectedDate.getDate());
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_week() {
+        test('parseByToken should return next week', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -394,10 +419,10 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() + 7);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_last_week() {
+        test('parseByToken should return last week', function() {
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -406,10 +431,10 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() - 7);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
-        function test_parseByToken_should_return_next_day() { //like tomorrow
+        test('parseByToken should return next day', function() { //like tomorrow
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -418,11 +443,11 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() + 1);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
 
 
-        function test_parseByToken_should_return_last_day() { //like tomorrow
+        test('parseByToken should return last day', function() { //like tomorrow
 
             var tmpDate = new $.telerik.datetime(2009, 10, 27);
             var expectedDate = new Date(2009, 10, 27);
@@ -431,39 +456,24 @@
 
             expectedDate.setFullYear(expectedDate.getFullYear(), expectedDate.getMonth(), expectedDate.getDate() - 1);
 
-            assertTrue(compareDates(expectedDate, returnedDate));
-        }
+            ok(compareDates(expectedDate, returnedDate));
+        });
         
-        function test_parseByToken_should_return_null_if_cannot_parse_first_token()
-        {
+        test('parseByToken should return null if cannot parse first token', function() {
             var returnedDate = $t.datetime.parseByToken("undefined");
-            assertNull(returnedDate);
-        }
+            ok(null === returnedDate);
+        });
 
-        function test_parseByToken_should_return_null_if_second_token_is_not_provided() {
+        test('parseByToken should return null if second token is not provided', function() {
             var returnedDate = $t.datetime.parseByToken("next ");
-            assertNull(returnedDate);
-        }
+            ok(null === returnedDate);
+        });
 
-        function test_parseByToken_should_return_null_if_second_token_is_not_correct() {
+        test('parseByToken should return null if second token is not correct', function() {
             var returnedDate = $t.datetime.parseByToken("next undeffined");
-            assertNull(returnedDate);
-        }
-       
-    </script>
-    
-    
-    
-    <%= Html.Telerik().DatePicker()
-            .Name("DatePicker")
-            .MinDate(new DateTime(1900, 01, 01))
-            .MaxDate(new DateTime(2100, 01, 01))
-    %>
-    
-    <% Html.Telerik().ScriptRegistrar()
-           .Scripts(scripts => scripts
-               .Add("telerik.common.js")
-               .Add("telerik.calendar.js")
-               .Add("telerik.datepicker.js")); %>
+            ok(null === returnedDate);
+        });
+
+</script>
 
 </asp:Content>

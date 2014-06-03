@@ -108,12 +108,23 @@ function OutdentTool() {
     }
     
     this.update = function ($ui, nodes) {
-        var suitable = finder.findSuitable(nodes);
-        for (var i = 0; i < suitable.length;i++)
-            if (dom.is(suitable[i], 'li') || suitable[i].style.marginLeft) {
+        var suitable = finder.findSuitable(nodes),
+            isOutdentable, listParentsCount;
+
+        for (var i = 0; i < suitable.length; i++) {
+            isOutdentable = suitable[i].style.marginLeft;
+
+            if (!isOutdentable) {
+                listParentsCount = $(suitable[i]).parents('ul,ol').length;
+                isOutdentable = (dom.is(suitable[i], 'li') && listParentsCount > 1)
+                             || (dom.ofType(suitable[i], ['ul','ol']) && listParentsCount > 0);
+            }
+
+            if (isOutdentable) {
                 $ui.removeClass('t-state-disabled');
                 return;
             }
+        }
     
         $ui.addClass('t-state-disabled').removeClass('t-state-hover');
     }

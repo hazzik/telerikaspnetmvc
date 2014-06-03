@@ -1,19 +1,15 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
     using System.Web.Mvc;
 
     public class DatePickerController : Controller
     {
-        public ActionResult Index()
+        public ActionResult ClientEvents()
         {
-            ViewData["controllerName"] = "DatePicker";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
+            return View();
         }
 
-        public ActionResult ClientEvents()
+        public ActionResult ClientSideRendering()
         {
             return View();
         }

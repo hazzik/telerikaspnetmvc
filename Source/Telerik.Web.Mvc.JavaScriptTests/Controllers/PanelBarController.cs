@@ -1,18 +1,9 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
     using System.Web.Mvc;
 
     public class PanelBarController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewData["controllerName"] = "PanelBar";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
-        }
-
         public ActionResult ExpandCollapse()
         {
             return View();
@@ -39,6 +30,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         }
 
         public ActionResult Selection()
+        {
+            return View();
+        }
+
+        public ActionResult Serialization()
         {
             return View();
         }

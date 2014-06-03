@@ -20,15 +20,15 @@
             builder = new Mock<ITabStripHtmlBuilder>();
             builder.Setup(r => r.TabStripTag()).Returns(() => 
             {
-                IHtmlNode result = new HtmlTag("div");
+                IHtmlNode result = new HtmlElement("div");
 
-                new HtmlTag("ul").AppendTo(result);
+                new HtmlElement("ul").AppendTo(result);
 
                 return result;
             });
-            builder.Setup(r => r.ItemTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("li"));
-            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("div"));
-            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a"));
+            builder.Setup(r => r.ItemTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("li"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("div"));
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("a"));
 
             tabStrip = TabStripTestHelper.CreateTabStrip(writer.Object, builder.Object);
             tabStrip.Name = "TabStrip1";
@@ -43,9 +43,9 @@
         {
             builder.Setup(r => r.TabStripTag()).Returns(() =>
             {
-                IHtmlNode result = new HtmlTag("div");
+                IHtmlNode result = new HtmlElement("div");
 
-                new HtmlTag("ul").AppendTo(result);
+                new HtmlElement("ul").AppendTo(result);
 
                 return result;
             });
@@ -58,7 +58,7 @@
         [Fact]
         public void Render_should_output_item_tag()
         {
-            builder.Setup(r => r.ItemTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("li"));
+            builder.Setup(r => r.ItemTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("li"));
 
             tabStrip.Render();
 
@@ -68,7 +68,7 @@
         [Fact]
         public void Render_should_call_ItemContent_as_many_times_as_items_count()
         {
-            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a"));
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("a"));
 
             tabStrip.Render();
 
@@ -108,7 +108,7 @@
         {
             tabStrip.Items[0].Content = () => { };
 
-            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a")).Verifiable();
+            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("a")).Verifiable();
 
             tabStrip.Render();
 
@@ -120,7 +120,7 @@
         {
             tabStrip.Items[0].Html = "Html";
 
-            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a")).Verifiable();
+            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("a")).Verifiable();
 
             tabStrip.Render();
 
@@ -132,7 +132,7 @@
         {
             tabStrip.Items[0].ContentUrl = "URL";
 
-            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a")).Verifiable();
+            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlElement("a")).Verifiable();
 
             tabStrip.Render();
 
@@ -203,7 +203,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            tabStrip.ClientEvents.OnSelect.InlineCode = () => { };
+            tabStrip.ClientEvents.OnSelect.CodeBlock = () => { };
 
             TabStripTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onSelect", tabStrip.ClientEvents.OnSelect)).Verifiable();
 
@@ -218,7 +218,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            tabStrip.ClientEvents.OnError.InlineCode = () => { };
+            tabStrip.ClientEvents.OnError.CodeBlock = () => { };
 
             TabStripTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onError", tabStrip.ClientEvents.OnError)).Verifiable();
 
@@ -232,7 +232,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            tabStrip.ClientEvents.OnLoad.InlineCode = () => { };
+            tabStrip.ClientEvents.OnLoad.CodeBlock = () => { };
 
             TabStripTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", tabStrip.ClientEvents.OnLoad)).Verifiable();
 

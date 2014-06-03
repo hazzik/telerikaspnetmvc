@@ -18,7 +18,7 @@ namespace Telerik.Web.Mvc.UI
     /// <summary>
     /// View component base class.
     /// </summary>
-    public abstract class ViewComponentBase : IScriptableComponent, IHtmlAttributesContainer
+    public abstract class ViewComponentBase : IViewComponent, IScriptableComponent, IHtmlAttributesContainer
     {
         private string name;
 
@@ -157,7 +157,12 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         public void Render()
         {
-            using (HtmlTextWriter textWriter = new HtmlTextWriter(ViewContext.HttpContext.Response.Output))
+#if MVC1
+            var baseWriter = ViewContext.HttpContext.Response.Output;
+#else
+            var baseWriter = ViewContext.Writer;
+#endif
+            using (HtmlTextWriter textWriter = new HtmlTextWriter(baseWriter))
             {
                 WriteHtml(textWriter);    
             }

@@ -2,11 +2,13 @@ namespace Telerik.Web.Mvc.Examples
 {
     using System.Web.Mvc;
     using System.Linq;
-    using Models;
 
     public partial class GridController : Controller
     {
-        [SourceCodeFile("CheckedOrders.ascx", "~/Views/Grid/CheckedOrders.ascx")]
+        [SourceCodeFile(
+            Caption = "CheckedOrders",
+            FileName = "~/Views/Grid/CheckedOrders.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Grid/CheckedOrders.cshtml")]
         public ActionResult CheckBoxesAjax()
         {
             return View();

@@ -75,24 +75,5 @@
 
             Assert.IsType(typeof(PanelBarItemBuilder), returnedBuilder);
         }
-
-        [Fact]
-        public void Setting_Url_when_contentUrl_is_set_should_throw_exception()
-        {
-            const string url = "test";
-            item.ContentUrl = url;
-
-            Assert.Throws(typeof(NotSupportedException), () => { builder.Url(url); });
-        }
-
-
-        [Fact]
-        public void Setting_ContentUrl_when_Url_is_set_should_throw_exception()
-        {
-            const string url = "test";
-            item.Url = url;
-
-            Assert.Throws(typeof(NotSupportedException), () => { builder.LoadContentFrom(url); });
-        }
     }
 }

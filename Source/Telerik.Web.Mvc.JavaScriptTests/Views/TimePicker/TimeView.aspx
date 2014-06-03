@@ -1,13 +1,12 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     
     <h2>TimeView</h2>
     
     <script type="text/javascript">
-        var $t;
         var tv;
         var $input;
         var position;
@@ -22,8 +21,25 @@
             itemValue = pass;
         }
 
-        function setUp() {
-            $t = $.telerik;
+    </script>
+
+    <input id="testInput" />
+
+    <% Html.Telerik().ScriptRegistrar()
+           .DefaultGroup(group => group.Add("telerik.common.js")
+                                       .Add("telerik.timepicker.js")); 
+    %>
+
+</asp:Content>
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+    module("TreeView / ClientAPI", {
+        setup: function () {
             $input = $('#testInput');
 
             tv = new $t.timeView({
@@ -32,8 +48,8 @@
                 format: $t.cultureInfo.shortTime,
                 interval: 30,
                 isRtl: $input.closest('.t-rtl').length,
-                minValue: new $t.datetime(2010, 10, 10, 12, 0, 0),
-                maxValue: new $t.datetime(2010, 10, 10, 12, 0, 0),
+                minValue: new Date(2010, 10, 10, 12, 0, 0),
+                maxValue: new Date(2010, 10, 10, 12, 0, 0),
                 onChange: changeCallBack,
                 onNavigateWithOpenPopup: navigateWithOpenPopupCallBack
             });
@@ -45,286 +61,280 @@
                 zIndex: $t.getElementZIndex($input[0])
             }
         }
+    });
 
-        function test_timeView_should_create_dropDown_on_its_creating() {
-            
-            var timeView = new $t.timeView({
-                effects: new $t.fx.slide.defaults(),
-                dropDownAttr: 'width:100px',
-                isRtl: 0
-            });
+    test('timeView should create dropDown on its creating', function () {
 
-            assertNotUndefined(timeView.dropDown);
-            assertNotUndefined(timeView.dropDown.onClick);
-            assertEquals('not correct effects are set', timeView.effects.list[0].name, timeView.dropDown.effects.list[0].name);
-            assertEquals('not correct effects are set', timeView.dropDownAttr, timeView.dropDown.attr);
-        }
+        var timeView = new $t.timeView({
+            effects: new $t.fx.slide.defaults(),
+            dropDownAttr: 'width:100px',
+            isRtl: 0
+        });
 
-        function test_ensure_items_will_call_bind_if_not_items_are_created() {
-            var isCalled = false;
-            var oldM = tv.bind;
-            tv.bind = function () { isCalled = true; }
+        ok(undefined !== timeView.dropDown);
+        ok(undefined !== timeView.dropDown.onClick);
+        equal(timeView.dropDown.effects.list[0].name, timeView.effects.list[0].name, 'not correct effects are set');
+        equal(timeView.dropDown.attr, timeView.dropDownAttr, 'not correct effects are set');
+    });
 
-            tv.dropDown.$items = null;
+    test('ensure items will call bind if not items are created', function () {
+        var isCalled = false;
+        var oldM = tv.bind;
+        tv.bind = function () { isCalled = true; }
 
-            tv._ensureItems();
+        tv.dropDown.$items = null;
 
-            assertTrue('bind method was not called', isCalled);
+        tv._ensureItems();
 
-            tv.bind = oldM;
-        }
+        ok(isCalled, 'bind method was not called');
 
-        function test_open_method_should_call_ensureItems() {
-            var isCalled = false;
-            var oldM = tv._ensureItems;
-            tv._ensureItems = function () { isCalled = true; }
+        tv.bind = oldM;
+    });
 
-            tv.open(position);
+    test('open method should call ensureItems', function () {
+        var isCalled = false;
+        var oldM = tv._ensureItems;
+        tv._ensureItems = function () { isCalled = true; }
 
-            assertTrue('_ensureItems was not called', isCalled);
+        tv.open(position);
 
-            tv._ensureItems = oldM;
-        }
+        ok(isCalled, '_ensureItems was not called');
 
-        function test_open_method_should_call_dropDown_open_method_with_position_data() {
-            var passedPos;
-            var isCalled = false;
-            var oldM = tv.dropDown.open;
-            tv.dropDown.open = function (pos) { isCalled = true; passedPos = pos; }
+        tv._ensureItems = oldM;
+    });
 
-            tv.open(position);
+    test('open method should call dropDown open method with position data', function () {
+        var passedPos;
+        var isCalled = false;
+        var oldM = tv.dropDown.open;
+        tv.dropDown.open = function (pos) { isCalled = true; passedPos = pos; }
 
-            assertTrue('open method was not called', isCalled);
-            assertEquals('passed position is not correct', position.offset.top, passedPos.offset.top); //just chekc one property
+        tv.open(position);
 
-            tv.dropDown.open = oldM;
-        }
+        ok(isCalled, 'open method was not called');
+        equal(passedPos.offset.top, position.offset.top, 'passed position is not correct'); //just chekc one property
 
-        function test_open_method_should_call_dropDown_close_method() {
-            var isCalled = false;
-            var oldM = tv.dropDown.close;
-            tv.dropDown.close = function () { isCalled = true; }
+        tv.dropDown.open = oldM;
+    });
 
-            tv.close();
+    test('open method should call dropDown close method', function () {
+        var isCalled = false;
+        var oldM = tv.dropDown.close;
+        tv.dropDown.close = function () { isCalled = true; }
 
-            assertTrue('close method was not called', isCalled);
+        tv.close();
 
-            tv.dropDown.close = oldM;
-        }
+        ok(isCalled, 'close method was not called');
 
-        function test_bind_method_will_call_dataBind_with_correct_array_of_available_hours() {
-            var timeView = new $t.timeView({
-                effects: new $t.fx.slide.defaults(),
-                dropDownAttr: 'width:100px',
-                isRtl: 0,
-                format: 'H:mm',
-                interval: 30,
-                isRtl: $input.closest('.t-rtl').length,
-                minValue: new $t.datetime(2010, 10, 10, 23, 0, 0),
-                maxValue: new $t.datetime(2010, 10, 10, 2, 0, 0)
-            });
+        tv.dropDown.close = oldM;
+    });
 
-            var availableHours;
-            var oldM = timeView.dropDown.dataBind;
-            timeView.dropDown.dataBind = function (hours) { availableHours = hours; }
+    test('bind method will call dataBind with correct array of available hours', function () {
+        var timeView = new $t.timeView({
+            effects: new $t.fx.slide.defaults(),
+            dropDownAttr: 'width:100px',
+            isRtl: 0,
+            format: 'H:mm',
+            interval: 30,
+            isRtl: $input.closest('.t-rtl').length,
+            minValue: new Date(2010, 10, 10, 23, 0, 0),
+            maxValue: new Date(2010, 10, 10, 2, 0, 0)
+        });
 
-            timeView.bind();
+        var availableHours;
+        var oldM = timeView.dropDown.dataBind;
+        timeView.dropDown.dataBind = function (hours) { availableHours = hours; }
 
-            assertNotUndefined(availableHours);
-            assertEquals('renderedItems are not correct number', 7, availableHours.length);
-            assertEquals('hours is not formatted correctly', "23:00", availableHours[0]);
+        timeView.bind();
 
-            timeView.dropDown.dataBind = oldM;
-        }
+        ok(undefined !== availableHours);
+        equal(availableHours.length, 7, 'renderedItems are not correct number');
+        equal(availableHours[0], "23:00", 'hours is not formatted correctly');
 
-        function test_bind_method_should_add_maxValue_to_items_list() {
-            var timeView = new $t.timeView({
-                effects: new $t.fx.slide.defaults(),
-                dropDownAttr: 'width:100px',
-                isRtl: 0,
-                format: 'H:mm',
-                interval: 30,
-                isRtl: $input.closest('.t-rtl').length,
-                minValue: new $t.datetime(2010, 10, 10, 23, 0, 0),
-                maxValue: new $t.datetime(2010, 10, 10, 2, 15, 0)
-            });
+        timeView.dropDown.dataBind = oldM;
+    });
 
-            var availableHours;
-            var oldM = timeView.dropDown.dataBind;
-            timeView.dropDown.dataBind = function (hours) { availableHours = hours; }
+    test('bind method should add maxValue to items list', function () {
+        var timeView = new $t.timeView({
+            effects: new $t.fx.slide.defaults(),
+            dropDownAttr: 'width:100px',
+            isRtl: 0,
+            format: 'H:mm',
+            interval: 30,
+            isRtl: $input.closest('.t-rtl').length,
+            minValue: new Date(2010, 10, 10, 23, 0, 0),
+            maxValue: new Date(2010, 10, 10, 2, 15, 0)
+        });
 
-            timeView.bind();
+        var availableHours;
+        var oldM = timeView.dropDown.dataBind;
+        timeView.dropDown.dataBind = function (hours) { availableHours = hours; }
 
-            assertEquals('renderedItems are not correct number', 8, availableHours.length);
-            assertEquals('hours is not formatted correctly', "2:15", availableHours[7]);
+        timeView.bind();
 
-            timeView.dropDown.dataBind = oldM;
-        }
+        equal(availableHours.length, 8, 'renderedItems are not correct number');
+        equal(availableHours[7], "2:15", 'hours is not formatted correctly');
 
-        function test_value_method_should_highlight_item_depending_on_the_passed_date() {
-            tv.dropDown.$items = null
-            tv.minValue = new $t.datetime(2010, 10, 10, 12, 0, 0);
-            tv.maxValue = new $t.datetime(2010, 10, 10, 12, 0, 0);
-            
-            tv.value("3:00 PM");
+        timeView.dropDown.dataBind = oldM;
+    });
 
-            var $item = tv.dropDown.$items.filter('.t-state-selected');
+    test('value method should highlight item depending on the passed date', function () {
+        tv.dropDown.$items = null
+        tv.minValue = new Date(2010, 10, 10, 12, 0, 0);
+        tv.maxValue = new Date(2010, 10, 10, 12, 0, 0);
 
-            assertEquals('Selected item is not one', 1, $item.length);
-            assertEquals('selected item is not correct', "3:00 PM", $item.text());
-        }
+        tv.value("3:00 PM");
 
-        function test_value_method_should_deselect_all_items_if_value_is_null() {
-            tv.dropDown.$items = null
-            tv.minValue = new $t.datetime(2010, 10, 10, 12, 0, 0);
-            tv.maxValue = new $t.datetime(2010, 10, 10, 12, 0, 0);
+        var $item = tv.dropDown.$items.filter('.t-state-selected');
 
-            tv.value(null);
+        equal($item.length, 1, 'Selected item is not one');
+        equal($item.text(), "3:00 PM", 'selected item is not correct');
+    });
 
-            var $item = tv.dropDown.$items.filter('.t-state-selected');
+    test('value method should deselect all items if value is null', function () {
+        tv.dropDown.$items = null
+        tv.minValue = new Date(2010, 10, 10, 12, 0, 0);
+        tv.maxValue = new Date(2010, 10, 10, 12, 0, 0);
 
-            assertEquals('Selected item is not 0', 0, $item.length);
-        }
+        tv.value(null);
 
-        function test_value_method_should_return_text_of_the_selected_item() {
-            tv._ensureItems();
-            var $item = tv.dropDown.$items.filter('.t-state-selected');
-            assertEquals($item.text(), tv.value());
-        }
+        var $item = tv.dropDown.$items.filter('.t-state-selected');
 
-        function test_max_method_should_rebind_items_list() {
-            var date = new Date(2000, 1, 1, 3, 0, 0);
+        equal($item.length, 0, 'Selected item is not 0');
+    });
 
-            tv.max(date)
+    test('value method should return text of the selected item', function () {
+        tv._ensureItems();
+        var $item = tv.dropDown.$items.filter('.t-state-selected');
+        equal(tv.value(), $item.text());
+    });
 
-            var $items = tv.dropDown.$items;
+    test('max method should rebind items list', function () {
+        var date = new Date(2000, 1, 1, 3, 0, 0);
 
-            assertEquals('maxValue is not set correctly', 0, tv.maxValue.toDate() - date);
-            assertEquals($t.datetime.format(tv.maxValue.toDate(), tv.format), $($items[$items.length - 1]).text());
-        }
+        tv.max(date)
 
-        function test_max_method_should_return_maxValue() {
-            var date = tv.max();
+        var $items = tv.dropDown.$items;
 
-            assertEquals(0, date - tv.maxValue.toDate());
-        }  
+        equal(tv.maxValue - date, 0, 'maxValue is not set correctly');
+        equal($($items[$items.length - 1]).text(), $t.datetime.format(tv.maxValue, tv.format));
+    });
 
-        function test_min_method_should_rebind_items_list() {
-            var date = new Date(2000, 1, 1, 10, 0, 0)
+    test('max method should return maxValue', function () {
+        var date = tv.max();
 
-            tv.min(date)
+        equal(date - tv.maxValue, 0);
+    });
 
-            var $items = tv.dropDown.$items;
+    test('min method should rebind items list', function () {
+        var date = new Date(2000, 1, 1, 10, 0, 0)
 
-            assertEquals('minValue is not set correctly', 0, tv.minValue.toDate() - date);
-            assertEquals($t.datetime.format(tv.minValue.toDate(), tv.format), $($items[0]).text());
-        }
+        tv.min(date)
 
-        function test_min_method_should_return_minValue() {
-            var date = tv.min();
+        var $items = tv.dropDown.$items;
 
-            assertEquals(0, date - tv.minValue.toDate());
-        }
+        equal(tv.minValue - date, 0, 'minValue is not set correctly');
+        equal($($items[0]).text(), $t.datetime.format(tv.minValue, tv.format));
+    });
 
-        function test_clicking_item_should_raise_onChange_callback() {
-            tv.open(position);
+    test('min method should return minValue', function () {
+        var date = tv.min();
 
-            var $item = tv.dropDown.$items.eq(1);
+        equal(date - tv.minValue, 0);
+    });
 
-            $item.click();
+    test('clicking item should raise onChange callback', function () {
+        tv.open(position);
 
-            assertNotUndefined(passedValue);
-            assertEquals('passed value is not correct', $item.text(), passedValue);
-        }
+        var $item = tv.dropDown.$items.eq(1);
 
-        function test_pressing_down_arrow_should_select_next_item() {
-            tv.open(position);
+        $item.click();
 
-            var $initialSelectedItem = tv.dropDown
+        ok(undefined !== passedValue);
+        equal(passedValue, $item.text(), 'passed value is not correct');
+    });
+
+    test('pressing down arrow should select next item', function () {
+        tv.open(position);
+
+        var $initialSelectedItem = tv.dropDown
                                             .$items
                                             .removeClass('t-state-selected')
                                             .first()
                                             .addClass('t-state-selected');
 
-            tv.navigate({ keyCode: 40, preventDefault: function () { } });
+        tv.navigate({ keyCode: 40, preventDefault: function () { } });
 
-            var $selectedItem = tv.dropDown.$items.filter('.t-state-selected').eq(0);
+        var $selectedItem = tv.dropDown.$items.filter('.t-state-selected').eq(0);
 
-            assertEquals('correct item is not selected', $initialSelectedItem.next().index(), $selectedItem.index());
-            assertEquals($selectedItem.text(), itemValue);
-        }
+        equal($selectedItem.index(), $initialSelectedItem.next().index(), 'correct item is not selected');
+        equal(itemValue, $selectedItem.text());
+    });
 
-        function test_pressing_up_arrow_should_select_prev_item() {
-            tv.open(position);
+    test('pressing up arrow should select prev item', function () {
+        tv.open(position);
 
-            tv.dropDown.highlight(tv.dropDown.$items[1]);
+        tv.dropDown.highlight(tv.dropDown.$items[1]);
 
-            tv.navigate({ keyCode: 38, preventDefault: function () { } });
+        tv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-            var $selectedItem = tv.dropDown.$items.filter('.t-state-selected').eq(0);
+        var $selectedItem = tv.dropDown.$items.filter('.t-state-selected').eq(0);
 
-            assertEquals('correct item is not selected', 0, $selectedItem.index());
-            assertEquals($selectedItem.text(), itemValue);
-        }
+        equal($selectedItem.index(), 0, 'correct item is not selected');
+        equal(itemValue, $selectedItem.text());
+    });
 
-        function test_keydown_should_create_$items_if_they_do_not_exist() {
-            tv.dropDown.$items = null;
+    test('keydown should create $items if they do not exist', function () {
+        tv.dropDown.$items = null;
 
-            tv.navigate({ keyCode: 38, preventDefault: function () { } });
+        tv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-            assertTrue(tv.dropDown.$items.length > 0);
-        }
+        ok(tv.dropDown.$items.length > 0);
+    });
 
-        function test_pressing_up_arrow_should_select_first_item_if_no_selected_item() {
-            tv.open(position);
+    test('pressing up arrow should select first item if no selected item', function () {
+        tv.open(position);
 
-            tv.dropDown.$items.removeClass('t-state-selected');
+        tv.dropDown.$items.removeClass('t-state-selected');
 
-            tv.navigate({ keyCode: 38, preventDefault: function () { } });
+        tv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-            assertEquals(0, tv.dropDown.$items.filter('.t-state-selected').index())
-        }
+        equal(tv.dropDown.$items.filter('.t-state-selected').index(), 0)
+    });
 
-        function test_pressing_up_arrow_should_raise_OnChange_if_popup_is_closed() {
-            tv.close(position);
+    test('pressing up arrow should raise OnChange if popup is closed', function () {
+        tv.close(position);
 
-            tv._ensureItems();
+        tv._ensureItems();
 
-            tv.dropDown.highlight(tv.dropDown.$items[1]);
+        tv.dropDown.highlight(tv.dropDown.$items[1]);
 
-            tv.navigate({ keyCode: 38, preventDefault: function () { } });
+        tv.navigate({ keyCode: 38, preventDefault: function () { } });
 
-            var $selectedItem = tv.dropDown.$items.filter('.t-state-selected').eq(0);
+        var $selectedItem = tv.dropDown.$items.filter('.t-state-selected').eq(0);
 
-            assertEquals('correct item is not selected', 0, $selectedItem.index());
-            assertEquals($selectedItem.text(), passedValue);
-        }
+        equal($selectedItem.index(), 0, 'correct item is not selected');
+        equal(passedValue, $selectedItem.text());
+    });
 
-        function test_navigate_should_not_call_preventDefault_if_key_is_not_arrow() {
+    test('navigate should not call preventDefault if key is not arrow', function () {
 
-            var isCalled = false;
+        var isCalled = false;
 
-            tv.navigate({ keyCode: 49, preventDefault: function () { isCalled = true; } });
+        tv.navigate({ keyCode: 49, preventDefault: function () { isCalled = true; } });
 
-            assertFalse('preventDefault was called', isCalled);
-        }
+        ok(!isCalled, 'preventDefault was called');
+    });
 
-        function test_navigate_should_call_preventDefault_if_key_is_arrow() {
+    test('navigate should call preventDefault if key is arrow', function () {
 
-            var isCalled = false;
+        var isCalled = false;
 
-            tv.navigate({ keyCode: 38, preventDefault: function () { isCalled = true; } });
+        tv.navigate({ keyCode: 38, preventDefault: function () { isCalled = true; } });
 
-            assertTrue('preventDefault was not called', isCalled);
-        }
+        ok(isCalled, 'preventDefault was not called');
+    });
 
-    </script>
-
-    <input id="testInput" />
-
-    <% Html.Telerik().ScriptRegistrar()
-           .DefaultGroup(group => group.Add("telerik.common.js")
-                                       .Add("telerik.timepicker.js")); 
-    %>
+</script>
 
 </asp:Content>

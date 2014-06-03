@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddNew" xml:space="preserve">
     <value>Добави нов запис</value>
@@ -233,5 +233,23 @@
   </data>
   <data name="NoRecords" xml:space="preserve">
     <value>Няма записи за показване!</value>
+  </data>
+  <data name="CancelChanges" xml:space="preserve">
+    <value>Откажи промените</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Запази промените</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Опресни</value>
+  </data>
+  <data name="SortedAsc" xml:space="preserve">
+    <value>сортиране в нарастващ ред</value>
+  </data>
+  <data name="SortedDesc" xml:space="preserve">
+    <value>сортиране в намаляващ ред</value>
+  </data>
+  <data name="UnGroup" xml:space="preserve">
+    <value>премахни групирането</value>
   </data>
 </root>

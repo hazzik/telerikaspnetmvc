@@ -6,9 +6,9 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-
-    using Extensions;
-    using Infrastructure;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="TextBoxBase"/> component.
@@ -165,11 +165,11 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TBuilder ClientEvents(Action<TextboxBaseClientEventsBuilder> clientEventsAction)
+        public TBuilder ClientEvents(Action<TextBoxBaseClientEventsBuilder> clientEventsAction)
         {
             Guard.IsNotNull(clientEventsAction, "clientEventsAction");
 
-            clientEventsAction(new TextboxBaseClientEventsBuilder(Component.ClientEvents, Component.ViewContext));
+            clientEventsAction(new TextBoxBaseClientEventsBuilder(Component.ClientEvents, Component.ViewContext));
 
             return this as TBuilder;
         }
@@ -179,6 +179,15 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         /// <param name="attributes">The HTML attributes.</param>
         public TBuilder InputHtmlAttributes(object attributes)
+        {
+            return InputHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the Input HTML attributes.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public TBuilder InputHtmlAttributes(IDictionary<string, object> attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 

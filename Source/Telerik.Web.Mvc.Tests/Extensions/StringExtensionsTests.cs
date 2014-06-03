@@ -5,6 +5,8 @@
 
 namespace Telerik.Web.Mvc.Extensions.Tests
 {
+    using System;
+    using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
 
     public class StringExtensionsTests
@@ -36,8 +38,8 @@ namespace Telerik.Web.Mvc.Extensions.Tests
         [Fact]
         public void Should_be_able_to_compress_and_decompress()
         {
-            string compressed = new string('x', 10 * 1024).Compress();
-            string plain = compressed.Decompress();
+            var compressed = new String('x', 10 * 1024).Compress();
+            var plain = compressed.Decompress();
 
             Assert.True(plain.Length > compressed.Length);
         }
@@ -58,6 +60,24 @@ namespace Telerik.Web.Mvc.Extensions.Tests
         public void AsTitle_splits_pascal_case()
         {
             Assert.Equal("Contact Name", "ContactName".AsTitle());
+        }
+
+        [Fact]
+        public void Should_not_throw_exception_on_invalid_base64_string()
+        {
+            Assert.DoesNotThrow(() => "x;ls%20-l;dir;".Decompress());
+        }        
+        
+        [Fact]
+        public void ToEnum_parses_enum()
+        {
+            "Male".ToEnum<Gender>(Gender.Female).ShouldEqual(Gender.Male);
+        }        
+        
+        [Fact]
+        public void ToEnum_parses_values_ignoring_their_case()
+        {
+            "male".ToEnum<Gender>(Gender.Female).ShouldEqual(Gender.Male);
         }
     }
 }

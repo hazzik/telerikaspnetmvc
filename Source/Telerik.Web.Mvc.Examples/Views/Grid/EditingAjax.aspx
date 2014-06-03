@@ -5,16 +5,16 @@
 <% 
     GridEditMode mode = (GridEditMode)ViewData["mode"];
     GridButtonType type = (GridButtonType)ViewData["type"];
-    
+
     using (Html.Configurator("Edit mode")
               .PostTo("EditingAjax", "Grid")
               .Begin())
-   { 
+    { 
 %>
     <ul>
-        <li><%= Html.RadioButton("mode", "InLine", mode == GridEditMode.InLine, new { id = "inLine" }) %><label for="inLine">In-line</label></li>
-        <li><%= Html.RadioButton("mode", "InForm", mode == GridEditMode.InForm, new { id = "inForm" }) %><label for="inForm">In-form</label></li>
-        <li><%= Html.RadioButton("mode", "PopUp", mode == GridEditMode.PopUp, new { id = "popUp" }) %><label for="popUp">Pop-up</label></li>
+        <li><%= Html.RadioButton("mode", "InLine", mode == GridEditMode.InLine, new { id = "inLine" })%><label for="inLine">In-line</label></li>
+        <li><%= Html.RadioButton("mode", "InForm", mode == GridEditMode.InForm, new { id = "inForm" })%><label for="inForm">In-form</label></li>
+        <li><%= Html.RadioButton("mode", "PopUp", mode == GridEditMode.PopUp, new { id = "popUp" })%><label for="popUp">Pop-up</label></li>
     </ul>
     <br />
     <h3 class="configurator-legend">
@@ -24,19 +24,23 @@
         <li><%= Html.RadioButton("type", "Text", type == GridButtonType.Text, new { id = "text" })%><label for="text">Text</label></li>
         <li><%= Html.RadioButton("type", "Image", type == GridButtonType.Image, new { id = "image" })%><label for="image">Image</label></li>
         <li><%= Html.RadioButton("type", "ImageAndText", type == GridButtonType.ImageAndText, new { id = "imageAndText" })%><label for="imageAndText">Image and text</label></li>
+        <li><%= Html.RadioButton("type", "BareImage", type == GridButtonType.BareImage, new { id = "bareImage" })%><label for="bareImage">Bare Image (no button borders)</label></li>
     </ul>
-    <button type="submit" class="t-button t-state-default">Apply</button>
+    <button type="submit" class="t-button">Apply</button>
 <% 
-   }
+    }
 %>
 
 <%= Html.Telerik().Grid<EditableProduct>()
         .Name("Grid")
-        .DataKeys(keys => 
+        .DataKeys(keys =>
         {
             keys.Add(p => p.ProductID);
         })
-        .ToolBar(commands => commands.Insert().ButtonType(type).ImageHtmlAttributes(new {style="margin-left:0"}))
+        .ToolBar(commands =>
+        {
+            commands.Insert().ButtonType(type).ImageHtmlAttributes(new { style = "margin-left:0" });
+        })
         .DataBinding(dataBinding =>
         {
             dataBinding.Ajax()
@@ -62,7 +66,7 @@
         .Editable(editing => editing.Mode(mode))
         .Pageable()
         .Scrollable()
-        .Sortable()        
+        .Sortable()
 %>
 
 </asp:content>

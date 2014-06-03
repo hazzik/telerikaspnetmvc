@@ -268,25 +268,5 @@ namespace Telerik.Web.Mvc.UI.Tests
 
             Assert.IsType(typeof(TimePickerBuilder), returnedBuilder);
         }
-
-        [Fact]
-        public void ClientEvents_should_set_events_of_the_datepicker()
-        {
-            Action<TimePickerClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
-
-            builder.ClientEvents(clientEventsAction);
-
-            Assert.NotNull(timepicker.ClientEvents.OnLoad.HandlerName);
-        }
-
-        [Fact]
-        public void ClientEvents_should_return_builder()
-        {
-            Action<TimePickerClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
-
-            var returnedBuilder = builder.ClientEvents(clientEventsAction);
-
-            Assert.IsType(typeof(TimePickerBuilder), returnedBuilder);
-        }
     }
 }

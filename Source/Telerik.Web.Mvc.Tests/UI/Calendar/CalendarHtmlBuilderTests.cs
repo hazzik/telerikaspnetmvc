@@ -122,7 +122,7 @@
         [Fact]
         public void CellTag_should_render_td_tag()
         {
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, false);
 
             Assert.Equal("td", tag.TagName);
         }
@@ -130,7 +130,7 @@
         [Fact]
         public void CellTag_should_render_other_month_class_if_isOtherMonth_is_true()
         {
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, true);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, true);
 
             Assert.Equal("t-other-month", tag.Attribute("class"));
         }
@@ -140,7 +140,7 @@
         {
             calendar.Value = DateTime.Today;
 
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, false);
 
             Assert.Equal(UIPrimitives.SelectedState, tag.Attribute("class"));
         }
@@ -150,7 +150,7 @@
         {
             calendar.MaxDate = DateTime.Today.AddMonths(-1);
 
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, false);
 
             Assert.Equal("&nbsp;", tag.InnerHtml);
         }
@@ -158,7 +158,7 @@
         [Fact]
         public void CellTag_should_render_day_if_it_is_in_range_and_no_URL_format()
         {
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, false);
 
             Assert.Equal(DateTime.Today.Day.ToString(), tag.Children[0].InnerHtml);
         }
@@ -166,7 +166,7 @@
         [Fact]
         public void CellTag_should_render_title_attribute_with_today_Long_Date_String()
         {
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, false);
 
             Assert.Equal(DateTime.Today.ToLongDateString(), tag.Children[0].Attribute("title"));
         }
@@ -174,7 +174,7 @@
         [Fact]
         public void CellTag_should_render_day_with_ds_href_if_no_urlFormat()
         {
-            IHtmlNode tag = renderer.CellTag(DateTime.Today, string.Empty, false);
+            IHtmlNode tag = renderer.CellTag(DateTime.Today, calendar.Value, string.Empty, false);
 
             Assert.Equal("#", tag.Children[0].Attribute("href"));
             Assert.Equal(UIPrimitives.Link, tag.Children[0].Attribute("class"));
@@ -187,9 +187,9 @@
             const string urlFormat = "app/controller/action/{0}";
             calendar.SelectionSettings.Dates = new List<DateTime>();
 
-            IHtmlNode tag = renderer.CellTag(day, urlFormat, false);
+            IHtmlNode tag = renderer.CellTag(day, calendar.Value, urlFormat, false);
 
-            Assert.Equal(string.Format(urlFormat, day.ToShortDateString()), tag.Children[0].Attribute("href"));
+            Assert.Equal(string.Format(urlFormat, day), tag.Children[0].Attribute("href"));
         }
 
         [Fact]
@@ -199,9 +199,21 @@
             const string urlFormat = "app/controller/action/{0}";
             calendar.SelectionSettings.Dates = new List<DateTime> { new DateTime(2005, 5, 10), day, new DateTime(2000, 10, 10) };
 
-            IHtmlNode tag = renderer.CellTag(day, urlFormat, false);
+            IHtmlNode tag = renderer.CellTag(day, calendar.Value, urlFormat, false);
 
-            Assert.Equal(string.Format(urlFormat, day.ToShortDateString()), tag.Children[0].Attribute("href"));
+            Assert.Equal(string.Format(urlFormat, day), tag.Children[0].Attribute("href"));
+        }
+
+        [Fact]
+        public void CellTag_should_render_link_with_selection_url_and_date_formatted_to_yyyy_MM_dd_format()
+        {
+            DateTime day = DateTime.Today;
+            const string urlFormat = "app/controller/action/{0:yyyy-MM-dd}";
+            calendar.SelectionSettings.Dates = new List<DateTime>();
+
+            IHtmlNode tag = renderer.CellTag(day, calendar.Value, urlFormat, false);
+
+            Assert.Equal(string.Format(urlFormat, day), tag.Children[0].Attribute("href"));
         }
 
         [Fact]
@@ -211,7 +223,7 @@
             const string urlFormat = "app/controller/action/{0}";
             calendar.SelectionSettings.Dates = new List<DateTime> { new DateTime(2005, 5, 10), day, new DateTime(2000, 10, 10) };
 
-            IHtmlNode tag = renderer.CellTag(new DateTime(2000, 5, 10), urlFormat, false);
+            IHtmlNode tag = renderer.CellTag(new DateTime(2000, 5, 10), calendar.Value, urlFormat, false);
 
             Assert.Equal("#", tag.Children[0].Attribute("href"));
         }

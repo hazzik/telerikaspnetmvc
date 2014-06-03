@@ -235,7 +235,7 @@
         [Fact]
         public void ObjectWriter_should_append_Load_property_of_clientEvents()
         {
-            input.ClientEvents.OnLoad.InlineCode = () => { };
+            input.ClientEvents.OnLoad.CodeBlock = () => { };
 
             TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", input.ClientEvents.OnLoad)).Verifiable();
 
@@ -247,7 +247,7 @@
         [Fact]
         public void ObjectWriter_should_append_Select_property_of_clientEvents()
         {
-            input.ClientEvents.OnChange.InlineCode = () => { };
+            input.ClientEvents.OnChange.CodeBlock = () => { };
 
             TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onChange", input.ClientEvents.OnChange)).Verifiable();
 

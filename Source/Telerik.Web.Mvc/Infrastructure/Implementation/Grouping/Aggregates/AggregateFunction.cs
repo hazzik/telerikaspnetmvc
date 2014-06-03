@@ -3,14 +3,15 @@
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
-namespace Telerik.Web.Mvc.Infrastructure
+namespace Telerik.Web.Mvc
 {
     using System.Globalization;
     using System.Linq.Expressions;
-    using System.Reflection;
 
     public abstract class AggregateFunction
     {
+        public abstract string AggregateMethodName { get; }
+
         private string functionName;
 
         /// <summary>
@@ -18,6 +19,16 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// </summary>
         /// <value>The caption to display as an illustration of the aggregate function.</value>
         public string Caption
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
+        /// Gets or sets the name of the field, of the item from the set of items, which value is used as the argument of the aggregate function.
+        /// </summary>
+        /// <value>The name of the field to get the argument value from.</value>
+        public virtual string SourceField
         {
             get;
             set;
@@ -59,8 +70,9 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// tree that will calculate the aggregate result.
         /// </summary>
         /// <param name="enumerableExpression">The grouping expression.</param>
+        /// <param name="liftMemberAccessToNull"></param>
         /// <returns></returns>
-        public abstract Expression CreateAggregateExpression(Expression enumerableExpression);
+        public abstract Expression CreateAggregateExpression(Expression enumerableExpression, bool liftMemberAccessToNull);
 
         /// <summary>
         /// Generates default name for this function using this type's name.

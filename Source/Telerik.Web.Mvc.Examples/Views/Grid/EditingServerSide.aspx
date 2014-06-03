@@ -4,18 +4,18 @@
 <asp:content contentplaceholderid="MainContent" runat="server">
 
 <% 
-    GridEditMode mode = (GridEditMode)ViewData["mode"];
-    GridButtonType type = (GridButtonType)ViewData["type"];
-    
-    using (Html.Configurator("Edit mode")
-              .PostTo("EditingServerSide", "Grid")
-              .Begin())
-   { 
+	GridEditMode mode = (GridEditMode)ViewData["mode"];
+	GridButtonType type = (GridButtonType)ViewData["type"];
+
+	using (Html.Configurator("Edit mode")
+			  .PostTo("EditingServerSide", "Grid")
+			  .Begin())
+	{ 
 %>
     <ul>
-        <li><%= Html.RadioButton("mode", "InLine", mode == GridEditMode.InLine, new { id = "inLine" }) %><label for="inLine">In-line</label></li>
-        <li><%= Html.RadioButton("mode", "InForm", mode == GridEditMode.InForm, new { id = "inForm" }) %><label for="inForm">In-form</label></li>
-        <li><%= Html.RadioButton("mode", "PopUp", mode == GridEditMode.PopUp, new { id = "popUp" }) %><label for="popUp">Pop-up</label></li>
+        <li><%= Html.RadioButton("mode", "InLine", mode == GridEditMode.InLine, new { id = "inLine" })%><label for="inLine">In-line</label></li>
+        <li><%= Html.RadioButton("mode", "InForm", mode == GridEditMode.InForm, new { id = "inForm" })%><label for="inForm">In-form</label></li>
+        <li><%= Html.RadioButton("mode", "PopUp", mode == GridEditMode.PopUp, new { id = "popUp" })%><label for="popUp">Pop-up</label></li>
     </ul>
     <br />
     <h3 class="configurator-legend">
@@ -25,37 +25,38 @@
         <li><%= Html.RadioButton("type", "Text", type == GridButtonType.Text, new { id = "text" })%><label for="text">Text</label></li>
         <li><%= Html.RadioButton("type", "Image", type == GridButtonType.Image, new { id = "image" })%><label for="image">Image</label></li>
         <li><%= Html.RadioButton("type", "ImageAndText", type == GridButtonType.ImageAndText, new { id = "imageAndText" })%><label for="imageAndText">Image and text</label></li>
+        <li><%= Html.RadioButton("type", "BareImage", type == GridButtonType.BareImage, new { id = "bareImage" })%><label for="bareImage">Bare Image (no button borders)</label></li>
     </ul>
-    <button type="submit" class="t-button t-state-default">Apply</button>
+    <button type="submit" class="t-button">Apply</button>
 <% 
-   }
+	}
 %>
     
 <%= Html.Telerik().Grid(Model)
-        .Name("Grid")
-        .DataKeys(keys => keys.Add(c => c.ProductID))
-        .ToolBar(commands => commands.Insert().ButtonType(type).ImageHtmlAttributes(new { style = "margin-left:0" }))
-        .DataBinding(dataBinding => dataBinding.Server()
-            .Select("EditingServerSide", "Grid", new { mode = mode, type = type })
-            .Insert("Insert", "Grid", new { mode = mode, type = type })
-            .Update("Save", "Grid", new { mode = mode, type = type })
-            .Delete("Delete", "Grid", new { mode = mode, type = type }))
-        .Columns(columns =>
-        {
-            columns.Bound(p => p.ProductName).Width(210);
-            columns.Bound(p => p.UnitPrice).Width(130).Format("{0:c}");
-            columns.Bound(p => p.UnitsInStock).Width(130);
-            columns.Bound(p => p.LastSupply).Width(130).Format("{0:d}");
-            columns.Bound(p => p.Discontinued);
-            columns.Command(commands =>
-            {
-                commands.Edit().ButtonType(type);
-                commands.Delete().ButtonType(type);
-            }).Width(180).Title("Commands");
-        })
-        .Editable(editing => editing.Mode(mode))
-        .Pageable()
-        .Sortable()
+		.Name("Grid")
+		.DataKeys(keys => keys.Add(c => c.ProductID))
+		.ToolBar(commands => commands.Insert().ButtonType(type).ImageHtmlAttributes(new { style = "margin-left:0" }))
+		.DataBinding(dataBinding => dataBinding.Server()
+			.Select("EditingServerSide", "Grid", new { mode = mode, type = type })
+			.Insert("Insert", "Grid", new { mode = mode, type = type })
+			.Update("Save", "Grid", new { mode = mode, type = type })
+			.Delete("Delete", "Grid", new { mode = mode, type = type }))
+		.Columns(columns =>
+		{
+			columns.Bound(p => p.ProductName).Width(210);
+			columns.Bound(p => p.UnitPrice).Width(120).Format("{0:c}");
+			columns.Bound(p => p.UnitsInStock).Width(120);
+			columns.Bound(p => p.LastSupply).Width(120).Format("{0:d}");
+			columns.Bound(p => p.Discontinued);
+			columns.Command(commands =>
+			{
+				commands.Edit().ButtonType(type);
+				commands.Delete().ButtonType(type);
+			}).Width(200).Title("Commands");
+		})
+		.Editable(editing => editing.Mode(mode))
+		.Pageable()
+		.Sortable()
 %>
 
 </asp:content>

@@ -49,7 +49,7 @@ namespace Telerik.Web.Mvc.UI
         {
             IHtmlNode ul = ListTag();
 
-            IHtmlNode li = new HtmlTag("li")
+            IHtmlNode li = new HtmlElement("li")
                 .AddClass(UIPrimitives.Item)
                 .AppendTo(ul);
 
@@ -72,7 +72,7 @@ namespace Telerik.Web.Mvc.UI
                     iconClass = "t-arrow-down";
                 }
 
-                new HtmlTag("span")
+                new HtmlElement("span")
                     .AddClass(UIPrimitives.Icon, iconClass)
                     .AppendTo(a);
             }

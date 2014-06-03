@@ -4,12 +4,24 @@
 // All other rights reserved.
 namespace Telerik.Web.Mvc.UI
 {
+    using System;
     using System.Collections.Generic;
+    using System.Data;
     using System.Linq;
     using System.Web.Routing;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Infrastructure;
+    using Extensions;
 
-    public class GridEditingSettings : IClientSerializable
+    public interface IGridEditingSettings
+    {
+        bool Enabled
+        {
+            get;
+        }
+    }
+
+    public class GridEditingSettings<T> : IGridEditingSettings, IClientSerializable
+        where T : class
     {
         private readonly IGrid grid;
 
@@ -19,6 +31,15 @@ namespace Telerik.Web.Mvc.UI
 
             DisplayDeleteConfirmation = true;
             FormHtmlAttributes = new RouteValueDictionary();
+            BeginEdit = GridBeginEditEvent.Auto;
+
+            DefaultDataItem = CreateDefaultItem;
+        }
+
+        public GridBeginEditEvent BeginEdit 
+        { 
+            get; 
+            set; 
         }
 
         public Window PopUp
@@ -45,7 +66,14 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
+        public Func<T> DefaultDataItem
+        {
+            get;
+            set;
+        }
+
 #if MVC2 || MVC3
+
         public string TemplateName
         {
             get; 
@@ -78,10 +106,41 @@ namespace Telerik.Web.Mvc.UI
                 .Add("mode", Mode.ToString())
 #if MVC2 || MVC3
                 .Add("editor", editorHtml, () => Mode != GridEditMode.InLine)
+                .Add("beginEdit", BeginEdit == GridBeginEditEvent.Click ? "click" : "dblclick", () => BeginEdit != GridBeginEditEvent.Auto)
+                .Add("defaultDataItem", SerializeDefaultDataItem(), () => DefaultDataItem() != null)
 #endif
                 .Add("popup", SerializePopUp(), () => Mode == GridEditMode.PopUp && grid.IsClientBinding);
 
             return result;
+        }
+
+        private object SerializeDefaultDataItem()
+        {
+            T dataItem = DefaultDataItem();
+            if (!typeof(T).IsDataRow())
+                return dataItem;
+
+            if (typeof(T) == typeof(DataRow))
+            {
+                return (dataItem as DataRow).SerializeRow();
+            }
+
+            return (dataItem as DataRowView).SerializeRow();
+        }
+
+        private T CreateDefaultItem()
+        {
+            if (typeof(T) == typeof(DataRowView))
+            {
+                return new DataTable().DefaultView.AddNew() as T;
+            }
+
+            if (typeof(T) == typeof(DataRow))
+            {
+                return new DataTable().NewRow() as T;
+            }
+
+            return Activator.CreateInstance<T>();
         }
 
         private IDictionary<string, object> SerializePopUp()

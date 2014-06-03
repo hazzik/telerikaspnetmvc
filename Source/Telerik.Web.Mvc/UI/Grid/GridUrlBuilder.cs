@@ -6,17 +6,124 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-    using System.Web.Mvc;
+    using System.Linq;
     using System.Web.Routing;
-    using Extensions;
-
-    public class GridUrlBuilder
+    using Telerik.Web.Mvc.Extensions;
+    
+    public class GridUrlBuilder : IGridUrlBuilder
     {
         private readonly IGrid grid;
 
-        public GridUrlBuilder(IGrid grid)
+        private readonly IGridDataKeyStore dataKeyStore;
+
+        public GridUrlBuilder(IGrid grid, IGridDataKeyStore dataKeyStore)
         {
+            this.dataKeyStore = dataKeyStore;
             this.grid = grid;
+        }
+
+        public string SelectUrl()
+        {
+            return Url(grid.Server.Select);
+        }
+
+        public string SelectUrl(string key, object value)
+        {
+            return Url(grid.Server.Select, key, value);
+        }
+
+        public string SelectUrl(object dataItem)
+        {
+            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+
+            var navigatable = grid.Server.Select;
+
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            selectRouteValues[grid.Prefix(GridUrlParameters.Mode)] = "select";
+
+            selectRouteValues.Merge(routeValues);
+
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
+        }
+
+        public string DeleteUrl(object dataItem)
+        {
+            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+            
+            var navigatable = grid.Server.Delete;
+
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            selectRouteValues.Merge(routeValues);
+
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
+        }
+
+        public string CancelUrl(object dataItem)
+        {
+            var keysToExclude = grid.DataKeys.Select(key => key.RouteKey);
+                
+            var navigatable = grid.Server.Select;
+            
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            selectRouteValues.Remove(grid.Prefix(GridUrlParameters.Mode));
+
+            foreach (var key in keysToExclude)
+            {
+                selectRouteValues[key] = string.Empty;
+            }
+
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
+        }
+
+        public string EditUrl(object dataItem)
+        {
+            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+
+            var navigatable = grid.Server.Select;
+            
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            selectRouteValues[grid.Prefix(GridUrlParameters.Mode)] = "edit";
+            
+            selectRouteValues.Merge(routeValues);
+
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
+        }
+
+        public string AddUrl(object dataItem)
+        {
+            var navigatable = grid.Server.Select;
+            
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            selectRouteValues[grid.Prefix(GridUrlParameters.Mode)] = "insert";
+            
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
+        }        
+        
+        public string InsertUrl(object dataItem)
+        {
+            var navigatable = grid.Server.Insert;
+
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
+        }
+
+        public string UpdateUrl(object dataItem)
+        {
+            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+
+            var navigatable = grid.Server.Update;
+
+            var selectRouteValues = PrepareRouteValues(navigatable.RouteValues);
+
+            selectRouteValues.Merge(routeValues);
+
+            return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, selectRouteValues);
         }
 
         public string Url(INavigatable navigatable, string key, object value)
@@ -64,5 +171,6 @@ namespace Telerik.Web.Mvc.UI
 
             return result;
         }
+
     }
 }

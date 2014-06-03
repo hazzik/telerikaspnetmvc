@@ -49,31 +49,68 @@
             .Pageable(pager => pager.Position(GridPagerPosition.Both))
     %>
 
-    <script type="text/javascript">
-        var gridElement;
+    <div id="dummyGrid">
+    </div>
+</asp:Content>
 
-        function setUp() {
-            gridElement = document.createElement("div");
-            gridElement.id = "tempGrid";
-        }
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        var gridElement;
 
         function getGrid(selector) {
             return $(selector).data("tGrid");
         }
+        
+        function createGrid(gridElement, options)
+        {
+             options = $.extend({}, $.fn.tGrid.defaults, options);
+             return new $.telerik.grid(gridElement, options);
+        }    
 
-        function test_grid_object_is_initialized() {
+        module("Grid / Paging", {
+            setup: function() {
+                gridElement = document.createElement("div");
+                gridElement.id = "tempGrid";
+            },
+            teardown: function() {
+                gridElement = null;
+
+                $("#Grid_DefaultPager .t-arrow-next").parent().removeClass("t-state-disabled");
+                $("#Grid_DefaultPager .t-arrow-last").parent().removeClass("t-state-disabled");
+                $("#Grid_DefaultPager .t-arrow-prev").parent().add("t-state-disabled");
+                $("#Grid_DefaultPager .t-arrow-first").parent().add("t-state-disabled");
+                $("#Grid_DefaultPager .t-pager .t-state-active").removeClass("t-state-active");
+                $("#Grid_DefaultPager .t-pager .t-link").eq(0).addClass("t-state-active");
+
+                $("#Grid_NextPrevAndInputPager .t-arrow-next").parent().removeClass("t-state-disabled");
+                $("#Grid_NextPrevAndInputPager .t-arrow-last").parent().removeClass("t-state-disabled");
+                $("#Grid_NextPrevAndInputPager .t-arrow-prev").parent().add("t-state-disabled");
+                $("#Grid_NextPrevAndInputPager .t-arrow-first").parent().add("t-state-disabled");
+
+                $("#Grid_NextPrevAndInputPager .t-pager input[type=text]").val(1);
+                $("#Grid_NextPrevAndInputPager .t-status-text").text("Displaying items 1 - 1 of 2");
+
+                getGrid("#Grid_DefaultPager").currentPage = 1;
+                getGrid("#Grid_NextPrevAndInputPager").currentPage = 1;
+            }
+        });
+
+        test('grid object is initialized', function() {
             var grid = getGrid("#Grid_DefaultPager");
-            assertNotNull(grid);
-            assertNotUndefined(grid);
-        }
+            ok(null !== grid);
+            ok(undefined !== grid);
+        });
 
-        function test_grid_colum_names_are_initialized() {
+        test('grid colum names are initialized', function() {
             var grid = getGrid("#Grid_DefaultPager");
-            assertEquals("Name", grid.columns[0].member);
-            assertEquals("BirthDate.Day", grid.columns[1].member);
-        }
+            equal(grid.columns[0].member, "Name");
+            equal(grid.columns[1].member, "BirthDate.Day");
+        });
 
-        function test_createColumnMappings_maps_data_fields_to_column() {
+        test('createColumnMappings maps data fields to column', function() {
             var grid = createGrid(gridElement, { columns: [
                 { member: "Name" },
                 { member: "Id" }
@@ -82,272 +119,243 @@
             });
 
             var dataItem = { Id: 1, Name: "John" };
-            grid.createColumnMappings(dataItem);
+            grid.initializeColumns(dataItem);
             var nameMapping = grid.columns[0].display;
-            assertNotUndefined(nameMapping);
-            assertEquals(dataItem.Name, nameMapping(dataItem));
-        }
+            ok(undefined !== nameMapping);
+            equal(nameMapping(dataItem), dataItem.Name);
+        });
 
-        function test_bind_populates_from_data() {
+        test('bind populates from data', function() {
             var grid = getGrid("#Grid_DefaultPager");
             var data = [{ Name: "Test", BirthDate: { Day: 1}}];
 
             grid.dataBind(data);
-            assertEquals("Test", $("#Grid_DefaultPager tbody tr:nth-child(1) td:nth-child(1)").text());
-            assertEquals("1", $("#Grid_DefaultPager tbody tr:nth-child(1) td:nth-child(2)").text());
-        }
+            equal($("#Grid_DefaultPager tbody tr:nth-child(1) td:nth-child(1)").text(), "Test");
+            equal($("#Grid_DefaultPager tbody tr:nth-child(1) td:nth-child(2)").text(), "1");
+        });
 
-        function test_page_size_serialized() {
+        test('page size serialized', function() {
             var grid = getGrid("#Grid_DefaultPager");
-            assertEquals(1, grid.pageSize);
-        }
+            equal(grid.pageSize, 1);
+        });
 
-        function test_update_pager_next_disabled_on_last_page() {
+        test('update pager next disabled on last page', function() {
             var grid = getGrid("#Grid_NextPrevAndInputPager");
             grid.currentPage = 2;
             grid.updatePager(2);
-            assertTrue($("#Grid_NextPrevAndInputPager .t-arrow-next").parent().hasClass("t-state-disabled"));
-        }
+            ok($("#Grid_NextPrevAndInputPager .t-arrow-next").parent().hasClass("t-state-disabled"));
+        });
 
-        function test_total_pages_when_page_size_divides_total_without_remainder() {
+        test('total pages when page size divides total without remainder', function() {
             var grid =createGrid(gridElement, { pageSize: 10 });
             grid.total = 20;
-            assertEquals(2, grid.totalPages());
-        }
+            equal(grid.totalPages(), 2);
+        });
 
-        function test_total_pages_when_page_size_divides_total_with_remainder() {
+        test('total pages when page size divides total with remainder', function() {
             var grid =createGrid(gridElement, { pageSize: 10 });
             grid.total = 19;
-            assertEquals(2, grid.totalPages());
-        }
+            equal(grid.totalPages(), 2);
+        });
 
-        function test_total_when_total_is_less_than_page_size() {
+        test('total when total is less than page size', function() {
             var grid =createGrid(gridElement, { pageSize: 10 });
             grid.total = 9;
-            assertEquals(1, grid.totalPages());
-        }
+            equal(grid.totalPages(), 1);
+        });
 
-        function test_total_when_total_is_zero() {
+        test('total when total is zero', function() {
             var grid =createGrid(gridElement, { pageSize: 10 });
             grid.total = 0;
-            assertEquals(0, grid.totalPages());
-        }
+            equal(grid.totalPages(), 0);
+        });
 
-        function test_update_default_pager_sets_the_text() {
+        test('update default pager sets the text', function() {
             var grid = getGrid("#Grid_NextPrevAndInputPager");
             grid.currentPage = 2;
             grid.updatePager();
 
-            assertEquals("2", $("#Grid_NextPrevAndInputPager .t-pager input[type=text]").val());
-        }
+            equal($("#Grid_NextPrevAndInputPager .t-pager input[type=text]").val(), "2");
+        });
 
-        function test_clicking_next_increments_current_page() {
+        test('clicking next increments current page', function() {
 
             var grid = getGrid("#Grid_DefaultPager");
             grid.ajaxRequest = function() { };
             $("#Grid_DefaultPager .t-arrow-next").parent().trigger("click");
-            assertEquals(2, grid.currentPage);
-        }
+            equal(grid.currentPage, 2);
+        });
 
-        function test_clicking_last_set_the_page_to_last() {
+        test('clicking last set the page to last', function() {
             var grid = getGrid("#Grid_NextPrevAndInputPager");
             grid.ajaxRequest = function() { };
             $("#Grid_NextPrevAndInputPager .t-arrow-last").parent().trigger("click");
-            assertEquals(2, grid.currentPage);
-        }
+            equal(grid.currentPage, 2);
+        });
 
-        function test_current_page_is_one_by_default() {
+        test('current page is one by default', function() {
             var grid = getGrid("#Grid_DefaultPager");
-            assertEquals(1, grid.currentPage);
-        }
+            equal(grid.currentPage, 1);
+        });
 
-        function test_update_pager_last_button_disabled_on_last_page() {
+        test('update pager last button disabled on last page', function() {
             var grid = getGrid("#Grid_NextPrevAndInputPager");
             grid.currentPage = 2;
             grid.updatePager(2);
-            assertTrue($("#Grid_NextPrevAndInputPager .t-arrow-last").parent().hasClass("t-state-disabled"));
-        }
+            ok($("#Grid_NextPrevAndInputPager .t-arrow-last").parent().hasClass("t-state-disabled"));
+        });
 
-        function test_update_pager_prev_button_enabled_on_last_page() {
+        test('update pager prev button enabled on last page', function() {
             var grid = getGrid("#Grid_DefaultPager");
             grid.currentPage = 2;
             grid.updatePager(2);
-            assertFalse($("#Grid_DefaultPager .t-arrow-prev").parent().hasClass("t-state-disabled"));
-        }
+            ok(!$("#Grid_DefaultPager .t-arrow-prev").parent().hasClass("t-state-disabled"));
+        });
 
-        function test_update_pager_first_button_enabled_on_last_page() {
+        test('update pager first button enabled on last page', function() {
             var grid = getGrid("#Grid_DefaultPager");
             grid.currentPage = 2;
             grid.updatePager(2);
-            assertFalse($("#Grid_DefaultPager .t-arrow-first").parent().hasClass("t-state-disabled"));
-        }
+            ok(!$("#Grid_DefaultPager .t-arrow-first").parent().hasClass("t-state-disabled"));
+        });
 
-        function test_clicking_prev_goes_to_previous_page() {
+        test('clicking prev goes to previous page', function() {
             var grid = getGrid("#Grid_DefaultPager");
             grid.ajaxRequest = function() { };
             grid.currentPage = 2;
             grid.updatePager(2);
 
             $("#Grid_DefaultPager .t-arrow-prev").parent().trigger("click");
-            assertEquals(1, grid.currentPage);
-        }
+            equal(grid.currentPage, 1);
+        });
 
-        function test_clicking_first_goes_to_first_page() {
+        test('clicking first goes to first page', function() {
             var grid = getGrid("#Grid_DefaultPager");
             grid.ajaxRequest = function() { };
             grid.currentPage = 2;
             grid.updatePager(2);
 
             $("#Grid_DefaultPager .t-arrow-first").parent().trigger("click");
-            assertEquals(1, grid.currentPage);
-        }
+            equal(grid.currentPage, 1);
+        });
 
-        function test_firstItemInPage_first_page() {
+        test('firstItemInPage first page', function() {
             var grid =createGrid(gridElement, { currentPage: 1, pageSize: 10, total: 20 });
-            assertEquals(1, grid.firstItemInPage());
-        }
+            equal(grid.firstItemInPage(), 1);
+        });
 
-        function test_firstItemInPage_when_total_is_0() {
+        test('firstItemInPage when total is 0', function() {
             var grid = createGrid(gridElement, { currentPage: 1, pageSize: 10, total: 0 });
-            assertEquals(0, grid.firstItemInPage());
-        }
-        function test_firstItemInPage_second_page() {
+            equal(grid.firstItemInPage(), 0);
+        });
+        test('firstItemInPage second page', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 20 });
-            assertEquals(11, grid.firstItemInPage());
-        }
+            equal(grid.firstItemInPage(), 11);
+        });
 
-        function test_lastItemInPage_first_page() {
+        test('lastItemInPage first page', function() {
             var grid =createGrid(gridElement, { currentPage: 1, pageSize: 10, total: 20 });
-            assertEquals(10, grid.lastItemInPage());
-        }
+            equal(grid.lastItemInPage(), 10);
+        });
 
-        function test_lastItemInPage_last_page() {
+        test('lastItemInPage last page', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 20 });
-            assertEquals(20, grid.lastItemInPage());
-        }
+            equal(grid.lastItemInPage(), 20);
+        });
 
-        function test_last_itemInPage_last_page_page_size_divides_total_with_remainder() {
+        test('last itemInPage last page page size divides total with remainder', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(19, grid.lastItemInPage());
-        }
+            equal(grid.lastItemInPage(), 19);
+        });
 
-        function test_sanitizePage_returns_the_value_if_valid_integer_below_total_pages() {
+        test('sanitizePage returns the value if valid integer below total pages', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(1, grid.sanitizePage("1"));
-        }
+            equal(grid.sanitizePage("1"), 1);
+        });
 
-        function test_sanitizePage_returns_currentPage_when_the_value_is_not_a_number() {
+        test('sanitizePage returns currentPage when the value is not a number', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(2, grid.sanitizePage("something"));
-        }
+            equal(grid.sanitizePage("something"), 2);
+        });
 
-        function test_sanitizePage_returns_currentPage_when_the_value_is_a_negative_number_or_zero() {
+        test('sanitizePage returns currentPage when the value is a negative number or zero', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(2, grid.sanitizePage("-1"));
-            assertEquals(2, grid.sanitizePage("0"));
-        }
+            equal(grid.sanitizePage("-1"), 2);
+            equal(grid.sanitizePage("0"), 2);
+        });
 
-        function test_sanitizePage_returns_whole_fraction_when_the_value_is_floating_point() {
+        test('sanitizePage returns whole fraction when the value is floating point', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(2, grid.sanitizePage("2.5"));
-        }
+            equal(grid.sanitizePage("2.5"), 2);
+        });
 
-        function test_sanitizePage_returns_total_pages_if_number_is_bigger_than_total_pages() {
+        test('sanitizePage returns total pages if number is bigger than total pages', function() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
-            assertEquals(2, grid.sanitizePage("3"));
-        }
+            equal(grid.sanitizePage("3"), 2);
+        });
 
-        function test_pressing_enter_in_pager_text_box_pages() {
+        test('pressing enter in pager text box pages', function() {
             var grid = getGrid("#Grid_NextPrevAndInputPager");
             grid.ajaxRequest = function() { };
             $("#Grid_NextPrevAndInputPager .t-pager input").val("2").trigger({ type: "keydown", keyCode: 13 });
-            assertEquals(2, grid.currentPage);
-        }
+            equal(grid.currentPage, 2);
+        });
 
-        function test_query_string_parameter_names_are_set_by_default() {
+        test('query string parameter names are set by default', function() {
             var grid = getGrid("#Grid_DefaultPager");
-            assertEquals("page", grid.queryString.page);
-            assertEquals("size", grid.queryString.size);
-            assertEquals("orderBy", grid.queryString.orderBy);
-        }
+            equal(grid.queryString.page, "page");
+            equal(grid.queryString.size, "size");
+            equal(grid.queryString.orderBy, "orderBy");
+        });
 
-        function test_numeric_page_buttons_decreased_when_total_is_less_than_initial() {
+        test('numeric page buttons decreased when total is less than initial', function() {
             var grid = getGrid("#Grid_UpdatePager");
 
             grid.total = 10;
             grid.dataBind([]);
 
-            assertEquals(1, $(".t-numeric", grid.element).children().length);
-        }
+            equal($(".t-numeric", grid.element).children().length, 1);
+        });
 
-        function test_numeric_pager_when_current_page_is_less_than_total_number_of_numeric_buttons() {
+        test('numeric pager when current page is less than total number of numeric buttons', function() {
             var grid = getGrid("#Grid_UpdatePager");
             var pager = $(".t-pager .t-numeric", grid.element);
 
 
             grid.numericPager(pager[0], 1, 10);
-            assertEquals(10, pager.children().length);
-            assertEquals('t-state-active', pager.children().eq(0).attr("class"));
-        }
+            equal(pager.children().length, 10);
+            equal(pager.children().eq(0).attr("class"), 't-state-active');
+        });
 
-        function test_numeric_pager_when_current_page_is_on_the_second_set_of_numeric_page_buttons() {
+        test('numeric pager when current page is on the second set of numeric page buttons', function() {
             var grid = getGrid("#Grid_UpdatePager");
             var pager = $(".t-pager .t-numeric", grid.element);
             grid.numericPager(pager[0], 11, 21);
-            assertEquals(12, pager.children().length);
-            assertEquals('t-state-active', pager.children().eq(1).attr("class"));
-        }
+            equal(pager.children().length, 12);
+            equal(pager.children().eq(1).attr("class"), 't-state-active');
+        });
 
-        function test_numeric_pager_when_current_page_is_on_the_third_set_of_numeric_page_buttons() {
+        test('numeric pager when current page is on the third set of numeric page buttons', function() {
             var grid = getGrid("#Grid_UpdatePager");
             var pager = $(".t-pager .t-numeric", grid.element);
             grid.numericPager(pager[0], 21, 31);
-            assertEquals(12, pager.children().length);
-            assertEquals('t-state-active', pager.children().eq(1).attr("class"));
-        }
+            equal(pager.children().length, 12);
+            equal(pager.children().eq(1).attr("class"), 't-state-active');
+        });
 
-        function test_top_pager_diplaying_items_update_after_paging() {
+        test('top pager diplaying items update after paging', function() {
             var grid = getGrid("#Grid_TopAndBottomPager");
             grid.ajaxRequest = function () { };
             grid.currentPage = 2;
             grid.updatePager(2);
 
-            var displayingItemsText = $("#Grid_TopAndBottomPager > .t-pager-wrapper .t-status-text").text()
+            var displayingItemsText = $("#Grid_TopAndBottomPager .t-status-text:first").text()
 
             $("#Grid_TopAndBottomPager .t-arrow-next").parent().trigger("click");
 
-            assertEquals('Displaying items 11 - 20 of 20', displayingItemsText);
-        }
+            equal(displayingItemsText, 'Displaying items 11 - 20 of 20');
+        });
 
-        function tearDown() {
-            gridElement = null;
+</script>
 
-            $("#Grid_DefaultPager .t-arrow-next").parent().removeClass("t-state-disabled");
-            $("#Grid_DefaultPager .t-arrow-last").parent().removeClass("t-state-disabled");
-            $("#Grid_DefaultPager .t-arrow-prev").parent().add("t-state-disabled");
-            $("#Grid_DefaultPager .t-arrow-first").parent().add("t-state-disabled");
-            $("#Grid_DefaultPager .t-pager .t-state-active").removeClass("t-state-active");
-            $("#Grid_DefaultPager .t-pager .t-link").eq(0).addClass("t-state-active");
-
-            $("#Grid_NextPrevAndInputPager .t-arrow-next").parent().removeClass("t-state-disabled");
-            $("#Grid_NextPrevAndInputPager .t-arrow-last").parent().removeClass("t-state-disabled");
-            $("#Grid_NextPrevAndInputPager .t-arrow-prev").parent().add("t-state-disabled");
-            $("#Grid_NextPrevAndInputPager .t-arrow-first").parent().add("t-state-disabled");
-
-            $("#Grid_NextPrevAndInputPager .t-pager input[type=text]").val(1);
-            $("#Grid_NextPrevAndInputPager .t-status-text").text("Displaying items 1 - 1 of 2");
-
-            getGrid("#Grid_DefaultPager").currentPage = 1;
-            getGrid("#Grid_NextPrevAndInputPager").currentPage = 1;
-        }
-        
-        function createGrid(gridElement, options)
-        {
-             options = $.extend({}, $.fn.tGrid.defaults, options);
-             return new $.telerik.grid(gridElement, options);
-        }        
-    </script>
-
-    <div id="dummyGrid">
-    </div>
 </asp:Content>

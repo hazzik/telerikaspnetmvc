@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public DateTimePickerClientEventsBuilder OnChange(Action onChangeInlineCode)
+        public DateTimePickerClientEventsBuilder OnChange(Action onChangeCodeBlock)
         {
-            Guard.IsNotNull(onChangeInlineCode, "onChangeInlineCode");
+            Guard.IsNotNull(onChangeCodeBlock, "onChangeCodeBlock");
 
-            clientEvents.OnChange.InlineCode = onChangeInlineCode;
+            clientEvents.OnChange.CodeBlock = onChangeCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnChange client-side event
+        /// </summary>
+        /// <param name="onChangeAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DateTimePicker()
+        ///            .Name("DateTimePicker")
+        ///            .ClientEvents(events => events.OnChange(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DateTimePickerClientEventsBuilder OnChange(Func<object, object> onChangeInlineCodeBlock)
+        {
+            Guard.IsNotNull(onChangeInlineCodeBlock, "onChangeInlineCodeBlock");
+
+            clientEvents.OnChange.InlineCodeBlock = onChangeInlineCodeBlock;
 
             return this;
         }
@@ -102,11 +130,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public DateTimePickerClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public DateTimePickerClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DateTimePicker()
+        ///            .Name("DateTimePicker")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DateTimePickerClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -152,11 +208,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public DateTimePickerClientEventsBuilder OnOpen(Action onOpenInlineCode)
+        public DateTimePickerClientEventsBuilder OnOpen(Action onOpenCodeBlock)
         {
-            Guard.IsNotNull(onOpenInlineCode, "onOpenInlineCode");
+            Guard.IsNotNull(onOpenCodeBlock, "onOpenCodeBlock");
 
-            clientEvents.OnOpen.InlineCode = onOpenInlineCode;
+            clientEvents.OnOpen.CodeBlock = onOpenCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnOpen client-side event
+        /// </summary>
+        /// <param name="onOpenAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DateTimePicker()
+        ///            .Name("DateTimePicker")
+        ///            .ClientEvents(events => events.OnOpen(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DateTimePickerClientEventsBuilder OnOpen(Func<object, object> onOpenInlineCodeBlock)
+        {
+            Guard.IsNotNull(onOpenInlineCodeBlock, "onOpenInlineCodeBlock");
+
+            clientEvents.OnOpen.InlineCodeBlock = onOpenInlineCodeBlock;
 
             return this;
         }
@@ -202,11 +286,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public DateTimePickerClientEventsBuilder OnClose(Action onCloseInlineCode)
+        public DateTimePickerClientEventsBuilder OnClose(Action onCloseCodeBlock)
         {
-            Guard.IsNotNull(onCloseInlineCode, "onCloseInlineCode");
+            Guard.IsNotNull(onCloseCodeBlock, "onCloseCodeBlock");
 
-            clientEvents.OnClose.InlineCode = onCloseInlineCode;
+            clientEvents.OnClose.CodeBlock = onCloseCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnClose client-side event
+        /// </summary>
+        /// <param name="onCloseAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DateTimePicker()
+        ///            .Name("DateTimePicker")
+        ///            .ClientEvents(events => events.OnClose(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DateTimePickerClientEventsBuilder OnClose(Func<object, object> onCloseInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCloseInlineCodeBlock, "onCloseInlineCodeBlock");
+
+            clientEvents.OnClose.InlineCodeBlock = onCloseInlineCodeBlock;
 
             return this;
         }

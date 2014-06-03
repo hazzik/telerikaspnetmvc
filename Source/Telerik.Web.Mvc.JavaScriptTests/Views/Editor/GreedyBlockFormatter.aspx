@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -11,33 +11,42 @@
         var editor;
 
         var GreedyBlockFormatter;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             GreedyBlockFormatter = $.telerik.editor.GreedyBlockFormatter;
         }
 
-        function test_apply_replaces_outer_block_element() {
+        test('apply replaces outer block element', function() {
             editor.value('<p>foo</p>');
 
             var formatter = new GreedyBlockFormatter([{ tags: ['h1'] }], {}, true);
 
             formatter.apply([editor.body.firstChild.firstChild]);
             
-            assertEquals('<h1>foo</h1>', editor.value());
-        }        
+            equal(editor.value(), '<h1>foo</h1>');
+        });        
         
-        function test_apply_adds_block_element() {
+        test('apply adds block element', function() {
             editor.value('foo');
 
             var formatter = new GreedyBlockFormatter([{ tags: ['h1'] }], {}, true);
 
             formatter.apply([editor.body.firstChild]);
             
-            assertEquals('<h1>foo</h1>', editor.value());
-        }
+            equal(editor.value(), '<h1>foo</h1>');
+        });
 
-        function test_apply_splits_lists() {
+        test('apply splits lists', function() {
             editor.value('<ul><li>foo</li><li>bar</li><li>baz</li></ul>');
 
             var formatter = new GreedyBlockFormatter([{ tags: ['h1'] }], {}, true);
@@ -45,10 +54,10 @@
             formatter.editor = editor;
             formatter.apply([editor.body.firstChild.childNodes[1].firstChild]);
             
-            assertEquals('<ul><li>foo</li></ul><h1>bar</h1><ul><li>baz</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul><h1>bar</h1><ul><li>baz</li></ul>');
+        });
 
-        function test_apply_is_applied_on_multiple_list_items() {
+        test('apply is applied on multiple list items', function() {
             editor.value('<ul><li>foo</li><li>bar</li><li>baz</li></ul>');
 
             var formatter = new GreedyBlockFormatter([{ tags: ['h1']}], {}, true);
@@ -56,10 +65,10 @@
             formatter.editor = editor;
             formatter.apply([editor.body.firstChild.childNodes[0].firstChild, editor.body.firstChild.childNodes[1].firstChild]);
 
-            assertEquals('<h1>foo</h1><h1>bar</h1><ul><li>baz</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<h1>foo</h1><h1>bar</h1><ul><li>baz</li></ul>');
+        });
 
-        function test_apply_is_applied_on_multiple_paragraphs() {
+        test('apply is applied on multiple paragraphs', function() {
             editor.value('<p>foo</p><p>bar</p><p>baz</p>');
 
             var formatter = new GreedyBlockFormatter([{ tags: ['h1'] }], {}, true);
@@ -67,10 +76,10 @@
             formatter.editor = editor;
             formatter.apply([editor.body.childNodes[0].firstChild, editor.body.childNodes[1].firstChild]);
             
-            assertEquals('<h1>foo</h1><h1>bar</h1><p>baz</p>', editor.value());
-        }
+            equal(editor.value(), '<h1>foo</h1><h1>bar</h1><p>baz</p>');
+        });
 
-        function test_toggle_calls_apply() {
+        test('toggle calls apply', function() {
             var formatter = new GreedyBlockFormatter([{ tags: ['h1'] }], {}, true);
             
             formatter.editor = editor;
@@ -81,7 +90,9 @@
 
             formatter.toggle(createRangeFromText(editor, '<p>|foo|</p>'));
             
-            assertTrue(called);
-        }
-    </script>
+            ok(called);
+        });
+
+</script>
+
 </asp:Content>

@@ -19,7 +19,7 @@
 
             httpContext.Setup(c => c.Request.Browser.CreateHtmlTextWriter(It.IsAny<TextWriter>())).Returns(new HtmlTextWriter(TextWriter.Null));
 
-            Mock<ITextboxBaseHtmlBuilderFactory<T>> inputRendererFactory = new Mock<ITextboxBaseHtmlBuilderFactory<T>>();
+            Mock<ITextBoxBaseHtmlBuilderFactory<T>> inputRendererFactory = new Mock<ITextBoxBaseHtmlBuilderFactory<T>>();
 
             Mock<IClientSideObjectWriterFactory> clientSideObjectWriterFactory = new Mock<IClientSideObjectWriterFactory>();
             clientSideObjectWriter = new Mock<IClientSideObjectWriter>();
@@ -30,7 +30,7 @@
 
             TextBoxBase<T> input = new TextBoxBase<T>(viewContext, clientSideObjectWriterFactory.Object, inputRendererFactory.Object);
 
-            renderer = renderer ?? new TextboxBaseHtmlBuilder<T>(input);
+            renderer = renderer ?? new TextBoxBaseHtmlBuilder<T>(input);
             inputRendererFactory.Setup(f => f.Create(It.IsAny<TextBoxBase<T>>())).Returns(renderer);
 
             return input;
@@ -42,7 +42,7 @@
 
             httpContext.Setup(c => c.Request.Browser.CreateHtmlTextWriter(It.IsAny<TextWriter>())).Returns(new HtmlTextWriter(TextWriter.Null));
 
-            Mock<ITextboxBaseHtmlBuilderFactory<int>> inputRendererFactory = new Mock<ITextboxBaseHtmlBuilderFactory<int>>();
+            Mock<ITextBoxBaseHtmlBuilderFactory<int>> inputRendererFactory = new Mock<ITextBoxBaseHtmlBuilderFactory<int>>();
 
             Mock<IClientSideObjectWriterFactory> clientSideObjectWriterFactory = new Mock<IClientSideObjectWriterFactory>();
             clientSideObjectWriter = new Mock<IClientSideObjectWriter>();
@@ -53,7 +53,7 @@
 
             IntegerTextBox input = new IntegerTextBox(viewContext, clientSideObjectWriterFactory.Object, inputRendererFactory.Object);
 
-            renderer = renderer ?? new TextboxBaseHtmlBuilder<int>(input);
+            renderer = renderer ?? new TextBoxBaseHtmlBuilder<int>(input);
             inputRendererFactory.Setup(f => f.Create(It.IsAny<IntegerTextBox>())).Returns(renderer);
 
             return input;
@@ -65,7 +65,7 @@
 
             httpContext.Setup(c => c.Request.Browser.CreateHtmlTextWriter(It.IsAny<TextWriter>())).Returns(new HtmlTextWriter(TextWriter.Null));
 
-            Mock<ITextboxBaseHtmlBuilderFactory<T>> inputRendererFactory = new Mock<ITextboxBaseHtmlBuilderFactory<T>>();
+            Mock<ITextBoxBaseHtmlBuilderFactory<T>> inputRendererFactory = new Mock<ITextBoxBaseHtmlBuilderFactory<T>>();
 
             Mock<IClientSideObjectWriterFactory> clientSideObjectWriterFactory = new Mock<IClientSideObjectWriterFactory>();
             clientSideObjectWriter = new Mock<IClientSideObjectWriter>();
@@ -76,7 +76,7 @@
 
             NumericTextBox<T> input = new NumericTextBox<T>(viewContext, clientSideObjectWriterFactory.Object, inputRendererFactory.Object);
 
-            renderer = renderer ?? new TextboxBaseHtmlBuilder<T>(input);
+            renderer = renderer ?? new TextBoxBaseHtmlBuilder<T>(input);
             inputRendererFactory.Setup(f => f.Create(It.IsAny<NumericTextBox<T>>())).Returns(renderer);
 
             return input;
@@ -88,7 +88,7 @@
 
             httpContext.Setup(c => c.Request.Browser.CreateHtmlTextWriter(It.IsAny<TextWriter>())).Returns(new HtmlTextWriter(TextWriter.Null));
 
-            Mock<ITextboxBaseHtmlBuilderFactory<double>> inputRendererFactory = new Mock<ITextboxBaseHtmlBuilderFactory<double>>();
+            Mock<ITextBoxBaseHtmlBuilderFactory<double>> inputRendererFactory = new Mock<ITextBoxBaseHtmlBuilderFactory<double>>();
 
             Mock<IClientSideObjectWriterFactory> clientSideObjectWriterFactory = new Mock<IClientSideObjectWriterFactory>();
             clientSideObjectWriter = new Mock<IClientSideObjectWriter>();
@@ -99,7 +99,7 @@
 
             PercentTextBox input = new PercentTextBox(viewContext, clientSideObjectWriterFactory.Object, inputRendererFactory.Object);
 
-            renderer = renderer ?? new TextboxBaseHtmlBuilder<double>(input);
+            renderer = renderer ?? new TextBoxBaseHtmlBuilder<double>(input);
             inputRendererFactory.Setup(f => f.Create(It.IsAny<PercentTextBox>())).Returns(renderer);
 
             return input;
@@ -111,7 +111,7 @@
 
             httpContext.Setup(c => c.Request.Browser.CreateHtmlTextWriter(It.IsAny<TextWriter>())).Returns(new HtmlTextWriter(TextWriter.Null));
 
-            Mock<ITextboxBaseHtmlBuilderFactory<decimal>> inputRendererFactory = new Mock<ITextboxBaseHtmlBuilderFactory<decimal>>();
+            Mock<ITextBoxBaseHtmlBuilderFactory<decimal>> inputRendererFactory = new Mock<ITextBoxBaseHtmlBuilderFactory<decimal>>();
 
             Mock<IClientSideObjectWriterFactory> clientSideObjectWriterFactory = new Mock<IClientSideObjectWriterFactory>();
             clientSideObjectWriter = new Mock<IClientSideObjectWriter>();
@@ -122,7 +122,7 @@
 
             CurrencyTextBox input = new CurrencyTextBox(viewContext, clientSideObjectWriterFactory.Object, inputRendererFactory.Object);
 
-            renderer = renderer ?? new TextboxBaseHtmlBuilder<decimal>(input);
+            renderer = renderer ?? new TextBoxBaseHtmlBuilder<decimal>(input);
             inputRendererFactory.Setup(f => f.Create(It.IsAny<CurrencyTextBox>())).Returns(renderer);
 
             return input;

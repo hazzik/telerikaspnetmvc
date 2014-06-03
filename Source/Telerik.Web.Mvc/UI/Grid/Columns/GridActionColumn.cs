@@ -5,17 +5,20 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Telerik.Web.Mvc.UI.Html;
 
     public class GridActionColumn<T> : GridColumnBase<T>, IGridActionColumn where T : class
     {
-        public GridActionColumn(Grid<T> grid) : base(grid)
+        public GridActionColumn(Grid<T> grid)
+            : base(grid)
         {
-            Commands = new List<GridActionCommandBase>();
+            Commands = new List<IGridActionCommand>();
         }
 
-        public IList<GridActionCommandBase> Commands
+        public IList<IGridActionCommand> Commands
         {
             get;
             private set;
@@ -25,10 +28,32 @@ namespace Telerik.Web.Mvc.UI
         {
             return new GridActionColumnSerializer(this);
         }
-
-        protected override IHtmlBuilder CreateDisplayHtmlBuilderCore(GridCell<T> cell)
+        
+        protected override IGridDataCellBuilder CreateDisplayBuilderCore(IGridHtmlHelper htmlHelper)
         {
-            return new GridActionCellHtmlBuilder<T>(cell);
+            var urlBuilder = Grid.UrlBuilder;
+
+            var buttons = Commands.SelectMany(command => command.CreateDisplayButtons(Grid.Localization, urlBuilder, htmlHelper));
+            
+            return new GridActionCellBuilder(buttons.Select(button => (Func<object, IHtmlNode>)button.Create));
+        }
+
+        protected override IGridDataCellBuilder CreateEditBuilderCore(IGridHtmlHelper htmlHelper)
+        {
+            var urlBuilder = Grid.UrlBuilder;
+
+            var buttons = Commands.SelectMany(command => command.CreateEditButtons(Grid.Localization, urlBuilder, htmlHelper));
+
+            return new GridActionCellBuilder(buttons.Select(button => (Func<object, IHtmlNode>)button.Create));
+        }
+
+        protected override IGridDataCellBuilder CreateInsertBuilderCore(IGridHtmlHelper htmlHelper)
+        {
+            var urlBuilder = Grid.UrlBuilder;
+
+            var buttons = Commands.SelectMany(command => command.CreateInsertButtons(Grid.Localization, urlBuilder, htmlHelper));
+
+            return new GridActionCellBuilder(buttons.Select(button => (Func<object, IHtmlNode>)button.Create));
         }
     }
 }

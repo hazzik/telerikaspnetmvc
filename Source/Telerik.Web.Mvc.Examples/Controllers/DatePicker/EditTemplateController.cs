@@ -6,10 +6,16 @@ namespace Telerik.Web.Mvc.Examples
 
     public partial class DatePickerController : Controller
     {
-        [SourceCodeFile("Time.ascx", "~/Views/Shared/EditorTemplates/Date.ascx")]
-        [SourceCodeFile("Date.ascx", "~/Views/Shared/EditorTemplates/Date.ascx")]
-        [SourceCodeFile("DateTime.ascx", "~/Views/Shared/EditorTemplates/DateTime.ascx")]
-        [SourceCodeFile("OrderInfo.cs", "~/Models/OrderInfo.cs")]
+        [SourceCodeFile("OrderInfo.cs", "~/Models/OrderInfo.cs", Order = 1)]
+        [SourceCodeFile(
+            FileName = "~/Views/Shared/EditorTemplates/Date.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/Date.cshtml")]
+        [SourceCodeFile(
+            FileName = "~/Views/Shared/EditorTemplates/Time.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/Time.cshtml")]
+        [SourceCodeFile(
+            FileName = "~/Views/Shared/EditorTemplates/DateTime.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/DateTime.cshtml")]
         public ActionResult EditTemplate(OrderInfo orderInfo)
         {
             if (orderInfo.OrderInfoID == 0)

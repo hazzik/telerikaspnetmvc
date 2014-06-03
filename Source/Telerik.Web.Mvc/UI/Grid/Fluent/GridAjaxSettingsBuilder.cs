@@ -8,7 +8,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="Grid{T}"/> ajax settings
     /// </summary>
-    public class GridAjaxSettingsBuilder : GridRequestSettingsBuilderBase<GridRequestSettings, GridAjaxSettingsBuilder>, IHideObjectMembers
+    public class GridAjaxSettingsBuilder : GridRequestSettingsBuilderBase<RequestSettings, GridAjaxSettingsBuilder>, IHideObjectMembers
     {
         private readonly GridBindingSettings ajaxSettings;
         /// <summary>

@@ -13,20 +13,10 @@ namespace Telerik.Web.Mvc
     /// <summary>
     /// Represents grouping criteria.
     /// </summary>
-    public class GroupDescriptor : IDescriptor
+    public class GroupDescriptor : SortDescriptor
     {
         private object displayContent;
         private AggregateFunctionCollection aggregateFunctions;
-
-        /// <summary>
-        /// Gets or sets the member name which will be used for sorting.
-        /// </summary>
-        /// <filterValue>The member that will be used for sorting.</filterValue>
-        public string Member
-        {
-            get;
-            set;
-        }
 
         /// <summary>
         /// Gets or sets the type of the member that is used for grouping.
@@ -57,17 +47,6 @@ namespace Telerik.Web.Mvc
             {
                 this.displayContent = value;
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the sort direction for this sort descriptor. If the value is null
-        /// no sorting will be applied.
-        /// </summary>
-        /// <value>The sort direction. The default value is null.</value>
-        public ListSortDirection SortDirection
-        {
-            get;
-            set;
         }
 
         /// <summary>

@@ -1,20 +1,20 @@
 ﻿(function ($) {
 
-    var $t = $.telerik;
-    var expandModes = {
-        'single': 0,
-        'multi': 1
-    };
+    var $t = $.telerik,
+        expandModes = {
+            'single': 0,
+            'multi': 1
+        };
 
     $.extend($t, {
         panelbar: function (element, options) {
             this.element = element;
 
-            var $element = $(element);
-
             $.extend(this, options);
-
-            var clickableItems = '.t-item:not(.t-state-disabled) > .t-link';
+            
+            var $element = $(element),
+                $content = $element.find('li.t-state-active > .t-content'),
+                clickableItems = '.t-item:not(.t-state-disabled) > .t-link';
 
             $element
                 .delegate(clickableItems, 'click', $.proxy(this._click, this))
@@ -32,8 +32,13 @@
                 load: this.onLoad
             });
 
-            var $content = $element.find('li.t-state-active > .t-content');
-            if ($content.length > 0 && $content.eq(0).children().length == 0)
+            if (this.contentUrls)
+                $element.find('> .t-item')
+                    .each($.proxy(function(index, item) {
+                        $(item).find('.t-link').data('ContentUrl', this.contentUrls[index]);
+                    }, this));
+
+            if ($content.length > 0 && $content.is(':empty'))
                 this.expand($content.parent());
         }
     });
@@ -80,17 +85,16 @@
         },
 
         _click: function (e) {
-            var $target = $(e.target);
-
-            var element = this.element;
+            var $target = $(e.target),
+                element = this.element;
 
             if ($target.closest('.t-widget')[0] != element)
                 return;
 
-            var $link = $target.closest('.t-link');
-            var $item = $link.closest('.t-item');
+            var $link = $target.closest('.t-link'),
+                $item = $link.closest('.t-item');
             
-            $(element).find('.t-state-selected').removeClass('t-state-selected');
+            $('.t-state-selected', element).removeClass('t-state-selected');
 
             $link.addClass('t-state-selected');
 
@@ -98,9 +102,9 @@
                 e.preventDefault();
             }
 
-            var contents = $item.find('> .t-content, > .t-group');
-            var href = $link.attr('href');
-            var isAnchor = (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + element.id + '-') != -1));
+            var contents = $item.find('> .t-content, > .t-group'),
+                href = $link.attr('href'),
+                isAnchor = $link.data('ContentUrl') || (href && (href.charAt(href.length - 1) == '#' || href.indexOf('#' + element.id + '-') != -1));
 
             if (isAnchor || contents.length > 0)
                 e.preventDefault();
@@ -122,24 +126,25 @@
         _toggleItem: function ($element, isVisible, e) {
             var childGroup = $element.find('> .t-group');
 
-            if (childGroup.length != 0) {
+            if (childGroup.length) {
 
                 this._toggleGroup(childGroup, isVisible);
+
                 if (e != null)
                     e.preventDefault();
             } else {
 
-                var itemIndex = $element.parent().children().index($element);
-                var contentElement = $element.find('> .t-content');
+                var itemIndex = $element.parent().children().index($element),
+                    $content = $element.find('> .t-content');
 
-                if (contentElement.length > 0) {
+                if ($content.length) {
                     if (e != null)
                         e.preventDefault();
-                    if ($.trim(contentElement.html()).length > 0) {
-                        this._toggleGroup(contentElement, isVisible);
-                    } else {
-                        this._ajaxRequest($element, contentElement, isVisible);
-                    }
+
+                    if (!$content.is(':empty'))
+                        this._toggleGroup($content, isVisible);
+                    else
+                        this._ajaxRequest($element, $content, isVisible);
                 }
             }
         },
@@ -180,17 +185,17 @@
 
         _ajaxRequest: function ($element, contentElement, isVisible) {
 
-            var statusIcon = $element.find('.t-panelbar-collapse, .t-panelbar-expand');
-            var loadingIconTimeout = setTimeout(function () {
-                statusIcon.addClass('t-loading');
-            }, 100);
-
-            var data = {};
+            var statusIcon = $element.find('.t-panelbar-collapse, .t-panelbar-expand'),
+                $link = $element.find('.t-link'),
+                loadingIconTimeout = setTimeout(function () {
+                    statusIcon.addClass('t-loading');
+                }, 100),
+                data = {};
 
             $.ajax({
                 type: 'GET',
                 cache: false,
-                url: $element.find('.t-link').attr('href'),
+                url: $link.data('ContentUrl') || $link.attr('href'),
                 dataType: 'html',
                 data: data,
 
@@ -207,9 +212,6 @@
                 success: $.proxy(function (data, textStatus) {
                     contentElement.html(data);
                     this._toggleGroup(contentElement, isVisible);
-                    var $link = contentElement.prev('.t-link');
-                    $link.data('ContentUrl', $link.attr('href'))
-                         .attr('href', '#');
                 }, this)
             });
         }

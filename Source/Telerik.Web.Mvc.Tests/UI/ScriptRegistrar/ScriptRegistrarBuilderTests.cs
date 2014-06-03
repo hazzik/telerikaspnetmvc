@@ -104,6 +104,14 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void OnDocumentReady_should_add_new_statement_in_on_document_ready_statement_collection_when_using_razor_overload()
+        {
+            _builder.OnDocumentReady((s) => "var foo = 'bar';");
+
+            Assert.Contains("var foo = 'bar';", _scriptRegistrar.OnDocumentReadyStatements);
+        }
+
+        [Fact]
         public void OnWindowUnload_should_add_new_action_in_on_window_unload_action_collection()
         {
             Action onUnload = delegate { };

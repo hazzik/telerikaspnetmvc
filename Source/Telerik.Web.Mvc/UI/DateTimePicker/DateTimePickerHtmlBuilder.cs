@@ -26,18 +26,17 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            IHtmlNode wrapper = new HtmlTag("div")
-                                .Attribute("id", Component.Id)
+            IHtmlNode wrapper = new HtmlElement("div")
                                 .Attributes(Component.HtmlAttributes)
                                 .PrependClass(UIPrimitives.Widget, "t-datetimepicker");
 
-            IHtmlNode innerWrapper = new HtmlTag("div")
+            IHtmlNode innerWrapper = new HtmlElement("div")
                                     .AddClass("t-picker-wrap")
                                     .AppendTo(wrapper);
 
             InputTag().AppendTo(innerWrapper);
 
-            IHtmlNode buttonsWrapper = new HtmlTag("span").AddClass("t-select");
+            IHtmlNode buttonsWrapper = new HtmlElement("span").AddClass("t-select");
 
             CalendarButtonTag().AppendTo(buttonsWrapper);
 
@@ -50,40 +49,25 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode InputTag()
         {
-            ModelState state;
-            DateTime? date = null;
-            ViewDataDictionary viewData = Component.ViewContext.ViewData;
-
-            if (Component.Value != null && Component.Value != DateTime.MinValue)
-            {
-                date = Component.Value;
-            }
-            else if (viewData.ModelState.TryGetValue(Component.Id, out state))
-            {
-                if (state.Errors.Count == 0)
-                {
-                    date = state.Value.ConvertTo(typeof(DateTime), CultureInfo.CurrentCulture) as DateTime?;
-                }
-            }
-
-            object valueFromViewData = viewData.Eval(Component.Name);
-
-            if (valueFromViewData != null)
+            Func<object, DateTime?> converter = val =>
             {
                 DateTime parsedDate;
-                if (DateTime.TryParse(valueFromViewData.ToString(), CultureInfo.CurrentCulture.DateTimeFormat, System.Globalization.DateTimeStyles.None, out parsedDate))
+                if (DateTime.TryParse(val.ToString(), CultureInfo.CurrentCulture.DateTimeFormat, System.Globalization.DateTimeStyles.None, out parsedDate))
                 {
-                    date = parsedDate;
+                    return parsedDate.AsNullable();
                 }
-            }
+                return null;
+            };
 
-            string value = string.Empty;
+            string value = Component.GetAttemptedValue();
+            DateTime? date = Component.GetValue(converter);
 
             if (date != null)
             {
+                
                 if (string.IsNullOrEmpty(Component.Format))
                 {
-                    value = date.Value.ToShortTimeString();
+                    value = date.Value.ToString(CultureInfo.CurrentCulture.DateTimeFormat);
                 }
                 else
                 {
@@ -91,9 +75,10 @@ namespace Telerik.Web.Mvc.UI
                 }
             }
 
-            return new HtmlTag("input", TagRenderMode.SelfClosing)
-                   .Attributes(new { id = Component.Id + "-input", name = Component.Name })
+            return new HtmlElement("input", TagRenderMode.SelfClosing)
+                   .Attributes(new { id = Component.Id, name = Component.Name })
                    .Attributes(Component.InputHtmlAttributes)
+                   .Attributes(Component.GetUnobtrusiveValidationAttributes())
                    .PrependClass(UIPrimitives.Input)
                    .ToggleAttribute("disabled", "disabled", !Component.Enabled)
                    .ToggleAttribute("value", value, value.HasValue());
@@ -101,7 +86,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode CalendarButtonTag()
         {
-            return new HtmlTag("span")
+            return new HtmlElement("span")
                    .AddClass(UIPrimitives.Icon, "t-icon-calendar")
                    .Attribute("title", Component.CalendarButtonTitle)
                    .Html(Component.CalendarButtonTitle);
@@ -109,7 +94,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode TimeButtonTag()
         {
-            return new HtmlTag("span")
+            return new HtmlElement("span")
                    .AddClass(UIPrimitives.Icon, "t-icon-clock")
                    .Attribute("title", Component.TimeButtonTitle)
                    .Html(Component.TimeButtonTitle);

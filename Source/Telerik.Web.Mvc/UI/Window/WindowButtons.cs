@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
 
-
     public class WindowButtons : IWindowButtonsContainer
     {
         private IList<IWindowButton> container;

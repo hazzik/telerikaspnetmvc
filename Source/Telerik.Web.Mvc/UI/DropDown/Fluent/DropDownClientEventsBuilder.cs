@@ -26,7 +26,7 @@
         /// <summary>
         /// Defines the inline handler of the OnLoad client-side event
         /// </summary>
-        /// <param name="onLoadInlineCode">The action defining the inline handler.</param>
+        /// <param name="onLoadCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().DropDownList()
@@ -43,11 +43,39 @@
         /// %&gt;
         /// </code>
         /// </example>
-        public DropDownClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public DropDownClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DropDownList()
+        ///            .Name("DropDownList")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DropDownClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -76,7 +104,7 @@
         /// <summary>
         /// Defines the inline handler of the OnChange client-side event
         /// </summary>
-        /// <param name="onChangeInlineCode">The action defining the inline handler.</param>
+        /// <param name="onChangeCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().DropDownList()
@@ -93,11 +121,39 @@
         /// %&gt;
         /// </code>
         /// </example>
-        public DropDownClientEventsBuilder OnChange(Action onChangeInlineCode)
+        public DropDownClientEventsBuilder OnChange(Action onChangeCodeBlock)
         {
-            Guard.IsNotNull(onChangeInlineCode, "onChangeInlineCode");
+            Guard.IsNotNull(onChangeCodeBlock, "onChangeCodeBlock");
 
-            clientEvents.OnChange.InlineCode = onChangeInlineCode;
+            clientEvents.OnChange.CodeBlock = onChangeCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnChange client-side event
+        /// </summary>
+        /// <param name="onChangeInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DropDownList()
+        ///            .Name("DropDownList")
+        ///            .ClientEvents(events => events.OnChange(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DropDownClientEventsBuilder OnChange(Func<object, object> onChangeInlineCodeBlock)
+        {
+            Guard.IsNotNull(onChangeInlineCodeBlock, "onChangeInlineCodeBlock");
+
+            clientEvents.OnChange.InlineCodeBlock = onChangeInlineCodeBlock;
 
             return this;
         }
@@ -147,7 +203,7 @@
         {
             Guard.IsNotNull(onOpenInlineCode, "onOpenInlineCode");
 
-            clientEvents.OnOpen.InlineCode = onOpenInlineCode;
+            clientEvents.OnOpen.CodeBlock = onOpenInlineCode;
 
             return this;
         }
@@ -176,7 +232,7 @@
         /// <summary>
         /// Defines the inline handler of the OnClose client-side event
         /// </summary>
-        /// <param name="onCloseInlineCode">The action defining the inline handler.</param>
+        /// <param name="onCloseCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().DropDownList()
@@ -193,11 +249,39 @@
         /// %&gt;
         /// </code>
         /// </example>
-        public DropDownClientEventsBuilder OnClose(Action onCloseInlineCode)
+        public DropDownClientEventsBuilder OnClose(Action onCloseCodeBlock)
         {
-            Guard.IsNotNull(onCloseInlineCode, "onCloseInlineCode");
+            Guard.IsNotNull(onCloseCodeBlock, "onCloseCodeBlock");
 
-            clientEvents.OnClose.InlineCode = onCloseInlineCode;
+            clientEvents.OnClose.CodeBlock = onCloseCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnClose client-side event
+        /// </summary>
+        /// <param name="onCloseInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DropDownList()
+        ///            .Name("DropDownList")
+        ///            .ClientEvents(events => events.OnClose(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DropDownClientEventsBuilder OnClose(Func<object, object> onCloseInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCloseInlineCodeBlock, "onCloseInlineCodeBlock");
+
+            clientEvents.OnClose.InlineCodeBlock = onCloseInlineCodeBlock;
 
             return this;
         }
@@ -226,7 +310,7 @@
         /// <summary>
         /// Defines the inline handler of the OnDataBinding client-side event
         /// </summary>
-        /// <param name="onDataBindingInlineCode">The action defining the inline handler.</param>
+        /// <param name="onDataBindingCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().DropDownList()
@@ -243,11 +327,39 @@
         /// %&gt;
         /// </code>
         /// </example>
-        public DropDownClientEventsBuilder OnDataBinding(Action onDataBindingInlineCode)
+        public DropDownClientEventsBuilder OnDataBinding(Action onDataBindingCodeBlock)
         {
-            Guard.IsNotNull(onDataBindingInlineCode, "onDataBindingInlineCode");
+            Guard.IsNotNull(onDataBindingCodeBlock, "onDataBindingCodeBlock");
 
-            clientEvents.OnDataBinding.InlineCode = onDataBindingInlineCode;
+            clientEvents.OnDataBinding.CodeBlock = onDataBindingCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnDataBinding client-side event
+        /// </summary>
+        /// <param name="onDataBindingInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DropDownList()
+        ///            .Name("DropDownList")
+        ///            .ClientEvents(events => events.OnDataBinding(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DropDownClientEventsBuilder OnDataBinding(Func<object, object> onDataBindingInlineCodeBlock)
+        {
+            Guard.IsNotNull(onDataBindingInlineCodeBlock, "onDataBindingInlineCodeBlock");
+
+            clientEvents.OnDataBinding.InlineCodeBlock = onDataBindingInlineCodeBlock;
 
             return this;
         }
@@ -276,7 +388,7 @@
         /// <summary>
         /// Defines the inline handler of the OnDataBound client-side event
         /// </summary>
-        /// <param name="OnDataBoundInlineCode">The action defining the inline handler.</param>
+        /// <param name="onDataBoundCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().DropDownList()
@@ -293,11 +405,39 @@
         /// %&gt;
         /// </code>
         /// </example>
-        public DropDownClientEventsBuilder OnDataBound(Action onDataBoundInlineCode)
+        public DropDownClientEventsBuilder OnDataBound(Action onDataBoundCodeBlock)
         {
-            Guard.IsNotNull(onDataBoundInlineCode, "onDataBoundInlineCode");
+            Guard.IsNotNull(onDataBoundCodeBlock, "onDataBoundCodeBlock");
 
-            clientEvents.OnDataBound.InlineCode = onDataBoundInlineCode;
+            clientEvents.OnDataBound.CodeBlock = onDataBoundCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnDataBound client-side event
+        /// </summary>
+        /// <param name="onDataBoundInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DropDownList()
+        ///            .Name("DropDownList")
+        ///            .ClientEvents(events => events.OnDataBound(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DropDownClientEventsBuilder OnDataBound(Func<object, object> onDataBoundInlineCodeBlock)
+        {
+            Guard.IsNotNull(onDataBoundInlineCodeBlock, "onDataBoundInlineCodeBlock");
+
+            clientEvents.OnDataBound.InlineCodeBlock = onDataBoundInlineCodeBlock;
 
             return this;
         }
@@ -326,7 +466,7 @@
         /// <summary>
         /// Defines the inline handler of the OnError client-side event
         /// </summary>
-        /// <param name="onErrorInlineCode">The action defining the inline handler.</param>
+        /// <param name="onErrorCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().DropDownList()
@@ -343,11 +483,39 @@
         /// %&gt;
         /// </code>
         /// </example>
-        public DropDownClientEventsBuilder OnError(Action onErrorInlineCode)
+        public DropDownClientEventsBuilder OnError(Action onErrorCodeBlock)
         {
-            Guard.IsNotNull(onErrorInlineCode, "onErrorInlineCode");
+            Guard.IsNotNull(onErrorCodeBlock, "onErrorCodeBlock");
 
-            clientEvents.OnError.InlineCode = onErrorInlineCode;
+            clientEvents.OnError.CodeBlock = onErrorCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnError client-side event
+        /// </summary>
+        /// <param name="onErrorInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().DropDownList()
+        ///            .Name("DropDownList")
+        ///            .ClientEvents(events => events.OnError(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public DropDownClientEventsBuilder OnError(Func<object, object> onErrorInlineCodeBlock)
+        {
+            Guard.IsNotNull(onErrorInlineCodeBlock, "onErrorInlineCodeBlock");
+
+            clientEvents.OnError.InlineCodeBlock = onErrorInlineCodeBlock;
 
             return this;
         }

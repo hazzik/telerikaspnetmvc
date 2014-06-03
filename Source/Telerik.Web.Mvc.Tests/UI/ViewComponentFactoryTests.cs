@@ -130,5 +130,17 @@ namespace Telerik.Web.Mvc.UI.Tests
         {
             Assert.NotNull(_factory.AutoComplete());
         }
+
+        [Fact]
+        public void Slider_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.Slider<float>());
+        }
+
+        [Fact]
+        public void RangeSlider_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.RangeSlider<float>());
+        }
     }
 }

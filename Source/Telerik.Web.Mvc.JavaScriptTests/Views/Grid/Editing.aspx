@@ -1,9 +1,7 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        Editing</h2>
-<%= Html.Telerik().Grid(Model)
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+    <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .DataKeys(keys => keys.Add(c => c.Name))
             .ToolBar(toolbar => toolbar.Insert())
@@ -235,116 +233,131 @@
             .Pageable(pager => pager.PageSize(10))
     %>
 
-    <script type="text/javascript">
+     <%= Html.Telerik().Grid(Model)
+            .Name("GridWithHierarchy")
+            .DataKeys(keys => keys.Add(c => c.Name))
+            .ToolBar(toolbar => toolbar.Insert())
+            .Columns(columns => 
+                {
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Address);
+                    columns.Command(commands =>
+                    {
+                        commands.Edit();
+                        commands.Delete();
+                    });
+                })
+            .DetailView(c => {
+                c.ClientTemplate("none");
+            })
+            .DataBinding(binding => binding.Ajax()
+                .Select("Select", "Dummy")
+                .Insert("Insert", "Dummy")
+                .Delete("Delete", "Dummy")
+                .Update("Update", "Dummy")
+            )
+            .Editable(editing => editing.Mode(GridEditMode.InLine))
+            .Pageable(pager => pager.PageSize(10))
+    %>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        function addNew(selector) {
+            $(selector || '#Grid1').find('.t-grid-add').trigger('click');
+        }
+
+        $.each('edit,cancel,update,insert'.split(','), function(index, command) {
+            window[command] = function(selector) {
+                $(selector || '#Grid1').find('.t-grid-' + command + ':first').click();
+            }
+        });
         
         function getGrid(selector) {
             return $(selector || "#Grid1").data("tGrid");
         }
 
-        function addNew() {
-            $('#Grid1 .t-grid-add').trigger('click');
-        }
-        
-        function edit() {
-            $('#Grid1 tbody tr:first').find('.t-grid-edit').trigger('click');
-        }
+        module("Grid / Editing", {
+            teardown: function() {
+                getGrid().cancel();
+                getGrid().editing = { confirmDelete: true, mode: 'InLine', defaultDataItem: {} };
+                var wnd = $('.t-window').data('tWindow');
+                if (wnd) wnd.destroy();
+            }
+        });
 
-        function cancel() {
-            $('#Grid1 tbody tr:first').find('.t-grid-cancel').trigger('click');
-        }
+        test('edit for does not exist by default', function() {
+            equal($('#Grid1form').length, 0);
+        });
 
-        function update() {
-            $('#Grid1 tbody tr:first').find('.t-grid-update').trigger('click');
-        }
-
-        function insert() {
-            $('#Grid1 tbody tr:first').find('.t-grid-insert').trigger('click');
-        }
-        
-        function tearDown() {
-            getGrid().cancel();
-            getGrid().editing = { confirmDelete: true, mode: 'InLine' };
-            var wnd = $('.t-window').data('tWindow');
-            if (wnd) wnd.destroy();
-        }
-
-        function test_edit_for_does_not_exist_by_default() {
-            assertEquals(0, $('#Grid1form').length);
-        }
-
-        function test_clicking_edit_creates_edit_form() {
+        test('clicking edit creates edit form', function() {
             edit();
-            assertEquals(1, $('#Grid1form').length);
-        }
+            equal($('#Grid1form').length, 1);
+        });
         
-        function test_clicking_cancel_removes_the_edit_form() {
-            edit();
-            cancel();
-            assertEquals(0, $('#Grid1form').length);
-        }
-
-        function test_clicking_edit_puts_the_row_in_edit_mode() {
+        test('clicking edit puts the row in edit mode', function() {
             edit();
 
-            assertEquals('Customer1', $('#Grid1 tbody tr').find(':input').first().val());
-        }
+            equal($('#Grid1 tbody tr').find(':input').first().val(), 'Customer1');
+        });
 
-        function test_date_is_set_according_to_format() {
+        test('date is set according to format', function() {
             edit();
             
-            assertEquals('1/1/1980', $('#Grid1 tbody tr').find(':input').eq(1).val());
-        }
+            equal($('#Grid1 tbody tr').find(':input').eq(1).val(), '1/1/1980');
+        });
 
-        function test_clicking_cancel_restores_original_data() {
+        test('clicking cancel restores original data', function() {
             edit();
-            $('#Grid1 tbody tr').find(':input').val('test');
+            $('#Grid1 tbody tr').find(':input').eq(0).val('test');
             cancel();
             edit();
-            assertEquals('Customer1', $('#Grid1 tbody tr').find(':input').first().val());
-        }
+            equal($('#Grid1 tbody tr').find(':input').first().val(), 'Customer1');
+        });
 
-        function test_data_keys_serialized() {
-            assertEquals('Customer1', getGrid().data[0].Name);
-            assertEquals('id', getGrid().dataKeys.Name);
-        }
+        test('data keys serialized', function() {
+            equal(getGrid().data[0].Name, 'Customer1');
+            equal(getGrid().dataKeys.Name, 'id');
+        });
 
-        function test_clicking_update_posts_data() {
+        test('clicking update posts data', function() {
             
             var called = false;
 
             getGrid().sendValues = function(values, url) {
                 called = true;
-                assertEquals('Customer1', values.Name);
-                assertEquals('Customer1', values.id);
-                assertEquals('updateUrl', url);
+                equal(values.Name, 'Customer1');
+                equal(url, 'updateUrl');
             }
             
             edit();
             update();
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
-        function test_create_row_creates_edit_form() {
+        test('create row creates edit form', function() {
             getGrid().addRow();
 
-            assertEquals(1, $('#Grid1form').length);
-        }
+            equal($('#Grid1form').length, 1);
+        });
 
-        function test_create_row_creates_empty_edit_form() {
+        test('create row creates empty edit form', function() {
             getGrid().addRow();
 
-            assertEquals('', $('#Grid1 tbody tr:first :input').first().val());
-        }
+            equal($('#Grid1 tbody tr:first :input').first().val(), '');
+        });
 
-        function test_clicking_insert_posts_data() {
+        test('clicking insert posts data', function() {
             var called = false;
 
             getGrid().sendValues = function(values, url) {
                 called = true;
-                assertEquals('test', values.Name);
-                assertUndefined(values.id);
-                assertEquals('insertUrl', url);
+                equal(values.Name, 'test');
+                equal(url, 'insertUrl');
             }
 
             getGrid().addRow();
@@ -353,15 +366,14 @@
             
             insert();
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
-        function test_clicking_delete_posts_data() {
+        test('clicking delete posts data', function() {
             var called = false;
             getGrid().sendValues = function(values, url) {
                 called = true;
-                assertEquals('Customer1', values.id);
-                assertEquals('deleteUrl', url);
+                equal(url, 'deleteUrl');
             }
 
             window.confirm = function() {
@@ -369,10 +381,10 @@
             }
             $('#Grid1 tbody tr:first .t-grid-delete').trigger('click');
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
-        function test_no_confirmation() {
+        test('no confirmation', function() {
             getGrid().editing = { confirmDelete: false };
 
             var called = false;
@@ -381,10 +393,10 @@
             }
             $('#Grid1 tbody tr:first .t-grid-delete').trigger('click');
 
-            assertFalse(called);
-        }
+            ok(!called);
+        });
 
-        function test_cancelling_confirm_on_delete_does_not_post_data() {
+        test('cancelling confirm on delete does not post data', function() {
             var called = false;
             
             getGrid().sendValues = function(values, url) {
@@ -397,10 +409,10 @@
 
             $('#Grid1 tbody tr:first .t-grid-delete').trigger('click');
 
-            assertFalse(called);
-        }
+            ok(!called);
+        });
 
-        function test_validation() {
+        test('validation', function() {
 
             var called = false;
             getGrid().sendValues = function(values, url) {
@@ -410,18 +422,17 @@
             getGrid().addRow();
             insert();
 
-            assertFalse(called);
-            assertEquals(1, $('#Grid1 .field-validation-error').length);
-        }
+            ok(!called);
+            equal($('#Grid1 .field-validation-error').length, 1);
+        });
 
-        function test_datepicker_instantiation() {
+        test('datepicker instantiation', function() {
             addNew();
 
-            assertNotUndefined($('div[id^=BirthDate]').data('tDatePicker'));
-        }
+            ok(undefined !== $('input[id=BirthDate]').data('tDatePicker'));
+        });
 
-        function test_confirm_shown_for_server_binding() {
-            var grid = getGrid('#Grid2');
+        test('confirm shown for server binding', function() {
             var called = false;
             window.confirm = function() {
                 called = true;
@@ -430,26 +441,26 @@
 
             $('#Grid2 tbody tr:first .t-grid-delete').trigger('click');
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
-        function test_read_only_column() {
+        test('read only column', function() {
             var grid = getGrid();
-            assertTrue(grid.columns[2].readonly);
-        }
+            ok(grid.columns[2].readonly);
+        });
 
-        function test_read_only_column_shown_in_edit_mode() {
+        test('read only column shown in edit mode', function() {
             edit();
 
-            assertEquals("0", $('#Grid1form tr:first td:eq(2)').text());
-        }
+            equal($('#Grid1 tr:has(td):first td:eq(2)').text(), "0");
+        });
 
-        function test_checkbox_checked_for_true_boolean() {
-            $('#Grid3 tbody tr:first').find('.t-grid-edit').trigger('click');
-            assertTrue($('#Grid3 tbody tr:first :checkbox').attr('checked'));
-        }
+        test('checkbox checked for true boolean', function() {
+            edit('#Grid3');
+            ok($('#Grid3 tbody tr:first :checkbox').attr('checked'));
+        });
 
-        function test_extracts_boolean_values_from_checkboxes() {
+        test('extracts boolean values from checkboxes', function() {
             $('#Grid3 tbody tr:eq(1)').find('.t-grid-edit').trigger('click');
             $('#Grid3 tbody tr:eq(1) :checkbox').attr('checked', true);
             
@@ -459,54 +470,53 @@
             
             getGrid('#Grid3').sendValues = function(values, url) {
                 called = true;
-                assertEquals(true, values.Active);
+                equal(values.Active, true);
             }
 
             $('#Grid3 tbody tr:eq(1)').find('.t-grid-update').trigger('click');
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
-        function test_cancelling_boolean_restores_the_value() {
+        test('cancelling boolean restores the value', function() {
             $('#Grid4 tbody tr:eq(0)').find('.t-grid-edit').trigger('click');
             $('#Grid4 tbody tr:eq(0)').find('.t-grid-cancel').trigger('click');
 
-            assertEquals("true", $('#Grid4 tbody tr:eq(0) td:first').text());
-        }
+            equal($('#Grid4 tbody tr:eq(0) td:first').text(), "true");
+        });
 
-        function test_cancelling_raises_row_data_bound() {
+        test('cancelling raises row data bound', function() {
             var row;
             var dataItem;
             
-            $('#Grid4 tbody tr:eq(0)').find('.t-grid-edit').trigger('click');
+            edit('#Grid4');
             
             $('#Grid4').bind('rowDataBound', function(e) {
                 row = e.row;
                 dataItem = e.dataItem;
             });
             
-            $('#Grid4 tbody tr:eq(0)').find('.t-grid-cancel').trigger('click');
-            assertEquals($('#Grid4 tbody tr:eq(0)')[0], row);
-            assertEquals(dataItem, $('#Grid4').data('tGrid').data[0]);
-        }
+            cancel('#Grid4');
+            equal(row, $('#Grid4 tbody tr:eq(0)')[0]);
+            equal($('#Grid4').data('tGrid').data[0], dataItem);
+        });
 
-        function test_booleans_are_not_validated() {
+        test('booleans are not validated', function() {
             getGrid('#Grid5').sendValues = function() { }
             $('#Grid5 tbody tr:eq(0)').find('.t-grid-edit').trigger('click');
             $('#Grid5 tbody tr:eq(0) :checkbox').attr('checked', false);
             $('#Grid5 tbody tr:eq(0)').find('.t-grid-update').trigger('click');
-            assertFalse($('#Grid5 tbody tr:eq(0) :checkbox').hasClass('input-validation-error'));
-        }
+            ok(!$('#Grid5 tbody tr:eq(0) :checkbox').hasClass('input-validation-error'));
+        });
 
-        function test_editing_in_popup_populates_data() {
-            var grid = getGrid('#Grid6');
+        test('editing in popup populates data', function() {
 
             $('#Grid6 tbody tr:first').find('.t-grid-edit').trigger('click');
-            assertEquals('Customer1', $('#Grid6PopUp input[name=Name]').val());
+            equal($('#Grid6PopUp input[name=Name]').val(), 'Customer1');
             $('#Grid6PopUp').remove();
-        }
+        });
 
-        function test_editing_in_popup_update_sends_data() {
+        test('editing in popup update sends data', function() {
             var grid = getGrid('#Grid6');
             $('#Grid6 tbody tr:eq(1)').find('.t-grid-edit').trigger('click');
             $('#Grid6PopUp input[name=Name]').val('test');
@@ -514,65 +524,55 @@
             var called = false;
             grid.sendValues = function(values, url) {
                 called = true;
-                assertEquals('test', values.Name);
+                equal(values.Name, 'test');
             }
 
             $('#Grid6PopUp .t-grid-update').trigger('click');
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
-        function test_appendCommandButtons_should_render_button_only_with_text() {
-            var grid = getGrid('#Grid1');
-
-            var builder = new $.telerik.stringBuilder();
-
-            var command = {name:'edit', attr:'title="edit"', buttonType:'Text', imageAttr:'style="width:20px"'};
-            grid.appendCommandHtml([command], builder);
-
-            assertEquals('<a href="#" class="t-grid-action t-button t-state-default t-grid-edit" title="edit">Edit</a>', builder.string());
-        }
-
-        function test_appendCommandButtons_should_render_button_only_with_image() {
-            var grid = getGrid('#Grid1');
-
-            var builder = new $.telerik.stringBuilder();
-
-            var command = { name: 'edit', attr: 'title="edit"', buttonType: 'Image', imageAttr: 'style="width:20px"' };
-            grid.appendCommandHtml([command], builder);
-
-            assertEquals('<a href="#" class="t-grid-action t-button t-state-default t-grid-edit" title="edit"><span class="t-icon t-edit" style="width:20px"></span></a>', builder.string());
-        }
-
-        function test_appendCommandButtons_should_render_button_only_with_image_and_text() {
-            var grid = getGrid('#Grid1');
-
-            var builder = new $.telerik.stringBuilder();
-
-            var command = { name: 'edit', attr: 'title="edit"', buttonType: 'ImageAndText', imageAttr: 'style="width:20px"' };
-            grid.appendCommandHtml([command], builder);
-
-            assertEquals('<a href="#" class="t-grid-action t-button t-state-default t-grid-edit" title="edit"><span class="t-icon t-edit" style="width:20px"></span>Edit</a>', builder.string());
-        }
-
-        function test_nested_properties_are_set() {
+        test('nested properties are set', function() {
             $('#Grid9 tbody tr:first').find('.t-grid-edit').trigger('click');
             
-            assertEquals('foo', $('#Grid9form #Address_Street').val());
-        }
+            equal($('#Grid9form #Address_Street').val(), 'foo');
+        });
 
-        function test_extractValues_extracts_all_input_values() {
-            $('#Grid8 tbody tr:first').find('.t-grid-edit').trigger('click');
+        test('extractValues extracts all input values', function() {
+            edit('#Grid8');
             var values = getGrid('#Grid8').extractValues($('#Grid8 tbody tr:first'));
-            assertEquals('foo', values['Address.Street']);
-        }        
+            equal(values['Address.Street'], 'foo');
+        });        
         
-        function test_null_is_not_set_to_ui_elements() {
+        test('null is not set to ui elements', function() {
             var grid = getGrid('#Grid10');
             grid.data[7].Name = null;
 
             $('#Grid10 tbody tr:eq(7)').find('.t-grid-edit').trigger('click');
-            assertEquals('', $('#Grid10form input[name=Name]').val());
-        }
-    </script>
+            equal($('#Grid10form input[name=Name]').val(), '');
+        });
+
+        test('editing a grid with hierarchy gets proper layout', function() {
+            edit('#GridWithHierarchy');
+
+            ok($('#GridWithHierarchy tr:has(td):first td').hasClass('t-hierarchy-cell'));
+        });
+
+        test("_convert removes properties with no value", function(){
+            var grid = getGrid('#Grid6');
+            var values = {
+                bar: 0,
+                foo: undefined,
+                baz: ""
+            };            
+
+            grid._convert(values);
+
+            ok(!("foo" in values));
+            equal(values.bar, 0);
+            equal(values.baz, "");
+        });
+
+</script>
+
 </asp:Content>

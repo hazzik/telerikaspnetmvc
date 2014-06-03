@@ -9,12 +9,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
     using Extensions;
     using Infrastructure;
-    using Telerik.Web.Mvc.Resources;
 
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="TimePicker"/> component.
     /// </summary>
-    public class TimePickerBuilder : ViewComponentBuilderBase<TimePicker, TimePickerBuilder>, IHideObjectMembers
+    public class TimePickerBuilder : DatePickerBaseBuilder<TimePicker, TimePickerBuilder>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TimePickerBuilder"/> class.
@@ -24,95 +23,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             : base(component)
         {
         }
-
-        /// <summary>
-        /// Configures the client-side events.
-        /// </summary>
-        /// <param name="configurator">The client events action.</param>
-        /// <example>
-        /// <code lang="CS">
-        ///  &lt;%= Html.Telerik().TimePicker()
-        ///             .Name("TimePicker")
-        ///             .ClientEvents(events =>
-        ///                 events.OnLoad("onLoad").OnChange("onChange")
-        ///             )
-        /// %&gt;
-        /// </code>
-        /// </example>
-        public TimePickerBuilder ClientEvents(Action<TimePickerClientEventsBuilder> configurator)
-        {
-            Guard.IsNotNull(configurator, "configurator");
-
-            configurator(new TimePickerClientEventsBuilder(Component.ClientEvents, Component.ViewContext));
-
-            return this;
-        }
-
-        /// <summary>
-        /// Configures the effects of the timepicker.
-        /// </summary>
-        /// <param name="condigurator">The action which configures the effects.</param>
-        /// <example>
-        /// <code lang="CS">
-        /// &lt;%= Html.Telerik().TimePicker()
-        ///	           .Name("TimePicker")
-        ///	           .Effects(fx =>
-        ///	           {
-        ///		            fx.Height()
-        ///			          .Opacity()
-        ///					  .OpenDuration(AnimationDuration.Normal)
-        ///					  .CloseDuration(AnimationDuration.Normal);
-        ///	           })
-        /// </code>
-        /// </example>
-        public TimePickerBuilder Effects(Action<EffectsBuilder> condigurator)
-        {
-            Guard.IsNotNull(condigurator, "condigurator");
-
-            var factory = new EffectsBuilderFactory();
-
-            condigurator(factory.Create(Component.Effects));
-
-            return this;
-        }
-
-
-        /// <summary>
-        /// Sets the time format, which will be used to parse and format the <see cref="DateTime"/>.
-        /// </summary>
-        public TimePickerBuilder Format(string format)
-        {
-            Guard.IsNotNullOrEmpty(format, "format");
-
-            Component.Format = format;
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the Input HTML attributes.
-        /// </summary>
-        /// <param name="attributes">The HTML attributes.</param>
-        public TimePickerBuilder InputHtmlAttributes(object attributes)
-        {
-            Guard.IsNotNull(attributes, "attributes");
-
-            Component.InputHtmlAttributes.Clear();
-            Component.InputHtmlAttributes.Merge(attributes);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets whether timepicker to be enabled.
-        /// </summary>
-        public TimePickerBuilder Enable(bool value)
-        {
-            Component.Enabled = value;
-
-            return this;
-        }
-
+        
         /// <summary>
         /// Sets the value of the timepicker input
         /// </summary>
@@ -162,16 +73,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the minimum time, which can be selected in timepicker
         /// </summary>
-        public TimePickerBuilder Min(DateTime value)
-        {
-            Component.MinValue = value;
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the minimum time, which can be selected in timepicker
-        /// </summary>
         public TimePickerBuilder Min(TimeSpan value)
         {
             Component.MinValue = new DateTime(value.Ticks);
@@ -190,16 +91,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
             
             Component.MinValue = new DateTime(time.Ticks);
             
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the maximum time, which can be selected in timepicker
-        /// </summary>
-        public TimePickerBuilder Max(DateTime value)
-        {
-            Component.MaxValue = value;
-
             return this;
         }
 

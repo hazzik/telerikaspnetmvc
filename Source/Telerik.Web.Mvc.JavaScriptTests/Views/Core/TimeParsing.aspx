@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage"%>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 <%
@@ -15,10 +15,6 @@
 
     <script type="text/javascript">
         var $t;
-
-        function setUp() {
-            $t = $.telerik;
-        }
         
         function isValidDate(expected, result) {
             var isValid = true;
@@ -31,221 +27,6 @@
                 isValid = false;
 
             return isValid;
-        }
-
-        function test_time_parsing_supports_short_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = '<%= new DateTime(2000, 1, 20, 22, 20, 20).ToString("t") %>';
-
-            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 22, result.hours());
-            assertEquals(culture + "-minutes", 20, result.minutes());
-            if($t.cultureInfo.shortTime.indexOf('ss') == -1)
-                assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_12_PM_with_short_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 10, 15, 15, 0);
-            var value = '<%= new DateTime(2000, 1, 10, 12, 15, 0).ToString("t") %>';
-
-            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 12, result.hours());
-            assertEquals(culture + "-minutes", 15, result.minutes());
-        }
-
-        function test_time_parsing_should_parse_12_AM_with_short_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 10, 15, 15, 0);
-            var value = '<%= new DateTime(2000, 1, 10, 0, 15, 0).ToString("t") %>';
-            
-            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 0, result.hours());
-            assertEquals(culture + "-minutes", 15, result.minutes());
-        }
-
-        function test_time_parsing_supports_long_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = '<%= new DateTime(2000, 1, 20, 18, 0, 30).ToString("T") %>';
-
-            var result = $t.datetime.parse({ value: value, format: "T", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 18, result.hours());
-            assertEquals(culture + "-minutes", 0, result.minutes());
-            assertEquals(culture + "-seconds", 30, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_morning_hours_using_short_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = '<%= new DateTime(2000, 1, 20, 9, 30, 0).ToString("t") %>';
-
-            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 9, result.hours());
-            assertEquals(culture + "-minutes", 30, result.minutes());
-            assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_morning_hours_using_long_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = '<%= new DateTime(2000, 1, 20, 9, 0, 30).ToString("T") %>';
-
-            var result = $t.datetime.parse({ value: value, format: "T", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 9, result.hours());
-            assertEquals(culture + "-minutes", 0, result.minutes());
-            assertEquals(culture + "-seconds", 30, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_24_and_return_0_hour() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "24:00"
-            
-            var result = $t.datetime.parse({ value: value, format: "H:mm", baseDate: dateToModify });
-
-            assertEquals(culture, null, result);
-        }
-
-        function test_time_parsing_should_parse_23_59() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "23:59"
-            
-            var result = $t.datetime.parse({ value: value, format: "H:mm", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 23, result.hours());
-            assertEquals(culture + "-minutes", 59, result.minutes());
-            assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_using_H_mm() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "13:22";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 13, result.hours());
-            assertEquals(culture + "-minutes", 22, result.minutes());
-            assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_with_seconds_using_H_mm_tt() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "4:22:22 PM";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm tt", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 16, result.hours());
-            assertEquals(culture + "-minutes", 22, result.minutes());
-            assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_without_seconds_using_H_mm_tt() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "4:22 PM";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm tt", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 16, result.hours());
-            assertEquals(culture + "-minutes", 22, result.minutes());
-            assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_with_seconds_using_H_mm_ss_tt() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "4:22:22 PM";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss tt", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 16, result.hours());
-            assertEquals(culture + "-minutes", 22, result.minutes());
-            assertEquals(culture + "-seconds", 22, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_without_seconds_using_H_mm_ss_tt() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "4:22 " + $t.cultureInfo.pm;
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss tt", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 16, result.hours());
-            assertEquals(culture + "-minutes", 22, result.minutes());
-            assertEquals(culture + "-seconds", 0, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_H_mm_ss() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "22:10:22";
-            
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 22, result.hours());
-            assertEquals(culture + "-minutes", 10, result.minutes());
-            assertEquals(culture + "-seconds", 22, result.seconds());
-        }
-
-        function test_time_parsing_not_fully_typed_hours_and_minutes() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "::22";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 0, result.hours());
-            assertEquals(culture + "-minutes", 0, result.minutes());
-            assertEquals(culture + "-seconds", 22, result.seconds());
-        }
-
-        function test_time_parsing_should_parse_using_H_mm_ss_f_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "10:10:22.6";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss.f", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 10, result.hours());
-            assertEquals(culture + "-minutes", 10, result.minutes());
-            assertEquals(culture + "-seconds", 22, result.seconds());
-            assertEquals(culture + "-milliseconds", 6, result.milliseconds());
-        }
-
-        function test_time_parsing_should_parse_using_H_mm_ss_ff_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "10:10:22.67";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss.ff", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 10, result.hours());
-            assertEquals(culture + "-minutes", 10, result.minutes());
-            assertEquals(culture + "-seconds", 22, result.seconds());
-            assertEquals(culture + "-milliseconds", 67, result.milliseconds());
-        }
-
-        function test_time_parsing_should_parse_using_H_mm_ss_fff_time_format() {
-            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
-            var value = "10:10:22.6741";
-
-            var result = $t.datetime.parse({ value: value, format: "H:mm:ss.fff", baseDate: dateToModify });
-
-            assertTrue('date is not same', isValidDate(dateToModify, result));
-            assertEquals(culture + "-hours", 10, result.hours());
-            assertEquals(culture + "-minutes", 10, result.minutes());
-            assertEquals(culture + "-seconds", 22, result.seconds());
-            assertEquals(culture + "-milliseconds", 674, result.milliseconds());
         }
 
     </script>
@@ -262,4 +43,234 @@
                                 .Add("telerik.common.js"));
 
     %>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            $t = $.telerik;
+        }
+
+        test('time parsing supports short time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = '<%= new DateTime(2000, 1, 20, 22, 20, 20).ToString("t") %>';
+
+            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 22, culture + "-hours");
+            equal(result.minutes(), 20, culture + "-minutes");
+            if($t.cultureInfo.shortTime.indexOf('ss') == -1)
+                equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse 12 PM with short time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 10, 15, 15, 0);
+            var value = '<%= new DateTime(2000, 1, 10, 12, 15, 0).ToString("t") %>';
+
+            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 12, culture + "-hours");
+            equal(result.minutes(), 15, culture + "-minutes");
+        });
+
+        test('time parsing should parse 12 AM with short time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 10, 15, 15, 0);
+            var value = '<%= new DateTime(2000, 1, 10, 0, 15, 0).ToString("t") %>';
+            
+            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 0, culture + "-hours");
+            equal(result.minutes(), 15, culture + "-minutes");
+        });
+
+        test('time parsing supports long time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = '<%= new DateTime(2000, 1, 20, 18, 0, 30).ToString("T") %>';
+
+            var result = $t.datetime.parse({ value: value, format: "T", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 18, culture + "-hours");
+            equal(result.minutes(), 0, culture + "-minutes");
+            equal(result.seconds(), 30, culture + "-seconds");
+        });
+
+        test('time parsing should parse morning hours using short time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = '<%= new DateTime(2000, 1, 20, 9, 30, 0).ToString("t") %>';
+
+            var result = $t.datetime.parse({ value: value, format: "t", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 9, culture + "-hours");
+            equal(result.minutes(), 30, culture + "-minutes");
+            equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse morning hours using long time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = '<%= new DateTime(2000, 1, 20, 9, 0, 30).ToString("T") %>';
+
+            var result = $t.datetime.parse({ value: value, format: "T", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 9, culture + "-hours");
+            equal(result.minutes(), 0, culture + "-minutes");
+            equal(result.seconds(), 30, culture + "-seconds");
+        });
+
+        test('time parsing should parse 24 and return 0 hour', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "24:00"
+            
+            var result = $t.datetime.parse({ value: value, format: "H:mm", baseDate: dateToModify });
+
+            equal(result, null, culture);
+        });
+
+        test('time parsing should parse 23 59', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "23:59"
+            
+            var result = $t.datetime.parse({ value: value, format: "H:mm", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 23, culture + "-hours");
+            equal(result.minutes(), 59, culture + "-minutes");
+            equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse using H mm', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "13:22";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 13, culture + "-hours");
+            equal(result.minutes(), 22, culture + "-minutes");
+            equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse with seconds using H mm tt', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "4:22:22 PM";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm tt", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 16, culture + "-hours");
+            equal(result.minutes(), 22, culture + "-minutes");
+            equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse without seconds using H mm tt', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "4:22 PM";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm tt", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 16, culture + "-hours");
+            equal(result.minutes(), 22, culture + "-minutes");
+            equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse with seconds using H mm ss tt', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "4:22:22 PM";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss tt", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 16, culture + "-hours");
+            equal(result.minutes(), 22, culture + "-minutes");
+            equal(result.seconds(), 22, culture + "-seconds");
+        });
+
+        test('time parsing should parse without seconds using H mm ss tt', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "4:22 " + $t.cultureInfo.pm;
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss tt", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 16, culture + "-hours");
+            equal(result.minutes(), 22, culture + "-minutes");
+            equal(result.seconds(), 0, culture + "-seconds");
+        });
+
+        test('time parsing should parse H mm ss', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "22:10:22";
+            
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 22, culture + "-hours");
+            equal(result.minutes(), 10, culture + "-minutes");
+            equal(result.seconds(), 22, culture + "-seconds");
+        });
+
+        test('time parsing not fully typed hours and minutes', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "::22";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 0, culture + "-hours");
+            equal(result.minutes(), 0, culture + "-minutes");
+            equal(result.seconds(), 22, culture + "-seconds");
+        });
+
+        test('time parsing should parse using H mm ss f time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "10:10:22.6";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss.f", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 10, culture + "-hours");
+            equal(result.minutes(), 10, culture + "-minutes");
+            equal(result.seconds(), 22, culture + "-seconds");
+            equal(result.milliseconds(), 6, culture + "-milliseconds");
+        });
+
+        test('time parsing should parse using H mm ss ff time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "10:10:22.67";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss.ff", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 10, culture + "-hours");
+            equal(result.minutes(), 10, culture + "-minutes");
+            equal(result.seconds(), 22, culture + "-seconds");
+            equal(result.milliseconds(), 67, culture + "-milliseconds");
+        });
+
+        test('time parsing should parse using H mm ss fff time format', function() {
+            var dateToModify = new $t.datetime(2000, 1, 20, 10, 0, 20);
+            var value = "10:10:22.6741";
+
+            var result = $t.datetime.parse({ value: value, format: "H:mm:ss.fff", baseDate: dateToModify });
+
+            ok(isValidDate(dateToModify, result), 'date is not same');
+            equal(result.hours(), 10, culture + "-hours");
+            equal(result.minutes(), 10, culture + "-minutes");
+            equal(result.seconds(), 22, culture + "-seconds");
+            equal(result.milliseconds(), 674, culture + "-milliseconds");
+        });
+
+</script>
+
 </asp:Content>

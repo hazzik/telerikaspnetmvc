@@ -21,6 +21,6 @@ namespace Telerik.Web.Mvc.UI
 
         IHtmlNode RowTag();
 
-        IHtmlNode CellTag(DateTime day, string urlFormat, bool isOtherMonth);
+        IHtmlNode CellTag(DateTime currentDay, DateTime? selectedDate, string urlFormat, bool isOtherMonth);
     }
 }

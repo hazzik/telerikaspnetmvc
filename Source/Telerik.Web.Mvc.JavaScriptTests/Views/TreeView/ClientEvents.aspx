@@ -45,11 +45,6 @@
 
         var isRaised;
         var selectedItem;
-        
-        function test_client_object_is_available_in_on_load() {
-            assertNotNull(onLoadTreeView);
-            assertNotUndefined(onLoadTreeView);
-        }
 
         function onDataBinding_ClientSideTreeView(e) {
             var treeview = $('#ClientSideTreeView').data('tTreeView');
@@ -75,47 +70,6 @@
             isRaised = true;
         }
 
-        function test_clicking_item_should_raise_onselect_event_return_selected_item() {
-            
-            var treeview = $("#ClientSideTreeView").data("tTreeView");
-
-            var nodeToClick = $(treeview.element).find('.t-item');
-
-            nodeToClick.find('.t-in').click();
-
-            assertTrue($(selectedItem).hasClass('t-item'));
-        }
-
-        function test_trigger_input_select_should_not_bubble() {
-            
-            isRaised = false;
-
-            var treeview = $("#ContentTreeView").data("tTreeView");
-
-            var $input = $(treeview.element).find('.t-item').find('input').last();
-
-            $input.trigger('select');
-
-            assertFalse(isRaised);
-        }
-        
-        function test_clicking_load_on_demand_nodes_triggers_databinding_event() {
-            var treeview = $("#ClientSideTreeView").data("tTreeView"),
-                node = $(treeview.element).find('.t-item'),
-                hasCalledDataBinding = false,
-                eventContainsItem = false;
-        
-            $(treeview.element).bind('dataBinding', function(e) {
-                hasCalledDataBinding = true;
-                eventContainsItem = e.item == node[0];
-            });
-            
-            treeview.nodeToggle(null, node, true);
-            
-            assertTrue("DataBinding event should be fired when elements with LoadOnDemand are clicked.", hasCalledDataBinding);
-            assertTrue("DataBinding event should contain item in event data", eventContainsItem);
-        }
-
         function getItemHtml(item) {
             var html = new $.telerik.stringBuilder();
                           
@@ -130,17 +84,74 @@
 
             return html.string();
         }
+        
+    </script>
 
-        function test_reload_method_should_remove_items_group() {
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+        
+        test('client object is available in on load', function() {
+            ok(null !== onLoadTreeView);
+            ok(undefined !== onLoadTreeView);
+        });
+
+        test('clicking item should raise onselect event return selected item', function() {
+            
+            var treeview = $("#ClientSideTreeView").data("tTreeView");
+
+            var nodeToClick = $(treeview.element).find('.t-item');
+
+            nodeToClick.find('.t-in').click();
+
+            ok($(selectedItem).hasClass('t-item'));
+        });
+
+        test('trigger input select should not bubble', function() {
+            
+            isRaised = false;
+
+            var treeview = $("#ContentTreeView").data("tTreeView");
+
+            var $input = $(treeview.element).find('.t-item').find('input').last();
+
+            $input.trigger('select');
+
+            ok(!isRaised);
+        });
+        
+        test('clicking load on demand nodes triggers databinding event', function() {
+            var treeview = $("#ClientSideTreeView").data("tTreeView"),
+                node = $(treeview.element).find('.t-item'),
+                hasCalledDataBinding = false,
+                eventContainsItem = false;
+        
+            $(treeview.element).bind('dataBinding', function(e) {
+                hasCalledDataBinding = true;
+                eventContainsItem = e.item == node[0];
+            });
+            
+            treeview.nodeToggle(null, node, true);
+            
+            ok(hasCalledDataBinding, "DataBinding event should be fired when elements with LoadOnDemand are clicked.");
+            ok(eventContainsItem, "DataBinding event should contain item in event data");
+        });
+
+        test('reload method should remove items group', function() {
             var treeview = $("#ClientSideTreeView").data("tTreeView"),
                 $item = $(getItemHtml({ Text: 'Steven Buchanan', Items: [{ Text: 'Michael Suyama' }] }));
 
             treeview.reload($item);
 
-            assertEquals(0, $item.find('.t-group').length);
-        }
+            equal($item.find('.t-group').length, 0);
+        });
 
-        function test_reload_method_should_call_ajaxRequest_method() {
+        test('reload method should call ajaxRequest method', function() {
             var treeview = $("#ClientSideTreeView").data("tTreeView"),
                 oldAjaxRequest = treeview.ajaxRequest,
                 isCalled = false;
@@ -150,14 +161,14 @@
             
                 treeview.reload($('<li></li>'));
 
-                assertTrue(isCalled);
+                ok(isCalled);
 
             } finally {
                 treeview.ajaxRequest = oldAjaxRequest;
             }
-        }
+        });
 
-        function test_clicking_disabled_items_does_not_trigger_select_event() {
+        test('clicking disabled items does not trigger select event', function() {
             var treeviewElement = $("#DisabledTreeView"),
                 isCalled = false;
                 
@@ -166,13 +177,13 @@
 
                 treeviewElement.find('.t-in.t-state-disabled').trigger('click');
 
-                assertFalse(isCalled);
+                ok(!isCalled);
             } finally {
                 treeviewElement.unbind('select');
             }
-        }
+        });
 
-        function test_expanding_load_on_demand_nodes_triggers_expand_event() {
+        test('expanding load on demand nodes triggers expand event', function() {
             var treeviewElement = $("#ClientSideTreeView"),
                 treeview = treeviewElement.data("tTreeView"),
                 node = treeviewElement.find('.t-item:first'),
@@ -187,13 +198,13 @@
             
                 treeview.nodeToggle(null, node, true);
             
-                assertTrue("Expand event should be fired when elements with LoadOnDemand are expanded.", expandTrigggered);
-                assertTrue("Expand event should contain item in event data", eventContainsItem);
+                ok(expandTrigggered, "Expand event should be fired when elements with LoadOnDemand are expanded.");
+                ok(eventContainsItem, "Expand event should contain item in event data");
             } finally {
                 treeviewElement.unbind('expand');
             }
-        }
-        
-    </script>
+        });
+
+</script>
 
 </asp:Content>

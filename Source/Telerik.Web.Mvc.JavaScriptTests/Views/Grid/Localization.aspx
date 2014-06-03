@@ -1,8 +1,7 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        Selection</h2>
+
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .DataKeys(keys => keys.Add(c => c.Name))
@@ -30,98 +29,66 @@
             .Groupable()
     %>
 
-    <script type="text/javascript">
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
         var grid;
-        
-        function setUp() {
-            grid = getGrid('#Grid1');
-            grid.ajaxRequest = function() { }
-        }
 
         function getGrid(selector) {
             return $(selector || "#Grid1").data("tGrid");
         }
+        
+        module("Grid / Localization", {
+            setup: function() {
+                grid = getGrid('#Grid1');
+                grid.ajaxRequest = function() { }
+            },
+            teardown: function() {
+            }
+        });
 
-        function test_input_paging_text() {
+        test('input paging text', function() {
             grid.localization.page = 'stranica';
             grid.localization.pageOf = 'ot {0}';
             
             var $pager = $('.t-page-i-of-n');
             grid.updatePager();
-            assertTrue($pager.html().indexOf('stranica') > -1);
-            assertTrue($pager.html().indexOf('ot') > -1);
-        }
+            ok($pager.html().indexOf('stranica') > -1);
+            ok($pager.html().indexOf('ot') > -1);
+        });
 
-        function test_pager_status() {
+        test('pager status', function() {
             grid.localization.displayingItems = 'Pokazvame zapisi {0} - {1} ot {2}';
             grid.updatePager();
             var $status = $('.t-status-text');
-            assertEquals('Pokazvame zapisi 1 - 10 ot 20', $status.html());
-        }
+            equal($status.html(), 'Pokazvame zapisi 1 - 10 ot 20');
+        });
 
-        function test_edit_localization() {
-            grid.localization.edit = "redaktirai";
-            grid.editRow($('.t-grid-edit:first', grid.element).closest('tr'));
-            grid.cancel();
-
-            assertEquals('redaktirai', $('.t-grid-edit:first').text());
-        }
-
-        function test_delete_localization() {
-            grid.localization['delete'] = "iztrii";
-            grid.editRow($('.t-grid-edit:first', grid.element).closest('tr'));
-            grid.cancel();
-
-            assertEquals('iztrii', $('.t-grid-delete:first').text());
-        }
-
-        function test_update_localization() {
-            grid.localization['update'] = "zapazi";
-            grid.editRow($('.t-grid-edit:first', grid.element).closest('tr'));
-            assertEquals('zapazi', $('.t-grid-update:first').text());
-            grid.cancel();
-        }
-        
-        function test_cancel_localization() {
-            grid.localization['cancel'] = "otkaz";
-            grid.editRow($('.t-grid-edit:first', grid.element).closest('tr'));
-            assertEquals('otkaz', $('.t-grid-cancel:first').text());
-            grid.cancel();
-        }
-
-        function test_insert_localization() {
-            grid.localization['insert'] = "dobavi";
-            grid.addRow();
-            assertEquals('dobavi', $('.t-grid-insert:first').text());
-            grid.cancel();
-        }
-
-        function test_select_localization() {
-            grid.localization['select'] = "izberi";
-            grid.editRow($('.t-grid-edit:first', grid.element).closest('tr'));
-            grid.cancel();
-            assertEquals('izberi', $('.t-grid-select:first').text());
-        }
-
-        function test_filter_localization() {
+        test('filter localization', function() {
             grid.localization['filter'] = "filtrirai";
             grid.localization['filterClear'] = "mahni filter";
             grid.localization['filterShowRows'] = "pokazhi redove, koito";
             grid.localization['filterAnd'] = "i";
             grid.localization['filterStringEq'] = "sushtoto kato";
             $('th:contains(Name) .t-filter').click();
-            assertEquals('filtrirai', $('.t-filter-button:visible').text());
-            assertEquals('mahni filter', $('.t-clear-button:visible').text());
-            assertEquals('pokazhi redove, koito', $('.t-filter-help-text:visible:first').text());
-            assertEquals('i', $('.t-filter-help-text:visible:eq(1)').text());
-            assertEquals('sushtoto kato', $('select:visible option:first').text());
-        }
+            equal($('.t-filter-button:visible').text(), 'filtrirai');
+            equal($('.t-clear-button:visible').text(), 'mahni filter');
+            equal($('.t-filter-help-text:visible:first').text(), 'pokazhi redove, koito');
+            equal($('.t-filter-help-text:visible:eq(1)').text(), 'i');
+            equal($('select:visible option:first').text(), 'sushtoto kato');
+        });
 
-        function test_grouping_localization() {
+        test('grouping localization', function() {
             grid.localization.groupHint = 'grupirane';
             grid.group('Name');
             grid.unGroup('Name');
-            assertEquals('grupirane', $('.t-grouping-header').text());
-        }
-    </script>
+            equal($('.t-grouping-header').text(), 'grupirane');
+        });
+
+</script>
+
 </asp:Content>

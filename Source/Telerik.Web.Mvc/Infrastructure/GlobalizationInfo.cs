@@ -5,9 +5,9 @@
 
 namespace Telerik.Web.Mvc.Infrastructure
 {
-    using System.Collections.Generic;
     using System.Globalization;
-
+    using System.Collections.Generic;
+    
     public class GlobalizationInfo
     {
         private readonly IDictionary<string, object> globalization = new Dictionary<string, object>();
@@ -36,6 +36,7 @@ namespace Telerik.Web.Mvc.Infrastructure
             globalization["pm"] = dateTimeFormats.PMDesignator;
             globalization["dateSeparator"] = dateTimeFormats.DateSeparator;
             globalization["timeSeparator"] = dateTimeFormats.TimeSeparator;
+            globalization["firstDayOfWeek"] = (int)dateTimeFormats.FirstDayOfWeek;
 
             globalization["currencydecimaldigits"] = numberFormats.CurrencyDecimalDigits;
             globalization["currencydecimalseparator"] = numberFormats.CurrencyDecimalSeparator;

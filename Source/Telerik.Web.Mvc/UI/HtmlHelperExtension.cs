@@ -28,30 +28,19 @@ namespace Telerik.Web.Mvc.UI
 
             ViewContext viewContext = helper.ViewContext;
             HttpContextBase httpContext = viewContext.HttpContext;
-            ViewComponentFactory factory = httpContext.Items[Key] as ViewComponentFactory;
+            
+            ScriptWrapperBase scriptWrapper = DI.Current.Resolve<ScriptWrapperBase>();
+            IClientSideObjectWriterFactory clientSideObjectWriterFactory = DI.Current.Resolve<IClientSideObjectWriterFactory>();
 
-            if (factory == null)
-            {
-                ScriptWrapperBase scriptWrapper = DI.Current.Resolve<ScriptWrapperBase>();
-                IClientSideObjectWriterFactory clientSideObjectWriterFactory = DI.Current.Resolve<IClientSideObjectWriterFactory>();
+            StyleSheetRegistrar styleSheetRegistrar = httpContext.Items[StyleSheetRegistrar.Key] as StyleSheetRegistrar ??
+                                                        new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>());
+            ScriptRegistrar scriptRegistrar = httpContext.Items[ScriptRegistrar.Key] as ScriptRegistrar ??
+                                                        new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>(), scriptWrapper);
 
-                StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>());
-                ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), 
-                    new List<IScriptableComponent>(), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>(), scriptWrapper);
+            StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = StyleSheetRegistrarBuilder.Create(styleSheetRegistrar);
+            ScriptRegistrarBuilder scriptRegistrarBuilder = ScriptRegistrarBuilder.Create(scriptRegistrar);
 
-                StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = StyleSheetRegistrarBuilder.Create(styleSheetRegistrar);
-                ScriptRegistrarBuilder scriptRegistrarBuilder = ScriptRegistrarBuilder.Create(scriptRegistrar);
-
-                factory = new ViewComponentFactory(helper, clientSideObjectWriterFactory, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
-
-                httpContext.Items[Key] = factory;
-            }
-            else
-            {
-                factory.HtmlHelper = helper;
-            }
-
-            return factory;
+            return new ViewComponentFactory(helper, clientSideObjectWriterFactory, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
         }
 
 #if MVC2 || MVC3
@@ -67,31 +56,18 @@ namespace Telerik.Web.Mvc.UI
             ViewContext viewContext = helper.ViewContext;
             HttpContextBase httpContext = viewContext.HttpContext;
 
-            ViewComponentFactory<TModel> factory = httpContext.Items[Key] as ViewComponentFactory<TModel>;
+            ScriptWrapperBase scriptWrapper = DI.Current.Resolve<ScriptWrapperBase>();
+            IClientSideObjectWriterFactory clientSideObjectWriterFactory = DI.Current.Resolve<IClientSideObjectWriterFactory>();
 
-            if (factory == null)
-            {
-                ScriptWrapperBase scriptWrapper = DI.Current.Resolve<ScriptWrapperBase>();
-                IClientSideObjectWriterFactory clientSideObjectWriterFactory = DI.Current.Resolve<IClientSideObjectWriterFactory>();
+            StyleSheetRegistrar styleSheetRegistrar = httpContext.Items[StyleSheetRegistrar.Key] as StyleSheetRegistrar ??
+                                                        new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>());
+            ScriptRegistrar scriptRegistrar = httpContext.Items[ScriptRegistrar.Key] as ScriptRegistrar ??
+                                                        new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>(), scriptWrapper);
 
-                StyleSheetRegistrar styleSheetRegistrar = httpContext.Items[StyleSheetRegistrar.Key] as StyleSheetRegistrar ??
-                                                          new StyleSheetRegistrar(new WebAssetCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>());
-                ScriptRegistrar scriptRegistrar = httpContext.Items[ScriptRegistrar.Key] as ScriptRegistrar ??
-                                                          new ScriptRegistrar(new WebAssetCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, DI.Current.Resolve<IWebAssetCollectionResolver>(), scriptWrapper);
+            StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = StyleSheetRegistrarBuilder.Create(styleSheetRegistrar);
+            ScriptRegistrarBuilder scriptRegistrarBuilder = ScriptRegistrarBuilder.Create(scriptRegistrar);
 
-                StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = StyleSheetRegistrarBuilder.Create(styleSheetRegistrar);
-                ScriptRegistrarBuilder scriptRegistrarBuilder = ScriptRegistrarBuilder.Create(scriptRegistrar);
-
-                factory = new ViewComponentFactory<TModel>(helper, clientSideObjectWriterFactory, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
-
-                httpContext.Items[Key] = factory;
-            }
-            else
-            {
-                factory.HtmlHelper = helper;
-            }
-
-            return factory;
+            return new ViewComponentFactory<TModel>(helper, clientSideObjectWriterFactory, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
         }
 #endif
     }

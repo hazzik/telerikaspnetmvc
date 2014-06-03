@@ -133,15 +133,15 @@
     };
 
     function defineFocusedDate(focusedValue, selectedValue, minValue, maxValue) {
-        if (!focusedValue)
-            focusedValue = new $t.datetime();
+        if (selectedValue) {
+            focusedValue = new Date(selectedValue);
+        }
 
-        if (selectedValue)
-            focusedValue = new $t.datetime(selectedValue.toDate());
-        else
-            focusedValue = $t.calendar.isInRange(focusedValue, minValue, maxValue)
-                        ? focusedValue
-                        : new $t.datetime(minValue.value);
+        if (minValue > focusedValue) {
+            focusedValue = new Date(minValue);
+        } else if (maxValue < focusedValue) {
+            focusedValue = new Date(maxValue);
+        }
 
         return focusedValue;
     }
@@ -160,7 +160,7 @@
         $.extend(this, options);
         this.isValueChanged = false;
 
-        this.focusedValue = defineFocusedDate(null, this.selectedValue, this.minValue, this.maxValue);
+        this.focusedValue = defineFocusedDate(new Date(), this.selectedValue, this.minValue, this.maxValue);
 
         this.$calendar = this._createSharedCalendar();
     }
@@ -168,7 +168,7 @@
     $t.dateView.prototype = {
         _createSharedCalendar: function () {
             if (!sharedCalendar) {
-                sharedCalendar = $($t.calendar.html(this.focusedValue, this.selectedValue, this.minValue, this.maxValue))
+                sharedCalendar = $($t.calendar.html(new $t.datetime(this.focusedValue), this.selectedValue ? new $t.datetime(this.selectedValue) : null, new $t.datetime(this.minValue), new $t.datetime(this.maxValue)))
                                 .hide()
                                 .addClass('t-datepicker-calendar')
                                 .bind('click', function (e) { e.stopPropagation(); })
@@ -179,12 +179,12 @@
                                     maxDate: this.maxValue
                                 });
 
-                $t.fx._wrap(sharedCalendar);
+                $t.fx._wrap(sharedCalendar).css('display', 'none');
 
                 if ($.browser.msie && $.browser.version <= 6)
                     $('<iframe class="t-iframe-overlay" src="javascript:false;"></iframe>')
-                    .prependTo(sharedCalendar)
-                    .height(sharedCalendar.height());
+                        .prependTo(sharedCalendar)
+                        .height(sharedCalendar.height());
             }
 
             return sharedCalendar;
@@ -213,11 +213,11 @@
                         var selectedValue = this.selectedValue;
                         var newValue = new $t.datetime(e.date);
                         if (selectedValue !== null)
-                            newValue.hours(selectedValue.hours())
-                                    .minutes(selectedValue.minutes())
-                                    .seconds(selectedValue.seconds())
-                                    .milliseconds(selectedValue.milliseconds());
-                        this.onChange(newValue);
+                            newValue.hours(selectedValue.getHours())
+                                    .minutes(selectedValue.getMinutes())
+                                    .seconds(selectedValue.getSeconds())
+                                    .milliseconds(selectedValue.getMilliseconds());
+                        this.onChange(newValue.toDate());
                     }, this))
                     .unbind('navigate')
                     .bind('navigate', $.proxy(function (e) {
@@ -225,10 +225,7 @@
                         var viewedMonth = calendar.viewedMonth;
                         var viewIndex = calendar.currentView.index;
 
-                        if (viewIndex == 0)
-                            focusedValue = this.selectedValue ? new $t.datetime(this.selectedValue.toDate()) : focusedValue;
-                        else
-                            focusedValue.year(viewedMonth.year(), viewedMonth.month(), focusedValue.date());
+                        focusedValue.setFullYear(viewedMonth.year(), viewedMonth.month(), focusedValue.getDate());
 
                         $t.calendar.focusDate(focusedValue, viewIndex, sharedCalendar, e.direction);
 
@@ -267,7 +264,7 @@
             var calendar = this._getCalendar();
             var viewIndex = calendar.currentView.index;
 
-            if (!sharedCalendar.is(':visible') && calendar.viewedMonth.value - this.focusedValue.value != 0) {
+            if (!sharedCalendar.is(':visible') && calendar.viewedMonth.value - this.focusedValue != 0) {
                 calendar.goToView(viewIndex, this.focusedValue)
                         .value(this.selectedValue);
             }
@@ -293,23 +290,23 @@
 
         value: function (value) {
             if (value === undefined)
-                return this.selectedValue.toDate();
+                return this.selectedValue;
 
             var isNull = value === null;
             var calendar = this._getCalendar();
 
             //set selected date
             if (!isNull)
-                value = value.value ? value : new $t.datetime(value);
+                value = value.value ? new Date(value.value) : value;
 
             calendar.value(value);
             this.selectedValue = value;
 
             //update focused date;
             if (isNull)
-                value = new $t.datetime();
+                value = new Date();
 
-            this.focusedValue = new $t.datetime(value.toDate());
+            this.focusedValue = new Date(value);
             $t.calendar.focusDate(value, calendar.currentView.index, sharedCalendar);
         },
 
@@ -324,7 +321,7 @@
             var viewedMonth = calendar.viewedMonth;
             var currentView = calendar.currentView;
             var viewIndex = currentView.index;
-            var date = new $t.datetime(this.focusedValue.value)
+            var date = new $t.datetime(this.focusedValue);
 
             var navigate = function (className, method, futureNav) {
                 if (!$(className, $calendar).hasClass('t-state-disabled')) {
@@ -422,10 +419,10 @@
 
             if (isNavProcessed) {
                 e.preventDefault();
-                date = $t.calendar.fitDateToRange(date, this.minValue, this.maxValue);
+                date = $t.calendar.fitDateToRange(date, new $t.datetime(this.minValue), new $t.datetime(this.maxValue));
 
-                $t.calendar.focusDate(date, viewIndex, $calendar, isFuture);
-                this.focusedValue = date;
+                $t.calendar.focusDate(date.toDate(), viewIndex, $calendar, isFuture);
+                this.focusedValue = date.toDate();
             }
         }
     }
@@ -435,60 +432,95 @@
             function (value) {
                 var propertyName = method + 'Value';
                 if (value === undefined)
-                    return this[propertyName].toDate();
+                    return this[propertyName];
 
-                this[propertyName] = value.value ? value : new $t.datetime(value);
+                this[propertyName] = new Date(value.value ? value.value : value);
                 sharedCalendar.data("associatedDateView", null);
                 this._reassignSharedCalendar();
             };
     }, this));
 
     $t.datepicker = function (element, options) {
-        this.element = element;
-
         $.extend(this, options);
 
-        var $input = this.$input = $('.t-input', element)
-                         .attr('autocomplete', 'off')
-                         .bind({
-                             change: function (e) { e.stopPropagation(); },
-                             keydown: $.proxy(this._keydown, this),
-                             focus: $.proxy(function (e) {
-                                 this._change($input.val());
-                                 this._open();
-                                 this.$input.removeClass('t-state-error');
-                             }, this)
-                         });
+        if (element.nodeName.toLowerCase() !== "input" && element.type.toLowerCase() !== "text") {
+            throw "Target element is not a INPUT";
+        }
 
-        this.inputValue = $input.val();
+        this.element = element;
+        var $element = this.$element = $(element)
+                    .addClass('t-input')
+                    .attr('autocomplete', 'off')
+                    .bind({
+                        keydown: $.proxy(this._keydown, this),
+                        focus: $.proxy(function (e) {
+                            if (this.openOnFocus) {
+                                this._open();
+                            }
+                            this.$element.removeClass('t-state-error');
+                        }, this)
+                    }); ;
+
+        if (!$element.parent().hasClass('t-picker-wrap')) {
+
+            $element.wrap('<div class="t-widget t-datepicker"><div class="t-picker-wrap"></div></div>');
+
+            if (options.showButton) {
+                var builder = new $t.stringBuilder(),
+                    title = options.buttonTitle;
+
+                $(builder
+                    .cat('<span class="t-select">')
+                    .cat('<span class="t-icon t-icon-calendar" ')
+                    .catIf('title="', title)
+                    .catIf(title, title)
+                    .cat('"></span></span>')
+                    .string())
+                .insertAfter($element);
+            }
+        }
 
         this.dateView = new $t.dateView({
             selectedValue: this.selectedValue,
-            minValue: this.minDate,
-            maxValue: this.maxDate,
+            minValue: this.minValue,
+            maxValue: this.maxValue,
             effects: this.effects,
-            isRtl: $input.closest('.t-rtl').length,
+            isRtl: $element.closest('.t-rtl').length,
             onChange: $.proxy(function (value) {
-                this._change(value);
+                this._update(value);
                 this._close();
             }, this)
         });
 
-        $('.t-icon-calendar', element)
-            .bind('click', this.enabled
-                           ? $.proxy(this._togglePopup, this)
-                           : $t.preventDefault);
+        this.inputValue = $element.val();
+        var value = this.selectedValue || this.inputValue;
+        if (value) {
+            this._value(this.parse(value));
+        }
+
+        var clickHandler = this.enabled
+                         ? $.proxy(this._togglePopup, this)
+                         : $t.preventDefault;
+
+        this.$wrapper = $element.closest('.t-datepicker')
+            .find('.t-icon')
+            .bind('click', clickHandler)
+            .end();
 
         $(document.documentElement).bind('mousedown', $.proxy(function (e) {
+            var val = this.$element.val();
+            if (val != this.inputValue) {
+                this._update(val);
+            }
+
             if (!sharedCalendar) return;
 
             var associatedDateView = sharedCalendar.data('associatedDateView');
-            if (associatedDateView && associatedDateView == this.dateView) {
-                if ($.contains(element, e.target)
-                || $.contains(sharedCalendar[0], e.target))
-                    return;
+            if (!associatedDateView || associatedDateView != this.dateView) {
+                return;
+            }
 
-                this._change(this.$input.val());
+            if (!$.contains(this.$wrapper[0], e.target) && !$.contains(sharedCalendar[0], e.target)) {
                 this._close();
             }
         }, this));
@@ -496,20 +528,18 @@
         $t.bind(this, {
             open: this.onOpen,
             close: this.onClose,
-            change: this.onChange,
+            valueChange: this.onChange,
             load: this.onLoad
         });
     }
 
     $t.datepicker.prototype = {
         _togglePopup: function () {
-            var $input = this.$input;
-
             if (this.dateView.isOpened()) {
-                this._change($input.val());
                 this._close();
             } else {
-                $input[0].focus();
+                this.element.focus();
+                this._open();
             }
         },
 
@@ -528,99 +558,102 @@
                 this[methodName]();
         },
 
-        _change: function (newValue) {
-            var selectedValue = this.selectedValue;
-            var parsedValue = this.parse(newValue);
+        _update: function (val) {
+            val = this.parse(val);
 
-            if (parsedValue != null) {
-                if (parsedValue.value - this.minDate.value <= 0) {
-                    parsedValue = this.minDate;
+            if (val != null) {
+                if (val - this.minValue <= 0) {
+                    val = this.minValue;
                 }
-                else if (parsedValue.value - this.maxDate.value >= 0) {
-                    parsedValue = this.maxDate;
+                else if (val - this.maxValue >= 0) {
+                    val = this.maxValue;
                 }
             }
 
-            if ((selectedValue === null && parsedValue !== null)
-            || (selectedValue !== null && parsedValue === null)
-            || (selectedValue && parsedValue && (selectedValue.value > parsedValue.value
-                                                || parsedValue.value > selectedValue.value))) {
+            var selectedValue = this.selectedValue,
+                formattedSelectedValue = selectedValue ? $t.datetime.format(selectedValue, this.format) : '',
+                formattedValue = val ? $t.datetime.format(val, this.format) : '';
 
-                $t.trigger(this.element, 'change', {
-                    previousValue: selectedValue === null ? null : selectedValue.toDate(),
-                    value: parsedValue === null ? null : parsedValue.toDate(),
-                    previousDate: selectedValue === null ? null : selectedValue.toDate(),
-                    date: parsedValue === null ? null : parsedValue.toDate()
-                });
+            if (formattedValue != formattedSelectedValue) {
+                var data = {
+                    previousValue: selectedValue,
+                    value: val,
+                    previousDate: selectedValue,
+                    date: val
+                };
+
+                if ($t.trigger(this.element, 'valueChange', data)) {
+                    val = new Date(selectedValue);
+                }
             }
 
-            if (parsedValue == null || this.inputValue != newValue)
-                this._value(parsedValue);
+            this._value(val);
         },
 
         _keydown: function (e) {
             var keyCode = e.keyCode;
-            var inputValue = e.target.value;
 
-            if (keyCode == 9) { // tab button
-                this._change(inputValue);
+            if (keyCode == 9 || (keyCode == 13 && this.inputValue != this.$element.val())) {
+                this._update(this.$element.val());
                 this._close();
-            } else if (keyCode == 27) {//escape button
-                this._close();
-            } else if (keyCode == 13 && (this.inputValue != inputValue || !this.dateView.isOpened())) {
-                this._change(inputValue);
+            } else if (keyCode == 27) {
                 this._close();
             } else if (e.altKey) {
-                if (keyCode == 40)
+                if (keyCode == 40) {
                     this._open();
-                else if (keyCode == 38)
+                } else if (keyCode == 38) {
                     this._close();
+                }
             } else {
                 this.dateView.navigate(e);
             }
         },
 
         enable: function () {
-            this.$input.attr('disabled', false);
-            $(this.element).removeClass('t-state-disabled')
-                  .find('.t-icon')
-                  .unbind('click')
-                  .bind('click', $.proxy(this._togglePopup, this));
+            this.$element.attr('disabled', false);
+            this.$wrapper
+                .removeClass('t-state-disabled')
+                .find('.t-icon')
+                .unbind('click')
+                .bind('click', $.proxy(this._togglePopup, this));
         },
 
         disable: function (e) {
-            this.$input.attr('disabled', true);
-            $(this.element).addClass('t-state-disabled')
+            this.$element.attr('disabled', true);
+            this.$wrapper
+                .addClass('t-state-disabled')
                 .find('.t-icon')
                 .unbind('click')
                 .bind('click', $t.preventDefault);
         },
 
         _value: function (value) {
-            var text = this.$input.val();
+            var text = this.$element.val();
             var isNull = value === null;
 
             this.selectedValue = value;
 
             this.dateView.value(value);
 
-            if (!isNull)
-                text = $t.datetime.format(value.toDate(), this.format);
+            if (!isNull) {
+                text = $t.datetime.format(value, this.format);
+            }
 
             this.inputValue = text;
-            this.$input.toggleClass('t-state-error', isNull && text != '')
-                       .val(text);
+            this.$element.toggleClass('t-state-error', isNull && text != '')
+                         .val(text);
         },
 
         value: function (val) {
             if (val === undefined)
-                return this.selectedValue === null ? null : this.selectedValue.toDate();
+                return this.selectedValue;
 
             var parsedValue = this.parse(val);
-            parsedValue = $t.calendar.isInRange(parsedValue, this.minDate, this.maxDate) ? parsedValue : null;
+            parsedValue = $t.datepicker.isInRange(parsedValue, this.minValue, this.maxValue) ? parsedValue : null;
 
-            if (parsedValue === null)
-                this.$input.removeClass('t-state-error').val('');
+            if (parsedValue === null) {
+                this.$element.removeClass('t-state-error').val('');
+            }
 
             this._value(parsedValue);
 
@@ -638,13 +671,13 @@
         },
 
         open: function () {
-            var $input = this.$input;
+            var $element = this.$element;
 
             this.dateView.open({
-                offset: $input.offset(),
-                outerHeight: $input.outerHeight(),
-                outerWidth: $input.outerWidth(),
-                zIndex: $t.getElementZIndex($input[0])
+                offset: $element.offset(),
+                outerHeight: $element.outerHeight(),
+                outerWidth: $element.outerWidth(),
+                zIndex: $t.getElementZIndex($element[0])
             });
         },
 
@@ -653,31 +686,40 @@
         },
 
         parse: function (value, format) {
-            if (value === null || value.value)
+            if (value === null || value.getDate)
                 return value;
 
-            return value.getDate
-                   ? new $t.datetime(value)
-                   : $t.datetime.parse({
-                       value: value,
-                       format: format || this.format,
-                       shortYearCutOff: this.shortYearCutOff
-                   });
+            var result = $t.datetime.parse({
+                value: value,
+                format: format || this.format,
+                shortYearCutOff: this.shortYearCutOff
+            });
+            return result != null ? result.toDate() : null;
+
         }
     }
 
     $.each(["min", "max"], $.proxy(function (index, method) {
         $t.datepicker.prototype[method] =
         function (value) {
-            var propertyName = method + 'Date';
+            var propertyName = method + 'Value';
             if (value === undefined)
-                return this[propertyName].toDate();
+                return this[propertyName];
 
             var parsedValue = this.parse(value);
+
             if (parsedValue !== null) {
+                var oldValue = this[propertyName];
                 this[propertyName] = parsedValue;
+
+                if (this.minValue > this.maxValue) {
+                    this[propertyName] = oldValue;
+                    return;
+                }
+
                 this.dateView[method](parsedValue);
-                this._change(parsedValue);
+                if (!$t.datepicker.isInRange(this.selectedValue, this.minValue, this.maxValue))
+                    this.value(parsedValue);
             }
         };
     }, this));
@@ -690,6 +732,11 @@
                 date.addMonth(otherViewValue);
             else
                 date.addYear((viewIndex == 2 ? otherViewValue : 10 * otherViewValue));
+        },
+
+        isInRange: function (date, minDate, maxDate) {
+            if (!date) return false;
+            return minDate - date <= 0 && maxDate - date >= 0;
         }
     });
 
@@ -707,10 +754,13 @@
         effects: $t.fx.slide.defaults(),
         selectedValue: null,
         format: $t.cultureInfo.shortDate,
-        minDate: new $t.datetime(1899, 11, 31),
-        maxDate: new $t.datetime(2100, 0, 1),
+        minValue: new Date(1899, 11, 31),
+        maxValue: new Date(2100, 0, 1),
         shortYearCutOff: 30,
-        enabled: true
+        showButton: true,
+        buttonTitle: 'Open the calendar',
+        enabled: true,
+        openOnFocus: false
     };
 
 })(jQuery);

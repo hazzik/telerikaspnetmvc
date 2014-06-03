@@ -7,10 +7,10 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
 
-    public class TextboxBaseClientEvents
+    public class TextBoxBaseClientEvents
     {
 
-        public TextboxBaseClientEvents()
+        public TextBoxBaseClientEvents()
         {
             OnLoad = new ClientEvent();
             OnChange = new ClientEvent();

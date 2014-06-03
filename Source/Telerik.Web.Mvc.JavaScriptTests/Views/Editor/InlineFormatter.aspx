@@ -1,320 +1,239 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>FormatFinder</h2>
     <%= Html.Telerik().Editor().Name("Editor") %>
     
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
 
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript">
     
-    var editor;
+        var editor;
 
-    var InlineFormatter;
-    var RangeEnumerator;
-    var enumerator;
+        var InlineFormatter;
+        var RangeEnumerator;
 
-    function setUp() {
-        editor = getEditor();
-        InlineFormatter = $.telerik.editor.InlineFormatter;
-        RangeEnumerator = $.telerik.editor.RangeEnumerator;
-    }
+        module("Editor / InlineFormatter", {
+            setup: function() {
+                editor = getEditor();
+                InlineFormatter = $.telerik.editor.InlineFormatter;
+                RangeEnumerator = $.telerik.editor.RangeEnumerator;
+            }
+        });
     
-    function test_apply_format_applies_style() {
-        var range = createRangeFromText(editor, '<span>|foo|</span>');
+        test('apply format applies style', function() {
+            var range = createRangeFromText(editor, '<span>|foo|</span>');
 
-        var formatter = new InlineFormatter(editor.formats.underline);
+            var formatter = new InlineFormatter(editor.formats.underline);
 
-        formatter.apply(new RangeEnumerator(range).enumerate());
+            formatter.apply(new RangeEnumerator(range).enumerate());
 
-        assertEquals('<span style="text-decoration:underline;">foo</span>', editor.value());
-    }
+            equal(editor.value(), '<span style="text-decoration:underline;">foo</span>');
+        });
 
-    function test_apply_wraps_text_node() {
-        var range = createRangeFromText(editor, '|foo|');
+        test('apply wraps text node', function() {
+            var range = createRangeFromText(editor, '|foo|');
 
-        var formatter = new InlineFormatter(editor.formats.bold);
+            var formatter = new InlineFormatter(editor.formats.bold);
 
-        formatter.apply(new RangeEnumerator(range).enumerate());
+            formatter.apply(new RangeEnumerator(range).enumerate());
 
-        assertEquals('<strong>foo</strong>', editor.value());
-    }
+            equal(editor.value(), '<strong>foo</strong>');
+        });
 
-    function test_apply_wraps_text_node_and_applies_styles() {
-        var range = createRangeFromText(editor, '|foo|');
+        test('apply wraps text node and applies styles', function() {
+            var range = createRangeFromText(editor, '|foo|');
 
-        var formatter = new InlineFormatter(editor.formats.underline);
+            var formatter = new InlineFormatter(editor.formats.underline);
 
-        formatter.apply(new RangeEnumerator(range).enumerate());
+            formatter.apply(new RangeEnumerator(range).enumerate());
 
-        assertEquals('<span style="text-decoration:underline;">foo</span>', editor.value());
-    }
+            equal(editor.value(), '<span style="text-decoration:underline;">foo</span>');
+        });
 
-    function test_apply_resolves_style_argument() {
-        editor.value('foo');
-        var formatter = new InlineFormatter([{tags:['span']}], {style:{color:'#f1f1f1'}});
-        formatter.apply([editor.body.firstChild]);
-        assertEquals('<span style="color:#f1f1f1;">foo</span>', editor.value());
-    }
+        test('apply resolves style argument', function() {
+            editor.value('foo');
+            var formatter = new InlineFormatter([{tags:['span']}], {style:{color:'#f1f1f1'}});
+            formatter.apply([editor.body.firstChild]);
+            equal(editor.value(), '<span style="color:#f1f1f1;">foo</span>');
+        });
 
-    function test_apply_applies_attributes() {
-        editor.value('foo');
-        var formatter = new InlineFormatter([{tags:['span']}], {id:'test'});
+        test('apply applies attributes', function() {
+            editor.value('foo');
+            var formatter = new InlineFormatter([{tags:['span']}], {id:'test'});
         
-        formatter.apply([editor.body.firstChild]);
-        assertEquals('<span id="test">foo</span>', editor.value());
-    }
+            formatter.apply([editor.body.firstChild]);
+            equal(editor.value(), '<span id="test">foo</span>');
+        });
     
-    function test_apply_updates_attributes() {
-        editor.value('<span id="foo">foo</span>');
-        var formatter = new InlineFormatter([{ tags: ['span']}], {id:'bar'});
+        test('apply updates attributes', function() {
+            editor.value('<span id="foo">foo</span>');
+            var formatter = new InlineFormatter([{ tags: ['span']}], {id:'bar'});
 
-        formatter.apply([editor.body.firstChild.firstChild]);
+            formatter.apply([editor.body.firstChild.firstChild]);
         
-        assertEquals('<span id="bar">foo</span>', editor.value());
-    }
+            equal(editor.value(), '<span id="bar">foo</span>');
+        });
 
-    function test_consolidate_merges_nodes_of_same_format() {
-        editor.value('<span style="text-decoration:underline;">f</span><span style="text-decoration:underline;">oo</span>');
-        var formatter = new InlineFormatter(editor.formats.underline);
-        formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
-        assertEquals('<span style="text-decoration:underline;">foo</span>', editor.value());
-    }
+        test('consolidate merges nodes of same format', function() {
+            editor.value('<span style="text-decoration:underline;">f</span><span style="text-decoration:underline;">oo</span>');
+            var formatter = new InlineFormatter(editor.formats.underline);
+            formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
+            equal(editor.value(), '<span style="text-decoration:underline;">foo</span>');
+        });
 
-    function test_consolidate_skips_marker() {
-        editor.value('<span style="text-decoration:underline;">f</span><span class="t-marker"></span><span style="text-decoration:underline;">oo</span>');
-        var formatter = new InlineFormatter(editor.formats.underline);
-        formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
-        assertEquals('<span style="text-decoration:underline;">f<span class="t-marker"></span>oo</span>', editor.value());
-    }
+        test('consolidate skips marker', function() {
+            editor.value('<span style="text-decoration:underline;">f</span><span class="t-marker"></span><span style="text-decoration:underline;">oo</span>');
+            var formatter = new InlineFormatter(editor.formats.underline);
+            formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
+            equal(editor.value(), '<span style="text-decoration:underline;">f<span class="t-marker"></span>oo</span>');
+        });
 
-    function test_consolidate_does_not_merge_nodes_which_are_not_siblings() {
-        editor.value('<em>f</em><strong><em>oo</em></strong>');
-        var formatter = new InlineFormatter(editor.formats.italic);
-        formatter.consolidate([editor.body.firstChild, editor.body.lastChild.firstChild]);
-        assertEquals('<em>f</em><strong><em>oo</em></strong>', editor.value());
-    }
+        test('consolidate does not merge nodes which are not siblings', function() {
+            editor.value('<em>f</em><strong><em>oo</em></strong>');
+            var formatter = new InlineFormatter(editor.formats.italic);
+            formatter.consolidate([editor.body.firstChild, editor.body.lastChild.firstChild]);
+            equal(editor.value(), '<em>f</em><strong><em>oo</em></strong>');
+        });
     
-    function test_consolidate_does_not_merge_nodes_with_different_styles() {
-        editor.value('<span style="color:#ff0000;">foo</span><span style="font-family:Courier;">bar</span>');
-        var formatter = new InlineFormatter([{ tags: ['span'] }], { style: { color: '#ff0000' } }, 'color');
-        formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
-        assertEquals('<span style="color:#ff0000;">foo</span><span style="font-family:Courier;">bar</span>', editor.value());
-    }
+        test('consolidate does not merge nodes with different styles', function() {
+            editor.value('<span style="color:#ff0000;">foo</span><span style="font-family:Courier;">bar</span>');
+            var formatter = new InlineFormatter([{ tags: ['span'] }], { style: { color: '#ff0000' } }, 'color');
+            formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
+            equal(editor.value(), '<span style="color:#ff0000;">foo</span><span style="font-family:Courier;">bar</span>');
+        });
 
-    function test_remove_removes_format_whole_node_contents_selected() {
-        var range = createRangeFromText(editor, "<strong>|foo|</strong>");
-        var formatter = new InlineFormatter(editor.formats.bold);
-        formatter.remove(new RangeEnumerator(range).enumerate());
-        assertEquals('foo', editor.value());
-    }
+        test('remove removes format whole node contents selected', function() {
+            var range = createRangeFromText(editor, "<strong>|foo|</strong>");
+            var formatter = new InlineFormatter(editor.formats.bold);
+            formatter.remove(new RangeEnumerator(range).enumerate());
+            equal(editor.value(), 'foo');
+        });
 
-    function test_remove_removes_format_whole_node_selected() {
-        var range = createRangeFromText(editor, "|<strong>foo</strong>|");
-        var formatter = new InlineFormatter(editor.formats.bold);
-        formatter.remove(new RangeEnumerator(range).enumerate());
-        assertEquals('foo', editor.value());
-    }
+        test('remove removes format whole node selected', function() {
+            var range = createRangeFromText(editor, "|<strong>foo</strong>|");
+            var formatter = new InlineFormatter(editor.formats.bold);
+            formatter.remove(new RangeEnumerator(range).enumerate());
+            equal(editor.value(), 'foo');
+        });
 
-    function test_splits_format_before_selection() {
-        var range = createRangeFromText(editor, "<strong>f|oo|</strong>");
-        var formatter = new InlineFormatter(editor.formats.bold);
-        formatter.split(range);
-        assertEquals('<strong>f</strong><strong>oo</strong>', editor.value());
-    }
+        test('splits format before selection', function() {
+            var range = createRangeFromText(editor, "<strong>f|oo|</strong>");
+            var formatter = new InlineFormatter(editor.formats.bold);
+            formatter.split(range);
+            equal(editor.value(), '<strong>f</strong><strong>oo</strong>');
+        });
 
-    function test_splits_format_after_selection() {
-        var range = createRangeFromText(editor, "<strong>|fo|o</strong>");
-        var formatter = new InlineFormatter(editor.formats.bold);
+        test('splits format after selection', function() {
+            var range = createRangeFromText(editor, "<strong>|fo|o</strong>");
+            var formatter = new InlineFormatter(editor.formats.bold);
         
-        formatter.split(range);
-        assertEquals('<strong>fo</strong><strong>o</strong>', editor.value());
-    }
+            formatter.split(range);
+            equal(editor.value(), '<strong>fo</strong><strong>o</strong>');
+        });
 
-    function test_split_format_keeps_markers() {
-        var range = createRangeFromText(editor, '<strong>|fo|o</strong>');
-        var formatter = new InlineFormatter(editor.formats.bold);
+        test('split format keeps markers', function() {
+            var range = createRangeFromText(editor, '<strong>|fo|o</strong>');
+            var formatter = new InlineFormatter(editor.formats.bold);
         
-        var marker = new $.telerik.editor.Marker();
-        range = marker.add(range);
+            var marker = new $.telerik.editor.Marker();
+            range = marker.add(range);
 
-        formatter.split(range);
-        assertEquals('<strong><span class="t-marker"></span>fo<span class="t-marker"></span></strong><strong>o</strong>', editor.value());
-    }
+            formatter.split(range);
+            equal(editor.value(), '<strong><span class="t-marker"></span>fo<span class="t-marker"></span></strong><strong>o</strong>');
+        });
 
-    function test_split_trims_nodes_containing_only_invisible_characters() {
-        var range = createRangeFromText(editor, '<strong>\ufeff||\ufeff</strong>');
-        var formatter = new InlineFormatter(editor.formats.bold);
+        test('toggle applies format if format is not found', function() {
+            var range = createRangeFromText(editor, '|fo|');
+
+            var formatter = new InlineFormatter(editor.formats.bold);
+            var argument;
+            formatter.apply = function() {
+                argument = arguments[0];
+            }
+            formatter.toggle(range);
+            ok($.isArray(argument));
+        });
+
+        test('toggle removes format if format is found', function() {
+            var range = createRangeFromText(editor, '<strong>|fo|</strong>');
+
+            var formatter = new InlineFormatter(editor.formats.bold);
+            var argument;
+            formatter.remove = function() {
+                argument = arguments[0];
+            }
+            formatter.toggle(range);
+            ok($.isArray(argument));
+        });
+
+        test('toggle split format if format is found', function() {
+            var range = createRangeFromText(editor, '<strong>|fo|</strong>');
+
+            var formatter = new InlineFormatter(editor.formats.bold);
+            var argument;
+            formatter.split = function () {
+                argument = arguments[0];
+            }
+            formatter.toggle(range);
+            equal(argument, range);
+        });
+
+        test('space before content preserved after removing format', function() {
+            var range = createRangeFromText(editor, 'foo<strong> |bar|</strong>');
+            var formatter = new InlineFormatter(editor.formats.bold);
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
+            formatter.toggle(range);
+            marker.remove(range);
+            equal(editor.value(), 'foo bar');
+        });
+
+        test('space after content preserved after removing format', function() {
+            var range = createRangeFromText(editor, '<strong>|foo| </strong>');
+            var formatter = new InlineFormatter(editor.formats.bold);
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
         
-        var marker = new $.telerik.editor.Marker();
-        range = marker.add(range);
-
-        formatter.split(range);
-        assertEquals('<strong><span class="t-marker"></span><span class="t-marker"></span></strong>', editor.value());
-    }
-
-    function test_toggle_applies_format_if_format_is_not_found() {
-        var range = createRangeFromText(editor, '|fo|');
-
-        var formatter = new InlineFormatter(editor.formats.bold);
-        var argument;
-        formatter.apply = function() {
-            argument = arguments[0];
-        }
-        formatter.toggle(range);
-        assertTrue($.isArray(argument));
-    }
-
-    function test_toggle_removes_format_if_format_is_found() {
-        var range = createRangeFromText(editor, '<strong>|fo|</strong>');
-
-        var formatter = new InlineFormatter(editor.formats.bold);
-        var argument;
-        formatter.remove = function() {
-            argument = arguments[0];
-        }
-        formatter.toggle(range);
-        assertTrue($.isArray(argument));
-    }
-
-    function test_toggle_split_format_if_format_is_found() {
-        var range = createRangeFromText(editor, '<strong>|fo|</strong>');
-
-        var formatter = new InlineFormatter(editor.formats.bold);
-        var argument;
-        formatter.split = function () {
-            argument = arguments[0];
-        }
-        formatter.toggle(range);
-        assertEquals(range, argument);
-    }
-
-    function test_toggle_inserts_pending_format_around_caret_marker() {
-        editor.value('foo bar');
-
-        var range = editor.createRange();
-        range.setStart(editor.body.firstChild, 3);
-        range.collapse(true);
-        
-        var marker = new $.telerik.editor.Marker();
-        range = marker.add(range, true);
-
-        var formatter = new InlineFormatter(editor.formats.bold);
-        formatter.editor = editor;
-        formatter.toggle(range);
-
-        marker.remove(range);
-
-        assertEquals('foo<strong>\ufeff\ufeff</strong> bar', editor.value());
-    }
-
-    function test_toggle_inserts_child_pending_format() {
-        editor.value('foo<strong>\ufeff</strong> bar');
-
-        var range = editor.createRange();
-        range.selectNodeContents(editor.body.childNodes[1]);
-        
-        var marker = new $.telerik.editor.Marker();
-        range = marker.add(range, true);
-
-        var formatter = new InlineFormatter(editor.formats.italic);
-        formatter.editor = editor;
-        formatter.toggle(range);
-
-        marker.remove(range);
-
-        assertEquals('foo<strong><em>\ufeff</em></strong> bar', editor.value());
-    }
-
-    function test_toggle_removes_inserted_pending_format() {
-        editor.value('foo<strong>\ufeff</strong> bar');
-
-        var range = editor.createRange();
-        range.selectNodeContents(editor.body.childNodes[1]);
-        
-        var marker = new $.telerik.editor.Marker();
-        range = marker.add(range, true);
-
-        var formatter = new InlineFormatter(editor.formats.bold);
-        formatter.editor = editor;
-        formatter.toggle(range);
-
-        marker.remove(range);
-
-        assertEquals('foo\ufeff bar', editor.value());
-    }
-
-    function test_toggle_leaves_marker_within_pending_format() {
-        editor.value('foo bar');
-
-        var range = editor.createRange();
-        range.setStart(editor.body.firstChild, 3);
-        range.collapse(true);
-        
-        var marker = new $.telerik.editor.Marker();
-        range = marker.add(range, true);
-
-        var formatter = new InlineFormatter(editor.formats.bold);
-        formatter.editor = editor;
-        formatter.toggle(range);
-
-        marker.remove(range);
-
-        var caret = $.telerik.editor.Dom.create(editor.document, 'span', { className: "caret" });
-        range.insertNode(caret);
-
-        assertEquals('foo<strong>\ufeff<span class="caret"></span>\ufeff</strong> bar', editor.value());
-    }
-
-    function test_toggle_leaves_correct_range_after_inserting_pending_format() {
-//        editor.value('foo bar');
-
-//        var range = editor.createRange();
-//        range.setStart(editor.body.firstChild, 3);
-//        range.collapse(true);
-//        
-//        var marker = new $.telerik.editor.Marker();
-//        range = marker.add(range, true);
-
-//        var formatter = new InlineFormatter(editor.formats.bold);
-//        formatter.editor = editor;
-//        formatter.toggle(range);
-
-//        range.deleteContents();
-
-//        assertEquals('foo bar', editor.value());
-    }
-
-    function test_space_before_content_preserved_after_removing_format() {
-        var range = createRangeFromText(editor, 'foo<strong> |bar|</strong>');
-        var formatter = new InlineFormatter(editor.formats.bold);
-        var marker = new $.telerik.editor.Marker();
-        marker.add(range);
-        formatter.toggle(range);
-        marker.remove(range);
-        assertEquals('foo bar', editor.value());
-    }
-
-    function test_space_after_content_preserved_after_removing_format() {
-        var range = createRangeFromText(editor, '<strong>|foo| </strong>');
-        var formatter = new InlineFormatter(editor.formats.bold);
-        var marker = new $.telerik.editor.Marker();
-        marker.add(range);
-        
-        formatter.toggle(range);
-        marker.remove(range);
-        assertEquals('foo ', editor.value());
-    }    
+            formatter.toggle(range);
+            marker.remove(range);
+            equal(editor.value(), 'foo ');
+        });    
     
-    function test_space_before_and_after_content_preserved_after_removing_format() {
-        var range = createRangeFromText(editor, 'foo<strong> |bar| baz</strong>');
-        var formatter = new InlineFormatter(editor.formats.bold);
-        var marker = new $.telerik.editor.Marker();
-        marker.add(range);
-        formatter.toggle(range);
-        marker.remove(range);
-        assertEquals('foo bar<strong> baz</strong>', editor.value());
-    }
+        test('space before and after content preserved after removing format', function() {
+            var range = createRangeFromText(editor, 'foo<strong> |bar| baz</strong>');
+            var formatter = new InlineFormatter(editor.formats.bold);
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
+            formatter.toggle(range);
+            marker.remove(range);
+            equal(editor.value(), 'foo bar<strong> baz</strong>');
+        });
+
+        test('InlineFormatTool.willDelayExecution returns false when format will be directly applied', function() {
+            var tool = editor.tools.bold, range;
+            
+            range = createRangeFromText(editor, 'foo|bar|baz');
+
+            ok(!tool.willDelayExecution(range));
+            
+            range = createRangeFromText(editor, 'foob||arbaz');
+
+            ok(!tool.willDelayExecution(range));
+        });
+
+        test('InlineFormatTool.willDelayExecution returns true when format will be added to pending formats', function() {
+            var tool = editor.tools.bold;
+            
+            var range = createRangeFromText(editor, 'foobarbaz||');
+
+            ok(tool.willDelayExecution(range));
+        });
+
     </script>
+
 </asp:Content>

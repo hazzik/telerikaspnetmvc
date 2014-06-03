@@ -7,21 +7,17 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using Telerik.Web.Mvc.Extensions;
-    using Telerik.Web.Mvc.UI;
-    using Telerik.Web.Mvc.UI.Html;
 
-    public class GridRow<T> : IGridRenderingContext<T>
+    public class GridRow<T>
         where T : class
     {
         public GridRow(Grid<T> grid, T dataItem, int index)
         {
+            HtmlAttributes = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             Grid = grid;
             DataItem = dataItem;
             Index = index;
             IsAlternate = (index % 2) != 0;
-            HtmlAttributes = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 
         public Grid<T> Grid
@@ -51,7 +47,7 @@ namespace Telerik.Web.Mvc.UI
         public bool IsAlternate
         {
             get;
-            private set;
+            set;
         }
 
         public IDictionary<string, object> HtmlAttributes

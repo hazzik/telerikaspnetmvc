@@ -21,11 +21,17 @@ namespace Telerik.Web.Mvc.UI
         
         /// <summary>The pager will display an input field and the total number of pages.</summary>
         PageInput = 0x04,
-        
+
+        /// <summary>The pager will display a dropdown and the total number of pages.</summary>
+        PageSizeDropDown = 1 << 4,
+
         /// <summary>(first) (previous) (page numbers) (next) (last)</summary>
         NextPreviousAndNumeric = NextPrevious | Numeric,
         
         /// <summary>(first) (previous) (page input field) (next) (last)</summary>
-        NextPreviousAndInput = NextPrevious | PageInput
+        NextPreviousAndInput = NextPrevious | PageInput,
+
+        /// <summary>(first) (previous) (page size drop down) (next) (last)</summary>
+        NextPreviousAndDropDown = NextPrevious | PageSizeDropDown
     }
 }

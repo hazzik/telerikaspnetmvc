@@ -39,7 +39,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ItemTag(TreeViewItem item, bool hasAccessibleChildren)
         {
-            IHtmlNode li = new HtmlTag("li")
+            IHtmlNode li = new HtmlElement("li")
                 .Attributes(item.HtmlAttributes);
 
             if (item.NextSibling == null)
@@ -54,7 +54,7 @@ namespace Telerik.Web.Mvc.UI
 
             li.PrependClass(UIPrimitives.Item);
 
-            IHtmlNode div = new HtmlTag("div")
+            IHtmlNode div = new HtmlElement("div")
                 .ToggleClass(UIPrimitives.Top, item.PreviousSibling == null)
                 .ToggleClass(UIPrimitives.Bottom, item.NextSibling == null)
                 .ToggleClass(UIPrimitives.Middle, item.PreviousSibling != null && item.NextSibling != null)
@@ -62,7 +62,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (item.LoadOnDemand || hasAccessibleChildren || item.Template.HasValue())
             {
-                new HtmlTag("span")
+                new HtmlElement("span")
                         .AddClass(UIPrimitives.Icon)
                         .ToggleClass("t-plus", item.Enabled && !item.Expanded)
                         .ToggleClass("t-minus", item.Enabled && item.Expanded)
@@ -75,7 +75,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 string checkedItemNamePrefix = Component.Name + "_checkedNodes[{0}].";
 
-                IHtmlNode chkBoxWrapperTag = new HtmlTag("span")
+                IHtmlNode chkBoxWrapperTag = new HtmlElement("span")
                     .ToggleClass(UIPrimitives.DisabledState, !item.Enabled)
                     .AddClass(UIPrimitives.CheckBox)
                     .AppendTo(div);
@@ -92,12 +92,12 @@ namespace Telerik.Web.Mvc.UI
 
                 checkedItemNamePrefix = checkedItemNamePrefix.FormatWith(string.Join(":", indexes.ToArray()));
 
-                new HtmlTag("input", TagRenderMode.SelfClosing)
+                new HtmlElement("input", TagRenderMode.SelfClosing)
                     .AddClass(UIPrimitives.Input)
                     .Attributes(new { type = "hidden", name = Component.Name + "_checkedNodes.Index", value = string.Join(":", indexes.ToArray()) })
                     .AppendTo(chkBoxWrapperTag);
 
-                IHtmlNode chkBoxTag = new HtmlTag("input", TagRenderMode.SelfClosing)
+                IHtmlNode chkBoxTag = new HtmlElement("input", TagRenderMode.SelfClosing)
                     .AddClass(UIPrimitives.Input)
                     .Attributes(new { name = checkedItemNamePrefix + "Checked", type = "checkbox", value = item.Checked })
                     .ToggleAttribute("disabled", "disabled", !item.Enabled)
@@ -107,12 +107,12 @@ namespace Telerik.Web.Mvc.UI
                 {
                     chkBoxTag.Attribute("checked", "checked");
 
-                    new HtmlTag("input", TagRenderMode.SelfClosing)
+                    new HtmlElement("input", TagRenderMode.SelfClosing)
                         .AddClass(UIPrimitives.Input)
                         .Attributes(new { type = "hidden", name = checkedItemNamePrefix + "Text", value = item.Text })
                         .AppendTo(chkBoxWrapperTag);
 
-                    new HtmlTag("input", TagRenderMode.SelfClosing)
+                    new HtmlElement("input", TagRenderMode.SelfClosing)
                         .AddClass(UIPrimitives.Input)
                         .Attributes(new { type = "hidden", name = checkedItemNamePrefix + "Value", value = item.Value })
                         .AppendTo(chkBoxWrapperTag);
@@ -127,7 +127,7 @@ namespace Telerik.Web.Mvc.UI
             string url = Component.GetItemUrl(item, string.Empty);
             bool isNavigatable = !string.IsNullOrEmpty(url);
 
-            IHtmlNode tag = new HtmlTag(isNavigatable ? "a" : "span");
+            IHtmlNode tag = new HtmlElement(isNavigatable ? "a" : "span");
 
             if (isNavigatable)
             {
@@ -164,7 +164,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ItemHiddenInputValue(TreeViewItem item)
         {
-            return new HtmlTag("input", TagRenderMode.SelfClosing)
+            return new HtmlElement("input", TagRenderMode.SelfClosing)
                  .AddClass(UIPrimitives.Input)
                  .Attributes(new { type = "hidden", value = item.Value, name = "itemValue" });
         }

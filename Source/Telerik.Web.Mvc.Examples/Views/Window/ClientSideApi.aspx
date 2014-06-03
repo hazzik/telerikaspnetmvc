@@ -12,11 +12,9 @@
 		<% using (Html.Configurator("Client API").Begin()) { %>
             
             <p>
-                <button onclick="openWindow()">Open</button> / <button onclick="closeWindow()">Close</button>
-            </p>
-            
-            <p>
-                <button onclick="refreshWindow()">Refresh</button>
+                <button onclick="openWindow()" class="t-button">Open</button> / <button onclick="closeWindow()" class="t-button">Close</button>
+				<br />
+                <button onclick="refreshWindow()" class="t-button">Refresh</button>
             </p>
         <% } %>
 		
@@ -77,5 +75,12 @@
             margin: 0;
             padding: .4em 0;
         }
+        
+        .configurator .t-button
+        {
+            display:inline-block;
+            width:auto;
+        }
+        
     </style>
 </asp:content>

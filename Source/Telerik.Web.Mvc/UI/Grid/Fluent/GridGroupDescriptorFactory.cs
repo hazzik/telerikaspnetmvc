@@ -21,11 +21,21 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
         public GridGroupDescriptorBuilder<TModel> Add<TValue>(Expression<Func<TModel, TValue>> expression)
         {
-            GroupDescriptor descriptor = new GroupDescriptor();
+            return Add<TValue>(expression, ListSortDirection.Ascending);
+        }
+        
+        public GridGroupDescriptorBuilder<TModel> AddDescending<TValue>(Expression<Func<TModel, TValue>> expression)
+        {
+            return Add<TValue>(expression, ListSortDirection.Descending);
+        }
+        
+        private GridGroupDescriptorBuilder<TModel> Add<TValue>(Expression<Func<TModel, TValue>> expression, ListSortDirection sortDirection)
+        {
+            var descriptor = new GroupDescriptor();
             descriptor.Member = expression.MemberWithoutInstance();
-            descriptor.SortDirection = ListSortDirection.Ascending;
+            descriptor.SortDirection = sortDirection;
             descriptor.MemberType = typeof(TValue);
-            
+
             settings.Groups.Add(descriptor);
 
             return new GridGroupDescriptorBuilder<TModel>(descriptor);

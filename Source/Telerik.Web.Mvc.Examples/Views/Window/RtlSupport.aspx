@@ -26,16 +26,16 @@
     
     <% Html.Telerik().ScriptRegistrar()
            .OnDocumentReady(() => {%>
-                var lovelyWindow = $('#Window');
+                var windowElement = $('#Window');
                 var undoButton = $('#undo');
                 undoButton
                     .bind('click', function(e) {
-                        lovelyWindow.data('tWindow').open();
+                        windowElement.data('tWindow').open();
                         undoButton.hide();
                     })
-                    .toggle(!lovelyWindow.is(':visible'));
+                    .toggle(!windowElement.is(':visible'));
                 
-                lovelyWindow.bind('close', function() {
+                windowElement.bind('close', function() {
                     undoButton.show();
                 });
            <%}); %>
@@ -48,9 +48,9 @@
 <asp:content contentplaceholderid="HeadContent" runat="server">
     <style type="text/css">
         
-        .example h3
+        .theme-agnostic
         {
-            margin-top: 370px;
+            margin-top: 340px;
         }
         
         #undo

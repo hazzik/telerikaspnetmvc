@@ -43,6 +43,7 @@
                                 .OnOpen("onAutoCompleteOpen")
                                 .OnClose("onAutoCompleteClose")
                           )
+                          .Encode(false)
                           .Multiple()
                           .BindTo(Model.Select(p=>p.ProductName))
         %>

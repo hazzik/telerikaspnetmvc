@@ -6,8 +6,12 @@ namespace Telerik.Web.Mvc.Examples
 
     public partial class NumericTextBoxController : Controller
     {
-        [SourceCodeFile("Currency.ascx", "~/Views/Shared/EditorTemplates/Currency.ascx")]
-        [SourceCodeFile("Integer.ascx", "~/Views/Shared/EditorTemplates/Integer.ascx")]
+        [SourceCodeFile(
+            FileName = "~/Views/Shared/EditorTemplates/Currency.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/Currency.cshtml")]
+        [SourceCodeFile(
+            FileName = "~/Views/Shared/EditorTemplates/Integer.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Shared/EditorTemplates/Integer.cshtml")]
         [SourceCodeFile("EditableProduct.cs", "~/Models/EditableProduct.cs")]
         public ActionResult EditTemplate(EditableProduct product)
         {

@@ -1,8 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>FormView</h2>
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .DataKeys(keys => keys.Add(c => c.Name))
@@ -48,184 +47,236 @@
                 .Name("ComboBox")
                 .Items(items =>
                 {
-                    items.Add().Text("foo");
-                    items.Add().Text("bar");
+                    items.Add().Text("foo text").Value("foo");
+                    items.Add().Text("bar text").Value("bar");
+                }) 
+        %>
+
+        <%= Html.Telerik().ComboBox()
+                .Name("ComboBox1")
+                .Items(items =>
+                {
+                    items.Add().Text("foo text").Value("foo");
+                    items.Add().Text("bar text").Value("bar");
                 }) 
         %>
     </div>
-    <script type="text/javascript">
+    <div id="editor">
+         <%= Html.Telerik().Editor()
+            .Name("Editor1")
+            .Value("foo")
+            .Tools(tools => tools
+                .Clear()
+                .Bold()
+            )
+    %>
+    </div>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
     
     function getGrid(selector) {
         return $(selector || "#Grid1").data("tGrid");
     }
     
     var FormViewBinder;
-    var binder;
-    
-    function setUp() {
-        FormViewBinder = $.telerik.grid.FormViewBinder;
-        binder = new FormViewBinder();
-    }
+    var binder; 
 
-    function test_bind_populates_textbox() {
+    module("Grid / FormViewBinder", {
+        setup: function() {
+            FormViewBinder = $.telerik.grid.FormViewBinder;
+            binder = new FormViewBinder();
+        }
+    });
+    
+    test('bind populates textbox', function() {
         var $ui = $('<div><input type="text" name="foo" /></div>');
         
         binder.bind($ui, {foo:'bar'});
 
-        assertEquals('bar', $ui.find(':input').val());
-    }
+        equal($ui.find(':input').val(), 'bar');
+    });
     
-    function test_bind_checkes_checkboxes() {
+    test('bind checkes checkboxes', function() {
         var $ui = $('<div><input type="checkbox" name="foo" /></div>');
         
         binder.bind($ui, {foo:true});
 
-        assertEquals(true, $ui.find(':checkbox').attr('checked'));
-    }
+        equal($ui.find(':checkbox').attr('checked'), true);
+    });
     
-    function test_bind_does_not_set_null() {
+    test('bind selects radiobutton', function() {
+        var $ui = $('<div><input type="radio" name="foo" value="1" /><input type="radio" name="foo" value="2" /></div>');
+        
+        binder.bind($ui, {foo:1});
+
+        equal($ui.find(':radio:first').attr('checked'), true);
+    });
+
+    test('bind does not set null', function() {
         var $ui = $('<div><input type="text" name="foo" /></div>');
         
         binder.bind($ui, {foo:null});
 
-        assertEquals('', $ui.find(':input').val());
-    }    
+        equal($ui.find(':input').val(), '');
+    });    
     
-    function test_bind_populates_text_area() {
+    test('bind populates text area', function() {
         var $ui = $('<div><textarea name="foo" ></textarea></div>');
         
         binder.bind($ui, {foo:'bar'});
 
-        assertEquals('bar', $ui.find('textarea').val());
-    }
+        equal($ui.find('textarea').val(), 'bar');
+    });
 
-    function test_bind_populates_select() {
+    test('bind populates select', function() {
         var $ui = $('<div><select name="foo"><option>foo</option><option>bar</option></select></div>');
         
         binder.bind($ui, {foo:'bar'});
 
-        assertEquals('bar', $ui.find('select').val());
-    }    
-    
-    function test_bind_populates_numeric_text_box() {
-        var $ui = $('#numeric');
-        
-        binder.bind($ui, {NumericTextBox: 42});
+        equal($ui.find('select').val(), 'bar');
+    });
 
-        assertEquals(42, $('#NumericTextBox').data('tTextBox').value());
-        assertEquals('42.00', $('#NumericTextBox-input-text').val());
-    }
+    test('bind populates numeric text box', function () {
+        var $ui = $('#numeric');
+        binder.bind($ui, { NumericTextBox: 42 });
+
+        equal($('#NumericTextBox').data('tTextBox').value(), 42);
+        equal($('#NumericTextBox').closest('.t-numerictextbox').find('.t-formatted-value').html(), '42.00');
+    });
     
-    function test_bind_skips_inputs_whose_name_does_not_match() {
+    test('bind skips inputs whose name does not match', function() {
         var $ui = $('<div><input type="text" name="bar" /></div>');
         
         binder.bind($ui, {foo:'baz'});
 
-        assertEquals('', $ui.find(':input').val());
-    }
+        equal($ui.find(':input').val(), '');
+    });
 
-    function test_eval_for_prefixed_column() {
-        assertEquals('Customer1', binder.evaluate({Name:'Customer1'}, 'm.Name'));
-    }
+    test('eval for prefixed column', function() {
+        equal(binder.evaluate({Name:'Customer1'}, 'm.Name'), 'Customer1');
+    });
 
-    function test_eval_uses_converters() {
+    test('eval uses converters', function() {
         var binder = new FormViewBinder({'number':function(name,value){return -value;}});
         
-        assertEquals(-42, binder.evaluate({foo:42}, 'foo'));
-    }
+        equal(binder.evaluate({foo:42}, 'foo'), -42);
+    });
         
-    function test_eval_for_nested_property() {
-        assertEquals('foo', binder.evaluate({Address:{Street:'foo'}}, 'Address.Street'));
-    }
+    test('eval for nested property', function() {
+        equal(binder.evaluate({Address:{Street:'foo'}}, 'Address.Street'), 'foo');
+    });
         
-    function test_eval_for_property_which_does_not_have_a_column() {
-        assertEquals(true, binder.evaluate({Active:true}, 'Active'));
-    }
+    test('eval for property which does not have a column', function() {
+        equal(binder.evaluate({Active:true}, 'Active'), true);
+    });
 
-    function test_eval_for_nested_property_with_prefix() {
-        assertEquals('foo', binder.evaluate({Address:{Street:'foo'}}, 'm.Address.Street'));
-    }
+    test('eval for nested property with prefix', function() {
+        equal(binder.evaluate({Address:{Street:'foo'}}, 'm.Address.Street'), 'foo');
+    });
 
-    function test_eval_returns_undefined_with_invalid_expression_with_valid_parts() {
-        assertUndefined(binder.evaluate({Address:{Street:'foo'}}, 'm.Address.Foo'));
-    }
+    test('eval returns undefined with invalid expression with valid parts', function() {
+        ok(undefined === binder.evaluate({Address:{Street:'foo'}}, 'm.Address.Foo'));
+    });
         
-    function test_eval_with_more_than_one_prefix() {
-        assertEquals('foo', binder.evaluate({Address:{Street:'foo'}}, 'foo.bar.Address.Street'));
-    }
+    test('eval with more than one prefix', function() {
+        equal(binder.evaluate({Address:{Street:'foo'}}, 'foo.bar.Address.Street'), 'foo');
+    });
         
-    function test_eval_returns_undefined_with_invalid_expression() {
-        assertUndefined(binder.evaluate({}, 'foo'));
-    }
+    test('eval returns undefined with invalid expression', function() {
+        ok(undefined === binder.evaluate({}, 'foo'));
+    });
     
-    function test_eval_returns_date_time_for_serialized_dates() {
+    test('eval returns date time for serialized dates', function() {
         var value = binder.evaluate({ Date: "/Date(315525600000)/" }, 'Date');
-        assertEquals(1, value.getDate());
-        assertEquals(1, value.getMonth() + 1);
-        assertEquals(1980, value.getFullYear());
-    }
+        equal(value.getDate(), 1);
+        equal(value.getMonth() + 1, 1);
+        equal(value.getFullYear(), 1980);
+    });
 
-    function test_eval_with_non_existent_name() {
+    test('eval with non existent name', function() {
         var value = binder.evaluate({ }, 'Foo');
-        assertUndefined(value);
-    }    
+        ok(undefined === value);
+    });    
     
-    function test_eval_nested_member_of_null() {
+    test('eval nested member of null', function() {
         var value = binder.evaluate({ Foo: null }, 'Foo.Bar');
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
     
-    function test_eval_nested_member_of_primitive_type() {
+    test('eval nested member of primitive type', function() {
         var value = binder.evaluate({ Foo: true}, 'Foo.Bar');
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
     
-    function test_eval_returns_undefined_when_expression_is_null() {
+    test('eval returns undefined when expression is null', function() {
         var value = binder.evaluate({}, null);
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
     
-    function test_eval_returns_undefined_when_expression_is_undefined() {
+    test('eval returns undefined when expression is undefined', function() {
         var value = binder.evaluate({}, undefined);
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
 
-    function test_eval_returns_undefined_when_expression_is_empty_string() {
+    test('eval returns undefined when expression is empty string', function() {
         var value = binder.evaluate({}, '');
-        assertUndefined(value);
-    }    
+        ok(undefined === value);
+    });    
     
-    function test_eval_returns_undefined_when_model_is_null() {
+    test('eval returns undefined when model is null', function() {
         var value = binder.evaluate(null, 'foo');
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
 
-    function test_evaluate_returns_undefined_for_non_primitive_values() {
+    test('evaluate returns undefined for non primitive values', function() {
         var value = binder.evaluate({ Foo: {} }, 'Foo');
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
     
-    function test_eval_returns_undefined_when_model_is_undefined() {
+    test('eval returns undefined when model is undefined', function() {
         var value = binder.evaluate(undefined, 'foo');
-        assertUndefined(value);
-    }
+        ok(undefined === value);
+    });
 
-    function test_bind_populates_dropdownlist() {
+    test('bind populates dropdownlist', function() {
         var $ui = $('#dropdown');
         binder.bind($ui, {DropDownList: 'bar'});
 
-        assertEquals('bar', $('#DropDownList').data('tDropDownList').value());
-        assertEquals('bar', $('#DropDownList .t-input').text());
-    }    
+        equal($('#DropDownList').data('tDropDownList').value(), 'bar');
+        equal($('#DropDownList').val(), 'bar');
+    });
     
-    function test_bind_populates_combobox() {
+    test('bind populates combobox', function() {
         var $ui = $('#combobox');
         
         binder.bind($ui, {ComboBox: 'bar'});
 
-        assertEquals('bar', $('#ComboBox').data('tComboBox').value());
-        assertEquals('bar', $('#ComboBox .t-input').val());
-    }    
+        equal($('#ComboBox').data('tComboBox').value(), 'bar');
+    });
+
+    test('bind populates both combobox', function () {
+        var $ui = $('#combobox');
+
+        binder.bind($ui, { ComboBox: 'foo', ComboBox1: 'foo' });
+
+        equal($('#ComboBox').data('tComboBox').$text.val(), 'foo text');
+        equal($('#ComboBox1').data('tComboBox').$text.val(), 'foo text');
+        equal($('#ComboBox').data('tComboBox').value(), 'foo');
+        equal($('#ComboBox1').data('tComboBox').value(), 'foo');
+    });
     
-    </script>
+    test('bind populates editor', function() {
+        var $ui = $('#editor');
+        
+        binder.bind($ui, {Editor1: 'bar'});
+
+        equal($('#Editor1').data('tEditor').value(), 'bar');
+    });
+
+</script>
+
 </asp:Content>

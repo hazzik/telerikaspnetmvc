@@ -9,6 +9,12 @@ namespace Telerik.Web.Mvc.UI
 
     public static class GridUrlParameters
     {
+        public static string Aggregates
+        {
+            get;
+            set;
+        }
+        
         public static string Filter { get; set; }
         public static string CurrentPage { get; set; }
         public static string PageSize { get; set; }
@@ -24,6 +30,7 @@ namespace Telerik.Web.Mvc.UI
             PageSize = "size";
             Filter = "filter";
             Mode = "mode";
+            Aggregates = "aggregates";
         }
 
         public static IDictionary<string, string> ToDictionary(string prefix)

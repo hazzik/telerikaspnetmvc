@@ -91,7 +91,7 @@ namespace Telerik.Web.Mvc.UI
         
         public GridColumnBase<T> CreateColumn(GridColumnSettings settings)
         {
-            GridCommandColumnSettings commandSettings = settings as GridCommandColumnSettings;
+            var commandSettings = settings as GridCommandColumnSettings;
             if (commandSettings != null)
             {
                 var column = new GridActionColumn<T>(grid);

@@ -8,7 +8,7 @@
     <% using (Html.BeginForm("servervalidation", "numerictextbox")) { %>
 
         <div>
-            <label for="piecesOfCake-input">Pieces of cake (required):</label>
+            <label for="piecesOfCake">Pieces of cake (required):</label>
             <%= Html.Telerik().NumericTextBox()
                               .Name("piecesOfCake")
             %>
@@ -16,7 +16,7 @@
         </div>
 
         <p>
-            <button class="t-button t-state-default" type="submit">Save</button>
+            <button class="t-button" type="submit">Save</button>
         </p>
     
     <% } %>

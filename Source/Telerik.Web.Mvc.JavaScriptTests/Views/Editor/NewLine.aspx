@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
@@ -12,23 +12,32 @@
 
         var NewLineCommand;
         var enumerator;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             NewLineCommand = $.telerik.editor.NewLineCommand;
         }
 
-        function test_exec_inserts_br_at_carret_position() {
+        test('exec inserts br at carret position', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.setEnd(editor.body.firstChild, 1);
             var command = new NewLineCommand({range:range});
             command.exec();
-            assertEquals('f<br />oo', editor.value());
-        }
+            equal(editor.value(), 'f<br />oo');
+        });
 
-        function test_exec_moves_cursor_after_br() {
+        test('exec moves cursor after br', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -37,39 +46,41 @@
             command.exec();
             range = editor.getRange();
             range.insertNode(editor.document.createElement('hr'));
-            assertEquals('f<br /><hr />oo', editor.value())
-        }
+            equal(editor.value(), 'f<br /><hr />oo')
+        });
 
-        function test_exec_replaces_selection_with_br() {
+        test('exec replaces selection with br', function() {
             var range = createRangeFromText(editor, 'f|o|o');
             var command = new NewLineCommand({range:range});
             command.exec();
-            assertEquals('f<br />o', editor.value());
-        }
+            equal(editor.value(), 'f<br />o');
+        });
 
-        function test_undo_removes_br() {
-            var range = createRangeFromText(editor, 'f|o|o');
-            var command = new NewLineCommand({range:range});
-            command.exec();
-            command.undo();
-            assertEquals('foo', editor.value());
-        }
-
-        function test_undo_leaves_normalized_content() {
+        test('undo removes br', function() {
             var range = createRangeFromText(editor, 'f|o|o');
             var command = new NewLineCommand({range:range});
             command.exec();
             command.undo();
-            assertEquals(1, editor.body.childNodes.length);
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_redo() {
+        test('undo leaves normalized content', function() {
+            var range = createRangeFromText(editor, 'f|o|o');
+            var command = new NewLineCommand({range:range});
+            command.exec();
+            command.undo();
+            equal(editor.body.childNodes.length, 1);
+        });
+
+        test('redo', function() {
             var range = createRangeFromText(editor, 'f|o|o');
             var command = new NewLineCommand({range:range});
             command.exec();
             command.undo();
             command.exec();
-            assertEquals('f<br />o', editor.value());
-        }
-    </script>
+            equal(editor.value(), 'f<br />o');
+        });
+
+</script>
+
 </asp:Content>

@@ -39,9 +39,10 @@
         function onNodeDrop(e) {
             var dropContainer = $(e.dropTarget).closest('.drop-container');
             var treeview = $('#TreeView').data('tTreeView');
-            
-            if (dropContainer.length > 0) {
-                $('<div><strong>' + treeview.getItemText(e.item) + '</strong></div>')
+            var nodeText = treeview.getItemText(e.item);
+
+            if (dropContainer.length > 0 && dropContainer[0].innerHTML.indexOf(nodeText) == -1) {
+                $('<div><strong>' + nodeText + '</strong></div>')
                     .hide().appendTo(dropContainer).slideDown('fast');
 
                 e.preventDefault();

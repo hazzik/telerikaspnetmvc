@@ -59,6 +59,7 @@
                               fx.OpenDuration((int)ViewData["openDuration"])
                                 .CloseDuration((int)ViewData["closeDuration"]);
                           })
+                          .Encode(false)
                           .BindTo(Model.Select(p => p.ProductName))
                           .HtmlAttributes(new { style = "clear:both; width: 200px; float: left; margin-bottom: 30px;" }) %>
     </div>
@@ -103,7 +104,7 @@
                 </li>
             </ul>
     
-            <button class="t-button t-state-default" type="submit">Apply</button>
+            <button class="t-button" type="submit">Apply</button>
         <% } %>
     </div>
     <% Html.Telerik().ScriptRegistrar().OnDocumentReady(() => {%>

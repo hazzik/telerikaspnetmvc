@@ -2,41 +2,48 @@
     Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>ClientEvents tests</h2>
-    
+
     <%= Html.Telerik().TreeView()
             .Name("ClientSideTreeView")
             .ShowCheckBox(true)
             .Effects(fx => fx.Toggle()) %>
 
-    <script type="text/javascript">
-        var treeview;
-        
-        function setUp() {
-            treeview = $('#ClientSideTreeView').data('tTreeView');
-        }
+</asp:Content>
 
-        function test_disable_disables_checkboxes() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        var treeview;
+
+        module("TreeView / ClientAPI", {
+            setup: function() {
+                treeview = $('#ClientSideTreeView').data('tTreeView');
+            }
+        });
+
+        test('disable disables checkboxes', function() {
             treeview.bindTo([
                 { Text: 'Griffin.Door' }
             ]);
 
             treeview.disable('.t-item');
 
-            assertTrue($(':checkbox', treeview.element).is('[disabled]'));
-        }
+            ok($(':checkbox', treeview.element).is('[disabled]'));
+        });
 
-        function test_enable_enables_checkboxes() {
+        test('enable enables checkboxes', function() {
             treeview.bindTo([
                 { Text: 'Griffin.Door', Enabled: false }
             ]);
 
             treeview.enable('.t-item');
 
-            assertTrue($(':checkbox', treeview.element).is(':not([disabled])'));
-        }
+            ok($(':checkbox', treeview.element).is(':not([disabled])'));
+        });
 
-        function test_disable_disables_expand_collapse_icon() {
+        test('disable disables expand collapse icon', function() {
             treeview.bindTo([
                 {
                     Text: 'Griffin.Door', Expanded: false,
@@ -46,11 +53,11 @@
 
             treeview.disable('.t-item');
 
-            assertTrue($('.t-item:first > div > .t-icon').hasClass('t-plus-disabled'));
-            assertFalse($('.t-item:first > div > .t-icon').hasClass('t-plus'));
-        }
+            ok($('.t-item:first > div > .t-icon').hasClass('t-plus-disabled'));
+            ok(!($('.t-item:first > div > .t-icon').hasClass('t-plus')));
+        });
 
-        function test_enable_enables_expand_collapse_icon() {
+        test('enable enables expand collapse icon', function() {
             treeview.bindTo([
                 {
                     Text: 'Griffin.Door', Expanded: false, Enabled: false,
@@ -60,10 +67,22 @@
 
             treeview.enable('.t-item');
 
-            assertTrue($('.t-item:first > div > .t-icon').hasClass('t-plus'));
-            assertFalse($('.t-item:first > div > .t-icon').hasClass('t-plus-disabled'));
-        }
-        
-    </script>
+            ok($('.t-item:first > div > .t-icon').hasClass('t-plus'));
+            ok(!($('.t-item:first > div > .t-icon').hasClass('t-plus-disabled')));
+        });
+
+        test('checking node should set value of the checkbox input to TRUE', function () {
+            treeview.bindTo([
+                { Text: 'Griffin' }
+            ]);
+            
+            var checkbox = $(':checkbox', treeview.element);
+            var item = checkbox.closest('.t-item');
+            treeview.nodeCheck(item[0], true);
+
+            equal(checkbox.val(), 'true', 'value of the checkbox was not updated');
+        })
+
+</script>
 
 </asp:Content>

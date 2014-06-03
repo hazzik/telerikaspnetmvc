@@ -1,19 +1,30 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
     using System.Web.Mvc;
 
     public class EditorController : Controller
     {
-        public ActionResult Index()
+        public ActionResult FormatBlock()
         {
-            ViewData["controllerName"] = "Editor";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
+            return View();
+        }
+        
+        public ActionResult Breadcrumbs()
+        {
+            return View();
         }
 
-        public ActionResult FormatBlock()
+        public ActionResult SearchBox()
+        {
+            return View();
+        }  
+
+        public ActionResult FileListView()
+        {
+            return View();
+        }
+
+        public ActionResult FileInfoReader()
         {
             return View();
         }
@@ -249,6 +260,16 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         }
 
         public ActionResult RtlSupport()
+        {
+            return View();
+        }
+
+        public ActionResult Backspace()
+        {
+            return View();
+        }
+
+        public ActionResult PendingFormats()
         {
             return View();
         }

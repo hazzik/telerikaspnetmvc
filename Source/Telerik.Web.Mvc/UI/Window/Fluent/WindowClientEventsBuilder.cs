@@ -52,11 +52,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public WindowClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadInlineCode");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadAction">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -102,11 +130,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnOpen(Action onOpenInlineCode)
+        public WindowClientEventsBuilder OnOpen(Action onOpenCodeBlock)
         {
-            Guard.IsNotNull(onOpenInlineCode, "onOpenInlineCode");
+            Guard.IsNotNull(onOpenCodeBlock, "onOpenCodeBlock");
 
-            clientEvents.OnOpen.InlineCode = onOpenInlineCode;
+            clientEvents.OnOpen.CodeBlock = onOpenCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnOpen client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnOpen(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnOpen(Func<object, object> onOpenInlineCodeBlock)
+        {
+            Guard.IsNotNull(onOpenInlineCodeBlock, "onOpenInlineCodeBlock");
+
+            clientEvents.OnOpen.InlineCodeBlock = onOpenInlineCodeBlock;
 
             return this;
         }
@@ -152,11 +208,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnActivate(Action onActivateInlineCode)
+        public WindowClientEventsBuilder OnActivate(Action onActivateCodeBlock)
         {
-            Guard.IsNotNull(onActivateInlineCode, "onActivateInlineCode");
+            Guard.IsNotNull(onActivateCodeBlock, "onActivateCodeBlock");
 
-            clientEvents.OnActivate.InlineCode = onActivateInlineCode;
+            clientEvents.OnActivate.CodeBlock = onActivateCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnActivate client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnActivate(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnActivate(Func<object, object> onActivateInlineCodeBlock)
+        {
+            Guard.IsNotNull(onActivateInlineCodeBlock, "onActivateInlineCodeBlock");
+
+            clientEvents.OnActivate.InlineCodeBlock = onActivateInlineCodeBlock;
 
             return this;
         }
@@ -202,11 +286,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnClose(Action onCloseInlineCode)
+        public WindowClientEventsBuilder OnClose(Action onCloseCodeBlock)
         {
-            Guard.IsNotNull(onCloseInlineCode, "onCloseInlineCode");
+            Guard.IsNotNull(onCloseCodeBlock, "onCloseCodeBlock");
 
-            clientEvents.OnClose.InlineCode = onCloseInlineCode;
+            clientEvents.OnClose.CodeBlock = onCloseCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnClose client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnClose(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnClose(Func<object, object> onCloseInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCloseInlineCodeBlock, "onCloseInlineCodeBlock");
+
+            clientEvents.OnClose.InlineCodeBlock = onCloseInlineCodeBlock;
 
             return this;
         }
@@ -252,11 +364,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnMove(Action onMoveInlineCode)
+        public WindowClientEventsBuilder OnMove(Action onMoveCodeBlock)
         {
-            Guard.IsNotNull(onMoveInlineCode, "onMoveInlineCode");
+            Guard.IsNotNull(onMoveCodeBlock, "onMoveCodeBlock");
 
-            clientEvents.OnMove.InlineCode = onMoveInlineCode;
+            clientEvents.OnMove.CodeBlock = onMoveCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnMove client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnMove(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnMove(Func<object, object> onMoveInlineCodeBlock)
+        {
+            Guard.IsNotNull(onMoveInlineCodeBlock, "onMoveInlineCodeBlock");
+
+            clientEvents.OnMove.InlineCodeBlock = onMoveInlineCodeBlock;
 
             return this;
         }
@@ -302,11 +442,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnResize(Action onResizeInlineCode)
+        public WindowClientEventsBuilder OnResize(Action onResizeCodeBlock)
         {
-            Guard.IsNotNull(onResizeInlineCode, "onResizeInlineCode");
+            Guard.IsNotNull(onResizeCodeBlock, "onResizeCodeBlock");
 
-            clientEvents.OnResize.InlineCode = onResizeInlineCode;
+            clientEvents.OnResize.CodeBlock = onResizeCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnResize client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnResize(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnResize(Func<object, object> onResizeInlineCodeBlock)
+        {
+            Guard.IsNotNull(onResizeInlineCodeBlock, "onResizeInlineCodeBlock");
+
+            clientEvents.OnResize.InlineCodeBlock = onResizeInlineCodeBlock;
 
             return this;
         }
@@ -352,11 +520,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnRefresh(Action onRefreshInlineCode)
+        public WindowClientEventsBuilder OnRefresh(Action onRefreshCodeBlock)
         {
-            Guard.IsNotNull(onRefreshInlineCode, "onRefreshInlineCode");
+            Guard.IsNotNull(onRefreshCodeBlock, "onRefreshCodeBlock");
 
-            clientEvents.OnRefresh.InlineCode = onRefreshInlineCode;
+            clientEvents.OnRefresh.CodeBlock = onRefreshCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnRefresh client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnRefresh(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnRefresh(Func<object, object> onRefreshInlineCodeBlock)
+        {
+            Guard.IsNotNull(onRefreshInlineCodeBlock, "onRefreshInlineCodeBlock");
+
+            clientEvents.OnRefresh.InlineCodeBlock = onRefreshInlineCodeBlock;
 
             return this;
         }
@@ -402,11 +598,39 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public WindowClientEventsBuilder OnError(Action onErrorInlineCode)
+        public WindowClientEventsBuilder OnError(Action onErrorCodeBlock)
         {
-            Guard.IsNotNull(onErrorInlineCode, "onErrorInlineCode");
+            Guard.IsNotNull(onErrorCodeBlock, "onErrorCodeBlock");
 
-            clientEvents.OnError.InlineCode = onErrorInlineCode;
+            clientEvents.OnError.CodeBlock = onErrorCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnError client-side event
+        /// </summary>
+        /// <param name="javaScript">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Window()
+        ///            .Name("Window")
+        ///            .ClientEvents(events => events.OnError(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowClientEventsBuilder OnError(Func<object, object> onErrorInlineCodeBlock)
+        {
+            Guard.IsNotNull(onErrorInlineCodeBlock, "onErrorInlineCodeBlock");
+
+            clientEvents.OnError.InlineCodeBlock = onErrorInlineCodeBlock;
 
             return this;
         }

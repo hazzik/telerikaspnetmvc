@@ -1,7 +1,9 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests.Grid
 {
     using System;
+    using System.Linq;
     using Fluent;
+    using Infrastructure.Implementation;
     using Xunit;
 
     public class GridBoundColumnBuilderTests
@@ -200,6 +202,13 @@
             builder.FooterTemplate(template);
 
             column.FooterTemplate.HasValue().ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_set_aggregate()
+        {
+            builder.Aggregate(agg => agg.Min());
+            column.Aggregates.First().ShouldBeType<MinFunction>();
         }
 
 #if MVC2 || MVC3

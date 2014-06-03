@@ -1,8 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.Examples.Models
 {
-    using System;
     using System.Runtime.Serialization;
     using System.ComponentModel.DataAnnotations;
+    using System.Web.Mvc;
 
     [KnownType(typeof(EmployeeDto))]
     public class EmployeeDto
@@ -26,8 +26,9 @@
             get;
             set;
         }
-
+        
         [Required]
+        [AllowHtml]
         public string Notes
         {
             get;

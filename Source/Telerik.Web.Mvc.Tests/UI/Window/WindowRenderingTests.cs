@@ -206,7 +206,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnClose.InlineCode = () => { };
+            window.ClientEvents.OnClose.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onClose", window.ClientEvents.OnClose)).Verifiable();
 
@@ -220,7 +220,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnError.InlineCode = () => { };
+            window.ClientEvents.OnError.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onError", window.ClientEvents.OnError)).Verifiable();
 
@@ -234,7 +234,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnLoad.InlineCode = () => { };
+            window.ClientEvents.OnLoad.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", window.ClientEvents.OnLoad)).Verifiable();
 
@@ -248,7 +248,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnMove.InlineCode = () => { };
+            window.ClientEvents.OnMove.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onMove", window.ClientEvents.OnMove)).Verifiable();
 
@@ -262,7 +262,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnOpen.InlineCode = () => { };
+            window.ClientEvents.OnOpen.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onOpen", window.ClientEvents.OnOpen)).Verifiable();
 
@@ -276,7 +276,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnResize.InlineCode = () => { };
+            window.ClientEvents.OnResize.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onResize", window.ClientEvents.OnResize)).Verifiable();
 
@@ -398,7 +398,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            window.ClientEvents.OnRefresh.InlineCode = () => { };
+            window.ClientEvents.OnRefresh.CodeBlock = () => { };
 
             WindowTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onRefresh", window.ClientEvents.OnRefresh)).Verifiable();
 

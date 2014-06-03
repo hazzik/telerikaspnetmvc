@@ -9,6 +9,13 @@ namespace Telerik.Web.Mvc.Examples
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI;
+#if MVC1 || MVC2
+    using IHtmlString = System.String;
+#else
+    using IHtmlString = System.Web.IHtmlString;
+    using System.Reflection;
+    using System.Web.Routing;
+#endif
 
     public static class HtmlHelpersExtensions
     {
@@ -45,21 +52,45 @@ namespace Telerik.Web.Mvc.Examples
             return string.Empty;
         }
 
-        public static string ProductMetaTag(this HtmlHelper html)
+        public static string ProductVersion(this HtmlHelper html)
+        {
+		    Assembly controlAssembly = typeof(Menu).Assembly;
+		    Version version = controlAssembly.GetName().Version;
+
+		    int quarter = version.Minor;
+		    int versionYear = version.Major;
+		    int year = versionYear;
+		    int date = version.Build;
+		    int month = date / 100;
+
+		    if (month > 12)
+		    {
+			    year++;
+			    month %= 12;
+		    }
+
+		    int day = date % 100;
+
+		    return string.Format("Version Q{0} {1}, released {2:d2}/{3:d2}/{4}",
+                    quarter, versionYear, month, day, year);
+        }
+
+        public static IHtmlString ProductMetaTag(this HtmlHelper html)
         {
             string controller = (string)html.ViewContext.RouteData.Values["controller"];
 
             if (!controllerToProductIdMap.ContainsKey(controller))
             {
-                return string.Empty;
+                return string.Empty.Raw();
             }
 
-            return String.Format("<meta name=\"ProductId\" content=\"{0}\" />", controllerToProductIdMap[controller]);
+            return String.Format("<meta name=\"ProductId\" content=\"{0}\" />", controllerToProductIdMap[controller]).Raw();
         }
 
-        public static string CheckBox(this HtmlHelper html, string id, bool isChecked, string labelText)
+
+        public static IHtmlString CheckBox(this HtmlHelper html, string id, bool isChecked, string labelText)
         {
-            return html.CheckBox(id, isChecked) + new HtmlTag("label").Attribute("for", id).Html(labelText).ToString();
+            return (html.CheckBox(id, isChecked) + new HtmlElement("label").Attribute("for", id).Html(labelText).ToString()).Raw();
         }
 
         public static string GetCurrentTheme(this HtmlHelper html)
@@ -67,21 +98,35 @@ namespace Telerik.Web.Mvc.Examples
             return html.ViewContext.HttpContext.Request.QueryString["theme"] ?? "vista";
         }
 
-        public static string WaveValidatorLink(this HtmlHelper html)
+        public static IHtmlString WaveValidatorLink(this HtmlHelper html)
         {
-            var link = new HtmlTag("a")
+            var link = new HtmlElement("a")
                 .Attributes(new
                 {
                     href = String.Format("http://wave.webaim.org/report?url={0}", System.Web.HttpUtility.UrlEncode(html.ViewContext.HttpContext.Request.Url.AbsoluteUri)),
                     id = "wave-validate",
-                    @class = "t-button t-state-default"
+                    @class = "t-button t-button-icontext"
                 });
 
-            new HtmlTag("span").AddClass("t-icon wave-logo").AppendTo(link);
+            new HtmlElement("span").AddClass("t-icon wave-logo").AppendTo(link);
 
             new LiteralNode("Validate with WAVE").AppendTo(link);
 
+            return link.ToString().Raw();
+        }
+
+        public static string SwitchToRazorLink(this HtmlHelper html)
+        {
+#if MVC3
+            var link = html.ActionLink("Switch to Razor view engine",
+                (string)html.ViewContext.RouteData.Values["action"],
+                new { area = "razor", controller = (string)html.ViewContext.RouteData.Values["controller"] },
+                new { @class = "t-button" });
+
             return link.ToString();
+#else
+            return "";
+#endif
         }
     }
 
@@ -97,7 +142,7 @@ namespace Telerik.Web.Mvc.Examples
         public ExampleConfigurator(HtmlHelper htmlHelper)
         {
             this.htmlHelper = htmlHelper;
-            this.writer = new HtmlTextWriter(htmlHelper.ViewContext.HttpContext.Response.Output);
+            this.writer = new HtmlTextWriter(htmlHelper.ViewContext.Writer);
         }
 
         public ExampleConfigurator Title(string title)
@@ -109,7 +154,10 @@ namespace Telerik.Web.Mvc.Examples
 
         public ExampleConfigurator Begin()
         {
-            this.writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass);
+            if (this.form == null)
+            {
+                this.writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass);
+            }
             this.writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
             this.writer.AddAttribute(HtmlTextWriterAttribute.Class, "legend");
@@ -122,7 +170,7 @@ namespace Telerik.Web.Mvc.Examples
 
         public ExampleConfigurator End()
         {
-            this.writer.RenderEndTag(); // fieldset
+            this.writer.RenderEndTag();
 
             if (this.form != null)
             {
@@ -141,7 +189,7 @@ namespace Telerik.Web.Mvc.Examples
         {
             string theme = this.htmlHelper.ViewContext.HttpContext.Request.Params["theme"] ?? "vista";
 
-            this.form = this.htmlHelper.BeginForm(action, controller, new { theme = theme });
+            this.form = this.htmlHelper.BeginForm(action, controller, new { theme = theme }, FormMethod.Post, new { @class = CssClass });
 
             return this;
         }

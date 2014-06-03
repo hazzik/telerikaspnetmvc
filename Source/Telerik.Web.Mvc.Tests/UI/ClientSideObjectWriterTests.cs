@@ -5,13 +5,11 @@
 
 namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Moq;
     using System;
     using System.Collections.Generic;
     using System.IO;
-
-    using Extensions;
-
-    using Moq;
+    using Telerik.Web.Mvc.Extensions;
     using Xunit;
 
     public class ClientSideObjectWriterTests
@@ -226,7 +224,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .AppendDateOnly("foo", new DateTime(2000, 1, 1, 23, 59, 59, 999));
 
-            _writer.Verify(w => w.Write("foo:new jQuery.telerik.datetime(2000,00,01)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,00,01)"));
         }
 
         [Fact]
@@ -239,7 +237,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .AppendDateOnly("foo", date);
 
-            _writer.Verify(w => w.Write("foo:new jQuery.telerik.datetime(2000,00,01)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,00,01)"));
         }
 
         [Fact]
@@ -261,7 +259,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .Append("foo", (DateTime?) new DateTime(2000, 1, 1, 23, 59, 59, 999));
 
-            _writer.Verify(w => w.Write("foo:new jQuery.telerik.datetime(2000,00,01,23,59,59,999)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,00,01,23,59,59,999)"));
         }
 
         [Fact]
@@ -272,7 +270,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _objectWriter.Start()
                          .Append("foo", new DateTime(2000, 1, 1, 23, 59, 59, 999));
 
-            _writer.Verify(w => w.Write("foo:new jQuery.telerik.datetime(2000,00,01,23,59,59,999)"));
+            _writer.Verify(w => w.Write("foo:new Date(2000,00,01,23,59,59,999)"));
         }
 
         [Fact]
@@ -420,7 +418,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             _writer.Setup(w => w.Write(It.IsAny<string>())).Verifiable();
 
             ClientEvent clientEvent = new ClientEvent();
-            clientEvent.InlineCode = () => { };
+            clientEvent.CodeBlock = () => { };
 
             _objectWriter.Start()
                          .AppendClientEvent("foo", clientEvent);

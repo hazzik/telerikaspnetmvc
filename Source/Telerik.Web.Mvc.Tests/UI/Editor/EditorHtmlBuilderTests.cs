@@ -23,30 +23,23 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         [Fact]
         public void EditorTag_should_output_start_tag()
         {
-            IHtmlNode tag = renderer.CreateEditor();
-
-            Assert.Equal("table", tag.TagName);
+            renderer.CreateEditor().TagName.ShouldEqual("table");
         }
 
         [Fact]
         public void EditorTag_should_output_render_id()
         {
             const string id = "testName";
+            
             editor.Name = id;
 
-            IHtmlNode tag = renderer.CreateEditor();
-
-            Assert.Equal(id, tag.Attribute("id"));
+            renderer.CreateEditor().Attribute("id").ShouldEqual(id);
         }
 
         [Fact]
         public void EditorTag_should_output_render_css_classes()
         {
-            const string css = "t-widget t-editor t-header";
-            
-            IHtmlNode tag = renderer.CreateEditor();
-
-            Assert.Equal(css, tag.Attribute("class"));
+            renderer.CreateEditor().Attribute("class").ShouldEqual("t-widget t-editor t-header");
         }
 
         [Fact]
@@ -54,26 +47,21 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         {
             editor.HtmlAttributes.Add("title", "genericEditor");
 
-            IHtmlNode tag = renderer.CreateEditor();
-
-            Assert.Equal("genericEditor", tag.Attribute("title"));
+            renderer.CreateEditor().Attribute("title").ShouldEqual("genericEditor");
         }
 
         [Fact]
         public void TextareaTag_should_output_start_tag()
         {
-            IHtmlNode tag = renderer.CreateTextArea();
-
-            Assert.Equal("textarea", tag.TagName);
+            renderer.CreateTextArea().TagName.ShouldEqual("textarea");
         }
 
         [Fact]
         public void TextareaTag_should_set_the_name()
         {
             editor.Name = "Foo.bar";
-            IHtmlNode tag = renderer.CreateTextArea();
 
-            Assert.Equal("Foo.bar", tag.Attribute("name"));
+            renderer.CreateTextArea().Attribute("name").ShouldEqual("Foo.bar");
         }
 
     }

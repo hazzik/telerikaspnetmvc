@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     {
         Text,
         Image,
-        ImageAndText
+        ImageAndText,
+		BareImage
     }
 }

@@ -20,7 +20,7 @@ namespace Telerik.Web.Mvc.UI
             IHtmlNode div = ComponentTag("div")
                 .PrependClass(UIPrimitives.Widget, "t-tabstrip", UIPrimitives.Header);
 
-            new HtmlTag("ul").AddClass(UIPrimitives.ResetStyle, "t-tabstrip-items").AppendTo(div);
+            new HtmlElement("ul").AddClass(UIPrimitives.ResetStyle, "t-tabstrip-items").AppendTo(div);
 
             return div;
         }

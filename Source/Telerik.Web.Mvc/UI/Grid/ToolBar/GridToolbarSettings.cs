@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
     using System.Linq;
-    using Telerik.Web.Mvc.Extensions;
 
     public class GridToolBarSettings<T> where T : class
     {
@@ -16,6 +15,12 @@ namespace Telerik.Web.Mvc.UI
             Commands = new List<GridToolBarCommandBase<T>>();
             Grid = grid;
             Template = new HtmlTemplate();
+        }
+
+        public GridToolBarPosition Position
+        {
+            get;
+            set;
         }
 
         public Grid<T> Grid
@@ -42,18 +47,6 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
             private set;
-        }
-
-        public void AppendTo(IHtmlNode parent)
-        {
-            if (Template.HasValue())
-            {
-                Template.Apply(parent);
-            }
-            else
-            {
-                Commands.Each(command => command.Html(Grid, parent));
-            }
         }
     }
 }

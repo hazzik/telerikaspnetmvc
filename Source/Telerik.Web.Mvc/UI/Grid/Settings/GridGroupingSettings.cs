@@ -7,8 +7,8 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
-    using Extensions;
-    using Infrastructure;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class GridGroupingSettings : IClientSerializable
     {
@@ -63,7 +63,7 @@ namespace Telerik.Web.Mvc.UI
                 FluentDictionary.For(group)
                     .Add("member", groupDescriptor.Member)
                     .Add("order", groupDescriptor.SortDirection == ListSortDirection.Ascending ? "asc" : "desc")
-                    .Add("title", grid.GroupTitle(groupDescriptor));
+                    .Add("title", grid.Columns.GroupTitleForMember(groupDescriptor.Member));
 
                 result.Add(group);
             });

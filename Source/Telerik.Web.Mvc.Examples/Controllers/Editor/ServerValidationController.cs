@@ -1,6 +1,5 @@
 ﻿namespace Telerik.Web.Mvc.Examples
 {
-    using System.Web;
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Examples.Models;
 
@@ -9,25 +8,25 @@
         [SourceCodeFile("EmployeeDto (model)", "~/Models/EmployeeDto.cs")]
         public ActionResult ServerValidation()
         {
-            EmployeeDto dto = new EmployeeDto
+            var employee = new EmployeeDto
                {
                    FirstName = "Nancy",
                    LastName = "Davolio",
                    Notes = ""
                };
 
-            return View(dto);
+            return View(employee);
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
         [SourceCodeFile("EmployeeDto (model)", "~/Models/EmployeeDto.cs")]
-        public ActionResult ServerValidation(EmployeeDto EmployeeDto)
+        public ActionResult ServerValidation(EmployeeDto employeeDto)
         {
             if (ModelState.IsValid)
             {
-                ViewData["FirstName"] = EmployeeDto.FirstName;
-                ViewData["LastName"] = EmployeeDto.LastName;
-                ViewData["Notes"] = HttpUtility.HtmlDecode(EmployeeDto.Notes);
+                ViewData["FirstName"] = employeeDto.FirstName;
+                ViewData["LastName"] = employeeDto.LastName;
+                ViewData["Notes"] = employeeDto.Notes;
             }
 
             return View();

@@ -251,7 +251,7 @@
         [Fact]
         public void ObjectWriter_should_append_Load_property_of_clientEvents()
         {
-            input.ClientEvents.OnLoad.InlineCode = () => { };
+            input.ClientEvents.OnLoad.CodeBlock = () => { };
 
             TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", input.ClientEvents.OnLoad)).Verifiable();
 
@@ -263,7 +263,7 @@
         [Fact]
         public void ObjectWriter_should_append_Select_property_of_clientEvents()
         {
-            input.ClientEvents.OnChange.InlineCode = () => { };
+            input.ClientEvents.OnChange.CodeBlock = () => { };
 
             TextBoxBaseTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onChange", input.ClientEvents.OnChange)).Verifiable();
 
@@ -273,7 +273,7 @@
         }
 
         [Fact]
-        public void Render_should_not_throw_exception_if_value_is_equal_to_maxDate()
+        public void Render_should_not_throw_exception_if_value_is_equal_to_maxValue()
         {
             double value = 10;
 
@@ -284,12 +284,38 @@
         }
 
         [Fact]
-        public void Render_should_not_throw_exception_if_value_is_equal_to_minDate()
+        public void Render_should_not_throw_exception_if_value_is_equal_to_minValue()
         {
             double value = 10;
 
             input.Value = value;
             input.MinValue = value;
+            input.MaxValue = 100;
+
+            Assert.DoesNotThrow(() => input.Render());
+        }
+
+        [Fact]
+        public void Render_should_throw_exception_if_value_is_bigger_then_minValue_and_less_then_maxValue()
+        {
+            input.Value = 10;
+            input.MinValue = 11;
+            input.MaxValue = 100;
+
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => input.Render());
+
+            input.Value = 101;
+            input.MinValue = 11;
+            input.MaxValue = 100;
+
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => input.Render());
+        }
+
+        [Fact]
+        public void Render_should_not_throw_exception_if_value_is_null_and_we_have_minValue_and_maxValue()
+        {
+            input.Value = null;
+            input.MinValue = 11;
             input.MaxValue = 100;
 
             Assert.DoesNotThrow(() => input.Render());

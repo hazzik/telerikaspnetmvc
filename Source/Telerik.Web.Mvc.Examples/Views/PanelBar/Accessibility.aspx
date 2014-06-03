@@ -30,5 +30,9 @@
         </p>
     <% } %>
 
+    <noscript>
+        <p>Your browsing experience on this page will be better if you visit it with a JavaScript-enabled browser / if you enable JavaScript.</p>
+    </noscript>
+
     <% Html.RenderPartial("AccessibilityValidation"); %>
 </asp:content>

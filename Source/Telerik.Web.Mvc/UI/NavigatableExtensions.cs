@@ -57,6 +57,11 @@ namespace Telerik.Web.Mvc.UI
             SetAction(navigatable, actionName, controllerName, routeValues);
         }
 
+        /// <summary>
+        /// Sets the action and route values of <see cref="INavigatable"/> object.
+        /// </summary>
+        /// <param name="item">The <see cref="INavigatable"/> object.</param>
+        /// <param name="controllerAction">The controller action.</param>
         public static void Action<TController>(this INavigatable item, Expression<Action<TController>> controllerAction) where TController : Controller
         {
             MethodCallExpression call = (MethodCallExpression)controllerAction.Body;
@@ -162,6 +167,13 @@ namespace Telerik.Web.Mvc.UI
             return urlGenerator.Generate(viewContext.RequestContext, navigatable);
         }
 
+        /// <summary>
+        /// Determines whether the specified navigatable matches the current request URL.
+        /// </summary>
+        /// <param name="navigatable">The <see cref="INavigatable"/> object.</param>
+        /// <param name="viewContext">The <see cref="ViewContext"/> object.</param>
+        /// <param name="urlGenerator">The <see cref="IUrlGenerator"/> generator.</param>
+        /// <returns></returns>
         public static bool IsCurrent(this INavigatable navigatable, ViewContext viewContext, IUrlGenerator urlGenerator)
         {
             var currentUrl = viewContext.HttpContext.Request.Url.PathAndQuery;
@@ -202,6 +214,17 @@ namespace Telerik.Web.Mvc.UI
         public static bool IsAccessible<T>(this IEnumerable<T> items, INavigationItemAuthorization authorization, ViewContext viewContext)
         {
             return items.Any(item => authorization.IsAccessibleToUser(viewContext.RequestContext, (INavigatable)item));
+        }
+
+        /// <summary>
+        /// Determines whether this instance has value.
+        /// </summary>
+        /// <returns>true if either ActionName and ControllerName, RouteName or Url are set; false otherwise</returns>
+        public static bool HasValue(this INavigatable navigatable)
+        {
+            return  (navigatable.ActionName.HasValue() && navigatable.ControllerName.HasValue()) ||
+                    navigatable.RouteName.HasValue() ||
+                    navigatable.Url.HasValue();
         }
 
         private static void SetAction(INavigatable navigatable, string actionName, string controllerName, RouteValueDictionary routeValues)

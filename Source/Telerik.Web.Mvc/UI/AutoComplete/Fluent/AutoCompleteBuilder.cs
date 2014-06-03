@@ -101,6 +101,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
         public AutoCompleteBuilder DropDownHtmlAttributes(object attributes)
         {
+            return DropDownHtmlAttributes(attributes.ToDictionary());
+        }
+
+        public AutoCompleteBuilder DropDownHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
             Component.DropDownHtmlAttributes.Clear();
@@ -247,6 +252,56 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public AutoCompleteBuilder Enable(bool value)
         {
             Component.Enabled = value;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets whether provided List{string} should be encoded before rendering.
+        /// </summary>
+        /// <param name="isEncoded">Whether the property should be encoded. Default: true.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().AutoComplete()
+        ///             .Name("AutoComplete")
+        ///             .BindTo(new List<string>
+        ///             {
+        ///                 "ComboBox",
+        ///                 "DropDownList",
+        ///                 "AutoComplete"
+        ///             })
+        ///             .Encode(false)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public AutoCompleteBuilder Encode(bool isEncoded)
+        {
+            Component.Encoded = isEncoded;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets value of the input.
+        /// </summary>
+        /// <param name="value">Value which will be rendered as a input text.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().AutoComplete()
+        ///             .Name("AutoComplete")
+        ///             .BindTo(new List<string>
+        ///             {
+        ///                 "ComboBox",
+        ///                 "DropDownList",
+        ///                 "AutoComplete"
+        ///             })
+        ///             .Value("ComboBox")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public AutoCompleteBuilder Value(string value)
+        {
+            Component.Value = value;
 
             return this;
         }

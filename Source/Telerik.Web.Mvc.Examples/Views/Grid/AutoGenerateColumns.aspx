@@ -9,7 +9,7 @@
                          columns.AutoGenerate(column =>
                                                   {
                                                       //customize autogenereted column's settings
-                                                      column.Width = "150px";
+                                                      column.Width = "130px";
                                                       if (column.Member == "CustomerID")
                                                           column.Visible = false;
                                                   });

@@ -14,7 +14,7 @@ namespace Telerik.Web.Mvc.UI
 
     public class CurrencyTextBox : TextBoxBase<decimal>
     {
-        public CurrencyTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<decimal> rendererFactory)
+        public CurrencyTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextBoxBaseHtmlBuilderFactory<decimal> rendererFactory)
             : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
@@ -100,12 +100,12 @@ namespace Telerik.Web.Mvc.UI
 
             if (MinValue > MaxValue)
             {
-                throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
             }
 
             if ((Value != null) && (MinValue > Value || Value > MaxValue))
             {
-                throw new ArgumentOutOfRangeException(TextResource.ValueOutOfRange);
+                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
             }
 
             if (PositivePatternIndex < 0 || PositivePatternIndex > 3) //currency positive patterns are 4.

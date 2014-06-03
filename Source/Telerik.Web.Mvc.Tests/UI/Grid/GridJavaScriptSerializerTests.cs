@@ -356,9 +356,9 @@
         public void Should_serialize_client_events()
         {
             var grid = GridTestHelper.CreateGrid<Customer>();
-            grid.ClientEvents.OnDataBinding.InlineCode = grid.ClientEvents.OnDataBound.InlineCode =
-                grid.ClientEvents.OnError.InlineCode = grid.ClientEvents.OnLoad.InlineCode =
-                grid.ClientEvents.OnRowDataBound.InlineCode = grid.ClientEvents.OnRowSelect.InlineCode = () => { };
+            grid.ClientEvents.OnDataBinding.CodeBlock = grid.ClientEvents.OnDataBound.CodeBlock =
+                grid.ClientEvents.OnError.CodeBlock = grid.ClientEvents.OnLoad.CodeBlock =
+                grid.ClientEvents.OnRowDataBound.CodeBlock = grid.ClientEvents.OnRowSelect.CodeBlock = () => { };
 
             writer.Setup(w => w.AppendClientEvent("onLoad", It.IsAny<ClientEvent>()));
             writer.Setup(w => w.AppendClientEvent("onDataBinding", It.IsAny<ClientEvent>()));

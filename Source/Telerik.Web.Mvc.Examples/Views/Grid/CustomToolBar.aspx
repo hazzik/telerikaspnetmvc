@@ -28,6 +28,7 @@
             columns.Bound(o => o.ShipAddress);
             columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
         })
+        .ClientEvents(clientEvents => clientEvents.OnDataBinding("dataBinding"))
         .DataBinding(dataBinding => dataBinding.Ajax().Select("_CustomToolBar", "Grid"))
         .Pageable()
         .Sortable()
@@ -35,12 +36,13 @@
     %>
     <script type="text/javascript">
         function customerChange() {
-            var customerID = $(this).data("tComboBox").value();
+            $("#Grid").data("tGrid").rebind();
+        }
 
-            $("#Grid").data("tGrid").rebind({
-                customerID: customerID
-            });
-        }       
+        function dataBinding(args) {
+            var customerID = $("#Customers").data("tComboBox").value();
+            args.data = $.extend(args.data, { customerID: customerID });
+        }
     </script>
 </asp:Content>
 <asp:Content ID="Content1" ContentPlaceHolderID="HeadContent" runat="server">

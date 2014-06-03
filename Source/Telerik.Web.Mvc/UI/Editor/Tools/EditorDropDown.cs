@@ -18,14 +18,15 @@ namespace Telerik.Web.Mvc.UI
             Identifier = identifier.ToCamelCase();
             HtmlAttributes = new Dictionary<string, object>() { { "class", "t-" + Identifier } };
             Enabled = true;
+            Encoded = true;
         }
 
         public string Identifier { get; set; }
 
         public ViewContext ViewContext { get; private set; }
 
-        string IDropDownRenderable.Id { get { return ""; } }
-        string IDropDownRenderable.Name { get { return ""; } }
+        string IViewComponent.Id { get { return ""; } }
+        string IViewComponent.Name { get { return ""; } }
         public IDictionary<string, object> HtmlAttributes { get; private set; }
 
         public IList<DropDownItem> Items
@@ -35,7 +36,9 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public int SelectedIndex { get; set; }
+        public string Value { get; set; }
         public bool Enabled { get; set; }
+        public bool Encoded { get; set; }
 
         public IHtmlBuilder CreateHtmlBuilder()
         {

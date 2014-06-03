@@ -1,6 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.Tests.Data
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
@@ -32,9 +33,9 @@
         {
             IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };
 
-            IQueryable quearyablePeople = QueryableFactory.CreateQueryable(people);
+            var quearyablePeople = QueryableFactory.CreateQueryable(people);
 
-            IQueryable<Person> filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
+            var filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
             {
                 Member = "Name",
                 Operator = FilterOperator.IsEqualTo,
@@ -49,9 +50,9 @@
         {
             IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };
 
-            IQueryable quearyablePeople = QueryableFactory.CreateQueryable(people);
+            var quearyablePeople = QueryableFactory.CreateQueryable(people);
 
-            IQueryable<Person> filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
+            var filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
             {
                 Member = "Name",
                 Operator = FilterOperator.IsNotEqualTo,
@@ -66,9 +67,9 @@
         {
             IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };
 
-            IQueryable quearyablePeople = QueryableFactory.CreateQueryable(people);
+            var quearyablePeople = QueryableFactory.CreateQueryable(people);
 
-            IQueryable<Person> sortedPeople = quearyablePeople.Sort(new[] { 
+            var sortedPeople = quearyablePeople.Sort(new[] { 
                 new SortDescriptor { 
                     Member = "Name", 
                     SortDirection = ListSortDirection.Descending 
@@ -96,8 +97,8 @@
         [Fact]
         public void Page_should_page_the_data()
         {
-            IQueryable people = CreateTestData();
-            IQueryable<Person> secondPageOfPeople = people.Page(1, 5).Cast<Person>();
+            var people = CreateTestData();
+            var secondPageOfPeople = people.Page(1, 5).Cast<Person>();
 
             Assert.Equal(5, secondPageOfPeople.First().ID);
         }
@@ -105,8 +106,8 @@
         [Fact]
         public void Filter_with_composite_descriptor_should_filter_the_data()
         {
-            IQueryable people = CreateTestData();
-            IQueryable<Person> filteredPeople = people.Where(new[] { 
+            var people = CreateTestData();
+            var filteredPeople = people.Where(new[] { 
                 new CompositeFilterDescriptor {
                     FilterDescriptors = new FilterDescriptorCollection {
                            new FilterDescriptor("ID", FilterOperator.IsGreaterThanOrEqualTo, 0),
@@ -124,7 +125,7 @@
         [Fact]
         public void Filter_with_expression_should_filter_the_data()
         {
-            IQueryable people = CreateTestData();
+            var people = CreateTestData();
             Expression<Func<Person, bool>> expression = (Person p) => p.ID >= 0 && p.ID <= 2;
             IQueryable<Person> filteredPeople = people.Where(expression).Cast<Person>();
 
@@ -135,15 +136,15 @@
         [Fact]
         public void Group_with_group_descriptor_groups_the_data()
         {
-            IQueryable people = CreateTestData();
-            IQueryable<IGroup> grouppedPeople = people.GroupBy(new[]{new GroupDescriptor{
+            var people = CreateTestData();
+            var grouppedPeople = people.GroupBy(new[]{new GroupDescriptor{
                         Member = "ID"
                     }
                 })
                 .Cast<IGroup>();
 
-            IGroup firstGroup = grouppedPeople.First();
-            IEnumerable<Person> itemsInFirstGroup = firstGroup.Items.Cast<Person>();
+            var firstGroup = grouppedPeople.First();
+            var itemsInFirstGroup = firstGroup.Items.Cast<Person>();
             Assert.Equal(0, firstGroup.Key);
             Assert.Equal(1, itemsInFirstGroup.Count());
             Assert.Equal(0, itemsInFirstGroup.First().ID);
@@ -156,6 +157,85 @@
             IQueryable<Person> grouppedPeople = people.GroupBy(new GroupDescriptor[]{})
                 .Cast<Person>();
             Assert.Equal(grouppedPeople.Count(), CreateTestData().Count());
+        }
+
+        [Fact]
+        public void Should_calculate_aggreagte_for_group()
+        {
+            IEnumerable<Person> people = new[]
+                                             {new Person {Name = "A"}, new Person {Name = "A"}, new Person {Name = "B"}};
+            IQueryable queryablePeople = QueryableFactory.CreateQueryable(people);
+
+            var groupDescriptor = new GroupDescriptor {Member = "Name", MemberType = typeof (string)};
+            groupDescriptor.AggregateFunctions.Add(new CountFunction());
+            var groupDescriptors = new[] {groupDescriptor};
+
+            var result = queryablePeople.GroupBy(queryablePeople, groupDescriptors);
+            var groups = result.Cast<AggregateFunctionsGroup>();
+
+            groups.Count().ShouldEqual(2);
+
+            groups.ElementAt(0).GetAggregateResults(groupDescriptor.AggregateFunctions).First().Value.ShouldEqual(2);
+            groups.ElementAt(1).GetAggregateResults(groupDescriptor.AggregateFunctions).First().Value.ShouldEqual(1);
+        }
+
+        [Fact]
+        public void Should_calculate_group_aggregate_if_paged()
+        {
+            IEnumerable<Person> people = new[]{ new Person { Name = "A" }, new Person { Name = "A" },new Person { Name = "B" }};
+
+            var queryablePeople = QueryableFactory.CreateQueryable(people);
+
+            var groupDescriptor = new GroupDescriptor { Member = "Name", MemberType = typeof(string) };
+            groupDescriptor.AggregateFunctions.Add(new CountFunction());
+            var groupDescriptors = new[] { groupDescriptor };
+
+            var notPagedData = queryablePeople;
+
+            var result = queryablePeople.Page(0, 1).GroupBy(notPagedData, groupDescriptors);
+            var groups = result.Cast<AggregateFunctionsGroup>();
+
+            groups.Count().ShouldEqual(1);
+
+            groups.ElementAt(0).GetAggregateResults(groupDescriptor.AggregateFunctions).First().Value.ShouldEqual(2);
+        }
+
+        [Fact]
+        public void Should_calculate_group_aggregate_on_multiple_groups()
+        {
+            IEnumerable<Person> people = new[] { new Person { ID = 0, Name = "A" }, new Person { ID = 1, Name = "A" }, new Person { ID = 2, Name = "B" } };
+            var queryablePeople = QueryableFactory.CreateQueryable(people);
+
+            var outterGroup = new GroupDescriptor { Member = "Name", MemberType = typeof(string) };
+            outterGroup.AggregateFunctions.Add(new CountFunction());
+
+            var innerGroup = new GroupDescriptor { Member = "ID", MemberType = typeof(string) };
+            innerGroup.AggregateFunctions.Add(new CountFunction());
+
+            var groupDescriptors = new[] { outterGroup, innerGroup };
+
+
+            var result = queryablePeople.GroupBy(queryablePeople, groupDescriptors);
+            var groups = result.Cast<AggregateFunctionsGroup>();
+            
+            groups.Count().ShouldEqual(2);
+            
+            var firstGroupHeader = FindGroupHeader(groups, 0);
+            var secondGroupHeader = FindGroupHeader(groups, 1);
+
+            firstGroupHeader.GetAggregateResults(outterGroup.AggregateFunctions).First().Value.ShouldEqual(2);
+            secondGroupHeader.GetAggregateResults(outterGroup.AggregateFunctions).First().Value.ShouldEqual(1);
+
+            var firstInnerGroupHeader = FindGroupHeader(firstGroupHeader.Items, 0);
+            firstInnerGroupHeader.GetAggregateResults(innerGroup.AggregateFunctions).First().Value.ShouldEqual(1);
+
+            var secondInnerGroupHeader = FindGroupHeader(firstGroupHeader.Items, 1);
+            secondInnerGroupHeader.GetAggregateResults(innerGroup.AggregateFunctions).First().Value.ShouldEqual(1);
+        }
+
+        private AggregateFunctionsGroup FindGroupHeader(IEnumerable items, int index)
+        {
+            return items.Cast<AggregateFunctionsGroup>().ElementAt(index);
         }
 
 #if MVC3

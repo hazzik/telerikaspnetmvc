@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -10,11 +10,6 @@
 
     <script type="text/javascript">
         var FormatCommand, editor, Marker;
-
-        function setUp() {
-            editor = getEditor();
-            Marker = $.telerik.editor.Marker;
-        }
 
         /* helpers */
 
@@ -35,8 +30,24 @@
         }
 
         /* add/removeMarker tests */
+        
+        /* add/removeCaretMarker tests */
+    </script>
+</asp:Content>
 
-        function test_addMarker_inserts_markers() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            editor = getEditor();
+            Marker = $.telerik.editor.Marker;
+        }
+
+        test('addMarker inserts markers', function() {
             editor.value('foo');
             
             var range = createRange(editor.body.firstChild, 1, editor.body.firstChild, 2);
@@ -44,10 +55,10 @@
             var marker = new Marker();
             marker.add(range);
 
-            assertEquals('f<span class="t-marker"></span>o<span class="t-marker"></span>o', editor.value());
+            equal(editor.value(), 'f<span class="t-marker"></span>o<span class="t-marker"></span>o');
         
-        }
-        function test_addMarker_normalizes() {
+        });
+        test('addMarker normalizes', function() {
             editor.value('foo');
 
             var range = createRange(editor.body.firstChild, 0, editor.body.firstChild, 3);
@@ -55,10 +66,10 @@
             var marker = new Marker();
             marker.add(range);
             
-            assertTrue(editor.body.childNodes.length < 5);
-        }
+            ok(editor.body.childNodes.length < 5);
+        });
 
-        function test_addMarker_does_not_remove_line_breaks() {
+        test('addMarker does not remove line breaks', function() {
             editor.value('foo<br />bar');
             
             var range = createRange(editor.body.firstChild, 0, editor.body.firstChild, 3);
@@ -66,10 +77,10 @@
             var marker = new Marker();
             marker.add(range);
 
-            assertEquals('<span class="t-marker"></span>foo<span class="t-marker"></span><br />bar', editor.value());
-        }
+            equal(editor.value(), '<span class="t-marker"></span>foo<span class="t-marker"></span><br />bar');
+        });
 
-        function test_addMarker_on_collapsed_range() {
+        test('addMarker on collapsed range', function() {
             editor.value('foo');
             
             var range = createCollapsedRange(editor.body.firstChild, 1);
@@ -77,47 +88,47 @@
             var marker = new Marker();
             marker.add(range);
 
-            assertEquals('f<span class="t-marker"></span><span class="t-marker"></span>oo', editor.value());
-        }
+            equal(editor.value(), 'f<span class="t-marker"></span><span class="t-marker"></span>oo');
+        });
         
-        function test_removeMarker_removes_markers() {
+        test('removeMarker removes markers', function() {
             var range = createRangeFromText(editor, '|foo|');
             
             var marker = new Marker();
             marker.add(range);
             marker.remove(range);
 
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
         
-        function test_removeMarker_restores_range() {
+        test('removeMarker restores range', function() {
             var range = createRangeFromText(editor, '|foo|');
 
             var marker = new Marker();
             marker.add(range);
             marker.remove(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(3, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 3);
+        });
         
-        function test_removeMarker_normalizes_neighbouring_text_nodes() {
+        test('removeMarker normalizes neighbouring text nodes', function() {
             var range = createRangeFromText(editor, 'foo|bar|baz');
 
             var marker = new Marker();
             marker.add(range);
             marker.remove(range);
             
-            assertEquals(1, editor.body.childNodes.length);
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(3, range.startOffset);
-            assertEquals(6, range.endOffset);
-        }
+            equal(editor.body.childNodes.length, 1);
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 3);
+            equal(range.endOffset, 6);
+        });
 
-        function test_removeMarker_on_collapsed_range() {
+        test('removeMarker on collapsed range', function() {
             editor.value('foo');
             var range = createCollapsedRange(editor.body.firstChild, 1);
 
@@ -125,12 +136,12 @@
             marker.add(range);
             marker.remove(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.startOffset, 1);
+            equal(range.collapsed, true);
+        });
 
-        function test_addMarker_on_collapsed_range_selects_markers() {
+        test('addMarker on collapsed range selects markers', function() {
             editor.value('foo bar');
 
             var range = editor.createRange();
@@ -140,15 +151,13 @@
             var marker = new $.telerik.editor.Marker();
             range = marker.add(range, true);
 
-            assertEquals(editor.body, range.startContainer);
-            assertEquals(editor.body, range.endContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(4, range.endOffset);
-        }
-        
-        /* add/removeCaretMarker tests */
+            equal(range.startContainer, editor.body);
+            equal(range.endContainer, editor.body);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 4);
+        });
 
-        function test_addCaretMarker_inserts_caret_marker() {
+        test('addCaretMarker inserts caret marker', function() {
             editor.value('foo');
             
             var range = createCollapsedRange(editor.body.firstChild, 2);
@@ -156,10 +165,10 @@
             var marker = new Marker();
             marker.addCaret(range);
 
-            assertEquals('fo<span class="t-marker"></span>o', editor.value());
-        }
+            equal(editor.value(), 'fo<span class="t-marker"></span>o');
+        });
 
-        function test_addCaretMarker_updates_range_to_include_caret_marker() {
+        test('addCaretMarker updates range to include caret marker', function() {
             editor.value('foo');
             
             var range = createCollapsedRange(editor.body.firstChild, 2);
@@ -167,13 +176,13 @@
             var marker = new Marker();
             marker.addCaret(range);
 
-            assertEquals(editor.body, range.startContainer);
-            assertEquals(editor.body, range.endContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body);
+            equal(range.endContainer, editor.body);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+        });
 
-        function test_removeCaretMarker_removes_caret_marker() {
+        test('removeCaretMarker removes caret marker', function() {
             editor.value('foo');
             
             var range = createRange(editor.body.firstChild, 1, editor.body.firstChild, 2);
@@ -181,10 +190,10 @@
             marker.addCaret(range);
             marker.removeCaret(range);
 
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_removeCaretMarker_normalizes_dom() {
+        test('removeCaretMarker normalizes dom', function() {
             editor.value('foo');
             
             var range = createRange(editor.body.firstChild, 1, editor.body.firstChild, 2);
@@ -192,10 +201,10 @@
             marker.addCaret(range);
             marker.removeCaret(range);
 
-            assertEquals(1, editor.body.childNodes.length);
-        }
+            equal(editor.body.childNodes.length, 1);
+        });
 
-        function test_removeCaretMarker_updates_range_to_collapsed_state() {
+        test('removeCaretMarker updates range to collapsed state', function() {
             editor.value('foo');
             
             var range = createRange(editor.body.firstChild, 1, editor.body.firstChild, 2);
@@ -203,13 +212,13 @@
             marker.addCaret(range);
             marker.removeCaret(range);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(1, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 1);
+        });
 
-        function test_removeCaretMarker_when_caret_at_the_beginning() {
+        test('removeCaretMarker when caret at the beginning', function() {
             editor.value('foo');
             var range = createRange(editor.body.firstChild, 0, editor.body.firstChild, 0);
             
@@ -220,12 +229,12 @@
 
             marker.removeCaret(range);
             
-            assertEquals(0, range.startOffset);
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertTrue(range.collapsed);
-        }
+            equal(range.startOffset, 0);
+            equal(range.startContainer, editor.body.firstChild);
+            ok(range.collapsed);
+        });
 
-        function test_removeCaretMarker_within_element() {
+        test('removeCaretMarker within element', function() {
             editor.value('foo<strong></strong> bar');
             
             var range = createRange(editor.body.childNodes[1], 0, editor.body.childNodes[1], 0);
@@ -235,12 +244,12 @@
 
             marker.removeCaret(range);
             
-            assertEquals(0, range.startOffset);
-            assertEquals(editor.body.childNodes[1], range.startContainer);
-            assertTrue(range.collapsed);
-        }
+            equal(range.startOffset, 0);
+            equal(range.startContainer, editor.body.childNodes[1]);
+            ok(range.collapsed);
+        });
 
-        function test_remove_marker_before_br() {
+        test('remove marker before br', function() {
             editor.value('<br />');
             var range = editor.getRange();
             range.setStartBefore(editor.body.firstChild);
@@ -248,11 +257,11 @@
             var marker = new Marker();
             marker.addCaret(range);
             marker.removeCaret(range);
-            assertEquals(0, range.startOffset);
-            assertEquals(editor.body, range.startContainer);
-        }
+            equal(range.startOffset, 0);
+            equal(range.startContainer, editor.body);
+        });
 
-        function test_remove_marker_after_element() {
+        test('remove marker after element', function() {
             editor.value('<a></a>');
             var range = editor.getRange();
             range.setEndAfter(editor.body.firstChild);
@@ -261,11 +270,11 @@
             marker.add(range);
             
             marker.remove(range);
-            assertEquals(1, range.startOffset);
-            assertEquals(editor.body, range.startContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.startContainer, editor.body);
+        });
 
-        function test_remove_caret_after_element() {
+        test('remove caret after element', function() {
             editor.value('<a></a>');
             var range = editor.getRange();
             range.setEndAfter(editor.body.firstChild);
@@ -274,11 +283,11 @@
             marker.addCaret(range);
             
             marker.removeCaret(range);
-            assertEquals(1, range.startOffset);
-            assertEquals(editor.body, range.startContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.startContainer, editor.body);
+        });
 
-        function test_remove_marker_before_element() {
+        test('remove marker before element', function() {
             editor.value('<a></a>');
             var range = editor.getRange();
             range.setStartBefore(editor.body.firstChild);
@@ -287,11 +296,11 @@
             marker.add(range);
             
             marker.remove(range);
-            assertEquals(0, range.startOffset);
-            assertEquals(editor.body, range.startContainer);
-        }
+            equal(range.startOffset, 0);
+            equal(range.startContainer, editor.body);
+        });
         
-        function test_remove_caret_before_element() {
+        test('remove caret before element', function() {
             editor.value('<a></a>');
             var range = editor.getRange();
             range.setStartBefore(editor.body.firstChild);
@@ -300,11 +309,11 @@
             marker.addCaret(range);
 
             marker.removeCaret(range);
-            assertEquals(0, range.startOffset);
-            assertEquals(editor.body, range.startContainer);
-        }
+            equal(range.startOffset, 0);
+            equal(range.startContainer, editor.body);
+        });
 
-        function test_remove_caret_puts_range_at_end_of_last_text_node(){
+        test('remove caret puts range at end of last text node', function() {
             editor.value('<a>foo</a>');
             var range = editor.getRange();
             range.setStartAfter(editor.body.firstChild);
@@ -314,12 +323,12 @@
             marker.addCaret(range);
             marker.removeCaret(range);
 
-            assertEquals(editor.body.firstChild.firstChild, range.startContainer);
-            assertEquals(3, range.startOffset);
-            assertTrue(range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild.firstChild);
+            equal(range.startOffset, 3);
+            ok(range.collapsed);
+        });
 
-        function test_remove_marker_from_empty_paragraph() {
+        test('remove marker from empty paragraph', function() {
             editor.value('<p>&nbsp;</p>');
             var range = editor.getRange();
             range.selectNodeContents(editor.body.firstChild);
@@ -328,6 +337,8 @@
             var marker = new Marker();
             marker.add(range);
             marker.remove(range);
-        }
-    </script>
+        });
+
+</script>
+
 </asp:Content>

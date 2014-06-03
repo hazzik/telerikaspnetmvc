@@ -86,9 +86,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public TBuilder LoadContentFrom(string actionName, string controllerName, object routeValues)
         {
-            UrlHelper urlHelper = new UrlHelper(ViewContext.RequestContext);
-            
-            return LoadContentFrom(urlHelper.Action(actionName, controllerName, routeValues));
+            return LoadContentFrom(actionName, controllerName, new RouteValueDictionary(routeValues));
         }
 
         public TBuilder LoadContentFrom(string actionName, string controllerName, RouteValueDictionary routeValues)
@@ -117,9 +115,6 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public TBuilder LoadContentFrom(string value)
         {
-            if (!string.IsNullOrEmpty(Item.Url))
-                throw new NotSupportedException(Resources.TextResource.UrlAndContentUrlCannotBeSet);
-
             Item.ContentUrl = value;
 
             return this as TBuilder;

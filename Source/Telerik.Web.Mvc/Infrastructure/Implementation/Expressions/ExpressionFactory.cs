@@ -12,8 +12,15 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
 
     internal static class ExpressionFactory
     {
-        public static readonly ConstantExpression ZeroExpression = Expression.Constant(0);
-        public static readonly ConstantExpression EmptyStringExpression = Expression.Constant(string.Empty);
+        public static ConstantExpression ZeroExpression
+        {
+            get { return Expression.Constant(0); }
+        }
+
+        public static ConstantExpression EmptyStringExpression
+        {
+            get { return Expression.Constant(string.Empty); }
+        }
 
         public static Expression DefaltValueExpression(Type type)
         {

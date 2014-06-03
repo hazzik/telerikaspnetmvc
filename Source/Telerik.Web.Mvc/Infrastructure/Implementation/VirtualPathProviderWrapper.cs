@@ -54,17 +54,27 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         public string ReadAllText(string virtualPath)
         {
-            string path = VirtualPathUtility.IsAppRelative(virtualPath) ?
+            var path = VirtualPathUtility.IsAppRelative(virtualPath) ?
                           VirtualPathUtility.ToAbsolute(virtualPath) :
                           virtualPath;
 
             using (Stream stream = VirtualPathProvider.OpenFile(path))
             {
-                using (StreamReader sr = new StreamReader(stream))
+                using (var sr = new StreamReader(stream))
                 {
                     return sr.ReadToEnd();
                 }
             }
+        }
+
+        public string ToAbsolute(string virtualPath)
+        {
+            return VirtualPathUtility.ToAbsolute(virtualPath);
+        }
+
+        public string AppendTrailingSlash(string virtualPath)
+        {
+            return VirtualPathUtility.AppendTrailingSlash(virtualPath);
         }
     }
 }

@@ -12,7 +12,17 @@
             return $('#Editor1').data("tEditor");
         }
 
-        function setUp() {
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             impl = {
                 formatRange: function(range, format) {
@@ -28,7 +38,7 @@
             }
         }
 
-        function test_applyFormat_applies_format_on_text_range() {
+        test('applyFormat applies format on text range', function() {
             editor.value('<p>golgafrincham telephone sanitisers</p>');
 
             var pararagraph = $('p', editor.document)[0].firstChild;
@@ -38,10 +48,10 @@
 
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<p><strong>golgafrincham</strong> telephone sanitisers</p>', editor.value());
-        }
+            equal(editor.value(), '<p><strong>golgafrincham</strong> telephone sanitisers</p>');
+        });
         
-        function test_applyFormat_applies_inline_formats_properly_on_block_elements() {
+        test('applyFormat applies inline formats properly on block elements', function() {
             editor.value('<p>golgafrincham</p>');
 
             var pararagraph = $('p', editor.document)[0];
@@ -51,10 +61,10 @@
 
             impl.formatRange(range, editor.formats.bold);
             
-            assertEquals('<p><strong>golgafrincham</strong></p>', editor.value());
-        }
+            equal(editor.value(), '<p><strong>golgafrincham</strong></p>');
+        });
         
-        function test_applyFormat_applies_format_on_split_text_elements() {
+        test('applyFormat applies format on split text elements', function() {
             editor.value('<p>golga<em>frin</em>cham</p>');
 
             var pararagraph = $('p', editor.document)[0];
@@ -65,10 +75,10 @@
 
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<p>go<strong>lga</strong><em><strong>frin</strong></em><strong>ch</strong>am</p>', editor.value());
-        }
+            equal(editor.value(), '<p>go<strong>lga</strong><em><strong>frin</strong></em><strong>ch</strong>am</p>');
+        });
         
-        function test_applyFormat_uses_the_supplied_selector() {
+        test('applyFormat uses the supplied selector', function() {
             editor.value('<p>golgafrincham</p>');
 
             var pararagraph = $('p', editor.document)[0];
@@ -78,10 +88,10 @@
 
             impl.formatRange(range, editor.formats.italic);
             
-            assertEquals('<p><em>golgafrincham</em></p>', editor.value());
-        }
+            equal(editor.value(), '<p><em>golgafrincham</em></p>');
+        });
         
-        function test_formatRange_applies_style_commands() {
+        test('formatRange applies style commands', function() {
             editor.value('<p>golgafrincham</p>');
 
             var range = editor.createRange();
@@ -92,11 +102,11 @@
 
             var span = $(editor.value()).find('span');
 
-            assertEquals(1, span.length);
-            assertEquals('underline', span.css('textDecoration'));
-        }
+            equal(span.length, 1);
+            equal(span.css('textDecoration'), 'underline');
+        });
         
-        function test_formatRange_does_not_introduce_blank_text_nodes() {
+        test('formatRange does not introduce blank text nodes', function() {
             editor.value('golgafrincham');
 
             var range = editor.createRange();
@@ -105,10 +115,10 @@
             
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals(1, editor.body.childNodes.length);
-        }
+            equal(editor.body.childNodes.length, 1);
+        });
 
-        function test_formatRange_does_honor_block_elements() {
+        test('formatRange does honor block elements', function() {
             editor.value('<p>golgafrincham</p><p>telephone</p>');
 
             var range = editor.createRange();
@@ -117,10 +127,10 @@
             
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<p><strong>golgafrincham</strong></p><p><strong>telephone</strong></p>', editor.value().replace(/\s*/gi, ''));
-        }
+            equal(editor.value().replace(/\s*/gi, ''), '<p><strong>golgafrincham</strong></p><p><strong>telephone</strong></p>');
+        });
 
-        function test_formatRange_honors_nested_block_element() {
+        test('formatRange honors nested block element', function() {
             editor.value('<div><div>golgafrincham</div></div>');
 
             var range = editor.createRange();
@@ -129,10 +139,10 @@
             
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<div><div><strong>golgafrincham</strong></div></div>', editor.value().replace(/\s*/gi, ''));
-        }
+            equal(editor.value().replace(/\s*/gi, ''), '<div><div><strong>golgafrincham</strong></div></div>');
+        });
 
-        function test_formatRange_honors_multiple_nested_block_elements() {
+        test('formatRange honors multiple nested block elements', function() {
             editor.value('<ul><li>golgafrincham</li><li>telephone</li></ul>');
             
             var range = editor.createRange();
@@ -141,10 +151,10 @@
             
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<ul><li><strong>golgafrincham</strong></li><li><strong>telephone</strong></li></ul>', editor.value().replace(/\s*/gi, ''));
-        }
+            equal(editor.value().replace(/\s*/gi, ''), '<ul><li><strong>golgafrincham</strong></li><li><strong>telephone</strong></li></ul>');
+        });
         
-        function test_formatRange_reuses_span() {
+        test('formatRange reuses span', function() {
             editor.value('<span>golgafrincham</span>');
 
             var range = editor.createRange();
@@ -152,10 +162,10 @@
 
             impl.formatRange(range, editor.formats.underline);
 
-            assertEquals('<span style="text-decoration:underline;">golgafrincham</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="text-decoration:underline;">golgafrincham</span>');
+        });
         
-        function test_formatRange_reuses_span_when_node_contents_are_selected() {
+        test('formatRange reuses span when node contents are selected', function() {
             editor.value('<span>golgafrincham</span>');
 
             var range = editor.createRange();
@@ -163,10 +173,10 @@
             
             impl.formatRange(range, editor.formats.underline);
 
-            assertEquals('<span style="text-decoration:underline;">golgafrincham</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="text-decoration:underline;">golgafrincham</span>');
+        });
 
-        function test_formatRange_does_not_reuse_span_if_tags_are_specified() {
+        test('formatRange does not reuse span if tags are specified', function() {
             editor.value('<span>golgafrincham</span>');
 
             var range = editor.createRange();
@@ -174,10 +184,10 @@
 
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<span><strong>golgafrincham</strong></span>', editor.value());
-        }
+            equal(editor.value(), '<span><strong>golgafrincham</strong></span>');
+        });
         
-        function test_formatRange_with_inline_format_on_collapsed_range_formats_to_word_boundary() {
+        test('formatRange with inline format on collapsed range formats to word boundary', function() {
             editor.value('foo');
 
             var range = editor.createRange();
@@ -186,10 +196,10 @@
 
             impl.formatRange(range, editor.formats.bold);
 
-            assertEquals('<strong>foo</strong>', editor.value());
-        }
+            equal(editor.value(), '<strong>foo</strong>');
+        });
 
-        function test_underline_and_collapsed_range() {
+        test('underline and collapsed range', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -197,8 +207,9 @@
             
             impl.formatRange(range, editor.formats.underline);
 
-            assertEquals('<span style="text-decoration:underline;">foo</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="text-decoration:underline;">foo</span>');
+        });
 
-    </script>
+</script>
+
 </asp:Content>

@@ -66,7 +66,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (hasAccessibleChildren || item.Template.HasValue() || item.ContentUrl.HasValue())
             {
-                new HtmlTag("span")
+                new HtmlElement("span")
                     .AddClass(UIPrimitives.Icon)
                     .ToggleClass("t-arrow-up", item.Expanded)
                     .ToggleClass("t-panelbar-collapse", item.Expanded)

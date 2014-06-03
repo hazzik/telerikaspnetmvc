@@ -68,8 +68,16 @@
         }
 
         function cue(e) {
-            var column = grid.columnFromTitle(e.$draggable.text());
-            return $t.dragCue(column.title);
+            if (e.$draggable.hasClass('t-header')) {
+                var column = grid.columnFromTitle(e.$draggable.text());
+                return $t.dragCue(column.title);
+            } else {
+                // remove icons' hidden accessibility content first
+                var groupButtonLink = $('.t-link', e.$draggable);
+                var columnTitle = groupButtonLink.text().substr($('.t-icon', groupButtonLink).text().length);
+                var column = grid.columnFromTitle(columnTitle);
+                return $t.dragCue(column.title);
+            }
         }
         
         function stop(e) {
@@ -140,11 +148,15 @@
             grid.$groupHeader
                 .delegate('.t-button', 'click', function (e) {
                     e.preventDefault();
-                    grid.unGroup($(this).parent().text());
+                    var groupButtonLink = $(this).parent().find('.t-link');
+                    var columnTitle = groupButtonLink.text().substr($('.t-icon', groupButtonLink).text().length);
+                    grid.unGroup(columnTitle);
                 })
                 .delegate('.t-link', 'click', function (e) {
                     e.preventDefault();
-                    var group = grid.groupFromTitle($(this).parent().text());
+                    var groupButtonLink = $(this);
+                    var columnTitle = groupButtonLink.text().substr($('.t-icon', groupButtonLink).text().length);
+                    var group = grid.groupFromTitle(columnTitle);
                     group.order = group.order == 'asc' ? 'desc' : 'asc';
                     grid.group(group.title);
                 });
@@ -234,7 +246,7 @@
                     var html = new $.telerik.stringBuilder()
                         .cat('<div class="t-group-indicator">')
                             .cat('<a href="#" class="t-link"><span class="t-icon" />').cat(title).cat('</a>')
-                            .cat('<a class="t-button t-state-default"><span class="t-icon t-group-delete" /></a>')
+                            .cat('<a class="t-button t-button-icon t-button-bare"><span class="t-icon t-group-delete">').cat(grid.localization.ungroup).cat('</span></a>')
                         .cat('</div>')
                     .string();
                     $groupItem = $(html).appendTo(this.$groupHeader);
@@ -245,7 +257,8 @@
 
                 $groupItem.find('.t-link .t-icon')
                           .toggleClass('t-arrow-up-small', group.order == 'asc')
-                          .toggleClass('t-arrow-down-small', group.order == 'desc');
+                          .toggleClass('t-arrow-down-small', group.order == 'desc')
+                          .html('(' + (group.order == 'asc' ? grid.localization.sortedAsc : grid.localization.sortedDesc) + ')');
 
                 this.ajaxRequest();
             } else {
@@ -275,7 +288,7 @@
             var diff = colspan - grid.$tbody.parent().find(' > colgroup > col').length;
             if (diff == 0) return;
             
-            var $tables = grid.$tbody.parent().add(grid.$headerWrap.find('table')).add(grid.$footerWrap.find("table"));
+            var $tables = grid.$tbody.parent().add(grid.$headerWrap.find('table')).add(grid.$footer.find("table"));
             if ($.browser.msie) {
                 // ie8 goes into compatibility mode if the columns get removed
                 if (diff > 0) {
@@ -297,8 +310,8 @@
                 // take the tables out for a walk. ie8 does not recalculate table layout properly.
                 var containers = [];
                 var i = 0;
-
-                $('table', grid.element)
+                
+                $('table, .t-grid-bottom', grid.element)
                     .each(function() { containers.push(this.parentNode); })
                     .appendTo($('<div />'))
                     .each(function() { containers[i++].appendChild(this); });
@@ -317,8 +330,6 @@
                 $(new $t.stringBuilder().rep('<td class="t-group-cell">&nbsp;</td>', groups).string())
                         .insertBefore($tables.find('tr.t-footer-template > td:first'));
             }            
-            
-            grid.$footer.find(".t-pager-wrapper").attr('colspan', colspan);
         },
 
         grid.bindGroup = function (dataItem, colspan, html, level) {
@@ -333,17 +344,34 @@
                 .rep('<td class="t-group-cell"></td>', level)
                 .cat('<td colspan="')
                 .cat(colspan - level)
-                .cat('"><p class="t-reset"><a class="t-icon t-collapse" href="#"></a>')
-                .cat(group.title)
-                .cat(': ')
-                .cat(key)
-                .cat('</p></td></tr>');
+                .cat('"><p class="t-reset"><a class="t-icon t-collapse" href="#"></a>');
+            
+            if (column)                            
+                html.cat(column.groupHeader($.extend( { Title: group.title, Key: key }, dataItem.Aggregates[column.member] )));
+            else
+                html.cat(group.title + ': ' + key);
+            
+            html.cat('</p></td></tr>');
 
             if (dataItem.HasSubgroups) {
                 for (var i = 0, l = dataItem.Items.length; i < l; i++)
                     grid.bindGroup(dataItem.Items[i], colspan, html, level + 1);
             } else {
                 grid.bindData(dataItem.Items, html, level + 1);
+            }
+            
+            if (grid.showGroupFooter) {
+                html.cat('<tr class="t-group-footer">')
+                    .rep('<td class="t-group-cell"></td>', grid.groups.length);
+            
+                $.each(grid.columns, function() {
+                    html.cat('<td>');
+                    if (this.groupFooter)
+                        html.cat(this.groupFooter(dataItem.Aggregates[this.member]));
+                    html.cat('</td>');
+                });
+
+                html.cat('</tr>');
             }
         }
     }

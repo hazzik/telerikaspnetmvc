@@ -2,25 +2,25 @@ function ParagraphCommand(options) {
     Command.call(this, options);
 
     this.exec = function () {
-        var range = this.getRange();
-
-        var document = documentFromRange(range);
-
-        var emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />';
+        var range = this.getRange(),
+            document = documentFromRange(range),
+            next,
+            emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />';
 
         // necessary while the emptyParagraphContent is empty under IE
-        var startInBlock = dom.parentOfType(range.startContainer, ['p']),
-            endInBlock = dom.parentOfType(range.endContainer, ['p']),
+        var blocks = 'p,h1,h2,h3,h4,h5,h6'.split(','),
+            startInBlock = dom.parentOfType(range.startContainer, blocks),
+            endInBlock = dom.parentOfType(range.endContainer, blocks),
             shouldTrim = (startInBlock && !endInBlock) || (!startInBlock && endInBlock);
 
         range.deleteContents();
 
         var marker = dom.create(document, 'a');
         range.insertNode(marker);
+        normalize(marker.parentNode);
 
-        var li = dom.parentOfType(marker, 'li'.split(','));
-
-        var next;
+        var li = dom.parentOfType(marker, ['li']),
+            heading = dom.parentOfType(marker, 'h1,h2,h3,h4,h5,h6'.split(','));
 
         if (li) {
             var rng = range.cloneRange();
@@ -39,14 +39,22 @@ function ParagraphCommand(options) {
                 next = paragraph;
             }
         }
+        else if (heading && !marker.nextSibling) {
+            var paragraph = dom.create(document, 'p');
+
+            dom.insertAfter(paragraph, heading);
+            paragraph.innerHTML = emptyParagraphContent;
+            dom.remove(marker);
+            next = paragraph;
+        }
 
         if (!next) {
-            if (!li)
+            if (!(li || heading))
                 new BlockFormatter([{ tags: ['p']}]).apply([marker]);
 
             range.selectNode(marker);
 
-            var parent = dom.parentOfType(marker, [li ? 'li' : 'p']);
+            var parent = dom.parentOfType(marker, [li ? 'li' : heading ? dom.name(heading) : 'p']);
 
             split(range, parent, shouldTrim);
 
@@ -62,23 +70,19 @@ function ParagraphCommand(options) {
 
             dom.remove(parent);
 
-            if (previous.firstChild && dom.is(previous.firstChild, 'br'))
-                dom.remove(previous.firstChild);
+            function clean(node) {
+                if (node.firstChild && dom.is(node.firstChild, 'br'))
+                    dom.remove(node.firstChild);
 
-            if (isDataNode(previous) && previous.nodeValue == '')
-                previous = previous.parentNode;
+                if (isDataNode(node) && node.nodeValue == '')
+                    node = node.parentNode;
 
-            if (previous && previous.innerHTML == '')
-                previous.innerHTML = emptyParagraphContent;
+                if (node && !dom.is(node, 'img') && node.innerHTML == '')
+                    node.innerHTML = emptyParagraphContent;
+            }
 
-            if (next.firstChild && dom.is(next.firstChild, 'br'))
-                dom.remove(next.firstChild);
-
-            if (isDataNode(next) && next.nodeValue == '')
-                next = next.parentNode;
-
-            if (next.innerHTML == '')
-                next.innerHTML = emptyParagraphContent;
+            clean(previous);
+            clean(next);
 
             // normalize updates the caret display in Gecko
             normalize(previous);
@@ -86,7 +90,11 @@ function ParagraphCommand(options) {
 
         normalize(next);
 
-        range.selectNodeContents(next);
+        if (!dom.is(next, 'img'))
+            range.selectNodeContents(next);
+        else
+            range.setStartBefore(next);
+
         range.collapse(true);
 
         dom.scrollTo(next);
@@ -103,7 +111,8 @@ function NewLineCommand(options) {
         range.deleteContents();
         var br = dom.create(documentFromRange(range), 'br');
         range.insertNode(br);
-        br.parentNode.normalize();
+        normalize(br.parentNode);
+        
         if (!$.browser.msie && (!br.nextSibling || dom.isWhitespace(br.nextSibling))) { 
             //Gecko and WebKit cannot put the caret after only one br.
             var filler = br.cloneNode(true);

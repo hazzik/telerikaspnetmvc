@@ -11,7 +11,6 @@ namespace Telerik.Web.Mvc.UI
 
     using Extensions;
     using Infrastructure;
-    using Telerik.Web.Mvc.UI;
 
     public class GridDataProcessor
     {
@@ -23,12 +22,17 @@ namespace Telerik.Web.Mvc.UI
         private IList<SortDescriptor> sortDescriptors;
         private IList<IFilterDescriptor> filterDescriptors;
         private IList<GroupDescriptor> groupDescriptors;
+        private IEnumerable<AggregateResult> aggregatesResults;
+        private IEnumerable<AggregateDescriptor> aggregateDescriptors; 
+        
+        private bool aggregatesAreCalculated;
 
         public GridDataProcessor(IGridBindingContext bindingContext)
         {
             Guard.IsNotNull(bindingContext, "bindingContext");
 
             this.bindingContext = bindingContext;
+            aggregatesResults = Enumerable.Empty<AggregateResult>();
         }
 
         public int Total
@@ -46,7 +50,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (sortDescriptors == null)
                 {
-                    string sortExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.OrderBy);
+                    var sortExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.OrderBy);
 
                     if (sortExpression != null)
                     {
@@ -69,7 +73,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (groupDescriptors == null)
                 {
-                    string groupExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.GroupBy);
+                    var groupExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.GroupBy);
                     
                     if (groupExpression != null)
                     {
@@ -92,7 +96,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (filterDescriptors == null)
                 {
-                    string filterExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.Filter);
+                    var filterExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.Filter);
 
                     if (filterExpression != null)
                     {
@@ -115,7 +119,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 EnsureDataSourceIsProcessed();
 
-                int pageSize = bindingContext.PageSize;
+                var pageSize = PageSize;
 
                 if ((totalCount == 0) || (pageSize == 0))
                 {
@@ -144,6 +148,72 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        public int PageSize
+        {
+            get
+            {
+                return bindingContext.GetGridParameter<int?>(GridUrlParameters.PageSize) ?? bindingContext.PageSize;
+            }
+        }
+
+        protected IEnumerable<AggregateFunction> Aggregates
+        {
+            get 
+            {
+                if (aggregateDescriptors == null)
+                {
+                    var aggregates = bindingContext.GetGridParameter<string>(GridUrlParameters.Aggregates);
+
+                    if (aggregates != null)
+                    {
+                        aggregateDescriptors = GridDescriptorSerializer.Deserialize<AggregateDescriptor>(aggregates); 
+                    }
+
+                    if (aggregateDescriptors == null)
+                    {
+                        aggregateDescriptors = bindingContext.Aggregates;
+                    }
+                }
+                return aggregateDescriptors.SelectMany(aggregate => aggregate.Aggregates);
+            }
+        }
+
+        public IEnumerable<AggregateResult> AggregatesResults
+        {
+            get
+            {
+                CalculateAggregates();
+                return aggregatesResults;
+            }
+        }
+
+        private void CalculateAggregates()
+        {
+            if (aggregatesAreCalculated)
+            {
+                return;
+            }
+
+            if (bindingContext.DataSource == null)
+            {
+                aggregatesAreCalculated = true;
+                return;
+            }
+
+            if (Aggregates.Any())
+            {
+                var dataSource = bindingContext.DataSource.AsQueryable();
+
+                var source = dataSource;
+                if (FilterDescriptors.Any())
+                {
+                    source = dataSource.Where(FilterDescriptors);
+                }
+                aggregatesResults = source.Aggregate(Aggregates);
+                aggregatesAreCalculated = true;
+            }
+        }
+
         private void EnsureDataSourceIsProcessed()
         {
             if (dataSourceIsProcessed)
@@ -160,16 +230,23 @@ namespace Telerik.Web.Mvc.UI
             if (!bindingContext.EnableCustomBinding)
             {
                 GridModel model;
+
+                if (GroupDescriptors.Any() && Aggregates.Any())
+                {
+                    GroupDescriptors.Each(g => g.AggregateFunctions.AddRange(Aggregates));
+                }
+
                 var dataTableEnumerable = bindingContext.DataSource as GridDataTableWrapper;
                 if (dataTableEnumerable != null)
                 {
-                    model = dataTableEnumerable.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);                    
+                    model = dataTableEnumerable.ToGridModel(CurrentPage, PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);                    
                 }
                 else
                 {
-                    IQueryable dataSource = bindingContext.DataSource.AsQueryable();
-                    model = dataSource.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);                    
+                    var dataSource = bindingContext.DataSource.AsQueryable();
+                    model = dataSource.ToGridModel(CurrentPage, PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);
                 }
+
                 totalCount = model.Total;
                 processedDataSource = model.Data.AsGenericEnumerable();
             }

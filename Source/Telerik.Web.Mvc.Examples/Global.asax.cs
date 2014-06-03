@@ -23,6 +23,14 @@
 
         protected void Application_Start()
         {
+#if MVC3
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new RazorViewEngine());
+            ViewEngines.Engines.Add(new WebFormViewEngine());
+
+            AreaRegistration.RegisterAllAreas();
+#endif
+
             RegisterRoutes(RouteTable.Routes);
 
             SiteMapManager.SiteMaps.Register<XmlSiteMap>("examples", sitmap => sitmap.Load());

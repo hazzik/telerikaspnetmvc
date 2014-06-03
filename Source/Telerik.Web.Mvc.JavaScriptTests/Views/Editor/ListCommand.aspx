@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -12,39 +12,48 @@
 
         var ListCommand;
         var enumerator;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             ListCommand = $.telerik.editor.ListCommand;
         }
 
-        function test_exec_adds_list() {
+        test('exec adds list', function() {
             var range = createRangeFromText(editor, '|foo|');
             var command = new ListCommand({tag:'ul', range:range});
             command.exec();
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_undo_removes_list() {
+        test('undo removes list', function() {
             var range = createRangeFromText(editor, '|foo|');
             var command = new ListCommand({tag:'ul', range:range});
             command.exec();
             command.undo();
 
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_redo_adds_list() {
+        test('redo adds list', function() {
             var range = createRangeFromText(editor, '|foo|');
             var command = new ListCommand({ tag: 'ul', range: range });
             command.exec();
             command.undo();
             command.exec();
 
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_exec_with_collapsed_range() {
+        test('exec with collapsed range', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -52,10 +61,10 @@
             var command = new ListCommand({ tag: 'ul', range: range });
             command.exec();
 
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_exec_keeps_selection() {
+        test('exec keeps selection', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -63,28 +72,30 @@
             var command = new ListCommand({ tag: 'ul', range: range });
             command.exec();
             range = editor.getRange();
-            assertEquals(editor.body.firstChild.firstChild.firstChild, range.startContainer);
-            assertEquals(1, range.startOffset);
-            assertTrue(range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild.firstChild.firstChild);
+            equal(range.startOffset, 1);
+            ok(range.collapsed);
+        });
 
-        function test_apply_and_cursor() {
+        test('apply and cursor', function() {
             editor.value('foo<ul><li>bar</li></ul>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.collapse(true);
             var command = new ListCommand({ tag: 'ul', range: range });
             command.exec();
-            assertEquals('<ul><li>foo</li></ul><ul><li>bar</li></ul>', editor.value())
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul><ul><li>bar</li></ul>')
+        });
 
-        function test_exec_puts_cursor_in_empty_li() {
+        test('exec puts cursor in empty li', function() {
             editor.value('');
             editor.focus();
             var command = new ListCommand({ tag: 'ul', range: editor.getRange() });
             command.exec();
             editor.getRange().insertNode(editor.document.createElement('a'));
-            assertEquals('<ul><li><a></a></li></ul>', editor.value())
-        }
-    </script>
+            equal(editor.value(), '<ul><li><a></a></li></ul>')
+        });
+
+</script>
+
 </asp:Content>

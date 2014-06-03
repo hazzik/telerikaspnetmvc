@@ -175,7 +175,7 @@
 			<label for="multiple"><strong>multiple panels</strong> to be expanded at a time</label>
 		</li>
 	</ul>
-    <button type="submit" class="t-button t-state-default">Apply</button>
+    <button type="submit" class="t-button">Apply</button>
 <% } %>
 		
 </asp:Content>

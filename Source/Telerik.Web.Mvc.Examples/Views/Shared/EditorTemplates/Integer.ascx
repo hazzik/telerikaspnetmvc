@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<int>" %>
+<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<int?>" %>
 
 <%= Html.Telerik().IntegerTextBox()
         .Name(ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty))

@@ -1,163 +1,92 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests.Extensions" %>
+
+<!DOCTYPE html>
 <html>
+<head runat="server">
+    <title>QUnit test runner :: Telerik Extensions for ASP.NET MVC</title>
+    <link href="<%= Url.Content("~/content/qunit.css") %>" rel="stylesheet" type="text/css" />
+    <link href="<%= Url.Content("~/content/qunit-runner.css") %>" rel="stylesheet" type="text/css" />
 
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>JsUnit Test Runner</title>
-<script language="JavaScript" type="text/javascript" src="<%= Url.Content("~/Scripts/jsUnit/app/xbDebug.js")%>"></script>
-<script language="JavaScript" type="text/javascript" src="<%= Url.Content("~/Scripts/jsUnit/app/jsUnitCore.js")%>"></script>
-<script language="JavaScript" type="text/javascript">
-    var DEFAULT_TEST_FRAME_HEIGHT = 250;
+    <%= Html.Telerik().ScriptRegistrar()
+            .DefaultGroup(defaultGroup => defaultGroup
+                .Add("qunit.js")
+                .Add("qunit-runner.js"))
+    %>
 
-    function jsUnitParseParms(string) {
-        var i;
-        var searchString = unescape(string);
-        var parameterHash = new Object();
+    <%--
+    <!-- globalization tests -->
 
-        if (!searchString) {
-            return parameterHash;
-        }
+    <script type="text/javascript">
+        var cultures = [];
+    </script>
 
-        i = searchString.indexOf('?');
-        if (i != -1) {
-            searchString = searchString.substring(i + 1);
-        }
+    <%
+        Response.Write("<script type='text/javascript'>");
 
-        var parmList = searchString.split('&');
-        var a;
-        for (i = 0; i < parmList.length; i++) {
-            a = parmList[i].split('=');
-            a[0] = a[0].toLowerCase();
-            if (a.length > 1) {
-                parameterHash[a[0]] = a[1];
-            }
-            else {
-                parameterHash[a[0]] = true;
+        foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures))
+        {
+            if (!ci.IsNeutralCulture)
+            {
+                Response.Write("cultures.push(\"" + ci.Name + "\");");
             }
         }
-        return parameterHash;
-    }
 
-    function jsUnitConstructTestParms() {
-        var p;
-        var parms = '';
+        Response.Write("</script>");
+    %>
 
-        for (p in jsUnitParmHash) {
-            var value = jsUnitParmHash[p];
+    <script type="text/javascript">
+        function suite() {
+            var allTests = new top.jsUnitTestSuite();
+            var suite = new top.jsUnitTestSuite();
 
-            if (!value ||
-                p == 'testpage' ||
-                p == 'autorun' ||
-                p == 'coverage' ||
-                p == 'submitresults' ||
-                p == 'showtestframe' ||
-                p == 'resultid') {
-                continue;
+            for (var i = 0; i < cultures.length; i++) {
+                suite.addTestPage("Core/DateFormatting?culture=" + cultures[i]);
+                suite.addTestPage("Core/NumberFormatting?culture=" + cultures[i]);
+                suite.addTestPage("Core/TimeParsing?culture=" + cultures[i]);
             }
 
-            if (parms) {
-                parms += '&';
+            allTests.addTestSuite(suite);
+            return allTests;
+        }
+    </script>--%>
+    
+    <script type="text/javascript">
+
+        var tests = [
+                <% 
+                    foreach (var controller in (IEnumerable<Type>)ViewData["Controllers"]) {
+                        foreach (var actionName in controller.GetActions()) { %>
+                            { page: '<%= Url.Action(actionName, controller.GetName()) %>', title: '<%= controller.GetName() %> / <%= actionName %>' },
+                <%
+                        }
+                    }
+                %>
+                {}
+            ],
+            sequential = true, // false to run tests simultaneously
+            runnerDone = function(failures, total) {
+                $('<p id="qunit-testresult" class="result" />')
+                    .html(["Tests completed in ", (+new Date()) - start, " milliseconds.<br />",
+                           "<span class='passed'>", total-failures, "</span> tests of <span class='total'>", total,
+                           "</span> passed, <span class='failed'>", failures, "</span> failed."
+                        ].join(''))
+                    .appendTo("body > div");
             }
 
-            parms += p;
+        tests.pop();
 
-            if (typeof(value) != 'boolean') {
-                parms += '=' + value;
-            }
-        }
-        return escape(parms);
-    }
-
-    var jsUnitParmHash = jsUnitParseParms(document.location.search);
-
-    // set to true to turn debugging code on, false to turn it off.
-    xbDEBUG.on = jsUnitGetParm('debug') ? true : false;
-</script>
-
-<script language="JavaScript" type="text/javascript" src="<%= Url.Content("~/Scripts/jsUnit/app/jsUnitTestManager.js")%>"></script>
-<script language="JavaScript" type="text/javascript" src="<%= Url.Content("~/Scripts/jsUnit/app/jsUnitTracer.js")%>"></script>
-<script language="JavaScript" type="text/javascript" src="<%= Url.Content("~/Scripts/jsUnit/app/jsUnitTestSuite.js")%>"></script>
-<script language="JavaScript" type="text/javascript">
-
-    var testManager;
-    var utility;
-    var tracer;
-
-
-    if (!Array.prototype.push) {
-        Array.prototype.push = function (anObject) {
-            this[this.length] = anObject;
-        }
-    }
-
-    if (!Array.prototype.pop) {
-        Array.prototype.pop = function () {
-            if (this.length > 0) {
-                delete this[this.length - 1];
-                this.length--;
-            }
-        }
-    }
-
-    function shouldKickOffTestsAutomatically() {
-        return jsUnitGetParm('autorun') == "true";
-    }
-
-    function shouldShowTestFrame() {
-        return jsUnitGetParm('showtestframe');
-    }
-
-    function shouldSubmitResults() {
-        return jsUnitGetParm('submitresults');
-    }
-
-    function getResultId() {
-        if (jsUnitGetParm('resultid'))
-            return jsUnitGetParm('resultid');
-        return "";
-    }
-
-    function submitResults() {
-        window.mainFrame.mainData.document.testRunnerForm.runButton.disabled = true;
-        window.mainFrame.mainResults.populateHeaderFields(getResultId(), navigator.userAgent, JSUNIT_VERSION, testManager.resolveUserEnteredTestFileName());
-        window.mainFrame.mainResults.submitResults();
-    }
-
-    function wasResultUrlSpecified() {
-        return shouldSubmitResults() && jsUnitGetParm('submitresults') != 'true';
-    }
-
-    function getSpecifiedResultUrl() {
-        return jsUnitGetParm('submitresults');
-    }
-
-    function init() {
-        var testRunnerFrameset = document.getElementById('testRunnerFrameset');
-        if (shouldShowTestFrame() && testRunnerFrameset) {
-            var testFrameHeight;
-            if (jsUnitGetParm('showtestframe') == 'true')
-                testFrameHeight = DEFAULT_TEST_FRAME_HEIGHT;
-            else
-                testFrameHeight = jsUnitGetParm('showtestframe');
-            testRunnerFrameset.rows = '*,0,' + testFrameHeight;
-        }
-        testManager = new jsUnitTestManager();
-        tracer = new JsUnitTracer(testManager);
-        
-        if (shouldKickOffTestsAutomatically()) {
-            window.mainFrame.mainData.kickOffTests();
-        }
-    }
-
-
-</script>
+        var start = +new Date();
+        QUnit.run(tests, sequential, runnerDone);
+    </script>
 </head>
-
-<frameset id="testRunnerFrameset" rows="*,0,0" border="0" onload="init()">
-    <frame frameborder="0" name="mainFrame" src="<%= Url.Content("~/Scripts/jsUnit/app/main-frame.html")%>">
-    <frame frameborder="0" name="documentLoader" src="<%= Url.Content("~/Scripts/jsUnit/app/main-loader.html")%>">
-    <frame frameborder="0" name="testContainer" src="<%= Url.Content("~/Scripts/jsUnit/app/testContainer.html")%>">
-</frameset>
+<body>
+    <div>
+        <h1 id="qunit-header">TEST RUNNER</h1>
+        <h2 id="qunit-banner"></h2>
+        <h2 id="qunit-runner-userAgent"></h2>
+        <div id="runner-test-page-container"></div>
+    </div>
+</body>
 </html>

@@ -1,9 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>Selection</h2>
-    
     <% Html.Telerik().PanelBar()
             .Name("myPanelBar")
             .Items(panelbar =>
@@ -32,36 +30,44 @@
             .Effects(fx => fx.Toggle())
             .Render(); %>
             
+</asp:Content>
 
-    <script type="text/javascript">
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
 
         var panelbar;
-
-        function setUp() {
-            panelbar = $('#myPanelBar').data('tPanelBar');
-        }
             
         function getRootItem(index) {
             return $('#myPanelBar').find('.t-header').parent().eq(index)
         }
+        
+        module("PanelBar / Selection", {
+            setup: function() {
+                panelbar = $('#myPanelBar').data('tPanelBar');
+            }
+        });
 
-        function test_clicking_root_items_selects_them() {
+        test('clicking root items selects them', function() {
             var firstLink = getRootItem(0).find('> .t-link');
         
             firstLink.trigger({ type: 'click' });
 
-            assertTrue(firstLink.hasClass('t-state-selected'));
-        }
+            ok(firstLink.hasClass('t-state-selected'));
+        });
 
-        function test_selecting_root_items_deselects_their_siblings() {
+        test('selecting root items deselects their siblings', function() {
             var firstLink = getRootItem(0).find('> .t-link');
             var secondLink = getRootItem(1).find('> .t-link');
         
             firstLink.trigger({ type: 'click' });
             secondLink.trigger({ type: 'click' });
 
-            assertEquals(1, $(panelbar.element).find('.t-state-selected').length);
-        }
+            equal($(panelbar.element).find('.t-state-selected').length, 1);
+        });
 
-    </script>
+</script>
+
 </asp:Content>

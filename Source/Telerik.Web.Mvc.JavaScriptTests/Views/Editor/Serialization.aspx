@@ -1,428 +1,458 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>Serialization</h2>
-
     
     <%= Html.Telerik().Editor().Name("Editor") %>
 
+    <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript">
-        function getEditor() {
-            return $('#Editor').data('tEditor');
-        }
-        
+
         var editor;
-        
-        function setUp() {
-            editor = getEditor();
-        }
 
-        function test_value_reciprocity() {
-            var editor = getEditor();
+        module("Editor / Serialization", {
+            setup: function() {
+                editor = getEditor();
+            }
+        });
 
+        test('value reciprocity', function() {
             editor.value("<p>and now, for something completely different</p>");
 
-            assertEquals("<p>and now, for something completely different</p>", editor.value());
-        }
+            equal(editor.value(), "<p>and now, for something completely different</p>");
+        });
         
-        function test_closes_empty_tags() {
+        test('closes empty tags', function() {
             editor.value('<br>');
-            assertEquals('<br />', editor.value());
-        }
+            equal(editor.value(), '<br />');
+        });
 
-        function test_converts_to_lower_case() {
+        test('converts to lower case', function() {
             editor.value('<BR>');
-            assertEquals('<br />', editor.value());
-        }
+            equal(editor.value(), '<br />');
+        });
 
-        function test_converts_mixed_case_to_lower_case() {
+        test('converts mixed case to lower case', function() {
             editor.value('<Br>');
-            assertEquals('<br />', editor.value());
-        }
+            equal(editor.value(), '<br />');
+        });
 
-        function test_returns_child_tags() {
+        test('returns child tags', function() {
             editor.value('<div><span></div>');
-            assertEquals('<div><span></span></div>', editor.value());
-        }
+            equal(editor.value(), '<div><span></span></div>');
+        });
         
-        function test_returns_root_text_nodes() {
+        test('returns root text nodes', function() {
             editor.value('test');
-            assertEquals('test', editor.value());
-        }
+            equal(editor.value(), 'test');
+        });
         
-        function test_returns_child_text_nodes() {
+        test('returns child text nodes', function() {
             editor.value('<span>test</span>');
-            assertEquals('<span>test</span>', editor.value());
-        }
+            equal(editor.value(), '<span>test</span>');
+        });
 
-        function test_fills_attributes() {
+        test('fills attributes', function() {
             editor.value('<input type=hidden>');
-            assertEquals('<input type="hidden" />', editor.value());
-        }
+            equal(editor.value(), '<input type="hidden" />');
+        });
 
-        function test_expands_attributes() {
+        test('expands attributes', function() {
             editor.value('<br disabled>');
-            assertEquals('<br disabled="disabled" />', editor.value());
-        }
+            equal(editor.value(), '<br disabled="disabled" />');
+        });
 
-        function test_fills_custom_attributes() {
+        test('fills custom attributes', function() {
             editor.value('<br test="test">');
-            assertEquals('<br test="test" />', editor.value());
-        }
+            equal(editor.value(), '<br test="test" />');
+        });
 
-        function test_caps_attributes() {
+        test('caps attributes', function() {
             editor.value('<br CLASS="test">');
-            assertEquals('<br class="test" />', editor.value());
-        }
+            equal(editor.value(), '<br class="test" />');
+        });
 
-        function test_attributes_containing_dashes() {
+        test('attributes containing dashes', function() {
             editor.value('<br class=t-input />');
-            assertEquals('<br class="t-input" />', editor.value());
-        }
+            equal(editor.value(), '<br class="t-input" />');
+        });
 
-        function test_adds_closing_tag() {
+        test('adds closing tag', function() {
             editor.value('<strong>');
-            assertEquals('<strong></strong>', editor.value());
-        }
+            equal(editor.value(), '<strong></strong>');
+        });
 
-        function test_fixes_improperly_nested_inline_tags() {
+        test('fixes improperly nested inline tags', function() {
             editor.value('<strong><span></strong></span>');
-            assertEquals('<strong><span></span></strong>', editor.value());
-        }
+            equal(editor.value(), '<strong><span></span></strong>');
+        });
         
-        function test_fixes_improperly_nested_inline_and_block_tags() {
+        test('fixes improperly nested inline and block tags', function() {
 //How to fix this without string parsing ???
 //            editor.value('<strong><div></strong></div>');
-//            assertEquals('<strong></strong><div></div>', editor.value());
-        }
+//            equal(editor.value(), '<strong></strong><div></div>');
+        });
 
-        function test_handles_style_attribute_values() {
+        test('handles style attribute values', function() {
             editor.value('<div style="text-align:left"></div>');
             
-            assertEquals('<div style="text-align:left;"></div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:left;"></div>');
+        });
 
-        function test_handles_style_color_values() {
+        test('handles style color values', function() {
             editor.value('<div style="color:#000000"></div>');
-            assertEquals('<div style="color:#000000;"></div>', editor.value());
-        }
+            equal(editor.value(), '<div style="color:#000000;"></div>');
+        });
 
-        function test_comments() {
+        test('comments', function() {
             editor.value('<!-- comment -->');
-            assertEquals('<!-- comment -->', editor.value());
-        }
+            equal(editor.value(), '<!-- comment -->');
+        });
         
-        function test_cdata_encoding() {
+        test('cdata encoding', function() {
             editor.value('<![CDATA[test]]>');
-            assertEquals('<!--[CDATA[test]]-->', editor.body.innerHTML);
-        }
+            equal(editor.body.innerHTML, '<!--[CDATA[test]]-->');
+        });
 
-        function test_cdata() {
+        test('cdata', function() {
             editor.value('<![CDATA[test]]>');
-            assertEquals('<![CDATA[test]]>', editor.value());
-        }
+            equal(editor.value(), '<![CDATA[test]]>');
+        });
 
-        function test_b_converted_to_strong() {
+        test('b converted to strong', function() {
             editor.value('<b></b>');
-            assertEquals('<strong></strong>', editor.value());
-        }
+            equal(editor.value(), '<strong></strong>');
+        });
 
-        function test_i_converted_to_em() {
+        test('i converted to em', function() {
             editor.value('<i></i>');
-            assertEquals('<em></em>', editor.value());
-        }
+            equal(editor.value(), '<em></em>');
+        });
         
-        function test_u_converted_to_span_with_underline_style() {
+        test('u converted to span with underline style', function() {
             editor.value('<u></u>');
-            assertEquals('<span style="text-decoration:underline;"></span>', editor.value());
-        }
+            equal(editor.value(), '<span style="text-decoration:underline;"></span>');
+        });
 
-        function test_font_converted_to_span() {
+        test('font converted to span', function() {
             editor.value('<font color="#ff0000" face="verdana" size="5">foo</font>');
-            assertEquals('<span style="color:#ff0000;font-face:verdana;font-size:x-large;">foo</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="color:#ff0000;font-face:verdana;font-size:x-large;">foo</span>');
+        });
 
-        function test_script_tag_preserved() {
+        test('script tag preserved', function() {
             editor.value('<script>var answer=42;<\/script>');
-            assertEquals('<script>var answer=42;<\/script>', editor.value());
-        }
+            equal(editor.value(), '<script>var answer=42;<\/script>');
+        });
         
-        function test_script_tag_not_executed() {
+        test('script tag not executed', function() {
             editor.value('<script>var answer=42;<\/script>');
-            assertUndefined(window.answer);
-        }
+            ok(undefined === window.answer);
+        });
 
-        function test_br_moz_dirty_removed() {
+        test('br moz dirty removed', function() {
             editor.value('<br _moz_dirty="">');
-            assertEquals('', editor.value());
-        }
+            equal(editor.value(), '');
+        });
         
-        function test_moz_dirty_removed() {
+        test('moz dirty removed', function() {
             editor.value('<hr _moz_dirty="">');
-            assertEquals('<hr />', editor.value());
-        }
+            equal(editor.value(), '<hr />');
+        });
 
-        function test_multiple_attributes_sorted_alphabetically() {
+        test('multiple attributes sorted alphabetically', function() {
             editor.value('<input type="button" class="t-button" style="display:none;" />');
-            assertEquals('<input class="t-button" style="display:none;" type="button" />', editor.value());
-        }
+            equal(editor.value(), '<input class="t-button" style="display:none;" type="button" />');
+        });
 
-        function test_javascript_attributes() {
+        test('javascript attributes', function() {
             editor.value('<input type="button" onclick="alert(1)" />');
-            assertEquals('<input onclick="alert(1)" type="button" />', editor.value());
-        }
+            equal(editor.value(), '<input onclick="alert(1)" type="button" />');
+        });
 
-        function test_value_attribute() {
+        test('value attribute', function() {
             editor.value('<input type="button" value="test" />');
-            assertEquals('<input type="button" value="test" />', editor.value());
-        }
+            equal(editor.value(), '<input type="button" value="test" />');
+        });
 
-        function test_type_text_attribute() {
+        test('type text attribute', function() {
             editor.value('<input type="text" value="test" />');
-            assertEquals('<input type="text" value="test" />', editor.value());
-        }
+            equal(editor.value(), '<input type="text" value="test" />');
+        });
         
-        function test_style_ending_with_whitespace() {
+        test('style ending with whitespace', function() {
             editor.value('<br style="display:none; " />');
-            assertEquals('<br style="display:none;" />', editor.value());
-        }
+            equal(editor.value(), '<br style="display:none;" />');
+        });
 
-        function test_a_href_is_not_made_absolute() {
+        test('a href is not made absolute', function() {
             editor.value('<a href="foo">a</a>');
-            assertEquals('<a href="foo">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="foo">a</a>');
+        });
         
-        function test_link_href_is_not_made_absolute() {
+        test('link href is not made absolute', function() {
             editor.value('<link href="foo" />');
-            assertEquals('<link href="foo" />', editor.value());
-        }
+            equal(editor.value(), '<link href="foo" />');
+        });
         
-        function test_img_src_is_not_made_absolute() {
+        test('img src is not made absolute', function() {
             editor.value('<img src="foo" />');
-            assertEquals('<img src="foo" />', editor.value());
-        }
-        function test_script_src_is_not_made_absolute() {
+            equal(editor.value(), '<img src="foo" />');
+        });
+        test('script src is not made absolute', function() {
             editor.value('<script src="foo"><\/script>');
-            assertEquals('<script src="foo"><\/script>', editor.value());
-        }
+            equal(editor.value(), '<script src="foo"><\/script>');
+        });
 
-        function test_href_without_quotes() {
+        test('href without quotes', function() {
             editor.value('<a href=foo>a</a>');
-            assertEquals('<a href="foo">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="foo">a</a>');
+        });
         
-        function test_href_without_quotes_and_with_whitespace() {
+        test('href without quotes and with whitespace', function() {
             editor.value('<a href= foo >a</a>');
-            assertEquals('<a href="foo">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="foo">a</a>');
+        });
         
-        function test_href_without_quotes_and_whith_other_attrubutes() {
+        test('href without quotes and whith other attrubutes', function() {
             editor.value('<a href= foo class=test>a</a>');
-            assertEquals('<a class="test" href="foo">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a class="test" href="foo">a</a>');
+        });
 
-        function test_href_with_single_quotes() {
+        test('href with single quotes', function() {
             editor.value('<a href=\'foo\'>a</a>');
-            assertEquals('<a href="foo">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="foo">a</a>');
+        });
         
-        function test_href_with_hash() {
+        test('href with hash', function() {
             editor.value('<a href="#hash">a</a>');
-            assertEquals('<a href="#hash">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="#hash">a</a>');
+        });
         
-        function test_href_with_absolute() {
+        test('href with absolute', function() {
             editor.value('<a href="http://www.example.com">a</a>');
-            assertEquals('<a href="http://www.example.com">a</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="http://www.example.com">a</a>');
+        });
 
-        function test_href_with_absolute_and_url_content() {
+        test('href with absolute and url content', function() {
             editor.value('<a href="http://www.example.com">www.example.com</a>');
-            assertEquals('<a href="http://www.example.com">www.example.com</a>', editor.value());
-        }
+            equal(editor.value(), '<a href="http://www.example.com">www.example.com</a>');
+        });
 
-        function test_attributes_starting_with_underscore_moz_are_removed() {
+        test('attributes starting with underscore moz are removed', function() {
             editor.value('<br _moz_resizing="true" />');
-            assertEquals('<br />', editor.value());
-        }
+            equal(editor.value(), '<br />');
+        });
 
-        function test_empty_whitespace_whitespace_trimmed() {
+        test('empty whitespace whitespace trimmed', function() {
             editor.value('<br />      ');
-            assertEquals('<br />', editor.value());
-        }
+            equal(editor.value(), '<br />');
+        });
 
-        function test_whitespace_empty_whitespace_trimmed() {
+        test('whitespace empty whitespace trimmed', function() {
             editor.value('           <br />');
-            assertEquals('<br />', editor.value());
-        }
+            equal(editor.value(), '<br />');
+        });
         
-        function test_whitespace_empty_inline_whitespace_trimmed() {
+        test('whitespace empty inline whitespace trimmed', function() {
             editor.value('           <a></a>');
-            assertEquals('<a></a>', editor.value());
-        }
+            equal(editor.value(), '<a></a>');
+        });
 
-        function test_whitespace_inline_whitespace_trimmed() {
+        test('whitespace inline whitespace trimmed', function() {
             editor.value('           <a>foo</a>');
-            assertEquals('<a>foo</a>', editor.value());
-        }
+            equal(editor.value(), '<a>foo</a>');
+        });
 
-        function test_empty_inline_whitespace_whitespace_trimmed() {
+        test('empty inline whitespace whitespace trimmed', function() {
             editor.value('<a></a>     ');
-            assertEquals('<a></a>', editor.value());
-        }
+            equal(editor.value(), '<a></a>');
+        });
 
-        function test_inline_whitespace_whitespace_collapsed() {
+        test('inline whitespace whitespace collapsed', function() {
             editor.value('<a>foo</a>     ');
-            assertEquals('<a>foo</a> ', editor.value());
-        }
+            equal(editor.value(), '<a>foo</a> ');
+        });
         
-        function test_whitespace_empty_block_whitespace_trimmed() {
+        test('whitespace empty block whitespace trimmed', function() {
             editor.value('           <div></div>');
-            assertEquals('<div></div>', editor.value());
-        }
+            equal(editor.value(), '<div></div>');
+        });
         
-        function test_whitespace_block_whitespace_trimmed() {
+        test('whitespace block whitespace trimmed', function() {
             editor.value('           <div>foo</div>');
-            assertEquals('<div>foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div>foo</div>');
+        });
 
-        function test_empty_block_whitespace_whitespace_trimmed() {
+        test('empty block whitespace whitespace trimmed', function() {
             editor.value('<div></div>     ');
-            assertEquals('<div></div>', editor.value());
-        }
+            equal(editor.value(), '<div></div>');
+        });
 
-        function test_block_whitespace_whitespace_trimmed() {
+        test('block whitespace whitespace trimmed', function() {
             editor.value('<div>foo</div>     ');
-            assertEquals('<div>foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div>foo</div>');
+        });
 
-        function test_trimming_whitespace_within_content() {
+        test('trimming whitespace within content', function() {
             editor.value('<span>foo   bar</span>');
-            assertEquals('<span>foo bar</span>', editor.value());
-        }
+            equal(editor.value(), '<span>foo bar</span>');
+        });
 
-        function test_keeping_white_space_in_pre() {
+        test('keeping white space in pre', function() {
             editor.value('<pre>foo   bar</pre>');
-            assertEquals('<pre>foo   bar</pre>', editor.value());
-        }
+            equal(editor.value(), '<pre>foo   bar</pre>');
+        });
         
-        function test_keeping_white_space_in_pre_children() {
+        test('keeping white space in pre children', function() {
             editor.value('<pre><span>   foo  </span></pre>');
-            assertEquals('<pre><span>   foo  </span></pre>', editor.value());
-        }
+            equal(editor.value(), '<pre><span>   foo  </span></pre>');
+        });
 
-        function test_text_whitespace_inline_whitespace_collapsed() {
+        test('text whitespace inline whitespace collapsed', function() {
             editor.value('foo  <strong>bar</strong>');
-            assertEquals('foo <strong>bar</strong>', editor.value());
-        }
+            equal(editor.value(), 'foo <strong>bar</strong>');
+        });
 
-        function test_text_whitespace_block_whitespace_preserved() {
+        test('text whitespace block whitespace preserved', function() {
             editor.value('foo <div>bar</div>');
-            assertEquals('foo <div>bar</div>', editor.value());
-        }
+            equal(editor.value(), 'foo <div>bar</div>');
+        });
 
-        function test_text_whitespace_empty_element_whitespace_preserved() {
+        test('text whitespace empty element whitespace preserved', function() {
             editor.value('foo <br />');
-            assertEquals('foo <br />', editor.value());
-        }
+            equal(editor.value(), 'foo <br />');
+        });
 
-        function test_empty_element_whitespace_text_whitespace_trimmed() {
+        test('empty element whitespace text whitespace trimmed', function() {
             editor.value('<br /> foo');
-            assertEquals('<br />foo', editor.value());
-        }
+            equal(editor.value(), '<br />foo');
+        });
 
-        function test_whitespace_at_end_of_inline_element_preserved() {
+        test('whitespace at end of inline element preserved', function() {
             editor.value('<strong>foo </strong>');
-            assertEquals('<strong>foo </strong>', editor.value());
-        }
+            equal(editor.value(), '<strong>foo </strong>');
+        });
 
-        function test_whitespace_at_beginning_of_inline_element_after_text() {
+        test('whitespace at beginning of inline element after text', function() {
             editor.value('foo bar<strong> baz</strong>');
-            assertEquals('foo bar<strong> baz</strong>', editor.value());
-        }          
+            equal(editor.value(), 'foo bar<strong> baz</strong>');
+        });          
         
-        function test_whitespace_at_end_of_inline_element_after_text() {
+        test('whitespace at end of inline element after text', function() {
             editor.value('foo bar<strong>baz </strong>');
-            assertEquals('foo bar<strong>baz </strong>', editor.value());
-        }        
+            equal(editor.value(), 'foo bar<strong>baz </strong>');
+        });        
         
-        function test_whitespace_at_end_of_inline_element() {
+        test('whitespace at end of inline element', function() {
             editor.value('<strong>baz </strong>');
-            assertEquals('<strong>baz </strong>', editor.value());
-        }         
+            equal(editor.value(), '<strong>baz </strong>');
+        });         
         
-        function test_whitespace_at_beginning_of_inline_element() {
+        test('whitespace at beginning of inline element', function() {
             editor.value('<strong> baz</strong>');
-            assertEquals('<strong>baz</strong>', editor.value());
-        }        
+            equal(editor.value(), '<strong>baz</strong>');
+        });        
         
-        function test_whitespace_at_beginning_of_inline_element_before_text() {
+        test('whitespace at beginning of inline element before text', function() {
             editor.value('<p><strong>foo</strong> bar</p>');
-            assertEquals('<p><strong>foo</strong> bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p><strong>foo</strong> bar</p>');
+        });
 
-        function test_complete_attribute_ignored() {
+        test('complete attribute ignored', function() {
             editor.value('<img complete="complete" />');
-            assertEquals('<img />', editor.value());
-        }
+            equal(editor.value(), '<img />');
+        });
 
-        function test_image_discards_redundant_height() {
+        test('image discards redundant height', function() {
             editor.value('<img height="2" style="height:2px;" />');
-            assertEquals('<img height="2" />', editor.value());
-        }
+            equal(editor.value(), '<img height="2" />');
+        });
 
-        function test_image_migrates_height_from_style() {
+        test('image migrates height from style', function() {
             editor.value('<img style="height:4px;" />');
-            assertEquals('<img height="4" />', editor.value());
-        }
+            equal(editor.value(), '<img height="4" />');
+        });
 
-        function test_image_discards_redundant_width() {
+        test('image discards redundant width', function() {
             editor.value('<img width="2" style="width:2px;" />');
-            assertEquals('<img width="2" />', editor.value());
-        }
+            equal(editor.value(), '<img width="2" />');
+        });
 
-        function test_image_migrates_width_from_style() {
+        test('image migrates width from style', function() {
             editor.value('<img style="width:4px;" />');
-            assertEquals('<img width="4" />', editor.value());
-        }
+            equal(editor.value(), '<img width="4" />');
+        });
         
-        function test_nbsp() {
+        test('nbsp', function() {
             editor.value('&nbsp;&nbsp;&nbsp;');
-            assertEquals('&nbsp;&nbsp;&nbsp;', editor.value());
-        }
+            equal(editor.value(), '&nbsp;&nbsp;&nbsp;');
+        });
 
-        function test_nbsp_and_whitespace() {
+        test('nbsp and whitespace', function() {
             editor.value('            &nbsp;&nbsp;&nbsp;');
-            assertEquals('&nbsp;&nbsp;&nbsp;', editor.value());
-        }
-        function test_amp() {
+            equal(editor.value(), '&nbsp;&nbsp;&nbsp;');
+        });
+        test('amp', function() {
             editor.value('&amp;');
-            assertEquals('&amp;', editor.value());
-        }
+            equal(editor.value(), '&amp;');
+        });
         
-        function test_lt() {
+        test('lt', function() {
             editor.value('&lt;');
-            assertEquals('&lt;', editor.value());
-        }
+            equal(editor.value(), '&lt;');
+        });
         
-        function test_gt() {
+        test('gt', function() {
             editor.value('&gt;');
-            assertEquals('&gt;', editor.value());
-        }
+            equal(editor.value(), '&gt;');
+        });
 
-        function test_amp_escaped() {
+        test('amp escaped', function() {
             editor.value('&amp;');
-            assertEquals('&amp;amp;', editor.encodedValue());
-        }
+            equal(editor.encodedValue(), '&amp;amp;');
+        });
 
-        function test_gt_escaped() {
+        test('gt escaped', function() {
             editor.value('&gt;');
-            assertEquals('&amp;gt;', editor.encodedValue());
-        }
+            equal(editor.encodedValue(), '&amp;gt;');
+        });
 
-        function test_nbsp_escaped() {
+        test('nbsp escaped', function() {
             editor.value('&nbsp;');
-            assertEquals('&amp;nbsp;', editor.encodedValue());
-        }
-    </script>
+            equal(editor.encodedValue(), '&amp;nbsp;');
+        });
+
+        test('setting empty paragraphs adds line breaks in mozilla', function() {
+            editor.value('<p> </p>');
+
+            if ($.browser.mozilla) {
+                equals(editor.body.firstChild.childNodes.length, 1);
+                equals(editor.body.firstChild.firstChild.nodeName.toLowerCase(), 'br');
+            }
+        });
+
+        test('setting value removes pending formats', function() {
+            editor.value('foo');
+
+            editor.pendingFormats.toggle({ format: editor.formats.bold, values: undefined });
+
+            ok(editor.pendingFormats.hasPending());
+
+            editor.value('bar');
+
+            ok(!editor.pendingFormats.hasPending());
+        });
+
+        test("single quotes in style attribute", function() {
+            editor.value('<span style="font-family:\'Verdana\';">foo</span>');
+            equal(editor.value(), '<span style="font-family:\'Verdana\';">foo</span>');
+        });
+
+</script>
+
 </asp:Content>

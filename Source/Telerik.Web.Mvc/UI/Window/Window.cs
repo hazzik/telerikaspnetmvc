@@ -264,14 +264,14 @@ namespace Telerik.Web.Mvc.UI
                 ResizingSettings.MaxWidth != int.MinValue &&
                 ResizingSettings.MinWidth > ResizingSettings.MaxWidth)
             {
-                throw new ArgumentException(TextResource.MinWidthShouldBeLessThanMaxWidth);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinWidth", "MaxWidth"));
             }
 
             if (ResizingSettings.MinHeight != int.MinValue &&
                 ResizingSettings.MaxHeight != int.MinValue &&
                 ResizingSettings.MinHeight > ResizingSettings.MaxHeight)
             {
-                throw new ArgumentException(TextResource.MinHeightShouldBeLessThanMaxHeight);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinHeight", "MaxHeight"));
             }
         }
     }

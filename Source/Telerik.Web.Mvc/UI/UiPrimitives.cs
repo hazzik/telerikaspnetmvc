@@ -3,7 +3,6 @@
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
-using System;
 namespace Telerik.Web.Mvc.UI
 {
     /// <summary>
@@ -17,11 +16,26 @@ namespace Telerik.Web.Mvc.UI
         public const string ActiveState = "t-state-active";
 
         /// <summary>
-        /// Button
+        /// Button with plain text content
         /// </summary>
         public const string Button = "t-button";
 
-        /// <summary>
+		/// <summary>
+		/// Button with an icon and text content
+		/// </summary>
+		public const string ButtonIconText = "t-button-icontext";
+
+		/// <summary>
+		/// Button with an icon only
+		/// </summary>
+		public const string ButtonIcon = "t-button-icon";
+
+		/// <summary>
+		/// Bare button with an icon only (no background and borders)
+		/// </summary>
+		public const string ButtonBare = "t-button-bare";
+
+		/// <summary>
         /// Content - rendered around custom content
         /// </summary>
         public const string Content = "t-content";
@@ -135,32 +149,66 @@ namespace Telerik.Web.Mvc.UI
         /// ToolBar - rendered on all toolbars
         /// </summary>
         public const string ToolBar = "t-toolbar";
-        
+
         /// <summary>
-        /// Contains CSS classes, used in the Grid
+        /// Alternating class for zebra stripes
+        /// </summary>
+        public const string Alt = "t-alt";
+
+        /// <summary>
+        /// Scrollable - rendered on all elements that wish to be scrollable on touch devices
+        /// </summary>
+        public const string Scrollable = "t-scrollable";
+
+        /// <summary>
+        /// Contains CSS classes for icons
         /// </summary>
         public static class Icons
         {
+            /// <summary>
+            /// "Delete" icon
+            /// </summary>
             public const string Delete = "t-delete";
 
+            /// <summary>
+            /// "Delete Group" icon
+            /// </summary>
             public const string GroupDelete = "t-group-delete";
+
+            /// <summary>
+            /// "Minimize" icon
+            /// </summary>
+            public const string Refresh = "t-refresh";
+
+            /// <summary>
+            /// "Maximize" icon
+            /// </summary>
+            public const string Maximize = "t-maximize";
+
+            /// <summary>
+            /// "Close" icon
+            /// </summary>
+            public const string Close = "t-close";
         }
 
         /// <summary>
-        /// Contains CSS classes, used in the Grid
+        /// Contains CSS classes, used in the grid
         /// </summary>
         public static class Grid
         {
-            /// <summary>
-            /// Grid action
-            /// </summary>
-            public const string Action = "t-grid-action";
+            public const string GroupFooter = "t-group-footer";
 
+            public const string Action = "t-grid-action";
+            
             public const string Edit = "t-grid-edit";
             
             public const string Delete = "t-grid-delete";
             
             public const string Update = "t-grid-update";
+
+            public const string SaveChanges = "t-grid-save-changes";
+            
+            public const string CancelChanges = "t-grid-cancel-changes";
             
             public const string Cancel = "t-grid-cancel";
             
@@ -181,7 +229,10 @@ namespace Telerik.Web.Mvc.UI
             public const string GroupIndicator = "t-group-indicator";
 
             public const string FooterTemplateRow = "t-footer-template";
+
             public const string FooterTemplateRowWrap = "t-footer-template-wrap";
+            
+            public const string ScrollableContent = "t-grid-content";
 
             /// <summary>
             /// Grid action
@@ -192,6 +243,8 @@ namespace Telerik.Web.Mvc.UI
             /// Container element for editing / inserting form
             /// </summary>
             public const string EditingContainer = "t-edit-container";
+
+            public const string InFormContainer = "t-edit-form-container";
 
             /// <summary>
             /// Container element for editing / inserting form
@@ -204,6 +257,9 @@ namespace Telerik.Web.Mvc.UI
             public const string ToolBar = "t-grid-toolbar";
         }
 
+        /// <summary>
+        /// Contains CSS classes, used in the treeview
+        /// </summary>
         public static class TreeView
         {
             /// <summary>
@@ -212,15 +268,18 @@ namespace Telerik.Web.Mvc.UI
             public const string Lines = "t-treeview-lines";
         }
 
+        /// <summary>
+        /// Contains CSS classes, used in the editor
+        /// </summary>
         public static class Editor
         {
             /// <summary>
-            /// Editor toolbar button
+            /// Button in editor toolbar
             /// </summary>
             public const string ToolbarButton = "t-editor-button";
 
             /// <summary>
-            /// Editor toolbar color picker
+            /// Color picker in editor toolbar
             /// </summary>
             public const string ToolbarColorPicker = "t-editor-colorpicker";
 
@@ -228,7 +287,84 @@ namespace Telerik.Web.Mvc.UI
             /// Editor tool icon
             /// </summary>
             public const string ToolIcon = "t-tool-icon";
+
+            /// <summary>
+            /// Editor custom tool
+            /// </summary>
             public const string Custom = "t-custom";
+
+            /// <summary>
+            /// Editor textarea element
+            /// </summary>
+            public const string RawContent = "t-raw-content";
+        }
+
+        public static class Slider
+        {
+            /// <summary>Slider increase button.</summary>
+            public const string IncreaseButton = "t-increase";
+
+            /// <summary>Slider decrease button.</summary>
+            public const string DecreaseButton = "t-decrease";
+
+            public const string Items = "t-slider-items";
+
+            public const string Item = "t-tick";
+
+            public const string DragHandle = "t-draghandle";
+
+            public const string SlectedDiv = "t-draghandle";
+
+            public const string TrackDiv = "t-draghandle";
+        }
+
+        public static class Splitter
+        {
+            /// <summary>Horizontal splitter</summary>
+            public const string Horizontal = "t-splitter-horizontal";
+
+            /// <summary>Vertical splitter</summary>
+            public const string Vertical = "t-splitter-vertical";
+
+            /// <summary>Splitter pane</summary>
+            public const string Pane = "t-pane";
+        }
+
+        /// <summary>
+        /// UI primitives for Upload
+        /// </summary>
+        public static class Upload
+        {
+            /// <summary>
+            /// Upload button
+            /// </summary>
+            public const string Button = "t-button t-upload-button";
+        }
+
+        /// <summary>
+        /// Contains CSS classes, used in the window
+        /// </summary>
+        public static class Window
+        {
+            /// <summary>
+            /// Window buttons class
+            /// </summary>
+            public const string Action = "t-window-action";
+
+            /// <summary>
+            /// Window content area
+            /// </summary>
+            public const string Content = "t-window-content";
+
+            /// <summary>
+            /// Window icon
+            /// </summary>
+            public const string Icon = "t-window-icon";
+
+            /// <summary>
+            /// Window title bar
+            /// </summary>
+            public const string TitleBar = "t-window-titlebar";
         }
     }
 }

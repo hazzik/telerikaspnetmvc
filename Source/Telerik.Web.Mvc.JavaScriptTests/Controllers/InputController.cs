@@ -1,18 +1,9 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
     using System.Web.Mvc;
 
     public class InputController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewData["controllerName"] = "Input";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
-        }
-
         public ActionResult NumericTextBox()
         {
             return View();
@@ -24,6 +15,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
         }
 
         public ActionResult ClientAPI()
+        {
+            return View();
+        }
+        
+        public ActionResult ClientSideRendering()
         {
             return View();
         }

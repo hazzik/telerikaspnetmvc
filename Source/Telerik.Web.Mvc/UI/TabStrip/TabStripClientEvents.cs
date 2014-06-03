@@ -12,6 +12,7 @@ namespace Telerik.Web.Mvc.UI
             OnLoad = new ClientEvent();
             OnError = new ClientEvent();
             OnSelect = new ClientEvent();
+            OnContentLoad = new ClientEvent();
         }
 
         public ClientEvent OnLoad { get; private set; }
@@ -19,5 +20,7 @@ namespace Telerik.Web.Mvc.UI
         public ClientEvent OnError { get; private set; }
 
         public ClientEvent OnSelect {  get; private set; }
+
+        public ClientEvent OnContentLoad { get; private set; }
     }
 }

@@ -48,9 +48,9 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
         
-        public object GetValue(TModel dataItem)
+        public object GetValue(object dataItem)
         {
-            return Value(dataItem);
+            return Value((TModel)dataItem);
         }
 #if MVC2 || MVC3
         public string HiddenFieldHtml(HtmlHelper<TModel> htmlHelper)

@@ -11,7 +11,7 @@
         <%= Html.TextBox("startsWith", "Paul") %>
     </p>
     
-    <button class="t-button t-state-default" type="submit">Apply</button>
+    <button class="t-button" type="submit">Apply</button>
 <% } %>
 
 <%= Html.Telerik().Grid(Model)

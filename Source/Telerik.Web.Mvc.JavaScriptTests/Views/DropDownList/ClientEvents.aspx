@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -18,190 +18,6 @@
 
         function getAjaxDropDownList() {
             return $('#AjaxDropDownList').data('tDropDownList');
-        }
-
-        function test_clicking_toggle_button_should_raise_onOpen_event() {
-            getDropDownList().close();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger('click');
-
-            assertTrue(isRaised);
-        }
-
-        function test_clicking_toggle_button_should_raise_onClose_event() {
-            getDropDownList().open();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger('click');
-
-            assertTrue(isRaised);
-        }
-
-        function test_clicking_alt_and_down_arrow_should_raise_onOpen() {
-            getDropDownList().close();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            assertTrue(isRaised);
-        }
-
-        function test_clicking_escape_should_raise_onClose_if_opened() {
-            getDropDownList().open();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger({ type: "keydown", keyCode: 27 });
-
-            assertTrue(isRaised);
-        }
-
-        function test_clicking_escape_should_not_raise_onClose_if_closed() {
-            getDropDownList().close();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger({ type: "keydown", keyCode: 27 });
-
-            assertFalse(isRaised);
-        }
-
-        function test_clicking_enter_should_raise_onClose_if_list_is_opened() {
-            getDropDownList().open();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger({ type: "keydown", keyCode: 13 });
-
-            assertTrue(isRaised);
-        }
-
-        function test_clicking_tab_should_raise_onClose_if_list_is_opened() {
-            getDropDownList().open();
-
-            var dropdownlist = $('#DropDownList .t-input');
-
-            isRaised = false;
-
-            dropdownlist.trigger({ type: "keydown", keyCode: 9 });
-
-            assertTrue(isRaised);
-        }
-
-        function test_clicking_item_from_dropDownList_should_raise_onClose_when_it_is_opened() {
-            getDropDownList().open();
-
-            isRaised = false;
-            
-            var $selectedItems = $('.t-state-selected', getDropDownList().dropDown.$items);
-            $selectedItems = $selectedItems.length > 0 ? $selectedItems : getDropDownList().dropDown.$items.first();
-            $selectedItems.next().click();
-
-            assertTrue(isRaised);
-        }
-
-        function test_enter_should_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_shown() {
-            getDropDownList().open();
-
-            isChangeRaised = false;
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 40 });
-            $ddl.trigger({ type: "keydown", keyCode: 13 });
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_escape_should_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_shown() {
-            getDropDownList().open();
-
-            isChangeRaised = false;
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 40 });
-            $ddl.trigger({ type: "keydown", keyCode: 27 });
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_down_arrow_should_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_closed() {
-            getDropDownList().close();
-
-            isChangeRaised = false;
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 40 });
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_down_arrow_should_not_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_shown() {
-            getDropDownList().open();
-
-            isChangeRaised = false;
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 40 });
-
-            assertFalse(isChangeRaised);
-        }
-
-        function test_clicking_on_new_item_should_raise_onChange_event() {
-            var ddl = getDropDownList();
-            ddl.open();
-
-            isChangeRaised = false;
-
-            $(ddl.dropDown.$element.find('li')[2]).click();
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_focus_open_close_blur_will_not_raise_change_event() {
-            var ddl = getDropDownList();
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-
-            ddl.open();
-            ddl.close();
-
-            $ddl.blur();
-
-            isChangeRaised = false;
-
-            assertFalse(isChangeRaised);
-        }
-
-        function test_trigger_change_method_should_set_hidden_value_to_text_if_item_value_is_null() {
-            var ddl = $('#DDLWithNoValue').data('tDropDownList');
-            ddl.select(2);
-            ddl.trigger.change();
-
-            var item = ddl.data[2];
-
-            assertEquals(null, item.Value);
-            assertEquals(item.Text, ddl.value());
         }
 
         //handlers
@@ -289,4 +105,204 @@
     %>
 
     <br />
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+    test('clicking toggle button should raise onOpen event', function () {
+        var ddl = getDropDownList();
+        ddl.close();
+
+        var wrapper = ddl.$wrapper;
+
+        isRaised = false;
+
+        wrapper.trigger('click');
+
+        ok(isRaised);
+    });
+
+        test('clicking toggle button should raise onClose event', function() {
+            var ddl = getDropDownList();
+            ddl.open();
+
+            var wrapper = ddl.$wrapper;
+
+            isRaised = false;
+
+            wrapper.trigger('click');
+
+            ok(isRaised);
+        });
+
+        test('clicking alt and down arrow should raise onOpen', function() {
+            var ddl = getDropDownList();
+            ddl.close();
+
+            var wrapper = ddl.$wrapper;
+
+            isRaised = false;
+
+            wrapper.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(isRaised);
+        });
+
+        test('clicking escape should raise onClose if opened', function() {
+            var ddl = getDropDownList();
+            ddl.open();
+
+            var wrapper = ddl.$wrapper;
+
+            isRaised = false;
+
+            wrapper.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(isRaised);
+        });
+
+        test('clicking escape should not raise onClose if closed', function () {
+            var ddl = getDropDownList();
+            ddl.close();
+
+            var wrapper = ddl.$wrapper;
+
+            isRaised = false;
+
+            wrapper.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(!isRaised);
+        });
+
+        test('clicking enter should raise onClose if list is opened', function() {
+            var ddl = getDropDownList();
+            ddl.open();
+
+            var wrapper = ddl.$wrapper;
+
+            isRaised = false;
+
+            wrapper.trigger({ type: "keydown", keyCode: 13 });
+
+            ok(isRaised);
+        });
+
+        test('clicking tab should raise onClose if list is opened', function() {
+            var ddl = getDropDownList();
+            ddl.open();
+
+            var wrapper = ddl.$wrapper;
+
+            isRaised = false;
+
+            wrapper.trigger({ type: "keydown", keyCode: 9 });
+
+            ok(isRaised);
+        });
+
+        test('clicking item from dropDownList should raise onClose when it is opened', function() {
+            getDropDownList().open();
+
+            isRaised = false;
+            
+            var $selectedItems = $('.t-state-selected', getDropDownList().dropDown.$items);
+            $selectedItems = $selectedItems.length > 0 ? $selectedItems : getDropDownList().dropDown.$items.first();
+            $selectedItems.next().click();
+
+            ok(isRaised);
+        });
+
+        test('enter should raise onChange event if other item is selected and dropDown is shown', function() {
+            getDropDownList().open();
+
+            isChangeRaised = false;
+
+            var $ddl = $('#DropDownList').closest('.t-dropdown');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 40 });
+            $ddl.trigger({ type: "keydown", keyCode: 13 });
+
+            ok(isChangeRaised);
+        });
+
+        test('escape should raise onChange event if other item is selected and dropDown is shown', function() {
+            getDropDownList().open();
+
+            isChangeRaised = false;
+
+            var $ddl = $('#DropDownList').closest('.t-dropdown');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 40 });
+            $ddl.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(isChangeRaised);
+        });
+
+        test('down arrow should raise onChange event if other item is selected and dropDown is closed', function() {
+            getDropDownList().close();
+
+            isChangeRaised = false;
+
+            var $ddl = $('#DropDownList').closest('.t-dropdown');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 40 });
+
+            ok(isChangeRaised);
+        });
+
+        test('down arrow should not raise onChange event if other item is selected and dropDown is shown', function() {
+            getDropDownList().open();
+
+            isChangeRaised = false;
+
+            var $ddl = $('#DropDownList').closest('.t-dropdown');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 40 });
+
+            ok(!isChangeRaised);
+        });
+
+        test('clicking on new item should raise onChange event', function() {
+            var ddl = getDropDownList();
+            ddl.open();
+
+            isChangeRaised = false;
+
+            $(ddl.dropDown.$element.find('li')[2]).click();
+
+            ok(isChangeRaised);
+        });
+
+        test('focus open close blur will not raise change event', function() {
+            var ddl = getDropDownList();
+
+            var $ddl = $('#DropDownList').closest('.t-dropdown');
+            $ddl.focus();
+
+            ddl.open();
+            ddl.close();
+
+            $ddl.blur();
+
+            isChangeRaised = false;
+
+            ok(!isChangeRaised);
+        });
+
+        test('trigger change method should set hidden value to text if item value is null', function() {
+            var ddl = $('#DDLWithNoValue').data('tDropDownList');
+            ddl.select(2);
+            ddl.trigger.change();
+
+            var item = ddl.data[2];
+
+            equal(item.Value, null);
+            equal(ddl.value(), item.Text);
+        });
+
+</script>
+
 </asp:Content>

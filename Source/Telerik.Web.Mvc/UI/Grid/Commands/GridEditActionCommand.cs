@@ -5,8 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using Extensions;
-    using Infrastructure;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.UI.Html;
 
     public class GridEditActionCommand : GridActionCommandBase
     {
@@ -15,92 +15,57 @@ namespace Telerik.Web.Mvc.UI
             get { return "edit"; }
         }
 
-        public override void EditModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            #if MVC2 || MVC3
+            var editButton = CreateButton<GridLinkButtonBuilder>(localization.Edit, UIPrimitives.Grid.Edit);
 
-            Grid<T> grid = context.Grid;
+            editButton.Url = urlBuilder.EditUrl;
 
-            grid.WriteDataKeys(context.DataItem, parent);
+            editButton.SpriteCssClass = "t-edit";
 
-            new HtmlTag("button")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Update)
-                .Attribute("type", "submit")
-                .Html(this.ButtonContent(grid.Localization.Update, "t-update"))
-                .AppendTo(parent);
-
-            AppendCancelButton(grid, parent);
-
-            #endif
+            return new[]
+            {
+                editButton
+            };
         }
 
-        public override void InsertModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateEditButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            #if MVC2 || MVC3
+            var cancelButton = CreateButton<GridLinkButtonBuilder>(localization.Cancel, UIPrimitives.Grid.Cancel);
 
-            Grid<T> grid = context.Grid;
+            cancelButton.Url = urlBuilder.CancelUrl;
+            
+            cancelButton.SpriteCssClass = "t-cancel";
 
-            grid.WriteDataKeys(context.DataItem, parent);
+            var updateButton = CreateButton<GridButtonBuilder>(localization.Update, UIPrimitives.Grid.Update);
+            updateButton.ShouldAppendDataKeys = true;
+            updateButton.SpriteCssClass = "t-update";
+            updateButton.HtmlHelper = htmlHelper;
 
-            new HtmlTag("button")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Insert)
-                .Attribute("type", "submit")
-                .Html(this.ButtonContent(grid.Localization.Insert, "t-insert"))
-                .AppendTo(parent);
-
-            AppendCancelButton(grid, parent);
-
-            #endif
+            return new IGridButtonBuilder[]
+            {
+                updateButton,
+                cancelButton
+            };
         }
 
-        public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateInsertButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            #if MVC2 || MVC3
-            Grid<T> grid = context.Grid;
-            var urlBuilder = new GridUrlBuilder(grid);
+            var cancelButton = CreateButton<GridLinkButtonBuilder>(localization.Cancel, UIPrimitives.Grid.Cancel);
 
-            new HtmlTag("a")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Edit)
-                .Attribute("href", urlBuilder.Url(grid.Server.Select, routeValues =>
-                {
-                     grid.DataKeys.Each(dataKey =>
-                     {
-                         routeValues[dataKey.RouteKey] = dataKey.GetValue(context.DataItem);
-                     });
+            cancelButton.Url = urlBuilder.CancelUrl;
 
-                    routeValues[grid.Prefix(GridUrlParameters.Mode)] = "edit";
-                }))
-                .Html(this.ButtonContent(grid.Localization.Edit, "t-edit"))
-                .AppendTo(parent);
-            #endif
+            cancelButton.SpriteCssClass = "t-cancel";
+
+            var insertButton = CreateButton<GridButtonBuilder>(localization.Insert, UIPrimitives.Grid.Insert);
+            insertButton.SpriteCssClass = "t-insert";
+            insertButton.HtmlHelper = htmlHelper;
+
+            return new IGridButtonBuilder[]
+            {
+                insertButton,
+                cancelButton
+            };
         }
-
-        #if MVC2 || MVC3
-        private void AppendCancelButton<T>(Grid<T> grid, IHtmlNode parent) where T : class
-        {
-            var urlBuilder = new GridUrlBuilder(grid);
-
-            new HtmlTag("a")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Cancel)
-                .Attribute("href", urlBuilder.Url(grid.Server.Select, routeValues =>
-                {
-                    grid.DataKeys.Each(dataKey =>
-                    {
-                        if (routeValues.ContainsKey(dataKey.RouteKey))
-                        {
-                            routeValues[dataKey.RouteKey] = string.Empty;
-                        }
-                    });
-                    routeValues.Merge(grid.Server.Select.RouteValues);
-                    routeValues.Remove(grid.Prefix(GridUrlParameters.Mode));
-                }))
-                .Html(this.ButtonContent(grid.Localization.Cancel, "t-cancel"))
-                .AppendTo(parent);
-        }
-#endif
     }
 }

@@ -1,37 +1,29 @@
 ﻿namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
+    using System.Linq;
+    using System.Reflection;
     using System.Web.Mvc;
-using System.Text.RegularExpressions;
+    using Telerik.Web.Mvc.JavaScriptTests.Extensions;
 
     [HandleError]
     public class HomeController : Controller
     {
-        Regex indexPageRegex = new Regex(@"JavascriptTests[/]?$", RegexOptions.Compiled);
         public ActionResult Index()
         {
-            var requestedTestPage = Request.QueryString.Get("testpage");
+            string requestedController = "";
 
-            if (!string.IsNullOrEmpty(requestedTestPage) && indexPageRegex.IsMatch(requestedTestPage))
+            if (Request.RawUrl.LastIndexOf("?") > 0)
             {
-                requestedTestPage += (indexPageRegex.Match(requestedTestPage).Length == 15 ? "/" : "") + "Home/Suite";
-                return RedirectToAction("Index", new { autorun = "true", testpage = requestedTestPage });
+                requestedController = Request.RawUrl.Substring(Request.RawUrl.LastIndexOf("?") + 1);
             }
 
-            return View();
-        }
+            ViewData["Controllers"] =
+                from type in Assembly.GetExecutingAssembly().GetTypes()
+                where type.IsClass && type.Namespace == "Telerik.Web.Mvc.JavaScriptTests.Controllers" && type.Name != "HomeController"
+                where requestedController == "" || type.GetName().ToLower() == requestedController.ToLower()
+                orderby type.Name
+                select type;
 
-        public ActionResult TestPage()
-        {
-            return View();
-        }
-    
-        public ActionResult Suite()
-        {
-            return View();
-        }
-
-        public ActionResult GlobalizationSuite()
-        {
             return View();
         }
     }

@@ -7,193 +7,18 @@
     
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
 
-    <script type="text/javascript">
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
     
         var editor;
 
-        function setUp() {
-            editor = getEditor();
-        }
-
         function getRange() {
             return getEditor().createRange(document);
-        }
-
-        function test_range_creation() {
-            var range = editor.createRange();
-
-            assertEquals(editor.document, range.startContainer);
-            assertEquals(editor.document, range.endContainer);
-            assertEquals(editor.document, range.commonAncestorContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(0, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
-
-        function test_setStart_setEnd_within_the_same_text_node() {
-            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
-
-            var range = editor.createRange();
-
-            range.setStart(editor.body.firstChild, 2);
-            range.setEnd(editor.body.firstChild, 10);
-
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(10, range.endOffset);
-            assertEquals(false, range.collapsed);
-        }
-
-        function test_setStart_setEnd_collapsing() {
-            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
-
-            var range = editor.createRange();
-
-            range.setStart(editor.body.firstChild, 4);
-            range.setEnd(editor.body.firstChild, 4);
-
-            assertEquals(true, range.collapsed);
-        }
-
-        function test_setStart_setEnd_in_different_containers() {
-            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
-
-            var range = editor.createRange();
-
-            range.setStart(editor.body.childNodes[1].firstChild, 2);
-            range.setEnd(editor.body.childNodes[3].firstChild, 3);
-
-            assertEquals(editor.body, range.commonAncestorContainer);
-        }
-
-        function test_setStart_setEnd_in_nested_containers() {
-            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
-
-            var range = editor.createRange();
-
-            range.setStart(editor.body.firstChild, 2);
-            range.setEnd(editor.body.childNodes[1].firstChild, 3);
-
-            assertEquals(editor.body, range.commonAncestorContainer);
-        }
-
-        function test_selectNode_selects_node() {
-            editor.value('<strong>golga</strong>');
-
-            var range = editor.createRange();
-
-            range.selectNode(editor.body.firstChild);
-
-            assertEquals(editor.body, range.commonAncestorContainer);
-
-            assertEquals(editor.body, range.startContainer);
-            assertEquals(editor.body, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(1, range.endOffset);
-        }
-
-        function test_selectNodeContents_selects_node_contents() {
-            editor.value('<strong>golga</strong>');
-
-            var range = editor.createRange();
-
-            range.selectNodeContents(editor.body.firstChild);
-
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(1, range.endOffset);
-        }
-
-        function test_insertNode_on_expanded_range_in_text_element() {
-            editor.value('golgafrincham');
-
-            var range = editor.createRange();
-            range.setStart(editor.body.firstChild, 5);
-            range.setEnd(editor.body.firstChild, 10);
-
-            range.insertNode(editor.document.createElement('span'));
-
-            assertEquals('golga<span></span>frincham', editor.value());
-        }
-
-        function test_insertNode_on_expanded_range_inserts_node_at_start() {
-            editor.value('<p>foo</p>');
-
-            var range = editor.createRange();
-            range.selectNode(editor.body.firstChild);
-
-            range.insertNode(editor.document.createElement('span'));
-
-            assertEquals('<span></span><p>foo</p>', editor.value());
-        }
-
-        function test_insertNode_on_collapsed_range_at_end_of_text_element() {
-        
-            editor.value('golgafrincham<br />');
-
-            var range = editor.createRange();
-            range.setStart(editor.body.firstChild, 13);
-            range.setEnd(editor.body.firstChild, 13);
-
-            range.insertNode(editor.document.createElement('span'));
-
-            assertEquals('golgafrincham<span></span><br />', editor.value());
-        }
-
-        function test_extractContents_on_text_node() {
-            editor.value('golgafrincham');
-
-            var range = editor.createRange();
-
-            range.setStart(editor.body.firstChild, 5);
-            range.setEnd(editor.body.firstChild, 9);
-
-            var contents = range.extractContents();
-
-            assertEquals('frin', contents.firstChild.nodeValue);
-            assertEquals('golgacham', editor.value());
-        }
-
-        function test_extractContents_extracts_tags() {
-            editor.value('golga<strong>frincham</strong>');
-
-            var range = editor.createRange();
-            
-            range.setStart(editor.body.lastChild.firstChild, 4);
-            range.setEndAfter(editor.body.lastChild);
-
-            var contents = range.extractContents();
-            
-            assertEquals(1, contents.childNodes.length);
-            assertEquals('strong', contents.firstChild.tagName.toLowerCase());
-            assertEquals('cham', contents.firstChild.innerHTML.toLowerCase());
-            assertEquals('golga<strong>frin</strong>', editor.value());
-        }
-
-        function test_extractContents_after_range_manipulation() {
-            editor.value('golga<strong>frincham</strong>');
-
-            var range = editor.createRange();
-
-            range.setStart(editor.body.firstChild, 0);
-            range.setEnd(editor.body.firstChild, 4);
-
-            range = range.cloneRange();
-            range.collapse(false);
-            range.setEndAfter(editor.body.lastChild);
-
-            var contents = range.extractContents();
-            
-            assertEquals('golg', editor.value());
-            assertEquals(2, contents.childNodes.length);
-            assertEquals('a', contents.firstChild.nodeValue);
-            assertEquals('strong', contents.lastChild.tagName.toLowerCase());
-            assertEquals('frincham', contents.lastChild.firstChild.nodeValue);
         }
         
         /* traversal tests */
@@ -209,8 +34,213 @@
 
             return range;
         }
+        
+        module("Editor / Range", {
+            setup: function() {
+                editor = getEditor();
+            }
+        });
 
-        function test_extractContents_updates_original_range_when_container_is_text_node() {
+        test('range creation', function() {
+            var range = editor.createRange();
+
+            equal(range.startContainer, editor.document);
+            equal(range.endContainer, editor.document);
+            equal(range.commonAncestorContainer, editor.document);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 0);
+            equal(range.collapsed, true);
+        });
+
+        test('setStart setEnd within the same text node', function() {
+            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
+
+            var range = editor.createRange();
+
+            range.setStart(editor.body.firstChild, 2);
+            range.setEnd(editor.body.firstChild, 10);
+
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 10);
+            equal(range.collapsed, false);
+        });
+
+        test('setStart setEnd collapsing', function() {
+            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
+
+            var range = editor.createRange();
+
+            range.setStart(editor.body.firstChild, 4);
+            range.setEnd(editor.body.firstChild, 4);
+
+            equal(range.collapsed, true);
+        });
+
+        test('setStart setEnd in different containers', function() {
+            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
+
+            var range = editor.createRange();
+
+            range.setStart(editor.body.childNodes[1].firstChild, 2);
+            range.setEnd(editor.body.childNodes[3].firstChild, 3);
+
+            equal(range.commonAncestorContainer, editor.body);
+        });
+
+        test('setStart setEnd in nested containers', function() {
+            editor.value('this is only a test of the <span>emergency</span> <em>broadcast</em> system');
+
+            var range = editor.createRange();
+
+            range.setStart(editor.body.firstChild, 2);
+            range.setEnd(editor.body.childNodes[1].firstChild, 3);
+
+            equal(range.commonAncestorContainer, editor.body);
+        });
+
+        test('selectNode selects node', function() {
+            editor.value('<strong>golga</strong>');
+
+            var range = editor.createRange();
+
+            range.selectNode(editor.body.firstChild);
+
+            equal(range.commonAncestorContainer, editor.body);
+
+            equal(range.startContainer, editor.body);
+            equal(range.endContainer, editor.body);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 1);
+        });
+
+        test('selectNodeContents selects node contents', function() {
+            editor.value('<strong>golga</strong>');
+
+            var range = editor.createRange();
+
+            range.selectNodeContents(editor.body.firstChild);
+
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 1);
+        });
+
+        test('selectNodeContents on img', function() {
+            editor.value('<img src="foo" />');
+
+            var range = editor.createRange();
+
+            range.selectNodeContents(editor.body.firstChild);
+
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 0);
+
+            range.collapse(true);
+
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 0);
+        });
+
+        test('insertNode on expanded range in text element', function() {
+            editor.value('golgafrincham');
+
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild, 5);
+            range.setEnd(editor.body.firstChild, 10);
+
+            range.insertNode(editor.document.createElement('span'));
+
+            equal(editor.value(), 'golga<span></span>frincham');
+        });
+
+        test('insertNode on expanded range inserts node at start', function() {
+            editor.value('<p>foo</p>');
+
+            var range = editor.createRange();
+            range.selectNode(editor.body.firstChild);
+
+            range.insertNode(editor.document.createElement('span'));
+
+            equal(editor.value(), '<span></span><p>foo</p>');
+        });
+
+        test('insertNode on collapsed range at end of text element', function() {
+        
+            editor.value('golgafrincham<br />');
+
+            var range = editor.createRange();
+            range.setStart(editor.body.firstChild, 13);
+            range.setEnd(editor.body.firstChild, 13);
+
+            range.insertNode(editor.document.createElement('span'));
+
+            equal(editor.value(), 'golgafrincham<span></span><br />');
+        });
+
+        test('extractContents on text node', function() {
+            editor.value('golgafrincham');
+
+            var range = editor.createRange();
+
+            range.setStart(editor.body.firstChild, 5);
+            range.setEnd(editor.body.firstChild, 9);
+
+            var contents = range.extractContents();
+
+            equal(contents.firstChild.nodeValue, 'frin');
+            equal(editor.value(), 'golgacham');
+        });
+
+        test('extractContents extracts tags', function() {
+            editor.value('golga<strong>frincham</strong>');
+
+            var range = editor.createRange();
+            
+            range.setStart(editor.body.lastChild.firstChild, 4);
+            range.setEndAfter(editor.body.lastChild);
+
+            var contents = range.extractContents();
+            
+            equal(contents.childNodes.length, 1);
+            equal(contents.firstChild.tagName.toLowerCase(), 'strong');
+            equal(contents.firstChild.innerHTML.toLowerCase(), 'cham');
+            equal(editor.value(), 'golga<strong>frin</strong>');
+        });
+
+        test('extractContents after range manipulation', function() {
+            editor.value('golga<strong>frincham</strong>');
+
+            var range = editor.createRange();
+
+            range.setStart(editor.body.firstChild, 0);
+            range.setEnd(editor.body.firstChild, 4);
+
+            range = range.cloneRange();
+            range.collapse(false);
+            range.setEndAfter(editor.body.lastChild);
+
+            var contents = range.extractContents();
+            
+            equal(editor.value(), 'golg');
+            equal(contents.childNodes.length, 2);
+            equal(contents.firstChild.nodeValue, 'a');
+            equal(contents.lastChild.tagName.toLowerCase(), 'strong');
+            equal(contents.lastChild.firstChild.nodeValue, 'frincham');
+        });
+
+        test('extractContents updates original range when container is text node', function() {
             var range = createRangeFromText(editor, "<strong>f|oo|</strong>");
 
             var leftRange = range.cloneRange();
@@ -218,13 +248,13 @@
             leftRange.setStartBefore(editor.body.lastChild);
             leftRange.extractContents();
 
-            assertEquals(editor.body.lastChild.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild.firstChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.lastChild.firstChild);
+            equal(range.endContainer, editor.body.lastChild.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 2);
+        });
 
-        function test_extractContents_updates_original_range_when_container_is_element_node() {
+        test('extractContents updates original range when container is element node', function() {
             var range = createRangeFromText(editor, '<strong>|fo|o</strong>');
         
             var marker = new $.telerik.editor.Marker();
@@ -235,13 +265,13 @@
             leftRange.setStartBefore(editor.body.firstChild);
             leftRange.extractContents();
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(3, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 3);
+        });
 
-        function test_extractContents_updates_original_range_when_whole_text_element_is_removed() {
+        test('extractContents updates original range when whole text element is removed', function() {
             editor.value('<p>foo</p><p>bar<a></a>baz</p>')
             var range = editor.createRange();
             var anchor = editor.body.lastChild.childNodes[1];
@@ -253,13 +283,13 @@
 
             leftRange.extractContents();
 
-            assertEquals(editor.body.lastChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(1, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.lastChild);
+            equal(range.endContainer, editor.body.lastChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 1);
+        });
 
-        function test_extractContents_does_not_update_original_range_when_outside_range() {
+        test('extractContents does not update original range when outside range', function() {
             editor.value('<p>foo</p><p>bar<strong>baz</strong>foo</p>')
             var range = editor.createRange();
             var anchor = editor.body.lastChild.childNodes[1];
@@ -270,91 +300,91 @@
             rightRange.setEndAfter(anchor.parentNode);
             rightRange.extractContents();
 
-            assertEquals(editor.body.lastChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.lastChild);
+            equal(range.endContainer, editor.body.lastChild);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+        });
 
-        function test_setStart_to_marker_after_end_collapses_range_to_new_start() {
+        test('setStart to marker after end collapses range to new start', function() {
             var range = createRangeFromText(editor, '|f|oo');
 
             range.setStart(editor.body.firstChild, 2);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 2);
+            equal(range.collapsed, true);
+        });
 
-        function test_setEnd_to_marker_before_start_collapses_range_to_new_end() {
+        test('setEnd to marker before start collapses range to new end', function() {
             var range = createRangeFromText(editor, 'fo|o|');
 
             range.setEnd(editor.body.firstChild, 1);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(1, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 1);
+            equal(range.collapsed, true);
+        });
 
-        function test_setStart_validation_across_nested_containers() {
+        test('setStart validation across nested containers', function() {
             var range = createRangeFromText(editor, '<div><span>f|oo</span><span>ba|r</span></div>');
 
             range.setStart(editor.body.firstChild, 2);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 2);
+            equal(range.collapsed, true);
+        });
 
-        function test_setStart_validation_across_sibling_containers() {
+        test('setStart validation across sibling containers', function() {
             var range = createRangeFromText(editor, '<span>f|oo</span><span>ba|r</span><span>baz</span');
 
             range.setStart(editor.body.lastChild.firstChild, 2);
 
-            assertEquals(editor.body.lastChild.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild.firstChild, range.endContainer);
-            assertEquals(editor.body.lastChild.firstChild, range.commonAncestorContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.lastChild.firstChild);
+            equal(range.endContainer, editor.body.lastChild.firstChild);
+            equal(range.commonAncestorContainer, editor.body.lastChild.firstChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 2);
+            equal(range.collapsed, true);
+        });
 
-        function test_setEnd_validation_across_nested_containers() {
+        test('setEnd validation across nested containers', function() {
             var range = createRangeFromText(editor, '<div><span>f|oo</span><span>ba|r</span></div>');
 
             range.setEnd(editor.body.firstChild, 0);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(0, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 0);
+            equal(range.collapsed, true);
+        });
 
-        function test_setEnd_validation_across_sibling_containers() {
+        test('setEnd validation across sibling containers', function() {
             var range = createRangeFromText(editor, '<span>foo</span><span>ba|r</span><span>ba|z</span');
 
             range.setEnd(editor.body.firstChild.firstChild, 2);
 
-            assertEquals(editor.body.firstChild.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild.firstChild, range.commonAncestorContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild.firstChild);
+            equal(range.endContainer, editor.body.firstChild.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild.firstChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 2);
+            equal(range.collapsed, true);
+        });
 
-        function test_setEndAfter_validation_across_sibling_containers() {
+        test('setEndAfter validation across sibling containers', function() {
             editor.value('<p>foo<strong>bar</strong>baz<br />foo<em>bar</em>baz<br />foo</p>');
 
             var range = editor.createRange();
@@ -365,25 +395,26 @@
             range.collapse(false);
             range.setEndAfter(editor.body.firstChild.childNodes[1]);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(editor.body.firstChild, range.commonAncestorContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(true, range.collapsed);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.commonAncestorContainer, editor.body.firstChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 2);
+            equal(range.collapsed, true);
+        });
 
-        function test_getRange_returns_body_when_editor_is_empty() {
+        test('getRange returns body when editor is empty', function() {
             editor.value('');
             editor.focus();
             
             var range = editor.getRange();
 
-            assertEquals(editor.body, range.startContainer);
-            assertEquals(editor.body, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(0, range.endOffset);
-        }
+            equal(range.startContainer, editor.body);
+            equal(range.endContainer, editor.body);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 0);
+        });
 
-    </script>
+</script>
+
 </asp:Content>

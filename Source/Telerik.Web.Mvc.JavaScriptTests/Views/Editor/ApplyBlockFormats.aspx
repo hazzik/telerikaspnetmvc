@@ -12,7 +12,17 @@
             return $('#Editor1').data("tEditor");
         }
 
-        function setUp() {
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             impl = {
                 formatRange: function(range, format) {
                     var command = new $.telerik.editor.FormatCommand({
@@ -27,7 +37,7 @@
             }
         }
 
-        function test_applyFormat_applies_block_format_on_full_selection() {
+        test('applyFormat applies block format on full selection', function() {
             var editor = getEditor();
 
             editor.value('<p>golgafrincham</p>');
@@ -39,10 +49,10 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<p style="text-align:center;">golgafrincham</p>', editor.value());
-        }
+            equal(editor.value(), '<p style="text-align:center;">golgafrincham</p>');
+        });
 
-        function test_applyFormat_applies_block_format_on_partial_selection() {
+        test('applyFormat applies block format on partial selection', function() {
             var editor = getEditor();
 
             editor.value('<p>golgafrincham</p>');
@@ -54,10 +64,10 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<p style="text-align:center;">golgafrincham</p>', editor.value());
-        }
+            equal(editor.value(), '<p style="text-align:center;">golgafrincham</p>');
+        });
 
-        function test_applyFormat_applies_block_format_on_partial_selection_with_line_break() {
+        test('applyFormat applies block format on partial selection with line break', function() {
             var editor = getEditor();
 
             editor.value('<p>golga<br />frincham</p>');
@@ -69,10 +79,10 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<p style="text-align:center;">golga<br />frincham</p>', editor.value());
-        }
+            equal(editor.value(), '<p style="text-align:center;">golga<br />frincham</p>');
+        });
 
-        function test_applyFormat_applies_block_format_on_block_level_around_selection() {
+        test('applyFormat applies block format on block level around selection', function() {
             var editor = getEditor();
 
             editor.value('golgafrincham');
@@ -83,8 +93,9 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<div style="text-align:center;">golgafrincham</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="text-align:center;">golgafrincham</div>');
+        });
 
-    </script>
+</script>
+
 </asp:Content>

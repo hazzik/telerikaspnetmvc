@@ -60,48 +60,59 @@
             return $('#myPanelBar').find('.t-header').eq(index)
         }
 
-        function test_clicking_expanded_content_items_should_collapse_them() {
+    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('clicking expanded content items should collapse them', function() {
         
             var item = getRootItem(0);
 
             item.trigger('click');
             
-            assertEquals('none', item.parent().find('.t-content').css("display"));
-        }
+            equal(item.parent().find('.t-content').css("display"), 'none');
+        });
 
-        function test_clicking_expanded_content_items_should_toggle_arrow() {
+        test('clicking expanded content items should toggle arrow', function() {
             var item = getRootItem(1);
 
             item.trigger('click');
 
-            assertTrue(item.parent().find('.t-icon').hasClass('t-arrow-down'));
-        }
+            ok(item.parent().find('.t-icon').hasClass('t-arrow-down'));
+        });
 
-        function test_clicking_collapsed_content_items_should_expand_them() {
+        test('clicking collapsed content items should expand them', function() {
             var item = getRootItem(2);
 
             item.trigger('click');
 
-            assertEquals("block", item.parent().find('.t-content').css("display"));
-        }
+            equal(item.parent().find('.t-content').css("display"), "block");
+        });
 
-        function test_clicking_collapsed_content_items_should_toggle_arrow() {
+        test('clicking collapsed content items should toggle arrow', function() {
             var item = getRootItem(3);
 
             item.trigger('click');
 
-            assertTrue(item.parent().find('.t-icon').hasClass('t-arrow-up'));
-        }
+            ok(item.parent().find('.t-icon').hasClass('t-arrow-up'));
+        });
 
-        function test_clicking_should_make_item_active() {
+        test('clicking should make item active', function() {
 
             var item = getRootItem(6);
             
             item.trigger('click');
 
-            assertTrue(item.parent().hasClass('t-state-active'));
-        }
+            ok(item.parent().hasClass('t-state-active'));
+        });
 
-    </script>
+</script>
 
 </asp:Content>

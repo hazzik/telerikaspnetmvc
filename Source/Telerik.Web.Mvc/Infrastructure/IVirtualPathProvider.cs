@@ -20,5 +20,9 @@ namespace Telerik.Web.Mvc.Infrastructure
         string CombinePaths(string basePath, string relativePath);
 
         string ReadAllText(string virtualPath);
+
+        string ToAbsolute(string virtualPath);
+
+        string AppendTrailingSlash(string virtualPath);
     }
 }

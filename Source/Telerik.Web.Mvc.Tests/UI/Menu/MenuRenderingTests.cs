@@ -20,10 +20,10 @@
             Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(TextWriter.Null);
 
             builder = new Mock<INavigationComponentHtmlBuilder<MenuItem>>();
-            builder.Setup(b => b.Build()).Returns(() => new HtmlTag("ul"));
-            builder.Setup(r => r.ItemTag(It.IsAny<MenuItem>())).Returns(() => new HtmlTag("li"));
-            builder.Setup(r => r.ItemInnerContentTag(It.IsAny<MenuItem>(), It.IsAny<bool>())).Returns(() => new HtmlTag("a"));
-            builder.Setup(r => r.ChildrenTag(It.IsAny<MenuItem>())).Returns(() => new HtmlTag("ul"));
+            builder.Setup(b => b.Build()).Returns(() => new HtmlElement("ul"));
+            builder.Setup(r => r.ItemTag(It.IsAny<MenuItem>())).Returns(() => new HtmlElement("li"));
+            builder.Setup(r => r.ItemInnerContentTag(It.IsAny<MenuItem>(), It.IsAny<bool>())).Returns(() => new HtmlElement("a"));
+            builder.Setup(r => r.ChildrenTag(It.IsAny<MenuItem>())).Returns(() => new HtmlElement("ul"));
 
             menu = MenuTestHelper.CreateMenu(writer.Object, builder.Object);
             menu.Name = "Menu";
@@ -66,7 +66,7 @@
         {
             menu.Items[0].Content = () => { };
 
-            builder.Setup(r => r.ItemContentTag(It.IsAny<MenuItem>())).Returns(new HtmlTag("div"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<MenuItem>())).Returns(new HtmlElement("div"));
 
             menu.Render();
 
@@ -78,7 +78,7 @@
         {
             menu.Items[0].Html = "Html";
 
-            builder.Setup(r => r.ItemContentTag(It.IsAny<MenuItem>())).Returns(new HtmlTag("div")).Verifiable();
+            builder.Setup(r => r.ItemContentTag(It.IsAny<MenuItem>())).Returns(new HtmlElement("div")).Verifiable();
 
             menu.Render();
 

@@ -95,7 +95,7 @@ namespace Telerik.Web.Mvc.UI
             return this;
         }
 
-        public IHtmlNode Template(Action value)
+        public IHtmlNode Template(Action<TextWriter> value)
         {
             throw new NotSupportedException();
         }
@@ -119,7 +119,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        public Action Template()
+        public Action<TextWriter> Template()
         {
             throw new NotSupportedException();
         }

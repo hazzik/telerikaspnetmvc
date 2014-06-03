@@ -5,6 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using System.Collections.Generic;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
 
@@ -121,6 +122,16 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="attributes">The HTML attributes.</param>
         /// <returns></returns>
         public virtual TBuilder HtmlAttributes(object attributes)
+        {
+            return HtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        /// <returns></returns>
+        public virtual TBuilder HtmlAttributes(IDictionary<string, object> attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 

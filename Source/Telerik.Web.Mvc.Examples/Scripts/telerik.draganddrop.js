@@ -75,7 +75,11 @@
         this._stopProxy = $.proxy(this._stop, this);
         this._dragProxy = $.proxy(this._drag, this);
     }
-
+    
+    $t.draggable.get = function(scope) {
+        return draggables[scope];
+    }
+    
     $t.draggable.prototype = {
         _raise: function(e, callback) {
             var draggable = draggables[this.scope];
@@ -88,10 +92,11 @@
             this._startPosition = { x: e.pageX, y: e.pageY };
 
             $(document).bind( {
-                        mousemove: this._startProxy,
-                        mouseup: this._destroyProxy
-                      })
-                      .trigger('mousedown', e); // manually triggering 'mousedown' because the next statement will prevent that.
+                mousemove: this._startProxy,
+                mouseup: this._destroyProxy
+            });
+
+            $(document.documentElement).trigger('mousedown', e); // manually triggering 'mousedown' because the next statement will prevent that.
 
             // required to avoid selection in Gecko
             return false;

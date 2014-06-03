@@ -6,14 +6,13 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
-    using System.Globalization;
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
 
-    public class TextboxBaseHtmlBuilder<T> : ITextBoxBaseHtmlBuilder where T : struct {
-        
-        public TextboxBaseHtmlBuilder(TextBoxBase<T> input)
+    public class TextBoxBaseHtmlBuilder<T> : ITextBoxBaseHtmlBuilder where T : struct 
+    {
+        public TextBoxBaseHtmlBuilder(TextBoxBase<T> input)
         {
             Input = input;
         }
@@ -26,8 +25,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build(string objectName)
         {
-            return new HtmlTag("div")
-                   .Attribute("id", Input.Id)
+            return new HtmlElement("div")
                    .Attributes(Input.HtmlAttributes)
                    .PrependClass(UIPrimitives.Widget, objectName)
                    .ToggleClass("t-state-disabled", !Input.Enabled);
@@ -35,10 +33,24 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode InputTag()
         {
-            return new HtmlTag("input", TagRenderMode.SelfClosing)
-                   .Attributes(new { name = Input.Name, id = Input.Id + "-input", value = "{0}".FormatWith(GetValue())})
+            Func<object, T?> converter = val => 
+            {
+                return ((T)Convert.ChangeType(val, typeof(T))).AsNullable();
+            };
+
+            string value = Input.GetAttemptedValue();
+            T? result = Input.GetValue(converter);
+            if (result != null) 
+            {
+                value = "{0}".FormatWith(result);
+            }
+            
+            return new HtmlElement("input", TagRenderMode.SelfClosing)
+                   .Attributes(new { name = Input.Name, id = Input.Id })
+                   .ToggleAttribute("value", value, value.HasValue())
                    .ToggleAttribute("disabled", "disabled", !Input.Enabled)
                    .Attributes(Input.InputHtmlAttributes)
+                   .Attributes(Input.GetUnobtrusiveValidationAttributes())
                    .PrependClass(UIPrimitives.Input);
         }
 
@@ -46,7 +58,7 @@ namespace Telerik.Web.Mvc.UI
         {
             string title = string.IsNullOrEmpty(Input.ButtonTitleUp) ? "Increase value" : Input.ButtonTitleUp;
 
-            return new HtmlTag("a")
+            return new HtmlElement("a")
                    .Attributes(new { href = "#", title = title, tabindex = "-1" })
                    .AddClass(UIPrimitives.Link, UIPrimitives.Icon, "t-arrow-up")
                    .Text("Increment");
@@ -56,38 +68,10 @@ namespace Telerik.Web.Mvc.UI
         {
             string title = string.IsNullOrEmpty(Input.ButtonTitleDown) ? "Decrease value" : Input.ButtonTitleDown;
 
-            return new HtmlTag("a")
+            return new HtmlElement("a")
                    .Attributes(new { href = "#", title = title, tabindex = "-1" })
                    .AddClass(UIPrimitives.Link, UIPrimitives.Icon, "t-arrow-down")
                    .Text("Decrement");
-        }
-
-        private T? GetValue()
-        {
-            ModelState state;
-            T? value = null;
-            ViewDataDictionary viewData = Input.ViewContext.ViewData;
-            
-            if (Input.Value != null)
-            {
-                value = Input.Value;
-            }
-            else if (viewData.ModelState.TryGetValue(Input.Id, out state))
-            {
-                if (state.Errors.Count == 0)
-                {
-                    value = state.Value.ConvertTo(typeof(T), CultureInfo.CurrentCulture) as T?;
-                }
-            }
-            
-            object valueFromViewData = viewData.Eval(Input.Name);
-
-            if (valueFromViewData != null)
-            {
-                value = (T)Convert.ChangeType(valueFromViewData, typeof(T));
-            }
-
-            return value;
         }
     }
 }

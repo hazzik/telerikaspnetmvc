@@ -1,6 +1,5 @@
 namespace Telerik.Web.Mvc.Examples
 {
-    using System;
     using System.Linq;
     using System.Web.Mvc;
 
@@ -11,7 +10,10 @@ namespace Telerik.Web.Mvc.Examples
     public partial class GridController
     {
         [SourceCodeFile("ClientEditableOrder (model)", "~/Models/ClientEditableOrder.cs")]
-        [SourceCodeFile("ClientEmployee.ascx (Editor)", "~/Views/Grid/EditorTemplates/ClientEmployee.ascx")]
+        [SourceCodeFile(
+            Caption = "ClientEmployee (Editor)",
+            FileName = "~/Views/Grid/EditorTemplates/ClientEmployee.ascx",
+            RazorFileName = "~/Areas/Razor/Views/Grid/EditorTemplates/ClientEmployee.cshtml")]
         public ActionResult ClientEditTemplates()
         {
             PopulateEmployees();

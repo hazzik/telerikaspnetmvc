@@ -5,7 +5,10 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using System;
     using System.Collections.Generic;
+    using Infrastructure;
+    using Telerik.Web.Mvc.UI.Html;
 
     public interface IGridColumn
     {
@@ -21,14 +24,20 @@ namespace Telerik.Web.Mvc.UI
             get;
             set;
         }
-
+        
+        string ClientFooterTemplate
+        {
+            get;
+            set;
+        }
+        
         HtmlTemplate HeaderTemplate
         {
             get;
             set;
         }
 
-        HtmlTemplate FooterTemplate
+        HtmlTemplate<GridAggregateResult> FooterTemplate
         {
             get;
             set;
@@ -83,5 +92,17 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
         }
+
+        IGridDataCellBuilder CreateDisplayBuilder(IGridHtmlHelper htmlHelper);
+
+        IGridDataCellBuilder CreateEditBuilder(IGridHtmlHelper htmlHelper);
+
+        IGridDataCellBuilder CreateInsertBuilder(IGridHtmlHelper htmlHelper);
+
+        IGridCellBuilder CreateHeaderBuilder();
+
+        IGridCellBuilder CreateFooterBuilder(IEnumerable<AggregateResult> aggregateResults);
+        
+        IGridCellBuilder CreateGroupFooterBuilder(IEnumerable<AggregateResult> aggregatesResults);
     }
 }

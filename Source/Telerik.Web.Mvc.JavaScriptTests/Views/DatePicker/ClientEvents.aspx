@@ -19,29 +19,6 @@
            return $('#DatePicker').data('tDatePicker');
        }
 
-       function test_client_object_is_available_in_on_load() {
-           assertNotNull(onLoadDatePicker);
-           assertNotUndefined(onLoadDatePicker);
-       }
-
-       function test_value_should_return_selected_date() {
-           getDatePicker().open();
-
-           var $calendar = getDatePicker().dateView.$calendar;
-
-           var today = new Date();
-
-           var days = $calendar.find('td:not(.t-other-month)');
-
-           var day = $.grep(days, function(n) {
-               return $('.t-link', n).html() == today.getDate();
-           });
-
-           $(day).click();
-
-           assertTrue(isValidDate(today, getDatePicker().value()));
-       }
-
        function isValidDate(date1, date2) {
            var isValid = true;
 
@@ -57,52 +34,6 @@
 
        var isChanged;
        var isRaised;
-              
-       function test_focusing_input_should_raise_onOpen_event() {
-           getDatePicker().close();
-           var input = $('#DatePicker .t-input');
-
-           isRaised = false;
-
-           input.focus();
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_tab_should_raise_onClose() {
-
-           getDatePicker().open();
-
-           isRaised = false;
-           var input = $('#DatePicker .t-input');
-           input.trigger({ type: "keydown", keyCode: 9});        
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_escape_should_raise_onClose() {
-
-           getDatePicker().open();
-
-           isRaised = false;
-           
-           var input = $('#DatePicker .t-input');
-           input.trigger({ type: "keydown", keyCode: 27 });
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_enter_should_raise_onClose() {
-
-           getDatePicker().open();
-
-           isRaised = false;
-
-           var input = $('#DatePicker .t-input');
-           input.trigger({ type: "keydown", keyCode: 13 });
-
-           assertTrue(isRaised);
-       }
 
        //handlers
 
@@ -127,13 +58,149 @@
 
  <%= Html.Telerik().DatePicker().Name("DatePicker")
                    .Effects(e => e.Toggle())
-                   .MinDate(new DateTime(1600, 1,1))
-                   .MaxDate(new DateTime(2400, 1, 1))
+                   .Min(new DateTime(1600, 1,1))
+                   .Max(new DateTime(2400, 1, 1))
                    .ClientEvents(events => events.OnLoad("onLoad")
                                                  .OnChange("onChange")
                                                  .OnClose("onClose")
                                                  .OnOpen("onOpen"))
                                                  
  %>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+       test('client object is available in on load', function() {
+           ok(null !== onLoadDatePicker);
+           ok(undefined !== onLoadDatePicker);
+       });
+
+       test('value should return selected date', function() {
+           getDatePicker().open();
+
+           var $calendar = getDatePicker().dateView.$calendar;
+
+           var today = new Date();
+
+           var days = $calendar.find('td:not(.t-other-month)');
+
+           var day = $.grep(days, function(n) {
+               return $('.t-link', n).html() == today.getDate();
+           });
+
+           $(day).click();
+
+           ok(isValidDate(today, getDatePicker().value()));
+       });
+              
+       test('focusing input should raise onOpen event', function() {
+           var datepicker = getDatePicker();
+           datepicker.openOnFocus = true;
+           
+           var input = $('#DatePicker');
+
+           isRaised = false;
+
+           input.focus();
+
+           datepicker.openOnFocus = false;
+
+           ok(isRaised);
+       });
+
+       test('focusing input should not raise onOpen event if openOnFocus is set to false', function () {
+           var datepicker = getDatePicker();
+           
+           datepicker.close();
+           
+           var input = $('#DatePicker');
+
+           isRaised = false;
+
+           input.focus();
+
+           ok(!isRaised);
+
+           datepicker.openOnFocus = true;
+       });
+
+       test('clicking tab should raise onClose', function() {
+
+           getDatePicker().open();
+
+           isRaised = false;
+           var input = $('#DatePicker');
+           input.trigger({ type: "keydown", keyCode: 9});        
+
+           ok(isRaised);
+       });
+
+       test('clicking escape should raise onClose', function() {
+
+           getDatePicker().open();
+
+           isRaised = false;
+           
+           var input = $('#DatePicker');
+           input.trigger({ type: "keydown", keyCode: 27 });
+
+           ok(isRaised);
+       });
+
+       test('clicking enter should raise onClose', function() {
+
+           getDatePicker().open();
+
+           isRaised = false;
+
+           var input = $('#DatePicker');
+           input.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(isRaised);
+       });
+
+       test('change event should not raise if value is set with value() and document is clicked', function () {
+           isChanged = false;
+           var datepicker = getDatePicker();
+           datepicker.value(new Date());
+
+           $(document.documentElement).mousedown();
+
+           ok(!isChanged, "change event was raised incorrectly");
+       });
+
+       test('change event should not raise when call min() method', function () {
+           isChanged = false;
+
+           var datepicker = getDatePicker();
+           datepicker.min(new Date());
+
+           ok(!isChanged, "change event was raised incorrectly");
+       });
+
+       test('if defaultPrevented in change event, then old value should be chosen', function () {
+           isChanged = false;
+
+           var datepicker = getDatePicker();
+           var old = datepicker.onChange;
+
+           datepicker.onChange = function (e) { e.preventDefault(); };
+
+           var oldDate = datepicker.value();
+           var newDate = new Date();
+           newDate.setMonth(newDate.getMonth() + 1);
+           datepicker._update(newDate);
+
+           notEqual(+datepicker.value(), +oldDate);
+
+           datepicker.onChange = old;
+       });
+
+</script>
 
 </asp:Content>

@@ -1,6 +1,6 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <h2>
         Keyboard</h2>
     <%= Html.Telerik().Editor().Name("Editor") %>
@@ -8,16 +8,25 @@
         var Keyboard;
 
         var editor;
-        function setUp() {
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+        QUnit.testStart = function() {
             Keyboard = $.telerik.editor.Keyboard;
             editor = $('#Editor').data('tEditor');
         }
 
-        function test_editor_has_keyboard() {
-            assertNotUndefined(editor.keyboard);
-        }
+        test('editor has keyboard', function() {
+            ok(undefined !== editor.keyboard);
+        });
 
-        function test_keydown_calls_clearTimeout() {
+        test('keydown calls clearTimeout', function() {
             
             var originalKeyDown = editor.keyboard.keydown;
             var originalClearTimeout = editor.keyboard.clearTimeout;
@@ -34,13 +43,13 @@
                 
                 $(editor.document).trigger(e);
 
-                assertTrue(called);
+                ok(called);
             } finally {
                 editor.keyboard.keydown = originalKeyDown;
                 editor.keyboard.clearTimeout = originalClearTimeout;
             }
-        }
-        function test_keydown_calls_keyboard_keydown() {
+        });
+        test('keydown calls keyboard keydown', function() {
             var originalKeyDown = editor.keyboard.keydown;
             var originalClearTimeout = editor.keyboard.clearTimeout;
             try {
@@ -59,13 +68,13 @@
 
                 $(editor.document).trigger(e);
 
-                assertTrue(called);
+                ok(called);
             } finally {
                 editor.keyboard.keydown = originalKeyDown;
                 editor.keyboard.clearTimeout = originalClearTimeout;
             }
-        }
-        function test_keyup_calls_keyboard_keyup() {
+        });
+        test('keyup calls keyboard keyup', function() {
             var originalKeyUp = editor.keyboard.keyup;
             try {
                 var called = false;
@@ -79,43 +88,43 @@
 
                 $(editor.document).trigger(e);
 
-                assertTrue(called);
+                ok(called);
             } finally {
                 editor.keyboard.keyup = originalKeyUp;
             }
-        }
+        });
 
-        function test_isTypingKey_returns_true_if_char_is_typed() {
+        test('isTypingKey returns true if char is typed', function() {
             var e = {
                 keyCode: 'B'.charCodeAt(0)
             };
 
             var keyboard = new Keyboard();
 
-            assertTrue(keyboard.isTypingKey(e));
-        }
+            ok(keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_true_if_backspace_is_typed() {
+        test('isTypingKey returns true if backspace is typed', function() {
             var e = {
                 keyCode: 8
             };
 
             var keyboard = new Keyboard();
 
-            assertTrue(keyboard.isTypingKey(e));
-        }
+            ok(keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_true_if_delete_is_typed() {
+        test('isTypingKey returns true if delete is typed', function() {
             var e = {
                 keyCode: 46
             };
 
             var keyboard = new Keyboard();
 
-            assertTrue(keyboard.isTypingKey(e));
-        }
+            ok(keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_ctrl_and_char_is_typed() {
+        test('isTypingKey returns false if ctrl and char is typed', function() {
             var e = {
                 keyCode: 'B'.charCodeAt(0),
                 ctrlKey: true
@@ -123,10 +132,10 @@
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_alt_and_char_is_typed() {
+        test('isTypingKey returns false if alt and char is typed', function() {
             var e = {
                 keyCode: 'B'.charCodeAt(0),
                 altKey: true
@@ -134,10 +143,10 @@
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_true_if_shift_and_char_is_typed() {
+        test('isTypingKey returns true if shift and char is typed', function() {
             var e = {
                 keyCode: 'B'.charCodeAt(0),
                 shiftKey: true
@@ -145,10 +154,10 @@
 
             var keyboard = new Keyboard();
 
-            assertTrue(keyboard.isTypingKey(e));
-        }
+            ok(keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_shift_and_delete_is_typed() {
+        test('isTypingKey returns false if shift and delete is typed', function() {
             var e = {
                 keyCode: 46,
                 shiftKey: true
@@ -156,10 +165,10 @@
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_ctrl_and_delete_is_typed() {
+        test('isTypingKey returns false if ctrl and delete is typed', function() {
             var e = {
                 keyCode: 46,
                 ctrlKey: true
@@ -167,10 +176,10 @@
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_alt_and_delete_is_typed() {
+        test('isTypingKey returns false if alt and delete is typed', function() {
             var e = {
                 keyCode: 46,
                 altKey: true
@@ -178,53 +187,53 @@
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_ctrl_is_typed() {
+        test('isTypingKey returns false if ctrl is typed', function() {
             var e = {
                 keyCode: 17
             };
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_shift_is_typed() {
+        test('isTypingKey returns false if shift is typed', function() {
             var e = {
                 keyCode: 16
             };
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_isTypingKey_returns_false_if_alt_is_typed() {
+        test('isTypingKey returns false if alt is typed', function() {
             var e = {
                 keyCode: 18
             };
 
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.isTypingKey(e));
-        }
+            ok(!keyboard.isTypingKey(e));
+        });
 
-        function test_typingInProgress_returns_false_initially() {
+        test('typingInProgress returns false initially', function() {
             var keyboard = new Keyboard();
 
-            assertFalse(keyboard.typingInProgress());
-        }
+            ok(!keyboard.typingInProgress());
+        });
 
-        function test_typingInProgress_returns_true_after_startTyping() {
+        test('typingInProgress returns true after startTyping', function() {
             var keyboard = new Keyboard();
 
             keyboard.startTyping();
-            assertTrue(keyboard.typingInProgress());
-        }
+            ok(keyboard.typingInProgress());
+        });
 
-        function test_typingInProgress_returns_false_after_endTyping() {
+        test('typingInProgress returns false after endTyping', function() {
             var keyboard = new Keyboard();
             var original = window.setTimeout;
 
@@ -236,12 +245,12 @@
                 }
 
                 keyboard.endTyping();
-                assertFalse(keyboard.typingInProgress());
+                ok(!keyboard.typingInProgress());
             } finally {
                 window.setTimeout = original;
             }
-        }
-        function test_typingInProgress_does_not_immediately_return_false_after_endTyping() {
+        });
+        test('typingInProgress does not immediately return false after endTyping', function() {
             var keyboard = new Keyboard();
             var original = window.setTimeout;
 
@@ -252,13 +261,13 @@
                 }
 
                 keyboard.endTyping();
-                assertTrue(keyboard.typingInProgress());
+                ok(keyboard.typingInProgress());
             } finally {
                 window.setTimeout = original;
             }
-        }
+        });
         
-        function test_typingInProgress_return_false_after_forced_endTyping() {
+        test('typingInProgress return false after forced endTyping', function() {
             var keyboard = new Keyboard();
             var original = window.setTimeout;
 
@@ -269,13 +278,13 @@
                 }
 
                 keyboard.endTyping(true);
-                assertFalse(keyboard.typingInProgress());
+                ok(!keyboard.typingInProgress());
             } finally {
                 window.setTimeout = original;
             }
-        }
+        });
 
-        function test_end_typing_calls_callback_specified_in_start_typing() {
+        test('end typing calls callback specified in start typing', function() {
             var keyboard = new Keyboard();
             var callbackInvoked = false;
 
@@ -290,15 +299,15 @@
                     callbackInvoked = true;
                 });
 
-                assertFalse(callbackInvoked);
+                ok(!callbackInvoked);
                 keyboard.endTyping();
-                assertTrue(callbackInvoked);
+                ok(callbackInvoked);
             } finally {
                 window.setTimeout = original;
             }
-        }
+        });
         
-        function test_endTyping_creates_timeout() {
+        test('endTyping creates timeout', function() {
             var original = window.setTimeout;
 
             try {
@@ -311,12 +320,12 @@
                 var callback = function () { }
                 keyboard.startTyping(callback);
                 keyboard.endTyping();
-                assertNotUndefined(setTimeoutArgument);
+                ok(undefined !== setTimeoutArgument);
             } finally {
                 window.setTimeout = original;
             }
-        }
-        function test_endTyping_calls_clear_timeout() {
+        });
+        test('endTyping calls clear timeout', function() {
             var original = window.setTimeout;
             try {
                 window.setTimeout = function () {
@@ -328,84 +337,84 @@
                     called = true;
                 }
                 keyboard.endTyping();
-                assertTrue(called);
+                ok(called);
             } finally {
                 window.setTimeout = original;
             }
-        }
+        });
 
 
-        function test_isModifierKey_returns_true_for_ctrl() {
+        test('isModifierKey returns true for ctrl', function() {
             var keyboard = new Keyboard();
-            assertTrue(keyboard.isModifierKey({ keyCode: 17 }));
-        }
+            ok(keyboard.isModifierKey({ keyCode: 17 }));
+        });
 
-        function test_isModifierKey_returns_true_for_shift() {
+        test('isModifierKey returns true for shift', function() {
             var keyboard = new Keyboard();
-            assertTrue(keyboard.isModifierKey({ keyCode: 16 }));
-        }
+            ok(keyboard.isModifierKey({ keyCode: 16 }));
+        });
 
-        function test_isModifierKey_returns_true_for_alt() {
+        test('isModifierKey returns true for alt', function() {
             var keyboard = new Keyboard();
-            assertTrue(keyboard.isModifierKey({ keyCode: 18 }));
-        }
+            ok(keyboard.isModifierKey({ keyCode: 18 }));
+        });
 
-        function test_isModifierKey_returns_false_for_character() {
+        test('isModifierKey returns false for character', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 'B'.charCodeAt(0) }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 'B'.charCodeAt(0) }));
+        });
 
-        function test_isModifierKey_returns_false_for_character_and_ctrl() {
+        test('isModifierKey returns false for character and ctrl', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 'B'.charCodeAt(0), ctrlKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 'B'.charCodeAt(0), ctrlKey: true }));
+        });
 
-        function test_isModifierKey_returns_false_for_ctrl_and_shift() {
+        test('isModifierKey returns false for ctrl and shift', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 17, shiftKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 17, shiftKey: true }));
+        });
 
-        function test_isModifierKey_returns_false_for_ctrl_and_alt() {
+        test('isModifierKey returns false for ctrl and alt', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 17, altKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 17, altKey: true }));
+        });
 
-        function test_isModifierKey_returns_false_for_shift_and_ctrl() {
+        test('isModifierKey returns false for shift and ctrl', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 16, ctrlKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 16, ctrlKey: true }));
+        });
 
-        function test_isModifierKey_returns_false_for_shift_and_alt() {
+        test('isModifierKey returns false for shift and alt', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 16, altKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 16, altKey: true }));
+        });
 
-        function test_isModifierKey_returns_false_for_alt_and_ctrl() {
+        test('isModifierKey returns false for alt and ctrl', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 18, ctrlKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 18, ctrlKey: true }));
+        });
 
-        function test_isModifierKey_returns_false_for_alt_and_shift() {
+        test('isModifierKey returns false for alt and shift', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isModifierKey({ keyCode: 18, shiftKey: true }));
-        }
+            ok(!keyboard.isModifierKey({ keyCode: 18, shiftKey: true }));
+        });
 
-        function test_isSystem_returns_true_for_ctrl_and_del() {
+        test('isSystem returns true for ctrl and del', function() {
             var keyboard = new Keyboard();
-            assertTrue(keyboard.isSystem({ keyCode: 46, ctrlKey: true }));
-        }
+            ok(keyboard.isSystem({ keyCode: 46, ctrlKey: true }));
+        });
         
-        function test_isSystem_returns_false_for_ctrl_and_del_and_alt() {
+        test('isSystem returns false for ctrl and del and alt', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isSystem({ keyCode: 46, ctrlKey: true, altKey: true }));
-        }
+            ok(!keyboard.isSystem({ keyCode: 46, ctrlKey: true, altKey: true }));
+        });
 
-        function test_isSystem_returns_false_for_ctrl_and_del_and_shift() {
+        test('isSystem returns false for ctrl and del and shift', function() {
             var keyboard = new Keyboard();
-            assertFalse(keyboard.isSystem({ keyCode: 46, ctrlKey: true, shiftKey: true }));
-        }
+            ok(!keyboard.isSystem({ keyCode: 46, ctrlKey: true, shiftKey: true }));
+        });
 
-        function test_keydown_calls_the_keydown_method_of_the_handlers() {
+        test('keydown calls the keydown method of the handlers', function() {
             var calls = 0;
             var handlers = [
                 { keydown: function () { calls++ } },
@@ -414,10 +423,10 @@
 
             var keyboard = new Keyboard(handlers);
             keyboard.keydown();
-            assertEquals(2, calls)
-        }
+            equal(calls, 2)
+        });
 
-        function test_keydown_calls_the_keydown_breaks_if_some_handler_returns_true() {
+        test('keydown calls the keydown breaks if some handler returns true', function() {
             var calls = 0;
             var handlers = [
                 { keydown: function () { calls++; return true; } },
@@ -426,10 +435,10 @@
 
             var keyboard = new Keyboard(handlers);
             keyboard.keydown();
-            assertEquals(1, calls)
-        }
+            equal(calls, 1)
+        });
 
-        function test_keydown_passes_the_argument_to_handler() {
+        test('keydown passes the argument to handler', function() {
             var e = {};
             var arg;
             var handlers = [
@@ -438,10 +447,10 @@
 
             var keyboard = new Keyboard(handlers);
             keyboard.keydown(e);
-            assertEquals(e, arg)
-        }
+            equal(arg, e)
+        });
 
-        function test_keyup_calls_the_keydup_method_of_the_handlers() {
+        test('keyup calls the keydup method of the handlers', function() {
             var calls = 0;
             var handlers = [
                 { keyup: function () { calls++ } },
@@ -450,10 +459,10 @@
 
             var keyboard = new Keyboard(handlers);
             keyboard.keyup();
-            assertEquals(2, calls)
-        }
+            equal(calls, 2)
+        });
 
-        function test_keyup_calls_the_keyup_breaks_if_some_handler_returns_true() {
+        test('keyup calls the keyup breaks if some handler returns true', function() {
             var calls = 0;
             var handlers = [
                 { keyup: function () { calls++; return true; } },
@@ -462,10 +471,10 @@
 
             var keyboard = new Keyboard(handlers);
             keyboard.keyup();
-            assertEquals(1, calls)
-        }
+            equal(calls, 1)
+        });
 
-        function test_keyup_passes_the_argument_to_handler() {
+        test('keyup passes the argument to handler', function() {
             var e = {};
             var arg;
             var handlers = [
@@ -474,7 +483,9 @@
 
             var keyboard = new Keyboard(handlers);
             keyboard.keyup(e);
-            assertEquals(e, arg)
-        }
-    </script>
+            equal(arg, e)
+        });
+
+</script>
+
 </asp:Content>

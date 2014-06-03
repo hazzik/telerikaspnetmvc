@@ -1,21 +1,31 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        TypingHandler</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+
     <%= Html.Telerik().Editor().Name("Editor") %>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript">
-        var TypingHandler;
 
-        var editor;
-        
-        function setUp() {
-            TypingHandler = $.telerik.editor.TypingHandler;
-            editor = $('#Editor').data('tEditor');
-            editor.focus();
-        }
+        var editor, TypingHandler, oldEditorKeyboard;
 
-        function test_typing_handler_keydown_creates_start_restore_point_if_typing() {
+        module("Editor / TypingHandler", {
+            setup: function() {
+                TypingHandler = $.telerik.editor.TypingHandler;
+                editor = $('#Editor').data('tEditor');
+                editor.focus();
+
+                oldEditorKeyboard = editor.keyboard;
+            },
+            teardown: function() {
+                editor.keyboard = oldEditorKeyboard;
+            }
+        });
+
+        test('typing handler keydown creates start restore point if typing', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function () {},
@@ -26,10 +36,10 @@
 
             handler.keydown();
 
-            assertNotUndefined(handler.startRestorePoint);
-        }
+            ok(undefined !== handler.startRestorePoint);
+        });
 
-        function test_typing_handler_keydown_calls_startTyping() {
+        test('typing handler keydown calls startTyping', function() {
             var callback;
 
             editor.keyboard = {
@@ -40,10 +50,10 @@
 
             var handler = new TypingHandler(editor);
             handler.keydown();
-            assertNotUndefined(callback);
-        }
+            ok(undefined !== callback);
+        });
 
-        function test_typing_handler_keydown_returns_true() {
+        test('typing handler keydown returns true', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function () {},
@@ -51,10 +61,10 @@
             };
 
             var handler = new TypingHandler(editor);
-            assertTrue(handler.keydown())
-        }
+            ok(handler.keydown())
+        });
         
-        function test_typing_handler_keydown_returns_false_if_typing_is_in_progress() {
+        test('typing handler keydown returns false if typing is in progress', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function () {},
@@ -62,10 +72,10 @@
             };
 
             var handler = new TypingHandler(editor);
-            assertFalse(handler.keydown())
-        }
+            ok(!handler.keydown())
+        });
 
-        function test_typing_handler_keydown_returns_false_if_not_typing() {
+        test('typing handler keydown returns false if not typing', function() {
             editor.keyboard = {
                 isTypingKey: function () { return false; },
                 startTyping: function () {},
@@ -73,10 +83,10 @@
             };
 
             var handler = new TypingHandler(editor);
-            assertFalse(handler.keydown())
-        }
+            ok(!handler.keydown())
+        });
 
-        function test_typing_handler_keyup_creates_end_restore_point_if_typing() {
+        test('typing handler keyup creates end restore point if typing', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function (callback) {this.callback = callback},
@@ -92,10 +102,10 @@
             
             handler.keyup();
 
-            assertNotUndefined(handler.endRestorePoint);
-        }
+            ok(undefined !== handler.endRestorePoint);
+        });
 
-        function test_typing_handler_keyup_creates_undo_command() {
+        test('typing handler keyup creates undo command', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function (callback) {this.callback = callback},
@@ -114,10 +124,10 @@
             
             handler.keyup();
             
-            assertNotUndefined(command);
-        }
+            ok(undefined !== command);
+        });
 
-        function test_typing_handler_keyup_returns_true_when_typing() {
+        test('typing handler keyup returns true when typing', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function (callback) {this.callback = callback},
@@ -134,10 +144,10 @@
             
             editor.keyboard.typingInProgress = function() { return true};
             
-            assertTrue(handler.keyup())
-        }
+            ok(handler.keyup())
+        });
         
-        function test_typing_handler_keyup_returns_false_when_not_typing() {
+        test('typing handler keyup returns false when not typing', function() {
             editor.keyboard = {
                 isTypingKey: function () { return true; },
                 startTyping: function (callback) {this.callback = callback},
@@ -152,121 +162,9 @@
             
             handler.keydown();
             
-            assertFalse(handler.keyup())
-        }
-
-        function test_typing_handler_keyup_does_not_create_end_restore_point_if_not_typing_in_progress() {
-            editor.keyboard = {
-                isTypingKey: function () { return true; },
-                startTyping: function (callback) {this.callback = callback},
-                typingInProgress: function() { return false},
-                endTyping: function () {this.callback()}
-            };
-
-            var handler = new TypingHandler(editor);
-            
-            handler.keydown();
-
-            handler.keyup();
-
-            assertUndefined(handler.endRestorePoint);
-        }
-
-        function test_keydown_of_non_typing_key_removes_empty_pending_formats() {
-
-            editor.value('foo<strong></strong>');
-            
-            editor.keyboard = {
-                isTypingKey: function () { return false; },
-                startTyping: function (callback) {this.callback = callback},
-                typingInProgress: function() { return false},
-                endTyping: function () {this.callback()}
-            };
-
-            editor.pendingFormats = [editor.body.childNodes[1]];
-
-            var handler = new TypingHandler(editor);
-            handler.keydown();
-
-            assertEquals(1, editor.body.childNodes.length);
-        }
-
-        function test_keydown_removes_only_empty_pending_formats() {
-
-            editor.value('foo<strong>bar</strong>');
-            
-            editor.keyboard = {
-                isTypingKey: function () { return false; },
-                startTyping: function (callback) {this.callback = callback},
-                typingInProgress: function() { return false},
-                endTyping: function () {this.callback()}
-            };
-
-            editor.pendingFormats = [editor.body.childNodes[1]];
-
-            var handler = new TypingHandler(editor);
-            handler.keydown();
-
-            assertEquals(2, editor.body.childNodes.length);
-        }
-
-        function test_keydown_removes_nested_pending_formats() {
-
-            editor.value('foo<strong><em></em></strong>');
-            
-            editor.keyboard = {
-                isTypingKey: function () { return false; },
-                startTyping: function (callback) {this.callback = callback},
-                typingInProgress: function() { return false},
-                endTyping: function () {this.callback()}
-            };
-
-            editor.pendingFormats = [editor.body.lastChild, editor.body.lastChild.firstChild];
-
-            var handler = new TypingHandler(editor);
-            handler.keydown();
-
-            editor.body.normalize();
-            assertEquals(1, editor.body.childNodes.length);
-        }
-
-        function test_keydown_skips_invalid_nodes_from_pending_formats() {
-
-            editor.value('foo<strong></strong>');
-            
-            editor.keyboard = {
-                isTypingKey: function () { return false; },
-                startTyping: function (callback) {this.callback = callback},
-                typingInProgress: function() { return false},
-                endTyping: function () {this.callback()}
-            };
-
-            editor.pendingFormats = [{ parentNode: null, childNodes: [], innerHTML: '' }, editor.body.lastChild];
-
-            var handler = new TypingHandler(editor);
-            handler.keydown();
-
-            assertEquals(1, editor.body.childNodes.length);
-        }
-
-        function test_keydown_does_not_remove_pending_formats_if_typing() {
-
-            editor.value('foo<strong></strong>');
-            
-            editor.keyboard = {
-                isTypingKey: function () { return true; },
-                startTyping: function (callback) {this.callback = callback},
-                typingInProgress: function() { return false},
-                endTyping: function () {this.callback()}
-            };
-
-            editor.pendingFormats = [editor.body.lastChild];
-
-            var handler = new TypingHandler(editor);
-            handler.keydown();
-
-            assertEquals(2, editor.body.childNodes.length);
-        }
+            ok(!handler.keyup())
+        });
 
     </script>
+
 </asp:Content>

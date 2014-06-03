@@ -36,6 +36,13 @@ namespace Telerik.Web.Mvc.UI
             Effects = new Effects();
             defaultEffects.Each(el => Effects.Container.Add(el));
             Enabled = true;
+            Encoded = true;
+        }
+
+        public bool Encoded
+        {
+            get;
+            set;
         }
 
         public IUrlGenerator UrlGenerator
@@ -104,6 +111,12 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
+        public string Value
+        {
+            get;
+            set;
+        }
+
         public override void WriteInitializationScript(System.IO.TextWriter writer)
         {
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tAutoComplete", writer);
@@ -129,6 +142,14 @@ namespace Telerik.Web.Mvc.UI
 
             if (Items.Any())
             {
+                if (Encoded) 
+                {
+                    for (int i = 0, length = Items.Count; i < length; i++) 
+                    {
+                        Items[i] = System.Web.HttpUtility.HtmlEncode(Items[i]);
+                    }
+                }
+
                 objectWriter.AppendCollection("data", Items);
             }
 
@@ -136,6 +157,8 @@ namespace Telerik.Web.Mvc.UI
             {
                 objectWriter.Append("dropDownAttr", DropDownHtmlAttributes.ToAttributeString());
             }
+
+            objectWriter.Append("encoded", this.Encoded, true);
 
             objectWriter.Complete();
 

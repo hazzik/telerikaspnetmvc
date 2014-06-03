@@ -2,9 +2,8 @@
 namespace Telerik.Web.Mvc.UI.Tests 
 {
     using System.Data;
-    using Extensions;
+    using Telerik.Web.Mvc.Extensions;
     using Xunit;
-    using Mvc.Tests;
 
     public class GridRowViewDataKeyTests
     {

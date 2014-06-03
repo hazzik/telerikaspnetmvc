@@ -20,8 +20,7 @@
 
         public IHtmlNode Build()
         {           
-            IHtmlNode root = new HtmlTag("div")
-                                .Attribute("id", Component.Id)
+            IHtmlNode root = new HtmlElement("div")
                                 .Attributes(Component.HtmlAttributes)
                                 .PrependClass(UIPrimitives.Widget, "t-dropdown", UIPrimitives.Header)
                                 .ToggleClass("t-state-disabled", !Component.Enabled)
@@ -36,16 +35,25 @@
 
         public IHtmlNode InnerContentTag()
         {
-            IHtmlNode root = new HtmlTag("div").AddClass("t-dropdown-wrap", UIPrimitives.DefaultState);
+            IHtmlNode root = new HtmlElement("div").AddClass("t-dropdown-wrap", UIPrimitives.DefaultState);
 
-            new HtmlTag("span")
+            string text = "&nbsp;";
+            var items = Component.Items;
+            int selectedIndex = Component.SelectedIndex;
+
+            if (items.Count > 0 && !(string.IsNullOrEmpty(items[selectedIndex].Text) || items[selectedIndex].Text.Trim().Length == 0)) 
+            {
+                text = items[selectedIndex].Text;
+            }          
+
+            new HtmlElement("span")
                 .AddClass("t-input")
-                .Html(Component.Items.Any() ? Component.Items[Component.SelectedIndex].Text : "&nbsp;")
+                .Html(text)
                 .AppendTo(root);
 
-            IHtmlNode link = new HtmlTag("span").AddClass("t-select");
+            IHtmlNode link = new HtmlElement("span").AddClass("t-select");
 
-            new HtmlTag("span")
+            new HtmlElement("span")
                 .AddClass(UIPrimitives.Icon, "t-arrow-down")
                 .Html("select")
                 .AppendTo(link);
@@ -57,7 +65,7 @@
 
         public IHtmlNode HiddenInputTag()
         {
-            IHtmlNode input = new HtmlTag("input", TagRenderMode.SelfClosing)
+            IHtmlNode input = new HtmlElement("input", TagRenderMode.SelfClosing)
                     .Attributes(new
                     {
                         type = "text",
@@ -65,11 +73,12 @@
                     });
 
             if (Component.Name.HasValue())
-                input.Attributes(new
-                {
-                    name = Component.Name,
-                    id = Component.Id + "-value"
-                });
+                input.Attributes(Component.GetUnobtrusiveValidationAttributes())
+                     .Attributes(new
+                     {
+                         name = Component.Name,
+                         id = Component.Id
+                     });
 
             if (Component.Items.Any())
             {

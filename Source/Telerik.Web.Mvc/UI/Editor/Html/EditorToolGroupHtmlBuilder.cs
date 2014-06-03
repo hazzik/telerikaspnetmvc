@@ -20,7 +20,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            var ul = new HtmlTag("ul")
+            var ul = new HtmlElement("ul")
                 .AddClass("t-editor-toolbar");
 
             group.Tools.Each(tool =>

@@ -48,10 +48,10 @@
         public void Should_serialize_client_events()
         {
             var Autocomplete = AutoCompleteTestHelper.CreateAutocomplete();
-            Autocomplete.ClientEvents.OnDataBinding.InlineCode = Autocomplete.ClientEvents.OnDataBound.InlineCode =
-                Autocomplete.ClientEvents.OnError.InlineCode = Autocomplete.ClientEvents.OnLoad.InlineCode =
-                Autocomplete.ClientEvents.OnChange.InlineCode = Autocomplete.ClientEvents.OnOpen.InlineCode =
-                Autocomplete.ClientEvents.OnClose.InlineCode = () => { };
+            Autocomplete.ClientEvents.OnDataBinding.CodeBlock = Autocomplete.ClientEvents.OnDataBound.CodeBlock =
+                Autocomplete.ClientEvents.OnError.CodeBlock = Autocomplete.ClientEvents.OnLoad.CodeBlock =
+                Autocomplete.ClientEvents.OnChange.CodeBlock = Autocomplete.ClientEvents.OnOpen.CodeBlock =
+                Autocomplete.ClientEvents.OnClose.CodeBlock = () => { };
 
             var writer = AutoCompleteTestHelper.clientSideObjectWriter;
 
@@ -206,6 +206,29 @@
             AutoComplete.WriteInitializationScript(textWriter.Object);
 
             AutoCompleteTestHelper.clientSideObjectWriter.Verify(w => w.Append("minChars", It.IsAny<int>(), It.IsAny<int>()));
+        }
+
+        [Fact]
+        public void ObjectWriter_should_call_append_for_Encoded_property()
+        {
+            AutoCompleteTestHelper.clientSideObjectWriter.Setup(w => w.Append("encoded", It.IsAny<bool>(), true));
+
+            AutoComplete.WriteInitializationScript(textWriter.Object);
+
+            AutoCompleteTestHelper.clientSideObjectWriter.Verify(w => w.Append("encoded", It.IsAny<bool>(), true));
+        }
+
+        [Fact]
+        public void WriteInitializationScript_should_encode_Items_collection_if_Encoded_true()
+        {
+            var decodedText = "Test<script>alert('i can haz your data');</script>";
+
+            AutoComplete.Items.Clear();
+            AutoComplete.Items.Add(decodedText);
+
+            AutoComplete.WriteInitializationScript(textWriter.Object);
+
+            Assert.Equal(AutoComplete.Items[0], System.Web.HttpUtility.HtmlEncode(decodedText));
         }
     }
 }

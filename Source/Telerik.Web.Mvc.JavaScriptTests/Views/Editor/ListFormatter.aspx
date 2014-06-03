@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
@@ -9,194 +9,202 @@
         var editor;
         var ListFormatter;
 
-        function setUp() {
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        QUnit.testStart = function() {
             editor = getEditor();
             ListFormatter = $.telerik.editor.ListFormatter;
         }
 
-        function test_apply_on_text_node() {
+        test('apply on text node', function() {
             editor.value('foo');
             var formatter = new ListFormatter('ul');
             formatter.apply([editor.body.firstChild]);
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_apply_on_inline_node() {
+        test('apply on inline node', function() {
             editor.value('<strong>foo</strong>');
             var formatter = new ListFormatter('ul');
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ul><li><strong>foo</strong></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li><strong>foo</strong></li></ul>');
+        });
 
-        function test_apply_on_block_node() {
+        test('apply on block node', function() {
             editor.value('<div>foo</div>');
             var formatter = new ListFormatter('ul');
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_apply_on_block_nodes() {
+        test('apply on block nodes', function() {
             editor.value('<div>foo</div><div>bar</div>');
             var formatter = new ListFormatter('ul');
             formatter.apply([editor.body.firstChild.firstChild,editor.body.lastChild.firstChild]);
-            assertEquals('<ul><li>foo</li><li>bar</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
 
-        function test_apply_on_list_and_other_content_merges_the_list() {
+        test('apply on list and other content merges the list', function() {
             editor.value('<ul><li>foo</li></ul>bar');
             var formatter = new ListFormatter('ul');
             
             formatter.apply([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild]);
-            assertEquals('<ul><li>foo</li><li>bar</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
 
-        function test_apply_applies_to_selected_block_contents_only() {
+        test('apply applies to selected block contents only', function() {
             editor.value('<div>foo</div><div>bar</div>');
             var formatter = new ListFormatter('ul');
             
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ul><li>foo</li></ul><div>bar</div>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul><div>bar</div>');
+        });
 
-        function test_apply_applies_to_inline_siblings() {
+        test('apply applies to inline siblings', function() {
             editor.value('<span>foo</span><span>bar</span>');
             var formatter = new ListFormatter('ul');
 
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ul><li><span>foo</span><span>bar</span></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li><span>foo</span><span>bar</span></li></ul>');
+        });
         
-        function test_apply_when_text_node_and_inline_node_selected() {
+        test('apply when text node and inline node selected', function() {
             editor.value('<p>foo<strong>bar</strong></p>');
             
             var formatter = new ListFormatter('ul');
             
             formatter.apply([editor.body.firstChild.firstChild, editor.body.firstChild.childNodes[1].firstChild]);
-            assertEquals('<ul><li>foo<strong>bar</strong></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo<strong>bar</strong></li></ul>');
+        });
 
-        function test_apply_over_paragraph_containing_whitespace() {
+        test('apply over paragraph containing whitespace', function() {
             editor.value('<p>foo<strong>foo</strong> </p>');
             
             var formatter = new ListFormatter('ul');
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ul><li>foo<strong>foo</strong> </li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo<strong>foo</strong> </li></ul>');
+        });
 
-        function test_apply_converts_ul_to_ol() {
+        test('apply converts ul to ol', function() {
             editor.value('<ul><li>foo</li></ul>');
             var formatter = new ListFormatter('ol');
 
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ol><li>foo</li></ol>', editor.value());
-        }
+            equal(editor.value(), '<ol><li>foo</li></ol>');
+        });
 
-        function test_apply_converts_ol_to_li() {
+        test('apply converts ol to li', function() {
             editor.value('<ol><li>foo</li></ol>');
             var formatter = new ListFormatter('ul');
             
             formatter.apply([editor.body.firstChild.firstChild]);
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_apply_merges_adjacent_lists() {
+        test('apply merges adjacent lists', function() {
             editor.value('<ol><li>foo</li></ol><ol><li>bar</li></ol>');
             var formatter = new ListFormatter('ol');
             
             formatter.apply([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]);
-            assertEquals('<ol><li>foo</li><li>bar</li></ol>', editor.value());
-        }
+            equal(editor.value(), '<ol><li>foo</li><li>bar</li></ol>');
+        });
         
-        function test_apply_converts_and_merges_adjacent_lists() {
+        test('apply converts and merges adjacent lists', function() {
             editor.value('<ol><li>foo</li></ol><ol><li>bar</li></ol>');
             var formatter = new ListFormatter('ul');
 
             formatter.apply([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]);
-            assertEquals('<ul><li>foo</li><li>bar</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
 
-        function test_apply_converts_and_merges_adjacent_lists_of_different_type_li() {
+        test('apply converts and merges adjacent lists of different type li', function() {
             editor.value('<ol><li>foo</li></ol><ul><li>bar</li></ul>');
             var formatter = new ListFormatter('ul');
             
             formatter.apply([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]);
-            assertEquals('<ul><li>foo</li><li>bar</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
         
-        function test_apply_converts_and_merges_adjacent_lists_of_different_type_ol() {
+        test('apply converts and merges adjacent lists of different type ol', function() {
             editor.value('<ol><li>foo</li></ol><ul><li>bar</li></ul>');
             var formatter = new ListFormatter('ol');
 
             formatter.apply([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild.firstChild]);
-            assertEquals('<ol><li>foo</li><li>bar</li></ol>', editor.value());
-        }
+            equal(editor.value(), '<ol><li>foo</li><li>bar</li></ol>');
+        });
 
-        function test_remove_unwraps() {
+        test('remove unwraps', function() {
             editor.value('<ul><li>foo</li></ul>');
 
             var formatter = new ListFormatter('ul');
 
             formatter.remove([editor.body.firstChild.firstChild.firstChild]);
-            assertEquals('<p>foo</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p>');
+        });
 
-        function test_split() {
+        test('split', function() {
             var range = createRangeFromText(editor, '<ul><li>|foo|</li><li>bar</li></ul>');
             var formatter = new ListFormatter('ul');
 
             formatter.split(range);
-            assertEquals('<ul><li>foo</li></ul><ul><li>bar</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul><ul><li>bar</li></ul>');
+        });
 
-        function test_split_partial_selection_across_multiple_list_items() {
+        test('split partial selection across multiple list items', function() {
             var range = createRangeFromText(editor, '<ul><li>|foo</li><li>bar|</li></ul>');
             var formatter = new ListFormatter('ul');
 
             formatter.split(range);
-            assertEquals('<ul><li>foo</li><li>bar</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
 
-        function test_split_whole_li_selected() {
+        test('split whole li selected', function() {
             var range = createRangeFromText(editor, '<ul><li>|foo|</li></ul>');
             var formatter = new ListFormatter('ul');
 
             formatter.split(range);
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_split_partial_contents_of_li_selected() {
+        test('split partial contents of li selected', function() {
             var range = createRangeFromText(editor, '<ul><li>|fo|o</li></ul>');
             var formatter = new ListFormatter('ul');
 
             formatter.split(range);
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_toggle_on_partial_selection() {
+        test('toggle on partial selection', function() {
             var range = createRangeFromText(editor, '<ul><li>|foo</li><li>bar|</li><li>baz</li></ul>');
             var formatter = new ListFormatter('ul');
             
             formatter.toggle(range);
-            assertEquals('<p>foo</p><p>bar</p><ul><li>baz</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p>bar</p><ul><li>baz</li></ul>');
+        });
 
-        function test_toggle_formatted_element_amidst_text() {
+        test('toggle formatted element amidst text', function() {
             var range = createRangeFromText(editor, '<ul><li>foo<strong>b|a|r</strong>baz</li></ul>');
             var formatter = new ListFormatter('ul');
             
             formatter.toggle(range);
-            assertEquals('<p>foo<strong>bar</strong>baz</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo<strong>bar</strong>baz</p>');
+        });
 
-        function test_toggle_unformatted_element_amidst_text() {
+        test('toggle unformatted element amidst text', function() {
             var range = createRangeFromText(editor, 'foo<strong>b|a|r</strong>baz');
             var formatter = new ListFormatter('ul');
             
             formatter.toggle(range);
-            assertEquals('<ul><li>foo<strong>bar</strong>baz</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo<strong>bar</strong>baz</li></ul>');
+        });
 
-        function test_toggle_unformatted_element_from_caret() {
+        test('toggle unformatted element from caret', function() {
             editor.value('foo <strong>bar</strong> baz');
             var range = editor.createRange();
             range.setStart(editor.body.childNodes[1].firstChild, 1);
@@ -205,10 +213,10 @@
             var formatter = new ListFormatter('ul');
             
             formatter.toggle(range);
-            assertEquals('<ul><li>foo <strong>bar</strong> baz</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo <strong>bar</strong> baz</li></ul>');
+        });
 
-        function test_toggle_applies_format_if_format_is_not_found() {
+        test('toggle applies format if format is not found', function() {
             var range = createRangeFromText(editor, '|foo|');
 
             var formatter = new ListFormatter('ul');
@@ -217,10 +225,10 @@
                 argument = arguments[0];
             }
             formatter.toggle(range);
-            assertTrue($.isArray(argument));
-        }
+            ok($.isArray(argument));
+        });
 
-        function test_toggle_removes_format_if_format_is_found() {
+        test('toggle removes format if format is found', function() {
             var range = createRangeFromText(editor, '<ul><li>|foo|</li>');
 
             var formatter = new ListFormatter('ul');
@@ -229,10 +237,10 @@
                 argument = arguments[0];
             }
             formatter.toggle(range);
-            assertTrue($.isArray(argument));
-        }
+            ok($.isArray(argument));
+        });
 
-        function test_toggle_and_unexpandable_range() {
+        test('toggle and unexpandable range', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStartAfter(editor.body.firstChild);
@@ -240,10 +248,10 @@
 
             var formatter = new ListFormatter('ul');
             formatter.toggle(range);
-            assertEquals('<ul><li>foo</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo</li></ul>');
+        });
 
-        function test_toggle_removes_list() {
+        test('toggle removes list', function() {
             editor.value('<ul><li>foo</li><li>bar</li></ul>');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild.firstChild.firstChild, 0);
@@ -251,10 +259,10 @@
             
             var formatter = new ListFormatter('ul');
             formatter.toggle(range);
-            assertEquals('<p>foo</p><p>bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p>bar</p>');
+        });
         
-        function test_toggle_removes_empty_lists() {
+        test('toggle removes empty lists', function() {
             editor.value('<ul>   <li>foo</li>   <li>bar</li>   </ul>');
             var range = editor.createRange();
             var lis = $('li', editor.body.firstChild);
@@ -263,80 +271,110 @@
             
             var formatter = new ListFormatter('ul');
             formatter.toggle(range);
-            assertEquals('<p>foo</p><p>bar</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p><p>bar</p>');
+        });
 
-        function test_remove_and_nested_block_node() {
+        test('remove and nested block node', function() {
             editor.value('<ul><li><p>foo</p></li></ul>');
             
             var formatter = new ListFormatter('ul');
             formatter.remove([editor.body.firstChild.firstChild.firstChild.firstChild]);
             
-            assertEquals('<p>foo</p>', editor.value());
-        }
+            equal(editor.value(), '<p>foo</p>');
+        });
 
-        function test_remove_and_nested_text_and_block_node() {
+        test('remove and nested text and block node', function() {
             editor.value('<ul><li>foo<div>bar</div>baz</li></ul>');
             
             var formatter = new ListFormatter('ul');
             formatter.remove([editor.body.firstChild.firstChild.firstChild.firstChild]);
             
             editor.value('<p>foo</p><div>bar</div><p>baz</p>');
-        }
+        });
 
-        function test_remove_and_nested_text_and_inline_node() {
+        test('remove and nested text and inline node', function() {
             editor.value('<ul><li>foo<strong>bar</strong>baz</li></ul>');
 
             var formatter = new ListFormatter('ul');
             formatter.remove([editor.body.firstChild.firstChild.firstChild.firstChild]);
 
             editor.value('<p>foo<strong>bar</strong>baz</p>');
-        }
+        });
         
-        function test_apply_text_nodes_in_inline_element() {
+        test('apply text nodes in inline element', function() {
             editor.value('<span>foo<strong>bar</strong></span>baz');
             
             var formatter = new ListFormatter('ul');
             formatter.apply([editor.body.firstChild.firstChild, editor.body.firstChild.lastChild.firstChild]);
             
-            assertEquals('<ul><li><span>foo<strong>bar</strong></span>baz</li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li><span>foo<strong>bar</strong></span>baz</li></ul>');
+        });
 
-        function test_convert_mixed_nested_ul_to_ol() {
+        test('convert mixed nested ul to ol', function() {
             editor.value('<ol><li>foo<ul><li>bar</li></ul></li></ol>');
             var bar = editor.body.getElementsByTagName('li')[1].firstChild;
             var formatter = new ListFormatter('ol');
             formatter.apply([bar]);
             
-            assertEquals('<ol><li>foo<ol><li>bar</li></ol></li></ol>', editor.value());
-        }
+            equal(editor.value(), '<ol><li>foo<ol><li>bar</li></ol></li></ol>');
+        });
 
-        function test_convert_nested_ul_to_ol() {
+        test('convert nested ul to ol', function() {
             editor.value('<ul><li>foo<ul><li>bar</li></ul></li></ul>');
             var bar = editor.body.getElementsByTagName('li')[1].firstChild;
             var formatter = new ListFormatter('ol');
             formatter.apply([bar]);
 
-            assertEquals('<ul><li>foo<ol><li>bar</li></ol></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo<ol><li>bar</li></ol></li></ul>');
+        });
         
-        function test_convert_mixed_nested_ol_to_ul() {
+        test('convert mixed nested ol to ul', function() {
             editor.value('<ul><li>foo<ol><li>bar</li></ol></li></ul>');
             var bar = editor.body.getElementsByTagName('li')[1].firstChild;
             var formatter = new ListFormatter('ul');
             formatter.apply([bar]);
             
-            assertEquals('<ul><li>foo<ul><li>bar</li></ul></li></ul>', editor.value());
-        }
+            equal(editor.value(), '<ul><li>foo<ul><li>bar</li></ul></li></ul>');
+        });
         
-        function test_convert_nested_ol_to_ul() {
+        test('convert nested ol to ul', function() {
             editor.value('<ol><li>foo<ol><li>bar</li></ol></li></ol>');
             var bar = editor.body.getElementsByTagName('li')[1].firstChild;
             var formatter = new ListFormatter('ul');
             formatter.apply([bar]);
             
-            assertEquals('<ol><li>foo<ul><li>bar</li></ul></li></ol>', editor.value());
-        }
+            equal(editor.value(), '<ol><li>foo<ul><li>bar</li></ul></li></ol>');
+        });
 
-    </script>
+        test("apply in table cell", function() {
+            editor.value("<table><tbody><tr><td>foo</td></tr></tbody></table>");
+            var foo = editor.body.getElementsByTagName("td")[0].firstChild;
+            var formatter = new ListFormatter("ul");
+            
+            formatter.apply([foo]);
+            equal(editor.value(), "<table><tbody><tr><td><ul><li>foo</li></ul></td></tr></tbody></table>");
+        });
+
+        test("apply in selection between sibling table cells", function() {
+            editor.value("<table><tbody><tr><td>foo</td><td>bar</td></tr></tbody></table>");
+            var foo = editor.body.getElementsByTagName("td")[0].firstChild;
+            var bar = editor.body.getElementsByTagName("td")[1].firstChild;
+            var formatter = new ListFormatter("ul");
+            
+            formatter.apply([foo, bar]);
+            equal(editor.value(), "<table><tbody><tr><td><ul><li>foo</li></ul></td><td><ul><li>bar</li></ul></td></tr></tbody></table>");
+        });
+
+        test("apply in selection between different table rows", function() {
+            editor.value("<table><tbody><tr><td>foo</td></tr><tr><td>bar</td></tr></tbody></table>");
+            var foo = editor.body.getElementsByTagName("td")[0].firstChild;
+            var bar = editor.body.getElementsByTagName("td")[1].firstChild;
+            var formatter = new ListFormatter("ul");
+            
+            formatter.apply([foo, bar]);
+            equal(editor.value(), "<table><tbody><tr><td><ul><li>foo</li></ul></td></tr><tr><td><ul><li>bar</li></ul></td></tr></tbody></table>");
+        });
+
+</script>
+
 </asp:Content>

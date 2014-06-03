@@ -1,23 +1,20 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
         LinkCommand</h2>
     <%= Html.Telerik().Editor().Name("Editor") %>
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
-    <script type="text/javascript">
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
         var editor;
         var LinkCommand;
-
-        function setUp() {
-            editor = getEditor();
-            LinkCommand = $.telerik.editor.LinkCommand;
-        }
-
-        function tearDown() {
-            var window = $('.t-window').data('tWindow');
-            if (window) window.destroy();
-        }
 
         function execLinkCommandOnRange(range) {
             var command = new LinkCommand({ range: range });
@@ -27,45 +24,56 @@
             return command;
         }
 
-        function test_exec_creates_window() {
+        module("Editor / LinkCommand", {
+            setup: function() {
+                editor = getEditor();
+                LinkCommand = $.telerik.editor.LinkCommand;
+            },
+            teardown: function() {
+                var wnd = $('.t-window').data('tWindow');
+                if (wnd) wnd.destroy();
+            }
+        });
+
+        test('exec creates window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
-            assertEquals(1, $('.t-window').length)
-        }
+            equal($('.t-window').length, 1)
+        });
 
-        function test_clicking_close_closes_the_window() {
+        test('clicking close closes the window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
             $('.t-dialog-close').click();
-            assertEquals(0, $('.t-window').length)
-        }
+            equal($('.t-window').length, 0)
+        });
 
-        function test_clicking_insert_closes_the_window() {
+        test('clicking insert closes the window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
             $('.t-dialog-insert').click();
-            assertEquals(0, $('.t-window').length)
-        }
+            equal($('.t-window').length, 0)
+        });
 
-        function test_text_is_filled_when_only_text_is_selected() {
+        test('text is filled when only text is selected', function() {
             var range = createRangeFromText(editor, '|foo bar|');
             execLinkCommandOnRange(range);
 
-            assertEquals('foo bar', $('#t-editor-link-text').val())
-        }
+            equal($('#t-editor-link-text').val(), 'foo bar')
+        });
 
-        function test_text_is_removed_if_more_than_one_text_node_is_selected() {
+        test('text is removed if more than one text node is selected', function() {
             var range = createRangeFromText(editor, '|foo <strong>bar</strong>|');
             execLinkCommandOnRange(range);
 
-            assertEquals(0, $('label[for=t-editor-link-text]').length)
-            assertEquals(0, $('#t-editor-link-text').length)
-        }
+            equal($('label[for=t-editor-link-text]').length, 0)
+            equal($('#t-editor-link-text').length, 0)
+        });
 
-        function test_collapsed_range_is_expanded() {
+        test('collapsed range is expanded', function() {
             editor.value('foo');
             var range = editor.createRange();
             
@@ -74,44 +82,44 @@
             
             execLinkCommandOnRange(range);
 
-            assertEquals('foo', $('#t-editor-link-text').val())
-        }
+            equal($('#t-editor-link-text').val(), 'foo')
+        });
 
-        function test_clicking_insert_inserts_link_if_url_is_set() {
+        test('clicking insert inserts link if url is set', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
             $('#t-editor-link-url').val('foo');
             $('.t-dialog-insert').click();
-            assertEquals('<a href="foo">foo</a>', editor.value())
-        }
+            equal(editor.value(), '<a href="foo">foo</a>')
+        });
 
-        function test_clicking_insert_does_not_inserts_link_if_url_is_not_set() {
+        test('clicking insert does not inserts link if url is not set', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
             $('#t-editor-link-url').val('');
             $('.t-dialog-insert').click();
-            assertEquals('foo', editor.value())
-        }
+            equal(editor.value(), 'foo')
+        });
 
-        function test_clicking_insert_updates_existing_url() {
+        test('clicking insert updates existing url', function() {
             var range = createRangeFromText(editor, '<a href="bar">|foo|</a>');
             execLinkCommandOnRange(range);
 
             $('#t-editor-link-url').val('foo');
             $('.t-dialog-insert').click();
-            assertEquals('<a href="foo">foo</a>', editor.value())
-        }
+            equal(editor.value(), '<a href="foo">foo</a>')
+        });
 
-        function test_url_text_is_set() {
+        test('url text is set', function() {
             var range = createRangeFromText(editor, '<a href="bar">|foo|</a>');
             execLinkCommandOnRange(range);
 
-            assertEquals('bar', $('#t-editor-link-url').val());
-        }
+            equal($('#t-editor-link-url').val(), 'bar');
+        });
 
-        function test_hitting_enter_in_url_inserts_link() {
+        test('hitting enter in url inserts link', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -123,10 +131,10 @@
                 .val('foo')
                 .trigger(e);
             
-            assertEquals('<a href="foo">foo</a>', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
-        function test_hitting_esc_in_url_cancels() {
+            equal(editor.value(), '<a href="foo">foo</a>')
+            equal($('.t-window').length, 0);
+        });
+        test('hitting esc in url cancels', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -138,11 +146,11 @@
                 .val('foo')
                 .trigger(e);
 
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_hitting_enter_in_name_field_inserts_link() {
+        test('hitting enter in name field inserts link', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -154,11 +162,11 @@
                 .val('foo')
             $('#t-editor-link-text').trigger(e);
 
-            assertEquals('<a href="foo">foo</a>', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), '<a href="foo">foo</a>')
+            equal($('.t-window').length, 0);
+        });
         
-        function test_hitting_enter_in_title_field_inserts_link() {
+        test('hitting enter in title field inserts link', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -170,11 +178,11 @@
                 .val('foo')
             $('#t-editor-link-title').trigger(e);
 
-            assertEquals('<a href="foo">foo</a>', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), '<a href="foo">foo</a>')
+            equal($('.t-window').length, 0);
+        });
 
-         function test_hitting_esc_in_text_cancels() {
+         test('hitting esc in text cancels', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -187,11 +195,11 @@
 
             $('#t-editor-link-text').trigger(e);
             
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
         
-        function test_hitting_esc_in_title_cancels() {
+        test('hitting esc in title cancels', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -204,21 +212,21 @@
 
             $('#t-editor-link-title').trigger(e);
 
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_closing_the_window_restores_content() {
+        test('closing the window restores content', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
             $('.t-window').css({width:200,height:300}).find('.t-close').click();
 
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_setting_title() {
+        test('setting title', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -229,10 +237,10 @@
                 .val('bar')
 
             $('.t-dialog-insert').click();
-            assertEquals('<a href="foo" title="bar">foo</a>', editor.value())
-        }
+            equal(editor.value(), '<a href="foo" title="bar">foo</a>')
+        });
 
-        function test_setting_opening_in_new_window() {
+        test('setting opening in new window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -242,24 +250,24 @@
             $('#t-editor-link-target').attr('checked', true)
 
             $('.t-dialog-insert').click();
-            assertEquals('<a href="foo" target="_blank">foo</a>', editor.value())
-        }
+            equal(editor.value(), '<a href="foo" target="_blank">foo</a>')
+        });
 
-        function test_title_text_box_is_updated() {
+        test('title text box is updated', function() {
             var range = createRangeFromText(editor, '<a href="#" title="bar">|foo|</a>');
             execLinkCommandOnRange(range);
 
-            assertEquals('bar', $('#t-editor-link-title').val());
-        }
+            equal($('#t-editor-link-title').val(), 'bar');
+        });
 
-        function test_target_checkbox_is_updated() {
+        test('target checkbox is updated', function() {
             var range = createRangeFromText(editor, '<a href="#" target="_blank">|foo|</a>');
             execLinkCommandOnRange(range);
 
-            assertTrue($('#t-editor-link-target').is(':checked'));
-        }
+            ok($('#t-editor-link-target').is(':checked'));
+        });
 
-        function test_updatung_link_text() {
+        test('updatung link text', function() {
             var range = createRangeFromText(editor, '|foo|');
             execLinkCommandOnRange(range);
 
@@ -270,10 +278,10 @@
                 .val('bar')
 
             $('.t-dialog-insert').click();
-            assertEquals('<a href="foo">bar</a>', editor.value())
-        }
+            equal(editor.value(), '<a href="foo">bar</a>')
+        });
         
-        function test_updating_link_text_from_caret() {
+        test('updating link text from caret', function() {
             editor.value('foo');
             var range = editor.getRange();
             range.setStart(editor.body.firstChild,1);
@@ -288,10 +296,10 @@
                 .val('bar')
 
             $('.t-dialog-insert').click();
-            assertEquals('<a href="foo">bar</a>', editor.value())
-        }
+            equal(editor.value(), '<a href="foo">bar</a>')
+        });
 
-        function test_undo_restores_content() {
+        test('undo restores content', function() {
             editor.value('foo');
             var range = editor.getRange();
             range.setStart(editor.body.firstChild,1);
@@ -307,10 +315,10 @@
 
             $('.t-dialog-insert').click();
             command.undo();
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
-        function test_redo_creates_link() {
+        test('redo creates link', function() {
             editor.value('foo');
             var range = editor.getRange();
             range.setStart(editor.body.firstChild,1);
@@ -327,19 +335,19 @@
             $('.t-dialog-insert').click();
             command.undo();
             command.redo();
-            assertEquals('<a href="foo">bar</a>', editor.value())            
-        }
+            equal(editor.value(), '<a href="foo">bar</a>')            
+        });
 
-        function test_link_is_not_created_if_url_is_http_slash_slash() {
+        test('link is not created if url is http slash slash', function() {
             var range = createRangeFromText(editor, '|foo|');
             
             execLinkCommandOnRange(range);
 
             $('.t-dialog-insert').click();
-            assertEquals('foo', editor.value())            
-        }
+            equal(editor.value(), 'foo')            
+        });
         
-        function test_exec_inserts_link_with_empty_range() {
+        test('exec inserts link with empty range', function() {
             editor.value('foo ');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 4);
@@ -351,8 +359,9 @@
                 .val('bar');
 
             $('.t-dialog-insert').click();
-            assertEquals('foo <a href="bar"></a>', editor.value())            
-        }
+            equal(editor.value(), 'foo <a href="bar"></a>')            
+        });
 
-    </script>
+</script>
+
 </asp:Content>

@@ -123,6 +123,15 @@
   <data name="CreateLink" xml:space="preserve">
     <value>Adicionar Link</value>
   </data>
+  <data name="DeleteFile" xml:space="preserve">
+    <value>Are you sure you want to delete "{0}"?</value>
+  </data>
+  <data name="DirectoryNotFound" xml:space="preserve">
+    <value>A directory with this name was not found.</value>
+  </data>
+  <data name="EmptyFolder" xml:space="preserve">
+    <value>Empty Folder</value>
+  </data>
   <data name="FontName" xml:space="preserve">
     <value>Fonte</value>
   </data>
@@ -147,6 +156,9 @@
   <data name="InsertUnorderedList" xml:space="preserve">
     <value>Inserir Lista Aleatória</value>
   </data>
+  <data name="InvalidFileType" xml:space="preserve">
+    <value>The selected file "{0}" is not valid. Supported file types are {1}.</value>
+  </data>
   <data name="Italic" xml:space="preserve">
     <value>Itálico</value>
   </data>
@@ -162,8 +174,20 @@
   <data name="JustifyRight" xml:space="preserve">
     <value>Alinhar à Direita</value>
   </data>
+  <data name="OrderBy" xml:space="preserve">
+    <value>Arrange by:</value>
+  </data>
+  <data name="OrderByName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="OrderBySize" xml:space="preserve">
+    <value>Size</value>
+  </data>
   <data name="Outdent" xml:space="preserve">
     <value>Diminuir Recuo</value>
+  </data>
+  <data name="OverwriteFile" xml:space="preserve">
+    <value>A file with name "{0}" already exists in the current directory. Do you want to overwrite it?</value>
   </data>
   <data name="Strikethrough" xml:space="preserve">
     <value>Tachado</value>
@@ -176,5 +200,8 @@
   </data>
   <data name="Unlink" xml:space="preserve">
     <value>Remover Link</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>Upload</value>
   </data>
 </root>

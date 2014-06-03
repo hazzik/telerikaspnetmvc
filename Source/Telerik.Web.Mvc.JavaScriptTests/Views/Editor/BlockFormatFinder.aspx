@@ -1,144 +1,158 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        BlockFormatFinder</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+
     <%= Html.Telerik().Editor().Name("Editor") %>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
+
     <script type="text/javascript">
 
         var editor;
-
         var BlockFormatFinder;
-        var enumerator;
 
-        function setUp() {
-            editor = getEditor();
-            BlockFormatFinder = $.telerik.editor.BlockFormatFinder;
-        }
+        module("Editor / BlockFormatFinder", {
+            setup: function() {
+                editor = getEditor();
+                BlockFormatFinder = $.telerik.editor.BlockFormatFinder;
+            }
+        });
 
-        function test_findSuitable_returns_suitable_container() {
+        test('findSuitable returns suitable container', function() {
             editor.value('<div>foo</div>');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
-            assertEquals(editor.body.firstChild, finder.findSuitable([editor.body.firstChild.firstChild])[0]);
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild])[0], editor.body.firstChild);
+        });
 
-        function test_findSuitable_returns_null_if_no_suitable_found() {
+        test('findSuitable returns null if no suitable found', function() {
             editor.value('foo');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
-            assertEquals(0, finder.findSuitable([editor.body.firstChild]).length);
-        }
+            equal(finder.findSuitable([editor.body.firstChild]).length, 0);
+        });
         
-        function test_findSuitable_returns_all_suitable_nodes_null_if_no_suitable_found() {
+        test('findSuitable returns all suitable nodes null if no suitable found', function() {
             editor.value('<div>foo</div><div>bar</div>');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
-            assertEquals(2, finder.findSuitable([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]).length);
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]).length, 2);
+        });
 
-        function test_findSuitable_returns_distinct_nodes() {
+        test('findSuitable returns distinct nodes', function() {
             editor.value('<div><span>foo</span><span>bar</span></div><div>baz</div>');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
-            assertEquals(2, finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.firstChild.lastChild.firstChild, editor.body.lastChild.firstChild]).length);
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.firstChild.lastChild.firstChild, editor.body.lastChild.firstChild]).length, 2);
+        });
 
-        function test_findSuitable_looks_for_common_ancestor_which_is_suitable() {
+        test('findSuitable looks for common ancestor which is suitable', function() {
             editor.value('<div>foo</div>bar');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
-            assertEquals(0, finder.findSuitable([editor.body.firstChild.firstChild, editor.body.lastChild]).length);
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild, editor.body.lastChild]).length, 0);
+        });
 
-        function test_findSuitable_looks_for_the_outer_most_common_ancestor_which_is_suitable() {
+        test('findSuitable looks for the outer most common ancestor which is suitable', function() {
             editor.value('<div><div>foo</div>bar</div>');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
-            assertEquals(editor.body.firstChild, finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.firstChild.lastChild])[0]);
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild.firstChild, editor.body.firstChild.lastChild])[0], editor.body.firstChild);
+        });
 
-        function test_findSuitable_returns_the_innder_suitable_ancestor() {
+        test('findSuitable returns the inner suitable ancestor', function() {
             editor.value('<div><div>foo</div></div>');
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
-            assertEquals(editor.body.firstChild.firstChild, finder.findSuitable([editor.body.firstChild.firstChild.firstChild])[0]);
-        }
+            equal(finder.findSuitable([editor.body.firstChild.firstChild.firstChild])[0], editor.body.firstChild.firstChild);
+        });
 
-        function test_find_format_finds_formatted_node_by_tag() {
+        test('findSuitable tests against node in argument', function() {
+            editor.value('<div></div>');
+            var finder = new BlockFormatFinder(editor.formats.justifyCenter);
+
+            equal(finder.findSuitable([editor.body.firstChild])[0], editor.body.firstChild);
+        });
+
+        test('find format finds formatted node by tag', function() {
             editor.value('<div style="text-align:center">foo</strong>');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
             
-            assertEquals(editor.body.firstChild, finder.findFormat(editor.body.firstChild.firstChild));
-        }
+            equal(finder.findFormat(editor.body.firstChild.firstChild), editor.body.firstChild);
+        });
 
-        function test_find_suitable_finds_td() {
+        test('find suitable finds td', function() {
             editor.value('<table><tr><td>foo</td></tr></table>');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
             var td = $('td', editor.body)[0];
-            assertEquals(td, finder.findSuitable([td.firstChild])[0]);
-        }
+            equal(finder.findSuitable([td.firstChild])[0], td);
+        });
 
-        function test_find_format_returns_null_if_node_does_not_match_tag_and_style() {
+        test('find format returns null if node does not match tag and style', function() {
             editor.value('<div>foo</div>');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
-            assertNull(finder.findFormat(editor.body.firstChild.firstChild));
-        }
+            ok(null === finder.findFormat(editor.body.firstChild.firstChild));
+        });
 
-        function test_find_format_checks_all_formats() {
+        test('find format checks all formats', function() {
             editor.value('<p style="text-align:center">foo</p>');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
-            assertEquals(editor.body.firstChild, finder.findFormat(editor.body.firstChild.firstChild));
-        }
-        function test_is_formatted_checks_all_formats() {
+            equal(finder.findFormat(editor.body.firstChild.firstChild), editor.body.firstChild);
+        });
+        test('is formatted checks all formats', function() {
             editor.value('<p style="text-align:center">foo</p>');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
 
-            assertTrue(finder.isFormatted([editor.body.firstChild.firstChild]));
-        }
+            ok(finder.isFormatted([editor.body.firstChild.firstChild]));
+        });
 
-        function test_is_formatted_returns_true_if_all_nodes_are_formatted() {
+        test('is formatted returns true if all nodes are formatted', function() {
             editor.value('<div style="text-align:center">foo</div>');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
-            assertTrue(finder.isFormatted([editor.body.firstChild.firstChild]));
-        }
+            ok(finder.isFormatted([editor.body.firstChild.firstChild]));
+        });
 
-        function test_is_formatted_returns_true_for_formatted_and_unformatted_nodes() {
+        test('is formatted returns true for formatted and unformatted nodes', function() {
             editor.value('<div style="text-align:center">foo</div>bar');
 
             var finder = new BlockFormatFinder(editor.formats.justifyCenter);
-            assertFalse(finder.isFormatted([editor.body.firstChild.firstChild, editor.body.lastChild]));
-        }
+            ok(!finder.isFormatted([editor.body.firstChild.firstChild, editor.body.lastChild]));
+        });
 
-        function test_is_formatted_returns_true_for_image() {
+        test('is formatted returns true for image', function() {
             editor.value('<img style="float:right" />');
 
             var finder = new BlockFormatFinder(editor.formats.justifyRight);
-            assertTrue(finder.isFormatted([editor.body.firstChild]));
-        }
+            ok(finder.isFormatted([editor.body.firstChild]));
+        });
 
-        function test_getFormat_on_single_node() {
+        test('getFormat on single node', function() {
             editor.value('<h1>foo</h1>');
             var finder = new BlockFormatFinder([{ tags: 'div,p,h1,h2,h3,h4,h5,h6'.split(',') }]);
-            assertEquals('h1', finder.getFormat([editor.body.firstChild.firstChild]));
-        }
+            equal(finder.getFormat([editor.body.firstChild.firstChild]), 'h1');
+        });
 
-        function test_getFormat_on_multiple_different_nodes() {
+        test('getFormat on multiple different nodes', function() {
             editor.value('<h1>foo</h1><h2>bar</h2>');
             var finder = new BlockFormatFinder([{ tags: 'div,p,h1,h2,h3,h4,h5,h6'.split(',') }]);
-            assertEquals('', finder.getFormat([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]));
-        }
+            equal(finder.getFormat([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]), '');
+        });
 
-        function test_getFormat_on_body_does_not_throw_error() {
+        test('getFormat on body does not throw error', function() {
             editor.value('foo');
             var finder = new BlockFormatFinder([{ tags: 'div,p,h1,h2,h3,h4,h5,h6'.split(',') }]);
-            assertEquals('', finder.getFormat([editor.body]));
-        }
+            equal(finder.getFormat([editor.body]), '');
+        });
+
     </script>
+
 </asp:Content>

@@ -19,13 +19,14 @@ namespace Telerik.Web.Mvc.UI
             get; 
             set;
         }
+
+        object GetValue(object dataItem);
     }
     
     public interface IGridDataKey<T> : IGridDataKey
             where T : class
     {
 
-        object GetValue(T dataItem);
 #if MVC2 || MVC3
         string HiddenFieldHtml(HtmlHelper<T> htmlHelper);
 #endif

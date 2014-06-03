@@ -1,7 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <style type="text/css">
                 
         .t-state-focus
@@ -19,287 +19,6 @@
             return $('#DateTimePicker').data('tDateTimePicker');
         }
 
-        function test_internal_toggleDateView_should_call_change_and_open_if_dateView_is_closed() {
-            var isOpenCalled = false;
-            var isCloseCalled = false;
-            var isChangeCalled = false;
-
-            var openValue;
-            var closeValue;
-            var changeValue;
-
-            var dateTimePicker = getDateTimePicker();
-
-            var oldOpen = dateTimePicker._open;
-            var oldClose = dateTimePicker._close;
-            var oldChange = dateTimePicker._change;
-
-            dateTimePicker._open = function (value) { isOpenCalled = true; openValue = value; };
-            dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
-            dateTimePicker._change = function (value) { isChangeCalled = true; changeValue = value; };
-            
-            dateTimePicker.close('date');
-            dateTimePicker.$input.val('');
-            dateTimePicker._toggleDateView();
-
-            assertTrue('_open method was not called', isOpenCalled);
-            assertEquals('_open method was not called with "date" argument', 'date', openValue);
-            assertTrue('_close method was not called', isCloseCalled);
-            assertEquals('_close method was not called with "time" argument', 'time', closeValue);
-            assertTrue('_change method was not called', isChangeCalled);
-            assertEquals('_change method was not called with parsed value', null, changeValue);
-
-            dateTimePicker._open = oldOpen;
-            dateTimePicker._close = oldClose;
-            dateTimePicker._change = oldChange;
-        }
-
-        function test_internal_toggleTimeView_should_call_change_and_open_if_timeView_is_closed() {
-            var isOpenCalled = false;
-            var isCloseCalled = false;
-            var isChangeCalled = false;
-
-            var openValue;
-            var closeValue;
-            var changeValue;
-
-            var dateTimePicker = getDateTimePicker();
-
-            var oldOpen = dateTimePicker._open;
-            var oldClose = dateTimePicker._close;
-            var oldChange = dateTimePicker._change;
-
-            dateTimePicker._open = function (value) { isOpenCalled = true; openValue = value; };
-            dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
-            dateTimePicker._change = function (value) { isChangeCalled = true; changeValue = value; };
-
-            dateTimePicker.close('time');
-            dateTimePicker.$input.val('');
-            dateTimePicker._toggleTimeView();
-
-            assertTrue('_open method was not called', isOpenCalled);
-            assertEquals('_open method was not called with "time" argument', 'time', openValue);
-            assertTrue('_close method was not called', isCloseCalled);
-            assertEquals('_close method was not called with "date" argument', 'date', closeValue);
-            assertTrue('_change method was not called', isChangeCalled);
-            assertEquals('_change method was not called with parsed value', null, changeValue);
-
-            dateTimePicker._open = oldOpen;
-            dateTimePicker._close = oldClose;
-            dateTimePicker._change = oldChange;
-        }
-
-        function test_internal_toggleDateView_should_call_close_with_date_argument() {
-            var isCloseCalled = false;
-            var closeValue;
-
-            var dateTimePicker = getDateTimePicker();
-            var oldClose = dateTimePicker._close;
-
-            dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
-
-            dateTimePicker.open('date');
-            dateTimePicker._toggleDateView();
-
-            assertTrue('_close method was not called', isCloseCalled);
-            assertEquals('_close method was not called with "date" argument', 'date', closeValue);
-
-            dateTimePicker._close = oldClose;
-        }
-
-        function test_internal_toggleTimeView_should_call_close_with_date_argument() {
-            var isCloseCalled = false;
-            var closeValue;
-
-            var dateTimePicker = getDateTimePicker();
-            var oldClose = dateTimePicker._close;
-
-            dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
-
-            dateTimePicker.open('time');
-
-            console.log(dateTimePicker.timeView.isOpened());
-
-            dateTimePicker._toggleTimeView();
-
-            assertTrue('_close method was not called', isCloseCalled);
-            assertEquals('_close method was not called with "time" argument', 'time', closeValue);
-
-            dateTimePicker._close = oldClose;
-        }
-
-        function test_internal_open_method_should_call_internal_trigger_with_date_argument_if_dateView_is_closed() {
-
-            var arg1, arg2;
-            var dateTimePicker = getDateTimePicker();
-
-            var oldTrigger = dateTimePicker._trigger;
-            dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value};
-            dateTimePicker.dateView.close();
-
-            dateTimePicker._open('date');
-
-            assertEquals('trigger method was not called with correct popup', 'date', arg1);
-            assertEquals('trigger method was not called with correct method', 'open', arg2);
-
-            dateTimePicker._trigger = oldTrigger;
-        }
-
-        function test_internal_open_method_should_call_internal_trigger_with_time_argument_if_dateView_is_closed() {
-
-            var arg1, arg2;
-            var dateTimePicker = getDateTimePicker();
-
-            var oldTrigger = dateTimePicker._trigger;
-            dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
-            dateTimePicker.timeView.close();
-
-            dateTimePicker._open('time');
-
-            assertEquals('trigger method was not called with correct popup', 'time', arg1);
-            assertEquals('trigger method was not called with correct method', 'open', arg2);
-
-            dateTimePicker._trigger = oldTrigger;
-        }
-
-        function test_internal_close_method_should_call_internal_trigger_with_date_argument_if_dateView_is_opened() {
-
-            var arg1, arg2;
-            var dateTimePicker = getDateTimePicker();
-
-            var oldTrigger = dateTimePicker._trigger;
-            dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
-            var $input = dateTimePicker.$input;
-            dateTimePicker.dateView.open({
-                offset: $input.offset(),
-                outerHeight: $input.outerHeight(),
-                outerWidth: $input.outerWidth(),
-                zIndex: $.telerik.getElementZIndex($input[0])
-            });
-            
-            dateTimePicker._close('date');
-
-            assertEquals('trigger method was not called with correct popup', 'date', arg1);
-            assertEquals('trigger method was not called with correct method', 'close', arg2);
-
-            dateTimePicker._trigger = oldTrigger;
-        }
-
-        function test_internal_close_method_should_call_internal_trigger_with_time_argument_if_dateView_is_opened() {
-
-            var arg1, arg2;
-            var dateTimePicker = getDateTimePicker();
-
-            var oldTrigger = dateTimePicker._trigger;
-            dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
-            var $input = dateTimePicker.$input;
-            dateTimePicker.timeView.open({
-                offset: $input.offset(),
-                outerHeight: $input.outerHeight(),
-                outerWidth: $input.outerWidth(),
-                zIndex: $.telerik.getElementZIndex($input[0])
-            });
-            dateTimePicker._close('time');
-
-            assertEquals('trigger method was not called with correct popup', 'time', arg1);
-            assertEquals('trigger method was not called with correct method', 'close', arg2);
-
-            dateTimePicker._trigger = oldTrigger;
-        }
-
-        function test_internal_trigger_should_call_open_with_date_parameter() {
-            var pop;
-            var dateTimePicker = getDateTimePicker();
-            var old = dateTimePicker.open;
-
-            dateTimePicker.open = function (popup) { pop = popup; };
-
-            dateTimePicker._trigger('date', 'open');
-
-            assertEquals('open was not called with "date" parapm', 'date', pop);
-
-            dateTimePicker.open = old;
-        }
-
-        function test_internal_trigger_should_call_open_with_time_parameter() {
-            var pop;
-            var dateTimePicker = getDateTimePicker();
-            var old = dateTimePicker.open;
-
-            dateTimePicker.open = function (popup) { pop = popup; };
-
-            dateTimePicker._trigger('time', 'open');
-
-            assertEquals('open was not called with "time" parapm', 'time', pop);
-
-            dateTimePicker.open = old;
-        }
-
-        function test_internal_trigger_should_call_close_with_date_parameter() {
-            var pop;
-            var dateTimePicker = getDateTimePicker();
-            var old = dateTimePicker.close;
-
-            dateTimePicker.close = function (popup) { pop = popup; };
-
-            dateTimePicker._trigger('date', 'close');
-
-            assertEquals('open was not called with "date" parapm', 'date', pop);
-
-            dateTimePicker.close = old;
-        }
-
-        function test_internal_trigger_should_call_close_with_time_parameter() {
-            var pop;
-            var dateTimePicker = getDateTimePicker();
-            var old = dateTimePicker.close;
-
-            dateTimePicker.close = function (popup) { pop = popup; };
-
-            dateTimePicker._trigger('time', 'close');
-
-            assertEquals('open was not called with "time" parapm', 'time', pop);
-
-            dateTimePicker.close = old;
-        }
-
-        function test_disable_method_should_add_disable_attr() {
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.disable();
-
-            assertEquals('input is not disabled', true, dateTimePicker.$input.attr('disabled'))
-
-            dateTimePicker.enable();
-        }
-
-        function test_disable_method_should_add_enable_attr() {
-            var dateTimePicker = getDateTimePicker();
-
-            dateTimePicker.enable();
-
-            assertEquals('input is not disabled', false, dateTimePicker.$input.attr('disabled'))
-
-            dateTimePicker.disable();
-        }
-
-        function test_min_method_should_set_minDate_property_and_call_dateView_min_method() {
-            var isCalled = false;
-            var dateTimePicker = getDateTimePicker();
-
-            var oldM = dateTimePicker.dateView.min;
-            dateTimePicker.dateView.min = function () { isCalled = true; }
-
-            dateTimePicker.min('10/10/1904');
-
-            assertTrue(isCalled);
-            assertEquals('year', 1904, dateTimePicker.minValue.year());
-            assertEquals('month', 9, dateTimePicker.minValue.month());
-            assertEquals('day', 10, dateTimePicker.minValue.date());
-
-            dateTimePicker.dateView.min = oldM;
-        }
-
     </script>
     
     <%= Html.Telerik().DateTimePicker()
@@ -307,5 +26,353 @@
             .HtmlAttributes(new { style = "width:300px" })
             .Effects(e => e.Toggle()) 
     %>
+
+    <%= Html.Telerik().DateTimePicker()
+        .Name("DateTimePicker1")
+        .HtmlAttributes(new { style = "width:300px" })
+        .Effects(e => e.Toggle()) 
+    %>
+
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+    test('internal toggleDateView should call change and open if dateView is closed', function () {
+        var isOpenCalled = false;
+        var isCloseCalled = false;
+
+        var openValue;
+        var closeValue;
+
+        var dateTimePicker = getDateTimePicker();
+
+        var oldOpen = dateTimePicker._open;
+        var oldClose = dateTimePicker._close;
+
+        dateTimePicker._open = function (value) { isOpenCalled = true; openValue = value; };
+        dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
+
+        dateTimePicker.close('date');
+        dateTimePicker.$element.val('');
+        dateTimePicker._toggleDateView();
+
+        ok(isOpenCalled, '_open method was not called');
+        equal(openValue, 'date', '_open method was not called with "date" argument');
+        ok(isCloseCalled, '_close method was not called');
+        equal(closeValue, 'time', '_close method was not called with "time" argument');
+
+        dateTimePicker._open = oldOpen;
+        dateTimePicker._close = oldClose;
+    });
+
+    test('internal toggleTimeView should call change and open if timeView is closed', function () {
+        var isOpenCalled = false;
+        var isCloseCalled = false;
+        
+        var openValue;
+        var closeValue;
+        
+        var dateTimePicker = getDateTimePicker();
+
+        var oldOpen = dateTimePicker._open;
+        var oldClose = dateTimePicker._close;
+        
+        dateTimePicker._open = function (value) { isOpenCalled = true; openValue = value; };
+        dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
+        
+        dateTimePicker.close('time');
+        dateTimePicker.$element.val('');
+        dateTimePicker._toggleTimeView();
+
+        ok(isOpenCalled, '_open method was not called');
+        equal(openValue, 'time', '_open method was not called with "time" argument');
+        ok(isCloseCalled, '_close method was not called');
+        equal(closeValue, 'date', '_close method was not called with "date" argument');
+        
+        dateTimePicker._open = oldOpen;
+        dateTimePicker._close = oldClose;
+    });
+
+    test('internal toggleDateView should call close with date argument', function () {
+        var isCloseCalled = false;
+        var closeValue;
+
+        var dateTimePicker = getDateTimePicker();
+        var oldClose = dateTimePicker._close;
+
+        dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
+
+        dateTimePicker.open('date');
+        dateTimePicker._toggleDateView();
+
+        ok(isCloseCalled, '_close method was not called');
+        equal(closeValue, 'date', '_close method was not called with "date" argument');
+
+        dateTimePicker._close = oldClose;
+    });
+
+    test('internal toggleTimeView should call close with date argument', function () {
+        var isCloseCalled = false;
+        var closeValue;
+
+        var dateTimePicker = getDateTimePicker();
+        var oldClose = dateTimePicker._close;
+
+        dateTimePicker._close = function (value) { isCloseCalled = true; closeValue = value; };
+
+        dateTimePicker.open('time');
+
+        dateTimePicker._toggleTimeView();
+
+        ok(isCloseCalled, '_close method was not called');
+        equal(closeValue, 'time', '_close method was not called with "time" argument');
+
+        dateTimePicker._close = oldClose;
+    });
+
+    test('internal open method should call internal trigger with date argument if dateView is closed', function () {
+
+        var arg1, arg2;
+        var dateTimePicker = getDateTimePicker();
+
+        var oldTrigger = dateTimePicker._trigger;
+        dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
+        dateTimePicker.dateView.close();
+
+        dateTimePicker._open('date');
+
+        equal(arg1, 'date', 'trigger method was not called with correct popup');
+        equal(arg2, 'open', 'trigger method was not called with correct method');
+
+        dateTimePicker._trigger = oldTrigger;
+    });
+
+    test('internal open method should call internal trigger with time argument if dateView is closed', function () {
+
+        var arg1, arg2;
+        var dateTimePicker = getDateTimePicker();
+
+        var oldTrigger = dateTimePicker._trigger;
+        dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
+        dateTimePicker.timeView.close();
+
+        dateTimePicker._open('time');
+
+        equal(arg1, 'time', 'trigger method was not called with correct popup');
+        equal(arg2, 'open', 'trigger method was not called with correct method');
+
+        dateTimePicker._trigger = oldTrigger;
+    });
+
+    test('internal close method should call internal trigger with date argument if dateView is opened', function () {
+
+        var arg1, arg2;
+        var dateTimePicker = getDateTimePicker();
+
+        var oldTrigger = dateTimePicker._trigger;
+        dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
+        var $element = dateTimePicker.$element;
+        dateTimePicker.dateView.open({
+            offset: $element.offset(),
+            outerHeight: $element.outerHeight(),
+            outerWidth: $element.outerWidth(),
+            zIndex: $.telerik.getElementZIndex($element[0])
+        });
+
+        dateTimePicker._close('date');
+
+        equal(arg1, 'date', 'trigger method was not called with correct popup');
+        equal(arg2, 'close', 'trigger method was not called with correct method');
+
+        dateTimePicker._trigger = oldTrigger;
+    });
+
+    test('internal close method should call internal trigger with time argument if dateView is opened', function () {
+
+        var arg1, arg2;
+        var dateTimePicker = getDateTimePicker();
+
+        var oldTrigger = dateTimePicker._trigger;
+        dateTimePicker._trigger = function (popup, value) { arg1 = popup, arg2 = value };
+        var $element = dateTimePicker.$element;
+        dateTimePicker.timeView.open({
+            offset: $element.offset(),
+            outerHeight: $element.outerHeight(),
+            outerWidth: $element.outerWidth(),
+            zIndex: $.telerik.getElementZIndex($element[0])
+        });
+        dateTimePicker._close('time');
+
+        equal(arg1, 'time', 'trigger method was not called with correct popup');
+        equal(arg2, 'close', 'trigger method was not called with correct method');
+
+        dateTimePicker._trigger = oldTrigger;
+    });
+
+    test('internal trigger should call open with date parameter', function () {
+        var pop;
+        var dateTimePicker = getDateTimePicker();
+        var old = dateTimePicker.open;
+
+        dateTimePicker.open = function (popup) { pop = popup; };
+
+        dateTimePicker._trigger('date', 'open');
+
+        equal(pop, 'date', 'open was not called with "date" parapm');
+
+        dateTimePicker.open = old;
+    });
+
+    test('internal trigger should call open with time parameter', function () {
+        var pop;
+        var dateTimePicker = getDateTimePicker();
+        var old = dateTimePicker.open;
+
+        dateTimePicker.open = function (popup) { pop = popup; };
+
+        dateTimePicker._trigger('time', 'open');
+
+        equal(pop, 'time', 'open was not called with "time" parapm');
+
+        dateTimePicker.open = old;
+    });
+
+    test('internal trigger should call close with date parameter', function () {
+        var pop;
+        var dateTimePicker = getDateTimePicker();
+        var old = dateTimePicker.close;
+
+        dateTimePicker.close = function (popup) { pop = popup; };
+
+        dateTimePicker._trigger('date', 'close');
+
+        equal(pop, 'date', 'open was not called with "date" parapm');
+
+        dateTimePicker.close = old;
+    });
+
+    test('internal trigger should call close with time parameter', function () {
+        var pop;
+        var dateTimePicker = getDateTimePicker();
+        var old = dateTimePicker.close;
+
+        dateTimePicker.close = function (popup) { pop = popup; };
+
+        dateTimePicker._trigger('time', 'close');
+
+        equal(pop, 'time', 'open was not called with "time" parapm');
+
+        dateTimePicker.close = old;
+    });
+
+    test('disable method should add disable attr', function () {
+        var dateTimePicker = getDateTimePicker();
+
+        dateTimePicker.disable();
+
+        equal(dateTimePicker.$element.attr('disabled'), true, 'input is not disabled')
+
+        dateTimePicker.enable();
+    });
+
+    test('disable method should add enable attr', function () {
+        var dateTimePicker = getDateTimePicker();
+
+        dateTimePicker.enable();
+
+        equal(dateTimePicker.$element.attr('disabled'), false, 'input is not disabled')
+
+        dateTimePicker.disable();
+    });
+
+    test('min method should set minDate property and call dateView min method', function () {
+        var isCalled = false;
+        var dateTimePicker = getDateTimePicker();
+
+        var oldM = dateTimePicker.dateView.min;
+        dateTimePicker.dateView.min = function () { isCalled = true; }
+
+        dateTimePicker.min('10/10/1904');
+
+        var minValue = new $.telerik.datetime(dateTimePicker.minValue);
+
+        ok(isCalled);
+        equal(minValue.year(), 1904, 'year');
+        equal(minValue.month(), 9, 'month');
+        equal(minValue.date(), 10, 'day');
+
+        dateTimePicker.dateView.min = oldM;
+    });
+
+
+    test('min method should set value to minValue if value is not in range', function () {
+        var dateTimePicker = getDateTimePicker();
+        dateTimePicker.value(new Date(2000, 10, 10));
+
+        dateTimePicker.min(new Date(2001, 10, 10));
+
+        equal(+dateTimePicker.value(), +dateTimePicker.min(), "value was not updated");
+    });
+
+    test('max method should set value to maxValue if value is not in range', function () {
+        var dateTimePicker = $('#DateTimePicker1').data('tDateTimePicker');
+        dateTimePicker.value(new Date(2000, 10, 10));
+
+        dateTimePicker.max(new Date(1999, 10, 10));
+
+        equal(+dateTimePicker.value(), +dateTimePicker.max(), "value was not updated");
+    });
+
+    test('min method should not set minValue if it is bigger then maxValue', function () {
+        var dateTimePicker = $('#DateTimePicker1').data('tDateTimePicker');
+        var oldMin = dateTimePicker.min();
+
+        dateTimePicker.max(new Date(1999, 10, 10));
+        dateTimePicker.min(new Date(2000, 10, 10));
+
+        ok(oldMin - dateTimePicker.min() == 0, "min date was incorrectly updated");
+    });
+
+    test('max method should not set maxValue if it is less then minValue', function () {
+        var dateTimePicker = getDateTimePicker();
+        var oldMax = dateTimePicker.max();
+
+        dateTimePicker.min(new Date(2000, 10, 10));
+        dateTimePicker.max(new Date(1999, 10, 10));
+
+        ok(oldMax - dateTimePicker.max() == 0, "min date was incorrectly updated");
+    });
+
+    test('min method should set value to minValue if value is not in range', function () {
+        var dateTimePicker = getDateTimePicker();
+        dateTimePicker.min(new Date(1899, 10, 10));
+        dateTimePicker.max(new Date(2100, 10, 10));
+
+        dateTimePicker.endTime("10/10/2000 10:00 PM");
+        dateTimePicker.value("10/10/2000 10:00 AM");
+
+        dateTimePicker.startTime("10/10/2000 11:00 AM");
+
+        equal(dateTimePicker.value().getHours(), dateTimePicker.startTime().getHours(), "hours were not updated");
+        equal(dateTimePicker.value().getMinutes(), dateTimePicker.startTime().getMinutes(), "minutes were not updated");
+    });
+
+    test('max method should set value to maxValue if value is not in range', function () {
+        var dateTimePicker = getDateTimePicker();
+
+        dateTimePicker.startTime("10/10/2000 8:00 AM");
+        dateTimePicker.value("10/10/2000 10:00 AM");
+
+        dateTimePicker.endTime("10/10/2000 9:00 AM");
+
+        equal(dateTimePicker.value().getHours(), dateTimePicker.endTime().getHours(), "hours were not updated");
+        equal(dateTimePicker.value().getMinutes(), dateTimePicker.endTime().getMinutes(), "minutes were not updated");
+    });
+
+</script>
 
 </asp:Content>

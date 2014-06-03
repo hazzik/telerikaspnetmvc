@@ -5,14 +5,30 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using Extensions;
+
+    using System.Web;
     using System.Linq;
+    using System.Collections.Generic;   
 
     internal static class DropDownExtentions
     {
-        internal static void PrepareItemsAndDefineSelectedIndex(this IDropDown instance)
+        internal static void SyncSelectedIndex(this IDropDown instance)
         {
-            var selectedItemIndex = instance.Items.IndexOf(instance.Items.LastOrDefault(item => item.Selected == true));
-            
+            int selectedItemIndex = -1;
+            IList<DropDownItem> items = instance.Items;
+            string value = instance.Value.HasValue() ? instance.Value : instance.GetValueFromViewDataByName();
+
+            if (value.HasValue())
+            {
+                selectedItemIndex = items.IndexOf(items.FirstOrDefault(item => (item.Value ?? item.Text).ToLower() == value.ToLower()));
+            }
+
+            if (selectedItemIndex == -1)
+            {
+                selectedItemIndex = items.IndexOf(items.LastOrDefault(item => item.Selected == true));
+            }
+
             if (selectedItemIndex != -1)
             {
                 for (int i = 0, length = instance.Items.Count; i < length; i++)
@@ -31,6 +47,14 @@ namespace Telerik.Web.Mvc.UI
             {
                 instance.Items[0].Selected = true;
                 instance.SelectedIndex = 0;
+            }
+        }
+
+        internal static void EncodeTextPropertyofItems(this IDropDown instance) 
+        {
+            foreach (DropDownItem item in instance.Items)
+            {
+                item.Text = HttpUtility.HtmlEncode(item.Text);
             }
         }
     }

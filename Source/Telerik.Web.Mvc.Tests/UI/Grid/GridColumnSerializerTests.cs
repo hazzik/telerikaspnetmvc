@@ -97,13 +97,6 @@
         }
 
         [Fact]
-        public void Should_not_serialize_title_for_template_column()
-        {
-            var result = JsonForTemplateColumn((Customer c) => { });
-            Assert.False(result.ContainsKey("title"));
-        }
-
-        [Fact]
         public void Should_serialize_format_if_not_empty()
         {
             var result = JsonForBoundColumn((Customer c) => c.Id, c => c.Format = "{0}");
@@ -313,19 +306,6 @@
 
             var result = new GridBoundColumn<Customer, int>(grid, c => c.Id).CreateSerializer().Serialize();
 
-            Assert.False(result.ContainsKey("template"));
-        }
-
-        [Fact]
-        public void Should_not_serialize_client_template_if_server_binding()
-        {
-            var grid = GridTestHelper.CreateGrid<Customer>();
-            var result = new GridBoundColumn<Customer, int>(grid, c => c.Id)
-            {
-                ClientTemplate = "<#= Id #>"
-            }
-            .CreateSerializer()
-            .Serialize();
             Assert.False(result.ContainsKey("template"));
         }
 

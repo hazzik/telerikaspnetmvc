@@ -5,6 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using Telerik.Web.Mvc.UI.Html;
     using System;
     using Infrastructure;
 
@@ -23,6 +24,16 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(template, "value");
 
             InlineTemplate = template;
+        }
+       
+        protected override IGridDataCellBuilder CreateEditBuilderCore(IGridHtmlHelper htmlHelper)
+        {
+            return CreateDisplayBuilderCore(htmlHelper);
+        }
+        
+        protected override IGridDataCellBuilder CreateInsertBuilderCore(IGridHtmlHelper htmlHelper)
+        {
+            return CreateDisplayBuilderCore(htmlHelper);
         }
     }
 }

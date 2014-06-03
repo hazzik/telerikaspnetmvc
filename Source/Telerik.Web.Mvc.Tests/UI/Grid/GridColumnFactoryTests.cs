@@ -1,6 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.UI.Fluent.Tests
 {
     using System.Data;
+    using System.Linq;
     using UI.Tests;
     using Xunit;
 
@@ -24,7 +25,7 @@
                 }
             };
 
-            GridColumnFactory<DataRow> factory = Factory<DataRow>();
+            GridColumnFactory<DataRowView> factory = Factory<DataRowView>();
 
             var builder = factory.Bound(typeof(int), "ID");
 
@@ -32,14 +33,24 @@
 
             dataTable.Rows.Add(1, "Test");
 
-            Assert.Equal(1, ((GridBoundColumn<DataRow, int?>)builder.Column).Value(dataTable.Rows[0]));
+            Assert.Equal(1, ((GridBoundColumn<DataRowView, int?>)builder.Column).Value(dataTable.DefaultView[0]));
+        }
+
+        [Fact]
+        public void Should_create_column_by_name_from_linq_to_object_source()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            grid.DataSource = new[] {new Customer {Id = 1}}.AsQueryable();
+            var factory = new GridColumnFactory<Customer>(grid);
+            var builder = factory.Bound("Id");
+
+            builder.Column.ShouldBeType<GridBoundColumn<Customer, int>>();
         }
 
         [Fact]
         public void Bound_column_by_name()
         {
-            Customer customer = new Customer();
-            customer.Id = 1;
+            var customer = new Customer {Id = 1};
 
             GridColumnFactory<Customer> factory = Factory<Customer>();
 

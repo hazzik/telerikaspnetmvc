@@ -25,7 +25,7 @@
 
             builder.OnChange(param);
 
-            Assert.NotNull(clientEvents.OnChange.InlineCode);
+            Assert.NotNull(clientEvents.OnChange.CodeBlock);
         }
 
         [Fact]
@@ -65,7 +65,7 @@
 
             builder.OnLoad(param);
 
-            Assert.NotNull(clientEvents.OnLoad.InlineCode);
+            Assert.NotNull(clientEvents.OnLoad.CodeBlock);
         }
 
         [Fact]

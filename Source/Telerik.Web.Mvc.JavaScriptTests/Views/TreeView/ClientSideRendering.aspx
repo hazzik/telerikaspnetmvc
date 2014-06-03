@@ -1,8 +1,7 @@
-<%@ Page Title="CollapseDelay Tests" Language="C#" MasterPageFile="~/Views/Shared/Site.Master"
+<%@ Page Title="TreeView / ClientSideRendering" Language="C#" MasterPageFile="~/Views/Shared/Site.Master"
     Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>ClientSideRendering</h2>
 
     <% Html.Telerik().ScriptRegistrar()
                         .DefaultGroup(group => group
@@ -11,13 +10,20 @@
 
     %>
 
-    <script type="text/javascript">
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
 
         var treeviewStatic;
 
-        function setUp() {
-            treeviewStatic = $.telerik.treeview;
-        }
+        module("TreeView / ClientSideRendering", {
+            setup: function() {
+                treeviewStatic = $.telerik.treeview;
+            }
+        });
 
 //        $t.treeview.getGroupHtml({
 //            data: data,
@@ -31,7 +37,7 @@
 //            elementId: this.element.id
 //        });
 
-        function test_getGroupHtml_with_no_data_renders_empty_group() {
+        test('getGroupHtml with no data renders empty group', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getGroupHtml({
@@ -43,10 +49,10 @@
                 isExpanded: true
             });
 
-            assertEquals('<ul class="t-group"></ul>', html.string());
-        }
+            equal(html.string(), '<ul class="t-group"></ul>');
+        });
 
-        function test_getGroupHtml_for_first_level_renders_lines_class() {
+        test('getGroupHtml for first level renders lines class', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getGroupHtml({ 
@@ -58,10 +64,10 @@
                 isExpanded: true
             });
 
-            assertEquals('<ul class="t-group t-treeview-lines"></ul>', html.string());
-        }
+            equal(html.string(), '<ul class="t-group t-treeview-lines"></ul>');
+        });
 
-        function test_getGroupHtml_should_render_hidden_group_if_it_is_not_expanded() {
+        test('getGroupHtml should render hidden group if it is not expanded', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getGroupHtml({
@@ -73,10 +79,10 @@
                 isExpanded: false
             });
 
-            assertEquals('<ul class="t-group" style="display:none"></ul>', html.string());
-        }
+            equal(html.string(), '<ul class="t-group" style="display:none"></ul>');
+        });
 
-        function test_getGroupHtml_calls_getItemHtml_when_data_is_available() {
+        test('getGroupHtml calls getItemHtml when data is available', function() {
             var oldGetItemHtml = treeviewStatic.getItemHtml;
 
             try {
@@ -93,14 +99,14 @@
                     isFirstLevel: false
                 });
 
-                assertTrue(called);
+                ok(called);
 
             } finally {
                 treeviewStatic.getItemHtml = oldGetItemHtml;
             }
-        }
+        });
 
-        function test_getGroupHtml_calls_getItemHtml_for_each_data_item() {
+        test('getGroupHtml calls getItemHtml for each data item', function() {
             var oldGetItemHtml = treeviewStatic.getItemHtml;
             
             try {
@@ -117,14 +123,14 @@
                     isFirstLevel: true
                 });
 
-                assertEquals(3, calls);
+                equal(calls, 3);
 
             } finally {
                 treeviewStatic.getItemHtml = oldGetItemHtml;
             }
-        }
+        });
 
-//        getItemHtml({
+//        $t.treeview.getItemHtml({
 //            item: data[i],
 //            html: html,
 //            isAjax: options.isAjax,
@@ -136,7 +142,7 @@
 //            elementId: options.elementId
 //        });
 
-        function test_getItemHtml_renders_simple_items() {
+        test('getItemHtml renders simple items', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -149,10 +155,10 @@
                 itemsCount: 1
             });
 
-            assertEquals('<li class="t-item t-last"><div class="t-bot"><span class="t-in">text</span></div></li>', html.string());
-        }
+            equal(html.string(), '<li class="t-item t-last"><div class="t-bot"><span class="t-in">text</span></div></li>');
+        });
 
-        function test_getItemHtml_renders_links_for_items_with_NavigateUrl() {
+        test('getItemHtml renders links for items with NavigateUrl', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -168,10 +174,10 @@
                 itemsCount: 1
             });
 
-            assertEquals('<li class="t-item t-last"><div class="t-bot"><a href="http://google.com/" class="t-link t-in">text</a></div></li>', html.string());
-        }
+            equal(html.string(), '<li class="t-item t-last"><div class="t-bot"><a href="http://google.com/" class="t-link t-in">text</a></div></li>');
+        });
 
-        function test_getItemHtml_renders_disabled_state_on_disabled_items() {
+        test('getItemHtml renders disabled state on disabled items', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -187,10 +193,10 @@
                 itemsCount: 1
             });
 
-            assertEquals('<li class="t-item t-last"><div class="t-bot"><span class="t-in t-state-disabled">text</span></div></li>', html.string());
-        }
+            equal(html.string(), '<li class="t-item t-last"><div class="t-bot"><span class="t-in t-state-disabled">text</span></div></li>');
+        });
 
-        function test_getItemHtml_renders_selected_state_on_selected_items() {
+        test('getItemHtml renders selected state on selected items', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -206,10 +212,10 @@
                 itemsCount: 1
             });
 
-            assertEquals('<li class="t-item t-last"><div class="t-bot"><span class="t-in t-state-selected">text</span></div></li>', html.string());
-        }
+            equal(html.string(), '<li class="t-item t-last"><div class="t-bot"><span class="t-in t-state-selected">text</span></div></li>');
+        });
 
-        function test_getItemHtml_renders_collapsed_items_by_default() {
+        test('getItemHtml renders collapsed items by default', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -228,7 +234,7 @@
             });
             
 
-            assertEquals(
+            equal(
 '<li class="t-item t-last">\
 <div class="t-bot">\
 <span class="t-icon t-plus"></span><span class="t-in">Collapsed</span>\
@@ -237,9 +243,9 @@
 <li class="t-item t-last"><div class="t-bot"><span class="t-in">Should not be visible</span></div></li>\
 </ul>\
 </li>', html.string());
-        }
+        });
 
-        function test_getItemHtml_should_render_span_wrapper_for_the_checkNodes() {
+        test('getItemHtml should render span wrapper for the checkNodes', function() {
             var html = new $.telerik.stringBuilder();
             
             treeviewStatic.getItemHtml({
@@ -257,10 +263,10 @@
 
             var $item = $(html.string());
 
-            assertEquals('Does not render checkbox group wrapper', 1, $item.find('> div > .t-checkbox').length);
-        }
+            equal($item.find('> div > .t-checkbox').length, 1, 'Does not render checkbox group wrapper');
+        });
 
-        function test_getItemHtml_should_render_checkbox_and_hidden_input() {
+        test('getItemHtml should render checkbox and hidden input', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -278,11 +284,11 @@
 
             var $item = $(html.string());
 
-            assertEquals(1, $item.find('.t-input[type="hidden"]').length);
-            assertEquals(1, $item.find('.t-input[type="checkbox"]').length);
-        }
+            equal($item.find('.t-input[type="hidden"]').length, 1);
+            equal($item.find('.t-input[type="checkbox"]').length, 1);
+        });
 
-        function test_getItemHtml_should_render_hidden_input_with_name_attr_in_checkbox_wrapper() {
+        test('getItemHtml should render hidden input with name attr in checkbox wrapper', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -301,10 +307,10 @@
 
             var $item = $(html.string());
 
-            assertEquals("TreeView1_checkedNodes.Index", $item.find('.t-input[type="hidden"]').attr('name'));
-        }
+            equal($item.find('.t-input[type="hidden"]').attr('name'), "TreeView1_checkedNodes.Index");
+        });
 
-        function test_getItemHtml_should_render_hidden_input_in_checkbox_wrapper_with_value_0_if_it_is_first_level() {
+        test('getItemHtml should render hidden input in checkbox wrapper with value 0 if it is first level', function() {
             var html = new $.telerik.stringBuilder();
             
             treeviewStatic.getItemHtml({
@@ -324,10 +330,10 @@
 
             var $item = $(html.string());
 
-            assertEquals("0", $item.find('.t-input[type="hidden"]').attr('value'));
-        }
+            equal($item.find('.t-input[type="hidden"]').attr('value'), "0");
+        });
 
-        function test_getItemHtml_should_render_hidden_input_in_checkbox_wrapper_with_value_created_by_group_level() {
+        test('getItemHtml should render hidden input in checkbox wrapper with value created by group level', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -347,10 +353,10 @@
 
             var $item = $(html.string());
 
-            assertEquals("1:0:2", $item.find('.t-input[type="hidden"]').attr('value'));
-        }
+            equal($item.find('.t-input[type="hidden"]').attr('value'), "1:0:2");
+        });
 
-        function test_getItemHtml_should_render_checkbox_input_with_name_attr() {
+        test('getItemHtml should render checkbox input with name attr', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -370,10 +376,10 @@
 
             var $item = $(html.string());
 
-            assertEquals("TreeView1_checkedNodes[0:0].Checked", $item.find('.t-input[type="checkbox"]').attr('name'));
-        }
+            equal($item.find('.t-input[type="checkbox"]').attr('name'), "TreeView1_checkedNodes[0:0].Checked");
+        });
 
-        function test_getItemHtml_should_render_checkbox_input_with_value_true_if_item_is_checked() {
+        test('getItemHtml should render checkbox input with value true if item is checked', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -394,10 +400,10 @@
 
             var $item = $(html.string());
 
-            assertEquals("True", $item.find('.t-input[type="checkbox"]').attr('value'));
-        }
+            equal($item.find('.t-input[type="checkbox"]').attr('value'), "True");
+        });
 
-        function test_getItemHtml_should_render_disabled_checkbox_with_disabled_state_class() {
+        test('getItemHtml should render disabled checkbox with disabled state class', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -419,11 +425,10 @@
 
             var $item = $(html.string());
 
-            assertEquals(true, $item.find('.t-input[type="checkbox"]').attr('disabled'));
-        }
+            equal($item.find('.t-input[type="checkbox"]').attr('disabled'), true);
+        });
 
-        function test_getItemHtml_should_render_checked_checkbox_Checked_property_is_true()
-        {
+        test('getItemHtml should render checked checkbox Checked property is true', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -444,10 +449,10 @@
 
             var $item = $(html.string());
 
-            assertEquals(true, $item.find('[type=checkbox]').attr('checked'));
-        }
+            equal($item.find('[type=checkbox]').attr('checked'), true);
+        });
 
-        function test_getItemHtml_should_render_hidden_inputs_containing_dataItem_values_if_item_is_checked() {
+        test('getItemHtml should render hidden inputs containing dataItem values if item is checked', function() {
             var html = new $.telerik.stringBuilder();
 
             treeviewStatic.getItemHtml({
@@ -469,9 +474,34 @@
 
             var $item = $(html.string());
 
-            assertEquals("1", $item.find('[type=hidden]').eq(1).val());
-            assertEquals("text", $item.find('[type=hidden]').eq(2).val());
-        }
+            equal($item.find('[type=hidden]').eq(1).val(), "1");
+            equal($item.find('[type=hidden]').eq(2).val(), "text");
+        });
 
-    </script>
+        test('getItemHtml should render SpriteCssClasses', function() {
+            var html = new $.telerik.stringBuilder();
+
+            treeviewStatic.getItemHtml({
+                item: {
+                    Text: "text",
+                    SpriteCssClasses: "cssClass1"
+                },
+                html: html,
+                isAjax: false,
+                isFirstLevel: false,
+                showCheckBoxes: true,
+                itemIndex: 0,
+                itemsCount: 1,
+                elementId: "TreeView1",
+                groupLevel: "0"
+            });
+
+            var $item = $(html.string());
+
+            equal($item.find('.t-sprite').length, 1);
+            ok($item.find('.t-sprite').hasClass('cssClass1'));
+        });
+
+</script>
+
 </asp:Content>

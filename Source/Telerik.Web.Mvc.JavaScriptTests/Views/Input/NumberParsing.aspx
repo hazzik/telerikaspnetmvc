@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -22,16 +22,27 @@
             return $(selector || "#NumericTextBox").data("tTextBox");
         }
 
-        function test_parse_with_simple_format() {
-            assertEquals(1.00, getInput('#CurrencyTextBox').parse("1.00"));
-        }
-
-        function test_parse_with_negative_currency_format() {
-            assertEquals(-1.00, getInput('#CurrencyTextBox').parse("($1.00)"));
-        }
-
     </script>
 
 <% Html.Telerik().ScriptRegistrar().Globalization(true); %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('parse with simple format', function() {
+            equal(getInput('#CurrencyTextBox').parse("1.00"), 1.00);
+        });
+
+        test('parse with negative currency format', function() {
+            equal(getInput('#CurrencyTextBox').parse("($1.00)"), -1.00);
+        });
+
+</script>
 
 </asp:Content>

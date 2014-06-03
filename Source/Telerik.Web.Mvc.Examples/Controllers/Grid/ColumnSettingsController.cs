@@ -48,7 +48,7 @@ namespace Telerik.Web.Mvc.Examples
                         new GridEditActionCommand(),
                         new GridDeleteActionCommand()
                     },
-                    Width = "180px",
+                    Width = "200px",
                     Title = "Commands"
                 }
             };

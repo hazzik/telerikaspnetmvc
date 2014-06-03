@@ -9,8 +9,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     using Telerik.Web.Mvc.Extensions;
 
-    public class GridCell<T> : IGridRenderingContext<T>
-        where T : class
+    public class GridCell<T> where T : class
     {
         public GridCell(GridColumnBase<T> column, T dataItem)
         {

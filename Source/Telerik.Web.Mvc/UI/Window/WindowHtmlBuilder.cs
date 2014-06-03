@@ -24,7 +24,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode WindowTag()
         {
-            return new HtmlTag("div")
+            return new HtmlElement("div")
                    .Attribute("style", !Window.Visible ? "display:none" : string.Empty)
                    .Attribute("id", Window.Id)
                    .Attributes(Window.HtmlAttributes)
@@ -33,7 +33,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode HeaderTag()
         {
-            IHtmlNode header = new HtmlTag("div")
+            IHtmlNode header = new HtmlElement("div")
                   .AddClass("t-window-titlebar", UIPrimitives.Header);
 
             new LiteralNode("&nbsp;").AppendTo(header);
@@ -43,7 +43,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode IconTag()
         {
-            return new HtmlTag("img", TagRenderMode.SelfClosing)
+            return new HtmlElement("img", TagRenderMode.SelfClosing)
                     .Attribute("alt", Window.IconAlternativeText.HasValue() ? Window.IconAlternativeText : "icon", false)
                     .AddClass(UIPrimitives.Image, "t-window-icon")
                     .Attribute("src", Window.IconUrl);
@@ -51,7 +51,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode TitleTag() 
         {
-            IHtmlNode title = new HtmlTag("span")
+            IHtmlNode title = new HtmlElement("span")
                    .AddClass("t-window-title");
 
             if (Window.IconUrl.HasValue())
@@ -64,16 +64,16 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ButtonContainerTag()
         {
-            return new HtmlTag("div").AddClass("t-window-actions t-header");
+            return new HtmlElement("div").AddClass("t-window-actions t-header");
         }
 
         public IHtmlNode ButtonTag(IWindowButton button)
         {
-            IHtmlNode linkTag = new HtmlTag("a")
+            IHtmlNode linkTag = new HtmlElement("a")
                                 .AddClass("t-window-action", UIPrimitives.Link)
-                                .Attribute("href", "#");
+                                .Attribute("href", button.Url);
 
-            linkTag.Children.Add(new HtmlTag("span")
+            linkTag.Children.Add(new HtmlElement("span")
                             .AddClass(UIPrimitives.Icon, button.CssClass)
                             .Html(button.Name));
 
@@ -83,7 +83,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ContentTag()
         {
-            var content = new HtmlTag("div")
+            var content = new HtmlElement("div")
                                .AddClass("t-window-content", UIPrimitives.Content)
                                .Css("overflow", Window.Scrollable ? "auto" : "hidden")
                                .Attributes(Window.ContentHtmlAttributes);
@@ -102,13 +102,14 @@ namespace Telerik.Web.Mvc.UI
                 && (Window.ContentUrl.StartsWith("http", System.StringComparison.InvariantCultureIgnoreCase)
                 ||  Window.ContentUrl.StartsWith("https", System.StringComparison.InvariantCultureIgnoreCase)))
             {
-                new HtmlTag("iframe")
+                new HtmlElement("iframe")
                     .Attributes(new {
                         src = Window.ContentUrl,
                         title = Window.Title,
                         style = "border: 0; width: 100%; height: 100%;",
                         frameborder = "0"
                     })
+                    .Html("This page requires frames in order to show content")
                     .AppendTo(content);
             } 
             else if (Window.Template.HasValue())

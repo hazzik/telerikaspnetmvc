@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -14,28 +14,40 @@
             %>
 
     <script type="text/javascript">
+    </script>
 
-        function test_popup_inherits_zIndex_from_component() {
-            var datepicker = $('#DatePicker2').css('z-index', 42).data('tDatePicker');
+</asp:Content>
 
-            datepicker.open();
 
-            var popupZIndex = $('.t-datepicker-calendar').parent().css('z-index');
-            
-            assertEquals(43, parseInt(popupZIndex, 10));
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
-            $('#DatePicker').css('z-index', 'auto');
-        }
+<script type="text/javascript">
 
-        function test_popup_inherits_zIndex_from_parent_container_when_component_zIndex_is_not_set() {
+
+
+    test('popup inherits zIndex from component', function () {
+        var datepicker = $('#DatePicker2').data('tDatePicker');
+        var $wrapper = datepicker.$wrapper.css('z-index', 42);
+
+        datepicker.open();
+
+        var popupZIndex = $('.t-datepicker-calendar').parent().css('z-index');
+
+        equal(parseInt(popupZIndex, 10), 43);
+
+        $wrapper.css('z-index', 'auto');
+    });
+
+        test('popup inherits zIndex from parent container when component zIndex is not set', function() {
             var datepicker = $('#DatePicker1').data('tDatePicker');
 
             datepicker.showPopup();
 
             var popupZIndex = $('.t-datepicker-calendar').parent().css('z-index');
 
-            assertEquals(11, parseInt(popupZIndex, 10));
-        }
-    </script>
+            equal(parseInt(popupZIndex, 10), 11);
+        });
+
+</script>
 
 </asp:Content>

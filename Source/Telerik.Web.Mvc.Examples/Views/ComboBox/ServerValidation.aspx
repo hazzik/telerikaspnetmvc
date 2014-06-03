@@ -16,7 +16,6 @@
                     <%= Html.Telerik().ComboBoxFor(x => x.ProductID)
                             .DataBinding(binding => binding.Ajax().Select("_AjaxLoading", "ComboBox"))
                             .Filterable(filtering => filtering.FilterMode(AutoCompleteFilterMode.StartsWith))
-                            .SelectedIndex(Model.ProductID != -1 ? Model.ProductID - 1 : -1)
                     %>
                     <div class="error"><%= Html.ValidationMessageFor(x => x.ProductID)%></div>
                 </li>
@@ -25,7 +24,7 @@
                     <%= Html.Telerik().NumericTextBoxFor(x => x.UnitPrice).InputHtmlAttributes(new { style = "width:145px" })%>
                 </li>
                 <li class="action-row">
-                    <button class="t-button t-state-default" type="submit">Save</button>
+                    <button class="t-button" type="submit">Save</button>
                 </li>
             </ul>
         </div>

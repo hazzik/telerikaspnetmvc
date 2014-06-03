@@ -79,6 +79,33 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete &quot;{0}&quot;?.
+        /// </summary>
+        internal static string DeleteFile {
+            get {
+                return ResourceManager.GetString("DeleteFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A directory with this name was not found..
+        /// </summary>
+        internal static string DirectoryNotFound {
+            get {
+                return ResourceManager.GetString("DirectoryNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Empty Folder.
+        /// </summary>
+        internal static string EmptyFolder {
+            get {
+                return ResourceManager.GetString("EmptyFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select font family.
         /// </summary>
         internal static string FontName {
@@ -169,6 +196,15 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected file \&quot;{0}\&quot; is not valid. Supported file types are {1}..
+        /// </summary>
+        internal static string InvalidFileType {
+            get {
+                return ResourceManager.GetString("InvalidFileType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Italic.
         /// </summary>
         internal static string Italic {
@@ -214,11 +250,47 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Arrange by:.
+        /// </summary>
+        internal static string OrderBy {
+            get {
+                return ResourceManager.GetString("OrderBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string OrderByName {
+            get {
+                return ResourceManager.GetString("OrderByName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size.
+        /// </summary>
+        internal static string OrderBySize {
+            get {
+                return ResourceManager.GetString("OrderBySize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Outdent.
         /// </summary>
         internal static string Outdent {
             get {
                 return ResourceManager.GetString("Outdent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;A file with name &quot;{0}&quot; already exists in the current directory. Do you want to overwrite it?.
+        /// </summary>
+        internal static string OverwriteFile {
+            get {
+                return ResourceManager.GetString("OverwriteFile", resourceCulture);
             }
         }
         
@@ -255,6 +327,15 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string Unlink {
             get {
                 return ResourceManager.GetString("Unlink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        internal static string UploadFile {
+            get {
+                return ResourceManager.GetString("UploadFile", resourceCulture);
             }
         }
     }

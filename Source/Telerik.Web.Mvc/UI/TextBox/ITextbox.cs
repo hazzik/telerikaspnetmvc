@@ -8,7 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     using System;
 
-    public interface ITextbox<T> where T : struct
+    public interface ITextBox<T> where T : struct
     {
         IDictionary<string, object> InputHtmlAttributes { get; }
 

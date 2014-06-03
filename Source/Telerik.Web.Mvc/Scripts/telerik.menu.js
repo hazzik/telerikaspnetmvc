@@ -12,6 +12,8 @@
             .live('mouseleave', $t.delegate(this, this.mouseleave), true)
             .live('click', $t.delegate(this, this.click));
 
+        $('.t-item').live('click', $t.delegate(this, this.click));
+
         $('.t-item:not(.t-state-disabled) > .t-link', element)
             .live('mouseenter', $t.hover)
             .live('mouseleave', $t.leave);

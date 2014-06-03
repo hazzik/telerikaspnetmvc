@@ -108,7 +108,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Grid")
         ///             .DataBinding(dataBinding => 
         ///             {
-        ///                 dataBinding.Ajax().Select("Index", "Home", new { {"id", 1} });
+        ///                 dataBinding.Ajax().Select("Index", "Home", new { id = 1 });
         ///             })
         /// %&gt;
         /// </code>
@@ -121,7 +121,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets the action, controller and route values for the select operation
+        /// Sets the action and controller for the select operation
         /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
@@ -288,7 +288,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Grid")
         ///             .DataBinding(dataBinding => 
         ///             {
-        ///                 dataBinding.Ajax().Insert("Index", "Home", new { {"id", 1} });
+        ///                 dataBinding.Ajax().Insert("Index", "Home", new { id = 1 });
         ///             })
         /// %&gt;
         /// </code>
@@ -301,7 +301,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets the action, controller and route values for insert operation
+        /// Sets the action and controller for the select operation
         /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
@@ -468,7 +468,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Grid")
         ///             .DataBinding(dataBinding => 
         ///             {
-        ///                 dataBinding.Ajax().Update("Index", "Home", new { {"id", 1} });
+        ///                 dataBinding.Ajax().Update("Index", "Home", new { id = 1 });
         ///             })
         /// %&gt;
         /// </code>
@@ -481,7 +481,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets the action, controller and route values for update operation
+        /// Sets the action and controller for the select operation
         /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>
@@ -648,7 +648,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Grid")
         ///             .DataBinding(dataBinding => 
         ///             {
-        ///                 dataBinding.Ajax().Delete("Index", "Home", new { {"id", 1} });
+        ///                 dataBinding.Ajax().Delete("Index", "Home", new { id = 1 });
         ///             })
         /// %&gt;
         /// </code>
@@ -661,7 +661,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets the action, controller and route values for delete operation
+        /// Sets the action and controller for the select operation
         /// </summary>
         /// <param name="actionName">Name of the action.</param>
         /// <param name="controllerName">Name of the controller.</param>

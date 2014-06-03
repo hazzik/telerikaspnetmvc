@@ -23,183 +23,7 @@
     <script type="text/javascript">
         var $t;
 
-        function setUp() {
-            $t = $.telerik;
-        }
-
-        function test_number_formatting_supports_decimal_format() { //D
-            var number = 12123.12;
-            assertEquals(culture, '<%= (12123).ToString("D") %>', $t.textbox.formatNumber(number, "D"));
-        }
-
-        function test_number_formatting_supports_decimal_format_with_small_d() { //d
-            var number = 12123.12;
-            assertEquals(culture, '<%= (12123).ToString("d") %>', $t.textbox.formatNumber(number, "d"));
-        }
-
-        function test_number_formatting_supports_currency_format() { //C
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("C") %>', $t.textbox.formatNumber(number, "C"));
-        }
-
-        function test_number_formatting_supports_currency_format_with_small_c() { //C
-
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("c") %>', $t.textbox.formatNumber(number, "c"));
-        }
-
-        function test_number_formatting_supports_Number_format() { //N
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("N") %>', $t.textbox.formatNumber(number, "N"));
-        }
-
-        function test_number_formatting_supports_Number_format_with_small_n() { //n
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("n") %>', $t.textbox.formatNumber(number, "n"));
-        }
-
-        function test_number_formatting_supports_Percent_format() { //P
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.129).ToString("P") %>', $t.textbox.formatNumber(number, "P"));
-        }
-
-        function test_number_formatting_supports_Percent_format_with_small_p() { //p
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.129).ToString("p") %>', $t.textbox.formatNumber(number, "p"));
-        }
-
-        function test_number_formatting_supports_decimal_format_used_in_String_Format() { //D
-            var number = 12123.12;
-            assertEquals(culture, '<%= (12123).ToString("D") %>', $t.textbox.formatNumber(number, "{0:D}"));
-        }
-
-        function test_number_formatting_supports_decimal_format_with_small_d_used_in_String_Format() { //d
-            var number = 12123.12;
-            assertEquals(culture, '<%= (12123).ToString("d") %>', $t.textbox.formatNumber(number, "{0:d}"));
-        }
-
-        function test_number_formatting_supports_currency_format_used_in_String_Format() { //C
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("C") %>', $t.textbox.formatNumber(number, "{0:C}"));
-        }
-
-        function test_number_formatting_supports_currency_format_with_small_c_used_in_String_Format() { //C
-
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("c") %>', $t.textbox.formatNumber(number, "{0:c}"));
-        }
-
-        function test_number_formatting_supports_Number_format_used_in_String_Format() { //N
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("N") %>', $t.textbox.formatNumber(number, "{0:N}"));
-        }
-
-        function test_number_formatting_supports_Number_format_with_small_n_used_in_String_Format() { //n
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.13).ToString("n") %>', $t.textbox.formatNumber(number, "{0:n}"));
-        }
-
-        function test_number_formatting_supports_Percent_format_used_in_String_Format() { //P
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.129).ToString("P") %>', $t.textbox.formatNumber(number, "{0:P}"));
-        }
-
-        function test_number_formatting_supports_Percent_format_with_small_p_used_in_String_Format() { //p
-            var number = 12123.129;
-            assertEquals(culture, '<%= (12123.129).ToString("p") %>', $t.textbox.formatNumber(number, "{0:p}"));
-        }
-
         //custom formating;
-        function test_custom_number_formatting_with_normal_number_format() {
-            var number = 12123.12;
-            assertEquals(culture, '<%= (12123.12).ToString("###.##") %>', $t.textbox.formatNumber(number, "###.##"));
-        }
-
-        function test_custom_number_formatting_with_three_digits_after_decimal_point() {
-            var number = 12123.12;
-            assertEquals(culture, '<%= (12123.12).ToString("###.##0") %>', $t.textbox.formatNumber(number, "###.##0"));
-        }
-
-        function test_custom_number_formatting_with_decimal_digits_and_int_number() {
-            var number = 12123;
-            assertEquals(culture, '<%= (12123).ToString("###.##") %>', $t.textbox.formatNumber(number, "###.##"));
-        }
-
-        function test_custom_number_formatting_with_one_decimal_digits_and_double_number() {
-            var number = 12123.17;
-            assertEquals(culture, '<%= (12123.17).ToString("###.0") %>', $t.textbox.formatNumber(number, "###.0"));
-        }
-
-        function test_custom_number_formatting_with_one_decimal_digits_and_obligotory_zeros() {
-            var number = 23.17;
-            assertEquals(culture, '<%= (23.17).ToString("#00##.0") %>', $t.textbox.formatNumber(number, "#00##.0"));
-        }
-
-        function test_custom_number_formatting_with_currency_symbol() {
-            var number = 23.17;
-            assertEquals(culture, '<%= (23.17).ToString("$ #00##.0") %>', $t.textbox.formatNumber(number, "$ #00##.0"));
-        }
-
-        function test_custom_number_formatting_with_currency_symbol_and_string_format() {
-            var number = 23.17;
-            assertEquals(culture, '<%= String.Format("{0:$ #00##.0}", 23.17) %>', $t.textbox.formatNumber(number, "{0:$ #00##.0}"));
-        }
-
-
-        function test_custom_number_formatting_with_other_characteres() {
-            var number = 23.17;
-            assertEquals(culture, '<%= (23.17).ToString("(#) - ##") %>', $t.textbox.formatNumber(number, "(#) - ##"));
-        }
-
-        function test_custom_number_formatting_with_other_characteres_and_obligatory_zeros() {
-            var number = 23.17;
-            assertEquals(culture, '<%= (23.17).ToString("(0) - 00") %>', $t.textbox.formatNumber(number, "(0) - 00"));
-        }
-
-        function test_custom_number_formatting_with_negative_pattern() {
-            var number = -23.17;
-            assertEquals(culture, '<%= (-23.17).ToString("000.00; -###.00") %>', $t.textbox.formatNumber(number, "000.00; -###.00"));
-        }
-
-        function test_custom_number_formatting_with_negative_pattern_and_string_format() {
-            var number = -23.17;
-            assertEquals(culture, '<%= String.Format("{0:000.00;- 0###.00}", -23.17) %>', $t.textbox.formatNumber(number, "{0:000.00;- 0###.00}"));
-        }
-
-        function test_custom_number_formatting_with_zero_pattern() {
-            var number = 0;
-            assertEquals(culture, '<%= (0).ToString("000.00; -###.00;zero") %>', $t.textbox.formatNumber(number, "000.00; -###.00;zero"));
-        }
-
-        function test_custom_number_formatting_with_one_zero() {
-            var number = 123.12;
-            assertEquals(culture, '<%= (123.12).ToString("0$") %>', $t.textbox.formatNumber(number, "0$"));
-        }
-
-        function test_custom_number_format_with_less_digits_than_specified_in_format() {
-            var value = $t.textbox.formatNumber(666, "#,###.00");
-            assertEquals(culture, '<%= 666.ToString("#,###.00") %>', value);
-        }
-
-        function test_custom_number_format_with_less_digits_than_specified_in_format1() {
-            var value = $t.textbox.formatNumber(666, "#,##,###.00");
-            assertEquals(culture, '<%= 666.ToString("#,##,###.00") %>', value);
-        }
-
-        function test_custom_number_format_with_less_digits_than_specified_in_format_which_has_more_than_two_group_separators() {
-            var value = $t.textbox.formatNumber(6666, "#,##,###.00");
-            assertEquals(culture, '<%= 6666.ToString("#,##,###.00") %>', value);
-        }
-
-        function test_custom_number_format_exact_digits_count_as_format() {
-            var value = $t.textbox.formatNumber(6666666, "#,###,###.00");
-            assertEquals(culture, '<%= 6666666.ToString("#,###,###.00") %>', value);
-        }
-
-        function test_custom_number_format_with_less_digits_than_specified_in_format_less_than_zero() {
-            var value = $t.textbox.formatNumber(.5, "#,###.00");
-            assertEquals(culture, '<%= .5.ToString("#,###.00") %>', value);
-        }
     </script>
 
     <ul>
@@ -266,4 +90,196 @@
                                 .Add("telerik.textbox.js"));
 
     %>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            $t = $.telerik;
+        }
+
+        test('number formatting supports decimal format', function() { //D
+            var number = 12123.12;
+            equal($t.textbox.formatNumber(number, "D"), '<%= (12123).ToString("D") %>', culture);
+        });
+
+        test('number formatting supports decimal format with small d', function() { //d
+            var number = 12123.12;
+            equal($t.textbox.formatNumber(number, "d"), '<%= (12123).ToString("d") %>', culture);
+        });
+
+        test('number formatting supports currency format', function() { //C
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "C"), '<%= (12123.13).ToString("C") %>', culture);
+        });
+
+        test('number formatting supports currency format with small c', function() { //C
+
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "c"), '<%= (12123.13).ToString("c") %>', culture);
+        });
+
+        test('number formatting supports Number format', function() { //N
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "N"), '<%= (12123.13).ToString("N") %>', culture);
+        });
+
+        test('number formatting supports Number format with small n', function() { //n
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "n"), '<%= (12123.13).ToString("n") %>', culture);
+        });
+
+        test('number formatting supports Percent format', function() { //P
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "P"), '<%= (12123.129).ToString("P") %>', culture);
+        });
+
+        test('number formatting supports Percent format with small p', function() { //p
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "p"), '<%= (12123.129).ToString("p") %>', culture);
+        });
+
+        test('number formatting supports decimal format used in String Format', function() { //D
+            var number = 12123.12;
+            equal($t.textbox.formatNumber(number, "{0:D}"), '<%= (12123).ToString("D") %>', culture);
+        });
+
+        test('number formatting supports decimal format with small d used in String Format', function() { //d
+            var number = 12123.12;
+            equal($t.textbox.formatNumber(number, "{0:d}"), '<%= (12123).ToString("d") %>', culture);
+        });
+
+        test('number formatting supports currency format used in String Format', function() { //C
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:C}"), '<%= (12123.13).ToString("C") %>', culture);
+        });
+
+        test('number formatting supports currency format with small c used in String Format', function() { //C
+
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:c}"), '<%= (12123.13).ToString("c") %>', culture);
+        });
+
+        test('number formatting supports Number format used in String Format', function() { //N
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:N}"), '<%= (12123.13).ToString("N") %>', culture);
+        });
+
+        test('number formatting supports Number format with small n used in String Format', function() { //n
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:n}"), '<%= (12123.13).ToString("n") %>', culture);
+        });
+
+        test('number formatting supports Percent format used in String Format', function() { //P
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:P}"), '<%= (12123.129).ToString("P") %>', culture);
+        });
+
+        test('number formatting supports Percent format with small p used in String Format', function() { //p
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:p}"), '<%= (12123.129).ToString("p") %>', culture);
+        });
+        test('custom number formatting with normal number format', function() {
+            var number = 12123.12;
+            equal($t.textbox.formatNumber(number, "###.##"), '<%= (12123.12).ToString("###.##") %>', culture);
+        });
+
+        test('custom number formatting with three digits after decimal point', function() {
+            var number = 12123.12;
+            equal($t.textbox.formatNumber(number, "###.##0"), '<%= (12123.12).ToString("###.##0") %>', culture);
+        });
+
+        test('custom number formatting with decimal digits and int number', function() {
+            var number = 12123;
+            equal($t.textbox.formatNumber(number, "###.##"), '<%= (12123).ToString("###.##") %>', culture);
+        });
+
+        test('custom number formatting with one decimal digits and double number', function() {
+            var number = 12123.17;
+            equal($t.textbox.formatNumber(number, "###.0"), '<%= (12123.17).ToString("###.0") %>', culture);
+        });
+
+        test('custom number formatting with one decimal digits and obligotory zeros', function() {
+            var number = 23.17;
+            equal($t.textbox.formatNumber(number, "#00##.0"), '<%= (23.17).ToString("#00##.0") %>', culture);
+        });
+
+        test('custom number formatting with currency symbol', function() {
+            var number = 23.17;
+            equal($t.textbox.formatNumber(number, "$ #00##.0"), '<%= (23.17).ToString("$ #00##.0") %>', culture);
+        });
+
+        test('custom number formatting with currency symbol and string format', function() {
+            var number = 23.17;
+            equal($t.textbox.formatNumber(number, "{0:$ #00##.0}"), '<%= String.Format("{0:$ #00##.0}", 23.17) %>', culture);
+        });
+
+
+        test('custom number formatting with other characteres', function() {
+            var number = 23.17;
+            equal($t.textbox.formatNumber(number, "(#) - ##"), '<%= (23.17).ToString("(#) - ##") %>', culture);
+        });
+
+        test('custom number formatting with other characteres and obligatory zeros', function() {
+            var number = 23.17;
+            equal($t.textbox.formatNumber(number, "(0) - 00"), '<%= (23.17).ToString("(0) - 00") %>', culture);
+        });
+
+        test('custom number formatting with negative pattern', function() {
+            var number = -23.17;
+            equal($t.textbox.formatNumber(number, "000.00; -###.00"), '<%= (-23.17).ToString("000.00; -###.00") %>', culture);
+        });
+
+        test('custom number formatting with negative pattern and string format', function() {
+            var number = -23.17;
+            equal($t.textbox.formatNumber(number, "{0:000.00;- 0###.00}"), '<%= String.Format("{0:000.00;- 0###.00}", -23.17) %>', culture);
+        });
+
+        test('custom number formatting with zero pattern', function() {
+            var number = 0;
+            equal($t.textbox.formatNumber(number, "000.00; -###.00;zero"), '<%= (0).ToString("000.00; -###.00;zero") %>', culture);
+        });
+
+        test('custom number formatting with one zero', function() {
+            var number = 123.12;
+            equal($t.textbox.formatNumber(number, "0$"), '<%= (123.12).ToString("0$") %>', culture);
+        });
+
+        test('custom number format with less digits than specified in format', function() {
+            var value = $t.textbox.formatNumber(666, "#,###.00");
+            equal(value, '<%= 666.ToString("#,###.00") %>', culture);
+        });
+
+        test('custom number format with less digits than specified in format1', function() {
+            var value = $t.textbox.formatNumber(666, "#,##,###.00");
+            equal(value, '<%= 666.ToString("#,##,###.00") %>', culture);
+        });
+
+        test('custom number format with less digits than specified in format which has more than two group separators', function() {
+            var value = $t.textbox.formatNumber(6666, "#,##,###.00");
+            equal(value, '<%= 6666.ToString("#,##,###.00") %>', culture);
+        });
+
+        test('custom number format exact digits count as format', function() {
+            var value = $t.textbox.formatNumber(6666666, "#,###,###.00");
+            equal(value, '<%= 6666666.ToString("#,###,###.00") %>', culture);
+        });
+
+        test('custom number format with less digits than specified in format less than zero', function() {
+            var value = $t.textbox.formatNumber(.5, "#,###.00");
+            equal(value, '<%= .5.ToString("#,###.00") %>', culture);
+        });
+
+        test('"n" format and zero length NumberGroupSize should not apply group separator', function () {
+            var number = 12123.129;
+            equal($t.textbox.formatNumber(number, "{0:n}", 2, '.', ' ', 0 /*group size*/), '12123.13', culture);
+        });
+
+</script>
+
 </asp:Content>

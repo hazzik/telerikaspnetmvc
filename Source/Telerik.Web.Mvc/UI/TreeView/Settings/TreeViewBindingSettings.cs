@@ -9,7 +9,7 @@ namespace Telerik.Web.Mvc.UI
     {
         public TreeViewBindingSettings()
         {
-            Select = new TreeViewRequestSettings();
+            Select = new RequestSettings();
         }
 
         public bool Enabled
@@ -18,7 +18,7 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public TreeViewRequestSettings Select
+        public RequestSettings Select
         {
             get;
             private set;

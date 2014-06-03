@@ -94,7 +94,7 @@
 	                .cat('<input class="t-input" name="')
 	                .cat(fieldId)
 	                .cat('" id="')
-	                .cat(fieldId + '-input')
+	                .cat(fieldId)
 	                .cat('" type="text" value=""/>')
 	                .cat('</div>');
             } else {
@@ -106,7 +106,7 @@
             var filterMenuHtml = new $t.stringBuilder();
 
             filterMenuHtml.cat('<div class="t-animation-container"><div class="t-filter-options t-group" style="display:none">')
-					.cat('<button class="t-button t-state-default t-clear-button"><span class="t-icon t-clear-filter"></span>')
+					.cat('<button class="t-button t-button-icontext t-clear-button"><span class="t-icon t-clear-filter"></span>')
 					.cat(this.localization.filterClear)
 					.cat('</button><div class="t-filter-help-text">')
 					.cat(this.localization.filterShowRows)
@@ -127,7 +127,7 @@
                 this.createTypeSpecificInput(filterMenuHtml, column, fieldIdPrefix + 'second');
             }
 
-            filterMenuHtml.cat('<button class="t-button t-state-default t-filter-button"><span class="t-icon t-filter"></span>')
+            filterMenuHtml.cat('<button class="t-button t-button-icontext t-filter-button"><span class="t-icon t-filter"></span>')
                           .cat(this.localization.filter)
 				          .cat('</button></div></div>');
 
@@ -146,12 +146,12 @@
             });
 
             return $filterMenu
-                        .find('.t-datepicker')
+                        .find('.t-datepicker .t-input')
                         .each(function () {
                             $(this).tDatePicker({ format: getFormat(column) });
                         })
                         .end()
-                        .find('.t-numerictextbox')
+                        .find('.t-numerictextbox .t-input')
                         .each(function () {
                             $(this).tTextBox({ type: 'numeric', minValue: null, maxValue: null, numFormat: '', groupSeparator: '' });
                         })
@@ -180,7 +180,7 @@
                             e.stopPropagation();
 
                             if ($(e.target).parents('.t-datepicker').length == 0) {
-                                $('.t-datepicker', this)
+                                $('.t-datepicker .t-input', this)
                                     .each(function () {
                                         $(this).data('tDatePicker').hidePopup();
                                     });
@@ -233,7 +233,7 @@
             filterCallback = filterCallback || function () { return true; };
 
             $('.t-grid .t-animation-container')
-                .find('.t-datepicker')
+                .find('.t-datepicker .t-input')
                 .each(function () { $(this).data('tDatePicker').hidePopup(); })
                 .end()
                 .find('.t-filter-options')
@@ -272,7 +272,7 @@
             column.filters = [];
             var hasErrors = false;
 
-            $element.parent().find('input[type=text]:visible,select:not(.t-filter-operator)').each($.proxy(function (index, input) {
+            $element.closest(".t-filter-options").find('input[type=text]:visible,select:not(.t-filter-operator)').each($.proxy(function (index, input) {
                 var $input = $(input);
                 var value = $.trim($input.val());
 

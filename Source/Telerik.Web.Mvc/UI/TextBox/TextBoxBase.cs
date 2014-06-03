@@ -10,11 +10,11 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Routing;
 
 
-    public class TextBoxBase<T> : ViewComponentBase, ITextbox<T> where T : struct
+    public class TextBoxBase<T> : ViewComponentBase, ITextBox<T>, IInputComponent<T> where T : struct
     {
-        internal readonly ITextboxBaseHtmlBuilderFactory<T> rendererFactory;
+        internal readonly ITextBoxBaseHtmlBuilderFactory<T> rendererFactory;
 
-        public TextBoxBase(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<T> rendererFactory)
+        public TextBoxBase(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextBoxBaseHtmlBuilderFactory<T> rendererFactory)
             : base(viewContext, clientSideObjectWriterFactory)
         {
             this.rendererFactory = rendererFactory;
@@ -23,9 +23,25 @@ namespace Telerik.Web.Mvc.UI
 
             InputHtmlAttributes = new RouteValueDictionary();
 
-            ClientEvents = new TextboxBaseClientEvents();
+            ClientEvents = new TextBoxBaseClientEvents();
 
             Enabled = true;
+        }
+
+        /// <summary>
+        /// Gets the id.
+        /// </summary>
+        /// <value>The id.</value>
+        public new string Id
+        {
+            get
+            {
+                // Return from htmlattributes if user has specified
+                // otherwise build it from name
+                return InputHtmlAttributes.ContainsKey("id") ?
+                       InputHtmlAttributes["id"].ToString() :
+                       (!string.IsNullOrEmpty(Name) ? Name.Replace(".", HtmlHelper.IdAttributeDotReplacement) : null);
+            }
         }
 
         public IDictionary<string, object> InputHtmlAttributes
@@ -100,7 +116,7 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public TextboxBaseClientEvents ClientEvents
+        public TextBoxBaseClientEvents ClientEvents
         {
             get;
             private set;

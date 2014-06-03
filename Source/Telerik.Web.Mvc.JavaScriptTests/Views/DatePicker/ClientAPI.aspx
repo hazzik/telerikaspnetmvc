@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -7,132 +7,145 @@
               .Effects(e => e.Toggle())
       %>
 
+        <%= Html.Telerik().DatePicker()
+            .Name("DatePicker1")
+            .Effects(e => e.Toggle())
+      %>
+
+</asp:Content>
+
+
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript">
 
         function getDatePicker() {
             return $('#DatePicker').data('tDatePicker');
         }
 
-        function test_disable_method_should_disable_input() {
+
+        test('disable method should disable input', function () {
             var datepicker = getDatePicker();
 
             datepicker.enable();
             datepicker.disable();
 
-            assertTrue($('#DatePicker').find('.t-input').attr('disabled'));
-        }
+            ok($('#DatePicker').attr('disabled'));
+        });
 
-        function test_disable_method_should_unbind_click_event_of_toggle_button() {
+        test('disable method should unbind click event of toggle button', function () {
             var datepicker = getDatePicker();
 
             datepicker.enable();
             datepicker.disable();
 
-            var $icon = $('#DatePicker').find('.t-icon');
-            assertEquals(-1, $icon.data('events').click.toString().indexOf('e.preventDefault();'));
-        }
+            var $icon = $('#DatePicker').closest('.t-datepicker').find('.t-icon');
+            equal($icon.data('events').click.toString().indexOf('e.preventDefault();'), -1);
+        });
 
-        function test_enable_method_should_enable_input() {
+        test('enable method should enable input', function () {
             var datepicker = getDatePicker();
 
             datepicker.disable();
             datepicker.enable();
 
-            assertFalse($('#DatePicker').find('.t-input').attr('disabled'));
-        }
+            ok(!$('#DatePicker').attr('disabled'));
+        });
 
-        function test_enable_method_should_bind_click_event_of_toggle_button() {
+        test('enable method should bind click event of toggle button', function () {
             var datepicker = getDatePicker();
 
             datepicker.disable();
             datepicker.enable();
 
-            var $icon = $('#DatePicker').find('.t-icon');
+            var $icon = $('#DatePicker').closest('.t-datepicker').find('.t-icon');
+
+            ok(null !== $icon.data('events').click);
+        });
+
+        test('disable method should add state disabled', function () {
+            var datepicker = getDatePicker();
             
-            assertNotNull($icon.data('events').click);
-        }
-
-        function test_disable_method_should_add_state_disabled() {
-            var datepicker = getDatePicker();
-
             datepicker.enable();
             datepicker.disable();
 
-            assertTrue($('#DatePicker').hasClass('t-state-disabled'));
-        }
+            ok($('#DatePicker').closest('.t-datepicker').hasClass('t-state-disabled'));
+        });
 
-        function test_enable_method_should_remove_state_disabled() {
+        test('enable method should remove state disabled', function () {
             var datepicker = getDatePicker();
 
             datepicker.disable();
             datepicker.enable();
 
-            assertFalse($('#DatePicker').hasClass('t-state-disabled'));
-        }
+            ok(!$('#DatePicker').closest('.t-datepicker').hasClass('t-state-disabled'));
+        });
 
-        function test_open_method_should_call_dateView_open_method() {
-            
+        test('open method should call dateView open method', function () {
+
             var datepicker = getDatePicker();
-            var $input = datepicker.$input;
+            var $element = datepicker.$element;
 
             var position = {
-                offset: $input.offset(),
-                outerHeight: $input.outerHeight(),
-                outerWidth: $input.outerWidth(),
-                zIndex: $.telerik.getElementZIndex($input[0])
+                offset: $element.offset(),
+                outerHeight: $element.outerHeight(),
+                outerWidth: $element.outerWidth(),
+                zIndex: $.telerik.getElementZIndex($element[0])
             }
 
             var passedPos;
 
             var oldM = datepicker.dateView.open;
-            datepicker.dateView.open = function(posisiton) { passedPos = posisiton; }
+            datepicker.dateView.open = function (posisiton) { passedPos = posisiton; }
 
-            datepicker.open(); 
+            datepicker.open();
 
-            assertNotUndefined(passedPos);
-            assertEquals(position.offset.top, passedPos.offset.top);
-            assertEquals(position.offset.left, passedPos.offset.left);
-            assertEquals(position.elemHeight, passedPos.elemHeight);
-            assertEquals(position.outerWidth, passedPos.outerWidth);
-            assertEquals(position.zIndex, passedPos.zIndex);
+            ok(undefined !== passedPos);
+            equal(passedPos.offset.top, position.offset.top);
+            equal(passedPos.offset.left, position.offset.left);
+            equal(passedPos.elemHeight, position.elemHeight);
+            equal(passedPos.outerWidth, position.outerWidth);
+            equal(passedPos.zIndex, position.zIndex);
 
             datepicker.dateView.open = oldM;
-        }
+        });
 
-        function test_close_should_close_dateView() {
+        test('close should close dateView', function () {
             var datepicker = getDatePicker();
 
             datepicker.open();
             datepicker.close();
 
-            assertFalse(datepicker.dateView.isOpened());
-        }
+            ok(!datepicker.dateView.isOpened());
+        });
 
-        function test_value_method_should_set_selectedValue_of_the_component() {
+        test('value method should set selectedValue of the component', function () {
             var datepicker = getDatePicker();
 
             datepicker.value("10/10/2000");
-            
-            assertEquals('year', 2000, datepicker.selectedValue.year());
-            assertEquals('month', 9, datepicker.selectedValue.month());
-            assertEquals('day', 10, datepicker.selectedValue.date());
-        }
 
-        function test_value_method_should_call_dateView_value_method() {
+            var selectedValue = new $.telerik.datetime(datepicker.selectedValue);
+
+            equal(selectedValue.year(), 2000, 'year');
+            equal(selectedValue.month(), 9, 'month');
+            equal(selectedValue.date(), 10, 'day');
+        });
+
+        test('value method should call dateView value method', function () {
             var isCalled = false;
             var datepicker = getDatePicker();
             var oldM = datepicker.dateView.value;
 
             datepicker.dateView.value = function () { isCalled = true; }
-            
+
             datepicker.value("");
 
-            assertTrue(isCalled);
+            ok(isCalled);
 
             datepicker.dateView.value = oldM;
-        }
+        });
 
-        function test_min_method_should_set_minDate_property_and_call_dateView_min_method() {
+        test('min method should set minDate property and call dateView min method', function () {
             var isCalled = false;
             var datepicker = getDatePicker();
 
@@ -141,46 +154,87 @@
 
             datepicker.min('10/10/1904');
 
-            assertTrue(isCalled);
-            assertEquals('year', 1904, datepicker.minDate.year());
-            assertEquals('month', 9, datepicker.minDate.month());
-            assertEquals('day', 10, datepicker.minDate.date());
+            ok(isCalled);
+
+            var minDate = new $.telerik.datetime(datepicker.minValue);
+
+            equal(minDate.year(), 1904, 'year');
+            equal(minDate.month(), 9, 'month');
+            equal(minDate.date(), 10, 'day');
 
             datepicker.dateView.min = oldM;
-        }
-        
-        function test_value_method_with_null_should_set_empty_text() {
+        });
+
+        test('min method should set value to minValue if value is not in range', function () {
             var datepicker = getDatePicker();
-            var $input = datepicker.$input;
+            datepicker.value(new Date(2000, 10, 10));
+
+            datepicker.min(new Date(2001, 10, 10));
+
+            ok(datepicker.value() - datepicker.min() == 0, "value was not updated");
+        });
+
+        test('max method should set value to maxValue if value is not in range', function () {
+            var datepicker = $('#DatePicker1').data('tDatePicker');
+            datepicker.value(new Date(2000, 10, 10));
+
+            datepicker.max(new Date(1999, 10, 10));
+
+            ok(datepicker.value() - datepicker.max() == 0, "value was not updated");
+        });
+
+        test('min method should not set minValue if it is bigger then maxValue', function () {
+            var datepicker = $('#DatePicker1').data('tDatePicker');
+            var oldMin = datepicker.min();
+
+            datepicker.max(new Date(1999, 10, 10));
+            datepicker.min(new Date(2000, 10, 10));
+
+            ok(oldMin - datepicker.min() == 0, "min date was incorrectly updated");
+        });
+
+        test('max method should not set maxValue if it is less then minValue', function () {
+            var datepicker = $('#DatePicker1').data('tDatePicker');
+            var oldMax = datepicker.max();
+
+            datepicker.min(new Date(2000, 10, 10));
+            datepicker.max(new Date(1999, 10, 10));
+
+            ok(oldMax - datepicker.max() == 0, "min date was incorrectly updated");
+        });
+
+        test('value method with null should set empty text', function () {
+            var datepicker = getDatePicker();
+            var $element = datepicker.$element;
 
             datepicker.value(null);
-            assertEquals('', $input.val());
+            equal($element.val(), '');
 
             datepicker.value('');
-            assertEquals('', $input.val());
-        }
+            equal($element.val(), '');
+        });
 
-        function test_value_method_with_null_when_input_has_error_class_should_set_empty_text() {
+        test('value method with null when input has error class should set empty text', function () {
             var datepicker = getDatePicker();
-            var $input = datepicker.$input;
+            var $element = datepicker.$element;
 
             datepicker.value('11/31/2010');
             datepicker.value(null);
 
-            assertEquals('', $input.val());
-        
+            equal($element.val(), '');
+
             datepicker.value('11/31/2010');
             datepicker.value('');
 
-            assertEquals('', $input.val());
-        }
+            equal($element.val(), '');
+        });
 
-        function test_min_method_should_return_Date_object_of_minDate() {
+        test('min method should return Date object of minDate', function () {
             var datepicker = getDatePicker();
 
-            assertEquals(0, datepicker.min() - datepicker.minDate.value);
-        }
+            equal(datepicker.min() - datepicker.minValue, 0);
+        });
 
-    </script>
+</script>
 
 </asp:Content>

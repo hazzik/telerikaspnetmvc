@@ -75,73 +75,6 @@
             return $("#Menu").data("tMenu");
         }
 
-        function test_click_method_should_call_preventDefault_method() {
-            var item = getRootItem(7);
-            var isCalled = false;
-
-            var e = { preventDefault: function () { isCalled = true; }, stopPropagation: function () { } }
-
-            getMenu().click(e, item);
-
-            assertTrue(isCalled);
-        }
-
-        function test_click_method_should_call_stopPropagation_method_always() {
-            var item = getRootItem(7);
-            var isCalled = false;
-
-            var e = { stopPropagation: function () { isCalled = true; }, preventDefault: function () { } }
-
-            getMenu().click(e, item);
-
-            assertTrue(isCalled);
-        }
-
-        function test_clicking_should_raise_onSelect_event() {
-            var item = getRootItem(6);
-
-            isRaised = false;
-
-            item.find('> .t-link').trigger('click');
-
-            assertTrue(isRaised);
-        }
-
-        function test_open_should_not_open_item_is_disabled() {
-            var menu = getMenu();
-
-            var item = getRootItem(3);
-
-            menu.open(item);
-
-            assertEquals("none", item.find('> .t-group').css("display"));
-        }      
-
-        function test_disable_method_should_disable_enabled_item() {
-            var menu = getMenu();
-
-            var item = getRootItem(2);
-
-            menu.disable(item);
-            
-            assertTrue(item.hasClass('t-state-disabled'));
-        }
-
-        function test_enable_method_should_enable_disabled_item() {
-            var menu = getMenu();
-
-            var item = getRootItem(3);
-
-            menu.enable(item);
-
-            assertTrue(item.hasClass('t-state-default'));
-        }
-
-        function test_client_object_is_available_in_on_load() {
-            assertNotNull(onLoadMenu);
-            assertNotUndefined(onLoadMenu);
-        }
-
         //handlers
         function Open() {
             isRaised = true;
@@ -163,5 +96,83 @@
             onLoadMenu = $(this).data('tMenu');
         }
    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('click method should call preventDefault method', function() {
+            var item = getRootItem(7);
+            var isCalled = false;
+
+            var e = { preventDefault: function () { isCalled = true; }, stopPropagation: function () { } }
+
+            getMenu().click(e, item);
+
+            ok(isCalled);
+        });
+
+        test('click method should call stopPropagation method always', function() {
+            var item = getRootItem(7);
+            var isCalled = false;
+
+            var e = { stopPropagation: function () { isCalled = true; }, preventDefault: function () { } }
+
+            getMenu().click(e, item);
+
+            ok(isCalled);
+        });
+
+        test('clicking should raise onSelect event', function() {
+            var item = getRootItem(6);
+
+            isRaised = false;
+
+            item.find('> .t-link').trigger('click');
+
+            ok(isRaised);
+        });
+
+        test('open should not open item is disabled', function() {
+            var menu = getMenu();
+
+            var item = getRootItem(3);
+
+            menu.open(item);
+
+            equal(item.find('> .t-group').css("display"), "none");
+        });      
+
+        test('disable method should disable enabled item', function() {
+            var menu = getMenu();
+
+            var item = getRootItem(2);
+
+            menu.disable(item);
+            
+            ok(item.hasClass('t-state-disabled'));
+        });
+
+        test('enable method should enable disabled item', function() {
+            var menu = getMenu();
+
+            var item = getRootItem(3);
+
+            menu.enable(item);
+
+            ok(item.hasClass('t-state-default'));
+        });
+
+        test('client object is available in on load', function() {
+            ok(null !== onLoadMenu);
+            ok(undefined !== onLoadMenu);
+        });
+
+</script>
 
 </asp:Content>

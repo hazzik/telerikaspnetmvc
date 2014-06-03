@@ -120,11 +120,13 @@ namespace Telerik.Web.Mvc.Extensions
                 data = data.Sort(sortDescriptors);
             }
 
+            var notPagedData = data;
+
             data = data.Page(page - 1, pageSize);
 
             if (groupDescriptors.Any())
             {
-                data = data.GroupBy(groupDescriptors);
+                data = data.GroupBy(notPagedData, groupDescriptors);
             }
             
             result.Data = data;
@@ -286,8 +288,13 @@ namespace Telerik.Web.Mvc.Extensions
         /// </returns>
         public static IQueryable GroupBy(this IQueryable source, IEnumerable<GroupDescriptor> groupDescriptors)
         {
-            var builder = new GroupDescriptorCollectionExpressionBuilder(source, groupDescriptors);
+            return source.GroupBy(source, groupDescriptors);
+        }
 
+        public static IQueryable GroupBy(this IQueryable source, IQueryable notPagedData, IEnumerable<GroupDescriptor> groupDescriptors)
+        {
+            var builder = new GroupDescriptorCollectionExpressionBuilder(source, groupDescriptors, notPagedData);
+            builder.Options.LiftMemberAccessToNull = source.Provider.IsLinqToObjectsProvider();
             return builder.CreateQuery();
         }
 
@@ -305,6 +312,7 @@ namespace Telerik.Web.Mvc.Extensions
             if (functions.Count > 0)
             {
                 var builder = new QueryableAggregatesExpressionBuilder(source, functions);
+                builder.Options.LiftMemberAccessToNull = source.Provider.IsLinqToObjectsProvider();
                 var groups = builder.CreateQuery();
 
                 foreach (AggregateFunctionsGroup group in groups)

@@ -178,6 +178,34 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Defines the inline handler executed when the DOM document is ready (using the $(document).ready jQuery event)
+        /// </summary>
+        /// <param name="onDocumentReadyAction">The code of the inline handler wrapped in a text tag (Razor syntax)</param>
+        /// <example>
+        /// <code lang="CS">
+        /// @(Html.Telerik().ScriptRegistrar()
+        ///       .OnDocumentReady(
+        ///         @&lt;text&gt;
+        ///             alert("Document is ready");
+        ///         &lt;/text&gt;
+        ///       })
+        /// )
+        /// </code>
+        /// </example>
+        public virtual ScriptRegistrarBuilder OnDocumentReady(Func<object, object> onDocumentReadyFunc)
+        {
+            Guard.IsNotNull(onDocumentReadyFunc, "onDocumentReadyFunc");
+
+            var result = onDocumentReadyFunc(this);
+            if (result != null)
+            {
+                scriptRegistrar.OnDocumentReadyStatements.Add(result.ToString());
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Appends the specified statement in $(document).ready jQuery event. This method should be
         /// used in <code>Html.RenderAction()</code>.
         /// </summary>
@@ -248,6 +276,12 @@ namespace Telerik.Web.Mvc.UI
         public virtual void Render()
         {
             scriptRegistrar.Render();
+        }
+
+        public ScriptRegistrarBuilder OutputScriptFiles(bool value)
+        {
+            scriptRegistrar.OutputScriptFiles = value;
+            return this;
         }
 
         public string ToHtmlString()

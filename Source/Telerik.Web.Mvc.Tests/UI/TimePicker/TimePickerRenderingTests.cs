@@ -65,5 +65,17 @@
 
             Assert.DoesNotThrow(() => timePicker.Render());
         }
+
+        [Fact]
+        public void ObjectWriter_should_append_Enable_property()
+        {
+            timePicker.Enabled = false;
+
+            TimePickerTestHelper.clientSideObjectWriter.Setup(w => w.Append("enabled", timePicker.Enabled, true)).Verifiable();
+
+            timePicker.WriteInitializationScript(new StringWriter());
+
+            TimePickerTestHelper.clientSideObjectWriter.Verify(w => w.Append("enabled", timePicker.Enabled, true));
+        }
     }
 }

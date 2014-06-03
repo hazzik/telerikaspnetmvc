@@ -2,19 +2,10 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
     using System.Collections.Generic;
     using System.Web.Mvc;
-    using Extensions;
     using Telerik.Web.Mvc.UI;
 
     public class TreeViewController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewData["controllerName"] = "TreeView";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
-        }
-
         public ActionResult ExpandCollapse()
         {
             return View();

@@ -1,23 +1,18 @@
 namespace Telerik.Web.Mvc.Examples
 {
-    using System.IO;
-    using System.Text.RegularExpressions;
     using System.Web;
     using System.Web.Mvc;
-    using System.Xml;
-    using Telerik.Web.Mvc.Extensions;
 
     public partial class EditorController : Controller
     {
+        [ValidateInput(false)]
         public ActionResult FirstLook(string editor)
         {
-            // The HTML comes encoded so we should decode it first
-            var html = HttpUtility.HtmlDecode(editor);
-            if (html != null)
+            if (editor != null)
             {
-                ViewData["editor"] = html;
+                ViewData["editor"] = editor;
 
-                ViewData["value"] = HttpUtility.HtmlEncode(html.IndentHtml());
+                ViewData["value"] = HttpUtility.HtmlEncode(editor.IndentHtml());
             }
             return View();
         }

@@ -12,8 +12,17 @@
         function getEditor() {
             return $('#Editor1').data("tEditor");
         }
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             impl = {
                 formatRange: function(range, format) {
@@ -29,7 +38,7 @@
             }
         }
 
-        function test_removeFormat_applies_block_format_on_full_selection() {
+        test('removeFormat applies block format on full selection', function() {
             editor.value('<p style="text-align:center;">golgafrincham</p>');
 
             var pararagraph = $('p', editor.document)[0].firstChild;
@@ -39,10 +48,10 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<p>golgafrincham</p>', editor.value());
-        }
+            equal(editor.value(), '<p>golgafrincham</p>');
+        });
 
-        function test_removeFormat_applies_block_format_on_partial_selection() {
+        test('removeFormat applies block format on partial selection', function() {
             editor.value('<p style="text-align:center;">golgafrincham</p>');
 
             var pararagraph = $('p', editor.document)[0].firstChild;
@@ -52,10 +61,10 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<p>golgafrincham</p>', editor.value());
-        }
+            equal(editor.value(), '<p>golgafrincham</p>');
+        });
 
-        function test_removeFormat_applies_block_format_on_partial_selection_with_line_break() {
+        test('removeFormat applies block format on partial selection with line break', function() {
             editor.value('<p style="text-align:center;">golga<br />frincham</p>');
 
             var pararagraph = $('p', editor.document)[0];
@@ -65,7 +74,9 @@
 
             impl.formatRange(range, editor.formats.justifyCenter);
             
-            assertEquals('<p>golga<br />frincham</p>', editor.value());
-        }
-    </script>
+            equal(editor.value(), '<p>golga<br />frincham</p>');
+        });
+
+</script>
+
 </asp:Content>

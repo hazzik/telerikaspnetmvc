@@ -67,10 +67,10 @@
         <label for="itemIndex">Item index:</label>
         <%= Html.TextBox("itemIndex", "0", new { style = "width: 40px" })%> <br />
         
-        <button class="t-button t-state-default" onclick="Select()">Select</button><br />
+        <button class="t-button" onclick="Select()">Select</button><br />
         
-        <button class="t-button t-state-default" onclick="Enable()">Enable</button> /
-        <button class="t-button t-state-default" onclick="Disable()">Disable</button>
+        <button class="t-button" onclick="Enable()">Enable</button> /
+        <button class="t-button" onclick="Disable()">Disable</button>
     </p>
 <% } %>
         

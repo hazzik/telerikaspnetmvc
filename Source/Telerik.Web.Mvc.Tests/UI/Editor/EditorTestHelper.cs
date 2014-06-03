@@ -1,5 +1,6 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using System.Web.Routing;
     using Moq;
     using System.Collections.Generic;
     using System.IO;
@@ -38,7 +39,9 @@
             viewContext = TestHelper.CreateViewContext();
             viewContext.ViewData = new ViewDataDictionary();
 
-            return new Editor(viewContext, clientSideObjectWriterFactory.Object, new Mock<IWebAssetCollectionResolver>().Object, CreateLocalizationService())
+            var urlGenerator = new Mock<IUrlGenerator>();
+            urlGenerator.Setup(url => url.Generate(It.IsAny<RequestContext>(), It.IsAny<INavigatable>())).Returns(string.Empty);
+            return new Editor(viewContext, clientSideObjectWriterFactory.Object, new Mock<IWebAssetCollectionResolver>().Object, CreateLocalizationService(), urlGenerator.Object)
             {
                 Name = "Editor"
             };

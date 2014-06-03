@@ -14,7 +14,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
     /// <summary>
     /// Defines the fluent interface for building <see cref="GridRequestSettings"/>
     /// </summary>
-    public class GridRequestSettingsBuilderBase<TSettings, TBuilder> : IHideObjectMembers where TSettings : GridRequestSettings where TBuilder : class, IHideObjectMembers
+    public class GridRequestSettingsBuilderBase<TSettings, TBuilder> : IHideObjectMembers where TSettings : RequestSettings where TBuilder : class, IHideObjectMembers
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GridRequestSettingsBuilderBase&lt;TSettings, TBuilder&gt;"/> class.

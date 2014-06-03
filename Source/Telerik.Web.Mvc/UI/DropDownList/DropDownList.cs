@@ -28,6 +28,13 @@
             Items = new List<DropDownItem>();
             SelectedIndex = 0;
             Enabled = true;
+            Encoded = true;
+        }
+
+        public bool Encoded
+        {
+            get;
+            set;
         }
 
         public IUrlGenerator UrlGenerator 
@@ -68,8 +75,14 @@
             get;
             private set;
         }
-
+        
         public int SelectedIndex
+        {
+            get;
+            set;
+        }
+
+        public string Value
         {
             get;
             set;
@@ -97,9 +110,13 @@
             DataBinding.Ajax.SerializeTo("ajax", objectWriter, this);
             DataBinding.WebService.SerializeTo("ws", objectWriter, this);
 
-            if(Items.Any())
+            if (Items.Any())
             {
                 objectWriter.AppendCollection("data", Items);
+            }
+            else
+            {
+                objectWriter.Append("selectedValue", Value.HasValue() ? Value : this.GetValueFromViewDataByName());
             }
 
             objectWriter.Append("index", SelectedIndex, 0);
@@ -110,6 +127,7 @@
             }
 
             objectWriter.Append("enabled", this.Enabled, true);
+            objectWriter.Append("encoded", this.Encoded, true);
 
             objectWriter.Complete();
 
@@ -120,13 +138,15 @@
         {
             if (Items.Any())
             {
-                this.PrepareItemsAndDefineSelectedIndex();
-                this.UpdateSelectedIndexFromViewContext();
+                if (Encoded)
+                {
+                    this.EncodeTextPropertyofItems();
+                }
+
+                this.SyncSelectedIndex();
             }
 
-            IDropDownHtmlBuilder builder = new DropDownListHtmlBuilder(this);
-
-            builder.Build().WriteTo(writer);
+            (new DropDownListHtmlBuilder(this)).Build().WriteTo(writer);
 
             base.WriteHtml(writer);
         }

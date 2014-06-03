@@ -174,10 +174,77 @@
 
         public TDropDownBuilder DropDownHtmlAttributes(object attributes) 
         {
+            return DropDownHtmlAttributes(attributes.ToDictionary());
+        }
+
+        public TDropDownBuilder DropDownHtmlAttributes(IDictionary<string, object> attributes)
+        {
             Guard.IsNotNull(attributes, "attributes");
 
             Component.DropDownHtmlAttributes.Clear();
             Component.DropDownHtmlAttributes.Merge(attributes);
+
+            return this as TDropDownBuilder;
+        }
+
+        /// <summary>
+        /// Sets whether the Text property of the DropDownItem should be encoded when it is rendered.
+        /// </summary>
+        /// <param name="isEncoded">Whether the property should be encoded. Default: true.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DropDownList()
+        ///             .Name("DropDownList")
+        ///             .Encode(true)
+        ///             .BindTo(new List<DropDownItem>
+        ///             {
+        ///                 new DropDownItem{
+        ///                     Text = "&lt;h1&gt;Text1&lt;/h1&gt;",
+        ///                     Value = "Value1"
+        ///                 },
+        ///                 new DropDownItem{
+        ///                     Text = "Text2",
+        ///                     Value = "Value2"
+        ///                 }
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TDropDownBuilder Encode(bool isEncoded)
+        {
+            Component.Encoded = isEncoded;
+
+            return this as TDropDownBuilder;
+        }
+
+
+        /// <summary>
+        /// Sets selected item depending on its value.
+        /// </summary>
+        /// <param name="value">Value of the item which should be selected.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DropDownList()
+        ///             .Name("DropDownList")
+        ///             .Encode(true)
+        ///             .BindTo(new List<DropDownItem>
+        ///             {
+        ///                 new DropDownItem{
+        ///                     Text = "&lt;h1&gt;Text1&lt;/h1&gt;",
+        ///                     Value = "Value1"
+        ///                 },
+        ///                 new DropDownItem{
+        ///                     Text = "Text2",
+        ///                     Value = "Value2"
+        ///                 }
+        ///             })
+        ///             .Value("Value1")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TDropDownBuilder Value(string value)
+        {
+            Component.Value = value;
 
             return this as TDropDownBuilder;
         }

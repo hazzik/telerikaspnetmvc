@@ -5,8 +5,9 @@
 namespace Telerik.Web.Mvc.UI.Fluent
 {
 
-    using Extensions;
-    using Infrastructure;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
 
     /// <summary>
     /// Defines the fluent interface for configuring command.
@@ -48,6 +49,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <returns></returns>
         public TBuilder HtmlAttributes(object attributes)
         {
+            return HtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        /// <returns></returns>
+        public TBuilder HtmlAttributes(IDictionary<string, object> attributes)
+        {
             Command.HtmlAttributes.Merge(attributes);
             
             return this as TBuilder;
@@ -59,6 +70,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <param name="attributes">The Image HTML attributes.</param>
         /// <returns></returns>
         public TBuilder ImageHtmlAttributes(object attributes)
+        {
+            return ImageHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the image HTML attributes.
+        /// </summary>
+        /// <param name="attributes">The Image HTML attributes.</param>
+        /// <returns></returns>
+        public TBuilder ImageHtmlAttributes(IDictionary<string, object> attributes)
         {
             Command.ImageHtmlAttributes.Merge(attributes);
             

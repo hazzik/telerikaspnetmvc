@@ -24,11 +24,11 @@
             Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(textWriter.Object);
 
             builder = new Mock<INavigationComponentHtmlBuilder<PanelBarItem>>();
-            builder.Setup(r => r.Build()).Returns(() => new HtmlTag("ul"));
-            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("li"));
-            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div"));
-            builder.Setup(r => r.ItemInnerContentTag(It.IsAny<PanelBarItem>(), It.IsAny<bool>())).Returns(() => new HtmlTag("a"));
-            builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("ul"));
+            builder.Setup(r => r.Build()).Returns(() => new HtmlElement("ul"));
+            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("li"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("div"));
+            builder.Setup(r => r.ItemInnerContentTag(It.IsAny<PanelBarItem>(), It.IsAny<bool>())).Returns(() => new HtmlElement("a"));
+            builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("ul"));
 
             panelBar = PanelBarTestHelper.CreatePanelbar(writer.Object, builder.Object);
             panelBar.Name = "PanelBar1";
@@ -60,7 +60,7 @@
         [Fact]
         public void Render_should_output_once_PanelBar_begin_tag_if_items_are_not_zero()
         {
-            builder.Setup(r => r.Build()).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.Build()).Returns(() => new HtmlElement("div"));
 
             panelBar.Render();
 
@@ -70,7 +70,7 @@
         [Fact]
         public void Should_output_as_many_li_tags_as_items()
         {
-            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("li"));
+            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("li"));
 
             panelBar.Render();
 
@@ -80,7 +80,7 @@
         [Fact]
         public void Render_should_output_as_many_link_tags_as_items()
         {
-            builder.Setup(r => r.ItemInnerContentTag(It.IsAny<PanelBarItem>(), It.IsAny<bool>())).Returns(() => new HtmlTag("a"));
+            builder.Setup(r => r.ItemInnerContentTag(It.IsAny<PanelBarItem>(), It.IsAny<bool>())).Returns(() => new HtmlElement("a"));
 
             panelBar.Render();
 
@@ -96,7 +96,7 @@
             panelBar.Items.Clear();
             panelBar.Items.Add(item);
 
-            builder.Setup(b => b.ChildrenTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("ul"));
+            builder.Setup(b => b.ChildrenTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("ul"));
 
             panelBar.Render();
 
@@ -109,7 +109,7 @@
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList" });
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", RouteName = "ProductList" });
 
-            builder.Setup(b => b.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("li"));
+            builder.Setup(b => b.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("li"));
 
             panelBar.Render();
 
@@ -125,7 +125,7 @@
             panelBar.Items[0].Content = () => { };
 
             builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>()));
-            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("div"));
 
             panelBar.Render();
 
@@ -160,7 +160,7 @@
 
             panelBar.Items[0].ContentUrl = contentUrl;
 
-            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("div"));
 
             panelBar.Render();
 
@@ -175,7 +175,7 @@
             panelBar.Items[0].Html = "Html";
 
             builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>()));
-            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div")).Verifiable();
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlElement("div")).Verifiable();
 
             panelBar.Render();
 
@@ -224,7 +224,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            panelBar.ClientEvents.OnExpand.InlineCode = () => { };
+            panelBar.ClientEvents.OnExpand.CodeBlock = () => { };
 
             PanelBarTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onExpand", panelBar.ClientEvents.OnExpand)).Verifiable();
 
@@ -238,7 +238,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            panelBar.ClientEvents.OnCollapse.InlineCode = () => { };
+            panelBar.ClientEvents.OnCollapse.CodeBlock = () => { };
 
             PanelBarTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onCollapse", panelBar.ClientEvents.OnCollapse)).Verifiable();
 
@@ -252,7 +252,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            panelBar.ClientEvents.OnSelect.InlineCode = () => { };
+            panelBar.ClientEvents.OnSelect.CodeBlock = () => { };
 
             PanelBarTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onSelect", panelBar.ClientEvents.OnSelect)).Verifiable();
 
@@ -266,7 +266,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            panelBar.ClientEvents.OnLoad.InlineCode = () => { };
+            panelBar.ClientEvents.OnLoad.CodeBlock = () => { };
 
             PanelBarTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", panelBar.ClientEvents.OnLoad)).Verifiable();
 

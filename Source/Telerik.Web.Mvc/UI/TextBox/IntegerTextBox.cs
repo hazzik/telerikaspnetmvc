@@ -14,7 +14,7 @@ namespace Telerik.Web.Mvc.UI
 
     public class IntegerTextBox : TextBoxBase<int>
     {
-        public IntegerTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<int> rendererFactory)
+        public IntegerTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextBoxBaseHtmlBuilderFactory<int> rendererFactory)
             : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
@@ -78,12 +78,12 @@ namespace Telerik.Web.Mvc.UI
 
             if (MinValue > MaxValue)
             {
-                throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
             }
 
             if ((Value != null) && (MinValue > Value || Value > MaxValue))
             {
-                throw new ArgumentOutOfRangeException(TextResource.ValueOutOfRange);
+                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
             }
 
             if (NegativePatternIndex < 0 || NegativePatternIndex > 4)

@@ -292,7 +292,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (value != DateTime.MinValue)
             {
-                string dateValue = "new jQuery.telerik.datetime({0},{1},{2})".FormatWith(value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Day.ToString("00", CultureInfo.InvariantCulture));
+                string dateValue = "new Date({0},{1},{2})".FormatWith(value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Day.ToString("00", CultureInfo.InvariantCulture));
 
                 Append("{0}:{1}".FormatWith(name, dateValue));
             }
@@ -312,7 +312,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (value != null && value != DateTime.MinValue)
             {
-                string dateValue = "new jQuery.telerik.datetime({0},{1},{2})".FormatWith(value.Value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Value.Day.ToString("00", CultureInfo.InvariantCulture));
+                string dateValue = "new Date({0},{1},{2})".FormatWith(value.Value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Value.Day.ToString("00", CultureInfo.InvariantCulture));
 
                 Append("{0}:{1}".FormatWith(name, dateValue));
             }
@@ -412,7 +412,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (value != DateTime.MinValue)
             {
-                string dateValue = "new jQuery.telerik.datetime({0},{1},{2},{3},{4},{5},{6})".FormatWith(value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Day.ToString("00", CultureInfo.InvariantCulture), value.Hour.ToString("00", CultureInfo.InvariantCulture), value.Minute.ToString("00", CultureInfo.InvariantCulture), value.Second.ToString("00", CultureInfo.InvariantCulture), value.Millisecond.ToString("000", CultureInfo.InvariantCulture));
+                string dateValue = "new Date({0},{1},{2},{3},{4},{5},{6})".FormatWith(value.Year.ToString("0000", CultureInfo.InvariantCulture), (value.Month - 1).ToString("00", CultureInfo.InvariantCulture), value.Day.ToString("00", CultureInfo.InvariantCulture), value.Hour.ToString("00", CultureInfo.InvariantCulture), value.Minute.ToString("00", CultureInfo.InvariantCulture), value.Second.ToString("00", CultureInfo.InvariantCulture), value.Millisecond.ToString("000", CultureInfo.InvariantCulture));
 
                 Append("{0}:{1}".FormatWith(name, dateValue));
             }
@@ -452,6 +452,28 @@ namespace Telerik.Web.Mvc.UI
             {
                 Append("{0}:".FormatWith(name));
                 action();
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="action">The action.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter Append(string name, Func<object, object> func)
+        {
+            Guard.IsNotNullOrEmpty(name, "name");
+
+            if (func != null)
+            {
+                var result = func(this);
+                if (result != null)
+                {
+                    Append("{0}:{1}".FormatWith(name, result.ToString()));
+                }
             }
 
             return this;
@@ -525,9 +547,13 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
-            if (clientEvent.InlineCode != null)
+            if (clientEvent.CodeBlock != null)
             {
-                Append(name, clientEvent.InlineCode);
+                Append(name, clientEvent.CodeBlock);
+            }
+            else if (clientEvent.InlineCodeBlock != null)
+            {
+                Append(name, clientEvent.InlineCodeBlock);
             }
             else if (clientEvent.HandlerName.HasValue())
             {

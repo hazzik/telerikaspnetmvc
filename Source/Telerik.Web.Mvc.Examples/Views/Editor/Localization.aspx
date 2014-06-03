@@ -12,6 +12,7 @@
              <option value="pt-BR">Português do Brasil</option>
              <option value="ru-RU">Русский</option>
              <option value="uk-UA">Українське</option>
+             <option value="pl-PL">Polska</option>
         </select>
     </div>
 
@@ -20,8 +21,8 @@
            .HtmlAttributes(new { style = "height:400px" })
            .Value(() =>
            { %>
-                &lt;p&gt;
-                    &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png")%>&quot;
+                &lt;p&gt;&nbsp;
+                    &lt;img src=&quot;<%= Url.Content("~/Content/Editor/editor.png") %>&quot;
                             alt=&quot;Editor for ASP.NET MVC logo&quot;
                             style=&quot;display:block;margin-left:auto;margin-right:auto;&quot; /&gt;
 

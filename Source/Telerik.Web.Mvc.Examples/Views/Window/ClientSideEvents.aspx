@@ -37,8 +37,9 @@
             .LoadContentFrom("AjaxView", "Window")
             .Buttons(buttons => buttons.Refresh().Close())
 		    .Height(180)
-		    .Width(300)      
-		    .Resizable()      
+		    .Width(300)
+		    .Resizable()
+            .Draggable(true)
 		%>
 		
 		<% Html.RenderPartial("EventLog"); %>

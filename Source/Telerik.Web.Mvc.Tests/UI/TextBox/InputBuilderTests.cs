@@ -147,7 +147,7 @@
         [Fact]
         public void ClientEvents_should_set_events_of_the_datepicker()
         {
-            Action<TextboxBaseClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+            Action<TextBoxBaseClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
 
             builder.ClientEvents(clientEventsAction);
 
@@ -157,7 +157,7 @@
         [Fact]
         public void ClientEvents_should_return_builder()
         {
-            Action<TextboxBaseClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+            Action<TextBoxBaseClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
 
             var returnedBuilder = builder.ClientEvents(clientEventsAction);
 

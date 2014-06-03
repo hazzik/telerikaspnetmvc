@@ -1,59 +1,31 @@
 <%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head runat="server">
-    <title></title>
-    <script type="text/javascript" src='<%= Url.Content("~/Scripts/jsUnit/app/jsUnitCore.js") %>'></script>
-    
-    <% Html.Telerik().StyleSheetRegistrar()
-                     .DefaultGroup(group => group.Add("Site.css")
-                                                 .Add("telerik.common.css")
-                                                 .Add("telerik.vista.css")
-                                  )
-                     .Render(); %>
+    <title>QUnit test page</title>
+    <%= Html.Telerik().StyleSheetRegistrar().DefaultGroup(g => g
+            .Add("telerik.common.css")
+            .Add("telerik.forest.css")
+            .Add("qunit.css")) %>
 </head>
-
 <body>
-    <div class="page">
-        <script type="text/javascript">
-        
-        function setUpPage() {
-            window.setUpPageStatus = "incomplete";
-        }
-        
-        </script>
+    <h1 id="qunit-header">TEST PAGE</h1>
+    <h2 id="qunit-banner"></h2>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
 
-        <div id="header">
-            <div id="title">
-                <h1>My MVC Application</h1>
-            </div>
-              
-            <div id="menucontainer">
+    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
             
-                <ul id="menu">              
-                    <li><%= Html.ActionLink("Home", "Index", "Home")%></li>
-                    <li><%= Html.ActionLink("About", "About", "Home")%></li>
-                </ul>
-            
-            </div>
-        </div>
-
-        <div id="main">
-            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
-
-            <div id="footer">
-            </div>
-        </div>
-    </div>
-    
     <% Html.Telerik().ScriptRegistrar()
-                    .DefaultGroup(defaultGroup => defaultGroup
-                        .DefaultPath(string.IsNullOrEmpty(Request.QueryString.Get("coverage")) ? "~/Scripts" : "~/InstrumentedScripts")
-                        .Add("jquery.simulate.js"))
-                    .OnDocumentReady(() => { %> window.setUpPageStatus = "complete"; <% })
-                    .Render(); %>
+            .DefaultGroup(defaultGroup => defaultGroup
+                .Add("qunit.js")
+                .Add("qunit-runner.js")
+                .Add("jquery.mockjax.js"))
+                .OnDocumentReady(() => {%>if ($.telerik) window.$t = $.telerik;<%})
+                .Render();
+    %>
 
-
+    <asp:ContentPlaceHolder ID="TestContent" runat="server" />
 </body>
 </html>

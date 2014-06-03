@@ -169,6 +169,28 @@
             Assert.Equal("Age", ((FilterDescriptor)gridCommand.FilterDescriptors[0]).Member);
             Assert.Equal(42, gridCommand.PageSize);
         }
+        
+        [Fact]
+        public void OnActionExecuting_finds_grid_command_parameter_by_type()
+        {
+            valueProvider.Add(GridUrlParameters.CurrentPage, "1");
+            valueProvider.Add(GridUrlParameters.OrderBy, "Name-asc");
+            valueProvider.Add(GridUrlParameters.Filter, "Age~eq~1");
+            valueProvider.Add(GridUrlParameters.PageSize, "42");
+            valueProvider.Add(GridUrlParameters.GroupBy, "Name-asc");
+
+            filterExecutingContext.Object.ActionParameters["foo"] = new GridCommand();
+            
+            gridAttribute.OnActionExecuting(filterExecutingContext.Object);
+
+            GridCommand command = (GridCommand)filterExecutingContext.Object.ActionParameters["foo"];
+
+            Assert.Equal(1, command.Page);
+            Assert.Equal("Name", command.SortDescriptors[0].Member);
+            Assert.Equal("Name", command.GroupDescriptors[0].Member);
+            Assert.Equal("Age", ((FilterDescriptor)command.FilterDescriptors[0]).Member);
+            Assert.Equal(42, command.PageSize);
+        }
 
         [Fact]
         public void OnActionExecuting_updates_the_grid_command_parameter_with_prefixed_values()

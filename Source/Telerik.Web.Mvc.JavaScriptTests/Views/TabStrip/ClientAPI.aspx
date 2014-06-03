@@ -1,8 +1,6 @@
 <%@ Page Title="ClientAPI tests" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
-
-    <h2>Client API Tests</h2>
     
 	<% Html.Telerik().TabStrip()
             .Name("TabStrip")
@@ -50,10 +48,44 @@
                 items.Add().Text("Item 2");
             })
             .Render(); %>
-    
-   <script type="text/javascript">
 
-       var isRaised;
+     <% Html.Telerik().TabStrip()
+            .Name("TabStrip2")
+            .Effects(fx => fx.Opacity().Expand().OpenDuration(1).CloseDuration(1))
+            .Items(items =>
+            {
+                items.Add().Text("Item 1").Content("text test").Selected(true);
+            })
+            .Render(); %>
+    
+    <script type="text/javascript">
+
+        var isRaised;
+
+        var argsCheck = false;
+        
+        //handlers
+        function Select(e) {
+            if (argsCheck) {
+                isRaised = !!e.contentElement;
+                argsCheck = false;
+            } else
+                isRaised = true;
+        }
+    
+        var onLoadTabStrip;
+        function Load(e) {
+            isRaised = true;
+            onLoadTabStrip = $(this).data('tTabStrip');
+        }
+    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+    <script type="text/javascript">
         
         function getRootItem(index) {
             return $('#TabStrip').find('.t-item').eq(index)
@@ -63,7 +95,7 @@
             return $("#TabStrip").data("tTabStrip");
         }
 
-        function test_clicking_item_with_url_should_navigate() {
+        test('clicking item with url should navigate', function() {
             
             var tabstrip = getTabStrip();
             var $item = $(getRootItem(9));
@@ -72,13 +104,13 @@
                         
             $item.find('.t-link').trigger(e);
 
-            assertFalse(e.isDefaultPrevented());
+            ok(!e.isDefaultPrevented());
 
             //stop navigation after assert
             e.preventDefault();
-        }
+        });
 
-        function test_trigger_input_select_should_not_bubble() {
+        test('trigger input select should not bubble', function() {
 
             isRaised = false;
 
@@ -87,10 +119,10 @@
 
             $(content).find('input').first().trigger('select');
 
-            assertFalse(isRaised);
-        }
+            ok(!isRaised);
+        });
 
-        function test_reload_method_should_call_ajaxRequest() { 
+        test('reload method should call ajaxRequest', function() { 
             var tabstrip = getTabStrip();
             var isCalled = false;
             var $item = $(getRootItem(7));
@@ -100,10 +132,10 @@
             
             tabstrip.reload($item);
 
-            assertTrue(isCalled);
-        }
+            ok(isCalled);
+        });
     
-        function test_clicking_should_raise_onSelect_event() {
+        test('clicking should raise onSelect event', function() {
 
             var item = getRootItem(2);
 
@@ -111,94 +143,93 @@
 
             item.find('> .t-link').trigger('click');
 
-            assertTrue(isRaised);
-        }
+            ok(isRaised);
+        });
 
-        function test_clicking_first_item_should_select_it() {
+        test('clicking first item should select it', function() {
             var item = getRootItem(0);
 
             item.find('.t-link').trigger('click');
 
-            assertTrue(item.hasClass('t-state-active'));
-        }
+            ok(item.hasClass('t-state-active'));
+        });
 
-        function test_select_method_should_select_second_item() {
+        test('select method should select second item', function() {
             var tabstrip = getTabStrip();
             var item = getRootItem(1);
 
             tabstrip.select(item);
 
-            assertTrue(item.hasClass('t-state-active'));
+            ok(item.hasClass('t-state-active'));
         
-        }
+        });
 
-        function test_disable_method_should_disable_item() {
+        test('disable method should disable item', function() {
             var tabstrip = getTabStrip();
 
             var item = getRootItem(4);
 
             tabstrip.disable(item);
 
-            assertTrue(item.hasClass('t-state-disabled'));
-        }
+            ok(item.hasClass('t-state-disabled'));
+        });
 
-        function test_enable_method_should_enable_disabled_item() {
+        test('enable method should enable disabled item', function() {
             var tabstrip = getTabStrip();
 
             var item = getRootItem(3);
 
             tabstrip.enable(item);
 
-            assertTrue(item.hasClass('t-state-default'));
-        }
+            ok(item.hasClass('t-state-default'));
+        });
 
-        function test_select_method_should_show_content() {
+        test('select method should show content', function() {
             var tabstrip = getTabStrip();
 
             var item = getRootItem(5);
             tabstrip.select(item);
 
             var content = $(tabstrip.getContentElement(5));
-            assertTrue(content.hasClass('t-state-active'));
-        }
+            ok(content.hasClass('t-state-active'));
+        });
 
-        function test_getContentElement_should_return_content_of_seveth_tab() {
+        test('getContentElement should return content of seveth tab', function() {
             var tabstrip = getTabStrip();
             
             var expectedContent = $(tabstrip.element).find('> .t-content').eq(1); //second content under Tab-7
             
-            assertEquals(expectedContent.index(), $(tabstrip.getContentElement(6)).index());
-        }
+            equal($(tabstrip.getContentElement(6)).index(), expectedContent.index());
+        });
 
-        function test_getContentElement_should_not_return_tab_content_if_passed_argument_is_not_number() {
+        test('getContentElement should not return tab content if passed argument is not number', function() {
             var tabstrip = getTabStrip();
 
-            assertEquals(undefined, tabstrip.getContentElement("a"));
-        }
+            equal(tabstrip.getContentElement("a"), undefined);
+        });
 
-        function test_getContentElement_should_not_return_tab_content_if_passed_argument_is_not_in_range() {
+        test('getContentElement should not return tab content if passed argument is not in range', function() {
             var tabstrip = getTabStrip();
 
-            assertEquals(undefined, tabstrip.getContentElement(100));
-        }
+            equal(tabstrip.getContentElement(100), undefined);
+        });
 
-        function test_getSelectedTab_should_return_current_selected_tab() {
+        test('getSelectedTab should return current selected tab', function() {
             var tabstrip = getTabStrip();
 
             var item = getRootItem(0);
             tabstrip.select(item);
 
-            assertEquals($(item).index(), tabstrip.getSelectedTabIndex());
-        }
+            equal(tabstrip.getSelectedTabIndex(), $(item).index());
+        });
 
-        function test_getSelectedTab_should_return_negative_if_no_selected_tabs() {
+        test('getSelectedTab should return negative if no selected tabs', function() {
             var tabstrip = $("#TabStrip1").data("tTabStrip")
             
-            assertEquals(-1, tabstrip.getSelectedTabIndex());
-        }
+            equal(tabstrip.getSelectedTabIndex(), -1);
+        });
 
-        var argsCheck = false;
-        function test_click_should_raise_select_event_and_pass_corresponding_content() {
+        test('click should raise select event and pass corresponding content', function() {
             argsCheck = true;
 
             var item = getRootItem(6);
@@ -207,33 +238,19 @@
 
             item.find('> .t-link').trigger('click');
 
-            assertTrue(isRaised);
-        }
-        
-        //handlers
-        function Select(e) {
-            if (argsCheck) {
-                if (e.contentElement) {
-                    isRaised = true;
-                } else {
-                    isRaised = false;
-                }
-                argsCheck = false;
-            } else {
-                isRaised = true;
-            }
-        }
+            ok(isRaised);
+        });
 
-        function test_client_object_is_available_in_on_load() {
-            assertNotNull(onLoadTabStrip);
-            assertNotUndefined(onLoadTabStrip);
-        }
-    
-        var onLoadTabStrip;
-        function Load(e) {
-            isRaised = true;
-            onLoadTabStrip = $(this).data('tTabStrip');
-        }
-   </script>
+        test('client object is available in on load', function() {
+            ok(null !== onLoadTabStrip);
+            ok(undefined !== onLoadTabStrip);
+        });
+
+        test('animated text-only content is opened on load', function() {
+            
+            equals($('#TabStrip2 .t-content').css('opacity'), '1');
+        });
+
+    </script>
 
 </asp:Content>

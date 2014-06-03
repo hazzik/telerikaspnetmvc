@@ -32,7 +32,7 @@
         </div>
 
         <p>
-            <button class="t-button t-state-default" type="submit">Save</button>
+            <button class="t-button" type="submit">Save</button>
         </p>
     
     <% } %>

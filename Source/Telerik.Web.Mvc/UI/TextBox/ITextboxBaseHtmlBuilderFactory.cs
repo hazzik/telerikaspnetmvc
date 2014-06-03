@@ -5,8 +5,7 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-
-    public interface ITextboxBaseHtmlBuilderFactory<T> where T : struct
+    public interface ITextBoxBaseHtmlBuilderFactory<T> where T : struct
     {
         ITextBoxBaseHtmlBuilder Create(TextBoxBase<T> input);
     }

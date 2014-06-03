@@ -40,21 +40,11 @@ namespace Telerik.Web.Mvc.UI.Tests
         [Fact]
         public void Build_should_output_combobox_css_class_and_append_custom_css_classes()
         {
-            combobox.HtmlAttributes.Add("class", "myLovelyClass");
+            combobox.HtmlAttributes.Add("class", "myClass");
 
             IHtmlNode tag = renderer.Build();
 
-            Assert.Equal("t-widget t-combobox t-header myLovelyClass", tag.Attribute("class"));
-        }
-
-        [Fact]
-        public void Build_should_output_id_attribute()
-        {
-            combobox.Name = "ComboBox";
-
-            IHtmlNode tag = renderer.Build();
-
-            Assert.Equal(combobox.Id, tag.Attribute("id"));
+            Assert.Equal("t-widget t-combobox t-header myClass", tag.Attribute("class"));
         }
 
         [Fact]
@@ -119,6 +109,23 @@ namespace Telerik.Web.Mvc.UI.Tests
         }
 
         [Fact]
+        public void InnerContentTag_should_not_set_input_value_if_selectedIndex_not_is_negative()
+        {
+            string value = "test1";
+            combobox.SelectedIndex = 1;
+
+            combobox.Name = "ComboBox";
+            combobox.ViewContext.ViewData.Add(combobox.Name, value);
+
+            combobox.Items.Add(new DropDownItem { Text = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "2" });
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            Assert.NotEqual(value, tag.Children[0].Attribute("value"));
+        }
+
+        [Fact]
         public void InnerContentTag_should_html_input_element_output_html_attributes()
         {
             combobox.InputHtmlAttributes.Add("width", "100px");
@@ -162,6 +169,21 @@ namespace Telerik.Web.Mvc.UI.Tests
             Assert.Equal("Item2", tag.Children[0].Attribute("value"));
         }
 
+        [Fact]
+        public void InnerContentTag_should_add_Value_property_as_value_attr_if_no_selected_index()
+        {
+            combobox.Name = "Combo";
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+
+            combobox.SelectedIndex = -1;
+            combobox.Value = "Test";
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            Assert.Equal("Test", tag.Children[0].Attribute("value"));
+        }
+
 #if MVC2 || MVC3
         [Fact]
         public void InnerContentTag_should_add_attr_value_if_value_is_posted()
@@ -169,7 +191,7 @@ namespace Telerik.Web.Mvc.UI.Tests
             combobox.Name = "ComboBox1";
             combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
             combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
-            combobox.SelectedIndex = 1;
+            combobox.SelectedIndex = -1;
 
             ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1-input")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
 
@@ -249,7 +271,7 @@ namespace Telerik.Web.Mvc.UI.Tests
 
             IHtmlNode tag = renderer.HiddenInputTag();
 
-            Assert.Equal(combobox.Id + "-value", tag.Attribute("id"));
+            Assert.Equal(combobox.Id, tag.Attribute("id"));
             Assert.Equal(combobox.Name, tag.Attribute("name"));
         }
 
@@ -298,6 +320,21 @@ namespace Telerik.Web.Mvc.UI.Tests
             IHtmlNode tag = renderer.HiddenInputTag();
 
             Assert.Equal("Item2", tag.Attribute("value"));
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_add_attr_value_with_Value_property_if_selectedIndex_is_negative_but_there_are_items()
+        {
+            combobox.Name = "Combo";
+            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            combobox.Items.Add(new DropDownItem { Text = "Item2" });
+
+            combobox.SelectedIndex = 1;
+            combobox.Value = "Test";
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            Assert.Equal("Test", tag.Attribute("value"));
         }
 
 #if MVC2 || MVC3

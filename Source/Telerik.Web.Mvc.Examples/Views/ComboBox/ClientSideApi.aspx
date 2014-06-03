@@ -61,7 +61,7 @@
        { %>
         <ul>
             <li>
-                <label>Item index:</label>
+                <label for="comboBoxItemIndex">Item index:</label>
                 
                 <%= Html.Telerik().IntegerTextBox()
                                   .Name("comboBoxItemIndex")
@@ -71,19 +71,19 @@
                                   .InputHtmlAttributes(new { style = "width: 60px" })
                 %>
                 
-                <button class="t-button t-state-default" onclick="selectItemInComboBox()">Select</button>
+                <button class="t-button" onclick="selectItemInComboBox()">Select</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="getSelectedFromComboBoxt()" style="width: 100px;">Get Value</button>
+                <button class="t-button" onclick="getSelectedFromComboBoxt()" style="width: 100px;">Get Value</button>
             </li>
             <li>
-                <button id="OpenComboBoxDropDown" class="t-button t-state-default" onclick="openComboBoxDropDown(event)">Open</button>
+                <button id="OpenComboBoxDropDown" class="t-button" onclick="openComboBoxDropDown(event)">Open</button>
                 /
-                <button id="CloseComboBoxDropDown" class="t-button t-state-default" onclick="closeComboBoxDropDown(event)">Close</button>
+                <button id="CloseComboBoxDropDown" class="t-button" onclick="closeComboBoxDropDown(event)">Close</button>
             </li>
             <li>
-                <button class="t-button t-state-default" onclick="enableComboBox()">Enable</button> /
-                <button class="t-button t-state-default" onclick="disableComboBox()">Disable</button>
+                <button class="t-button" onclick="enableComboBox()">Enable</button> /
+                <button class="t-button" onclick="disableComboBox()">Disable</button>
             </li>
         </ul>
     <% } %>
@@ -97,7 +97,6 @@
     <script type="text/javascript">
 
         function selectItemInDropDownList() {
-            $("#DropDownList").focus();
             var dropDownList = $("#DropDownList").data("tDropDownList");
 
             var index = $("#dropDownListItemIndex").data("tTextBox").value();
@@ -158,21 +157,21 @@
                                       .InputHtmlAttributes(new { style = "width: 60px" })
                     %>
                 
-                    <button class="t-button t-state-default" onclick="selectItemInDropDownList()">Select</button>
+                    <button class="t-button" onclick="selectItemInDropDownList()">Select</button>
                 </li>
                 <li>
-                    <button class="t-button t-state-default" onclick="getSelectedFromDropDownList()" style="width: 100px;">Get Value</button>
+                    <button class="t-button" onclick="getSelectedFromDropDownList()" style="width: 100px;">Get Value</button>
                 </li>
                 <li>
-                    <button id="OpenDropDownListDropDown" class="t-button t-state-default" onclick="openDropDownListDropDown(event)">
+                    <button id="OpenDropDownListDropDown" class="t-button" onclick="openDropDownListDropDown(event)">
                         Open</button>
                     /
-                    <button id="CloseDropDownListDropDown" class="t-button t-state-default" onclick="closeDropDownListDropDown(event)">
+                    <button id="CloseDropDownListDropDown" class="t-button" onclick="closeDropDownListDropDown(event)">
                         Close</button>
                 </li>
                 <li>
-                    <button class="t-button t-state-default" onclick="enableDropDownList()">Enable</button> /
-                    <button class="t-button t-state-default" onclick="disableDropDownListr()">Disable</button>
+                    <button class="t-button" onclick="enableDropDownList()">Enable</button> /
+                    <button class="t-button" onclick="disableDropDownListr()">Disable</button>
                 </li>
            </ul>
     <% } %>
@@ -198,9 +197,6 @@
         .configurator .t-button
         {
             margin: 0 0 1em;
-            display: inline-block;
-            *display: inline;
-            zoom: 1;
         }
     </style>
 </asp:Content>

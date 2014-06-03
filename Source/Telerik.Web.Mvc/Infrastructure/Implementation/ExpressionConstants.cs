@@ -6,11 +6,22 @@
 namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System.Linq.Expressions;
-    
+
     internal class ExpressionConstants
     {
-        internal static readonly Expression TrueLiteral = Expression.Constant(true);
-        internal static readonly Expression FalseLiteral = Expression.Constant(false);
-        internal static readonly Expression NullLiteral = Expression.Constant(null);
+        internal static Expression TrueLiteral
+        {
+            get { return Expression.Constant(true); }
+        }
+
+        internal static Expression FalseLiteral
+        {
+            get { return Expression.Constant(false); }
+        }
+
+        internal static Expression NullLiteral
+        {
+            get { return Expression.Constant(null); }
+        }
     }
 }

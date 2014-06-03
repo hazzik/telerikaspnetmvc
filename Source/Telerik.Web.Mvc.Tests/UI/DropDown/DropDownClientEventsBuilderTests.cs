@@ -27,7 +27,17 @@
 
             builder.OnLoad(param);
 
-            Assert.NotNull(clientEvents.OnLoad.InlineCode);
+            Assert.NotNull(clientEvents.OnLoad.CodeBlock);
+        }
+
+        [Fact]
+        public void Loaded_Func_param_should_set_OnLoad_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnLoad(param);
+
+            Assert.NotNull(clientEvents.OnLoad.InlineCodeBlock);
         }
 
         [Fact]
@@ -51,6 +61,16 @@
         }
 
         [Fact]
+        public void Loaded_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnLoad(param);
+
+            Assert.IsType(typeof(DropDownClientEventsBuilder), returned);
+        }
+
+        [Fact]
         public void Loaded_String_should_return_builder()
         {
             const string param = "my_method()";
@@ -67,7 +87,17 @@
 
             builder.OnChange(param);
 
-            Assert.NotNull(clientEvents.OnChange.InlineCode);
+            Assert.NotNull(clientEvents.OnChange.CodeBlock);
+        }
+
+        [Fact]
+        public void Change_Func_param_should_set_OnChange_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnChange(param);
+
+            Assert.NotNull(clientEvents.OnChange.InlineCodeBlock);
         }
 
         [Fact]
@@ -91,6 +121,16 @@
         }
 
         [Fact]
+        public void Change_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnChange(param);
+
+            Assert.IsType(typeof(DropDownClientEventsBuilder), returned);
+        }
+
+        [Fact]
         public void Change_String_should_return_builder()
         {
             const string param = "my_method()";
@@ -107,7 +147,7 @@
 
             builder.OnOpen(param);
 
-            Assert.NotNull(clientEvents.OnOpen.InlineCode);
+            Assert.NotNull(clientEvents.OnOpen.CodeBlock);
         }
 
         [Fact]
@@ -147,7 +187,17 @@
 
             builder.OnClose(param);
 
-            Assert.NotNull(clientEvents.OnClose.InlineCode);
+            Assert.NotNull(clientEvents.OnClose.CodeBlock);
+        }
+
+        [Fact]
+        public void OnClose_Func_param_should_set_OnClose_InlineClientBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnClose(param);
+
+            Assert.NotNull(clientEvents.OnClose.InlineCodeBlock);
         }
 
         [Fact]
@@ -171,6 +221,16 @@
         }
 
         [Fact]
+        public void OnClose_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnClose(param);
+
+            Assert.IsType(typeof(DropDownClientEventsBuilder), returned);
+        }
+
+        [Fact]
         public void OnClose_String_should_return_builder()
         {
             const string param = "my_method()";
@@ -187,7 +247,17 @@
 
             builder.OnDataBinding(param);
 
-            Assert.NotNull(clientEvents.OnDataBinding.InlineCode);
+            Assert.NotNull(clientEvents.OnDataBinding.CodeBlock);
+        }
+
+        [Fact]
+        public void OnDataBinding_Func_param_should_set_OnDataBinding_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnDataBinding(param);
+
+            Assert.NotNull(clientEvents.OnDataBinding.InlineCodeBlock);
         }
 
         [Fact]
@@ -211,6 +281,16 @@
         }
 
         [Fact]
+        public void OnDataBinding_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnDataBinding(param);
+
+            Assert.IsType(typeof(DropDownClientEventsBuilder), returned);
+        }
+
+        [Fact]
         public void OnDataBinding_String_should_return_builder()
         {
             const string param = "my_method()";
@@ -227,7 +307,17 @@
 
             builder.OnDataBound(param);
 
-            Assert.NotNull(clientEvents.OnDataBound.InlineCode);
+            Assert.NotNull(clientEvents.OnDataBound.CodeBlock);
+        }
+
+        [Fact]
+        public void OnDataBound_Func_param_should_set_OnDataBound_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnDataBound(param);
+
+            Assert.NotNull(clientEvents.OnDataBound.InlineCodeBlock);
         }
 
         [Fact]
@@ -251,6 +341,16 @@
         }
 
         [Fact]
+        public void OnDataBound_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnDataBound(param);
+
+            Assert.IsType(typeof(DropDownClientEventsBuilder), returned);
+        }
+
+        [Fact]
         public void OnDataBound_String_should_return_builder()
         {
             const string param = "my_method()";
@@ -267,7 +367,17 @@
 
             builder.OnError(param);
 
-            Assert.NotNull(clientEvents.OnError.InlineCode);
+            Assert.NotNull(clientEvents.OnError.CodeBlock);
+        }
+
+        [Fact]
+        public void OnError_Func_param_should_set_OnDataBound_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnError(param);
+
+            Assert.NotNull(clientEvents.OnError.InlineCodeBlock);
         }
 
         [Fact]
@@ -284,6 +394,16 @@
         public void OnError_Action_should_return_builder()
         {
             Action param = () => { };
+
+            var returned = builder.OnError(param);
+
+            Assert.IsType(typeof(DropDownClientEventsBuilder), returned);
+        }
+
+        [Fact]
+        public void OnError_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
 
             var returned = builder.OnError(param);
 

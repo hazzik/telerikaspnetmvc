@@ -14,7 +14,7 @@
         <li><%= Html.CheckBox("sorting", true, "allow <strong>sorting</strong> of data")%></li>
         <li><%= Html.CheckBox("showFooter", true, "show footer")%></li>
     </ul>
-    <button class="t-button t-state-default" type="submit">Apply</button>
+    <button class="t-button" type="submit">Apply</button>
 <% } %>
 
 <%= Html.Telerik().Grid(Model)

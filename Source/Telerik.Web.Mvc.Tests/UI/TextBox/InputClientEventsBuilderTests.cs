@@ -6,16 +6,16 @@
 
     public class InputClientEventsBuilderTests
     {
-        private TextboxBaseClientEventsBuilder builder;
-        private TextboxBaseClientEvents clientEvents;
+        private TextBoxBaseClientEventsBuilder builder;
+        private TextBoxBaseClientEvents clientEvents;
         private ViewContext viewContext;
 
 
         public InputClientEventsBuilderTests()
         {
-            clientEvents = new TextboxBaseClientEvents();
+            clientEvents = new TextBoxBaseClientEvents();
             viewContext = new ViewContext();
-            builder = new TextboxBaseClientEventsBuilder(clientEvents, viewContext);
+            builder = new TextBoxBaseClientEventsBuilder(clientEvents, viewContext);
         }
 
         [Fact]
@@ -25,7 +25,17 @@
 
             builder.OnChange(param);
 
-            Assert.NotNull(clientEvents.OnChange.InlineCode);
+            Assert.NotNull(clientEvents.OnChange.CodeBlock);
+        }
+
+        [Fact]
+        public void OnChange_method_with_Func_param_should_set_OnChange_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnChange(param);
+
+            Assert.NotNull(clientEvents.OnChange.InlineCodeBlock);
         }
 
         [Fact]
@@ -45,7 +55,17 @@
 
             var returned = builder.OnChange(param);
 
-            Assert.IsType(typeof(TextboxBaseClientEventsBuilder), returned);
+            Assert.IsType(typeof(TextBoxBaseClientEventsBuilder), returned);
+        }
+
+        [Fact]
+        public void OnChange_method_with_Func_param_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnChange(param);
+
+            Assert.IsType(typeof(TextBoxBaseClientEventsBuilder), returned);
         }
 
         [Fact]
@@ -55,7 +75,7 @@
 
             var returned = builder.OnChange(param);
 
-            Assert.IsType(typeof(TextboxBaseClientEventsBuilder), returned);
+            Assert.IsType(typeof(TextBoxBaseClientEventsBuilder), returned);
         }
 
         [Fact]
@@ -65,7 +85,17 @@
 
             builder.OnLoad(param);
 
-            Assert.NotNull(clientEvents.OnLoad.InlineCode);
+            Assert.NotNull(clientEvents.OnLoad.CodeBlock);
+        }
+
+        [Fact]
+        public void Loaded_with_Func_param_should_set_OnLoad_InlineCodeBlock()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            builder.OnLoad(param);
+
+            Assert.NotNull(clientEvents.OnLoad.InlineCodeBlock);
         }
 
         [Fact]
@@ -85,7 +115,17 @@
 
             var returned = builder.OnLoad(param);
 
-            Assert.IsType(typeof(TextboxBaseClientEventsBuilder), returned);
+            Assert.IsType(typeof(TextBoxBaseClientEventsBuilder), returned);
+        }
+
+        [Fact]
+        public void Loaded_with_Func_should_return_builder()
+        {
+            Func<object, object> param = (o) => { return null; };
+
+            var returned = builder.OnLoad(param);
+
+            Assert.IsType(typeof(TextBoxBaseClientEventsBuilder), returned);
         }
 
         [Fact]
@@ -95,7 +135,7 @@
 
             var returned = builder.OnLoad(param);
 
-            Assert.IsType(typeof(TextboxBaseClientEventsBuilder), returned);
+            Assert.IsType(typeof(TextBoxBaseClientEventsBuilder), returned);
         }
     }
 }

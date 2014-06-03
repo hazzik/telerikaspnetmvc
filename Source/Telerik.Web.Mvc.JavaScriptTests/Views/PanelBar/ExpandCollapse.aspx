@@ -70,8 +70,18 @@
         function getRootItem(index) {
             return $('#myPanelBar').find('.t-header').parent().eq(index)
         }
+    </script>
 
-        function test_clicking_collapsed_item_not_expand_if_it_is_disabled() {
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('clicking collapsed item not expand if it is disabled', function() {
         
             var item = getRootItem(0);
             
@@ -81,56 +91,57 @@
 
             item.find('> .t-link').trigger('click');
             
-            assertEquals("none", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "none");
+        });
 
-        function test_clicking_expanded_items_should_toggle_arrow() {
+        test('clicking expanded items should toggle arrow', function() {
             var item = getRootItem(1);
 
             item.find('> .t-link').trigger('click');
 
-            assertTrue(item.find('.t-icon').hasClass('t-arrow-down'));
-        }
+            ok(item.find('.t-icon').hasClass('t-arrow-down'));
+        });
 
-        function test_clicking_collapsed_items_should_expand_them() {
+        test('clicking collapsed items should expand them', function() {
             var item = getRootItem(2);
 
             item.find('> .t-link').trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "block");
+        });
 
-        function test_clicking_collapsed_items_should_toggle_arrow() {
+        test('clicking collapsed items should toggle arrow', function() {
             var item = getRootItem(3);
 
             item.find('> .t-link').trigger('click');
 
-            assertTrue(item.find('.t-icon').hasClass('t-arrow-up'));
-        }
+            ok(item.find('.t-icon').hasClass('t-arrow-up'));
+        });
 
-        function test_clicking_collapsed_items_should_not_expand_child_groups() {
+        test('clicking collapsed items should not expand child groups', function() {
             var item = getRootItem(4);
 
             item.find('> .t-link').trigger('click');
 
-            assertEquals("none", item.find('.t-group .t-group').css("display"));
-        }
+            equal(item.find('.t-group .t-group').css("display"), "none");
+        });
 
-        function test_clicking_child_group_items_should_not_collapse_root_group() {
+        test('clicking child group items should not collapse root group', function() {
             var item = getRootItem(5);
 
             item.find('.t-item').trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "block");
+        });
 
-        function test_clicking_arrows_toggles_child_groups() {
+        test('clicking arrows toggles child groups', function() {
             var item = getRootItem(6);
 
             item.find('> .t-link > .t-icon').trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
-    </script>
+            equal(item.find('.t-group').css("display"), "block");
+        });
+
+</script>
 
 </asp:Content>

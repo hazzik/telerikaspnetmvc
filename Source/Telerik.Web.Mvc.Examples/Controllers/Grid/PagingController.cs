@@ -6,11 +6,12 @@ namespace Telerik.Web.Mvc.Examples
 
     public partial class GridController : Controller
     {
-        public ActionResult Paging(bool? pageInput, bool? nextPrevious, bool? numeric, GridPagerPosition? position, int? currentPage)
+        public ActionResult Paging(bool? pageInput, bool? nextPrevious, bool? numeric, GridPagerPosition? position, int? currentPage, bool? pageSize)
         {
             ViewData["pageInput"] = pageInput ?? false;
             ViewData["nextPrevious"] = nextPrevious ?? true;
             ViewData["numeric"] = numeric ?? true;
+            ViewData["pageSize"] = pageSize ?? false;
             ViewData["position"] = position ?? GridPagerPosition.Bottom;
             ViewData["currentPage"] = currentPage ?? 1;
 

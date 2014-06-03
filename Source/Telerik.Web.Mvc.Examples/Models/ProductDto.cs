@@ -17,6 +17,7 @@
             set;
         }
 
+        [UIHint("Slider")]
         public decimal UnitPrice
         {
             get;

@@ -48,10 +48,10 @@
         <label for="itemIndex">Item index:</label>
         <%= Html.TextBox("itemIndex", "0", new { style = "width: 40px", @class = "t-input" })%> <br />
         
-        <button class="t-button t-state-default" onclick="Open()">Open</button> /
-        <button class="t-button t-state-default" onclick="Close()">Close</button> <br />
-        <button class="t-button t-state-default" onclick="Enable()">Enable</button> /
-        <button class="t-button t-state-default" onclick="Disable()">Disable</button>
+        <button class="t-button" onclick="Open()">Open</button> /
+        <button class="t-button" onclick="Close()">Close</button> <br />
+        <button class="t-button" onclick="Enable()">Enable</button> /
+        <button class="t-button" onclick="Disable()">Disable</button>
     </p>
 <% } %>
         

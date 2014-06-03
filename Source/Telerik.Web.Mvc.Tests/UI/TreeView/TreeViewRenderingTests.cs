@@ -22,7 +22,7 @@
             objectWriter = new Mock<IClientSideObjectWriter>();
 
             var list = new List<IHtmlNode>();
-            list.Add(new HtmlTag("div"));
+            list.Add(new HtmlElement("div"));
 
             var rootTag = new Mock<IHtmlNode>();
             rootTag.SetupGet(t => t.Children).Returns(() => list);
@@ -166,7 +166,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnExpand.InlineCode = () => { };
+            treeView.ClientEvents.OnExpand.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onExpand", treeView.ClientEvents.OnExpand)).Verifiable();
 
@@ -180,7 +180,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnCollapse.InlineCode = () => { };
+            treeView.ClientEvents.OnCollapse.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onCollapse", treeView.ClientEvents.OnCollapse)).Verifiable();
 
@@ -194,7 +194,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnSelect.InlineCode = () => { };
+            treeView.ClientEvents.OnSelect.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onSelect", treeView.ClientEvents.OnSelect)).Verifiable();
 
@@ -208,7 +208,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnError.InlineCode = () => { };
+            treeView.ClientEvents.OnError.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onError", treeView.ClientEvents.OnError)).Verifiable();
 
@@ -222,7 +222,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnLoad.InlineCode = () => { };
+            treeView.ClientEvents.OnLoad.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onLoad", treeView.ClientEvents.OnLoad)).Verifiable();
 
@@ -236,7 +236,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnNodeDragStart.InlineCode = () => { };
+            treeView.ClientEvents.OnNodeDragStart.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onNodeDragStart", treeView.ClientEvents.OnNodeDragStart)).Verifiable();
 
@@ -250,7 +250,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnNodeDragging.InlineCode = () => { };
+            treeView.ClientEvents.OnNodeDragging.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onNodeDragging", treeView.ClientEvents.OnNodeDragging)).Verifiable();
 
@@ -264,7 +264,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnNodeDragCancelled.InlineCode = () => { };
+            treeView.ClientEvents.OnNodeDragCancelled.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onNodeDragCancelled", treeView.ClientEvents.OnNodeDragCancelled)).Verifiable();
 
@@ -278,7 +278,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnNodeDrop.InlineCode = () => { };
+            treeView.ClientEvents.OnNodeDrop.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onNodeDrop", treeView.ClientEvents.OnNodeDrop)).Verifiable();
 
@@ -292,7 +292,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnNodeDropped.InlineCode = () => { };
+            treeView.ClientEvents.OnNodeDropped.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onNodeDropped", treeView.ClientEvents.OnNodeDropped)).Verifiable();
 
@@ -306,7 +306,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnDataBinding.InlineCode = () => { };
+            treeView.ClientEvents.OnDataBinding.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onDataBinding", treeView.ClientEvents.OnDataBinding)).Verifiable();
 
@@ -320,7 +320,7 @@
         {
             Mock<TextWriter> writer = new Mock<TextWriter>();
 
-            treeView.ClientEvents.OnDataBound.InlineCode = () => { };
+            treeView.ClientEvents.OnDataBound.CodeBlock = () => { };
 
             objectWriter.Setup(w => w.AppendClientEvent("onDataBound", treeView.ClientEvents.OnDataBound)).Verifiable();
 

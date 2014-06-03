@@ -9,7 +9,7 @@
 <pre class="prettyprint">
 &lt;%= Html.Telerik().ComboBox()
      .Name("ComboBox")
-     <em>DataBinding(binding => binding.Ajax().Select("_AjaxLoading", "ComboBox"))</em>
+     <em>.DataBinding(binding => binding.Ajax().Select("_AjaxLoading", "ComboBox"))</em>
  %&gt;
 </pre>
 <p>
@@ -33,7 +33,7 @@ Available settings:
         <pre class="prettyprint" style="padding-bottom:0">
         &lt;%= Html.Telerik().ComboBox()
                 .Name("ComboBox")
-                <em>DataBinding(binding => binding.Ajax().Select("_AjaxLoading", "ComboBox").<strong>Cache(true)</strong>)</em>
+                <em>.DataBinding(binding => binding.Ajax().Select("_AjaxLoading", "ComboBox").<strong>Cache(true)</strong>)</em>
             %&gt;
         </pre>
         <p style="padding:0 0 0 2em">

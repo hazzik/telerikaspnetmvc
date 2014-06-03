@@ -1,10 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" Culture="de-DE"%>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" Culture="de-DE"%>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
     <% Html.Telerik().ScriptRegistrar().Globalization(true); %>
-
-    <h2>ModelBinder</h2>
 
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
@@ -70,8 +68,21 @@
                 .SelectedIndex(1)
         %>
     </div>
-    
-    <script type="text/javascript">
+    <div id="editor">
+         <%= Html.Telerik().Editor()
+            .Name("Editor1")
+            .Value("<strong>foo</strong>")
+            .Tools(tools => tools
+                .Clear()
+                .Bold())
+        %>
+    </div>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
     
     function getGrid(selector) {
         return $(selector || "#Grid1").data("tGrid");
@@ -79,99 +90,124 @@
     
     var ModelBinder;
     var binder;
+
+    module("Grid / ModelBinder", {
+        setup: function() {
+            ModelBinder = $.telerik.grid.ModelBinder;
+            binder = new ModelBinder();
+        }
+    });
     
-    function setUp() {
-        ModelBinder = $.telerik.grid.ModelBinder;
-        binder = new ModelBinder();
-    }
-    
-    function test_bind_textbox() {
+    test('bind textbox', function() {
         var $ui = $('<div><input type="text" name="foo" value="bar" /></div>');
         
         var model = binder.bind($ui);
 
-        assertEquals('bar', model.foo);
-    }
+        equal(model.foo, 'bar');
+    });
 
-    function test_bind_skips_disabled_elements() {
+    test('bind skips disabled elements', function() {
         var $ui = $('<div><input type="text" name="foo" value="bar" disabled="disabled" /></div>');
         
         var model = binder.bind($ui);
 
-        assertUndefined('bar', model.foo);
-    }
+        ok(undefined === model.foo, 'bar');
+    });
 
-    function test_bind_checked_checkbox_yields_true() {
+    test('bind checked checkbox yields true', function() {
         var $ui = $('<div><input type="checkbox" name="foo" checked="checked" /></div>');
         
         var model = binder.bind($ui);
 
-        assertEquals(true, model.foo);
-    }
+        equal(model.foo, true);
+    });
 
-    function test_bind_unchecked_checkbox_yields_false() {
+    test('bind unchecked checkbox yields false', function() {
         var $ui = $('<div><input type="checkbox" name="foo" /></div>');
         
         var model = binder.bind($ui);
 
-        assertEquals(false, model.foo);
-    }
+        equal(model.foo, false);
+    });
 
-    function test_bind_textarea() {
+    test('bind extracts selected radio button value', function() {
+        var $ui = $('<div><input type="radio" name="foo" value="1" checked="checked" /><input type="radio" name="foo" value="2" /></div>');
+        
+        var model = binder.bind($ui);
+
+        equal(model.foo, 1);
+    });
+
+    test('bind extracts undefined if no radio button is selected', function() {
+        var $ui = $('<div><input type="radio" name="foo" value="1" /><input type="radio" name="foo" value="2" /></div>');
+        
+        var model = binder.bind($ui);
+
+        equal(model.foo, undefined);
+    });
+
+    test('bind textarea', function() {
         var $ui = $('<div><textarea name="foo">bar</textarea></div>');
         
         var model = binder.bind($ui);
 
-        assertEquals('bar', model.foo);
-    }
+        equal(model.foo, 'bar');
+    });
 
-    function test_bind_select() {
+    test('bind select', function() {
         var $ui = $('<div><select name="foo"><option>foo</option><option selected="selected">bar</option></select></div>');
         
         var model = binder.bind($ui);
 
-        assertEquals('bar', model.foo);
-    }
+        equal(model.foo, 'bar');
+    });
 
-    function test_bind_populates_numeric_text_box() {
+    test('bind populates numeric text box', function() {
         var $ui = $('#numeric');
         
         var model = binder.bind($ui);
 
-        assertEquals('<%= 1231234.12 %>', model.NumericTextBox);
-    }
+        equal(model.NumericTextBox, 1231234.12);
+    });
 
-    function test_bind_populates_integer_text_box()
-    {
+    test('bind populates integer text box', function() {
         var $ui = $('#integer');
         
         var model = binder.bind($ui);
 
-        assertEquals('<%= 1231234 %>', model.IntegerTextBox);
-    } 
+        equal(model.IntegerTextBox, '<%= 1231234 %>');
+    }); 
 
-    function test_bind_dropdownlist() {
+    test('bind dropdownlist', function() {
         var $ui = $('#dropdown');
         
         var model = binder.bind($ui);
 
-        assertEquals('foo', model.DropDownList);
-    }
+        equal(model.DropDownList, 'foo');
+    });
     
-    function test_bind_combobox() {
+    test('bind combobox', function() {
         var $ui = $('#combobox');
         
         var model = binder.bind($ui);
-        assertEquals('bar', model.ComboBox);
-    }
+        equal(model.ComboBox, 'bar');
+    });
 
-    function test_bind_nested() {
+    test('bind nested', function() {
         var $ui = $('<div><input name="foo.bar" value="baz" /></div>');
         
         var model = binder.bind($ui);
 
-        assertEquals('baz', model['foo.bar']);
-    }
+        equal(model['foo.bar'], 'baz');
+    });
 
-    </script>
+    test('bind editor', function() {
+        var $ui = $('#editor');
+        
+        var model = binder.bind($ui);
+        equal(model.Editor1, '&lt;strong&gt;foo&lt;/strong&gt;');
+    });
+
+</script>
+
 </asp:Content>

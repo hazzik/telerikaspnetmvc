@@ -10,19 +10,6 @@
     <script type="text/javascript">
         var editor;
 
-        function setUp() {
-            editor = getEditor();
-        }
-
-        function test_getSelection_returns_selection_like_object() {
-            var selection = editor.getSelection();
-
-            assertNotUndefined(selection);
-            assertNotUndefined(selection.getRangeAt);
-            assertNotUndefined(selection.removeAllRanges);
-            assertNotUndefined(selection.addRange);
-        }
-
         /* helpers */
         
         function selectTextNodeContents(node, start, end)
@@ -82,8 +69,32 @@
         }
 
         /* addRange */
+
+        /* getRangeAt */
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
+            editor = getEditor();
+        }
+
+        test('getSelection returns selection like object', function() {
+            var selection = editor.getSelection();
+
+            ok(undefined !== selection);
+            ok(undefined !== selection.getRangeAt);
+            ok(undefined !== selection.removeAllRanges);
+            ok(undefined !== selection.addRange);
+        });
         
-        function test_addRange_with_text_range() {
+        test('addRange with text range', function() {
             editor.value('foo');
 
             var range = editor.createRange();
@@ -97,13 +108,13 @@
             
             range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+        });
         
-        function test_addRange_with_collapsed_range() {
+        test('addRange with collapsed range', function() {
             editor.value('<strong>golga</strong>frin');
 
             var range = editor.createRange();
@@ -117,14 +128,14 @@
             
             range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(editor.body.lastChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-            assertEquals(2, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.lastChild);
+            equal(range.endContainer, editor.body.lastChild);
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 2);
+        });
 
-        function test_addRange_with_text_to_element_range() {
-            editor.value('<strong>Haifisch</strong>, der hat Tränen');
+        test('addRange with text to element range', function() {
+            editor.value('<strong>Haifisch</strong>, der hat Trï¿½nen');
 
             var selection = editor.getSelection();
             var range = editor.createRange();
@@ -136,13 +147,13 @@
 
             range = selection.getRangeAt(0);
             
-            assertEquals(0, range.startOffset);
-            assertEquals(5, range.endOffset);
-            assertEquals(editor.body.lastChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-        }
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 5);
+            equal(range.startContainer, editor.body.lastChild);
+            equal(range.endContainer, editor.body.lastChild);
+        });
 
-        function test_addRange_with_collapsed_range_at_start_of_element() {
+        test('addRange with collapsed range at start of element', function() {
             editor.value('<p>foo</p><p>bar</p>');
 
             var selection = editor.getSelection();
@@ -155,15 +166,13 @@
 
             range = selection.getRangeAt(0);
             
-            assertEquals(0, range.startOffset);
-            assertEquals(0, range.endOffset);
-            assertEquals(editor.body.lastChild.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild.firstChild, range.endContainer);
-        }
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 0);
+            equal(range.startContainer, editor.body.lastChild.firstChild);
+            equal(range.endContainer, editor.body.lastChild.firstChild);
+        });
 
-        /* getRangeAt */
-
-        function test_getRangeAt_on_selection_of_single_text_node() {
+        test('getRangeAt on selection of single text node', function() {
             editor.value('foo');
             var textNode = editor.body.firstChild;
             
@@ -171,13 +180,13 @@
 
             var range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(0, range.startOffset);
-            assertEquals(3, range.endOffset);
-            assertEquals(textNode, range.startContainer);
-            assertEquals(textNode, range.endContainer);
-        }
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 3);
+            equal(range.startContainer, textNode);
+            equal(range.endContainer, textNode);
+        });
 
-        function test_getRangeAt_on_selection_of_part_of_text_node() {
+        test('getRangeAt on selection of part of text node', function() {
             editor.value('foo');
             var textNode = editor.body.firstChild;
             
@@ -185,73 +194,75 @@
             
             var range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(textNode, range.startContainer);
-            assertEquals(textNode, range.endContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+            equal(range.startContainer, textNode);
+            equal(range.endContainer, textNode);
+        });
 
-        function test_getRangeAt_on_selection_with_end_points_in_text_node_and_tag() {
+        test('getRangeAt on selection with end points in text node and tag', function() {
             editor.value('fo<em>obar</em>');
 
             selectRange(editor.body.firstChild, 1, editor.body.lastChild.firstChild, 2);
 
             var range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild.firstChild, range.endContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.lastChild.firstChild);
+        });
 
-        function test_getRangeAt_on_selection_with_end_points_in_tag_and_text_node() {
+        test('getRangeAt on selection with end points in tag and text node', function() {
             editor.value('<em>foob</em>ar');
             
             selectRange(editor.body.firstChild.firstChild, 2, editor.body.lastChild, 1, 5);
             
             var range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(2, range.startOffset);
-            assertEquals(1, range.endOffset);
-            assertEquals(editor.body.firstChild.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-        }
+            equal(range.startOffset, 2);
+            equal(range.endOffset, 1);
+            equal(range.startContainer, editor.body.firstChild.firstChild);
+            equal(range.endContainer, editor.body.lastChild);
+        });
 
-        function test_getRangeAt_on_selection_with_end_points_in_the_middle_of_different_tags() {
+        test('getRangeAt on selection with end points in the middle of different tags', function() {
             editor.value('<em>foo</em><strong>bar</strong>');
 
             selectRange(editor.body.firstChild.firstChild, 1, editor.body.lastChild.firstChild, 2);
             
             var range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-            assertEquals(editor.body.firstChild.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild.firstChild, range.endContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+            equal(range.startContainer, editor.body.firstChild.firstChild);
+            equal(range.endContainer, editor.body.lastChild.firstChild);
+        });
 
-        function test_getRangeAt_on_selection_with_end_points_in_the_middle_of_different_text_nodes() {
+        test('getRangeAt on selection with end points in the middle of different text nodes', function() {
             editor.value('fo<em>ob</em>ar');
             
             selectRange(editor.body.firstChild, 1, editor.body.lastChild, 1, 5);
             
             var range = editor.getSelection().getRangeAt(0);
             
-            assertEquals(1, range.startOffset);
-            assertEquals(1, range.endOffset);
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-        }
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 1);
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.lastChild);
+        });
 
-        function test_getRangeAt_on_collapsed_selection_at_end_of_paragraph() {
+        test('getRangeAt on collapsed selection at end of paragraph', function() {
             editor.value('<p>foo</p>');
             
             selectRange(editor.body.firstChild.firstChild, 3, editor.body.firstChild.firstChild, 3);
             var range = editor.getSelection().getRangeAt(0);
             
-            assertTrue(range.collapsed);
-            assertEquals(3, range.startOffset);
-            assertEquals(editor.body.firstChild.firstChild, range.startContainer);
-        }
-    </script>
+            ok(range.collapsed);
+            equal(range.startOffset, 3);
+            equal(range.startContainer, editor.body.firstChild.firstChild);
+        });
+
+</script>
+
 </asp:Content>

@@ -6,6 +6,9 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+#if MVC3
+    using System.Web.WebPages;
+#endif    
     using Telerik.Web.Mvc.Extensions;
 
     public class HtmlTemplate : HtmlTemplate<object>
@@ -38,8 +41,8 @@ namespace Telerik.Web.Mvc.UI
         }
     }
 
-    public class HtmlTemplate<T>
-        where T : class
+    public class HtmlTemplate<T> 
+        where T : class 
     {
         private string html;
         private Action<T> codeBlockTemplate;
@@ -73,7 +76,7 @@ namespace Telerik.Web.Mvc.UI
             { 
                 codeBlockTemplate = value;
 
-                binder = (dataItem, node) => node.Template(() => CodeBlockTemplate(dataItem));
+                binder = (dataItem, node) => node.Template((writer) => CodeBlockTemplate(dataItem));
 
                 html = null;
                 inlineTemplate = null;
@@ -90,15 +93,24 @@ namespace Telerik.Web.Mvc.UI
             { 
                 inlineTemplate = value;
 
-                binder = (dataItem, node) =>
-                {
-                    var result = inlineTemplate(dataItem);
-                    if (result != null)
+                binder = (dataItem, node) => node.Template((writer) => 
                     {
-                        node.Html(result.ToString());
-                    }
-                };
-
+                        var result = InlineTemplate(dataItem);
+#if MVC3
+                        var helperResult = result as HelperResult;
+                        
+                        if (helperResult != null)
+                        {
+                            helperResult.WriteTo(writer);
+                            return;
+                        }
+#endif
+                        if (result != null)
+                        {
+                            writer.Write(result.ToString());
+                        }
+                    });
+                
                 codeBlockTemplate = null;
                 html = null;
             }

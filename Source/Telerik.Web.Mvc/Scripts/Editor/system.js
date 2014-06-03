@@ -64,6 +64,7 @@ function InsertHtmlCommand(options) {
         editor.focus();
     }
 }
+
 function InsertHtmlTool() {
     Tool.call(this);
 
@@ -123,13 +124,12 @@ function TypingHandler(editor) {
         var keyboard = editor.keyboard;
         var isTypingKey = keyboard.isTypingKey(e);
 
-        if (!isTypingKey)
-            removePendingFormats(editor);
-
         if (isTypingKey && !keyboard.typingInProgress()) {
-            this.startRestorePoint = new RestorePoint(editor.getRange());
+            var range = editor.getRange();
+            this.startRestorePoint = new RestorePoint(range);
+
             keyboard.startTyping($.proxy(function () {
-                this.endRestorePoint = new RestorePoint(editor.getRange());
+                editor.selectionRestorePoint = this.endRestorePoint = new RestorePoint(editor.getRange());
                 editor.undoRedoStack.push(new GenericCommand(this.startRestorePoint, this.endRestorePoint));
             }, this));
 
@@ -165,7 +165,7 @@ function SystemHandler(editor) {
             return this.startRestorePoint.html != editor.body.innerHTML;
 
         return false;
-    },
+    }
 
     this.keydown = function (e) {
         var keyboard = editor.keyboard;

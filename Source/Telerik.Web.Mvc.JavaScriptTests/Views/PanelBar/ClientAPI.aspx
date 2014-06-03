@@ -84,96 +84,6 @@
             return $("#myPanelBar").data("tPanelBar");
         }
 
-        function test_trigger_input_select_should_not_bubble() {
-
-            isRaised = false;
-
-            var item = getRootItem(6);
-
-            $(item).find('input').first().trigger('select');
-
-            assertFalse(isRaised);
-        }
-
-        function test_clicking_should_raise_onSelect_event() {
-
-            var item = getRootItem(1);
-
-            isRaised = false;
-
-            item.find('> .t-link').trigger('click');
-
-            assertTrue(isRaised);
-        }
-
-        function test_collapse_should_raise_onCollapse_event() {
-
-            var panel = getPanelBar();
-
-            isRaised = false;
-
-            var item = getRootItem(0);
-            
-            item.find('> .t-link').trigger('click');
-
-            assertTrue(isRaised);
-        }
-        
-        function test_expand_should_raise_onExpand_event() {
-
-            var panel = getPanelBar();
-            
-            isRaised = false;
-
-            var item = getRootItem(0);
-
-            item.find('> .t-link').trigger('click');
-
-            assertTrue(isRaised);
-        }   
-
-        function test_disable_method_should_disable_disabled_item() {
-            var panel = getPanelBar();
-
-            var item = getRootItem(2);
-
-            panel.disable(item);
-
-            assertTrue(item.hasClass('t-state-disabled'));
-        }
-
-        function test_enable_method_should_enable_disabled_item() {
-            var panel = getPanelBar();
-
-            var item = getRootItem(3);
-
-            panel.enable(item);
-
-            assertTrue(item.hasClass('t-state-default'));
-        }
-
-        function test_collapse_method_should_collapse_last_item() {
-        
-            var panel = getPanelBar();
-
-            var item = getRootItem(4);
-
-            panel.collapse(item);
-
-            assertEquals("none", item.find('> .t-group').css("display"));
-        }
-
-        function test_expand_method_should_expand_last_item() {
-        
-            var panel = getPanelBar();
-
-            var item = getRootItem(4);
-
-            panel.expand(item);
-
-            assertEquals("block", item.find('> .t-group').css("display"));
-        }
-
         //handlers
         function Expand(sender, args) {
             isRaised = true;
@@ -186,11 +96,6 @@
         function Select(sender, args) {
             isRaised = true;
         }
-
-         function test_client_object_is_available_in_on_load() {
-            assertNotNull(onLoadPanelBar);
-            assertNotUndefined(onLoadPanelBar);
-        }
     
         var onLoadPanelBar;
         function Load(e) {
@@ -198,5 +103,111 @@
             onLoadPanelBar = $(this).data('tPanelBar');
         }
    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('trigger input select should not bubble', function() {
+
+            isRaised = false;
+
+            var item = getRootItem(6);
+
+            $(item).find('input').first().trigger('select');
+
+            ok(!isRaised);
+        });
+
+        test('clicking should raise onSelect event', function() {
+
+            var item = getRootItem(1);
+
+            isRaised = false;
+
+            item.find('> .t-link').trigger('click');
+
+            ok(isRaised);
+        });
+
+        test('collapse should raise onCollapse event', function() {
+
+            var panel = getPanelBar();
+
+            isRaised = false;
+
+            var item = getRootItem(0);
+            
+            item.find('> .t-link').trigger('click');
+
+            ok(isRaised);
+        });
+        
+        test('expand should raise onExpand event', function() {
+
+            var panel = getPanelBar();
+            
+            isRaised = false;
+
+            var item = getRootItem(0);
+
+            item.find('> .t-link').trigger('click');
+
+            ok(isRaised);
+        });   
+
+        test('disable method should disable disabled item', function() {
+            var panel = getPanelBar();
+
+            var item = getRootItem(2);
+
+            panel.disable(item);
+
+            ok(item.hasClass('t-state-disabled'));
+        });
+
+        test('enable method should enable disabled item', function() {
+            var panel = getPanelBar();
+
+            var item = getRootItem(3);
+
+            panel.enable(item);
+
+            ok(item.hasClass('t-state-default'));
+        });
+
+        test('collapse method should collapse last item', function() {
+        
+            var panel = getPanelBar();
+
+            var item = getRootItem(4);
+
+            panel.collapse(item);
+
+            equal(item.find('> .t-group').css("display"), "none");
+        });
+
+        test('expand method should expand last item', function() {
+        
+            var panel = getPanelBar();
+
+            var item = getRootItem(4);
+
+            panel.expand(item);
+
+            equal(item.find('> .t-group').css("display"), "block");
+        });
+
+         test('client object is available in on load', function() {
+            ok(null !== onLoadPanelBar);
+            ok(undefined !== onLoadPanelBar);
+        });
+
+</script>
 
 </asp:Content>

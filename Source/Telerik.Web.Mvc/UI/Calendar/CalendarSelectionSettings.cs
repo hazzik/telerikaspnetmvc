@@ -8,30 +8,12 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
 
-    public class CalendarSelectionSettings : INavigatable
+    public class CalendarSelectionSettings : RequestSettings
     {
-        public IList<DateTime> Dates { get; set; }
-
-        public string ControllerName
-        {
-            get;
-            set;
+        public IList<DateTime> Dates 
+        { 
+            get; 
+            set; 
         }
-
-        public string ActionName
-        {
-            get;
-            set;
-        }
-
-        public System.Web.Routing.RouteValueDictionary RouteValues
-        {
-            get;
-            set;
-        }
-
-        //not used in this case
-        public string Url { get; set; }
-        public string RouteName { get; set; }
     }
 }

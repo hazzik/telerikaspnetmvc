@@ -4,7 +4,7 @@
 
     <%= Html.Telerik().DatePicker()
             .Name("DatePicker")
-            .HtmlAttributes(new { style = "margin-bottom: 230px" })
+            .HtmlAttributes(new { id = "DatePicker_wrapper", style = "margin-bottom: 230px" })
     %>
     
     <% using (Html.Configurator("Try entering...").Begin()) { %>
@@ -22,12 +22,12 @@
     <% Html.Telerik().ScriptRegistrar().OnDocumentReady(() => {%>
         $('.humanReadableExamples a').click(function(e) {
             e.preventDefault();
-            
-            setTimeout($.proxy(function() {
-                $('#DatePicker-input')
+
+            $('#DatePicker')
                 .focus()
+                .val($(this).text())
+                .trigger('change')
                 .val($(this).text());
-            }, this), 0);
         });
     <%}); %>
     
@@ -36,7 +36,7 @@
 <asp:content contentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
         
-        #DatePicker
+        #DatePicker_wrapper
         {
             margin-bottom: 230px;
             float: left;

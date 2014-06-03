@@ -101,25 +101,48 @@ namespace Telerik.Web.Mvc.Extensions
         {
             Guard.IsNotNullOrEmpty(instance, "instance");
 
-            byte[] compressed = Convert.FromBase64String(instance);
-            byte[] binary;
-
-            using (MemoryStream ms = new MemoryStream())
+            var compressed = Decode(instance);
+            
+            if (compressed.Length < 4)
             {
-                int length = BitConverter.ToInt32(compressed, 0);
-                ms.Write(compressed, 4, compressed.Length - 4);
-
-                binary = new byte[length];
-
-                ms.Seek(0, SeekOrigin.Begin);
-
-                using (GZipStream zip = new GZipStream(ms, CompressionMode.Decompress))
-                {
-                    zip.Read(binary, 0, binary.Length);
-                }
+                return string.Empty;
             }
 
-            return Encoding.UTF8.GetString(binary);
+            using (var stream = new MemoryStream())
+            {
+                var length = BitConverter.ToInt32(compressed, 0);
+                stream.Write(compressed, 4, compressed.Length - 4);
+
+                var binary = new byte[length];
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (var zip = new GZipStream(stream, CompressionMode.Decompress))
+                {
+                    try
+                    {
+                        zip.Read(binary, 0, binary.Length);
+                        
+                        return Encoding.UTF8.GetString(binary);
+                    }
+                    catch (InvalidDataException)
+                    {
+                        return string.Empty;
+                    }
+                }
+            }
+        }
+
+        private static byte[] Decode(string value)
+        {
+            try
+            {
+                return Convert.FromBase64String(value);
+            }
+            catch (FormatException)
+            {
+                return new byte[0];
+            }
         }
 
         public static string ToCamelCase(this string instance)
@@ -127,24 +150,6 @@ namespace Telerik.Web.Mvc.Extensions
             Guard.IsNotNullOrEmpty(instance, "instance");
 
             return instance[0].ToString().ToLower() + instance.Substring(1);
-        }
-
-        public static T ToEnum<T>(this string instance, T defaultValue) where T : IComparable, IFormattable
-        {
-            T convertedValue = defaultValue;
-
-            if (!string.IsNullOrEmpty(instance))
-            {
-                try
-                {
-                    convertedValue = (T) Enum.Parse(typeof(T), instance.Trim(), true);
-                }
-                catch (ArgumentException)
-                {
-                }
-            }
-
-            return convertedValue;
         }
 
         public static string AsTitle(this string value)
@@ -162,6 +167,23 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return value.SplitPascalCase();
+        }
+
+        public static T ToEnum<T>(this string value, T defaultValue)
+        {
+            if (!value.HasValue())
+            {
+                return defaultValue;
+            }
+
+            try
+            {
+                return (T)Enum.Parse(typeof(T), value, true);
+            }
+            catch (ArgumentException)
+            {
+                return defaultValue;
+            }
         }
 
         public static string SplitPascalCase(this string value)

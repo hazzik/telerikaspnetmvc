@@ -11,14 +11,14 @@ namespace Telerik.Web.Mvc.UI
     using Infrastructure;
 
     /// <summary>
-    /// Defines the fluent interface for configuring the <see cref="TextboxBase.ClientEvents"/>.
+    /// Defines the fluent interface for configuring the <see cref="TextBoxBase.ClientEvents"/>.
     /// </summary>
-    public class TextboxBaseClientEventsBuilder : IHideObjectMembers
+    public class TextBoxBaseClientEventsBuilder : IHideObjectMembers
     {
-        private readonly TextboxBaseClientEvents clientEvents;
+        private readonly TextBoxBaseClientEvents clientEvents;
         private readonly ViewContext viewContext;
 
-        public TextboxBaseClientEventsBuilder(TextboxBaseClientEvents clientEvents, ViewContext viewContext)
+        public TextBoxBaseClientEventsBuilder(TextBoxBaseClientEvents clientEvents, ViewContext viewContext)
         {
             Guard.IsNotNull(clientEvents, "clientEvents");
             Guard.IsNotNull(viewContext, "viewContext");
@@ -30,7 +30,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Defines the inline handler of the OnChange client-side event
         /// </summary>
-        /// <param name="onSelectAction">The action defining the inline handler.</param>
+        /// <param name="onChangeCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().IntegerTextBox()
@@ -47,11 +47,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TextboxBaseClientEventsBuilder OnChange(Action onChangeInlineCode)
+        public TextBoxBaseClientEventsBuilder OnChange(Action onChangeCodeBlock)
         {
-            Guard.IsNotNull(onChangeInlineCode, "onChangeInlineCode");
+            Guard.IsNotNull(onChangeCodeBlock, "onChangeCodeBlock");
 
-            clientEvents.OnChange.InlineCode = onChangeInlineCode;
+            clientEvents.OnChange.CodeBlock = onChangeCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnChange client-side event
+        /// </summary>
+        /// <param name="onChangeInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().IntegerTextBox()
+        ///            .Name("IntegerTextBox")
+        ///            .ClientEvents(events => events.OnChange(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TextBoxBaseClientEventsBuilder OnChange(Func<object, object> onChangeInlineCodeBlock)
+        {
+            Guard.IsNotNull(onChangeInlineCodeBlock, "onChangeInlineCodeBlock");
+
+            clientEvents.OnChange.InlineCodeBlock = onChangeInlineCodeBlock;
 
             return this;
         }
@@ -68,7 +96,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TextboxBaseClientEventsBuilder OnChange(string onChangeHandlerName)
+        public TextBoxBaseClientEventsBuilder OnChange(string onChangeHandlerName)
         {
             Guard.IsNotNullOrEmpty(onChangeHandlerName, "onChangeHandlerName");
 
@@ -80,7 +108,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Defines the inline handler of the OnLoad client-side event
         /// </summary>
-        /// <param name="onLoadAction">The action defining the inline handler.</param>
+        /// <param name="onLoadCodeBlock">The action defining the inline handler.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;% Html.Telerik().IntegerTextBox()
@@ -97,11 +125,39 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TextboxBaseClientEventsBuilder OnLoad(Action onLoadInlineCode)
+        public TextBoxBaseClientEventsBuilder OnLoad(Action onLoadCodeBlock)
         {
-            Guard.IsNotNull(onLoadInlineCode, "onLoadInlineCode");
+            Guard.IsNotNull(onLoadCodeBlock, "onLoadCodeBlock");
 
-            clientEvents.OnLoad.InlineCode = onLoadInlineCode;
+            clientEvents.OnLoad.CodeBlock = onLoadCodeBlock;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnLoad client-side event
+        /// </summary>
+        /// <param name="onLoadInlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().IntegerTextBox()
+        ///            .Name("IntegerTextBox")
+        ///            .ClientEvents(events => events.OnLoad(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TextBoxBaseClientEventsBuilder OnLoad(Func<object, object> onLoadInlineCodeBlock)
+        {
+            Guard.IsNotNull(onLoadInlineCodeBlock, "onLoadInlineCodeBlock");
+
+            clientEvents.OnLoad.InlineCodeBlock = onLoadInlineCodeBlock;
 
             return this;
         }
@@ -118,7 +174,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public TextboxBaseClientEventsBuilder OnLoad(string onLoadHandlerName)
+        public TextBoxBaseClientEventsBuilder OnLoad(string onLoadHandlerName)
         {
             Guard.IsNotNullOrEmpty(onLoadHandlerName, "onLoadHandlerName");
 

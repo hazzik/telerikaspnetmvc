@@ -32,7 +32,7 @@
 
         this.sorted = $.grep(this.columns, function (column) { return column.order; });
 
-        this.$tbody = $('> .t-grid-content > table tbody', element);
+        this.$tbody = $('> .t-grid-content > table > tbody', element);
         this.scrollable = this.$tbody.length > 0;
 
         if (!this.scrollable) {
@@ -40,14 +40,20 @@
             this.$header = $('> table > thead tr', element);
             this.$footer = $('> table > tfoot', element);
         } else {
+            
+            $('> .t-grid-content', element).tScrollable();
+
             this.$header = $('> .t-grid-header tr', element);
             this.$footer = $('> .t-grid-footer', element);
         }
-        this.$footerWrap = this.$footer.find(".t-footer-template-wrap");
 
-        var headerWrap = this.$headerWrap = $('> .t-grid-header > .t-grid-header-wrap', element);        
+        this.$headerWrap = $('> .t-grid-header > .t-grid-header-wrap', element);
+        this.$footerWrap = $('> .t-grid-footer > .t-grid-footer-wrap', element);
+
+        var scrollables = this.$headerWrap.add(this.$footerWrap);
+        
         $('> .t-grid-content', element).bind('scroll', function () {
-            headerWrap.scrollLeft(this.scrollLeft);
+            scrollables.scrollLeft(this.scrollLeft);
         });
 
 
@@ -64,7 +70,7 @@
                         .rep('<td class="t-group-cell"></td>', $tr.find('.t-group-cell').length)
                         .cat('<td class="t-hierarchy-cell"></td>')
                         .cat('<td class="t-detail-cell" colspan="')
-                        .cat(this.columns.length)
+                        .cat(this.$header.find('th:not(.t-group-cell,.t-hierarchy-cell):visible').length)
                         .cat('">')
                         .cat(this.displayDetails(this.dataItem($tr)))
                         .cat('</td></tr>').string()).insertAfter($tr);
@@ -73,25 +79,50 @@
             $tr.next().toggle(expanding);
         }, this));
 
-        this.$pager = $('> .t-pager-wrapper .t-pager', element).add(this.$footer.find('.t-pager'));
+        this.$pager = $('> .t-grid-pager .t-pager', element);
+
+        var dropDown = new $t.dropDown({ 
+            effects: $t.fx.slide.defaults(),
+            onClick: $.proxy(function (e) {                                             
+                this.changePageSize($(e.item).text());                                
+                dropDown.close();   
+            },this)
+        });
+
+        dropDown.dataBind(options.pageSizesInDropDown || []);
+        
+        $(document.documentElement).bind('mousedown', function (e) {
+            var element = dropDown.$element[0];
+
+            if (!$.contains(element, e.target)) {
+                dropDown.close();
+            }
+        });
 
         this.$pager.delegate('.t-state-disabled', 'click', $t.preventDefault)
                    .delegate('.t-link:not(.t-state-disabled)', 'mouseenter', $t.hover)
                    .delegate('.t-link:not(.t-state-disabled)', 'mouseleave', $t.leave)
-                   .delegate('input[type=text]', 'keydown', $.proxy(this.pagerKeyDown, this));
+                   .delegate('input[type=text]', 'keydown', $.proxy(this.pagerKeyDown, this))
+                   .delegate('.t-page-size .t-dropdown-wrap', 'click', function(){
+                        var a = $(this);
+                        dropDown.open({
+                            offset: a.offset(),
+                            outerHeight: a.outerHeight(),
+                            outerWidth: a.outerWidth(),
+                            zIndex: $t.getElementZIndex(this)
+                        });
+                    });
 
-        this.$footer.add($('> .t-pager-wrapper', element)).delegate('.t-refresh', 'click', $.proxy(this.refreshClick, this));
+        $('> .t-grid-pager', element).delegate('.t-refresh', 'click', $.proxy(this.refreshClick, this));
 
-        $(element).delegate('.t-button', 'hover', $t.stop(function () {
-            $(this).toggleClass('t-button-hover');
-        }));
+        $(element).delegate('.t-button', 'hover', $t.preventDefault);
 
         if (this.sort)
             this.$header.delegate('.t-link', 'hover', function () {
                 $(this).toggleClass('t-state-hover');
             });
 
-        var nonSelectableRows = 'tr:not(.t-grouping-row,.t-detail-row,.t-no-data)';
+        var nonSelectableRows = 'tr:not(.t-grouping-row,.t-detail-row,.t-no-data,:has(>.t-edit-container))';
         
         if (this.selectable) {
             var tbody = this.$tbody[0];
@@ -127,16 +158,17 @@
             load: this.onLoad,
             rowSelect: this.onRowSelect,
             rowDataBound: this.onRowDataBound,
-            save: this.onSave
+            save: this.onSave,
+            submitChanges: this.onSubmitChanges
         });
 
-        this.createColumnMappings();
+        this.initializeColumns();
     }
 
     $t.grid.prototype = {
         rowClick: function (e) {
             var $target = $(e.target);
-            if (!$target.is(':button,a,:input')) {
+            if (!$target.is(':button,a,:input,a>.t-icon')) {
                 e.stopPropagation();
                 var $row = $target.closest('tr')
                                   .addClass('t-state-selected')
@@ -287,6 +319,22 @@
             this.pageTo(isFinite(page) ? page : this.currentPage);
         },
 
+        changePageSize: function (size) {            
+            var result = parseInt(size, 10);
+            if (isNaN(result) || result < 1) {
+                return this.pageSize;
+            }
+        
+            result = Math.max(result, 1);
+            this.pageSize = result;
+
+            if (this.isAjax()) {
+                this.ajaxRequest();
+            } else {
+                this.serverRequest();            
+            }
+        },
+
         pageTo: function (page) {
             this.currentPage = page;
             if (this.isAjax())
@@ -323,11 +371,18 @@
                     data = data.d || data; // Support the `d` returned by MS Web Services 
 
                     if (options.hasErrors && options.hasErrors(data)) {
-                        options.displayErrors(data);
+                        if(!$t.trigger(this.element, 'error', {
+                                XMLHttpRequest: xhr, 
+                                textStatus: 'modelstateerror', 
+                                modelState: data.modelState
+                            })) {
+                            options.displayErrors(data);
+                        }
                         return;
                     }
 
                     this.total = data.total || data.Total || 0;
+                    this.aggregates = data.aggregates || {};
                     this.dataBind(data.data || data.Data);
                 }, this)
             };
@@ -340,6 +395,10 @@
             state[this.queryString.orderBy] = this.orderBy || '';
             state[this.queryString.groupBy] = this.groupBy;
             state[this.queryString.filter] = (this.filterBy || '').replace(/\"/g, '\\"');
+            state[this.queryString.aggregates] = $.map(this.columns, function(c) {
+                if (c.aggregates)
+                    return c.member + '-' + c.aggregates.join('-');
+            }).join('~');
 
             if (this.ws) {
                 result.data = $t.toJson(result.data);
@@ -350,21 +409,21 @@
 
         showBusy: function () {
             this.busyTimeout = setTimeout($.proxy(function () {
-                $('.t-pager-wrapper', this.element).find('.t-status .t-icon').addClass('t-loading');
+                $('> .t-grid-pager .t-status .t-icon', this.element).addClass('t-loading');
             }, this), 100);
         },
 
         hideBusy: function () {
             clearTimeout(this.busyTimeout);
-            $('.t-pager-wrapper', this.element).find('.t-status .t-icon').removeClass('t-loading');
+            $('> .t-grid-pager .t-status .t-icon', this.element).removeClass('t-loading');
         },
 
         serverRequest: function () {
             location.href = $t.formatString(unescape(this.urlFormat),
-                    this.currentPage, this.orderBy || '~', this.groupBy || '~', encodeURIComponent(this.filterBy) || '~');
+                    this.currentPage, this.orderBy || '~', this.groupBy || '~', encodeURIComponent(this.filterBy) || '~', this.pageSize || '~');
         },
 
-        ajaxRequest: function () {
+        ajaxRequest: function (additionalData) {
             var e = {
                 page: this.currentPage,
                 sortedColumns: this.sorted,
@@ -382,7 +441,7 @@
             this.showBusy();
 
             $.ajax(this.ajaxOptions({
-                data: $.extend({}, e.data),
+                data: $.extend({}, e.data, additionalData),
                 url: this.url('selectUrl')
             }));
         },
@@ -396,8 +455,21 @@
         },
 
         displayFor: function (column) {
+            var localization = this.localization;
+
+            if (column.commands) {
+                var html = $.map(column.commands, function(command) {
+                    var builder = $t.grid.ButtonBuilder.create($.extend({text:localization[command.name]}, command));
+                    return builder.build();
+                }).join('');
+
+                return function() {
+                    return html;
+                };
+            }
+
             if (!column.template) {
-                var result = column.value;
+                var result = column.value || function () { return "" };
 
                 if (column.format || column.type == 'Date')
                     result = function (data) {
@@ -410,17 +482,40 @@
 
             return template(column.template);
         },
+        
+        insertFor: function(column) {
+            return this.displayFor(column);
+        },
 
-        createColumnMappings: function () {
+        editFor: function(column) {
+            return this.displayFor(column);
+        },
+        
+        initializeColumns: function () {
             $.each(this.columns, $.proxy(function (_, column) {
                 if (column.member !== undefined) {
                     column.value = this.valueFor(column);
-                    column.display = this.displayFor(column);
-                    column.edit = column.type != 'Date' ? column.value : column.display;
-                } else if (column.template) {
-                    column.display = this.displayFor(column);
+                } else {
                     column.readonly = true;
                 }
+                
+                column.insert = this.insertFor(column)
+                column.edit = this.editFor(column);
+                column.display = this.displayFor(column);
+                
+                if (column.footerTemplate)
+                    column.footer = template(column.footerTemplate);
+                
+                if (column.groupFooterTemplate) {
+                    this.showGroupFooter = true;
+                    column.groupFooter = template(column.groupFooterTemplate);
+                }
+                
+                column.groupHeader = template('<#= Title #>: <#= Key #>');
+                
+                if (column.groupHeaderTemplate)
+                    column.groupHeader = template(column.groupHeaderTemplate);
+            
             }, this));
 
             if (this.detail)
@@ -457,12 +552,8 @@
                     html.cat('<td')
                         .cat(column.attr)
                         .catIf(' class="t-last"', i == len - 1)
-                        .cat('>');
-                    var evaluate = column.display;
-                    if (evaluate)
-                        html.cat(evaluate(data[rowIndex]));
-
-                    this.appendCommandHtml(column.commands, html);
+                        .cat('>')
+                        .cat(column.display(data[rowIndex]));
 
                     html.cat('</td>');
                 }
@@ -471,48 +562,12 @@
             }
         },
 
-        appendCommandHtml: function (commands, html) {
-            if (commands) {
-                var localization = this.localization;
-
-                var getSpriteHtml = function (command, builder) {
-                    builder.cat('<span class="t-icon t-')
-                           .cat(command.name)
-                           .cat('" ')
-                           .cat(command.imageAttr)
-                           .cat('></span>');
-                }
-
-                $.each(commands, function () {
-                    var builder = html.cat('<a href="#" class="t-grid-action t-button t-state-default t-grid-')
-                                      .cat(this.name)
-                                      .cat('" ')
-                                      .cat(this.attr)
-                                      .cat('>');
-
-                    var buttonType = this.buttonType;
-
-                    if (buttonType == 'Image') {
-                        getSpriteHtml(this, builder);
-                    }
-                    else if (buttonType == 'ImageAndText') {
-                        getSpriteHtml(this, builder);
-                        builder.cat(localization[this.name]);
-                    } else {
-                        builder.cat(localization[this.name]);
-                    }
-
-                    builder.cat('</a>')
-                });
-            }
-        },
-
         normalizeColumns: function () {
             // empty - overridden in telerik.grid.grouping.js
         },
 
         dataItem: function (tr) {
-            return this.data[this.$tbody.find('> tr:not(.t-grouping-row,.t-detail-row)').index($(tr))];
+            return this.data[this.$tbody.find('> tr:not(.t-grouping-row,.t-detail-row,.t-grid-new-row)').index($(tr))];
         },
 
         bindTo: function (data) {
@@ -552,6 +607,7 @@
         updatePager: function () {
             var totalPages = this.totalPages(this.total);
             var currentPage = this.currentPage;
+            var pageSize = this.pageSize;
 
             // nextPrevious
             // work-around for weird issue in IE, when using comma-based selector
@@ -573,6 +629,15 @@
                                        .cat('" /> ')
                                        .cat($t.formatString(localization.pageOf, totalPages))
                                        .string();
+            });
+
+            this.$pager.find('.t-page-size').each(function () {
+                var html = '<div style="width: 50px;" class="t-dropdown t-header">' +
+                             '<div class="t-dropdown-wrap t-state-default"><span class="t-input">' + pageSize + '</span>' + 
+                                '<span class="t-select"><span class="t-icon t-arrow-down">select</span></span>' + 
+                             '</div>' + 
+                           '</div>';
+                this.innerHTML = html;
             });
 
             // numeric
@@ -653,6 +718,7 @@
 
                     $icon.toggleClass('t-arrow-up', direction == 'asc')
                         .toggleClass('t-arrow-down', direction == 'desc')
+                        .html('(' + (direction == 'asc' ? this.localization.sortedAsc : this.localization.sortedDesc) + ')')
                         .show();
                 }
             }, this));
@@ -680,44 +746,105 @@
         dataBind: function (data) {
             this.data = [];
             this.bindTo(data);
+
+            this.bindFooter();
+            
             this.updatePager();
             this.updateSorting();
             $t.trigger(this.element, 'dataBound');
+            $t.trigger(this.element, 'repaint');
+        },
+        
+        bindFooter: function() {
+            var $footerCells = this.$footer.find('td:not(.t-group-cell,.t-hierarchy-cell)');
+            var aggregates = this.aggregates;
+            
+            $.each(this.columns, function(index) {
+                if (this.footer)
+                    $footerCells.eq(index).html(this.footer(aggregates[this.member]));
+            });
         },
 
         rebind: function (args) {
             this.sorted = [];
+            this.orderBy = '';
             this.filterBy = '';
             this.currentPage = 1;
 
             $.each(this.columns, function () {
                 this.order = null;
-                this.filters = [];
+                this.filters = null;
             });
 
             $('.t-filter-options', this.element)
                 .find('input[type="text"], select')
                 .val('')
-                .removeClass('t-state-error');
+                .removeClass('t-state-error')
+                .end()
+                .find('div.t-formatted-value')
+                .html('');
 
-            for (var key in args) {
-                var regExp = new RegExp($t.formatString('({0})=([^&]*)', key), 'g');
-                if (regExp.test(this.ajax.selectUrl))
-                    this.ajax.selectUrl = this.ajax.selectUrl.replace(regExp, '$1=' + args[key]);
-                else {
-                    var url = new $t.stringBuilder();
-                    url.cat(this.ajax.selectUrl);
-                    if (this.ajax.selectUrl.indexOf('?') < 0)
-                        url.cat('?');
-                    else
-                        url.cat('&');
-                    this.ajax.selectUrl = url.cat(key).cat('=').cat(args[key]).string();
-                }
-            }
+            $('.t-grid-filter', this.element)
+                .removeClass('t-active-filter');
 
-            this.ajaxRequest();
+            this.ajaxRequest(args);
         }
     }
+    
+    $t.grid.ButtonBuilder = function (button) {
+        this.classNames = ['t-button', 't-grid-' + button.name];
+        
+        this.content = function () {
+            return button.text;
+        }
+
+        this.build = function() {
+            return '<a href="#" class="' + this.classNames.join(' ') +  '" ' + (button.attr? button.attr : '') + '>' +
+                        this.content() +
+                   '</a>';
+        }
+    }
+       
+    $t.grid.ButtonBuilder.create = function(button) {        
+        return new (buttonBuilderTypes[button.buttonType])(button);    
+    }
+
+    function sprite(name, imageAttr) {
+        return '<span class="t-icon t-' + name + '"' + (imageAttr? imageAttr : '') + '>' + '</span>'
+    }
+
+    $t.grid.ImageButtonBuilder = function (button) {
+        $t.grid.ButtonBuilder.call(this, button);
+        
+        this.classNames.push('t-button-icon');
+         
+        this.content = function() {
+            return sprite(button.name, button.imageAttr);
+        }
+    }    
+    
+    $t.grid.ImageTextButtonBuilder = function (button) {
+        $t.grid.ButtonBuilder.call(this, button);
+        
+        this.classNames.push('t-button-icontext');
+        
+        this.content = function() {
+            return '<span class="t-icon t-' + button.name + '"' + (button.imageAttr? button.imageAttr : '') + '>' +
+                   '</span>' + button.text;
+        }
+    }    
+    
+    $t.grid.BareImageButtonBuilder = function (button, localization) {
+        $t.grid.ImageButtonBuilder.call(this, button, localization);
+        this.classNames.push('t-button-icon', 't-button-bare');
+    }
+ 
+    var buttonBuilderTypes = {
+        Text: $t.grid.ButtonBuilder,
+        ImageAndText: $t.grid.ImageTextButtonBuilder,
+        Image: $t.grid.ImageButtonBuilder,
+        BareImage: $t.grid.BareImageButtonBuilder
+    };
 
     $.fn.tGrid = function (options) {
         return $t.create(this, {
@@ -780,14 +907,18 @@
             filterSelectValue: '-Select value-',
             filterOpenPopupHint: 'Open the calendar popup',
             groupHint: 'Drag a column header and drop it here to group by that column',
-            deleteConfirmation: 'Are you sure you want to delete this record?'
+            deleteConfirmation: 'Are you sure you want to delete this record?',
+            sortedAsc: 'sorted ascending',
+            sortedDesc: 'sorted descending',
+            ungroup: 'ungroup'
         },
         queryString: {
             page: 'page',
             size: 'size',
             orderBy: 'orderBy',
             groupBy: 'groupBy',
-            filter: 'filter'
+            filter: 'filter',
+            aggregates: 'aggregates'
         }
     };
 })(jQuery);

@@ -10,6 +10,7 @@ namespace Telerik.Web.Mvc.UI.Tests
     using System.Web.UI;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.Infrastructure.Implementation;
+    using Telerik.Web.Mvc.UI.Html;
     
     public static class GridTestHelper
     {
@@ -55,7 +56,9 @@ namespace Telerik.Web.Mvc.UI.Tests
             
             clientSideObjectFactory.Setup(f=>f.Create(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TextWriter>())).Returns(objectWriter);
 
-            Grid<T> grid = new Grid<T>(viewContext, clientSideObjectFactory.Object, urlGenerator.Object, CreateLocalizationService()) { Name = "Grid" };
+            var htmlBuilderFactory = new Mock<IGridHtmlBuilderFactory>();
+
+            Grid<T> grid = new Grid<T>(viewContext, clientSideObjectFactory.Object, urlGenerator.Object, CreateLocalizationService(), htmlBuilderFactory.Object) { Name = "Grid" };
 
             return grid;
         }

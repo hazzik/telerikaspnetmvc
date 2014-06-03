@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddNew" xml:space="preserve">
     <value>Novo</value>
@@ -227,5 +227,23 @@
   </data>
   <data name="Update" xml:space="preserve">
     <value>Actualizar</value>
+  </data>
+  <data name="CancelChanges" xml:space="preserve">
+    <value>Cancel Changes</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="SortedAsc" xml:space="preserve">
+    <value>ordenadas crescente</value>
+  </data>
+  <data name="SortedDesc" xml:space="preserve">
+    <value>ordenadas descendente</value>
+  </data>
+  <data name="UnGroup" xml:space="preserve">
+    <value>desagrupar</value>
   </data>
 </root>

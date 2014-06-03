@@ -257,6 +257,55 @@
             dataRowViewGrid.Editing.Enabled = true;
             Assert.Throws<NotSupportedException>(() => dataRowViewGrid.VerifySettings());
         }
+
+        [Fact]
+        public void Should_throw_if_in_cell_mode_is_enabled_and_server_binding_is_used()
+        {
+            var grid = GridTestHelper.CreateGrid<Customer>();
+            grid.DataKeys.Add(new GridDataKey<Customer, int>(c => c.Id));
+            grid.Editing.Enabled = true;
+            grid.Editing.Mode = GridEditMode.InCell;
+            Assert.Throws<NotSupportedException>(() => grid.VerifySettings());
+        }
+        
+        [Fact]
+        public void Should_throw_if_submitChanges_button_is_present_and_edit_mode_is_not_in_cell()
+        {
+            ConfigureEditing(g =>
+            {
+                g.ToolBar.Commands.Add(new GridToolBarSubmitChangesCommand<Customer>());
+            });
+        }
+        
+        [Fact]
+        public void Should_not_throw_if_in_cell_mode_and_add_command_is_defined_and_insert_setting_is_not_specified()
+        {
+            grid.Editing.Enabled = true;
+            grid.Editing.Mode = GridEditMode.InCell;
+            grid.Ajax.Enabled = true;
+            grid.DataKeys.Add(new GridDataKey<Customer, int>(c => c.Id));
+            grid.ToolBar.Commands.Add(new GridToolBarInsertCommand<Customer>());
+
+            Assert.DoesNotThrow(() => grid.VerifySettings());
+        }        
+        
+        [Fact]
+        public void Should_not_throw_if_in_cell_mode_and_delete_command_is_defined_and_delete_setting_is_not_specified()
+        {
+            grid.Editing.Enabled = true;
+            grid.Editing.Mode = GridEditMode.InCell;
+            grid.Ajax.Enabled = true;
+            grid.DataKeys.Add(new GridDataKey<Customer, int>(c => c.Id));
+            grid.Columns.Add(new GridActionColumn<Customer>(grid)
+            {
+                Commands =
+                    {
+                        new GridDeleteActionCommand()
+                    }
+            });
+
+            Assert.DoesNotThrow(() => grid.VerifySettings());
+        }
 #endif
     }
 }

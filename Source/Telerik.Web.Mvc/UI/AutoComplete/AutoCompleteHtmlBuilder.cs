@@ -25,23 +25,19 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            string value = Component.ViewContext.Controller.ValueOf<string>(Component.Name);
-            if (string.IsNullOrEmpty(value))
-            {
-                object viewDataValue = Component.ViewContext.ViewData.Eval(Component.Name);
-                value = viewDataValue != null ? viewDataValue.ToString() : "";
-            }
+            string value = Component.Value.HasValue() ? Component.Value : Component.GetValueFromViewDataByName();
 
-            return new HtmlTag("input", TagRenderMode.SelfClosing)
+            return new HtmlElement("input", TagRenderMode.SelfClosing)
                         .Attributes(new
                         {
                             id = Component.Id,
                             name = Component.Name
                         })
                         .ToggleAttribute("disabled", "disabled", !Component.Enabled)
+                        .ToggleAttribute("value", value, value.HasValue())
                         .Attributes(Component.HtmlAttributes)
-                        .PrependClass(UIPrimitives.Widget, "t-autocomplete", UIPrimitives.Input)
-                        .ToggleAttribute("value", value, value.HasValue());
+                        .Attributes(Component.GetUnobtrusiveValidationAttributes())
+                        .PrependClass(UIPrimitives.Widget, "t-autocomplete", UIPrimitives.Input);
         }
     }
 }

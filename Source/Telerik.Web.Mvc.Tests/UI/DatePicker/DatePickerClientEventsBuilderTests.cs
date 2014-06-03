@@ -1,7 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using System;
-    using System.Web.Mvc;
+
     using Xunit;
     using Telerik.Web.Mvc.UI.Fluent;
 
@@ -9,14 +9,12 @@
     {
         private DatePickerClientEventsBuilder builder;
         private DatePickerClientEvents clientEvents;
-        private ViewContext viewContext;
 
 
         public DatePickerClientEventsBuilderTests()
         {
             clientEvents = new DatePickerClientEvents();
-            viewContext = new ViewContext();
-            builder = new DatePickerClientEventsBuilder(clientEvents, viewContext);
+            builder = new DatePickerClientEventsBuilder(clientEvents);
         }
 
         [Fact]
@@ -26,7 +24,7 @@
 
             builder.OnChange(param);
 
-            Assert.NotNull(clientEvents.OnChange.InlineCode);
+            Assert.NotNull(clientEvents.OnChange.CodeBlock);
         }
 
         [Fact]
@@ -66,7 +64,7 @@
 
             builder.OnLoad(param);
 
-            Assert.NotNull(clientEvents.OnLoad.InlineCode);
+            Assert.NotNull(clientEvents.OnLoad.CodeBlock);
         }
 
         [Fact]
@@ -106,7 +104,7 @@
 
             builder.OnOpen(param);
 
-            Assert.NotNull(clientEvents.OnOpen.InlineCode);
+            Assert.NotNull(clientEvents.OnOpen.CodeBlock);
         }
 
         [Fact]
@@ -146,7 +144,7 @@
 
             builder.OnClose(param);
 
-            Assert.NotNull(clientEvents.OnClose.InlineCode);
+            Assert.NotNull(clientEvents.OnClose.CodeBlock);
         }
 
         [Fact]

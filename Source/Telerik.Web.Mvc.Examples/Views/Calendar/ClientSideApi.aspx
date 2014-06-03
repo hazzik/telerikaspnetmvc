@@ -16,7 +16,7 @@
                 .Name("valuePicker")
                 .Value(DateTime.Today) 
         %>
-        <button onclick="updateValue()" class="t-button t-state-default">Select</button>
+        <button onclick="updateValue()" class="t-button">Select</button>
     <% } %>
 			
 </asp:content>
@@ -45,9 +45,6 @@
 	    
 	    .example .configurator .t-button
 	    {
-	        display: inline-block;
-	        *display: inline;
-	        zoom: 1;
 	        margin: 1em 0 1.5em 1em;
 	    }
     </style>

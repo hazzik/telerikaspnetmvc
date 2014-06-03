@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -14,39 +14,50 @@
         var editor;
         var rootUrl = '<%= Url.Content("~/") %>';
 
-        function setUp() {
+    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
         }
 
-        function test_editor_value_should_not_be_encoded() {
+        test('editor value should not be encoded', function() {
             var editorEncodeFalse = getEditor('#EditorEncodeFalse');
             editorEncodeFalse.value('<p>foo</p>');
 
             editorEncodeFalse.update();
 
-            assertEquals('<p>foo</p>', editorEncodeFalse.textarea.value);
-        }
+            equal(editorEncodeFalse.textarea.value, '<p>foo</p>');
+        });
 
-        function test_editor_default_Encode_value_must_be_true() {
-            assertEquals(true, editor.encoded);
-        }
+        test('editor default Encode value must be true', function() {
+            equal(editor.encoded, true);
+        });
 
-        function test_editor_should_add_stylesheets() {
+        test('editor should add stylesheets', function() {
             var editorWithStyleSheets = getEditor('#EditorWithStyleSheets');
 
-            assertEquals(rootUrl + 'Content/telerik.common.css', editorWithStyleSheets.stylesheets[0]);
-            assertEquals(rootUrl + 'Content/telerik.vista.css', editorWithStyleSheets.stylesheets[1]);
-        }
+            equal(editorWithStyleSheets.stylesheets[0], rootUrl + 'Content/telerik.common.css');
+            equal(editorWithStyleSheets.stylesheets[1], rootUrl + 'Content/telerik.vista.css');
+        });
 
-        function test_editor_outputs_css_links_in_iframe() {
+        test('editor outputs css links in iframe', function() {
             var editorWithStyleSheets = getEditor('#EditorWithStyleSheets');
             
             var links = $('link', editorWithStyleSheets.document);
             
-            assertEquals(rootUrl + 'Content/telerik.common.css', links.eq(0).attr('href'));
-            assertEquals(rootUrl + 'Content/telerik.vista.css', links.eq(1).attr('href'));
-        }
+            equal(links.eq(0).attr('href'), rootUrl + 'Content/telerik.common.css');
+            equal(links.eq(1).attr('href'), rootUrl + 'Content/telerik.vista.css');
+        });
 
-    </script>
+</script>
 
 </asp:Content>

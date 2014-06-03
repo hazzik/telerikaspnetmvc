@@ -2,12 +2,8 @@
 {
     using System.Collections.Generic;
 
-    public interface IDropDown : IDataBoundDropDown
+    public interface IDropDown : IDataBoundDropDown, IDropDownRenderable
     {
-        IList<DropDownItem> Items { get; }
-
-        int SelectedIndex { get; set; }
-
         IDictionary<string, object> DropDownHtmlAttributes { get; }
 
         Effects Effects { get; }

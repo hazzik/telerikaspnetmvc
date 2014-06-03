@@ -19,34 +19,6 @@
            return $('#DateTimePicker').data('tDateTimePicker');
        }
 
-       function test_client_object_is_available_in_on_load() {
-           assertNotNull(onLoadDatePicker);
-           assertNotUndefined(onLoadDatePicker);
-       }
-
-       function test_value_should_return_selected_date() {
-           var dateTimepicker = getDateTimePicker();
-           dateTimepicker.open();
-
-           var $calendar = dateTimepicker.dateView.$calendar;
-
-           var today = new $.telerik.datetime();
-
-           var days = $calendar.find('td:not(.t-other-month)');
-
-           var day = $.grep(days, function(n) {
-               return $('.t-link', n).html() == today.date();
-           });
-
-           $(day).click();
-
-           var result = new $.telerik.datetime(dateTimepicker.value());
-
-           assertEquals('year', today.year(), result.year());
-           assertEquals('month', today.month(), result.month());
-           assertEquals('date', today.date(), result.date());
-       }
-
        function isValidDate(date1, date2) {
            var isValid = true;
 
@@ -62,57 +34,13 @@
 
        var isChanged;
        var isRaised;
-
-       function test_focusing_input_should_raise_onOpen_event() {
-           var dateTimepicker = getDateTimePicker();
-           dateTimepicker.close();
-
-           isRaised = false;
-
-           dateTimepicker.$element.find('.t-icon-calendar').click();         
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_tab_should_raise_onClose() {
-           var dateTimepicker = getDateTimePicker();
-           dateTimepicker.open();
-
-           isRaised = false;
-           var input = dateTimepicker.$input;
-           input.trigger({ type: "keydown", keyCode: 9});        
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_escape_should_raise_onClose() {
-           var dateTimepicker = getDateTimePicker();
-           dateTimepicker.open();
-
-           isRaised = false;
-
-           var input = dateTimepicker.$input;
-           input.trigger({ type: "keydown", keyCode: 27 });
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_enter_should_raise_onClose() {
-           var dateTimepicker = getDateTimePicker();
-           dateTimepicker.open();
-
-           isRaised = false;
-
-           var input = dateTimepicker.$input;
-           input.trigger({ type: "keydown", keyCode: 13 });
-
-           assertTrue(isRaised);
-       }
-
+       var count;
        //handlers
 
        function onChange(e) {
-           isChanged = true;
+           isChanged = !isChanged;
+
+           start();
        }
 
        function onClose() {
@@ -140,5 +68,124 @@
                                                  .OnOpen("onOpen"))
                                                  
  %>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+       test('client object is available in on load', function() {
+           ok(null !== onLoadDatePicker);
+           ok(undefined !== onLoadDatePicker);
+       });
+
+       test('value should return selected date', function() {
+           var dateTimepicker = getDateTimePicker();
+           dateTimepicker.open();
+
+           var $calendar = dateTimepicker.dateView.$calendar;
+
+           var today = new $.telerik.datetime();
+
+           var days = $calendar.find('td:not(.t-other-month)');
+
+           var day = $.grep(days, function(n) {
+               return $('.t-link', n).html() == today.date();
+           });
+
+           $(day).click();
+
+           var result = new $.telerik.datetime(dateTimepicker.value());
+
+           equal(result.year(), today.year(), 'year');
+           equal(result.month(), today.month(), 'month');
+           equal(result.date(), today.date(), 'date');
+       });
+
+       test('focusing input should raise onOpen event', function() {
+           var dateTimepicker = getDateTimePicker();
+           dateTimepicker.close();
+
+           isRaised = false;
+
+           dateTimepicker.$wrapper.find('.t-icon-calendar').click();         
+
+           ok(isRaised);
+       });
+
+       test('clicking tab should raise onClose', function() {
+           var dateTimepicker = getDateTimePicker();
+           dateTimepicker.open();
+
+           isRaised = false;
+           var input = dateTimepicker.$element;
+           input.trigger({ type: "keydown", keyCode: 9});        
+
+           ok(isRaised);
+       });
+
+       test('clicking escape should raise onClose', function() {
+           var dateTimepicker = getDateTimePicker();
+           dateTimepicker.open();
+
+           isRaised = false;
+
+           var input = dateTimepicker.$element;
+           input.trigger({ type: "keydown", keyCode: 27 });
+
+           ok(isRaised);
+       });
+
+       test('clicking enter should raise onClose', function() {
+           var dateTimepicker = getDateTimePicker();
+           dateTimepicker.open();
+
+           isRaised = false;
+
+           var input = dateTimepicker.$element;
+           input.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(isRaised);
+       });
+
+       test('change event should not raise if value is set with value() and document is clicked', function () {
+           isChanged = false;
+           var datetimepicker = getDateTimePicker();
+           datetimepicker.value(new Date());
+
+           $(document.documentElement).mousedown();
+
+           ok(!isChanged, "change event was raised incorrectly");
+       });
+
+       asyncTest('change event should raise when DV is opened and Enter is clicked', function () {         
+           var datetimepicker = getDateTimePicker();
+           datetimepicker.close('time')
+           datetimepicker.close('date')
+           datetimepicker.value(null);
+
+           datetimepicker.element.focus();
+           datetimepicker.open('date');
+           isChanged = false;
+           datetimepicker.$element.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(isChanged);
+       });
+
+       asyncTest('change event should not raise when TV is opened and Enter is clicked, user did not change anything', function () {
+           isChanged = false;
+           var datetimepicker = getDateTimePicker();
+           datetimepicker.close('time')
+           datetimepicker.close('date')
+           datetimepicker.value(null);
+
+           datetimepicker.element.focus();
+           datetimepicker.open('time');
+           datetimepicker.$element.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(!isChanged);
+       });
+</script>
 
 </asp:Content>

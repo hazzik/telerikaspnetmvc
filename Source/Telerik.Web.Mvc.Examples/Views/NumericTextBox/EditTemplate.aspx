@@ -20,7 +20,7 @@
                     <%= Html.LabelFor(m => m.UnitsInStock) %><%= Html.EditorFor(m => m.UnitsInStock) %>
                 </li>
             </ul>
-            <button type="submit" class="t-button t-state-default">Save</button>
+            <button type="submit" class="t-button">Save</button>
         </div>
     <% } %>
 

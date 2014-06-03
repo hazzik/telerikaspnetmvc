@@ -10,12 +10,12 @@
             <%= Html.TextBox("newValue", "", new { title = "newValue" }).ToHtmlString()%><br />
         </li>
         <li>
-            <button onclick="setValue()">Set Value</button> /
-            <button onclick="getValue()">Get Value</button>
+            <button onclick="setValue()" class="t-button">Set Value</button> /
+            <button onclick="getValue()" class="t-button">Get Value</button>
         </li>
         <li>
-            <button onclick="enableNumericTextBox()">Enable</button> / 
-            <button onclick="disableNumericTextBox()">Disable</button>
+            <button onclick="enableNumericTextBox()" class="t-button">Enable</button> / 
+            <button onclick="disableNumericTextBox()" class="t-button">Disable</button>
         </li>
    </ul>
    <% } %>
@@ -67,5 +67,12 @@
 	        vertical-align: top;
 	        margin-top: 1.3em;
 	    }
+	    
+	    .configurator .t-button
+	    {
+	    	display:inline-block;
+	    	width:auto;
+	    }
+	    
     </style>
 </asp:Content>

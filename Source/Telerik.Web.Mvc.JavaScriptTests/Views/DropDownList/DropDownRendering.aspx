@@ -7,449 +7,8 @@
     <script type="text/javascript">
         function dataBinding() { }
 
-        function getDropDownList() {
-            return $('#DropDownList').data('tDropDownList');
-        }
-
-        function test_DDL_should_tabindex_0_applied_on_client() {
-            assertTrue(getDropDownList().element.tabIndex == 0);
-        }
-
-        function test_on_initialize_DDL_should_render_hidden_input_with_id() {
-            var ddl = getDropDownList();
-            var id = ddl.$element.attr('id');
-            var input = ddl.$element.find('input');
-            
-
-            assertTrue(input.length == 1);
-            assertTrue(input[0].type == 'text');
-            assertTrue(input.attr('id') == id + '-value');
-        }
-
-        function test_open_method_should_open_dropDown_list() {
-            var ddl = getDropDownList();
-            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
-            ddl.close();
-            ddl.open();
-
-            assertTrue(ddl.dropDown.isOpened());
-        }
-
-        function test_open_method_reposition_dropDown_list() {
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            ddl.close();
-            ddl.open();
-
-            var animatedContainer = ddl.dropDown.$element.parent();
-
-            var elementPosition = ddl.$element.offset();
-
-            elementPosition.top += ddl.$element.outerHeight();
-
-            assertTrue(animatedContainer.css('position') == 'absolute');
-            assertTrue(animatedContainer.css('top') == Math.round(elementPosition.top * 1000) / 1000 + 'px');
-            assertTrue(animatedContainer.css('left') == Math.round(elementPosition.left * 1000) / 1000 + 'px');
-        }
-
-        function test_open_method_should_append_dropdown_list_to_body() {
-
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            ddl.close();
-            ddl.open();
-
-            assertTrue($.contains(document.body, ddl.dropDown.$element[0]));
-        }
-
-        function test_close_method_should_remove_dropdown_list_to_body() {
-
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            ddl.open();
-            ddl.close();
-
-            assertTrue(!$.contains(document.body, ddl.dropDown.$element[0]));
-        }
-
-        function test_click_item_in_items_list_when_it_is_shown_should_call_select_method() {
-
-            var isSelectCalled = false;
-            
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            var old = ddl.select;
-            ddl.select = function () { isSelectCalled = true; }
-
-            ddl.open();
-
-            $(ddl.dropDown.$element.find('li')[2]).click();
-
-            assertTrue(isSelectCalled);
-
-            ddl.select = old;
-        }
-
-        function test_select_should_select_one_item_only() {
-            
-            var ddl = getDropDownList();
-
-            var li = ddl.dropDown.$element.find('li')[3];
-
-            ddl.select(li);
-
-            assertTrue(ddl.dropDown.$element.find('.t-state-selected').length == 1);
-            assertTrue($(li).hasClass('t-state-selected'));
-        }
-
-        function test_select_should_cache_selected_item() {
-            var ddl = getDropDownList();
-            
-            ddl.selectedIndex = -1;
-
-            var li = ddl.dropDown.$element.find('li')[3];
-
-            ddl.select(li);
-
-            assertEquals(3, ddl.selectedIndex);
-        }
-
-        function test_highlight_should_highlight_only_one_item_by_index() {
-            var ddl = getDropDownList();
-
-            ddl.highlight(2);
-
-            assertEquals(1, ddl.dropDown.$element.find('.t-state-selected').length);
-        }
-
-        function test_highlight_should_highlight_fourth_item_by_index() {
-            var ddl = getDropDownList();
-
-            ddl.highlight(3);
-
-            assertEquals(3, ddl.dropDown.$element.find('.t-state-selected').first().index());
-        }
-
-        function test_highlight_should_preserve_previous_value_after_rebind() {
-            var ddl = getDropDownList();
-           
-            ddl.highlight(4);
-            
-            var value = ddl.previousValue;
-            
-            ddl.highlight(2);
-
-            assertEquals(value, ddl.previousValue);
-        }
-
-        function test_hightlight_method_should_return_negative_if_no_such_index() {
-            var ddl = getDropDownList();
-            
-            var result = ddl.highlight(3000);
-
-            assertEquals(-1, result);
-        }
-
-        function test_hightlight_method_should_call_close_and_dataBind_if_correct_index_is_passed() {
-            var ddl = getDropDownList();
-
-            var isCloseCalled = false;
-            var isDataBindCalled = false;
-
-            var close = ddl.close;
-            var dataBind = ddl.dropDown.dataBind;
-
-            ddl.close = function () { isCloseCalled = true; };
-            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
-
-            ddl.highlight(2);
-
-            assertTrue(isCloseCalled);
-            assertTrue(isDataBindCalled);
-
-            ddl.close = close;
-            ddl.dropDown.dataBind = dataBind;
-        }
-
-        function test_highlight_should_higlight_item_found_by_predicate() {
-            var ddl = getDropDownList();
-            ddl.fill();
-            
-            ddl.highlight(function (dataItem) {
-                return dataItem.Value == 2;
-            });
-
-            assertEquals(1, ddl.dropDown.$element.find('.t-state-selected').first().index());
-        }
-
-        function test_hightlight_method_should_return_negative_if_no_such_item() {
-            var ddl = getDropDownList();
-            ddl.fill();
-            
-            var result = ddl.highlight(function (dataItem) {
-                return dataItem.Value == 1000;
-            });
-
-            assertEquals(-1, result);
-        }
-
-        function test_hightlight_method_should_call_close_and_dataBind_if_item_is_found_by_predicate() {
-            var ddl = getDropDownList();
-            ddl.fill();
-
-            var isCloseCalled = false;
-            var isDataBindCalled = false;
-
-            var close = ddl.close;
-            var dataBind = ddl.dropDown.dataBind;
-
-            ddl.close = function () { isCloseCalled = true; };
-            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
-
-            ddl.highlight(function (dataItem) {
-                return dataItem.Value == 2;
-            });
-
-            assertTrue(isCloseCalled);
-            assertTrue(isDataBindCalled);
-
-            ddl.close = close;
-            ddl.dropDown.dataBind = dataBind;
-        }
-
-        function test_highlight_method_should_return_negative_index_if_data_is_undefined() {
-
-            var ddl = $('#DropDownList2').data('tDropDownList');
-            
-            var index = ddl.highlight(0);
-
-            assertEquals(-1, index);
-        }
-        
-        function test_text_method_should_set_html_of_text_span() {
-
-            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
-
-            var ddl = getDropDownList();
-
-            ddl.text("Item2");
-
-            assertEquals(item.Text, ddl.$text.html());
-        }
-
-        function test_text_method_should_return_innerHtml_if_no_parameters() {
-            
-            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
-            
-            var ddl = getDropDownList();
-
-            ddl.text("Item2");
-
-            var result = ddl.text();
-
-            assertEquals(item.Text, result);
-        }
-
-        function test_value_method_should_call_select_method_and_set_previousSelected_value_if_such_item() {
-            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
-            var isCalled = false;
-
-            var ddl = getDropDownList();
-            var select = ddl.select;
-            ddl.previousValue = null;
-            ddl.select = function () { isCalled = true; return 2; }
-            
-            ddl.value(2);
-
-            assertEquals(true, isCalled);
-            assertEquals('previous value was not updated', '2', ddl.previousValue.toString());
-
-            ddl.select = select;
-        }
-
-        function test_value_method_should_return_value_hidden_input() {
-            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
-
-            var ddl = getDropDownList();
-
-            ddl.value(2);
-
-            assertEquals(ddl.value(), item.Value);
-        }
-
-        function test_keyPress_should_find_element_т() {
-            var ddl = getDropDownList();
-            
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keypress", keyCode: 1058 });
-
-            assertTrue($(ddl.dropDown.$element.find('.t-state-selected')[0]).text() == "тtem20");
-        }
-
-        function test_pressing_right_arrow_should_select_next_item() {
-            var ddl = getDropDownList();
-
-            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-item')[0]);
-            ddl.select($initialSelectedItem);
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 39 });
-
-            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            assertFalse($initialSelectedItem.text() == $nextSelectedItem.text());
-        }
-
-
-        function test_pressing_down_arrow_should_select_next_item() {
-            var ddl = getDropDownList();
-
-            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-item')[0]);
-            ddl.select($initialSelectedItem);
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 40 });
-
-            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            assertFalse($initialSelectedItem.text() == $nextSelectedItem.text());
-        }
-
-        function test_pressing_up_arrow_should_select_prev_item() {
-            var ddl = getDropDownList();
-
-            ddl.select(ddl.dropDown.$element.find('li')[1]);
-
-            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 38 });
-
-            var $prevSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            assertFalse($initialSelectedItem.text() == $prevSelectedItem.text());
-        }
-
-        function test_pressing_left_arrow_should_select_prev_item() {
-            var ddl = getDropDownList();
-
-            ddl.select(ddl.dropDown.$element.find('li')[1]);
-
-            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 37 });
-
-            var $prevSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            assertFalse($initialSelectedItem.text() == $prevSelectedItem.text());
-        }
-
-        function test_Home_should_select_first_item() {
-            var ddl = getDropDownList();
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 36 });
-
-            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            assertTrue(ddl.dropDown.$element.find('.t-item').first().text() == $nextSelectedItem.text());
-        }
-
-        function test_End_should_select_last_item() {
-            var ddl = getDropDownList();
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-            $ddl.trigger({ type: "keydown", keyCode: 35 });
-
-            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
-
-            assertTrue(ddl.dropDown.$element.find('.t-item').last().text() == $nextSelectedItem.text());
-        }
-
-        function test_pressing_alt_down_arrow_should_open_dropdown_list() {
-            var ddl = getDropDownList();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            ddl.close();
-
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-
-            $ddl.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            assertTrue(ddl.dropDown.$element.is(':visible'));
-        }
-
-        function test_pressing_escape_should_close_dropdown_list() {
-            var ddl = getDropDownList();
-            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
-            
-            ddl.open();
-            
-            var $ddl = $('#DropDownList');
-            $ddl.focus();
-
-            $ddl.trigger({ type: "keydown", keyCode: 27});
-
-            assertFalse(ddl.dropDown.isOpened());
-        }
-
-        function test_scrollTo_method_should_return_if_item_is_undefined() {
-            var ddl2 = getDropDownList();
-
-            var throwException = false;
-
-            try {
-                ddl2.dropDown.scrollTo(undefined);
-            }
-            catch (e) {
-                throwException = true;
-            }
-                        
-            assertFalse("Thrown exception when item is undefined.", throwException);
-        }
-
-        function test_Fill_method_on_ajax_should_call_change_event_handler() {
-            var isCalled = false;
-            var ddl = $('#AjaxDropDownList').data('tDropDownList');
-            var old = ddl.trigger.change;
-
-            ddl.ajaxRequest = function (callback) { callback(); }
-            ddl.trigger.change = function () { isCalled = true; }
-
-            ddl.fill();
-
-            assertTrue(isCalled);
-        }
-
-        function test_open_sets_dropdown_zindex() {
-            var ddl = getDropDownList();
-            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
-            
-            var $ddl = $(ddl.element)
-
-            var lastZIndex = $ddl.css('z-index');
-
-            $ddl.css('z-index', 42);
-
-            ddl.close();
-            ddl.open();
-
-            assertEquals('43', '' + ddl.dropDown.$element.parent().css('z-index'));
-
-            $ddl.css('z-index', lastZIndex);
+        function getDropDownList(selector) {
+            return $(selector || '#DropDownList').data('tDropDownList');
         }
     </script>
 
@@ -500,5 +59,539 @@
         .Name("AjaxDropDownList")
         .ClientEvents(e => e.OnDataBinding("dataBinding")) 
     %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('DDL should tabindex 0 applied on client', function() {
+            ok(getDropDownList().element.tabIndex == 0);
+        });
+
+        test('on initialize DDL should render hidden input', function() {
+            var ddl = getDropDownList();
+            var input = ddl.$element;
+            
+
+            ok(input.length == 1);
+            ok(input[0].type == 'text');
+        });
+
+        test('open method should open dropDown list', function() {
+            var ddl = getDropDownList();
+            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
+            ddl.close();
+            ddl.open();
+
+            ok(ddl.dropDown.isOpened());
+        });
+
+        test('open method reposition dropDown list', function() {
+            var ddl = getDropDownList();
+            ddl.effects = $.telerik.fx.toggle.defaults();
+
+            ddl.close();
+            ddl.open();
+
+            var animatedContainer = ddl.dropDown.$element.parent();
+
+            var elementPosition = ddl.$wrapper.offset();
+
+            elementPosition.top += ddl.$wrapper.outerHeight();
+
+            equal(animatedContainer.css('position'), 'absolute');
+            equal(animatedContainer.css('top'), Math.round(elementPosition.top * 1000) / 1000 + 'px');
+            equal(animatedContainer.css('left'), Math.round(elementPosition.left * 1000) / 1000 + 'px');
+        });
+
+        test('open method should append dropdown list to body', function() {
+
+            var ddl = getDropDownList();
+            ddl.effects = $.telerik.fx.toggle.defaults();
+
+            ddl.close();
+            ddl.open();
+
+            ok($.contains(document.body, ddl.dropDown.$element[0]));
+        });
+
+        test('close method should remove dropdown list to body', function() {
+
+            var ddl = getDropDownList();
+            ddl.effects = $.telerik.fx.toggle.defaults();
+
+            ddl.open();
+            ddl.close();
+
+            ok(!$.contains(document.body, ddl.dropDown.$element[0]));
+        });
+
+        test('click item in items list when it is shown should call select method', function() {
+
+            var isSelectCalled = false;
+            
+            var ddl = getDropDownList();
+            ddl.effects = $.telerik.fx.toggle.defaults();
+
+            var old = ddl.select;
+            ddl.select = function () { isSelectCalled = true; }
+
+            ddl.open();
+
+            $(ddl.dropDown.$element.find('li')[2]).click();
+
+            ok(isSelectCalled);
+
+            ddl.select = old;
+        });
+
+        test('select should select one item only', function() {
+            
+            var ddl = getDropDownList();
+
+            var li = ddl.dropDown.$element.find('li')[3];
+
+            ddl.select(li);
+
+            ok(ddl.dropDown.$element.find('.t-state-selected').length == 1);
+            ok($(li).hasClass('t-state-selected'));
+        });
+
+        test('select should cache selected item', function() {
+            var ddl = getDropDownList();
+            
+            ddl.selectedIndex = -1;
+
+            var li = ddl.dropDown.$element.find('li')[3];
+
+            ddl.select(li);
+
+            equal(ddl.selectedIndex, 3);
+        });
+
+        test('highlight should highlight only one item by index', function() {
+            var ddl = getDropDownList();
+
+            ddl.highlight(2);
+
+            equal(ddl.dropDown.$element.find('.t-state-selected').length, 1);
+        });
+
+        test('highlight should highlight fourth item by index', function() {
+            var ddl = getDropDownList();
+
+            ddl.highlight(3);
+
+            equal(ddl.dropDown.$element.find('.t-state-selected').first().index(), 3);
+        });
+
+        test('highlight should preserve previous value after rebind', function() {
+            var ddl = getDropDownList();
+           
+            ddl.highlight(4);
+            
+            var value = ddl.previousValue;
+            
+            ddl.highlight(2);
+
+            equal(ddl.previousValue, value);
+        });
+
+        test('hightlight method should return negative if no such index', function() {
+            var ddl = getDropDownList();
+            
+            var result = ddl.highlight(3000);
+
+            equal(result, -1);
+        });
+
+        test('hightlight method should call close and dataBind if correct index is passed', function() {
+            var ddl = getDropDownList();
+
+            var isCloseCalled = false;
+            var isDataBindCalled = false;
+
+            var close = ddl.close;
+            var dataBind = ddl.dropDown.dataBind;
+
+            ddl.close = function () { isCloseCalled = true; };
+            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
+
+            ddl.highlight(2);
+
+            ok(isCloseCalled);
+            ok(isDataBindCalled);
+
+            ddl.close = close;
+            ddl.dropDown.dataBind = dataBind;
+        });
+
+        test('highlight should higlight item found by predicate', function() {
+            var ddl = getDropDownList();
+            ddl.fill();
+            
+            ddl.highlight(function (dataItem) {
+                return dataItem.Value == 2;
+            });
+
+            equal(ddl.dropDown.$element.find('.t-state-selected').first().index(), 1);
+        });
+
+        test('hightlight method should return negative if no such item', function() {
+            var ddl = getDropDownList();
+            ddl.fill();
+            
+            var result = ddl.highlight(function (dataItem) {
+                return dataItem.Value == 1000;
+            });
+
+            equal(result, -1);
+        });
+
+        test('hightlight method should call close and dataBind if item is found by predicate', function() {
+            var ddl = getDropDownList();
+            ddl.fill();
+
+            var isCloseCalled = false;
+            var isDataBindCalled = false;
+
+            var close = ddl.close;
+            var dataBind = ddl.dropDown.dataBind;
+
+            ddl.close = function () { isCloseCalled = true; };
+            ddl.dropDown.dataBind = function () { isDataBindCalled = true; };
+
+            ddl.highlight(function (dataItem) {
+                return dataItem.Value == 2;
+            });
+
+            ok(isCloseCalled);
+            ok(isDataBindCalled);
+
+            ddl.close = close;
+            ddl.dropDown.dataBind = dataBind;
+        });
+
+        test('highlight method should return negative index if data is undefined', function() {
+
+            var ddl = $('#DropDownList2').data('tDropDownList');
+            
+            var index = ddl.highlight(0);
+
+            equal(index, -1);
+        });
+        
+        test('text method should set html of text span', function() {
+
+            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
+
+            var ddl = getDropDownList();
+
+            ddl.text("Item2");
+
+            equal(ddl.$text.html(), item.Text);
+        });
+
+        test('text method should return innerHtml if no parameters', function() {
+            
+            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
+            
+            var ddl = getDropDownList();
+
+            ddl.text("Item2");
+
+            var result = ddl.text();
+
+            equal(result, item.Text);
+        });
+
+        test('value method should call select method and set previousSelected value if such item', function() {
+            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
+            var isCalled = false;
+
+            var ddl = getDropDownList();
+            var select = ddl.select;
+            ddl.previousValue = null;
+            ddl.select = function () { isCalled = true; return 2; }
+            
+            ddl.value(2);
+
+            equal(isCalled, true);
+            equal(ddl.previousValue.toString(), '2', 'previous value was not updated');
+
+            ddl.select = select;
+        });
+
+        test('value method should return value hidden input', function() {
+            var item = { "Selected": false, "Text": "Item2", "Value": "2" };
+            
+            var ddl = getDropDownList();
+
+            ddl.value(2);
+
+            equal(item.Value, ddl.value());
+        });
+
+        test('keyPress should find element т', function() {
+            var ddl = getDropDownList();
+            
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keypress", keyCode: 1058 });
+
+            ok($(ddl.dropDown.$element.find('.t-state-selected')[0]).text() == "тtem20");
+        });
+
+        test('pressing right arrow should select next item', function() {
+            var ddl = getDropDownList();
+
+            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-item')[0]);
+            ddl.select($initialSelectedItem);
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 39 });
+
+            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            ok(!($initialSelectedItem.text() == $nextSelectedItem.text()));
+        });
+
+
+        test('pressing down arrow should select next item', function() {
+            var ddl = getDropDownList();
+
+            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-item')[0]);
+            ddl.select($initialSelectedItem);
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 40 });
+
+            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            ok(!($initialSelectedItem.text() == $nextSelectedItem.text()));
+        });
+
+        test('pressing up arrow should select prev item', function() {
+            var ddl = getDropDownList();
+
+            ddl.select(ddl.dropDown.$element.find('li')[1]);
+
+            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 38 });
+
+            var $prevSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            ok(!($initialSelectedItem.text() == $prevSelectedItem.text()));
+        });
+
+        test('pressing left arrow should select prev item', function() {
+            var ddl = getDropDownList();
+
+            ddl.select(ddl.dropDown.$element.find('li')[1]);
+
+            var $initialSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 37 });
+
+            var $prevSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            ok(!($initialSelectedItem.text() == $prevSelectedItem.text()));
+        });
+
+        test('Home should select first item', function() {
+            var ddl = getDropDownList();
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 36 });
+
+            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            ok(ddl.dropDown.$element.find('.t-item').first().text() == $nextSelectedItem.text());
+        });
+
+        test('End should select last item', function() {
+            var ddl = getDropDownList();
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+            $ddl.trigger({ type: "keydown", keyCode: 35 });
+
+            var $nextSelectedItem = $(ddl.dropDown.$element.find('.t-state-selected')[0]);
+
+            ok(ddl.dropDown.$element.find('.t-item').last().text() == $nextSelectedItem.text());
+        });
+
+        test('pressing alt down arrow should open dropdown list', function() {
+            var ddl = getDropDownList();
+            ddl.effects = $.telerik.fx.toggle.defaults();
+
+            ddl.close();
+
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+
+            $ddl.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(ddl.dropDown.$element.is(':visible'));
+        });
+
+        test('pressing escape should close dropdown list', function() {
+            var ddl = getDropDownList();
+            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
+            
+            ddl.open();
+            
+            var $ddl = $('#DropDownList');
+            $ddl.focus();
+
+            $ddl.trigger({ type: "keydown", keyCode: 27});
+
+            ok(!ddl.dropDown.isOpened());
+        });
+
+        test('scrollTo method should return if item is undefined', function() {
+            var ddl2 = getDropDownList();
+
+            var throwException = false;
+
+            try {
+                ddl2.dropDown.scrollTo(undefined);
+            }
+            catch (e) {
+                throwException = true;
+            }
+                        
+            ok(!throwException, "Thrown exception when item is undefined.");
+        });
+
+        test('Fill method on ajax should call change event handler', function() {
+            var isCalled = false;
+            var ddl = $('#AjaxDropDownList').data('tDropDownList');
+            var old = ddl.trigger.change;
+
+            ddl.ajaxRequest = function (callback) { callback(); }
+            ddl.trigger.change = function () { isCalled = true; }
+
+            ddl.fill();
+
+            ok(isCalled);
+        });
+
+        test('open sets dropdown zindex', function () {
+            var ddl = getDropDownList();
+            ddl.effects = ddl.dropDown.effects = $.telerik.fx.toggle.defaults();
+
+            var $ddl = ddl.$wrapper;
+
+            var lastZIndex = $ddl.css('z-index');
+
+            $ddl.css('z-index', 42);
+
+            ddl.close();
+            ddl.open();
+
+            equal('' + ddl.dropDown.$element.parent().css('z-index'), '43');
+
+            $ddl.css('z-index', lastZIndex);
+        });
+
+        test('open sets dropdown width', function() {
+            var ddl = getDropDownList('#DDLWithServerAttr');
+
+            ddl.close();
+            ddl.open();
+            ddl.close();
+            ddl.open();
+            ddl.close();
+            ddl.open();
+
+            equal(ddl.dropDown.$element.parent()[0].style.width, '402px');
+        });
+
+        test('dataBind method should not throw exception if item is null', function () {
+            var decodedText = '<>&Visit W3Schools!';
+            var ddl = getDropDownList();
+
+            var dataSource = [
+                { Text: decodedText, Value: decodedText },
+                null
+            ];
+
+            var result;
+
+            try {
+                ddl.dataBind(dataSource);
+                result = true;
+            } catch (e) {
+                result = false;
+            } finally {
+                ok(result);
+            }
+        });
+
+        test('dataBind method should encode Text property if encoded is true', function () {
+            var decodedText = '<>&Visit W3Schools!';
+            var ddl = getDropDownList();
+            var old = ddl.loader.isAjax;
+            ddl.loader.isAjax = function () { return true; }
+            
+            var dataSource = [
+                { Text: decodedText, Value: decodedText },
+                { Text: "Product 2", Value: "2" }
+            ];
+
+            ddl.dataBind(dataSource);
+
+            ddl.loader.isAjax = old;
+
+            equal('&lt;&gt;&amp;Visit W3Schools!', ddl.data[0].Text, 'Text property is not encoded');
+            equal(dataSource[0].Value, ddl.data[0].Value);
+        });
+
+        test('dataBind method should not encode Text property if encoded is true and isAjax returns false', function () {
+            var ddl = getDropDownList();
+            var old = ddl.loader.isAjax;
+            ddl.loader.isAjax = function () { return false; }
+
+            var dataSource = [
+                { Text: "&lt;&gt;&amp;Visit W3Schools!", Value: "" },
+                { Text: "Product 2", Value: "2" }
+            ];
+
+            ddl.dataBind(dataSource);
+
+            ddl.loader.isAjax = old;
+
+            equal('&lt;&gt;&amp;Visit W3Schools!', ddl.data[0].Text, 'Text property is encoded twice');
+        });
+
+        test('dataBind method should not encode Text property if encoded is true, but isAjax returns onDataBinding handler', function () {
+            var ddl = $('#DropDownList2').data('tDropDownList');
+            ddl.onDataBinding = function () { };
+            
+            var dataSource = [
+                { Text: "&lt;&gt;&amp;Visit W3Schools!", Value: "" },
+                { Text: "Product 2", Value: "2" }
+            ];
+
+            ddl.dataBind(dataSource);
+
+            equal('&lt;&gt;&amp;Visit W3Schools!', ddl.data[0].Text, 'Text property is encoded twice');
+        });
+
+</script>
 
 </asp:Content>

@@ -7,17 +7,17 @@
     To define a custom template use the following code
 </p>
 <pre class="prettyprint">
-&lt;%= Html.Telerik().Grid(Model)
+&lt;% Html.Telerik().Grid(Model)
         .Name("Grid")
         .ToolBar(toolBar =&gt; toolBar.Template(() =&gt;
-                                    { %>
-                                    &lt;label&gt;
-                                        Show orders for customer:&lt;/label&gt;
-                                        &lt;% Html.Telerik().ComboBox()
-                                                .Name("Customers")                                               
-                                                .Render();
-                                        %&gt;
-                                     &lt;% })           
-        )
+        { 
+            %&gt;
+            &lt;label&gt;Show orders for customer:&lt;/label&gt;
+            &lt;%= Html.Telerik().ComboBox()
+                    .Name("Customers")                                               
+            %&gt;
+            &lt;% 
+        }))
+        .Render();
 %&gt;
 </pre>

@@ -5,8 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using Infrastructure;
-    using Telerik.Web.Mvc.Extensions;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.UI.Html;
 
     public class GridSelectActionCommand : GridActionCommandBase
     {
@@ -15,32 +15,14 @@ namespace Telerik.Web.Mvc.UI
             get { return "select"; }
         }
 
-        public override void EditModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-        }
+            var button = CreateButton<GridLinkButtonBuilder>(localization.Select, UIPrimitives.Grid.Select);
+            
+            button.SpriteCssClass = "t-select";
+            button.Url = urlBuilder.SelectUrl;
 
-        public override void InsertModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
-        {
-        }
-
-        public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
-        {
-            Grid<T> grid = context.Grid;
-            var urlBuilder = new GridUrlBuilder(grid);
-
-            new HtmlTag("a")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Select)
-                .Attribute("href", urlBuilder.Url(grid.Server.Select, routeValues =>
-                {
-                    grid.DataKeys.Each(dataKey =>
-                    {
-                        routeValues[dataKey.RouteKey] = dataKey.GetValue(context.DataItem);
-                    });
-                    routeValues[grid.Prefix(GridUrlParameters.Mode)] = "select";
-                }))
-                .Html(this.ButtonContent(grid.Localization.Select, "t-select"))
-                .AppendTo(parent);
+            return new[] { button };
         }
     }
 }

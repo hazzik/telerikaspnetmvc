@@ -10,7 +10,11 @@ function documentFromRange(range) {
 }
 
 function selectionFromWindow(window) {
-    return window.getSelection ? window.getSelection() : new W3CSelection(window.document);
+    if ($.browser.msie) {
+        return new W3CSelection(window.document);
+    }
+    
+    return window.getSelection(); 
 }
 
 function selectionFromRange(range) {
@@ -284,7 +288,11 @@ function updateRangeProperties(range) {
 }
 
 function createRange(document) {
-    return document.createRange ? document.createRange() : new W3CRange(document);
+    if ($.browser.msie) {
+        return new W3CRange(document);
+    }
+    
+    return document.createRange();
 }
 
 

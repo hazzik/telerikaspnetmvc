@@ -24,7 +24,7 @@
                     <%= Html.EditorFor(m => m.OrderDateTime)%>
                 </li>
             </ul>
-            <button type="submit" class="t-button t-state-default">Save</button>
+            <button type="submit" class="t-button">Save</button>
         </div>
     <% } %>
 
@@ -83,12 +83,12 @@
             width: 5em;
         }
         
-        #Delay, #DeliveryDate
+        #Delay_wrapper, #DeliveryDate_wrapper
         {
             width: 137px;
         }
         
-        #OrderDateTime
+        #OrderDateTime_wrapper
         {
             width: 156px;
         }

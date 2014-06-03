@@ -1,5 +1,10 @@
 ﻿namespace Telerik.Web.Mvc.UI.Fluent.Tests
 {
+    using System.Collections.Generic;
+    using System.Web.Mvc;
+    using System;
+    using Telerik.Web.Mvc.UI.Html;
+    using Telerik.Web.Mvc.UI;
     using Telerik.Web.Mvc.UI.Tests;
     using Xunit;
 #if MVC2 || MVC3
@@ -76,19 +81,16 @@
             get { throw new System.NotImplementedException(); }
         }
 
-        public override void EditModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            throw new System.NotImplementedException();
+            // TODO: Implement this method
+            throw new NotImplementedException();
         }
 
-        public override void InsertModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateEditButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
-        {
-            throw new System.NotImplementedException();
+            // TODO: Implement this method
+            throw new NotImplementedException();
         }
     }
 

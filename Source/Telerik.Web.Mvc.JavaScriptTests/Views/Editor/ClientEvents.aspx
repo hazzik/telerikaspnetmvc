@@ -1,8 +1,7 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        ClientEvents</h2>
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+
     <%= Html.Telerik().Editor()
               .Name("Editor")
               .Value("foo")
@@ -41,17 +40,6 @@
         var onChangeRaised = false;
         var onExecuteRaised = false;
 
-        function setUp() {
-            changeRaised = false;
-            editor = getEditor();
-
-            $(editor.element).bind('selectionChange', function () {
-                changeRaised = true;
-            });
-
-            editor.focus();
-        }
-
         function type(keyCode, ctrl, alt, shift) {
             var e = $.Event();
             e.keyCode = keyCode;
@@ -64,102 +52,129 @@
             $(editor.document).trigger(e);
         }
 
-        function test_onChange_executed() {
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+    <script type="text/javascript">
+
+        module("Editor / ClientEvents", {
+            setup: function() {
+                changeRaised = false;
+                editor = getEditor();
+
+                $(editor.element).bind('selectionChange', function () {
+                    changeRaised = true;
+                });
+
+                editor.focus();
+            }
+        });
+
+        test('onChange executed', function() {
             editor.value('bar');
             editor.body.innerHTML = 'foo';
             $(editor.window).trigger('blur');
-            assertTrue(onChangeRaised);
-        }
+            ok(onChangeRaised);
+        });
 
-        function test_onload_executed() {
-            assertTrue(loadRaised);
-        }
+        test('onload executed', function() {
+            ok(loadRaised);
+        });
 
-        function test_on_selection_change_executed() {
+        test('on selection change executed', function() {
             onSelectionChangeRaised = false;
             $(getEditor().element).trigger('selectionChange');
-            assertTrue(onSelectionChangeRaised);
-        }
+            ok(onSelectionChangeRaised);
+        });
 
-        function test_exec_raises_onExecute() {
+        test('exec raises onExecute', function() {
             editor.exec('undo');
-            assertTrue(onExecuteRaised);
-        }
+            ok(onExecuteRaised);
+        });
 
-        function test_up_arrow_raises_selection_change() {
+        test('up arrow raises selection change', function() {
             type(38);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_enter_raises_selection_change() {
-            var editor = getEditor();
-            editor.value('foo');
-            type(13);
-
-            assertTrue(changeRaised);
-        }
-
-        function test_mouseup_raises_selection_change() {
+        test('mouseup raises selection change', function() {
             $(getEditor().document).mouseup();
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_down_arrow_raises_selection_change() {
+        test('down arrow raises selection change', function() {
             type(40);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_left_arrow_raises_selection_change() {
+        test('left arrow raises selection change', function() {
             type(37);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_right_arrow_raises_selection_change() {
+        test('right arrow raises selection change', function() {
             type(39);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_home_raises_selection_change() {
+        test('home raises selection change', function() {
             type(36);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_end_raises_selection_change() {
+        test('end raises selection change', function() {
             type(35);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_pgup_raises_selection_change() {
+        test('pgup raises selection change', function() {
             type(33);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_pgdown_raises_selection_change() {
+        test('pgdown raises selection change', function() {
             type(34);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_insert_raises_selection_change() {
+        test('insert raises selection change', function() {
             type(45);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_backspace_raises_selection_change() {
+        test('backspace raises selection change', function() {
             type(9);
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
+        
+        test('ctrl+a raises selection change', function() {
+            type(65, true);
 
-        function test_exec_raises_selection_change() {
+            ok(changeRaised);
+        });
+        
+        test('ctrl+shift+a, ctrl+alt+a, and ctrl+shift+alt+a do not raise selection change', function() {
+            type(65, true, true);
+            type(65, true, false, true);
+            type(65, true, true, true);
+
+            ok(!changeRaised);
+        });
+
+        test('exec raises selection change', function() {
             var editor = getEditor();
             editor.value('foo');
             var range = editor.createRange();
@@ -168,24 +183,24 @@
             editor.getSelection().addRange(range);
 
             editor.exec('bold');
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_undo_raises_selection_change() {
+        test('undo raises selection change', function() {
             var editor = getEditor();
             editor.exec('undo');
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
 
-        function test_redo_raises_selection_change() {
+        test('redo raises selection change', function() {
             var editor = getEditor();
             editor.exec('redo');
 
-            assertTrue(changeRaised);
-        }
+            ok(changeRaised);
+        });
         
-        function test_exec_supplies_command_name_and_object() {
+        test('exec supplies command name and object', function() {
             var e;
             $(editor.element).bind('execute', function() {
                 e = arguments[0];
@@ -199,9 +214,10 @@
 
             editor.exec('bold');
 
-            assertEquals('bold', e.name);
-            assertTrue(e.command instanceof $.telerik.editor.FormatCommand);
-        }
+            equal(e.name, 'bold');
+            ok(e.command instanceof $.telerik.editor.FormatCommand);
+        });
 
     </script>
+
 </asp:Content>

@@ -153,7 +153,7 @@ namespace Telerik.Web.Mvc.Tests.Menu
 		[Fact]
 		public void Should_output_an_expand_arrow_for_items_with_children()
 		{
-			item.Items.Add(new MenuItem() { Text = "My lovely child item" });
+			item.Items.Add(new MenuItem() { Text = "My child item" });
 
             IHtmlNode tag = builder.ItemInnerContentTag(item, true);
 
@@ -176,7 +176,7 @@ namespace Telerik.Web.Mvc.Tests.Menu
 		[Fact]
 		public void Should_output_an_horizontal_expand_arrow_for_root_items_with_children_in_vertical_menus()
 		{
-			item.Items.Add(new MenuItem() { Text = "My lovely child item" });
+			item.Items.Add(new MenuItem() { Text = "My child item" });
 
 			menu.Orientation = MenuOrientation.Vertical;
 

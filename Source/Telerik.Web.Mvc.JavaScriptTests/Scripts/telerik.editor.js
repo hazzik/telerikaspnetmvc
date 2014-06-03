@@ -18,9 +18,27 @@ var block = makeMap(blockElements);
 var inline = makeMap('a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var'.split(','));
 var fillAttrs = makeMap('checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected'.split(','));
 
-function normalize(node) {
+
+var normalize = function (node) {
     if (node.nodeType == 1)
         node.normalize();
+}
+
+if ($.browser.msie && parseInt($.browser.version) > 8) {
+    normalize = function(parent) {
+        if (parent.nodeType == 1 && parent.firstChild) {
+            var prev = parent.firstChild,
+                node = prev;
+            
+            while (node = node.nextSibling) {
+                if (node.nodeType == 3 && prev.nodeType == 3) {
+                    node.nodeValue = prev.nodeValue + node.nodeValue;
+                    dom.remove(prev);
+                }
+                prev = node;
+            }
+        }
+    }
 }
 
 function findNodeIndex(node) {
@@ -96,7 +114,7 @@ var dom = {
     blockParentOrBody: function(node) {
         return dom.parentOfType(node, blockElements) || node.ownerDocument.body;
     },
-    
+    normalize: normalize,
     toHex: function (color) {
         var matches = rgb.exec(color);
 
@@ -170,7 +188,10 @@ var dom = {
     },
 
     insertBefore: function (newElement, referenceElement) {
-        return referenceElement.parentNode.insertBefore(newElement, referenceElement);
+        if (referenceElement.parentNode)
+            return referenceElement.parentNode.insertBefore(newElement, referenceElement);
+        else
+            return referenceElement;
     },
 
     insertAfter: function (newElement, referenceElement) {
@@ -290,7 +311,10 @@ var dom = {
         var $span = $(span);
                 
         var style = $.map(cssAttributes, function(value) {
-            return value + ':' + $span.css(value);
+            if ($.browser.msie && value == 'line-height' && $span.css(value) == "1px")
+                return 'line-height:1.5';
+            else
+                return value + ':' + $span.css(value);
         }).join(';');
                 
         $span.remove();
@@ -337,7 +361,8 @@ var dom = {
         return output;
     }
 }
-var fontSizeMappings = 'xx-small,x-small,small,medium,large,x-large,xx-large'.split(',');
+var fontSizeMappings = 'xx-small,x-small,small,medium,large,x-large,xx-large'.split(','),
+    quoteRe = /"/g
 
 function domToXhtml(root) {
     var result = [];
@@ -438,6 +463,10 @@ function domToXhtml(root) {
 
                         if (property.indexOf('color') >= 0)
                             value = dom.toHex(value);
+                        
+                        if (property.indexOf('font-family') >= 0) {
+                            value = value.replace(quoteRe, "'");
+                        }
 
                         result.push(property);
                         result.push(':');
@@ -538,7 +567,11 @@ function documentFromRange(range) {
 }
 
 function selectionFromWindow(window) {
-    return window.getSelection ? window.getSelection() : new W3CSelection(window.document);
+    if ($.browser.msie) {
+        return new W3CSelection(window.document);
+    }
+    
+    return window.getSelection(); 
 }
 
 function selectionFromRange(range) {
@@ -812,7 +845,11 @@ function updateRangeProperties(range) {
 }
 
 function createRange(document) {
-    return document.createRange ? document.createRange() : new W3CRange(document);
+    if ($.browser.msie) {
+        return new W3CRange(document);
+    }
+    
+    return document.createRange();
 }
 
 
@@ -1458,6 +1495,7 @@ function InsertHtmlCommand(options) {
         editor.focus();
     }
 }
+
 function InsertHtmlTool() {
     Tool.call(this);
 
@@ -1517,13 +1555,12 @@ function TypingHandler(editor) {
         var keyboard = editor.keyboard;
         var isTypingKey = keyboard.isTypingKey(e);
 
-        if (!isTypingKey)
-            removePendingFormats(editor);
-
         if (isTypingKey && !keyboard.typingInProgress()) {
-            this.startRestorePoint = new RestorePoint(editor.getRange());
+            var range = editor.getRange();
+            this.startRestorePoint = new RestorePoint(range);
+
             keyboard.startTyping($.proxy(function () {
-                this.endRestorePoint = new RestorePoint(editor.getRange());
+                editor.selectionRestorePoint = this.endRestorePoint = new RestorePoint(editor.getRange());
                 editor.undoRedoStack.push(new GenericCommand(this.startRestorePoint, this.endRestorePoint));
             }, this));
 
@@ -1559,7 +1596,7 @@ function SystemHandler(editor) {
             return this.startRestorePoint.html != editor.body.innerHTML;
 
         return false;
-    },
+    }
 
     this.keydown = function (e) {
         var keyboard = editor.keyboard;
@@ -1950,25 +1987,9 @@ function InlineFormatter(format, values) {
 
     this.toggle = function (range) {
         var nodes = textNodes(range);
-        var isPending = nodes.length == 0;
-        var caretMarker;
 
-        if (isPending) {
-            var markers = getMarkers(range);
-            caretMarker = markers[1];
-            var invisibleNode = this.editor.document.createTextNode('\ufeff');
-            dom.insertBefore(invisibleNode, caretMarker);
-            nodes.push(invisibleNode);
-            invisibleNode = invisibleNode.cloneNode(true);
-            dom.insertAfter(invisibleNode, caretMarker);
-            nodes.push(invisibleNode);
-            range.setEndAfter(markers[2]);
-        }
-
-        this.activate(range, nodes);
-
-        if (isPending)
-            this.editor.pendingFormats.push(caretMarker.parentNode);
+        if (nodes.length > 0)
+            this.activate(range, nodes);
     }
 
     this.apply = function (nodes) {
@@ -1999,18 +2020,12 @@ function InlineFormatter(format, values) {
     this.split = function (range) {
         var nodes = textNodes(range);
 
-        var isPending = nodes.length == 0;
-        var caretMarker;
-
-        if (isPending) {
-            caretMarker = getMarkers(range)[1];
-            nodes.push(caretMarker);
-        }
-
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var formatNode = this.finder.findFormat(nodes[i]);
-            if (formatNode)
-                split(range, formatNode, true);
+        if (nodes.length > 0) {
+            for (var i = 0, l = nodes.length; i < l; i++) {
+                var formatNode = this.finder.findFormat(nodes[i]);
+                if (formatNode)
+                    split(range, formatNode, true);
+            }
         }
     }
 
@@ -2039,10 +2054,12 @@ function GreedyInlineFormatFinder(format, greedyProperty) {
         var attributes = node.attributes,
             trim = $.trim;
 
+        if (!attributes) return;
+
         for (var i = 0, l = attributes.length; i < l; i++) {
-            var attribute = attributes[i];
-            var name = attribute.nodeName;
-            var attributeValue = attribute.nodeValue;
+            var attribute = attributes[i],
+                name = attribute.nodeName,
+                attributeValue = attribute.nodeValue;
 
             if (attribute.specified && name == 'style') {
                 
@@ -2102,6 +2119,7 @@ function GreedyInlineFormatter(format, values, greedyProperty) {
 
     this.activate = function(range, nodes) {
         this.split(range);
+
         if (greedyProperty) {
             var camelCase = greedyProperty.replace(/-([a-z])/, function(all, letter){return letter.toUpperCase()});
             this[values.style[camelCase] == 'inherit' ? 'remove' : 'apply'](nodes);
@@ -2111,20 +2129,26 @@ function GreedyInlineFormatter(format, values, greedyProperty) {
     }
 }
 
+function inlineFormatWillDelayExecution (range) {
+    return range.collapsed && !RangeUtils.isExpandable(range);
+}
+
 function InlineFormatTool(options) {
     FormatTool.call(this, $.extend(options, {
         finder: new InlineFormatFinder(options.format),
         formatter: function () { return new InlineFormatter(options.format) }
     }));
+
+    this.willDelayExecution = inlineFormatWillDelayExecution;
 }
 
 function FontTool(options){
     Tool.call(this, options);
     
     // IE has single selection hence we are using select box instead of combobox
-    var type = $.browser.msie ? 'tSelectBox' : 'tComboBox';
-
-    var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], options.cssAttr);
+    var type = $.browser.msie ? 'tSelectBox' : 'tComboBox',
+        format = [{ tags: ['span'] }],
+        finder = new GreedyInlineFormatFinder(format, options.cssAttr);
 
     this.command = function (commandArguments) {
         return new FormatCommand($.extend(commandArguments, {
@@ -2132,20 +2156,27 @@ function FontTool(options){
                 var style = {};
                 style[options.domAttr] = commandArguments.value;
 
-                return new GreedyInlineFormatter([{ tags: ['span'] }], { style: style }, options.cssAttr); 
+                return new GreedyInlineFormatter(format, { style: style }, options.cssAttr); 
             }
         }))        
     }
 
-    this.update = function ($ui, nodes) {
+    this.willDelayExecution = inlineFormatWillDelayExecution;
+    
+    this.update = function($ui, nodes, pendingFormats) {
         var list = $ui.data(type);
         list.close();
-        list.value(finder.getFormat(nodes));
-    } 
-    
-    this.init = function($ui, initOptions) {
+
+        var pendingFormat = pendingFormats.getPending(this.name);
+
+        var format = (pendingFormat && pendingFormat.params) ? pendingFormat.params.value : finder.getFormat(nodes)
+
+        list.value(format);
+    }
+
+    this.init = function ($ui, initOptions) {
         var editor = initOptions.editor;
-        
+
         $ui[type]({
             data: editor[options.name],
             onChange: function (e) {
@@ -2154,17 +2185,20 @@ function FontTool(options){
             highlightFirst: false
         });
 
-        $ui.data(type).dropDown.onItemCreate =
-            function (e) {
-                e.html = '<span unselectable="on" style="' + options.cssAttr +  ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
-            };
+        var component = $ui.data(type);
+        component.value('inherit');
+        component.dropDown.onItemCreate =
+                function (e) {
+                    e.html = '<span unselectable="on" style="' + options.cssAttr + ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
+                };
     }
 };
 
 function ColorTool (options) {
     Tool.call(this, options);
 
-    var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], options.cssAttr);
+    var format = [{ tags: ['span'] }],
+        finder = new GreedyInlineFormatFinder(format, options.cssAttr);
     
     this.update = function($ui) {
         $ui.data('tColorPicker').close();
@@ -2177,10 +2211,12 @@ function ColorTool (options) {
                 var style = {};
                 style[options.domAttr] = commandArguments.value;
 
-                return new GreedyInlineFormatter([{ tags: ['span'] }], { style: style }, options.cssAttr); 
+                return new GreedyInlineFormatter(format, { style: style }, options.cssAttr); 
             }
         }))        
     }
+
+    this.willDelayExecution = inlineFormatWillDelayExecution;
 
     this.init = function($ui, initOptions) {
         var editor = initOptions.editor;
@@ -2196,12 +2232,13 @@ function ColorTool (options) {
 
 function StyleTool() {
     Tool.call(this);
-    var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'className');
+    var format = [{ tags: ['span'] }],
+        finder = new GreedyInlineFormatFinder(format, 'className');
     
     this.command = function (commandArguments) {
         return new FormatCommand($.extend(commandArguments, {
             formatter: function () { 
-                return new GreedyInlineFormatter([{ tags: ['span'] }], { className: commandArguments.value }); 
+                return new GreedyInlineFormatter(format, { className: commandArguments.value }); 
             }
         }));
     }
@@ -2243,7 +2280,7 @@ function StyleTool() {
         var suitable = [];
 
         for (var i = 0; i < nodes.length; i++) {
-            var candidate = dom.parentOfType(nodes[i], format[0].tags);
+            var candidate = dom.ofType(nodes[i], format[0].tags) ? nodes[i] : dom.parentOfType(nodes[i], format[0].tags);
             if (!candidate)
                 return [];
             if ($.inArray(candidate, suitable) < 0)
@@ -2451,25 +2488,25 @@ function FormatBlockTool() {
     Command.call(this, options);
 
     this.exec = function () {
-        var range = this.getRange();
-
-        var document = documentFromRange(range);
-
-        var emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />';
+        var range = this.getRange(),
+            document = documentFromRange(range),
+            next,
+            emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />';
 
         // necessary while the emptyParagraphContent is empty under IE
-        var startInBlock = dom.parentOfType(range.startContainer, ['p']),
-            endInBlock = dom.parentOfType(range.endContainer, ['p']),
+        var blocks = 'p,h1,h2,h3,h4,h5,h6'.split(','),
+            startInBlock = dom.parentOfType(range.startContainer, blocks),
+            endInBlock = dom.parentOfType(range.endContainer, blocks),
             shouldTrim = (startInBlock && !endInBlock) || (!startInBlock && endInBlock);
 
         range.deleteContents();
 
         var marker = dom.create(document, 'a');
         range.insertNode(marker);
+        normalize(marker.parentNode);
 
-        var li = dom.parentOfType(marker, 'li'.split(','));
-
-        var next;
+        var li = dom.parentOfType(marker, ['li']),
+            heading = dom.parentOfType(marker, 'h1,h2,h3,h4,h5,h6'.split(','));
 
         if (li) {
             var rng = range.cloneRange();
@@ -2488,14 +2525,22 @@ function FormatBlockTool() {
                 next = paragraph;
             }
         }
+        else if (heading && !marker.nextSibling) {
+            var paragraph = dom.create(document, 'p');
+
+            dom.insertAfter(paragraph, heading);
+            paragraph.innerHTML = emptyParagraphContent;
+            dom.remove(marker);
+            next = paragraph;
+        }
 
         if (!next) {
-            if (!li)
+            if (!(li || heading))
                 new BlockFormatter([{ tags: ['p']}]).apply([marker]);
 
             range.selectNode(marker);
 
-            var parent = dom.parentOfType(marker, [li ? 'li' : 'p']);
+            var parent = dom.parentOfType(marker, [li ? 'li' : heading ? dom.name(heading) : 'p']);
 
             split(range, parent, shouldTrim);
 
@@ -2511,23 +2556,19 @@ function FormatBlockTool() {
 
             dom.remove(parent);
 
-            if (previous.firstChild && dom.is(previous.firstChild, 'br'))
-                dom.remove(previous.firstChild);
+            function clean(node) {
+                if (node.firstChild && dom.is(node.firstChild, 'br'))
+                    dom.remove(node.firstChild);
 
-            if (isDataNode(previous) && previous.nodeValue == '')
-                previous = previous.parentNode;
+                if (isDataNode(node) && node.nodeValue == '')
+                    node = node.parentNode;
 
-            if (previous && previous.innerHTML == '')
-                previous.innerHTML = emptyParagraphContent;
+                if (node && !dom.is(node, 'img') && node.innerHTML == '')
+                    node.innerHTML = emptyParagraphContent;
+            }
 
-            if (next.firstChild && dom.is(next.firstChild, 'br'))
-                dom.remove(next.firstChild);
-
-            if (isDataNode(next) && next.nodeValue == '')
-                next = next.parentNode;
-
-            if (next.innerHTML == '')
-                next.innerHTML = emptyParagraphContent;
+            clean(previous);
+            clean(next);
 
             // normalize updates the caret display in Gecko
             normalize(previous);
@@ -2535,7 +2576,11 @@ function FormatBlockTool() {
 
         normalize(next);
 
-        range.selectNodeContents(next);
+        if (!dom.is(next, 'img'))
+            range.selectNodeContents(next);
+        else
+            range.setStartBefore(next);
+
         range.collapse(true);
 
         dom.scrollTo(next);
@@ -2552,7 +2597,8 @@ function NewLineCommand(options) {
         range.deleteContents();
         var br = dom.create(documentFromRange(range), 'br');
         range.insertNode(br);
-        br.parentNode.normalize();
+        normalize(br.parentNode);
+        
         if (!$.browser.msie && (!br.nextSibling || dom.isWhitespace(br.nextSibling))) { 
             //Gecko and WebKit cannot put the caret after only one br.
             var filler = br.cloneNode(true);
@@ -2600,6 +2646,17 @@ function ListFormatter(tag, unwrapTag) {
                 continue;
             }
             
+            if (dom.is(node, "td")) {
+                while (node.firstChild) {
+                    li.appendChild(node.firstChild);
+                }
+                list.appendChild(li);
+                node.appendChild(list);
+                list = list.cloneNode(false);
+                li = li.cloneNode(false);
+                continue;
+            }
+
             li.appendChild(node);
 
             if (dom.isBlock(node)) {
@@ -2645,7 +2702,7 @@ function ListFormatter(tag, unwrapTag) {
         var commonAncestor = nodes.length == 1 ? dom.parentOfType(nodes[0], ['ul','ol']) : dom.commonAncestor.apply(null, nodes);
             
         if (!commonAncestor)
-            commonAncestor = nodes[0].ownerDocument.body;
+            commonAncestor = dom.parentOfType(nodes[0], ["td"]) || nodes[0].ownerDocument.body;
 
         if (dom.isInline(commonAncestor))
             commonAncestor = dom.blockParentOrBody(commonAncestor);
@@ -2656,8 +2713,12 @@ function ListFormatter(tag, unwrapTag) {
 
         if (!formatNode)
             formatNode = new ListFormatFinder(tag == 'ul' ? 'ol' : 'ul').findSuitable(nodes);
-            
+        
         var childNodes = dom.significantChildNodes(commonAncestor);
+        
+        if (/table|tbody/.test(dom.name(commonAncestor))) {
+            childNodes = $.map(nodes, function(node) { return dom.parentOfType(node, ["td"]) });
+        }
 
         for (var i = 0; i < childNodes.length; i++) {
             var child = childNodes[i];
@@ -2674,7 +2735,7 @@ function ListFormatter(tag, unwrapTag) {
             }
         }
 
-        if (ancestors.length == childNodes.length && commonAncestor != nodes[0].ownerDocument.body)
+        if (ancestors.length == childNodes.length && commonAncestor != nodes[0].ownerDocument.body && !/table|tbody|tr|td/.test(dom.name(commonAncestor)))
             ancestors = [commonAncestor];
 
         if (!formatNode) {
@@ -2855,7 +2916,7 @@ function LinkCommand(options) {
                         .cat('<li class="t-form-checkbox-row"><input type="checkbox" id="t-editor-link-target"/><label for="t-editor-link-target">Open link in new window</label></li>')
                     .cat('</ol>')
                     .cat('<div class="t-button-wrapper">')
-                        .cat('<button class="t-dialog-insert t-button t-state-default">Insert</button>')
+                        .cat('<button class="t-dialog-insert t-button">Insert</button>')
                         .cat('&nbsp;or&nbsp;')
                         .cat('<a href="#" class="t-dialog-close t-link">Close</a>')
                     .cat('</div>')
@@ -2872,8 +2933,6 @@ function LinkCommand(options) {
                 else if (e.keyCode == 27)
                     close(e);
             }).end()
-            .delegate('.t-button', 'mouseenter', $t.buttonHover)
-            .delegate('.t-button', 'mouseleave', $t.buttonLeave)
             // IE < 8 returns absolute url if getAttribute is not used
             .find('#t-editor-link-url').val(a ? a.getAttribute('href', 2) : 'http://').end()
             .find('#t-editor-link-text').val(nodes.length > 0 ? (nodes.length == 1 ? nodes[0].nodeValue : nodes[0].nodeValue + nodes[1].nodeValue) : '').end()
@@ -2920,7 +2979,7 @@ function ImageCommand(options) {
         if (attributes.src && attributes.src != 'http://') {
             if (!img) {
                 img = dom.create(documentFromRange(range), 'img', attributes);
-                img.onload = img.onerror = function() {
+                img.onload = img.onerror = function () {
                     img.removeAttribute('complete');
                     img.removeAttribute('width');
                     img.removeAttribute('height');
@@ -2976,39 +3035,49 @@ function ImageCommand(options) {
                 self.releaseRange(range);
         }
 
-        var dialog = $t.window.create($.extend({}, this.editor.dialogOptions, {
+        var fileBrowser = this.editor.fileBrowser;
+        var showBrowser = fileBrowser && fileBrowser.selectUrl !== undefined;
+        
+        function activate() {  
+            if (showBrowser) {
+                new $t.imageBrowser($(this).find(".t-image-browser"), $.extend(fileBrowser, { apply: apply, element: self.editor.element, localization: self.editor.localization }));
+            }
+        }        
+        
+        var dialog = $t.window.create($.extend({ width: 750 }, this.editor.dialogOptions, {
             title: "Insert image",
             html: new $.telerik.stringBuilder()
-                    .cat('<div class="t-editor-dialog">')
-                        .cat('<ol>')
-                            .cat('<li class="t-form-text-row"><label for="t-editor-image-url">Web address</label><input type="text" id="t-editor-image-url"/></li>')
-                            .cat('<li class="t-form-text-row"><label for="t-editor-image-title">Tooltip</label><input type="text" id="t-editor-image-title"/></li>')
-                        .cat('</ol>')
-                        .cat('<div class="t-button-wrapper">')
-                            .cat('<button class="t-dialog-insert t-button t-state-default">Insert</button>')
-                            .cat('&nbsp;or&nbsp;')
-                            .cat('<a href="#" class="t-dialog-close t-link">Close</a>')
+                        .cat('<div class="t-editor-dialog">')                        
+                            .catIf('<div class="t-image-browser"></div>', showBrowser)
+                            .cat('<ol>')
+                                .cat('<li class="t-form-text-row"><label for="t-editor-image-url">Web address</label><input type="text" id="t-editor-image-url"/></li>')
+                                .cat('<li class="t-form-text-row"><label for="t-editor-image-title">Tooltip</label><input type="text" id="t-editor-image-title"/></li>')
+                            .cat('</ol>')
+                            .cat('<div class="t-button-wrapper">')
+                                .cat('<button class="t-dialog-insert t-button">Insert</button>')
+                                .cat('&nbsp;or&nbsp;')
+                                .cat('<a href="#" class="t-dialog-close t-link">Close</a>')
+                            .cat('</div>')
                         .cat('</div>')
-                    .cat('</div>')
                     .string(),
-            onClose: close
+            onClose: close,
+            onActivate: activate
         }))
-            .hide()
-            .find('.t-dialog-insert').click(apply).end()
-            .find('.t-dialog-close').click(close).end()
-            .find('.t-form-text-row input').keydown(function (e) {
-                if (e.keyCode == 13)
-                    apply(e);
-                else if (e.keyCode == 27)
-                    close(e);
-            }).end()
-            .delegate('.t-button', 'mouseenter', $t.buttonHover)
-            .delegate('.t-button', 'mouseleave', $t.buttonLeave)
+        .hide()
+        .find('.t-dialog-insert').click(apply).end()
+        .find('.t-dialog-close').click(close).end()
+        .find('.t-form-text-row input').keydown(function (e) {
+            if (e.keyCode == 13)
+                apply(e);
+            else if (e.keyCode == 27)
+                close(e);
+        }).end()                
+        .toggleClass("t-imagebrowser", showBrowser)
         // IE < 8 returns absolute url if getAttribute is not used
-            .find('#t-editor-image-url').val(img ? img.getAttribute('src', 2) : 'http://').end()
-            .find('#t-editor-image-title').val(img ? img.alt : '').end()
-            .show()
-            .data('tWindow').center();
+        .find('#t-editor-image-url').val(img ? img.getAttribute('src', 2) : 'http://').end()
+        .find('#t-editor-image-title').val(img ? img.alt : '').end()
+        .show()
+        .data('tWindow').center();
 
         $('#t-editor-image-url', dialog.element).focus().select();
     }
@@ -3060,10 +3129,13 @@ $t.selectbox = function (element, options) {
     }
 
     this.value = function (value) {
+        if (value == undefined)
+            return selectedValue;
+
         select(value);
 
         if (selectedValue != value)
-            text(options.title || value);
+            text(options.title || value);       
     }
 
     this.close = function () {
@@ -3111,7 +3183,7 @@ $.fn.tSelectBox = function (options) {
 };
 
 $.fn.tSelectBox.defaults = {
-    effects: $.fn.tDropDownList.defaults.effects
+    effects: $t.fx.slide.defaults()
 };
 
 /* color picker */
@@ -3273,7 +3345,7 @@ $.fn.tColorPicker = function (options) {
 $.fn.tColorPicker.defaults = {
     data: '000000,7f7f7f,880015,ed1c24,ff7f27,fff200,22b14c,00a2e8,3f48cc,a349a4,ffffff,c3c3c3,b97a57,ffaec9,ffc90e,efe4b0,b5e61d,99d9ea,7092be,c8bfe7'.split(','),
     selectedColor: null,
-    effects: $.fn.tDropDownList.defaults.effects
+    effects: $t.fx.slide.defaults()
 };function IndentFormatter() {
     var finder = new BlockFormatFinder([{tags:blockElements}]);
     
@@ -3384,16 +3456,118 @@ function OutdentTool() {
     }
     
     this.update = function ($ui, nodes) {
-        var suitable = finder.findSuitable(nodes);
-        for (var i = 0; i < suitable.length;i++)
-            if (dom.is(suitable[i], 'li') || suitable[i].style.marginLeft) {
+        var suitable = finder.findSuitable(nodes),
+            isOutdentable, listParentsCount;
+
+        for (var i = 0; i < suitable.length; i++) {
+            isOutdentable = suitable[i].style.marginLeft;
+
+            if (!isOutdentable) {
+                listParentsCount = $(suitable[i]).parents('ul,ol').length;
+                isOutdentable = (dom.is(suitable[i], 'li') && listParentsCount > 1)
+                             || (dom.ofType(suitable[i], ['ul','ol']) && listParentsCount > 0);
+            }
+
+            if (isOutdentable) {
                 $ui.removeClass('t-state-disabled');
                 return;
             }
+        }
     
         $ui.addClass('t-state-disabled').removeClass('t-state-hover');
     }
-};function createContentElement($textarea, stylesheets) {
+};function PendingFormats(editor) {
+    this.editor = editor;
+    this.formats = [];
+}
+
+PendingFormats.prototype = {
+    apply: function(range) {
+        if (!this.hasPending())
+            return;
+            
+        var marker = new Marker();
+        
+        marker.addCaret(range);
+
+        var caret = range.startContainer.childNodes[range.startOffset];
+
+        var target = caret.previousSibling;
+
+        /* under IE, target is a zero-length text node. go figure. */
+        if (!target.nodeValue)
+            target = target.previousSibling;
+
+        range.setStart(target, target.nodeValue.length - 1);
+
+        marker.add(range);
+
+        if (textNodes(range).length == 0) {
+            marker.remove(range);
+            range.collapse(true);
+            this.editor.selectRange(range);
+            return;
+        }
+
+        var textNode = marker.end.previousSibling.previousSibling;
+
+        var pendingFormat, formats = this.formats;
+
+        for (var i = 0; i < formats.length; i++) {
+            pendingFormat = formats[i];
+            
+            var command = pendingFormat.command($.extend({ range: range }, pendingFormat.params));
+            command.editor = this.editor;
+            command.exec();
+
+            range.selectNode(textNode);
+        }
+
+        marker.remove(range);
+
+        if (textNode.parentNode) {
+            range.setStart(textNode, 1);
+            range.collapse(true);
+        }
+        
+        this.clear();
+
+        this.editor.selectRange(range);
+    },
+    hasPending: function() {
+        return this.formats.length > 0;
+    },
+    isPending: function(format) {
+        return !!this.getPending(format);
+    },
+    getPending: function(format) {
+        var formats = this.formats;
+        for (var i = 0; i < formats.length; i++)
+            if (formats[i].name == format)
+                return formats[i];
+
+        return;
+    },
+    toggle: function(format) {
+        var formats = this.formats;
+
+        for (var i = 0; i < formats.length; i++)
+            if (formats[i].name == format.name) {
+                if (formats[i].params && formats[i].params.value != format.params.value)
+                    formats[i].params.value = format.params.value;
+                else
+                    formats.splice(i, 1);
+
+                return;
+            }
+
+        formats.push(format);
+    },
+    clear: function() {
+        this.formats = [];
+    }
+};
+function createContentElement($textarea, stylesheets) {
     $textarea.hide();
     var iframe = $('<iframe />', { src: 'javascript:"<html></html>"', frameBorder: '0', className: 't-content' })
                     .css('display', '')
@@ -3416,11 +3590,11 @@ function OutdentTool() {
             .cat('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />')
             .cat('<style type="text/css">')
                 .cat('html,body{padding:0;margin:0;font-family:Verdana,Geneva,sans-serif;background:#fff;}')
-                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5em;padding-top:1px;margin-top:-1px;')
+                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5;padding-top:1px;margin-top:-1px;')
                     .catIf('direction:rtl;', $textarea.closest('.t-rtl').length)
                 .cat('}')
                 .cat('h1{font-size:2em;margin:.67em 0}h2{font-size:1.5em}h3{font-size:1.16em}h4{font-size:1em}h5{font-size:.83em}h6{font-size:.7em}')
-                .cat('p{margin:1em 0;padding:0 .2em}.t-marker{display:none;}.t-paste-container{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}')
+                .cat('p{margin:0 0 1em;padding:0 .2em}.t-marker{display:none;}.t-paste-container{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}')
                 .cat('ul,ol{padding-left:2.5em}')
                 .cat('a{color:#00a}')
                 .cat('code{font-size:1.23em}')
@@ -3438,25 +3612,6 @@ function OutdentTool() {
 
 function selectionChanged(editor) {
     $t.trigger(editor.element, 'selectionChange');
-}
-
-function removePendingFormats(editor) {
-    if (editor.pendingFormats.length == 0) return;
-
-    editor.pendingFormats.reverse();
-
-    $.each(editor.pendingFormats, function() {
-        for (var node = this.firstChild; node; node = node.nextSibling)
-            while (node.nodeType == 3 && (charIndex = node.nodeValue.indexOf('\ufeff')) >= 0)
-                node.deleteData(charIndex, 1);
-    });
-
-    $.each(editor.pendingFormats, function() {
-        if (this.innerHTML == '' && this.parentNode)
-            dom.remove(this);
-    });
-
-    editor.pendingFormats = [];
 }
 
 $t.editor = function (element, options) {
@@ -3480,8 +3635,12 @@ $t.editor = function (element, options) {
         load: this.onLoad,
         selectionChange: this.onSelectionChange,
         change: this.onChange,
-        execute: this.onExecute
+        execute: this.onExecute,
+        error: this.onError
     });
+
+    for (var id in this.tools)
+        this.tools[id].name = id.toLowerCase();
         
     this.textarea = $element.find('textarea').attr('autocomplete', 'off')[0];
     this.window = createContentElement($(this.textarea), this.stylesheets);
@@ -3491,7 +3650,7 @@ $t.editor = function (element, options) {
         
     this.clipboard = new Clipboard(this);
 
-    this.pendingFormats = [];
+    this.pendingFormats = new PendingFormats(this);
         
     this.undoRedoStack = new UndoRedoStack();
 
@@ -3518,24 +3677,28 @@ $t.editor = function (element, options) {
     }
 
     $(this.window).bind('blur', function () {
-        var old = self.textarea.value;
-        var value = self.encodedValue();
+        var old = self.textarea.value,
+            value = self.encodedValue();
         self.update(value);
+
         if (value != old)
-            $t.trigger(self.element, 'change')
+            $t.trigger(self.element, 'change');
     });
 
-    var toolbarItems = '.t-editor-toolbar > li > *';
-    
-    var buttons = '.t-editor-button .t-tool-icon:not(.t-state-disabled)';
+    var toolbarItems = '.t-editor-toolbar > li > *',
+        buttons = '.t-editor-button .t-tool-icon',
+        enabledButtons = buttons + ':not(.t-state-disabled)',
+        disabledButtons = buttons + '.t-state-disabled';
+
     $element
-        .delegate(buttons, 'mouseenter', $t.hover)
-        .delegate(buttons, 'mouseleave', $t.leave)
+        .delegate(enabledButtons, 'mouseenter', $t.hover)
+        .delegate(enabledButtons, 'mouseleave', $t.leave)
         .delegate(buttons, 'mousedown', $t.preventDefault)
-        .delegate(buttons, 'click', $t.stopAll(function (e) {
+        .delegate(enabledButtons, 'click', $t.stopAll(function (e) {
             self.focus();
             self.exec(toolFromClassName(this));
         }))
+        .delegate(disabledButtons, 'click', function(e) { e.preventDefault(); })
         .find(toolbarItems)
             .each(function () {
                 var toolName = toolFromClassName(this),
@@ -3569,22 +3732,21 @@ $t.editor = function (element, options) {
             $element.find(toolbarItems).each(function () {
                     var tool = self.tools[toolFromClassName(this)];
                     if (tool)
-                        tool.update($(this), nodes);
+                        tool.update($(this), nodes, self.pendingFormats);
                 });
         });
 
-    $(document).bind('mousedown', function() {
-                if (self.keyboard.typingInProgress())
-                    self.keyboard.endTyping(true);
-               })
-               .bind('DOMNodeInserted', function(e) {
-                    if ($.contains(e.target, self.element) || self.element == e.target) {
-                        $(self.element).find('iframe').remove();
-                        self.window = createContentElement($(self.textarea), self.stylesheets);
-                        self.document = self.window.contentDocument || self.window.document;
-                        self.body = self.document.body;
-                    }
-               });
+    $(document)
+        .bind('DOMNodeInserted', function(e) {
+            if ($.contains(e.target, self.element) || self.element == e.target) {
+                $(self.element).find('iframe').remove();
+                self.window = createContentElement($(self.textarea), self.stylesheets);
+                self.document = self.window.contentDocument || self.window.document;
+                self.body = self.document.body;
+            }
+        });
+
+    var isFirstKeyDown = true;
 
     $(this.document)
         .bind({
@@ -3596,17 +3758,47 @@ $t.editor = function (element, options) {
                     return false;
                 }
 
+                if (self.keyboard.isTypingKey(e) && self.pendingFormats.hasPending()) {
+                    if (isFirstKeyDown)
+                        isFirstKeyDown = false;
+                    else {
+                        var range = self.getRange();
+                        self.pendingFormats.apply(range);
+                        self.selectRange(range);
+                    } 
+                }
+
                 self.keyboard.clearTimeout();
 
                 self.keyboard.keydown(e);
             },
             keyup: function (e) {
-                var selectionCodes = [8, 9, 13, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+                var selectionCodes = [8, 9, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
 
-                if ($.inArray(e.keyCode, selectionCodes) > -1)
+                if ($.browser.mozilla && e.keyCode == 8)
+                    fixBackspace(self, e);
+                
+                if ($.inArray(e.keyCode, selectionCodes) > -1 || (e.keyCode == 65 && e.ctrlKey && !e.altKey && !e.shiftKey)) {
+                    self.pendingFormats.clear();
                     selectionChanged(self);
+                }
+                
+                if (self.keyboard.isTypingKey(e)) {
+                    var range = self.getRange();
+                    self.pendingFormats.apply(range);
+                    self.selectRange(range);
+                } else
+                    isFirstKeyDown = true;
 
                 self.keyboard.keyup(e);
+            },
+            mousedown: function(e) {
+                self.pendingFormats.clear();
+
+                var target = $(e.target);
+
+                if (!$.browser.gecko && e.which == 2 && target.is('a[href]'))
+                    window.open(target.attr('href'), '_new');
             },
             mouseup: function () {
                 selectionChanged(self);
@@ -3614,45 +3806,91 @@ $t.editor = function (element, options) {
         });
     
     $(this.body)
+        .bind('focusout', function(e) {
+            if (self.keyboard.typingInProgress())
+                self.keyboard.endTyping(true);
+            try {
+                if (!self.selectionRestorePoint) {
+                    self.selectionRestorePoint = new RestorePoint(self.getRange());
+                } 
+            }
+            catch (e) {
+                
+            }
+        })
         .bind('cut paste', function (e) {
             self.clipboard['on' + e.type](e);
         });
 };
 
+function fixBackspace(editor, e) {
+
+    var range = editor.getRange(),
+        startContainer = range.startContainer;
+
+	if (startContainer == editor.body.firstChild || !dom.isBlock(startContainer)
+    || (startContainer.childNodes.length > 0 && !(startContainer.childNodes.length == 1 && dom.is(startContainer.firstChild, 'br'))))
+        return;
+			
+	var previousBlock = startContainer.previousSibling;
+
+	while (previousBlock && !dom.isBlock(previousBlock))
+        previousBlock = previousBlock.previousSibling;
+
+	if (!previousBlock)
+        return;
+
+	var walker = editor.document.createTreeWalker(previousBlock, NodeFilter.SHOW_TEXT, null, false);
+
+    var textNode;
+
+	while (textNode = walker.nextNode())
+		previousBlock = textNode;
+
+	range.setStart(previousBlock, isDataNode(previousBlock) ? previousBlock.nodeValue.length : 0);
+	range.collapse(true);
+	selectRange(range);
+
+	dom.remove(startContainer);
+
+    e.preventDefault();
+}
+
 $.extend($t.editor, {
-    Dom: dom,
-    RestorePoint: RestorePoint,
-    Marker: Marker,
-    RangeUtils: RangeUtils,
-    RangeEnumerator: RangeEnumerator,
-    LinkFormatter: LinkFormatter,
-    LinkFormatFinder: LinkFormatFinder,
-    LinkCommand: LinkCommand,
-    UnlinkCommand: UnlinkCommand,
-    InlineFormatter: InlineFormatter,
-    GreedyInlineFormatter: GreedyInlineFormatter,
-    InlineFormatFinder: InlineFormatFinder,
-    GreedyInlineFormatFinder: GreedyInlineFormatFinder,
-    BlockFormatter: BlockFormatter,
-    GreedyBlockFormatter: GreedyBlockFormatter,
     BlockFormatFinder: BlockFormatFinder,
+    BlockFormatter: BlockFormatter,
+    Dom: dom,
     FormatCommand: FormatCommand,
-    IndentFormatter: IndentFormatter,
+    GenericCommand: GenericCommand,
+    GreedyBlockFormatter: GreedyBlockFormatter,
+    GreedyInlineFormatFinder: GreedyInlineFormatFinder,
+    GreedyInlineFormatter: GreedyInlineFormatter,
+    ImageCommand: ImageCommand,
     IndentCommand: IndentCommand,
-    OutdentCommand: OutdentCommand,
+    IndentFormatter: IndentFormatter,
+    InlineFormatFinder: InlineFormatFinder,
+    InlineFormatter: InlineFormatter,
+    InsertHtmlCommand: InsertHtmlCommand,
+    Keyboard: Keyboard,
+    LinkCommand: LinkCommand,
+    LinkFormatFinder: LinkFormatFinder,
+    LinkFormatter: LinkFormatter,
+    ListCommand: ListCommand,
     ListFormatFinder: ListFormatFinder,
     ListFormatter: ListFormatter,
-    ListCommand: ListCommand,
-    ParagraphCommand: ParagraphCommand,
+    MSWordFormatCleaner: MSWordFormatCleaner,
+    Marker: Marker,
     NewLineCommand: NewLineCommand,
-    ImageCommand: ImageCommand,
-    InsertHtmlCommand: InsertHtmlCommand,
-    GenericCommand: GenericCommand,
-    UndoRedoStack: UndoRedoStack,
-    TypingHandler: TypingHandler,
+    OutdentCommand: OutdentCommand,
+    ParagraphCommand: ParagraphCommand,
+    PendingFormats: PendingFormats,
+    RangeEnumerator: RangeEnumerator,
+    RangeUtils: RangeUtils,
+    RestorePoint: RestorePoint,
     SystemHandler: SystemHandler,
-    Keyboard: Keyboard,
-    MSWordFormatCleaner: MSWordFormatCleaner
+    TypingHandler: TypingHandler,
+    UndoRedoStack: UndoRedoStack,
+    UnlinkCommand: UnlinkCommand
 });
 
 // public api
@@ -3661,13 +3899,19 @@ $t.editor.prototype = {
         var body = this.body;
         if (html === undefined) return domToXhtml(body);
 
+        this.pendingFormats.clear();
+
         // Some browsers do not allow setting CDATA sections through innerHTML so we encode them as comments
         html = html.replace(/<!\[CDATA\[(.*)?\]\]>/g, '<!--[CDATA[$1]]-->');
 
         // Encode script tags to avoid execution and lost content (IE)
         html = html.replace(/<script([^>]*)>(.*)?<\/script>/ig, '<telerik:script $1>$2<\/telerik:script>');
 
-        if ($.browser.msie) {
+        // Add <br/>s to empty paragraphs in mozilla
+        if ($.browser.mozilla)
+            html = html.replace(/<p([^>]*)>(\s*)?<\/p>/ig, '<p $1><br _moz_dirty="" /><\/p>');
+
+        if ($.browser.msie && parseInt($.browser.version) < 9) {
             // Internet Explorer removes comments from the beginning of the html
             html = '<br/>' + html;
 
@@ -3694,6 +3938,10 @@ $t.editor.prototype = {
             });
         } else {
             body.innerHTML = html;
+            if ($.browser.msie) {
+                // having unicode characters creates denormalized DOM tree in IE9
+                normalize(body);
+            }
         }
 
         this.update();
@@ -3727,7 +3975,14 @@ $t.editor.prototype = {
 
     getRange: function () {
         var selection = this.getSelection();
-        return selection.rangeCount > 0 ? selection.getRangeAt(0) : this.createRange();
+        var range = selection.rangeCount > 0 ? selection.getRangeAt(0) : this.createRange();
+
+        if (range.startContainer == this.document && range.endContainer == this.document && range.startOffset == 0 && range.endOffset == 0) {
+            range.setStart(this.body, 0);
+            range.collapse(true);
+        }
+
+        return range;
     },
 
     selectedHtml: function() {
@@ -3750,6 +4005,13 @@ $t.editor.prototype = {
 
         if (tool) {
             var range = this.getRange();
+
+            if (!/undo|redo/i.test(name) && tool.willDelayExecution(range)) {
+                this.pendingFormats.toggle({ name: name, params: params, command: tool.command });
+                selectionChanged(this);
+                return;
+            }
+
             var command = tool.command ? tool.command($.extend({ range: range }, params)) : null;
 
             $t.trigger(this.element, 'execute', { name: name, command: command });
@@ -3759,7 +4021,7 @@ $t.editor.prototype = {
             } else if (command) {
                 if (!command.managesUndoRedo)
                     this.undoRedoStack.push(command);
-
+                    
                 command.editor = this;
                 command.exec();
 
@@ -3840,14 +4102,20 @@ function Tool(options) {
     }
 
     this.update = function() {
+    }
 
+    this.willDelayExecution = function() {
+        return false;
     }
 }
 
 Tool.exec = function (editor, name, value) {
     editor.focus();
-    if (editor.selectionRestorePoint)
+
+    if (editor.selectionRestorePoint) {
         editor.selectRange(editor.selectionRestorePoint.toRange());
+        editor.selectionRestorePoint = null;
+    }
                     
     editor.exec(name, { value: value });
 }
@@ -3861,8 +4129,12 @@ function FormatTool(options) {
             }));
     }
 
-    this.update = function($ui, nodes) {
-        $ui.toggleClass('t-state-active', options.finder.isFormatted(nodes));
+    this.update = function($ui, nodes, pendingFormats) {
+        var isPending = pendingFormats.isPending(this.name),
+            isFormatted = options.finder.isFormatted(nodes),
+            isActive = isPending ? !isFormatted : isFormatted;
+
+        $ui.toggleClass('t-state-active', isActive);
     }
 }
 
@@ -3890,7 +4162,16 @@ var localization = {
     fontSize: 'Select font size',
     fontSizeInherit: '(inherited size)',
     formatBlock: 'Format',
-    style: 'Styles'
+    style: 'Styles',
+    emptyFolder: 'Empty Folder',
+    uploadFile: 'Upload',
+    orderBy: 'Arrange by:',
+    orderBySize: 'Size',
+    orderByName: 'Name',
+    invalidFileType: "The selected file \"{0}\" is not valid. Supported file types are {1}.",
+    deleteFile: 'Are you sure you want to delete "{0}"?',
+    overwriteFile: 'A file with name "{0}" already exists in the current directory. Do you want to overwrite it?',
+    directoryNotFound: 'A directory with this name was not found.'
 };
 
 $.fn.tEditor.defaults = {

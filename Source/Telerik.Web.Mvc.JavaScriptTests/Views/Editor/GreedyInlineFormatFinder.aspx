@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -15,50 +15,61 @@
 
     var GreedyInlineFormatFinder;
     var enumerator;
+    </script>
+</asp:Content>
 
-    function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+    QUnit.testStart = function() {
         editor = getEditor();
         GreedyInlineFormatFinder = $.telerik.editor.GreedyInlineFormatFinder;
     }
-    function test_getFormat_returns_inherit_when_called_on_unformatted_node() {
+    test('getFormat returns inherit when called on unformatted node', function() {
         editor.value('foo');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-family');
-        assertEquals('inherit', finder.getFormat([editor.body.firstChild]));
-    }
+        equal(finder.getFormat([editor.body.firstChild]), 'inherit');
+    });
 
-    function test_getFormat_returns_correct_font_when_in_format_node() {
+    test('getFormat returns correct font when in format node', function() {
         editor.value('foo<span style="font-family:Courier, monospace;">bar</span>baz');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-family');
 
         var span = editor.body.childNodes[1];
-        assertEquals($(span).css('font-family'), finder.getFormat([span.firstChild]));
-    }
+        equal(finder.getFormat([span.firstChild]).replace(/\s+/g, ''), $(span).css('font-family').replace(/\s+/g, ''));
+    });
 
-    function test_getFormat_returns_correct_font_when_deep_in_format_node() {
+    test('getFormat returns correct font when deep in format node', function() {
         editor.value('foo<span style="font-family:Courier, monospace;"><del>bar</del></span>baz');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-family');
 
         var span = editor.body.childNodes[1];
-        assertEquals($(span).css('font-family'), finder.getFormat([span.firstChild.firstChild]));
-    }
+        equal(finder.getFormat([span.firstChild.firstChild]).replace(/\s+/g, ''), $(span).css('font-family').replace(/\s+/g, ''));
+    });
 
-    function test_getFormat_returns_empty_string_when_different_fonts_are_encountered() {
+    test('getFormat returns empty string when different fonts are encountered', function() {
         editor.value('<span style="font-family:Verdana,sans-serif;">foo</span><span style="font-family:Courier,monospace;">bar</span>');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-family');
 
-        assertEquals('', finder.getFormat([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]));
-    }
+        equal(finder.getFormat([editor.body.firstChild.firstChild, editor.body.lastChild.firstChild]), '');
+    });
 
-    function test_getFormat_returns_relative_font_sizes_when_they_are_set() {
+    test('getFormat returns relative font sizes when they are set', function() {
         editor.value('<span style="font-size:x-large;">foo</span>');
 
         var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'font-size');
 
-        assertEquals('x-large', finder.getFormat([editor.body.firstChild.firstChild]));
-    }
-    </script>
+        equal(finder.getFormat([editor.body.firstChild.firstChild]), 'x-large');
+    });
+
+</script>
+
 </asp:Content>

@@ -5,11 +5,16 @@
     $t.autocomplete = function (element, options) {
         $.extend(this, options);
 
-        var $element = $(element).attr('autocomplete', 'off');
+        var pasteMethod = $.browser.msie ? 'paste' : 'input';
+        var $element = this.$element = $(element)
+                                    .addClass('t-widget t-autocomplete t-input')
+                                    .attr('autocomplete', 'off')
+                                    .bind(pasteMethod, $.proxy(function (e) {
+                                        resetTimer(this);
+                                    }, this));
 
         this.$text = $element;
         this.element = element;
-        this.$element = $element;
         this.trigger = new $t.list.trigger(this);
         this.trigger.change = function () {
             var text = this.component.text();
@@ -114,7 +119,6 @@
                     postData[this.queryString.text] = textValue;
 
                     loader.ajaxRequest(function (data) {
-                        this.data = data;
                         this.dataBind(data, true);
                         highlightItem(this);
 
@@ -134,6 +138,9 @@
         }
 
         this.text = function () {
+            if (arguments.length > 0) {
+                this.previousValue = arguments[0];
+            }
             return this.$text.val.apply(this.$text, arguments);
         }
 
@@ -165,7 +172,7 @@
                 value = value.join(separator) + (wordIndex == value.length - 1 ? separator : '');
             }
 
-            this.text(value);
+            this.$text.val(value);
         }
 
         $t.list.common.call(this);
@@ -174,11 +181,25 @@
 
         //overrides common.databind method
         this.dataBind = function (data, preserveStatus) {
-            data = data || [];
-            this.data = data;
-            this.dropDown.dataBind(this.data);
+            this.data = data = (data || []);
+
+            var isAjax = !!this.loader.isAjax();
+            if (this.encoded && isAjax) {
+                for (var i = 0, length = data.length; i < length; i++) {
+                    var item = data[i];
+                    if (item) {
+                        if (item.Text) {
+                            data[i].Text = $t.encode(item.Text);
+                        } else {
+                            data[i] = $t.encode(item);
+                        }
+                    }
+                }
+            }
+
+            this.dropDown.dataBind(data);
             if (!preserveStatus)
-                this.text('');
+                this.$text.val('');
         }
 
         $element
@@ -188,7 +209,7 @@
                 keypress: $.proxy(function (e) {
                     var key = e.keyCode || e.charCode;
 
-                    if (key == 0 || $.inArray(key, $t.list.keycodes) != -1) return true;
+                    if (key == 0 || $.inArray(key, $t.list.keycodes) != -1 || e.ctrlKey) return true;
 
                     resetTimer(this); //reset and start filtering after delay
 
@@ -273,10 +294,10 @@
                 if (dropDown.$items) {
                     var $selectedItems = dropDown.$items.filter('.t-state-selected:first');
 
-                    if ($selectedItems.length > 0)
+                    if ($selectedItems.length > 0) {
                         this.select($selectedItems[0]);
+                    }
                 }
-
                 trigger.change();
                 trigger.close();
                 $t.list.moveToEnd(this.element);
@@ -302,6 +323,7 @@
 
     // default options
     $.fn.tAutoComplete.defaults = {
+        encoded: true,
         effects: $t.fx.slide.defaults(),
         filter: 1,
         delay: 200,

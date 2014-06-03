@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -8,148 +8,6 @@
 
         function getDropDownList(id) {
             return $('#' + (id || 'DropDownList')).data('tDropDownList');
-        }
-
-        function test_dataBind_method_should_preserve_selectedItem_depending_on_Selected_property_even_selectedIndex_is_present() {
-            var ddl = getDropDownList();
-            var data = [{ Text: 'Item1', Value: '1', Selected: false },
-                        { Text: 'Item2', Value: '2', Selected: false },
-                        { Text: 'Item3', Value: '3', Selected: false },
-                        { Text: 'Item4', Value: '4', Selected: false },
-                        { Text: 'Item5', Value: '5', Selected: true }];
-            ddl.index = 1;
-            
-            ddl.dataBind(data);
-
-            assertEquals(4, ddl.index);
-        }
-
-        function test_dataBind_method_should_override_selectedIndex_there_is_no_Selected_true() {
-            var ddl = getDropDownList();
-            var data = [{ Text: 'Item1', Value: '1', Selected: false },
-                        { Text: 'Item2', Value: '2', Selected: false },
-                        { Text: 'Item3', Value: '3', Selected: false },
-                        { Text: 'Item4', Value: '4', Selected: false },
-                        { Text: 'Item5', Value: '5', Selected: false}];
-
-            ddl.index = 1;
-
-            ddl.dataBind(data);
-
-            assertEquals(1, ddl.index);
-        }
-
-        function test_dataBind_method_should_override_selectedIndex_there_is_no_Selected_defined() {
-            var ddl = getDropDownList();
-            var data = [{ Text: 'Item1', Value: '1' },
-                        { Text: 'Item2', Value: '2' },
-                        { Text: 'Item3', Value: '3' },
-                        { Text: 'Item4', Value: '4' },
-                        { Text: 'Item5', Value: '5' }];
-
-            ddl.index = 2;
-
-            ddl.dataBind(data);
-
-            assertEquals(2, ddl.index);
-        }
-
-        function test_fill_method_should_call_component_dataBind_method() {
-            var ddl = getDropDownList();
-            ddl.data = [{ Text: 'Item1', Value: '1', Selected: false },
-                        { Text: 'Item2', Value: '2', Selected: false },
-                        { Text: 'Item3', Value: '3', Selected: true },
-                        { Text: 'Item4', Value: '4', Selected: false },
-                        { Text: 'Item5', Value: '5', Selected: false}];
-
-            ddl.index = 1;
-            ddl.dropDown.$items = null;
-            ddl.fill();
-            
-            assertEquals(2, ddl.index);
-            assertTrue('item is not selected', ddl.dropDown.$items.eq(2).hasClass('t-state-selected'));
-        }
-
-        function test_dataBind_method_should_clear_current_component_status() {
-            var ddl = getDropDownList();
-            var data = [{ Text: 'Item1', Value: '1', Selected: false },
-                        { Text: 'Item2', Value: '2', Selected: false },
-                        { Text: 'Item3', Value: '3', Selected: true },
-                        { Text: 'Item4', Value: '4', Selected: false },
-                        { Text: 'Item5', Value: '5', Selected: false}];
-
-            ddl.select(1);
-            
-            ddl.dataBind(data);
-
-            assertEquals('&nbsp;', ddl.text());
-            assertEquals('', ddl.value());
-        }
-
-        function test_dataBind_method_can_preserve_component_status() {
-            var ddl = getDropDownList();
-            var data = [{ Text: 'Item1', Value: '1', Selected: false },
-                        { Text: 'Item2', Value: '2', Selected: false },
-                        { Text: 'Item3', Value: '3', Selected: true },
-                        { Text: 'Item4', Value: '4', Selected: false },
-                        { Text: 'Item5', Value: '5', Selected: false}];
-
-            ddl.select(1);
-
-            ddl.dataBind(data, true /*should preserve status*/);
-
-            assertEquals('Item2', ddl.text());
-            assertEquals('2', ddl.value());
-        }
-
-        function test_value_method_should_select_item_depending_on_its_value() {
-            var ddl = getDropDownList('DDL2');
-            
-            ddl.value('2');
-            
-            assertEquals(ddl.dropDown.$items.eq(1).text(), ddl.text())
-            assertEquals(ddl.data[1].Value, ddl.value())
-        }
-
-        function test_value_method_should_select_item_depending_on_its_text_if_item_value_is_not_set() {
-            var ddl = getDropDownList('DDL2');
-
-            ddl.value('Item1');
-
-            assertEquals(null, ddl.data[0].Value)
-            assertEquals(ddl.data[0].Text, ddl.text())
-            assertEquals(ddl.data[0].Text, ddl.value())
-        }
-
-        function test_value_method_should_not_select_item_if_no_such_text_or_value() {
-            var ddl = getDropDownList('DDL2');
-
-            ddl.value('3');
-
-            ddl.value('Illegal');
-
-            assertEquals(ddl.data[2].Text, ddl.text())
-            assertEquals(ddl.data[2].Value, ddl.value())
-        }
-
-        function test_enable_method_should_enable_dropDownList()
-        {
-            var ddl = getDropDownList('DDL2');
-
-            ddl.enable();
-            ddl.disable();
-            
-            assertTrue($('#DDL2').hasClass('t-state-disabled'));
-        }
-
-        function test_enable_method_should_disable_dropDownList()
-        {
-            var ddl = getDropDownList('DDL2');
-
-            ddl.disable();
-            ddl.enable();
-            
-            assertFalse($('#DDL2').hasClass('t-state-disabled'));
         }
 
     </script>
@@ -205,4 +63,202 @@
     %>
 
     <br />
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        test('dataBind method should preserve selectedItem depending on Selected property even selectedIndex is present', function() {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: false },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: true }];
+            ddl.index = 1;
+            
+            ddl.dataBind(data);
+
+            equal(ddl.index, 4);
+        });
+
+        test('dataBind method should preserve selectedItem depending on Selected property even selectedIndex is present', function () {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: true  },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false }];
+            
+            ddl.index = 1;
+
+            ddl.dataBind(data);
+
+            equal(ddl.index, 2);
+            ok(ddl.dropDown.$items.eq(2).hasClass("t-state-selected"));
+        });
+
+        test('dataBind method should override selectedIndex there is no Selected true', function() {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: false },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            ddl.index = 1;
+
+            ddl.dataBind(data);
+
+            equal(ddl.index, 1);
+        });
+
+        test('dataBind method should override selectedIndex there is no Selected defined', function() {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1' },
+                        { Text: 'Item2', Value: '2' },
+                        { Text: 'Item3', Value: '3' },
+                        { Text: 'Item4', Value: '4' },
+                        { Text: 'Item5', Value: '5' }];
+
+            ddl.index = 2;
+
+            ddl.dataBind(data);
+
+            equal(ddl.index, 2);
+        });
+
+        test('dataBind method should clear current component status', function() {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: true },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            ddl.select(1);
+            
+            ddl.dataBind(data);
+
+            equal(ddl.text(), '&nbsp;&nbsp;');
+            equal(ddl.value(), '');
+        });
+
+        test('dataBind method can preserve component status', function() {
+            var ddl = getDropDownList();
+            var data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: false },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            ddl.select(1);
+
+            ddl.dataBind(data, true /*should preserve status*/);
+
+            equal(ddl.text(), 'Item2');
+            equal(ddl.value(), '2');
+        });
+
+        test('fill method should select third item even when selectedIndex is different', function () {
+            var ddl = getDropDownList();
+            ddl.data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: true },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            ddl.index = 1;
+            ddl.dropDown.$items = null;
+            ddl.fill();
+
+            equal(ddl.index, 2);
+            ok(ddl.dropDown.$items.eq(2).hasClass('t-state-selected'), 'item is not selected');
+        });
+
+        test('fill method should select second item if value update selected index', function () {
+            var ddl = getDropDownList();
+            ddl.data = [{ Text: 'Item1', Value: '1', Selected: false },
+                        { Text: 'Item2', Value: '2', Selected: false },
+                        { Text: 'Item3', Value: '3', Selected: false },
+                        { Text: 'Item4', Value: '4', Selected: false },
+                        { Text: 'Item5', Value: '5', Selected: false}];
+
+            ddl.index = 4;
+            ddl.selectedValue = "2";
+            ddl.dropDown.$items = null;
+            ddl.fill();
+
+            equal(ddl.selectedIndex, 1);
+            ok(ddl.dropDown.$items.eq(1).hasClass('t-state-selected'), 'item is selected');
+        });
+
+        test('value method should select item depending on its value', function() {
+            var ddl = getDropDownList('DDL2');
+            
+            ddl.value('2');
+            
+            equal(ddl.text(), ddl.dropDown.$items.eq(1).text())
+            equal(ddl.value(), ddl.data[1].Value)
+        });
+
+        test('value method should select item depending on its text if item value is not set', function() {
+            var ddl = getDropDownList('DDL2');
+
+            ddl.value('Item1');
+
+            equal(ddl.data[0].Value, null)
+            equal(ddl.text(), ddl.data[0].Text)
+            equal(ddl.value(), ddl.data[0].Text)
+        });
+
+        test('value method should not select item if no such text or value', function() {
+            var ddl = getDropDownList('DDL2');
+
+            ddl.value('3');
+
+            ddl.value('Illegal');
+
+            equal(ddl.text(), ddl.data[2].Text)
+            equal(ddl.value(), ddl.data[2].Value)
+        });
+
+        test('disable method should disable dropDownList', function() {
+            var ddl = getDropDownList('DDL2');
+
+            ddl.enable();
+            ddl.disable();
+            
+            ok(ddl.$wrapper.hasClass('t-state-disabled'));
+        });
+
+        test('enable method should disable dropDownList', function () {
+            var ddl = getDropDownList('DDL2');
+            
+            ddl.disable();
+            ddl.enable();
+
+            ok(!ddl.$wrapper.hasClass('t-state-disabled'));
+        });
+
+        test('text method should set &nbsp; if text is empty string', function () {
+            var ddl = getDropDownList('DDL2');
+
+            ddl.text("");
+
+            equal(ddl.text(), "&nbsp;&nbsp;")
+        });
+
+        test('text method should set &nbsp; if text is white space', function () {
+            var ddl = getDropDownList('DDL2');
+            
+            ddl.text(" ");
+
+            equal(ddl.text(), "&nbsp;&nbsp;")
+        });
+
+</script>
+
 </asp:Content>

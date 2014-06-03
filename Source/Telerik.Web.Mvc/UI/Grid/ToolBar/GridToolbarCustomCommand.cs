@@ -5,9 +5,9 @@
 
 namespace Telerik.Web.Mvc.UI
 {
+    using System.Collections.Generic;
     using System.Web.Routing;
-
-    using Infrastructure;
+    using Telerik.Web.Mvc.UI.Html;
 
     public class GridToolBarCustomCommand<T> : GridToolBarCommandBase<T>, INavigatable where T : class
     {
@@ -28,16 +28,17 @@ namespace Telerik.Web.Mvc.UI
 
         public string Text { get; set; }
 
-        public override void Html(Grid<T> context, IHtmlNode parent)
+        public override IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            GridUrlBuilder urlBuilder = new GridUrlBuilder(context);
+            var factory = new GridButtonFactory();
+            var button = factory.CreateButton<GridLinkButtonBuilder>(ButtonType);
 
-            new HtmlTag("a")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState)
-                .Attribute("href", urlBuilder.Url(this))
-                .Html(this.ButtonContent<T>(Text, null))
-                .AppendTo(parent);
+            button.Text = Text;
+            button.HtmlAttributes = HtmlAttributes;
+            button.ImageHtmlAttributes = ImageHtmlAttributes;
+            button.Url = delegate { return urlBuilder.Url(this); };
+
+            return new[] { button };
         }
     }
 }

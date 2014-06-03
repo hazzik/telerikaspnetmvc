@@ -28,7 +28,6 @@ namespace Telerik.Web.Mvc.UI
             var result = base.Serialize();
 
             FluentDictionary.For(result)
-                .Add("title", column.Title)
                 .Add("member", column.Member)
                 .Add("type", column.MemberType.ToJavaScriptType())
                 .Add("format", column.Format, () => column.Format.HasValue())
@@ -47,6 +46,19 @@ namespace Telerik.Web.Mvc.UI
                 .Add("readonly", column.ReadOnly, false)
                 .Add("editor", editorHtml, () => column.Grid.Editing.Enabled && column.Grid.IsClientBinding && !column.ReadOnly);
 #endif
+
+            if (column.ClientGroupHeaderTemplate.HasValue())
+            {
+                result.Add("groupHeaderTemplate", Encode(column, column.ClientGroupHeaderTemplate));
+            }
+            
+            if (column.ClientGroupFooterTemplate.HasValue())
+            {
+                result.Add("groupFooterTemplate", Encode(column, column.ClientGroupFooterTemplate));
+            }
+
+            SerializeAggregates(result);
+
             SerializeFilters(result);
 
             SerializeOrder(result);
@@ -56,12 +68,20 @@ namespace Telerik.Web.Mvc.UI
             return result;
         }
         
+        private void SerializeAggregates(IDictionary<string, object> result)
+        {
+            if (column.Aggregates.Any())
+            {
+                result["aggregates"] = column.Aggregates.Select(aggregate => aggregate.AggregateMethodName.ToLower());
+            }
+        }
+        
         private void SerializeOrder(IDictionary<string, object> result)
         {
-            SortDescriptor sortDescriptor = column.Grid
-                .DataProcessor
-                .SortDescriptors
-                .FirstOrDefault(s => s.Member == column.Member);
+            var sortDescriptor = column.Grid
+                 .DataProcessor
+                 .SortDescriptors
+                 .FirstOrDefault(s => s.Member == column.Member);
             
             if (sortDescriptor != null)
             {

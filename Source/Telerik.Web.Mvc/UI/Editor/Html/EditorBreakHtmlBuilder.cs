@@ -17,7 +17,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            return new HtmlTag("li")
+            return new HtmlElement("li")
                     .AddClass("t-break");
         }
     }

@@ -55,7 +55,6 @@ namespace Telerik.Web.Mvc
         /// Gets or sets the URL.
         /// </summary>
         /// <value>The URL.</value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         string Url
         {
             get;

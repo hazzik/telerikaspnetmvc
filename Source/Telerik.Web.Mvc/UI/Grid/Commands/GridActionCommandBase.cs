@@ -7,10 +7,14 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
     using System.Web.Routing;
-    
-    public abstract class GridActionCommandBase
+    using Telerik.Web.Mvc.UI.Html;
+
+    public abstract class GridActionCommandBase : IGridActionCommand
     {
-        public abstract string Name { get; }
+        public abstract string Name
+        {
+            get;
+        }
 
         public GridButtonType ButtonType
         {
@@ -21,13 +25,13 @@ namespace Telerik.Web.Mvc.UI
         public IDictionary<string, object> HtmlAttributes
         {
             get;
-            private set;
+            set;
         }
 
         public IDictionary<string, object> ImageHtmlAttributes
         {
             get;
-            private set;
+            set;
         }
 
         public GridActionCommandBase()
@@ -37,31 +41,29 @@ namespace Telerik.Web.Mvc.UI
             ImageHtmlAttributes = new RouteValueDictionary();
         }
 
-        public void Html<T>(IGridRenderingContext<T> context, IHtmlNode parent)
-             where T : class
+        protected T CreateButton<T>(string text, string @class) where T : IGridButtonBuilder, new()
         {
-            #if MVC2 || MVC3
+            var factory = new GridButtonFactory();
+            var button = factory.CreateButton<T>(ButtonType);
 
-            if (context.InInsertMode)
-            {
-                InsertModeHtml(parent, context);
-            }
-            else if (context.InEditMode)
-            {
-                EditModeHtml(parent, context);
-            }
-            else
-            {
-                BoundModeHtml(parent, context);
-            }
+            button.Text = text;
+            button.HtmlAttributes = HtmlAttributes;
+            button.ImageHtmlAttributes = ImageHtmlAttributes;
+            button.CssClass += " " + @class;
 
-            #endif
+            return button;
         }
 
-        public abstract void EditModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context) where T : class;
+        public abstract IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper);
 
-        public abstract void InsertModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context) where T : class;
-
-        public abstract void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context) where T : class;
+        public virtual IEnumerable<IGridButtonBuilder> CreateEditButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
+        {
+            return new IGridButtonBuilder[0];
+        }        
+        
+        public virtual IEnumerable<IGridButtonBuilder> CreateInsertButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
+        {
+            return new IGridButtonBuilder[0];
+        }
     }
 }

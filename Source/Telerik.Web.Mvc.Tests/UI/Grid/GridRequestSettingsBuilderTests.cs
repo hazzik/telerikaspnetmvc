@@ -7,11 +7,11 @@
     public class GridRequestSettingsBuilderTests
     {
         private GridRequestSettingsBuilder builder;
-        private GridRequestSettings settings;
+        private RequestSettings settings;
 
         public GridRequestSettingsBuilderTests()
         {
-            settings = new GridRequestSettings();
+            settings = new RequestSettings();
             builder = new GridRequestSettingsBuilder(settings);
         }
 

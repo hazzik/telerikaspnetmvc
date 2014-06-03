@@ -5,8 +5,8 @@
 
 namespace Telerik.Web.Mvc.UI
 {
-    using Extensions;
-    using Infrastructure;
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.UI.Html;
 
     public class GridDeleteActionCommand : GridActionCommandBase
     {
@@ -15,42 +15,17 @@ namespace Telerik.Web.Mvc.UI
             get { return "delete"; }
         }
 
-        public override void EditModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
+        public override IEnumerable<IGridButtonBuilder> CreateDisplayButtons(IGridLocalization localization, IGridUrlBuilder urlBuilder, IGridHtmlHelper htmlHelper)
         {
-            //Nothing in edit mode
-        }
+            var deleteButton = CreateButton<GridFormButtonBuilder>(localization.Delete, UIPrimitives.Grid.Delete);
 
-        public override void InsertModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
-        {
-            //Nothing in insert mode
-        }
+            deleteButton.Url = urlBuilder.DeleteUrl;
 
-        public override void BoundModeHtml<T>(IHtmlNode parent, IGridRenderingContext<T> context)
-        {
-            #if MVC2 || MVC3
+            deleteButton.HtmlHelper = htmlHelper;
 
-            Grid<T> grid = context.Grid;
-            GridUrlBuilder urlBuilder = new GridUrlBuilder(grid);
+            deleteButton.SpriteCssClass = "t-delete";
 
-            IHtmlNode form = new HtmlTag("form")
-                                 .AddClass(UIPrimitives.Grid.ActionForm)
-                                 .Attribute("method", "post")
-                                 .Attribute("action", urlBuilder.Url(grid.Server.Delete, routeValues => 
-                                     grid.DataKeys.Each(dataKey => routeValues[dataKey.RouteKey] = dataKey.GetValue(context.DataItem))))
-                                 .AppendTo(parent);
-
-            IHtmlNode div = new HtmlTag("div").AppendTo(form);
-
-            grid.WriteDataKeys(context.DataItem, div);
-
-            new HtmlTag("button")
-                .Attributes(HtmlAttributes)
-                .AddClass(UIPrimitives.Grid.Action, UIPrimitives.Button, UIPrimitives.DefaultState, UIPrimitives.Grid.Delete)
-                .Attribute("type", "submit")
-                .Html(this.ButtonContent(grid.Localization.Delete, UIPrimitives.Icons.Delete))
-                .AppendTo(div);
-
-            #endif
+            return new[] { deleteButton };
         }
     }
 }

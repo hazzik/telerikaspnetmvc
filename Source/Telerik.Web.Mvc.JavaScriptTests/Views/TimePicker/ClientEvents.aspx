@@ -9,223 +9,8 @@
            return $('#TimePicker').data('tTimePicker');
        }
 
-       function test_client_object_is_available_in_on_load() {
-           assertNotNull(onLoadTimePicker);
-           assertNotUndefined(onLoadTimePicker);
-       }
-
-       var isChanged;
-       var isRaised;
-              
-       function test_focusing_input_should_raise_onOpen_event() {
-           getTimePicker().close();
-
-           var input = $('#TimePicker').find('.t-input');
-
-           isRaised = false;
-
-           input.focus();
-
-           assertTrue(isRaised);
-       }       
-
-       function test_clicking_tab_should_raise_onClose() {
-
-           getTimePicker().open();
-
-           
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-
-           isRaised = false;
-           input.trigger({ type: "keydown", keyCode: 9});        
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_escape_should_raise_onClose() {
-
-           getTimePicker().open();
-
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-
-           isRaised = false;
-           input.trigger({ type: "keydown", keyCode: 27 });
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_enter_should_raise_onClose() {
-
-           getTimePicker().open();
-
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-
-           isRaised = false;
-           input.trigger({ type: "keydown", keyCode: 13 });
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_alt_and_down_arrow_should_raise_onOpen() {
-           var timepicker = getTimePicker();
-
-           timepicker.close();
-           isRaised = false;
-           timepicker.$input.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_alt_and_up_arrow_should_raise_onClose() {
-           var timepicker = getTimePicker();
-
-           timepicker.open();
-           isRaised = false;
-           timepicker.$input.trigger({ type: "keydown", keyCode: 38, altKey: true });
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_document_should_raise_close_event() {
-           getTimePicker().open();
-
-           isRaised = false;
-           $(document.documentElement).trigger('mousedown');
-
-           assertTrue(isRaised);
-       }
-
-       function test_clicking_item_should_raise_close_event() {
-           var timepicker = getTimePicker();
-           timepicker.open();
-
-           var $item = $(timepicker.timeView.dropDown.$items[0]);
-
-           isRaised = false;
-           $item.trigger('click');
-
-           assertTrue(isRaised);
-       }
-       
-       function test_clicking_enter_should_raise_onChange() {
-
-           var timepicker = getTimePicker();
-           timepicker.open();
-
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-           input.val('10:30 AM');
-
-           isChanged = false;
-           input.trigger({ type: "keydown", keyCode: 13 });
-
-           assertTrue(isChanged);
-       }
-
-       function test_clicking_tab_should_raise_onChange() {
-
-           var timepicker = getTimePicker();
-           timepicker.open();
-
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-           input.val('10:31 AM');
-
-           isChanged = false;
-           input.trigger({ type: "keydown", keyCode: 9 });
-
-           assertTrue(isChanged);
-       }
-
-       function test_clicking_escape_should_raise_onChange() {
-
-           var timepicker = getTimePicker();
-           timepicker.open();
-
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-           input.val('10:32 AM');
-
-           isChanged = false;
-           input.trigger({ type: "keydown", keyCode: 27 });
-
-           assertTrue(isChanged);
-       }
-
-       function test_clicking_up_arrow_should_raise_onChange_if_dropDown_is_closed() {
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-           getTimePicker().close();
-           
-           isChanged = false;
-           input.trigger({ type: "keydown", keyCode: 38 });
-
-           assertTrue(isChanged);
-       }
-
-       function test_clicking_document_should_raise_change_event() {
-           getTimePicker().open();
-           
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-           input.val('11:33 AM');
-           
-           isChanged = false;
-           $(document.documentElement).trigger('mousedown');
-
-           assertTrue(isChanged);
-       }
-
-       function test_typing_same_time_should_not_raise_change_event() {
-           var timepicker = getTimePicker();
-
-           timepicker.value('10:35 AM');
-
-           var input = timepicker.$input;
-           input[0].focus();
-           input.val('10:35 AM');
-           
-           isChanged = false;
-           input.trigger({ type: "keydown", keyCode: 13 });
-
-           assertFalse(isChanged);
-       }
-
-       function test_not_able_to_parse_text_should_add_error_state() {
-           var input = $('#TimePicker').find('.t-input');
-           input[0].focus();
-           input.val('Not valid time');
-
-           input.trigger({ type: "keydown", keyCode: 13 });
-
-           assertTrue("t-error-state was not added!", input.hasClass('t-state-error'));
-           
-       }
-
-       function test_datepicker_should_call_change_and_close_internal_methods_if_document_mousedown() {
-           var isCloseCalled = false;
-           var isChangeCalled = false;
-           var timepicker = getTimePicker();
-
-           var oldClose = timepicker._close;
-           var oldChange = timepicker._change;
-
-           timepicker._close = function () { isCloseCalled = true; };
-           timepicker._change = function () { isChangeCalled = true; };
-
-           timepicker.open();
-
-           $(document.documentElement).trigger('mousedown');
-
-           assertTrue('_close was not called', isCloseCalled);
-           assertTrue('_change was not called', isChangeCalled);
-
-           timepicker._close = oldClose;
-           timepicker._change = oldChange;
-       }
+       var isChanged,
+           isRaised;
 
        //handlers
        function onLoad(e) {
@@ -258,5 +43,219 @@
                                                  .OnClose("onClose")
                                                  .OnOpen("onOpen"))
  %>
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+       test('client object is available in on load', function() {
+           ok(null !== onLoadTimePicker);
+           ok(undefined !== onLoadTimePicker);
+       });
+
+       test('focusing input should raise onOpen event', function () {
+           var timepicker = getTimePicker();
+           timepicker.openOnFocus = true;
+           timepicker.close();
+
+           var input = $('#TimePicker');
+
+           isRaised = false;
+
+           input.focus();
+
+           timepicker.openOnFocus = false;
+
+           ok(isRaised);
+       });
+
+       test('focusing input should not raise onOpen event if openOnFocus is set to false', function () {
+           var timepicker = getTimePicker();
+           timepicker.close();
+           timepicker.openOnFocus = false;
+
+           var input = $('#TimePicker');
+
+           isRaised = false;
+
+           input.focus();
+
+           ok(!isRaised);
+
+           timepicker.openOnFocus = true;
+       });         
+
+       test('clicking tab should raise onClose', function() {
+
+           getTimePicker().open();
+
+           
+           var input = $('#TimePicker');
+           input[0].focus();
+
+           isRaised = false;
+           input.trigger({ type: "keydown", keyCode: 9});        
+
+           ok(isRaised);
+       });
+
+       test('clicking escape should raise onClose', function() {
+
+           getTimePicker().open();
+
+           var input = $('#TimePicker');
+           input[0].focus();
+
+           isRaised = false;
+           input.trigger({ type: "keydown", keyCode: 27 });
+
+           ok(isRaised);
+       });
+
+       test('clicking enter should raise onClose', function() {
+
+           getTimePicker().open();
+
+           var input = $('#TimePicker');
+           input[0].focus();
+
+           isRaised = false;
+           input.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(isRaised);
+       });
+
+       test('clicking alt and down arrow should raise onOpen', function() {
+           var timepicker = getTimePicker();
+
+           timepicker.close();
+           isRaised = false;
+           timepicker.$element.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+           ok(isRaised);
+       });
+
+       test('clicking alt and up arrow should raise onClose', function() {
+           var timepicker = getTimePicker();
+
+           timepicker.open();
+           isRaised = false;
+           timepicker.$element.trigger({ type: "keydown", keyCode: 38, altKey: true });
+
+           ok(isRaised);
+       });
+
+       test('clicking document should raise close event', function() {
+           getTimePicker().open();
+
+           isRaised = false;
+           $(document.documentElement).trigger('mousedown');
+
+           ok(isRaised);
+       });
+
+       test('clicking item should raise close event', function() {
+           var timepicker = getTimePicker();
+           timepicker.open();
+
+           var $item = $(timepicker.timeView.dropDown.$items[0]);
+
+           isRaised = false;
+           $item.trigger('click');
+
+           ok(isRaised);
+       });
+       
+       test('clicking enter should raise onChange after navigate', function() {
+
+           var timepicker = getTimePicker();
+           timepicker.open();
+
+           var input = $('#TimePicker');
+           input[0].focus();
+
+           isChanged = false;
+           input.trigger({ type: "keydown", keyCode: 40 });
+           input.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(isChanged);
+       });
+
+       test('clicking tab should raise onChange after navigate', function () {
+
+           var timepicker = getTimePicker();
+           timepicker.open();
+
+           var input = $('#TimePicker');
+           input[0].focus();
+
+           isChanged = false;
+           input.trigger({ type: "keydown", keyCode: 40 });
+           input.trigger({ type: "keydown", keyCode: 9 });
+
+           ok(isChanged);
+       });
+
+       test('clicking escape should raise onChange', function() {
+
+           var timepicker = getTimePicker();
+           timepicker.open();
+
+           var input = $('#TimePicker');
+           input[0].focus();
+
+           isChanged = false;
+           input.trigger({ type: "keydown", keyCode: 40 });
+           input.trigger({ type: "keydown", keyCode: 27 });
+
+           ok(isChanged);
+       });
+
+       test('clicking up arrow should raise onChange if dropDown is closed', function() {
+           var input = $('#TimePicker');
+           input[0].focus();
+           getTimePicker().close();
+           
+           isChanged = false;
+           input.trigger({ type: "keydown", keyCode: 38 });
+
+           ok(isChanged);
+       });
+       
+       test('not able to parse text should add error state', function() {
+           var input = $('#TimePicker');
+           input[0].focus();
+           input.val('Not valid time');
+
+           input.trigger({ type: "keydown", keyCode: 13 });
+
+           ok(input.hasClass('t-state-error'), "t-error-state was not added!");
+           
+       });
+       
+       test('change event should not raise if value is set with value() and document is clicked', function () {
+           isChanged = false;
+           var timepicker = getTimePicker();
+           timepicker.value(new Date());
+
+           $(document.documentElement).mousedown();
+
+           ok(!isChanged, "change event was raised incorrectly");
+       });
+
+       test('change event should not raise when call min() method', function () {
+           isChanged = false;
+
+           var timepicker = getTimePicker();
+           timepicker.min(new Date());
+
+           ok(!isChanged, "change event was raised incorrectly");
+       });
+
+</script>
 
 </asp:Content>

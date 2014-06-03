@@ -6,8 +6,9 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
-    
+
     public interface IGridBoundColumn : IGridColumn
     {
         string Format
@@ -46,8 +47,6 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        string GetSortUrl();
-
         ListSortDirection? SortDirection
         {
             get;
@@ -71,5 +70,32 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 #endif
+        ICollection<AggregateFunction> Aggregates
+        {
+            get;
+            set;
+        }
+
+        string ClientGroupHeaderTemplate
+        {
+            get;
+            set;
+        }
+
+        string ClientGroupFooterTemplate
+        {
+            get;
+            set;
+        }
+
+        HtmlTemplate<GridAggregateResult> GroupFooterTemplate
+        {
+            get;
+        }
+
+        HtmlTemplate<GridGroupAggregateResult> GroupHeaderTemplate
+        {
+            get;
+        }
     }
 }

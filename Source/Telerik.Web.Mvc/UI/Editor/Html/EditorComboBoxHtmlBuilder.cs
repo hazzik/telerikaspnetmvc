@@ -18,7 +18,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         protected override IHtmlNode BuildCore()
         {
-            var li = new HtmlTag("li")
+            var li = new HtmlElement("li")
                     .AddClass("t-editor-combobox");
 
             var builder = new ComboBoxHtmlBuilder(comboBox);

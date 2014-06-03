@@ -34,20 +34,20 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ListTag()
         {
-            return new HtmlTag("ul")
+            return new HtmlElement("ul")
                 .AddClass(UIPrimitives.Group);
         }
 
         public IHtmlNode ComponentTag(string tagName)
         {
-            return new HtmlTag(tagName)
+            return new HtmlElement(tagName)
                 .Attribute("id", Component.Id)
                 .Attributes(Component.HtmlAttributes);
         }
 
         public IHtmlNode ImageTag(TItem item)
         {
-            return new HtmlTag("img", TagRenderMode.SelfClosing)
+            return new HtmlElement("img", TagRenderMode.SelfClosing)
                     .Attribute("alt", "image", false)
                     .Attributes(item.ImageHtmlAttributes)
                     .PrependClass(UIPrimitives.Image)
@@ -64,13 +64,13 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode SpriteTag(TItem item)
         {
-            return new HtmlTag("span")
+            return new HtmlElement("span")
                 .AddClass(UIPrimitives.Sprite, item.SpriteCssClasses);
         }
 
         public IHtmlNode ContentTag(TItem item)
         {
-            var content = new HtmlTag("div").Attributes(item.ContentHtmlAttributes)
+            var content = new HtmlElement("div").Attributes(item.ContentHtmlAttributes)
                 .PrependClass(UIPrimitives.Content)
                 .Attribute("id", Component.GetItemContentId(item));
             
@@ -84,7 +84,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ListItemTag(TItem item, Action<IHtmlNode> configure)
         {
-            IHtmlNode li = new HtmlTag("li")
+            IHtmlNode li = new HtmlElement("li")
                 .Attributes(item.HtmlAttributes);
 
             if (!item.Enabled)
@@ -107,13 +107,13 @@ namespace Telerik.Web.Mvc.UI
 
             if (url != "#")
             {
-                a = new HtmlTag("a");
+                a = new HtmlElement("a");
 
                 a.Attribute("href", url);
             }
             else
             {
-                a = new HtmlTag("span");
+                a = new HtmlElement("span");
             }
 
             a.Attributes(item.LinkHtmlAttributes);

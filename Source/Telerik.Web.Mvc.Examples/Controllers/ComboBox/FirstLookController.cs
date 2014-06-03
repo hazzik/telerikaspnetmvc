@@ -19,6 +19,7 @@ namespace Telerik.Web.Mvc.Examples
             model.ComboBoxAttributes.SelectedIndex = model.ComboBoxAttributes.SelectedIndex ?? 0;
             model.ComboBoxAttributes.HighlightFirst = model.ComboBoxAttributes.HighlightFirst ?? true;
             model.ComboBoxAttributes.AutoFill = model.ComboBoxAttributes.AutoFill ?? true;
+            model.ComboBoxAttributes.OpenOnFocus = model.ComboBoxAttributes.OpenOnFocus ?? false;
 
             model.DropDownListAttributes.Width = model.DropDownListAttributes.Width ?? 200;
             model.DropDownListAttributes.SelectedIndex = model.DropDownListAttributes.SelectedIndex ?? 0;

@@ -103,7 +103,7 @@ namespace Telerik.Web.Mvc.UI
             throw new NotSupportedException();
         }
 
-        public IHtmlNode Template(System.Action value)
+        public IHtmlNode Template(Action<TextWriter> value)
         {
             throw new NotSupportedException();
         }
@@ -113,7 +113,7 @@ namespace Telerik.Web.Mvc.UI
             throw new NotSupportedException();
         }
 
-        public Action Template()
+        public Action<TextWriter> Template()
         {
             throw new NotSupportedException();
         }

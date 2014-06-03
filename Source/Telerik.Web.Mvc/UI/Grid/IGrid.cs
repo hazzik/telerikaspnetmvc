@@ -55,7 +55,12 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
-        GridEditingSettings Editing 
+        GridBindingSettings Server
+        {
+            get;
+        }
+
+        IGridEditingSettings Editing 
         { 
             get; 
         }
@@ -66,6 +71,11 @@ namespace Telerik.Web.Mvc.UI
         }
 
         IUrlGenerator UrlGenerator
+        {
+            get;
+        }
+
+        IGridUrlBuilder UrlBuilder
         {
             get;
         }

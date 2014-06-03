@@ -9,53 +9,62 @@
         function getUndoRedoStack() {
             return new $.telerik.editor.UndoRedoStack();
         }
+    </script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
         
-        function test_stack_is_initially_empty() {
+        test('stack is initially empty', function() {
             var undoRedoStack = getUndoRedoStack();
 
-            assertFalse(undoRedoStack.canUndo());
-            assertFalse(undoRedoStack.canRedo());
-        }
+            ok(!undoRedoStack.canUndo());
+            ok(!undoRedoStack.canRedo());
+        });
 
-        function test_canUndo_returns_true_after_command_is_pushed_in_stack() {
+        test('canUndo returns true after command is pushed in stack', function() {
             var undoRedoStack = getUndoRedoStack();
 
             undoRedoStack.push({});
 
-            assertTrue(undoRedoStack.canUndo());
-            assertFalse(undoRedoStack.canRedo());
-        }
+            ok(undoRedoStack.canUndo());
+            ok(!undoRedoStack.canRedo());
+        });
 
-        function test_canRedo_returns_true_after_undo() {
+        test('canRedo returns true after undo', function() {
             var undoRedoStack = getUndoRedoStack();
 
             undoRedoStack.push({ undo: function() {} });
             undoRedoStack.undo();
 
-            assertTrue(undoRedoStack.canRedo());
-        }
+            ok(undoRedoStack.canRedo());
+        });
 
-        function test_canUndo_returns_false_when_at_the_bottom_of_the_stack() {
+        test('canUndo returns false when at the bottom of the stack', function() {
             var undoRedoStack = getUndoRedoStack();
 
             undoRedoStack.push({ undo: function() {} });
             undoRedoStack.undo();
             
-            assertFalse(undoRedoStack.canUndo());
-        }
+            ok(!undoRedoStack.canUndo());
+        });
 
-        function test_canRedo_returns_false_when_a_new_command_is_pushed() {
+        test('canRedo returns false when a new command is pushed', function() {
             var undoRedoStack = getUndoRedoStack();
 
             undoRedoStack.push({ undo: function() {} });
             undoRedoStack.undo();
             undoRedoStack.push({ undo: function() {} });
             
-            assertFalse(undoRedoStack.canRedo());
-            assertTrue(undoRedoStack.canUndo());
-        }
+            ok(!undoRedoStack.canRedo());
+            ok(undoRedoStack.canUndo());
+        });
 
-        function test_undo_delegates_undo_to_current_command() {
+        test('undo delegates undo to current command', function() {
             var undoRedoStack = getUndoRedoStack();
 
             var called = false;
@@ -63,10 +72,10 @@
             undoRedoStack.push({ undo: function() { called = true; } });
             undoRedoStack.undo();
             
-            assertTrue(called);
-        }
+            ok(called);
+        });
         
-        function test_redo_delegates_to_exec_to_current_command() {
+        test('redo delegates to exec to current command', function() {
             var undoRedoStack = getUndoRedoStack();
 
             var called = false;
@@ -75,12 +84,12 @@
             undoRedoStack.undo();
             undoRedoStack.redo();
             
-            assertTrue(called);
-            assertFalse(undoRedoStack.canRedo());
-            assertTrue(undoRedoStack.canUndo());
-        }
+            ok(called);
+            ok(!undoRedoStack.canRedo());
+            ok(undoRedoStack.canUndo());
+        });
         
-        function test_redo_does_not_delegate_to_exec_when_at_top_of_stack() {
+        test('redo does not delegate to exec when at top of stack', function() {
             var undoRedoStack = getUndoRedoStack();
 
             var called = false;
@@ -88,18 +97,20 @@
             undoRedoStack.push({ undo: function() { }, redo: function() { called = true; } });
             undoRedoStack.redo();
             
-            assertFalse(called);
-        }
+            ok(!called);
+        });
 
-        function test_canUndo_is_true_after_undoing_the_second_command() {
+        test('canUndo is true after undoing the second command', function() {
             var undoRedoStack = getUndoRedoStack();
 
             undoRedoStack.push({ undo: function() { } });
             undoRedoStack.push({ undo: function() { } });
             undoRedoStack.undo();
             
-            assertTrue(undoRedoStack.canUndo());
+            ok(undoRedoStack.canUndo());
             
-        }
-    </script>
+        });
+
+</script>
+
 </asp:Content>

@@ -19,11 +19,17 @@ namespace Telerik.Web.Mvc.UI
     public class Editor : ViewComponentBase
     {
         private readonly IWebAssetCollectionResolver resolver;
+        private readonly IUrlGenerator urlGenerator;
 
-        public Editor(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IWebAssetCollectionResolver resolver, ILocalizationService localizationService)
+        public Editor(ViewContext viewContext, 
+            IClientSideObjectWriterFactory clientSideObjectWriterFactory, 
+            IWebAssetCollectionResolver resolver, 
+            ILocalizationService localizationService,
+            IUrlGenerator urlGenerator)
             : base(viewContext, clientSideObjectWriterFactory)
         {
             this.resolver = resolver;
+            this.urlGenerator = urlGenerator;
 
             ScriptFileNames.AddRange(new[] {
                 "telerik.common.js", 
@@ -62,6 +68,17 @@ namespace Telerik.Web.Mvc.UI
                 .CreateLink().Unlink()
                 .Separator()
                 .InsertImage();
+            
+            FileBrowserSettings = new EditorFileBrowserSettings(this);
+            
+            DefaultToolGroup.Tools.OfType<EditorComboBox>()
+                .Each(combo => combo.InputHtmlAttributes.Add("title", combo.Identifier));
+        }
+
+        public EditorFileBrowserSettings FileBrowserSettings 
+        { 
+            get; 
+            private set; 
         }
 
         public EditorClientEvents ClientEvents
@@ -127,7 +144,7 @@ namespace Telerik.Web.Mvc.UI
 
         public override void WriteInitializationScript(TextWriter writer)
         {
-            IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "tEditor", writer);
+            var objectWriter = ClientSideObjectWriterFactory.Create(Id, "tEditor", writer);
 
             objectWriter.Start();
 
@@ -141,6 +158,10 @@ namespace Telerik.Web.Mvc.UI
                 }
             });
 
+            var urlBuilder = new EditorUrlBuilder(urlGenerator, ViewContext);
+            
+            FileBrowserSettings.SerializeTo("fileBrowser", objectWriter, urlBuilder);
+
             if (Encode.HasValue && !Encode.Value)
             {
                 objectWriter.Append("encoded", Encode.Value);
@@ -148,10 +169,10 @@ namespace Telerik.Web.Mvc.UI
 
             if (StyleSheets.Items.Any())
             {
-                bool isSecured = ViewContext.HttpContext.Request.IsSecureConnection;
-                bool canCompress = ViewContext.HttpContext.Request.CanCompress();
+                var isSecured = ViewContext.HttpContext.Request.IsSecureConnection;
+                var canCompress = ViewContext.HttpContext.Request.CanCompress();
 
-                var mergedGroup = resolver.Resolve(new ResolverContext()
+                var mergedGroup = resolver.Resolve(new ResolverContext
                 {
                     ContentType = "text/css",
                     HttpHandlerPath = WebAssetHttpHandler.DefaultPath,
@@ -171,6 +192,16 @@ namespace Telerik.Web.Mvc.UI
 
         protected override void WriteHtml(HtmlTextWriter writer)
         {
+            if (FileBrowserSettings.Upload.HasValue())
+            {
+                ScriptFileNames.Add("telerik.upload.js");
+            }
+            
+            if (FileBrowserSettings.Select.HasValue())
+            {
+                ScriptFileNames.Add("telerik.imagebrowser.js");
+            }
+
             new EditorHtmlBuilder(this)
                 .Build()
                 .WriteTo(writer);

@@ -1,6 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.Infrastructure.Implementation.Tests
 {
     using Moq;
+    using System;
     using Telerik.Web.Mvc.Extensions;
     using Xunit;
 
@@ -60,7 +61,7 @@
             
             provider.Setup(p => p.ReadAllText(It.IsAny<string>())).Returns(() => content[index]).Callback(() => index++);
                 
-            Assert.Equal("onetwo", reader.Read(group));
+            Assert.Equal("one" + Environment.NewLine + "two" + Environment.NewLine, reader.Read(group));
         }
 
         [Fact]

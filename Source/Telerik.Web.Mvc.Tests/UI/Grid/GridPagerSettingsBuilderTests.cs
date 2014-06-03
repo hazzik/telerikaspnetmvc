@@ -33,6 +33,16 @@
         }
 
         [Fact]
+        public void PageSize_sets_page_size_and_drop_down_values()
+        {
+            var sizesInDropDown = new[] {1, 2, 3, 4, 5};
+
+            builder.PageSize(1, sizesInDropDown);
+
+            pager.PageSizesInDropDown.ShouldEqual(sizesInDropDown);
+        }
+
+        [Fact]
         public void Total_should_fail_on_negative()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => builder.Total(-1));

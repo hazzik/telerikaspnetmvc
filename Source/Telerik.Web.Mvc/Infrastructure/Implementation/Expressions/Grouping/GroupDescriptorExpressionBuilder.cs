@@ -18,9 +18,11 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
     {
         private readonly GroupDescriptor groupDescriptor;
         private readonly GroupDescriptorExpressionBuilder childBuilder;
+        private readonly IQueryable notPagedData;
 
         private ParameterExpression groupingParameterExpression;
-
+        private Expression aggregateParameterExpression;
+       
         public GroupDescriptorExpressionBuilder ChildBuilder
         {
             get
@@ -63,24 +65,54 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
                     LambdaExpression groupByExpression = this.CreateGroupByExpression();
                     Type groupingType = typeof(IGrouping<,>).MakeGenericType(groupByExpression.Body.Type, this.ItemType);
 
-                    this.groupingParameterExpression = Expression.Parameter(groupingType, "group");
+                    this.groupingParameterExpression = Expression.Parameter(groupingType, "group" + GetHashCode());
                 }
 
                 return this.groupingParameterExpression;
             }
         }
 
+        private Expression AggregateParameterExpression
+        {
+            get
+            {
+                if (aggregateParameterExpression == null)
+                {
+                    var groupItemsFilterExpression = CreateChildItemsFilterExpression();
+                    var items = notPagedData;
+
+                    if (ParentBuilder != null)
+                    {
+                        items = items.Where(ParentBuilder.CreateChildItemsFilterExpression());
+                    }
+
+                    items = items.Where(groupItemsFilterExpression);
+
+                    aggregateParameterExpression = items.Expression;
+                }
+
+                return aggregateParameterExpression;
+            }
+        }
+
+        public GroupDescriptorExpressionBuilder ParentBuilder
+        {
+            get;
+            set;
+        }
+
         public GroupDescriptorExpressionBuilder(IQueryable queryable, GroupDescriptor groupDescriptor)
-            : this(queryable, groupDescriptor, null)
+            : this(queryable, groupDescriptor, null, queryable)
         {
             this.groupDescriptor = groupDescriptor;
         }
 
-        public GroupDescriptorExpressionBuilder(IQueryable queryable, GroupDescriptor groupDescriptor, GroupDescriptorExpressionBuilder childBuilder)
+        public GroupDescriptorExpressionBuilder(IQueryable queryable, GroupDescriptor groupDescriptor, GroupDescriptorExpressionBuilder childBuilder, IQueryable notPagedData)
             : base(queryable)
         {
             this.groupDescriptor = groupDescriptor;
             this.childBuilder = childBuilder;
+            this.notPagedData = notPagedData;
         }
 
         protected override LambdaExpression CreateGroupByExpression()
@@ -100,6 +132,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
 
         protected override LambdaExpression CreateSelectExpression()
         {
+            if (HasSubgroups)
+            {
+                childBuilder.ParentBuilder = this;
+            }
             return Expression.Lambda(this.CreateSelectBodyExpression(), this.GroupingParameterExpression);
         }
 
@@ -116,12 +152,11 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             yield return this.CreateKeyMemberBinding();
             yield return this.CreateCountMemberBinding();
             yield return this.CreateHasSubgroupsMemberBinding();
-            yield return this.CreateItemsMemberBinding();
-
             if (groupDescriptor.AggregateFunctions.Count > 0)
             {
                 yield return this.CreateAggregateFunctionsProjectionMemberBinding();
             }
+            yield return this.CreateItemsMemberBinding();
         }
 
         private MemberBinding CreateItemsMemberBinding()
@@ -152,7 +187,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             return childBuilder.CreateQuery().Expression;
         }
 
-        private LambdaExpression CreateChildItemsFilterExpression()
+        public LambdaExpression CreateChildItemsFilterExpression()
         {
             LambdaExpression groupByExpression = this.CreateGroupByExpression();
             Expression keyPropertyExpression = Expression.Property(GroupingParameterExpression, "Key");
@@ -215,7 +250,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
 
         private IEnumerable<Expression> ProjectionPropertyValueExpressions()
         {
-            return this.groupDescriptor.AggregateFunctions.Select(f => f.CreateAggregateExpression(this.GroupingParameterExpression));
+            return this.groupDescriptor.AggregateFunctions.Select(f => f.CreateAggregateExpression(AggregateParameterExpression, Options.LiftMemberAccessToNull));
         }
 
         private NewExpression CreateProjectionNewExpression(IEnumerable<Expression> propertyValuesExpressions)

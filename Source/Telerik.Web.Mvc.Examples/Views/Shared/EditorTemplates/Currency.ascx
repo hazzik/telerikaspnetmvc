@@ -1,4 +1,4 @@
-<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<decimal>" %>
+<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl<decimal?>" %>
 
 <%= Html.Telerik().CurrencyTextBox()
         .Name(ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty))

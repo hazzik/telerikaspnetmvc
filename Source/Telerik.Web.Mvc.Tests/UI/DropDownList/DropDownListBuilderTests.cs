@@ -122,6 +122,22 @@
         }
 
         [Fact]
+        public void SelectedValue_should_set_selected_item_value()
+        {
+            builder.Value("1");
+
+            Assert.Equal("1", dropDownList.Value);
+        }
+
+        [Fact]
+        public void SelectedValue_should_return_builder()
+        {
+            var returnedBuilder = builder.Value("0");
+
+            Assert.IsType(typeof(DropDownListBuilder), returnedBuilder);
+        }
+
+        [Fact]
         public void DropDownHtmlAttributes_be_able_to_set_dropdown_html_attributes()
         {
             builder.DropDownHtmlAttributes(new { @class = "foo" });
@@ -149,6 +165,23 @@
             });
 
             Assert.True(fxFacCreated);
+        }
+
+        [Fact]
+        public void Encoded_method_be_able_to_set_Encoded_property()
+        {
+            builder.Encode(false);
+
+            Assert.False(dropDownList.Encoded);
+        }
+
+
+        [Fact]
+        public void Encoded_method_should_return_builder()
+        {
+            var returnedBuilder = builder.Encode(true);
+
+            Assert.IsType(typeof(DropDownListBuilder), returnedBuilder);
         }
     }
 }

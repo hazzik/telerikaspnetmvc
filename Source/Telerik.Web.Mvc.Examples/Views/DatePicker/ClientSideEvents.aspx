@@ -87,6 +87,7 @@
 
     <%= Html.Telerik().TimePicker()
             .Name("TimePicker")
+            .Min(new DateTime(2000, 1, 1, 10,0,0))
             .ClientEvents(events => events
                     .OnLoad("onLoadTimePicker")
                     .OnChange("onChangeTimePicker")

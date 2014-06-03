@@ -33,7 +33,7 @@
 %>
 
 <p>
-    <button type="submit" class="t-button t-state-default">Display checked orders</button>
+    <button type="submit" class="t-button">Display checked orders</button>
 </p>
 
 <% Html.EndForm(); %>

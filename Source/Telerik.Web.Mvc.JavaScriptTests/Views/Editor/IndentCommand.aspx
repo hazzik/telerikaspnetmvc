@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
@@ -10,44 +10,55 @@
     <script type="text/javascript">
         var editor;
         var IndentCommand;
+    </script>
+</asp:Content>
 
-        function setUp() {
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        QUnit.testStart = function() {
             editor = getEditor();
             IndentCommand = $.telerik.editor.IndentCommand;
         }
 
-        function test_exec_indents() {
+        test('exec indents', function() {
             var range = createRangeFromText(editor, '|foo|');
             var command = new IndentCommand({range:range});
             command.exec();
-            assertEquals('<div style="margin-left:30px;">foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="margin-left:30px;">foo</div>');
+        });
 
-        function test_undo_removes_margin() {
+        test('undo removes margin', function() {
             var range = createRangeFromText(editor, '|foo|');
             var command = new IndentCommand({range:range});
             command.exec();
             command.undo();
 
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
         
-        function test_redo_indents() {
+        test('redo indents', function() {
             var range = createRangeFromText(editor, '|foo|');
             var command = new IndentCommand({ range: range });
             command.exec();
             command.undo();
             command.exec();
 
-            assertEquals('<div style="margin-left:30px;">foo</div>', editor.value());
-        }
+            equal(editor.value(), '<div style="margin-left:30px;">foo</div>');
+        });
 
-        function test_indent_list() {
+        test('indent list', function() {
             editor.focus();
             var range = createRangeFromText(editor, '<ul><li>foo</li><li>|b|ar</li></ul>');
             var command = new IndentCommand({ range: range });
             command.exec();
-            assertEquals('<ul><li>foo<ul><li>bar</li></ul></li></ul>', editor.value());
-        }
-    </script>
+            equal(editor.value(), '<ul><li>foo<ul><li>bar</li></ul></li></ul>');
+        });
+
+</script>
+
 </asp:Content>

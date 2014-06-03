@@ -9,12 +9,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
     using Extensions;
     using Infrastructure;
-    using Telerik.Web.Mvc.Resources;
 
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="TimePicker"/> component.
     /// </summary>
-    public class DateTimePickerBuilder : ViewComponentBuilderBase<DateTimePicker, DateTimePickerBuilder>, IHideObjectMembers
+    public class DateTimePickerBuilder : DatePickerBaseBuilder<DateTimePicker, DateTimePickerBuilder>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TimePickerBuilder"/> class.
@@ -24,96 +23,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             : base(component)
         {
         }
-
-        /// <summary>
-        /// Configures the client-side events.
-        /// </summary>
-        /// <param name="configurator">The client events action.</param>
-        /// <example>
-        /// <code lang="CS">
-        ///  &lt;%= Html.Telerik().DateTimePicker()
-        ///             .Name("DateTimePicker")
-        ///             .ClientEvents(events =>
-        ///                 events.OnLoad("onLoad").OnChange("onChange")
-        ///             )
-        /// %&gt;
-        /// </code>
-        /// </example>
-        public DateTimePickerBuilder ClientEvents(Action<DateTimePickerClientEventsBuilder> configurator)
-        {
-            Guard.IsNotNull(configurator, "configurator");
-
-            configurator(new DateTimePickerClientEventsBuilder(Component.ClientEvents, Component.ViewContext));
-
-            return this;
-        }
-
-        //TODO: write tests for it
-        /// <summary>
-        /// Configures the effects of the dateTimePicker.
-        /// </summary>
-        /// <param name="configurator">The action which configures the effects.</param>
-        /// <example>
-        /// <code lang="CS">
-        /// &lt;%= Html.Telerik().DateTimePicker()
-        ///	           .Name("DateTimePicker")
-        ///	           .Effects(fx =>
-        ///	           {
-        ///		            fx.Height()
-        ///			          .Opacity()
-        ///					  .OpenDuration(AnimationDuration.Normal)
-        ///					  .CloseDuration(AnimationDuration.Normal);
-        ///	           })
-        /// </code>
-        /// </example>
-        public DateTimePickerBuilder Effects(Action<EffectsBuilder> configurator)
-        {
-            Guard.IsNotNull(configurator, "configurator");
-
-            EffectsBuilderFactory factory = new EffectsBuilderFactory();
-
-            configurator(factory.Create(Component.Effects));
-
-            return this;
-        }
-
-
-        /// <summary>
-        /// Sets the time format, which will be used to parse and format the <see cref="DateTime"/>.
-        /// </summary>
-        public DateTimePickerBuilder Format(string format)
-        {
-            Guard.IsNotNullOrEmpty(format, "format");
-
-            Component.Format = format;
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the Input HTML attributes.
-        /// </summary>
-        /// <param name="attributes">The HTML attributes.</param>
-        public DateTimePickerBuilder InputHtmlAttributes(object attributes)
-        {
-            Guard.IsNotNull(attributes, "attributes");
-
-            Component.InputHtmlAttributes.Clear();
-            Component.InputHtmlAttributes.Merge(attributes);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets whether dateTimePicker to be enabled.
-        /// </summary>
-        public DateTimePickerBuilder Enable(bool value)
-        {
-            Component.Enabled = value;
-
-            return this;
-        }
-
+      
         /// <summary>
         /// Sets the value of the dateTimePicker input
         /// </summary>
@@ -145,18 +55,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the minimal date, which can be selected in DateTimePicker.
         /// </summary>
-        public DateTimePickerBuilder Min(DateTime date)
-        {
-            Guard.IsNotNull(date, "date");
-
-            Component.MinValue = date;
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the minimal date, which can be selected in DateTimePicker.
-        /// </summary>
         public DateTimePickerBuilder Min(string value)
         {
             Guard.IsNotNullOrEmpty(value, "value");
@@ -164,18 +62,6 @@ namespace Telerik.Web.Mvc.UI.Fluent
             var date = DateTime.Parse(value);
             
             Component.MinValue = date;
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the maximal date, which can be selected in DateTimePicker.
-        /// </summary>
-        public DateTimePickerBuilder Max(DateTime date)
-        {
-            Guard.IsNotNull(date, "date");
-
-            Component.MaxValue = date;
 
             return this;
         }

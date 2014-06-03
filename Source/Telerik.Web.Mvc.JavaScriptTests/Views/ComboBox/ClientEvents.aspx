@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <%@ Import Namespace="Telerik.Web.Mvc.JavaScriptTests" %>
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
@@ -14,215 +14,6 @@
 
         function getComboBox(id) {
             return $(id || '#ComboBox').data('tComboBox');
-        }
-
-        function setUp() {
-            comboBox = getComboBox();
-            isOpenRaised = false;
-            isCloseRaised = false;
-            returnedValue = undefined; 
-            isChangeRaised = false;
-            isDataBinding = false;
-            isDataBound = false;
-        }
-
-        function test_clicking_toggle_button_should_raise_onOpen_event() {
-            comboBox.close();
-
-            comboBox.$text.focus();
-
-            assertTrue(isOpenRaised);
-        }
-
-        function test_clicking_toggle_button_should_raise_onClose_event() {
-            comboBox.open();
-
-            $('.t-dropdown-wrap > .t-select', comboBox.element).trigger('click');
-
-            assertTrue(isCloseRaised);
-        }
-
-        function test_clicking_document_should_raise_onClose_event() {
-            comboBox.open();
-
-            $(document.body).mousedown();
-
-            assertTrue(isCloseRaised);
-        }
-
-        function test_clicking_alt_and_down_arrow_should_raise_onOpen() {
-            comboBox.close();
-
-            comboBox.$text.trigger({ type: "keydown", keyCode: 40, altKey: true });
-
-            assertTrue(isOpenRaised);
-        }
-
-        function test_clicking_escape_should_raise_onClose_if_opened() {
-            comboBox.open();
-
-            comboBox.$text.trigger({ type: "keydown", keyCode: 27 });
-
-            assertTrue(isCloseRaised);
-        }
-
-        function test_clicking_escape_should_not_raise_onClose_if_closed() {
-            comboBox.close();
-
-            comboBox.$text.trigger({ type: "keydown", keyCode: 27 });
-
-            assertFalse(isCloseRaised);
-        }
-
-        function test_clicking_enter_should_raise_onClose_if_list_is_opened() {
-
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 40 })
-                .trigger({ type: "keydown", keyCode: 13 });
-
-            assertTrue(isCloseRaised);
-        }
-
-        function test_clicking_tab_should_raise_onClose_if_list_is_opened() {
-            comboBox.open();
-
-            comboBox.$text.trigger({ type: "keydown", keyCode: 9 });
-
-            assertTrue(isCloseRaised);
-        }
-
-        function test_clicking_item_from_dropDownList_should_raise_onClose_when_it_is_opened() {
-
-            comboBox.$text.focus();
-
-            comboBox.dropDown.$items.first().click();
-
-            assertTrue(isCloseRaised);
-        }
-
-        function test_enter_should_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_shown() {
-            
-            comboBox.open();
-
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 40 })
-                .trigger({ type: "keydown", keyCode: 13 });
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_escape_should_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_shown() {
-            comboBox.open();
-
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 40 })
-                .trigger({ type: "keydown", keyCode: 27 });
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_down_arrow_should_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_closed() {
-
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 13 })
-                .trigger({ type: "keydown", keyCode: 40 });
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_down_arrow_should_not_raise_onChange_event_if_other_item_is_selected_and_dropDown_is_shown() {
-            comboBox.open();
-            
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 40 });
-
-            assertFalse(isChangeRaised);
-        }
-
-        function test_clicking_on_new_item_should_raise_onChange_event() {
-            comboBox.$text.focus();
-
-            var item = comboBox.dropDown.$items.find('.t-state-selected').first().next();
-
-            if (!item.length)
-                item = comboBox.dropDown.$items.first();
-            else
-                item = item[0];
-
-            $(item).click();
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_cleared_input_should_not_raise_change_event_if_opened_and_close_after_clearing() {
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 13 })
-                .trigger({ type: "keydown", keyCode: 40 })
-                .val('');
-
-            comboBox.selectedIndex = -1;
-            comboBox.previousSelectedIndex = -1;
-
-            comboBox.$text.blur();
-
-            isChangeRaised = false;
-            
-            comboBox.$text.focus();
-            $(document.body).mousedown();
-
-            assertFalse(isChangeRaised);
-        }
-
-        function test_document_clicking_should_raise_value_changed_if_different_item_is_selected() {
-
-            comboBox.$text
-                .focus()
-                .trigger({ type: "keydown", keyCode: 40 });
-
-            isChangeRaised = false;
-
-            $(document.body).mousedown();
-
-            assertTrue(isChangeRaised);
-        }
-
-        function test_trigger_change_should_set_value_if_text_has_exact_match_with_date_items() {
-            
-            comboBox.text('Item2');
-            comboBox.trigger.change();
-
-            assertEquals('Item2', comboBox.text());
-            assertEquals('2', comboBox.value());
-        }
-
-        function test_trigger_change_method_should_set_hidden_value_to_text_if_item_value_is_null() {
-            var ddl = $('#ComboWithNoValue').data('tComboBox');
-            ddl.select(2);
-            ddl.trigger.change();
-
-            var item = ddl.data[2];
-
-            assertEquals(null, item.Value);
-            assertEquals(item.Text, ddl.value());
-        }
-
-        function test_Fill_method_on_ajax_should_call_change_event_handler() {
-            var isCalled = false;
-            var combo = $('#FakeAjaxComboBox').data('tComboBox');
-            var old = combo.trigger.change;
-
-            combo.ajaxRequest = function (callback) { callback(); }
-            combo.trigger.change = function () { isCalled = true; }
-
-            combo.fill();
-
-            assertTrue(isCalled);
         }
 
         //handlers
@@ -259,6 +50,20 @@
                 items.Add().Text("Item5");
             })
             .Effects(effects => effects.Toggle())
+            .OpenOnFocus(true)
+    %>
+
+    <%= Html.Telerik().ComboBox()
+            .Name("ComboWithEmptyValue")
+            .Items(items =>
+            {
+                items.Add().Text("");
+                items.Add().Text("Item2").Value("2");
+                items.Add().Text("Item3");
+                items.Add().Text("Item4").Value("4");
+                items.Add().Text("Item5");
+            })
+            .Effects(effects => effects.Toggle())
     %>
 
     <%= Html.Telerik().ComboBox()
@@ -268,6 +73,7 @@
                 for (var i = 1; i <= 14; i++)
                     items.Add().Text("Item" + i).Value(i.ToString());
             })
+            .OpenOnFocus(true)
             .Effects(effects => effects.Toggle())
                     .ClientEvents(events => events.OnOpen("onOpen")
                                                   .OnClose("onClose")
@@ -283,7 +89,267 @@
     %>
 
     <%= Html.Telerik().ComboBox()
+            .Name("AjaxComboBoxWithMinChars")
+            .Filterable(filtering => filtering.MinimumChars(3))
+            .Effects(effects => effects.Toggle())
+            .DataBinding(binding => binding.Ajax().Select("_AjaxLoading", "ComboBox"))
+            .ClientEvents(events => events.OnDataBinding("onDataBinding")
+                                          .OnDataBound("onDataBound"))
+    %>
+
+    <%= Html.Telerik().ComboBox()
             .Name("FakeAjaxComboBox")
             .ClientEvents(events => events.OnDataBinding("onDataBinding"))
     %>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+        QUnit.testStart = function() {
+            comboBox = getComboBox();
+            isOpenRaised = false;
+            isCloseRaised = false;
+            returnedValue = undefined; 
+            isChangeRaised = false;
+            isDataBinding = false;
+            isDataBound = false;
+        }
+                
+        test('on input focus should raise onOpen event', function () {
+            comboBox.close();
+
+            comboBox.$text.focus();
+
+            ok(isOpenRaised);
+        });
+
+        test('on input focus should not raise onOpen event if openOnFocus is set to false', function () {
+
+            comboBox.openOnFocus = false;
+            comboBox.close();
+
+            comboBox.$text.focus();
+
+            ok(!isOpenRaised);
+
+            comboBox.openOnFocus = true;
+        });
+
+        test('clicking toggle button should raise onClose event', function() {
+            comboBox.open();
+
+            $('.t-dropdown-wrap > .t-select', comboBox.$wrapper[0]).trigger('click');
+
+            ok(isCloseRaised);
+        });
+
+        test('clicking document should raise onClose event', function() {
+            comboBox.open();
+
+            $(document.body).mousedown();
+
+            ok(isCloseRaised);
+        });
+
+        test('clicking alt and down arrow should raise onOpen', function() {
+            comboBox.close();
+
+            comboBox.$text.trigger({ type: "keydown", keyCode: 40, altKey: true });
+
+            ok(isOpenRaised);
+        });
+
+        test('clicking escape should raise onClose if opened', function() {
+            comboBox.open();
+
+            comboBox.$text.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(isCloseRaised);
+        });
+
+        test('clicking escape should not raise onClose if closed', function() {
+            comboBox.close();
+
+            comboBox.$text.trigger({ type: "keydown", keyCode: 27 });
+
+            ok(!isCloseRaised);
+        });
+
+        test('clicking enter should raise onClose if list is opened', function() {
+
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 40 })
+                .trigger({ type: "keydown", keyCode: 13 });
+
+            ok(isCloseRaised);
+        });
+
+        test('clicking tab should raise onClose if list is opened', function() {
+            comboBox.open();
+
+            comboBox.$text.trigger({ type: "keydown", keyCode: 9 });
+
+            ok(isCloseRaised);
+        });
+
+        test('clicking tab should set value if text has exact match with date items', function () {
+
+            comboBox._textChanged = true;
+            comboBox.text('Item2');
+
+            comboBox.$text.trigger({ type: "keydown", keyCode: 9 });
+
+            equal(comboBox.text(), 'Item2');
+            equal(comboBox.value(), '2');
+        });
+
+        test('clicking item from dropDownList should raise onClose when it is opened', function() {
+
+            comboBox.$text.focus();
+
+            comboBox.dropDown.$items.first().click();
+
+            ok(isCloseRaised);
+        });
+
+        test('enter should raise onChange event if other item is selected and dropDown is shown', function() {
+            
+            comboBox.open();
+
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 40 })
+                .trigger({ type: "keydown", keyCode: 13 });
+
+            ok(isChangeRaised);
+        });
+
+        test('escape should raise onChange event if other item is selected and dropDown is shown', function() {
+            comboBox.open();
+
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 40 })
+                .trigger({ type: "keydown", keyCode: 27 });
+
+            ok(isChangeRaised);
+        });
+
+        test('down arrow should raise onChange event if other item is selected and dropDown is closed', function() {
+
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 13 })
+                .trigger({ type: "keydown", keyCode: 40 });
+
+            ok(isChangeRaised);
+        });
+
+        test('down arrow should not raise onChange event if other item is selected and dropDown is shown', function() {
+            comboBox.open();
+            
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 40 });
+
+            ok(!isChangeRaised);
+        });
+
+        test('clicking on new item should raise onChange event', function() {
+            comboBox.$text.focus();
+
+            var item = comboBox.dropDown.$items.find('.t-state-selected').first().next();
+
+            if (!item.length)
+                item = comboBox.dropDown.$items.first();
+            else
+                item = item[0];
+
+            $(item).click();
+
+            ok(isChangeRaised);
+        });
+
+        test('cleared input should not raise change event if opened and close after clearing', function() {
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 13 })
+                .trigger({ type: "keydown", keyCode: 40 })
+                .val('');
+
+            comboBox.selectedIndex = -1;
+            comboBox.previousSelectedIndex = -1;
+
+            comboBox.$text.blur();
+
+            isChangeRaised = false;
+            
+            comboBox.$text.focus();
+            $(document.body).mousedown();
+
+            ok(!isChangeRaised);
+        });
+
+        test('document clicking should raise value changed if different item is selected', function() {
+
+            comboBox.$text
+                .focus()
+                .trigger({ type: "keydown", keyCode: 40 });
+
+            isChangeRaised = false;
+
+            $(document.body).mousedown();
+
+            ok(isChangeRaised);
+        });
+
+        test('document click should set value if text has exact match with date items', function () {
+
+            comboBox._textChanged = true;
+            comboBox.text('Item2');
+
+            $(document.body).mousedown();
+
+            equal(comboBox.text(), 'Item2');
+            equal(comboBox.value(), '2');
+        });
+
+        test('trigger change should set value if text is empty', function () {
+            var combobox = $('#ComboBoxWithEmptyValue').data('tComboBox');
+            comboBox.text('');
+            comboBox.trigger.change();
+
+            equal(comboBox.text(), '');
+        });
+
+        test('trigger change method should set hidden value to text if item value is null', function() {
+            var ddl = $('#ComboWithNoValue').data('tComboBox');
+            ddl.select(2);
+            ddl.trigger.change();
+
+            var item = ddl.data[2];
+
+            equal(item.Value, null);
+            equal(ddl.value(), item.Text);
+        });
+
+        test('Fill method on ajax should call change event handler', function() {
+            var isCalled = false;
+            var combo = $('#FakeAjaxComboBox').data('tComboBox');
+            var old = combo.trigger.change;
+
+            combo.ajaxRequest = function (callback) { callback(); }
+            combo.trigger.change = function () { isCalled = true; }
+
+            combo.fill();
+
+            ok(isCalled);
+        });
+
+</script>
+
 </asp:Content>

@@ -36,9 +36,33 @@ namespace Telerik.Web.Mvc.UI
             Items = new List<DropDownItem>();
             SelectedIndex = -1;
             Enabled = true;
+            Encoded = true;
+            OpenOnFocus = false;
+        }
+
+        /// <summary>
+        /// Gets the id.
+        /// </summary>
+        /// <value>The id.</value>
+        public new string Id
+        {
+            get
+            {
+                // Return from htmlattributes if user has specified
+                // otherwise build it from name
+                return InputHtmlAttributes.ContainsKey("id") ?
+                       InputHtmlAttributes["id"].ToString() :
+                       (!string.IsNullOrEmpty(Name) ? Name.Replace(".", HtmlHelper.IdAttributeDotReplacement) : null);
+            }
         }
 
         public bool AutoFill
+        {
+            get;
+            set;
+        }
+
+        public bool Encoded
         {
             get;
             set;
@@ -106,11 +130,23 @@ namespace Telerik.Web.Mvc.UI
             get; 
             set; 
         }
+        
+        public string Value
+        { 
+            get; 
+            set; 
+        }
 
         public bool Enabled 
         { 
             get; 
             set; 
+        }
+
+        public bool OpenOnFocus
+        {
+            get;
+            set;
         }
 
         public override void WriteInitializationScript(System.IO.TextWriter writer)
@@ -134,7 +170,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (Filtering.Enabled)
             {
-                objectWriter.Append("filter", Filtering.FilterMode == AutoCompleteFilterMode.Contains ? 2 : 1); //"contains" : "startsWith");
+                objectWriter.Append("filter", (int)Filtering.FilterMode);
                 objectWriter.Append("minChars", Filtering.MinimumChars, 0);
             }
 
@@ -143,12 +179,16 @@ namespace Telerik.Web.Mvc.UI
                 objectWriter.AppendCollection("data", Items);
             }
 
+            objectWriter.Append("selectedValue", Value.HasValue() ? Value : this.GetValueFromViewDataByName());
             objectWriter.Append("index", SelectedIndex, -1);
 
             if (DropDownHtmlAttributes.Any())
             {
                 objectWriter.Append("dropDownAttr", DropDownHtmlAttributes.ToAttributeString());
             }
+
+            objectWriter.Append("encoded", this.Encoded, true);
+            objectWriter.Append("openOnFocus", this.OpenOnFocus, false);
 
             objectWriter.Complete();
 
@@ -159,8 +199,12 @@ namespace Telerik.Web.Mvc.UI
         {
             if (Items.Any())
             {
-                this.PrepareItemsAndDefineSelectedIndex();
-                this.UpdateSelectedIndexFromViewContext();
+                if (Encoded)
+                {
+                    this.EncodeTextPropertyofItems();
+                }
+
+                this.SyncSelectedIndex();
             }
 
             IDropDownHtmlBuilder builder = new ComboBoxHtmlBuilder(this);

@@ -4,24 +4,51 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
     using System.Collections.Generic;
     using System.Linq;
     using System.Web.Mvc;
-    using Extensions;
 
     public class GridController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewData["controllerName"] = "Grid";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
-        }
-
         public ActionResult Paging()
         {
             ViewData["lessData"] = TestData(2);
             ViewData["moreData"] = TestData(20);
 
             return View();
+        }
+        
+        public ActionResult FormContainerBuilder()
+        {
+            return View(TestData(20));
+        }         
+        
+        public ActionResult ChangeSet()
+        {
+            return View(TestData(20));
+        } 
+        
+        public ActionResult CellEditor()
+        {
+            return View(TestData(20));
+        }         
+        
+        public ActionResult Editor()
+        {
+            return View(TestData(20));
+        }         
+        
+        
+        public ActionResult PopUpEditor()
+        {
+            return View(TestData(20));
+        }         
+        
+        public ActionResult ButtonBuilders()
+        {
+            return View(TestData(20));
+        }        
+        
+        public ActionResult DataCellBuilder()
+        {
+            return View(TestData(20));
         }
 
         public ActionResult ErrorView()

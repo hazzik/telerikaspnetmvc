@@ -1,5 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
     using Xunit;
 
     public class GridEditingSettingsTests
@@ -24,5 +27,6 @@
             var result = grid.Editing.Serialize();
             Assert.False(result.ContainsKey("confirmDelete"));
         }
+       
     }
 }

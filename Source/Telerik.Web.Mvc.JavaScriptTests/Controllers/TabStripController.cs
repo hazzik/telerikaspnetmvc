@@ -1,24 +1,20 @@
 namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
 {
-    using Extensions;
     using System.Web.Mvc;
 
     public class TabStripController : Controller
     {
-        public ActionResult Index()
-        {
-            ViewData["controllerName"] = "TabStrip";
-            ViewData["actionNames"] = this.GetActions();
-
-            return View("Suite");
-        }
-
         public ActionResult AjaxLoading()
         {
             return View();
         }
 
         public ActionResult ClientAPI() 
+        {
+            return View();
+        }
+
+        public ActionResult Serialization()
         {
             return View();
         }

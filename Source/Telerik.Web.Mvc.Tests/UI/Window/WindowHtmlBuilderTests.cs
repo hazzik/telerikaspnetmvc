@@ -1,9 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using Telerik.Web.Mvc.UI.Tests.Extensions;
     using Xunit;
-    
-    using Infrastructure;
-    using Moq;
 
     public class WindowHtmlBuilderTests
     {
@@ -18,19 +16,15 @@
         }
 
         [Fact]
-        public void WindowTag_should_render_div_tag() 
+        public void WindowTag_should_render_div_tag()
         {
-            IHtmlNode tag = renderer.WindowTag();
-
-            Assert.Equal(tag.TagName, "div");
+            renderer.WindowTag().TagName.ShouldEqual("div");
         }
 
         [Fact]
         public void WindowTag_should_render_classes()
         {
-            IHtmlNode tag = renderer.WindowTag();
-
-            Assert.Equal(UIPrimitives.Widget.ToString() + " t-window", tag.Attribute("class"));
+            renderer.WindowTag().ShouldHaveClasses(UIPrimitives.Widget, "t-window");
         }
 
         [Fact]
@@ -38,9 +32,7 @@
         {
             window.HtmlAttributes.Add("title", "genericInput");
 
-            IHtmlNode tag = renderer.WindowTag();
-
-            Assert.Equal("genericInput", tag.Attribute("title"));
+            renderer.WindowTag().Attribute("title").ShouldEqual("genericInput");
         }
 
         [Fact]
@@ -48,9 +40,7 @@
         {
             window.Name = "TestName";
 
-            IHtmlNode tag = renderer.WindowTag();
-
-            Assert.Equal("TestName", tag.Attribute("id"));
+            renderer.WindowTag().Attribute("id").ShouldEqual("TestName");
         }
 
         [Fact]
@@ -58,25 +48,19 @@
         {
             window.Visible = false;
 
-            IHtmlNode tag = renderer.WindowTag();
-
-            Assert.Contains("display:none", tag.Attribute("style"));            
+            renderer.WindowTag().Attribute("style").ShouldContain("display:none");
         }
 
         [Fact]
         public void HeaderTag_should_render_div_tag()
         {
-            IHtmlNode tag = renderer.HeaderTag();
-
-            Assert.Equal(tag.TagName, "div");
+            renderer.HeaderTag().TagName.ShouldEqual("div");
         }
 
         [Fact]
         public void HeaderTag_should_render_classes()
         {
-            IHtmlNode tag = renderer.HeaderTag();
-
-            Assert.Equal("t-window-titlebar " + UIPrimitives.Header.ToString(), tag.Attribute("class"));
+            renderer.HeaderTag().ShouldHaveClasses(UIPrimitives.Header, UIPrimitives.Window.TitleBar);
         }
 
         [Fact]
@@ -87,10 +71,9 @@
 
             IHtmlNode tag = renderer.IconTag();
 
-            Assert.Equal("img", tag.TagName);
-            Assert.Equal(iconPath, tag.Attribute("src"));
-            Assert.Contains("t-window-icon", tag.Attribute("class"));
-            Assert.Contains(UIPrimitives.Image, tag.Attribute("class"));
+            tag.TagName.ShouldEqual("img");
+            tag.Attribute("src").ShouldEqual(iconPath);
+            tag.ShouldHaveClasses(UIPrimitives.Image, UIPrimitives.Window.Icon);
         }
 
         [Fact]
@@ -101,9 +84,13 @@
             window.IconUrl = iconPath;
             window.IconAlternativeText = "";
 
-            IHtmlNode tag = renderer.IconTag();
+            renderer.IconTag().Attribute("alt").ShouldEqual("icon");
+        }
 
-            Assert.Equal("icon", tag.Attribute("alt"));
+        [Fact]
+        public void TitleTag_should_render_span_with_proper_className()
+        {
+            renderer.TitleTag().ShouldHaveClass("t-window-title");
         }
 
         [Fact]
@@ -115,9 +102,8 @@
 
             IHtmlNode tag = renderer.TitleTag();
 
-            Assert.Equal("span", tag.TagName);
-            Assert.Contains("t-window-title", tag.Attribute("class"));
-            Assert.Contains(title, tag.Children[0].InnerHtml);
+            tag.TagName.ShouldEqual("span");
+            tag.Children[0].InnerHtml.ShouldContain(title);
         }
 
         [Fact]
@@ -127,34 +113,44 @@
 
             IHtmlNode tag = renderer.TitleTag();
 
-            Assert.Equal("span", tag.TagName);
-            Assert.Contains("t-window-title", tag.Attribute("class"));
-            Assert.Contains("Window", tag.Children[0].InnerHtml);
+            tag.TagName.ShouldEqual("span");
+            tag.Children[0].InnerHtml.ShouldContain("Window");
         }
 
         [Fact]
         public void ButtonTag_should_render_link_with_span_in_it()
         {
-            IHtmlNode linkTag = renderer.ButtonTag(window.Buttons.Container[0]);
+            HeaderButton button = new HeaderButton { Name = "foo", CssClass = "bar", Url = "baz" };
+
+            IHtmlNode linkTag = renderer.ButtonTag(button);
+
+            linkTag.Children.ShouldNotBeEmpty();
+            linkTag.TagName.ShouldEqual("a");
+            linkTag.ShouldHaveClasses(UIPrimitives.Window.Action, UIPrimitives.Link);
+            linkTag.Children[0].TagName.ShouldEqual("span");
+        }
+
+        [Fact]
+        public void ButtonTag_honors_button_properties()
+        {
+            const string name = "foo", cssClass = "bar", url = "baz";
+
+            HeaderButton button = new HeaderButton { Name = name, CssClass = cssClass, Url = url };
+
+            IHtmlNode linkTag = renderer.ButtonTag(button);
+            linkTag.Attribute("href").ShouldEqual(url);
+
             IHtmlNode spanTag = linkTag.Children[0];
-
-            Assert.Equal("a", linkTag.TagName);
-            Assert.Contains("#", linkTag.Attribute("href"));
-            Assert.Contains("t-window-action", linkTag.Attribute("class"));
-            Assert.Contains(UIPrimitives.Link, linkTag.Attribute("class"));
-
-            Assert.Equal("span", spanTag.TagName);
-            Assert.Equal("Close", spanTag.InnerHtml);
-            Assert.Contains(UIPrimitives.Icon + " t-close", spanTag.Attribute("class"));
+            spanTag.InnerHtml.ShouldEqual(name);
+            spanTag.ShouldHaveClasses(UIPrimitives.Icon, cssClass);
         }
 
         [Fact]
         public void ContentTag_should_render_div_and_class()
         {
-            IHtmlNode tag = renderer.ContentTag();
-
-            Assert.Equal("div", tag.TagName);
-            Assert.Equal("t-window-content " + UIPrimitives.Content, tag.Attribute("class"));
+            renderer.ContentTag()
+                .ShouldHaveClasses(UIPrimitives.Window.Content, UIPrimitives.Content)
+                .TagName.ShouldEqual("div");
         }
 
         [Fact]
@@ -163,9 +159,8 @@
             window.Height = 300;
             window.Width = 300;
 
-            IHtmlNode tag = renderer.ContentTag();
-
-            Assert.Equal("overflow:auto;width:300px;height:300px", tag.Attribute("style"));
+            renderer.ContentTag()
+                .Attribute("style").ShouldEqual("overflow:auto;width:300px;height:300px");
         }
 
         [Fact]
@@ -175,9 +170,8 @@
             window.Width = 300;
             window.Scrollable = false;
 
-            IHtmlNode tag = renderer.ContentTag();
-
-            Assert.Equal("overflow:hidden;width:300px;height:300px", tag.Attribute("style"));
+            renderer.ContentTag()
+                .Attribute("style").ShouldEqual("overflow:hidden;width:300px;height:300px");
         }
 
         [Fact]
@@ -185,9 +179,8 @@
         {
             window.ContentUrl = "http://www.abv.bg";
 
-            IHtmlNode content = renderer.ContentTag();
-
-            Assert.Equal("iframe", content.Children[0].TagName);
+            renderer.ContentTag()
+                .Children[0].TagName.ShouldEqual("iframe");
         }
 
         [Fact]
@@ -195,9 +188,8 @@
         {
             window.ContentUrl = "http://www.abv.bg";
 
-            IHtmlNode content = renderer.ContentTag();
-
-            Assert.Equal(window.ContentUrl, content.Children[0].Attribute("src"));
+            renderer.ContentTag()
+                .Children[0].Attribute("src").ShouldEqual(window.ContentUrl);
         }
 
         [Fact]
@@ -205,7 +197,7 @@
         {
             IHtmlNode content = renderer.ContentTag();
 
-            Assert.Equal(0, content.Children.Count);
+            content.Children.ShouldBeEmpty();
         }
 
         [Fact]
@@ -215,7 +207,17 @@
 
             IHtmlNode content = renderer.ContentTag();
 
-            Assert.Equal(0, content.Children.Count);
+            content.Children.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ContentTag_should_render_content_within_iframe_tag_for_browsers_that_do_not_support_frames()
+        {
+            window.ContentUrl = "http://www.abv.bg";
+
+            IHtmlNode content = renderer.ContentTag();
+
+            content.Children[0].InnerHtml.ShouldNotEqual(string.Empty);
         }
     }
 }

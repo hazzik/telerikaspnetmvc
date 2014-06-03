@@ -3,11 +3,13 @@
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
-namespace Telerik.Web.Mvc.Infrastructure.Implementation
+namespace Telerik.Web.Mvc
 {
     using System.Linq;
     using System.Linq.Expressions;
-    using Telerik.Web.Mvc.Infrastructure.Implementation.Expressions;
+    using Infrastructure.Implementation;
+    using Infrastructure.Implementation.Expressions;
+
     /// <summary>
     /// Represents an <see cref="AggregateFunction"/> that uses aggregate extension 
     /// methods provided in <see cref="Enumerable"/>.
@@ -18,10 +20,12 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         /// Creates the aggregate expression using <see cref="EnumerableAggregateFunctionExpressionBuilder"/>.
         /// </summary>
         /// <param name="enumerableExpression">The grouping expression.</param>
+        /// <param name="liftMemberAccessToNull"></param>
         /// <returns></returns>
-        public override Expression CreateAggregateExpression(Expression enumerableExpression)
+        public override Expression CreateAggregateExpression(Expression enumerableExpression, bool liftMemberAccessToNull)
         {
             var builder = new EnumerableAggregateFunctionExpressionBuilder(enumerableExpression, this);
+            builder.Options.LiftMemberAccessToNull = liftMemberAccessToNull;
             return builder.CreateAggregateExpression();
         }
     }

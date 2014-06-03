@@ -15,7 +15,7 @@ namespace Telerik.Web.Mvc.UI
 
     public class NumericTextBox<T> : TextBoxBase<T> where T : struct
     {
-        public NumericTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextboxBaseHtmlBuilderFactory<T> rendererFactory)
+        public NumericTextBox(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, ITextBoxBaseHtmlBuilderFactory<T> rendererFactory)
             : base(viewContext, clientSideObjectWriterFactory, rendererFactory)
         {
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.textbox.js" });
@@ -97,12 +97,12 @@ namespace Telerik.Web.Mvc.UI
 
             if (Nullable.Compare<T>(MinValue, MaxValue) == 1)
             {
-                throw new ArgumentException(TextResource.MinValueShouldBeLessThanMaxValue);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
             }
 
-            if ((Value != null) && (Nullable.Compare<T>(MinValue, MaxValue) == 1 || Nullable.Compare<T>(MinValue, MaxValue) == 1))
+            if (Value != null && (Nullable.Compare<T>(Value, MaxValue) == 1 || Nullable.Compare<T>(Value, MinValue) == -1))
             {
-                throw new ArgumentOutOfRangeException(TextResource.ValueOutOfRange);
+                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
             }
 
             if (NegativePatternIndex < 0 || NegativePatternIndex > 4)

@@ -28,18 +28,7 @@ using System.Collections.Generic;
 
             Assert.Equal("div", tag.TagName);
         }
-
-        [Fact]
-        public void Build_should_output_render_id()
-        {
-            const string id = "testName";
-            dropDownList.Name = id;
-
-            IHtmlNode tag = renderer.Build();
-
-            Assert.Equal(id, tag.Attribute("id"));
-        }
-
+        
         [Fact]
         public void Build_should_output_render_css_classes()
         {
@@ -126,6 +115,34 @@ using System.Collections.Generic;
         }
 
         [Fact]
+        public void InnerContentTag_should_render_break_space_if_Text_is_empty()
+        {
+            dropDownList.Items.Add(new DropDownItem { Text = "", Value = "1" });
+            dropDownList.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            dropDownList.SelectedIndex = 0;
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            IHtmlNode textSpan = tag.Children[0];
+
+            Assert.Equal("&nbsp;", textSpan.InnerHtml);
+        }
+
+        [Fact]
+        public void InnerContentTag_should_render_break_space_if_Text_is_empty_space()
+        {
+            dropDownList.Items.Add(new DropDownItem { Text = " ", Value = "1" });
+            dropDownList.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            dropDownList.SelectedIndex = 0;
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            IHtmlNode textSpan = tag.Children[0];
+
+            Assert.Equal("&nbsp;", textSpan.InnerHtml);
+        }
+
+        [Fact]
         public void DropDownListInnerContentTag_should_contain_selected_item_text()
         {
             dropDownList.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
@@ -137,6 +154,20 @@ using System.Collections.Generic;
             IHtmlNode textSpan = tag.Children[0];
 
             Assert.Equal("Item1", textSpan.InnerHtml);
+        }
+
+        [Fact]
+        public void DropDownListInnerContentTag_should_render_text_of_second_item()
+        {
+            dropDownList.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
+            dropDownList.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
+            dropDownList.SelectedIndex = 1;
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            IHtmlNode textSpan = tag.Children[0];
+
+            Assert.Equal("Item2", textSpan.InnerHtml);
         }
 
         [Fact]
@@ -182,7 +213,7 @@ using System.Collections.Generic;
 
             IHtmlNode tag = renderer.HiddenInputTag();
 
-            Assert.Equal(dropDownList.Id + "-value", tag.Attribute("id"));
+            Assert.Equal(dropDownList.Id, tag.Attribute("id"));
             Assert.Equal(dropDownList.Name, tag.Attribute("name"));
         }
 

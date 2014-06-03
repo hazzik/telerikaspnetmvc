@@ -16,12 +16,12 @@
 						    clear separation of concerns, easy testability - while helping make you more
 						    productive building MVC views.
 					    </p>
-					<%});
+					<%})
+                    .Expanded(true);
 
 				parent.Add()
                     .Text("Completely Open Source")
-					.LoadContentFrom("AjaxView_OpenSource", "PanelBar")
-                    .Expanded(true);
+					.LoadContentFrom("AjaxView_OpenSource", "PanelBar");
 				
                 parent.Add()
                     .Text("Exceptional Performance")

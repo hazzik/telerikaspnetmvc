@@ -4,6 +4,7 @@
 
     <%= Html.Telerik().ComboBox()
                       .Name("ComboBox")
+                      .HtmlAttributes(new {id="ComboBox_wrapper"})
                       .AutoFill(Model.ComboBoxAttributes.AutoFill.Value)
                       .BindTo(new SelectList(Model.Products, "ProductID", "ProductName"))
                       .Filterable(filtering =>
@@ -49,7 +50,7 @@
                 %>
             </li>
             <li>
-                <strong>start filtering</strong> after
+                <label for="ComboBoxAttributes_MinimumChars"><strong>start filtering</strong> after</label>
                 <% Html.Telerik().IntegerTextBoxFor(m => m.ComboBoxAttributes.MinimumChars)
                                  .InputHtmlAttributes(new { style = "width: 60px" })
                                  .MinValue(0)
@@ -69,15 +70,15 @@
                 chars            
             </li>
             <li>
-                <strong>highlight</strong> first item
+                <label for="ComboBoxAttributes_HighlightFirst"><strong>highlight</strong> first item</label>
                 <%= Html.CheckBox("ComboBoxAttributes.HighlightFirst", Model.ComboBoxAttributes.HighlightFirst.GetValueOrDefault(false), new { title = "HighlightFirst" })%>
             </li>
             <li>
-                <strong>auto-filling</strong> text
+                <label for="ComboBoxAttributes_AutoFill"><strong>auto-filling</strong> text</label>
                 <%= Html.CheckBox("ComboBoxAttributes.AutoFill", Model.ComboBoxAttributes.AutoFill.GetValueOrDefault(false), new { title = "AutoFill" })%>
             </li>
         </ul>
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
 
     <%= Html.Telerik().AutoComplete()
@@ -91,6 +92,7 @@
                       })
                       .HighlightFirstMatch(Model.AutoCompleteAttributes.HighlightFirst.Value)
                       .Multiple( multi => multi.Enabled(Model.AutoCompleteAttributes.AllowMultipleValues.Value))
+                      .Encode(false)
     %>
     
     <% using (Html.Configurator("The AutoComplete should...")
@@ -112,7 +114,7 @@
                 %>
             </li>
             <li>
-                <strong>start filtering</strong> after
+                <label for="AutoCompleteAttributes_MinimumChars"><strong>start filtering</strong> after</label>
                 <%= Html.Telerik().IntegerTextBoxFor(m => m.AutoCompleteAttributes.MinimumChars)
                                   .InputHtmlAttributes(new { style = "width: 60px" })
                                   .MinValue(1)
@@ -121,19 +123,19 @@
                 chars            
             </li>
             <li>
-                <strong>highlight</strong> first item
+                <label for="AutoCompleteAttributes_HighlightFirst"><strong>highlight</strong> first item</label>
                 <%= Html.CheckBox("AutoCompleteAttributes.HighlightFirst", Model.AutoCompleteAttributes.HighlightFirst.GetValueOrDefault(false), new { title = "HighlightFirst" })%>
             </li>
             <li>
-                <strong>auto-filling</strong> text
+                <label for="AutoCompleteAttributes_AutoFill"><strong>auto-filling</strong> text</label>
                 <%= Html.CheckBox("AutoCompleteAttributes.AutoFill", Model.AutoCompleteAttributes.AutoFill.GetValueOrDefault(false), new { title = "AutoFill" })%>
             </li>
             <li>
-                allow <strong>multiple</strong> values
+                <label for="AutoCompleteAttributes_AllowMultipleValues">allow <strong>multiple</strong> values</label>
                 <%= Html.CheckBox("AutoCompleteAttributes.AllowMultipleValues", Model.AutoCompleteAttributes.AllowMultipleValues.GetValueOrDefault(false), new { title = "AllowMultipleValues" })%>
             </li>
         </ul>
-        <button type="submit" class="t-button t-state-default">Apply</button>
+        <button type="submit" class="t-button">Apply</button>
     <% } %>
 
 </asp:content>
@@ -148,7 +150,7 @@
             float: left;
         }
         
-        #ComboBox
+        #ComboBox_wrapper
         {
             margin-bottom: 280px;
             float: left;

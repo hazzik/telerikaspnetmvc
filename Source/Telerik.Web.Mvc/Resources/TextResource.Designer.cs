@@ -70,6 +70,24 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must use InCell edit mode for batch updates..
+        /// </summary>
+        internal static string BatchUpdatesRequireInCellMode {
+            get {
+                return ResourceManager.GetString("BatchUpdatesRequireInCellMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Update data binding setting is required for batch updates. Please specify the Update action or url in the DataBinding configuration..
+        /// </summary>
+        internal static string BatchUpdatesRequireUpdate {
+            get {
+                return ResourceManager.GetString("BatchUpdatesRequireUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &quot;{0}&quot; cannot be negative..
         /// </summary>
         internal static string CannotBeNegative {
@@ -209,15 +227,6 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Date should be bigger than MinDate and less than MaxDate..
-        /// </summary>
-        internal static string DateOutOfRange {
-            get {
-                return ResourceManager.GetString("DateOutOfRange", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Delete data binding setting is required by the delete command. Please specify the Delete action or url in the DataBinding configuration..
         /// </summary>
         internal static string DeleteCommandRequiresDelete {
@@ -232,6 +241,15 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string EditCommandRequiresUpdate {
             get {
                 return ResourceManager.GetString("EditCommandRequiresUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} should not be bigger then {1}..
+        /// </summary>
+        internal static string FirstPropertyShouldNotBeBiggerThenSecondProperty {
+            get {
+                return ResourceManager.GetString("FirstPropertyShouldNotBeBiggerThenSecondProperty", resourceCulture);
             }
         }
         
@@ -268,6 +286,15 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string GroupWithSpecifiedNameDoesNotExistPleaseMakeSureYouHaveSpecifiedACorrectName {
             get {
                 return ResourceManager.GetString("GroupWithSpecifiedNameDoesNotExistPleaseMakeSureYouHaveSpecifiedACorrectName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InCell editing mode is not supported in server binding mode.
+        /// </summary>
+        internal static string InCellModeNotSupportedInServerBinding {
+            get {
+                return ResourceManager.GetString("InCellModeNotSupportedInServerBinding", resourceCulture);
             }
         }
         
@@ -326,38 +353,11 @@ namespace Telerik.Web.Mvc.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MinDate should be less than MaxDate..
+        ///   Looks up a localized string similar to {0} should be less than {1}..
         /// </summary>
-        internal static string MinDateShouldBeLessThanMaxDate {
+        internal static string MinPropertyMustBeLessThenMaxProperty {
             get {
-                return ResourceManager.GetString("MinDateShouldBeLessThanMaxDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MinHeight should be less than MaxHeight..
-        /// </summary>
-        internal static string MinHeightShouldBeLessThanMaxHeight {
-            get {
-                return ResourceManager.GetString("MinHeightShouldBeLessThanMaxHeight", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MinValue should be less than MaxValue.
-        /// </summary>
-        internal static string MinValueShouldBeLessThanMaxValue {
-            get {
-                return ResourceManager.GetString("MinValueShouldBeLessThanMaxValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MinWidth should be less than MaxWidth..
-        /// </summary>
-        internal static string MinWidthShouldBeLessThanMaxWidth {
-            get {
-                return ResourceManager.GetString("MinWidthShouldBeLessThanMaxWidth", resourceCulture);
+                return ResourceManager.GetString("MinPropertyMustBeLessThenMaxProperty", resourceCulture);
             }
         }
         
@@ -403,6 +403,24 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string OnlyPropertyAndFieldExpressionsAreSupported {
             get {
                 return ResourceManager.GetString("OnlyPropertyAndFieldExpressionsAreSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} must be begger then 0..
+        /// </summary>
+        internal static string PropertyMustBeBiggerThenZero {
+            get {
+                return ResourceManager.GetString("PropertyMustBeBiggerThenZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be positive number..
+        /// </summary>
+        internal static string PropertyMustBePositiveNumber {
+            get {
+                return ResourceManager.GetString("PropertyMustBePositiveNumber", resourceCulture);
             }
         }
         
@@ -502,15 +520,6 @@ namespace Telerik.Web.Mvc.Resources {
         internal static string ValueNotValidForProperty {
             get {
                 return ResourceManager.GetString("ValueNotValidForProperty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Value should be bigger than MinValue and less than MaxValue..
-        /// </summary>
-        internal static string ValueOutOfRange {
-            get {
-                return ResourceManager.GetString("ValueOutOfRange", resourceCulture);
             }
         }
         

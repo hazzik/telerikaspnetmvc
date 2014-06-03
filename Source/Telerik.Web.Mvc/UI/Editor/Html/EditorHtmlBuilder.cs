@@ -20,7 +20,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         public IHtmlNode CreateEditor()
         {
-            return new HtmlTag("table")
+            return new HtmlElement("table")
                     .Attributes(new { id = editor.Id, cellspacing = "4", cellpadding = "0" })
                     .Attributes(editor.HtmlAttributes)
                     .PrependClass(UIPrimitives.Widget, "t-editor", UIPrimitives.Header);
@@ -28,15 +28,15 @@ namespace Telerik.Web.Mvc.UI.Html
 
         public IHtmlNode CreateTextArea()
         {
-            var content = new HtmlTag("textarea")
+            var content = new HtmlElement("textarea")
                             .Attributes(new
                             {
-                                @class = "t-content t-raw-content",
                                 cols = "20",
                                 rows = "5",
                                 name = editor.Name,
                                 id = editor.Id + "-value"
-                            });
+                            })
+                            .PrependClass(UIPrimitives.Content, UIPrimitives.Editor.RawContent);
 
             var value = editor.ViewContext.ViewData.Eval(editor.Name) ?? editor.Value;
 
@@ -67,21 +67,21 @@ namespace Telerik.Web.Mvc.UI.Html
         {
             var root = CreateEditor();
 
-            var toolbarRow = new HtmlTag("tr").AppendTo(root);
+            var toolbarRow = new HtmlElement("tr").AppendTo(root);
 
             if (editor.DefaultToolGroup.Tools.Any())
             {
-                CreateToolBar().AppendTo(new HtmlTag("td").AddClass("t-editor-toolbar-wrap").AppendTo(toolbarRow));
+                CreateToolBar().AppendTo(new HtmlElement("td").AddClass("t-editor-toolbar-wrap").AppendTo(toolbarRow));
             }
 
-            var editableCell = new HtmlTag("td")
+            var editableCell = new HtmlElement("td")
                 .AddClass("t-editable-area")
-                .AppendTo(new HtmlTag("tr").AppendTo(root));
+                .AppendTo(new HtmlElement("tr").AppendTo(root));
 
             var textarea = CreateTextArea();
             textarea.AppendTo(editableCell);
             
-            var script = new HtmlTag("script")
+            var script = new HtmlElement("script")
                             .Attribute("type", "text/javascript")
                             .Html("document.getElementById('" + textarea.Attribute("id") + "').style.display='none'");
 

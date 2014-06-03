@@ -1,23 +1,18 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-    <h2>
-        ImageCommand</h2>
+    
     <%= Html.Telerik().Editor().Name("Editor") %>
+
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
     <script type="text/javascript">
         var editor;
         var ImageCommand;
-
-        function setUp() {
-            editor = getEditor();
-            ImageCommand = $.telerik.editor.ImageCommand;
-        }
-
-        function tearDown() {
-            var wnd = $('.t-window').data('tWindow');
-            if (wnd) wnd.destroy();
-        }
 
         function execImageCommandOnRange(range) {
             var command = new ImageCommand({ range: range });
@@ -27,48 +22,59 @@
             return command;
         }
 
-        function test_exec_creates_window() {
+        module("Editor / ImageCommand", {
+            setup: function() {
+                editor = getEditor();
+                ImageCommand = $.telerik.editor.ImageCommand;
+            },
+            teardown: function() {
+                var wnd = $('.t-window').data('tWindow');
+                if (wnd) wnd.destroy();
+            }
+        });
+
+        test('exec creates window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
-            assertEquals(1, $('.t-window').length)
-        }
+            equal($('.t-window').length, 1)
+        });
 
-        function test_clicking_close_closes_the_window() {
+        test('clicking close closes the window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
             $('.t-dialog-close').click();
-            assertEquals(0, $('.t-window').length)
-        }
+            equal($('.t-window').length, 0)
+        });
 
-        function test_clicking_insert_closes_the_window() {
+        test('clicking insert closes the window', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
             $('.t-dialog-insert').click();
-            assertEquals(0, $('.t-window').length)
-        }
+            equal($('.t-window').length, 0)
+        });
 
-        function test_clicking_insert_inserts_image_if_url_is_set() {
+        test('clicking insert inserts image if url is set', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
             $('#t-editor-image-url').val('foo');
             $('.t-dialog-insert').click();
-            assertEquals('<img alt="" src="foo" />', editor.value())
-        }
+            equal(editor.value(), '<img alt="" src="foo" />')
+        });
 
-        function test_clicking_insert_does_not_inserts_image_if_url_is_not_set() {
+        test('clicking insert does not inserts image if url is not set', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
             $('#t-editor-image-url').val('');
             $('.t-dialog-insert').click();
-            assertEquals('foo', editor.value())
-        }
+            equal(editor.value(), 'foo')
+        });
 
-        function test_clicking_insert_updates_existing_src() {
+        test('clicking insert updates existing src', function() {
             editor.value('<img src="bar" style="float:left" />');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
@@ -76,19 +82,19 @@
 
             $('#t-editor-image-url').val('foo');
             $('.t-dialog-insert').click();
-            assertEquals('<img alt="" src="foo" style="float:left;" />', editor.value())
-        }
+            equal(editor.value(), '<img alt="" src="foo" style="float:left;" />')
+        });
 
-        function test_url_text_is_set() {
+        test('url text is set', function() {
             editor.value('<img src="bar" />');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
             execImageCommandOnRange(range);
 
-            assertEquals('bar', $('#t-editor-image-url').val());
-        }
+            equal($('#t-editor-image-url').val(), 'bar');
+        });
 
-        function test_hitting_enter_in_url_inserts_image() {
+        test('hitting enter in url inserts image', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
@@ -100,11 +106,11 @@
                 .val('http://foo')
                 .trigger(e);
 
-            assertEquals('<img alt="" src="http://foo" />', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), '<img alt="" src="http://foo" />')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_hitting_esc_in_url_cancels() {
+        test('hitting esc in url cancels', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
@@ -116,11 +122,11 @@
                 .val('foo')
                 .trigger(e);
 
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_hitting_enter_in_title_field_inserts_link() {
+        test('hitting enter in title field inserts link', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
@@ -132,11 +138,11 @@
                 .val('http://foo')
             $('#t-editor-image-title').trigger(e);
 
-            assertEquals('<img alt="" src="http://foo" />', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), '<img alt="" src="http://foo" />')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_hitting_esc_in_title_cancels() {
+        test('hitting esc in title cancels', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
@@ -149,11 +155,11 @@
 
             $('#t-editor-image-title').trigger(e);
 
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
 
-        function test_setting_title_sets_alt() {
+        test('setting title sets alt', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
 
@@ -164,19 +170,19 @@
                 .val('bar')
 
             $('.t-dialog-insert').click();
-            assertEquals('<img alt="bar" src="http://foo" />', editor.value())
-        }
+            equal(editor.value(), '<img alt="bar" src="http://foo" />')
+        });
 
-        function test_title_text_box_is_filled_from_alt() {
+        test('title text box is filled from alt', function() {
             editor.value('<img src="foo" alt="bar" />');
             var range = editor.createRange();
             range.selectNode(editor.body.firstChild);
             execImageCommandOnRange(range);
 
-            assertEquals('bar', $('#t-editor-image-title').val());
-        }
+            equal($('#t-editor-image-title').val(), 'bar');
+        });
 
-        function test_undo_restores_content() {
+        test('undo restores content', function() {
             var range = createRangeFromText(editor, '|foo|');
 
             var command = execImageCommandOnRange(range);
@@ -186,11 +192,11 @@
 
             $('.t-dialog-insert').click();
             command.undo();
-            assertEquals('foo', editor.value());
-        }
+            equal(editor.value(), 'foo');
+        });
 
 
-        function test_exec_inserts_image_with_empty_range() {
+        test('exec inserts image with empty range', function() {
             editor.value('foo ');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 4);
@@ -202,19 +208,19 @@
                 .val('http://foo');
 
             $('.t-dialog-insert').click();
-            assertEquals('foo <img alt="" src="http://foo" />', editor.value())
-        }
+            equal(editor.value(), 'foo <img alt="" src="http://foo" />')
+        });
 
-        function test_link_is_not_created_if_url_is_http_slash_slash() {
+        test('link is not created if url is http slash slash', function() {
             var range = createRangeFromText(editor, '|foo|');
             
             execImageCommandOnRange(range);
 
             $('.t-dialog-insert').click();
-            assertEquals('foo', editor.value())
-        }
+            equal(editor.value(), 'foo')
+        });
 
-        function test_cursor_is_put_after_image() {
+        test('cursor is put after image', function() {
             var range = createRangeFromText(editor, '|foo|bar');
             execImageCommandOnRange(range);
 
@@ -225,17 +231,19 @@
             
             range = editor.getRange();
             range.insertNode(editor.document.createElement('span'));
-            assertEquals('<img alt="" src="http://foo" /><span></span>bar', editor.value());
-        }
+            equal(editor.value(), '<img alt="" src="http://foo" /><span></span>bar');
+        });
 
-        function test_closing_the_window_restores_content() {
+        test('closing the window restores content', function() {
             var range = createRangeFromText(editor, '|foo|');
             execImageCommandOnRange(range);
             
             $('.t-window').css({width:200,height:300}).find('.t-close').click();
 
-            assertEquals('foo', editor.value())
-            assertEquals(0, $('.t-window').length);
-        }
-    </script>
+            equal(editor.value(), 'foo')
+            equal($('.t-window').length, 0);
+        });
+
+</script>
+
 </asp:Content>

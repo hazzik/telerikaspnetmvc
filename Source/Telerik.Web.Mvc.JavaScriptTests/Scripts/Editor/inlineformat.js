@@ -65,25 +65,9 @@ function InlineFormatter(format, values) {
 
     this.toggle = function (range) {
         var nodes = textNodes(range);
-        var isPending = nodes.length == 0;
-        var caretMarker;
 
-        if (isPending) {
-            var markers = getMarkers(range);
-            caretMarker = markers[1];
-            var invisibleNode = this.editor.document.createTextNode('\ufeff');
-            dom.insertBefore(invisibleNode, caretMarker);
-            nodes.push(invisibleNode);
-            invisibleNode = invisibleNode.cloneNode(true);
-            dom.insertAfter(invisibleNode, caretMarker);
-            nodes.push(invisibleNode);
-            range.setEndAfter(markers[2]);
-        }
-
-        this.activate(range, nodes);
-
-        if (isPending)
-            this.editor.pendingFormats.push(caretMarker.parentNode);
+        if (nodes.length > 0)
+            this.activate(range, nodes);
     }
 
     this.apply = function (nodes) {
@@ -114,18 +98,12 @@ function InlineFormatter(format, values) {
     this.split = function (range) {
         var nodes = textNodes(range);
 
-        var isPending = nodes.length == 0;
-        var caretMarker;
-
-        if (isPending) {
-            caretMarker = getMarkers(range)[1];
-            nodes.push(caretMarker);
-        }
-
-        for (var i = 0, l = nodes.length; i < l; i++) {
-            var formatNode = this.finder.findFormat(nodes[i]);
-            if (formatNode)
-                split(range, formatNode, true);
+        if (nodes.length > 0) {
+            for (var i = 0, l = nodes.length; i < l; i++) {
+                var formatNode = this.finder.findFormat(nodes[i]);
+                if (formatNode)
+                    split(range, formatNode, true);
+            }
         }
     }
 
@@ -154,10 +132,12 @@ function GreedyInlineFormatFinder(format, greedyProperty) {
         var attributes = node.attributes,
             trim = $.trim;
 
+        if (!attributes) return;
+
         for (var i = 0, l = attributes.length; i < l; i++) {
-            var attribute = attributes[i];
-            var name = attribute.nodeName;
-            var attributeValue = attribute.nodeValue;
+            var attribute = attributes[i],
+                name = attribute.nodeName,
+                attributeValue = attribute.nodeValue;
 
             if (attribute.specified && name == 'style') {
                 
@@ -217,6 +197,7 @@ function GreedyInlineFormatter(format, values, greedyProperty) {
 
     this.activate = function(range, nodes) {
         this.split(range);
+
         if (greedyProperty) {
             var camelCase = greedyProperty.replace(/-([a-z])/, function(all, letter){return letter.toUpperCase()});
             this[values.style[camelCase] == 'inherit' ? 'remove' : 'apply'](nodes);
@@ -226,20 +207,26 @@ function GreedyInlineFormatter(format, values, greedyProperty) {
     }
 }
 
+function inlineFormatWillDelayExecution (range) {
+    return range.collapsed && !RangeUtils.isExpandable(range);
+}
+
 function InlineFormatTool(options) {
     FormatTool.call(this, $.extend(options, {
         finder: new InlineFormatFinder(options.format),
         formatter: function () { return new InlineFormatter(options.format) }
     }));
+
+    this.willDelayExecution = inlineFormatWillDelayExecution;
 }
 
 function FontTool(options){
     Tool.call(this, options);
     
     // IE has single selection hence we are using select box instead of combobox
-    var type = $.browser.msie ? 'tSelectBox' : 'tComboBox';
-
-    var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], options.cssAttr);
+    var type = $.browser.msie ? 'tSelectBox' : 'tComboBox',
+        format = [{ tags: ['span'] }],
+        finder = new GreedyInlineFormatFinder(format, options.cssAttr);
 
     this.command = function (commandArguments) {
         return new FormatCommand($.extend(commandArguments, {
@@ -247,20 +234,27 @@ function FontTool(options){
                 var style = {};
                 style[options.domAttr] = commandArguments.value;
 
-                return new GreedyInlineFormatter([{ tags: ['span'] }], { style: style }, options.cssAttr); 
+                return new GreedyInlineFormatter(format, { style: style }, options.cssAttr); 
             }
         }))        
     }
 
-    this.update = function ($ui, nodes) {
+    this.willDelayExecution = inlineFormatWillDelayExecution;
+    
+    this.update = function($ui, nodes, pendingFormats) {
         var list = $ui.data(type);
         list.close();
-        list.value(finder.getFormat(nodes));
-    } 
-    
-    this.init = function($ui, initOptions) {
+
+        var pendingFormat = pendingFormats.getPending(this.name);
+
+        var format = (pendingFormat && pendingFormat.params) ? pendingFormat.params.value : finder.getFormat(nodes)
+
+        list.value(format);
+    }
+
+    this.init = function ($ui, initOptions) {
         var editor = initOptions.editor;
-        
+
         $ui[type]({
             data: editor[options.name],
             onChange: function (e) {
@@ -269,17 +263,20 @@ function FontTool(options){
             highlightFirst: false
         });
 
-        $ui.data(type).dropDown.onItemCreate =
-            function (e) {
-                e.html = '<span unselectable="on" style="' + options.cssAttr +  ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
-            };
+        var component = $ui.data(type);
+        component.value('inherit');
+        component.dropDown.onItemCreate =
+                function (e) {
+                    e.html = '<span unselectable="on" style="' + options.cssAttr + ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
+                };
     }
 };
 
 function ColorTool (options) {
     Tool.call(this, options);
 
-    var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], options.cssAttr);
+    var format = [{ tags: ['span'] }],
+        finder = new GreedyInlineFormatFinder(format, options.cssAttr);
     
     this.update = function($ui) {
         $ui.data('tColorPicker').close();
@@ -292,10 +289,12 @@ function ColorTool (options) {
                 var style = {};
                 style[options.domAttr] = commandArguments.value;
 
-                return new GreedyInlineFormatter([{ tags: ['span'] }], { style: style }, options.cssAttr); 
+                return new GreedyInlineFormatter(format, { style: style }, options.cssAttr); 
             }
         }))        
     }
+
+    this.willDelayExecution = inlineFormatWillDelayExecution;
 
     this.init = function($ui, initOptions) {
         var editor = initOptions.editor;
@@ -311,12 +310,13 @@ function ColorTool (options) {
 
 function StyleTool() {
     Tool.call(this);
-    var finder = new GreedyInlineFormatFinder([{ tags: ['span'] }], 'className');
+    var format = [{ tags: ['span'] }],
+        finder = new GreedyInlineFormatFinder(format, 'className');
     
     this.command = function (commandArguments) {
         return new FormatCommand($.extend(commandArguments, {
             formatter: function () { 
-                return new GreedyInlineFormatter([{ tags: ['span'] }], { className: commandArguments.value }); 
+                return new GreedyInlineFormatter(format, { className: commandArguments.value }); 
             }
         }));
     }

@@ -21,11 +21,11 @@ function createContentElement($textarea, stylesheets) {
             .cat('<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />')
             .cat('<style type="text/css">')
                 .cat('html,body{padding:0;margin:0;font-family:Verdana,Geneva,sans-serif;background:#fff;}')
-                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5em;padding-top:1px;margin-top:-1px;')
+                .cat('html{font-size:100%}body{font-size:.75em;line-height:1.5;padding-top:1px;margin-top:-1px;')
                     .catIf('direction:rtl;', $textarea.closest('.t-rtl').length)
                 .cat('}')
                 .cat('h1{font-size:2em;margin:.67em 0}h2{font-size:1.5em}h3{font-size:1.16em}h4{font-size:1em}h5{font-size:.83em}h6{font-size:.7em}')
-                .cat('p{margin:1em 0;padding:0 .2em}.t-marker{display:none;}.t-paste-container{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}')
+                .cat('p{margin:0 0 1em;padding:0 .2em}.t-marker{display:none;}.t-paste-container{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}')
                 .cat('ul,ol{padding-left:2.5em}')
                 .cat('a{color:#00a}')
                 .cat('code{font-size:1.23em}')
@@ -43,25 +43,6 @@ function createContentElement($textarea, stylesheets) {
 
 function selectionChanged(editor) {
     $t.trigger(editor.element, 'selectionChange');
-}
-
-function removePendingFormats(editor) {
-    if (editor.pendingFormats.length == 0) return;
-
-    editor.pendingFormats.reverse();
-
-    $.each(editor.pendingFormats, function() {
-        for (var node = this.firstChild; node; node = node.nextSibling)
-            while (node.nodeType == 3 && (charIndex = node.nodeValue.indexOf('\ufeff')) >= 0)
-                node.deleteData(charIndex, 1);
-    });
-
-    $.each(editor.pendingFormats, function() {
-        if (this.innerHTML == '' && this.parentNode)
-            dom.remove(this);
-    });
-
-    editor.pendingFormats = [];
 }
 
 $t.editor = function (element, options) {
@@ -85,8 +66,12 @@ $t.editor = function (element, options) {
         load: this.onLoad,
         selectionChange: this.onSelectionChange,
         change: this.onChange,
-        execute: this.onExecute
+        execute: this.onExecute,
+        error: this.onError
     });
+
+    for (var id in this.tools)
+        this.tools[id].name = id.toLowerCase();
         
     this.textarea = $element.find('textarea').attr('autocomplete', 'off')[0];
     this.window = createContentElement($(this.textarea), this.stylesheets);
@@ -96,7 +81,7 @@ $t.editor = function (element, options) {
         
     this.clipboard = new Clipboard(this);
 
-    this.pendingFormats = [];
+    this.pendingFormats = new PendingFormats(this);
         
     this.undoRedoStack = new UndoRedoStack();
 
@@ -123,24 +108,28 @@ $t.editor = function (element, options) {
     }
 
     $(this.window).bind('blur', function () {
-        var old = self.textarea.value;
-        var value = self.encodedValue();
+        var old = self.textarea.value,
+            value = self.encodedValue();
         self.update(value);
+
         if (value != old)
-            $t.trigger(self.element, 'change')
+            $t.trigger(self.element, 'change');
     });
 
-    var toolbarItems = '.t-editor-toolbar > li > *';
-    
-    var buttons = '.t-editor-button .t-tool-icon:not(.t-state-disabled)';
+    var toolbarItems = '.t-editor-toolbar > li > *',
+        buttons = '.t-editor-button .t-tool-icon',
+        enabledButtons = buttons + ':not(.t-state-disabled)',
+        disabledButtons = buttons + '.t-state-disabled';
+
     $element
-        .delegate(buttons, 'mouseenter', $t.hover)
-        .delegate(buttons, 'mouseleave', $t.leave)
+        .delegate(enabledButtons, 'mouseenter', $t.hover)
+        .delegate(enabledButtons, 'mouseleave', $t.leave)
         .delegate(buttons, 'mousedown', $t.preventDefault)
-        .delegate(buttons, 'click', $t.stopAll(function (e) {
+        .delegate(enabledButtons, 'click', $t.stopAll(function (e) {
             self.focus();
             self.exec(toolFromClassName(this));
         }))
+        .delegate(disabledButtons, 'click', function(e) { e.preventDefault(); })
         .find(toolbarItems)
             .each(function () {
                 var toolName = toolFromClassName(this),
@@ -174,22 +163,21 @@ $t.editor = function (element, options) {
             $element.find(toolbarItems).each(function () {
                     var tool = self.tools[toolFromClassName(this)];
                     if (tool)
-                        tool.update($(this), nodes);
+                        tool.update($(this), nodes, self.pendingFormats);
                 });
         });
 
-    $(document).bind('mousedown', function() {
-                if (self.keyboard.typingInProgress())
-                    self.keyboard.endTyping(true);
-               })
-               .bind('DOMNodeInserted', function(e) {
-                    if ($.contains(e.target, self.element) || self.element == e.target) {
-                        $(self.element).find('iframe').remove();
-                        self.window = createContentElement($(self.textarea), self.stylesheets);
-                        self.document = self.window.contentDocument || self.window.document;
-                        self.body = self.document.body;
-                    }
-               });
+    $(document)
+        .bind('DOMNodeInserted', function(e) {
+            if ($.contains(e.target, self.element) || self.element == e.target) {
+                $(self.element).find('iframe').remove();
+                self.window = createContentElement($(self.textarea), self.stylesheets);
+                self.document = self.window.contentDocument || self.window.document;
+                self.body = self.document.body;
+            }
+        });
+
+    var isFirstKeyDown = true;
 
     $(this.document)
         .bind({
@@ -201,17 +189,47 @@ $t.editor = function (element, options) {
                     return false;
                 }
 
+                if (self.keyboard.isTypingKey(e) && self.pendingFormats.hasPending()) {
+                    if (isFirstKeyDown)
+                        isFirstKeyDown = false;
+                    else {
+                        var range = self.getRange();
+                        self.pendingFormats.apply(range);
+                        self.selectRange(range);
+                    } 
+                }
+
                 self.keyboard.clearTimeout();
 
                 self.keyboard.keydown(e);
             },
             keyup: function (e) {
-                var selectionCodes = [8, 9, 13, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
+                var selectionCodes = [8, 9, 33, 34, 35, 36, 37, 38, 39, 40, 40, 45, 46];
 
-                if ($.inArray(e.keyCode, selectionCodes) > -1)
+                if ($.browser.mozilla && e.keyCode == 8)
+                    fixBackspace(self, e);
+                
+                if ($.inArray(e.keyCode, selectionCodes) > -1 || (e.keyCode == 65 && e.ctrlKey && !e.altKey && !e.shiftKey)) {
+                    self.pendingFormats.clear();
                     selectionChanged(self);
+                }
+                
+                if (self.keyboard.isTypingKey(e)) {
+                    var range = self.getRange();
+                    self.pendingFormats.apply(range);
+                    self.selectRange(range);
+                } else
+                    isFirstKeyDown = true;
 
                 self.keyboard.keyup(e);
+            },
+            mousedown: function(e) {
+                self.pendingFormats.clear();
+
+                var target = $(e.target);
+
+                if (!$.browser.gecko && e.which == 2 && target.is('a[href]'))
+                    window.open(target.attr('href'), '_new');
             },
             mouseup: function () {
                 selectionChanged(self);
@@ -219,45 +237,91 @@ $t.editor = function (element, options) {
         });
     
     $(this.body)
+        .bind('focusout', function(e) {
+            if (self.keyboard.typingInProgress())
+                self.keyboard.endTyping(true);
+            try {
+                if (!self.selectionRestorePoint) {
+                    self.selectionRestorePoint = new RestorePoint(self.getRange());
+                } 
+            }
+            catch (e) {
+                
+            }
+        })
         .bind('cut paste', function (e) {
             self.clipboard['on' + e.type](e);
         });
 };
 
+function fixBackspace(editor, e) {
+
+    var range = editor.getRange(),
+        startContainer = range.startContainer;
+
+	if (startContainer == editor.body.firstChild || !dom.isBlock(startContainer)
+    || (startContainer.childNodes.length > 0 && !(startContainer.childNodes.length == 1 && dom.is(startContainer.firstChild, 'br'))))
+        return;
+			
+	var previousBlock = startContainer.previousSibling;
+
+	while (previousBlock && !dom.isBlock(previousBlock))
+        previousBlock = previousBlock.previousSibling;
+
+	if (!previousBlock)
+        return;
+
+	var walker = editor.document.createTreeWalker(previousBlock, NodeFilter.SHOW_TEXT, null, false);
+
+    var textNode;
+
+	while (textNode = walker.nextNode())
+		previousBlock = textNode;
+
+	range.setStart(previousBlock, isDataNode(previousBlock) ? previousBlock.nodeValue.length : 0);
+	range.collapse(true);
+	selectRange(range);
+
+	dom.remove(startContainer);
+
+    e.preventDefault();
+}
+
 $.extend($t.editor, {
-    Dom: dom,
-    RestorePoint: RestorePoint,
-    Marker: Marker,
-    RangeUtils: RangeUtils,
-    RangeEnumerator: RangeEnumerator,
-    LinkFormatter: LinkFormatter,
-    LinkFormatFinder: LinkFormatFinder,
-    LinkCommand: LinkCommand,
-    UnlinkCommand: UnlinkCommand,
-    InlineFormatter: InlineFormatter,
-    GreedyInlineFormatter: GreedyInlineFormatter,
-    InlineFormatFinder: InlineFormatFinder,
-    GreedyInlineFormatFinder: GreedyInlineFormatFinder,
-    BlockFormatter: BlockFormatter,
-    GreedyBlockFormatter: GreedyBlockFormatter,
     BlockFormatFinder: BlockFormatFinder,
+    BlockFormatter: BlockFormatter,
+    Dom: dom,
     FormatCommand: FormatCommand,
-    IndentFormatter: IndentFormatter,
+    GenericCommand: GenericCommand,
+    GreedyBlockFormatter: GreedyBlockFormatter,
+    GreedyInlineFormatFinder: GreedyInlineFormatFinder,
+    GreedyInlineFormatter: GreedyInlineFormatter,
+    ImageCommand: ImageCommand,
     IndentCommand: IndentCommand,
-    OutdentCommand: OutdentCommand,
+    IndentFormatter: IndentFormatter,
+    InlineFormatFinder: InlineFormatFinder,
+    InlineFormatter: InlineFormatter,
+    InsertHtmlCommand: InsertHtmlCommand,
+    Keyboard: Keyboard,
+    LinkCommand: LinkCommand,
+    LinkFormatFinder: LinkFormatFinder,
+    LinkFormatter: LinkFormatter,
+    ListCommand: ListCommand,
     ListFormatFinder: ListFormatFinder,
     ListFormatter: ListFormatter,
-    ListCommand: ListCommand,
-    ParagraphCommand: ParagraphCommand,
+    MSWordFormatCleaner: MSWordFormatCleaner,
+    Marker: Marker,
     NewLineCommand: NewLineCommand,
-    ImageCommand: ImageCommand,
-    InsertHtmlCommand: InsertHtmlCommand,
-    GenericCommand: GenericCommand,
-    UndoRedoStack: UndoRedoStack,
-    TypingHandler: TypingHandler,
+    OutdentCommand: OutdentCommand,
+    ParagraphCommand: ParagraphCommand,
+    PendingFormats: PendingFormats,
+    RangeEnumerator: RangeEnumerator,
+    RangeUtils: RangeUtils,
+    RestorePoint: RestorePoint,
     SystemHandler: SystemHandler,
-    Keyboard: Keyboard,
-    MSWordFormatCleaner: MSWordFormatCleaner
+    TypingHandler: TypingHandler,
+    UndoRedoStack: UndoRedoStack,
+    UnlinkCommand: UnlinkCommand
 });
 
 // public api
@@ -266,13 +330,19 @@ $t.editor.prototype = {
         var body = this.body;
         if (html === undefined) return domToXhtml(body);
 
+        this.pendingFormats.clear();
+
         // Some browsers do not allow setting CDATA sections through innerHTML so we encode them as comments
         html = html.replace(/<!\[CDATA\[(.*)?\]\]>/g, '<!--[CDATA[$1]]-->');
 
         // Encode script tags to avoid execution and lost content (IE)
         html = html.replace(/<script([^>]*)>(.*)?<\/script>/ig, '<telerik:script $1>$2<\/telerik:script>');
 
-        if ($.browser.msie) {
+        // Add <br/>s to empty paragraphs in mozilla
+        if ($.browser.mozilla)
+            html = html.replace(/<p([^>]*)>(\s*)?<\/p>/ig, '<p $1><br _moz_dirty="" /><\/p>');
+
+        if ($.browser.msie && parseInt($.browser.version) < 9) {
             // Internet Explorer removes comments from the beginning of the html
             html = '<br/>' + html;
 
@@ -299,6 +369,10 @@ $t.editor.prototype = {
             });
         } else {
             body.innerHTML = html;
+            if ($.browser.msie) {
+                // having unicode characters creates denormalized DOM tree in IE9
+                normalize(body);
+            }
         }
 
         this.update();
@@ -332,7 +406,14 @@ $t.editor.prototype = {
 
     getRange: function () {
         var selection = this.getSelection();
-        return selection.rangeCount > 0 ? selection.getRangeAt(0) : this.createRange();
+        var range = selection.rangeCount > 0 ? selection.getRangeAt(0) : this.createRange();
+
+        if (range.startContainer == this.document && range.endContainer == this.document && range.startOffset == 0 && range.endOffset == 0) {
+            range.setStart(this.body, 0);
+            range.collapse(true);
+        }
+
+        return range;
     },
 
     selectedHtml: function() {
@@ -355,6 +436,13 @@ $t.editor.prototype = {
 
         if (tool) {
             var range = this.getRange();
+
+            if (!/undo|redo/i.test(name) && tool.willDelayExecution(range)) {
+                this.pendingFormats.toggle({ name: name, params: params, command: tool.command });
+                selectionChanged(this);
+                return;
+            }
+
             var command = tool.command ? tool.command($.extend({ range: range }, params)) : null;
 
             $t.trigger(this.element, 'execute', { name: name, command: command });
@@ -364,7 +452,7 @@ $t.editor.prototype = {
             } else if (command) {
                 if (!command.managesUndoRedo)
                     this.undoRedoStack.push(command);
-
+                    
                 command.editor = this;
                 command.exec();
 
@@ -445,14 +533,20 @@ function Tool(options) {
     }
 
     this.update = function() {
+    }
 
+    this.willDelayExecution = function() {
+        return false;
     }
 }
 
 Tool.exec = function (editor, name, value) {
     editor.focus();
-    if (editor.selectionRestorePoint)
+
+    if (editor.selectionRestorePoint) {
         editor.selectRange(editor.selectionRestorePoint.toRange());
+        editor.selectionRestorePoint = null;
+    }
                     
     editor.exec(name, { value: value });
 }
@@ -466,8 +560,12 @@ function FormatTool(options) {
             }));
     }
 
-    this.update = function($ui, nodes) {
-        $ui.toggleClass('t-state-active', options.finder.isFormatted(nodes));
+    this.update = function($ui, nodes, pendingFormats) {
+        var isPending = pendingFormats.isPending(this.name),
+            isFormatted = options.finder.isFormatted(nodes),
+            isActive = isPending ? !isFormatted : isFormatted;
+
+        $ui.toggleClass('t-state-active', isActive);
     }
 }
 
@@ -495,7 +593,16 @@ var localization = {
     fontSize: 'Select font size',
     fontSizeInherit: '(inherited size)',
     formatBlock: 'Format',
-    style: 'Styles'
+    style: 'Styles',
+    emptyFolder: 'Empty Folder',
+    uploadFile: 'Upload',
+    orderBy: 'Arrange by:',
+    orderBySize: 'Size',
+    orderByName: 'Name',
+    invalidFileType: "The selected file \"{0}\" is not valid. Supported file types are {1}.",
+    deleteFile: 'Are you sure you want to delete "{0}"?',
+    overwriteFile: 'A file with name "{0}" already exists in the current directory. Do you want to overwrite it?',
+    directoryNotFound: 'A directory with this name was not found.'
 };
 
 $.fn.tEditor.defaults = {

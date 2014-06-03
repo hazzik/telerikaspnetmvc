@@ -107,8 +107,11 @@ namespace Telerik.Web.Mvc.UI
             }
 
             objectWriter.AppendClientEvent("onSelect", ClientEvents.OnSelect);
+            objectWriter.AppendClientEvent("onContentLoad", ClientEvents.OnContentLoad);
             objectWriter.AppendClientEvent("onLoad", ClientEvents.OnLoad);
             objectWriter.AppendClientEvent("onError", ClientEvents.OnError);
+
+            objectWriter.AppendContentUrls("contentUrls", Items, IsSelfInitialized);
 
             objectWriter.Complete();
 

@@ -4,20 +4,9 @@
 // All other rights reserved.
 namespace Telerik.Web.Mvc
 {
-    using System.ComponentModel;
-
     public interface IDescriptor
     {
-        string Member
-        {
-            get;
-            set;
-        }
-
-        ListSortDirection SortDirection
-        {
-            get;
-            set;
-        }
+        void Deserialize(string source);
+        string Serialize();
     }
 }

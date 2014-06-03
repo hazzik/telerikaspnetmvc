@@ -127,5 +127,21 @@
 
             Assert.IsType(typeof(ComboBoxBuilder), returnedBuilder);
         }
+
+        [Fact]
+        public void Encoded_method_be_able_to_set_Encoded_property()
+        {
+            builder.Encode(false);
+
+            Assert.False(combobox.Encoded);
+        }
+
+        [Fact]
+        public void Encoded_method_should_return_builder()
+        {
+            var returnedBuilder = builder.Encode(true);
+
+            Assert.IsType(typeof(ComboBoxBuilder), returnedBuilder);
+        }
     }
 }

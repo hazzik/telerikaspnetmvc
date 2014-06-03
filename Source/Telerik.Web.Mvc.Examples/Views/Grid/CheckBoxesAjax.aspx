@@ -23,23 +23,19 @@
         .Scrollable()
         .Pageable()
         .Render();
-%>
-
+%>    
 <p>
-    <button class="t-button t-state-default" onclick="displayCheckedOrders()">Display checked orders</button>
-    <script type="text/javascript">
+    <button class="t-button" onclick="displayCheckedOrders()">Display checked orders</button>
+    <script type="text/javascript">        
         function displayCheckedOrders() {
             var $checkedRecords = $(':checked');
             
             if ($checkedRecords.length < 1) {
                 alert('Check a few grid rows first.');
                 return;
-            }
-
-            $('#result').load('<%= Url.Action("DisplayCheckedOrders", "Grid") %>',
-                {
-                    checkedRecords: $checkedRecords.map(function() { return this.value; })
-                });
+            }                         
+            
+            $('#result').load('<%= Url.Action("DisplayCheckedOrders", "Grid") %>', $checkedRecords);
         }
     </script>
 </p>

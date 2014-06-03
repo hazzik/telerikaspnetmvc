@@ -22,7 +22,7 @@
             
             reorder(grid.$headerWrap.find('table').find('> colgroup > col:not(.t-group-col,.t-hierarchy-col)'), sourceIndex, destIndex);
 
-            var footerWrap = grid.$footerWrap.find('table');
+            var footerWrap = grid.$footer.find('table');
             reorder(footerWrap.find('> colgroup > col:not(.t-group-col,.t-hierarchy-col)'), sourceIndex, destIndex);            
             reorder(footerWrap.find('> tbody > tr.t-footer-template > td:not(.t-group-cell,.t-hierarchy-cell)')
                 .add(grid.$footer.find('tr.t-footer-template > td:not(.t-group-cell,.t-hierarchy-cell)')), sourceIndex, destIndex);
@@ -81,11 +81,17 @@
             over: function(e) {
                 var same = $.trim(e.$draggable.text()) == $.trim(e.$droppable.text());
                 $t.dragCueStatus(e.$cue, same? 't-denied' : 't-add');
-
+                
+                var top = 0; 
+                
+                $('> .t-grid-top, > .t-grouping-header', grid.element).each(function() {
+                    top += $(this).outerHeight();
+                });
+                
                 if (!same)
                     grid.$reorderDropCue.css({
                          height: e.$droppable.outerHeight(),
-                         top: $('> .t-grid-toolbar', grid.element).outerHeight() + $('> .t-pager-wrapper', grid.element).outerHeight() + $('> .t-grouping-header', grid.element).outerHeight(),
+                         top: top,
                          left: function() {
                                 return e.$droppable.position().left + ((e.$droppable.index() > e.$draggable.index()) ? e.$droppable.outerWidth() : 0)
                             }
@@ -107,6 +113,7 @@
                         newIndex: position
                     });
                     reorderColumn(position, column);
+                    $t.trigger(grid.element, 'repaint');
                 }
             }
         });

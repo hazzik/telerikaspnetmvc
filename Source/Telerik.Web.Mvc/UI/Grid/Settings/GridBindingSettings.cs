@@ -16,10 +16,10 @@ namespace Telerik.Web.Mvc.UI
         public GridBindingSettings(IGrid grid)
         {
             this.grid = grid;
-            Select = new GridRequestSettings();
-            Insert = new GridRequestSettings();
-            Update = new GridRequestSettings();
-            Delete = new GridRequestSettings();
+            Select = new RequestSettings();
+            Insert = new RequestSettings();
+            Update = new RequestSettings();
+            Delete = new RequestSettings();
         }
 
         public bool Enabled
@@ -28,25 +28,25 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public GridRequestSettings Select
+        public RequestSettings Select
         {
             get;
             private set;
         }
 
-        public GridRequestSettings Insert
+        public RequestSettings Insert
         {
             get;
             private set;
         }
 
-        public GridRequestSettings Update
+        public RequestSettings Update
         {
             get;
             private set;
         }
 
-        public GridRequestSettings Delete
+        public RequestSettings Delete
         {
             get;
             private set;
@@ -58,7 +58,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 Func<string,string> encoder = (string url) => grid.IsSelfInitialized ? HttpUtility.UrlDecode(url) : url;
 
-                var urlBuilder = new GridUrlBuilder(grid);
+                var urlBuilder = grid.UrlBuilder;
                 
                 var urls = new Dictionary<string, string>();
 

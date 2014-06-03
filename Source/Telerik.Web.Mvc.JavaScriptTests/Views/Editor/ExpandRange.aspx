@@ -1,27 +1,23 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>ExpandRange</h2>
        <%= Html.Telerik().Editor()
               .Name("Editor")
               .Value("foo")     
       %>
-        
-    <script type="text/javascript">
-        
+
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
         function getEditor() {
             return $('#Editor').data("tEditor");
         }
         
         var editor, impl;
-
-        function setUp() {
-            impl = $.telerik.editor.RangeUtils;
-            
-            editor = getEditor();
-            editor.focus();
-        }
 
         function expandRange(range) {
             var marker = new $.telerik.editor.Marker(range);
@@ -29,7 +25,20 @@
             return impl.expand(range);
         }
 
-        function test_expandRange_selects_node_contents() {
+        module("Editor / ExpandRange", {
+            setup: function() {
+                impl = $.telerik.editor.RangeUtils;
+            
+                editor = getEditor();
+                editor.focus();
+            },
+            teardown: function() {
+                var wnd = $('.t-window').data('tWindow');
+                if (wnd) wnd.destroy();
+            }
+        });
+
+        test('expandRange selects node contents', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -37,13 +46,13 @@
 
             range = expandRange(range);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.lastChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_selects_word() {
+        test('expandRange selects word', function() {
             editor.value('foo bar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -51,13 +60,13 @@
 
             range = expandRange(range);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.childNodes[2], range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.childNodes[2]);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_stops_at_tab() {
+        test('expandRange stops at tab', function() {
             editor.value('foo\tbar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
@@ -65,52 +74,52 @@
 
             range = expandRange(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.childNodes[2], range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.childNodes[2]);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_stops_at_nbsp() {
+        test('expandRange stops at nbsp', function() {
             editor.value('foo&nbsp;&nbsp;bar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.setEnd(editor.body.firstChild, 1);
             range = expandRange(range);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.childNodes[2], range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.childNodes[2]);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_does_not_stop_at_unicode_characters() {
+        test('expandRange does not stop at unicode characters', function() {
             editor.value('fooщbar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.setEnd(editor.body.firstChild, 1);
             range = expandRange(range);
 
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.lastChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(6, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.lastChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 6);
+        });
 
-        function test_expandRange_stops_at_exclamation_mark() {
+        test('expandRange stops at exclamation mark', function() {
             editor.value('foo!bar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 1);
             range.setEnd(editor.body.firstChild, 1);
             range = expandRange(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.childNodes[2], range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.childNodes[2]);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_detects_word_boundary_before_caret() {
+        test('expandRange detects word boundary before caret', function() {
             editor.value('foo bar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 5);
@@ -118,13 +127,13 @@
 
             range = expandRange(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.childNodes[2], range.endContainer);
-            assertEquals(4, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.childNodes[2]);
+            equal(range.startOffset, 4);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_detects_word_boundary_before_and_after_caret() {
+        test('expandRange detects word boundary before and after caret', function() {
             editor.value('foo bar baz');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 5);
@@ -132,13 +141,13 @@
 
             range = expandRange(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.childNodes[2], range.endContainer);
-            assertEquals(4, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.childNodes[2]);
+            equal(range.startOffset, 4);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_does_not_expand_at_end_of_node() {
+        test('expandRange does not expand at end of node', function() {
             editor.value('<strong>foo</strong>');
             
             var range = editor.createRange();
@@ -147,26 +156,26 @@
             
             range = expandRange(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+        });
 
-        function test_expandRange_does_not_crash_in_empty_node() {
+        test('expandRange does not crash in empty node', function() {
             editor.value('<strong></strong>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild);
 
             range = expandRange(range);
             
-            assertEquals(editor.body.firstChild, range.startContainer);
-            assertEquals(editor.body.firstChild, range.endContainer);
-            assertEquals(0, range.startOffset);
-            assertEquals(1, range.endOffset);
-        }
+            equal(range.startContainer, editor.body.firstChild);
+            equal(range.endContainer, editor.body.firstChild);
+            equal(range.startOffset, 0);
+            equal(range.endOffset, 1);
+        });
 
-        function test_expandRange_does_not_crash_between_element_nodes() {
+        test('expandRange does not crash between element nodes', function() {
             editor.value('<span></span><span></span>');
             var range = editor.createRange();
             range.setStart(editor.body, 1);
@@ -174,64 +183,63 @@
 
             range = expandRange(range);
             
-            assertEquals(editor.body, range.startContainer);
-            assertEquals(editor.body, range.endContainer);
-            assertEquals(1, range.startOffset);
-            assertEquals(2, range.endOffset);
-        }
+            equal(range.startContainer, editor.body);
+            equal(range.endContainer, editor.body);
+            equal(range.startOffset, 1);
+            equal(range.endOffset, 2);
+        });
 
-        /** isExpandable **/
-
-        function test_isExpandable_returns_false_for_start_word_boundary() {
+        test('isExpandable returns false for start word boundary', function() {
             editor.value('foo bar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 3);
             range.setEnd(editor.body.firstChild, 3);
 
-            assertFalse(impl.isExpandable(range));
-        }
+            ok(!impl.isExpandable(range));
+        });
 
-        function test_isExpandable_returns_false_for_end_word_boundary() {
+        test('isExpandable returns false for end word boundary', function() {
             editor.value('foo bar');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 4);
             range.setEnd(editor.body.firstChild, 4);
             
-            assertFalse(impl.isExpandable(range));
-        }
+            ok(!impl.isExpandable(range));
+        });
 
-        function test_isExpandable_returns_false_for_end_of_content() {
+        test('isExpandable returns false for end of content', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 3);
             range.setEnd(editor.body.firstChild, 3);
 
-            assertFalse(impl.isExpandable(range));
-        }
+            ok(!impl.isExpandable(range));
+        });
         
-        function test_isExpandable_returns_false_for_beginning_of_content() {
+        test('isExpandable returns false for beginning of content', function() {
             editor.value('foo');
             var range = editor.createRange();
             range.setStart(editor.body.firstChild, 0);
             range.setEnd(editor.body.firstChild, 0);
 
-            assertFalse(impl.isExpandable(range));
-        }
+            ok(!impl.isExpandable(range));
+        });
         
-        function test_isExpandable_returns_false_when_range_is_empty() {
+        test('isExpandable returns false when range is empty', function() {
             editor.value('foo');
             var range = editor.createRange();
 
-            assertFalse(impl.isExpandable(range));
-        }
+            ok(!impl.isExpandable(range));
+        });
 
-        function test_isExpandable_returns_false_when_in_empty_node() {
+        test('isExpandable returns false when in empty node', function() {
             editor.value('<strong></strong>');
             var range = editor.createRange();
             range.selectNodeContents(editor.body.firstChild);
 
-            assertFalse(impl.isExpandable(range));
-        }
-        
-    </script>
+            ok(!impl.isExpandable(range));
+        });
+
+</script>
+
 </asp:Content>

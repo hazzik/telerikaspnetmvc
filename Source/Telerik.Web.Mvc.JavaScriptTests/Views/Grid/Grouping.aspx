@@ -1,8 +1,7 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>Grouping</h2>
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
             .Columns(columns =>
@@ -60,60 +59,69 @@
                     groups.Add(c => c.BirthDate);
                 }))
             .DataBinding(dataBinding => dataBinding.Ajax().Select("Foo", "Bar"))
-        %>        
-    <script type="text/javascript">
-    
+        %>
+               
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
         function getGrid(selector) {
             return $(selector).data("tGrid");
         }
 
-        function setUp() {
-            getGrid('#Grid1').ajaxRequest = function() {};
-            getGrid('#Grid2').ajaxRequest = function() {};
-            getGrid('#Grid3').ajaxRequest = function() {};
-            getGrid('#Grid4').ajaxRequest = function() {};
-        }
+        module("Grid / Grouping", {
+            setup: function() {
+                getGrid('#Grid1').ajaxRequest = function() {};
+                getGrid('#Grid2').ajaxRequest = function() {};
+                getGrid('#Grid3').ajaxRequest = function() {};
+                getGrid('#Grid4').ajaxRequest = function() {};
+            }
+        });
 
-        function test_ungrouping_removes_grouping_columns() {
+        test('ungrouping removes grouping columns', function() {
             var grid = getGrid('#Grid1');
             grid.unGroup('Birth Date');
             grid.normalizeColumns(grid.groups.length + grid.columns.length);
             
-            assertEquals(4, $('table:first col', grid.element).length)
-            assertEquals(1, $('tr:has(th):first .t-group-cell', grid.element).length)
-        }
+            equal($('table:first col', grid.element).length, 4)
+            equal($('tr:has(th):first .t-group-cell', grid.element).length, 1)
+        });
 
-        function test_ungrouping_removes_grouping_columns_hidden() {
+        test('ungrouping removes grouping columns hidden', function() {
             var grid = getGrid('#Grid4');
             grid.unGroup('Birth Date');
             grid.normalizeColumns(grid.groups.length + grid.columns.length);
 
-            assertEquals(4, $('table:first col', grid.element).length)
-            assertEquals(1, $('tr:has(th):first .t-group-cell', grid.element).length)
-        }
+            equal($('table:first col', grid.element).length, 4)
+            equal($('tr:has(th):first .t-group-cell', grid.element).length, 1)
+        });
         
-        function test_grouping_creates_grouping_columns() {
+        test('grouping creates grouping columns', function() {
             var grid = getGrid('#Grid2');
             grid.group('Name');
             grid.normalizeColumns(grid.groups.length + grid.columns.length);
 
-            assertEquals(5, $('table:first col', grid.element).length)
-            assertEquals(1, $('tr:has(th):first .t-group-cell', grid.element).length)
-        }
+            equal($('table:first col', grid.element).length, 5)
+            equal($('tr:has(th):first .t-group-cell', grid.element).length, 1)
+        });
         
-        function test_grouping_creates_grouping_hidden() {
+        test('grouping creates grouping hidden', function() {
             var grid = getGrid('#Grid3');
             grid.group('Name');
             grid.normalizeColumns(grid.groups.length + grid.columns.length);
 
-            assertEquals(4, $('table:first col', grid.element).length)
-            assertEquals(1, $('tr:has(th):first .t-group-cell', grid.element).length)
-        }
+            equal($('table:first col', grid.element).length, 4)
+            equal($('tr:has(th):first .t-group-cell', grid.element).length, 1)
+        });
 
-        function test_ungroupable_columns_groupable_serialized() {
+        test('ungroupable columns groupable serialized', function() {
             var grid = getGrid('#Grid2');
-            assertFalse(grid.columns[grid.columns.length - 1].groupable);
-        }
+            ok(!grid.columns[grid.columns.length - 1].groupable);
+        });
 
-    </script>        
+</script>
+
 </asp:Content>

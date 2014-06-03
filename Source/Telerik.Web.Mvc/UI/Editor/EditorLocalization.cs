@@ -125,6 +125,51 @@ namespace Telerik.Web.Mvc.UI
             get { return GetValue("Style"); }
         }
 
+        public string EmptyFolder
+        {
+            get { return GetValue("EmptyFolder"); }
+        }
+
+        public string UploadFile
+        {
+            get { return GetValue("UploadFile"); }
+        }
+
+        public string OrderBy
+        {
+            get { return GetValue("OrderBy"); }
+        }
+        
+        public string OrderBySize
+        {
+            get { return GetValue("OrderBySize"); }
+        }
+        
+        public string OrderByName
+        {
+            get { return GetValue("OrderByName"); }
+        }
+
+        public string InvalidFileType
+        {
+            get { return GetValue("InvalidFileType"); }
+        }
+        
+        public string DeleteFile
+        {
+            get { return GetValue("DeleteFile"); }
+        }
+
+        public string OverwriteFile
+        {
+            get { return GetValue("OverwriteFile"); }
+        }
+
+        public string DirectoryNotFound
+        {
+            get { return GetValue("DirectoryNotFound"); }
+        }
+
         public void SerializeTo(string key, IClientSideObjectWriter writer)
         {
             if (!IsDefault)

@@ -35,7 +35,7 @@
             const bool showButton = true;
             builder.ShowButton(showButton);
 
-            Assert.Equal(showButton, datePicker.EnableButton);
+            Assert.Equal(showButton, datePicker.ShowButton);
         }
 
         [Fact]
@@ -125,7 +125,7 @@
 
             builder.Min(date);
 
-            Assert.Equal(date, datePicker.Min);
+            Assert.Equal(date, datePicker.MinValue);
         }
 
         [Fact]
@@ -142,7 +142,7 @@
             var date = new DateTime(2000, 10, 10);
             builder.Min(date.ToShortDateString());
 
-            Assert.Equal(date, datePicker.Min);
+            Assert.Equal(date, datePicker.MinValue);
         }
 
         [Fact]
@@ -165,7 +165,7 @@
             DateTime date = DateTime.Now;
             builder.Max(date);
 
-            Assert.Equal(date, datePicker.Max);
+            Assert.Equal(date, datePicker.MaxValue);
         }
 
         [Fact]
@@ -182,7 +182,7 @@
             var date = new DateTime(2000, 10, 10);
             builder.Max(date.ToShortDateString());
 
-            Assert.Equal(date, datePicker.Max);
+            Assert.Equal(date, datePicker.MaxValue);
         }
 
         [Fact]

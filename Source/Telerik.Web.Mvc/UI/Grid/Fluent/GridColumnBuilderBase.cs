@@ -53,7 +53,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder Title(string text)
+        public TColumnBuilder Title(string text)
         {
             Column.Title = text;
 
@@ -72,7 +72,24 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder HeaderHtmlAttributes(object attributes)
+        public TColumnBuilder HeaderHtmlAttributes(object attributes)
+        {
+            return HeaderHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes applied to the header cell of the column.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Columns(columns => columns.Bound(o => o.OrderID).HeaderHtmlAttributes(new {@class="order-header"}))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TColumnBuilder HeaderHtmlAttributes(IDictionary<string, object> attributes)
         {
             MergeAttributes(Column.HeaderHtmlAttributes, attributes);
 
@@ -91,7 +108,24 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder FooterHtmlAttributes(object attributes)
+        public TColumnBuilder FooterHtmlAttributes(object attributes)
+        {
+            return FooterHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes applied to the footer cell of the column.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Columns(columns => columns.Bound(o => o.OrderID).FooterHtmlAttributes(new {@class="order-footer"}))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TColumnBuilder FooterHtmlAttributes(IDictionary<string, object> attributes)
         {
             MergeAttributes(Column.FooterHtmlAttributes, attributes);
 
@@ -110,7 +144,24 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder HtmlAttributes(object attributes)
+        public TColumnBuilder HtmlAttributes(object attributes)
+        {
+            return HtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Sets the HTML attributes applied to the content cell of the column.
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Columns(columns => columns.Bound(o => o.OrderID).HtmlAttributes(new {@class="order-cell"}))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TColumnBuilder HtmlAttributes(IDictionary<string, object> attributes)
         {
             MergeAttributes(Column.HtmlAttributes, attributes);
 
@@ -129,7 +180,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder Width(int pixelWidth)
+        public TColumnBuilder Width(int pixelWidth)
         {
             Guard.IsNotNegative(pixelWidth, "pixelWidth");
 
@@ -156,7 +207,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder Width(string value)
+        public TColumnBuilder Width(string value)
         {
             Guard.IsNotNullOrEmpty(value, "value");
 
@@ -176,7 +227,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder Visible(bool value)
+        public TColumnBuilder Visible(bool value)
         {
             Column.Visible = value;
 
@@ -194,7 +245,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder Hidden(bool value)
+        public TColumnBuilder Hidden(bool value)
         {
             Column.Hidden = value;
 
@@ -214,7 +265,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TColumnBuilder Hidden()
+        public TColumnBuilder Hidden()
         {
             Column.Hidden = true;
 
@@ -225,7 +276,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Sets the header template for the column.
         /// </summary>
         /// <param name="template">The action defining the template.</param>
-        public virtual TColumnBuilder HeaderTemplate(Action template)
+        public TColumnBuilder HeaderTemplate(Action template)
         {
             Guard.IsNotNull(template, "template");
 
@@ -237,7 +288,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Sets the header template for the column.
         /// </summary>
         /// <param name="template">The string defining the template.</param>
-        public virtual TColumnBuilder HeaderTemplate(string template)
+        public TColumnBuilder HeaderTemplate(string template)
         {
             Guard.IsNotNullOrEmpty(template, "template");
 
@@ -249,7 +300,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Sets the header template for the column.
         /// </summary>
         /// <param name="template">The action defining the template.</param>
-        public virtual TColumnBuilder HeaderTemplate(Func<object, object> template)
+        public TColumnBuilder HeaderTemplate(Func<object, object> template)
         {
             Guard.IsNotNull(template, "template");
 
@@ -262,11 +313,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Sets the footer template for the column.
         /// </summary>
         /// <param name="template">The action defining the template.</param>
-        public virtual TColumnBuilder FooterTemplate(Action template)
+        public TColumnBuilder FooterTemplate(Action template)
         {
             Guard.IsNotNull(template, "template");
 
-            Column.FooterTemplate.Content = template;
+            Column.FooterTemplate.CodeBlockTemplate = delegate { template(); };
             return this as TColumnBuilder;
         }
 
@@ -274,7 +325,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Sets the footer template for the column.
         /// </summary>
         /// <param name="template">The string defining the template.</param>
-        public virtual TColumnBuilder FooterTemplate(string template)
+        public TColumnBuilder FooterTemplate(string template)
         {
             Guard.IsNotNullOrEmpty(template, "template");
 
@@ -286,15 +337,33 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Sets the footer template for the column.
         /// </summary>
         /// <param name="template">The action defining the template.</param>
-        public virtual TColumnBuilder FooterTemplate(Func<object, object> template)
+        public TColumnBuilder FooterTemplate(Func<object, object> template)
         {
             Guard.IsNotNull(template, "template");
 
-            Column.FooterTemplate.InlineTemplate = template;
+            Column.FooterTemplate.InlineTemplate = (result) => template(result);
+
+            return this as TColumnBuilder;
+        }
+
+        public TColumnBuilder ClientFooterTemplate(string template)
+        {
+            Guard.IsNotNullOrEmpty(template, "template");
+
+            Column.ClientFooterTemplate = template;
+            
             return this as TColumnBuilder;
         }
 
         private static void MergeAttributes(IDictionary<string, object> target, object attributes)
+        {
+            Guard.IsNotNull(attributes, "attributes");
+
+            target.Clear();
+            target.Merge(attributes);
+        }        
+        
+        private static void MergeAttributes(IDictionary<string, object> target, IDictionary<string, object> attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 

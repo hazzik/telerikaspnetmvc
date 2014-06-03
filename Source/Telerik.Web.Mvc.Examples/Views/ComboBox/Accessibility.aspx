@@ -2,7 +2,7 @@
 
 <asp:content contentPlaceHolderID="MainContent" runat="server">
    <div class="panel">
-        <h3>ComboBox</h3>
+        <label for="ComboBox-input">Combobox:</label>
 
         <%= Html.Telerik().ComboBox()
                 .Name("ComboBox")
@@ -18,7 +18,7 @@
     
     </div>
     <div class="panel">
-        <h3>AutoComplete</h3>
+        <label for="AutoComplete">AutoComplete:</label>
 
         <%= Html.Telerik().AutoComplete()
                 .Name("AutoComplete")
@@ -30,35 +30,33 @@
                 {
                     filtering.FilterMode(AutoCompleteFilterMode.StartsWith);
                 })
+                .Encode(false)
         %>
     </div>
 
+    <noscript>
+        <p>Your browsing experience on this page will be better if you visit it with a JavaScript-enabled browser / if you enable JavaScript.</p>
+    </noscript>
+
     <% Html.RenderPartial("AccessibilityValidation"); %>
 </asp:content>
-<asp:content ID="Content1" contentPlaceHolderID="HeadContent" runat="server">
+<asp:content contentPlaceHolderID="HeadContent" runat="server">
+    
     <style type="text/css">
-        .panel 
+        
+        .panel
         {
-             float:left;
-             width:30%;
-             padding-bottom: 3em;
+            padding: .3em 0;
         }
         
-        .panel h3
+        .panel label
         {
-            font-weight: normal;
-        }
-        
-        .panel .t-autocomplete
-        {
-            margin-top: 2px;
-        }
-       
-        .t-dropdown select
-        {
-            position: absolute;
-            top: 0;
-            width: 100%;
+            width: 100px;
+            padding-right: .4em;
+            display: inline-block;
+            *display: inline;
+            zoom: 1;
+            text-align: right;
         }
     </style>
 </asp:content>

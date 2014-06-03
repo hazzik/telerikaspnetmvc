@@ -6,7 +6,7 @@
         <%= Html.ValidationSummary() %>
     <% } %>
     
-    <% using ( Html.BeginForm("servervalidation", "editor") ) { %>
+    <% using ( Html.BeginForm() ) { %>
         <div class="editing-section">
             <div class="section-title">Edit Customer</div>
 
@@ -25,6 +25,7 @@
                     <%= Html.LabelFor(e => e.Notes)%>
                     <%= Html.Telerik().Editor()
                             .Name("Notes")
+                            .Encode(false)
                             .HtmlAttributes(new { style = "float: left; width: 345px;" })
                             .Tools(tools => tools
                                 .Clear()
@@ -36,7 +37,7 @@
                     <div class="error"><%= Html.ValidationMessageFor(e => e.Notes, "The Notes field is required.")%></div>
                 </li>
                 <li class="action-row">
-                    <button class="t-button t-state-default" type="submit">Save</button>
+                    <button class="t-button" type="submit">Save</button>
                 </li>
             </ul>
         </div>
@@ -44,9 +45,9 @@
 
     <% if (ViewData["notes"] != null)
        { %>
-       <p><strong>FirstName : <%= ViewData["FirstName"]%></strong></p>
-       <p><strong>LastName : <%= ViewData["LastName"]%></strong></p>
-       <p><strong>Notes : <%= HttpUtility.HtmlEncode((string)ViewData["Notes"]) %></strong></p>
+       <p><strong>FirstName : <%: ViewData["FirstName"]%></strong></p>
+       <p><strong>LastName : <%: ViewData["LastName"]%></strong></p>
+       <p><strong>Notes : <%: ViewData["Notes"] %></strong></p>
     <% } %>
 
 </asp:content>

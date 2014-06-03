@@ -1,6 +1,7 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests
 {
     using Xunit;
+    using System;
 
 
     public class InputHtmlBuilderTests
@@ -12,7 +13,7 @@
         public InputHtmlBuilderTests()
         {
             input = TextBoxBaseTestHelper.CreateInput<int>(null, null);
-            renderer = new TextboxBaseHtmlBuilder<int>(input);
+            renderer = new TextBoxBaseHtmlBuilder<int>(input);
             objectName = "t-integerinput";
             input.Name = "IntegerInput";
         }
@@ -44,16 +45,6 @@
         }
 
         [Fact]
-        public void Build_should_render_id()
-        {
-            input.Name = "TestName";
-
-            IHtmlNode tag = renderer.Build(objectName);
-
-            Assert.Equal("TestName", tag.Attribute("id"));
-        }
-
-        [Fact]
         public void InputTag_should_render_input_control()
         {
             IHtmlNode tag = renderer.InputTag();
@@ -63,14 +54,14 @@
         }
 
         [Fact]
-        public void InputTag_should_render_id_and_name()
+        public void InputTag_should_render_name()
         {
             input.Name = "IntegerInput";
 
             IHtmlNode tag = renderer.InputTag();
 
-            Assert.Equal(input.Id + "-input", tag.Attribute("id"));
-            Assert.Equal(input.Id, tag.Attribute("name"));
+            Assert.Equal(input.Name, tag.Attribute("name"));
+            Assert.Equal(input.Id, tag.Attribute("id"));
         }
 
         [Fact]
@@ -107,18 +98,34 @@
         }
 
         [Fact]
-        public void InputTag_should_render_viewdata_value_even_when_selected_value_is_set()
+        public void InputTag_should_render_value_even_viewdata_is_available()
         {
             const string inputName = "IntegerInput";
-            const int value = 19;
+            const int value = 10;
 
             input.Name = inputName;
-            input.Value = 10;
-            input.ViewContext.ViewData[inputName] = value;
+            input.Value = value;
+            input.ViewContext.ViewData[inputName] = 19;
 
             IHtmlNode tag = renderer.InputTag();
 
             Assert.Equal(value.ToString(), tag.Attribute("value"));
+        }
+
+        [Fact]
+        public void Input_value_method_should_set_attempedValue_if_GetValue_returns_null()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            input.Name = "DatePicker1";
+            input.ViewContext.ViewData.ModelState.Add("DatePicker1", state);
+            input.ViewContext.ViewData.ModelState.AddModelError("DatePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            tag.Attribute("value").ShouldEqual("s");
         }
 
         [Fact]

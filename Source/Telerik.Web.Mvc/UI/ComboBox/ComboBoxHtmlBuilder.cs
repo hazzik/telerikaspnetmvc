@@ -8,7 +8,6 @@ namespace Telerik.Web.Mvc.UI
     using System.Linq;
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
-    using Telerik.Web.Mvc.Infrastructure;
     
     public class ComboBoxHtmlBuilder : IDropDownHtmlBuilder
     {
@@ -25,8 +24,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            IHtmlNode root = new HtmlTag("div")
-                            .Attribute("id", Component.Id)
+            IHtmlNode root = new HtmlElement("div")
                             .Attributes(Component.HtmlAttributes)
                             .PrependClass(UIPrimitives.Widget, "t-combobox", UIPrimitives.Header)
                             .ToggleClass("t-state-disabled", !Component.Enabled);
@@ -39,35 +37,40 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode InnerContentTag()
         {
-            IHtmlNode root = new HtmlTag("div").AddClass("t-dropdown-wrap t-state-default");
+            IHtmlNode root = new HtmlElement("div").AddClass("t-dropdown-wrap t-state-default");
 
-            IHtmlNode input = new HtmlTag("input", TagRenderMode.SelfClosing)
+            IHtmlNode input = new HtmlElement("input", TagRenderMode.SelfClosing)
                               .Attributes(new { type = "text"})
                               .ToggleAttribute("disabled", "disabled", !Component.Enabled)
-                              .Attributes(Component.InputHtmlAttributes)
                               .PrependClass(UIPrimitives.Input)
                               .AppendTo(root);
 
-            if(Component.Items.Any() && Component.SelectedIndex != -1) 
+            string text = string.Empty;
+            if (Component.Items.Any())
             {
-                input.Attribute("value", Component.Items[Component.SelectedIndex].Text);
-            }
-
-            if (Component.Id.HasValue())
-            {
-                input.Attributes(new
+                text = Component.Value;
+                if (Component.SelectedIndex != -1)
                 {
-                    id = Component.Id + "-input",
-                    name = Component.Name + "-input"
-                });
-
-                string value = Component.ViewContext.Controller.ValueOf<string>(Component.Name + "-input");
-                input.ToggleAttribute("value", value, value.HasValue());
+                    text = Component.Items[Component.SelectedIndex].Text;
+                    if (Component.Encoded)
+                    {
+                        text = System.Web.HttpUtility.HtmlDecode(text);
+                    }
+                }
             }
 
-            IHtmlNode link = new HtmlTag("span").AddClass("t-select", UIPrimitives.Header);
+            if (Component.Name.HasValue())
+            {
+                input.Attributes(new { id = Component.Id + "-input", name = Component.Name + "-input" });
+                text = Component.ViewContext.Controller.ValueOf<string>(Component.Name + "-input") ?? text;
+            }
 
-            new HtmlTag("span").AddClass(UIPrimitives.Icon, "t-arrow-down").Html("select").AppendTo(link);
+            input.ToggleAttribute("value", text, text.HasValue())
+                 .Attributes(Component.InputHtmlAttributes);
+
+            IHtmlNode link = new HtmlElement("span").AddClass("t-select", UIPrimitives.Header);
+
+            new HtmlElement("span").AddClass(UIPrimitives.Icon, "t-arrow-down").Html("select").AppendTo(link);
 
             link.AppendTo(root);
 
@@ -76,23 +79,36 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode HiddenInputTag()
         {
-            IHtmlNode input = new HtmlTag("input", TagRenderMode.SelfClosing)
-                              .Attributes(new { type = "text", 
-                                      style="display:none" });
-            
-            if (Component.Items.Any() && Component.SelectedIndex != -1)
+            IHtmlNode input = new HtmlElement("input", TagRenderMode.SelfClosing)
+                              .Attributes(new 
+                              { 
+                                  type = "text", 
+                                  style = "display:none" 
+                              });
+
+            string value = string.Empty;
+            if (Component.Items.Any()) 
             {
-                DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
-                input.Attribute("value", selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text);
+                value = Component.Value;
+                if (string.IsNullOrEmpty(value) && Component.SelectedIndex != -1) 
+                {
+                    DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
+                    value = selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text;
+                }
             }
 
             if (Component.Name.HasValue()) { 
-                input.Attributes(new { name = Component.Name,
-                                       id = Component.Id + "-value" });
+                input.Attributes(Component.GetUnobtrusiveValidationAttributes())
+                     .Attributes(new 
+                     { 
+                         name = Component.Name,              
+                         id = Component.Id
+                     });
 
-                string value = Component.ViewContext.Controller.ValueOf<string>(Component.Name);
-                input.ToggleAttribute("value", value, value.HasValue());
+                value = Component.ViewContext.Controller.ValueOf<string>(Component.Name) ?? value;
             }
+
+            input.ToggleAttribute("value", value, value.HasValue());
             
             return input;
         }

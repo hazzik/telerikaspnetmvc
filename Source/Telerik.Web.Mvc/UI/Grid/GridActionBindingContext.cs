@@ -8,7 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections;
     using System.Collections.Generic;
     using System.Web.Mvc;
-
+    
     public class GridActionBindingContext : IGridBindingContext
     {
         public GridActionBindingContext(bool enableCustomBinding, ControllerBase controller, IEnumerable dataSource, int total)
@@ -20,6 +20,7 @@ namespace Telerik.Web.Mvc.UI
             SortDescriptors = new List<SortDescriptor>();
             GroupDescriptors = new List<GroupDescriptor>();
             FilterDescriptors = new List<CompositeFilterDescriptor>();
+            Aggregates = new List<AggregateDescriptor>();
             CurrentPage = 1;
         }
 
@@ -82,6 +83,12 @@ namespace Telerik.Web.Mvc.UI
         public string Prefix(string parameter)
         {
             return parameter;
+        }
+
+        public IEnumerable<AggregateDescriptor> Aggregates
+        {
+            get;
+            private set;
         }
     }
 }

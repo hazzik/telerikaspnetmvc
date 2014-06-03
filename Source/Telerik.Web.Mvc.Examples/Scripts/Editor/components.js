@@ -46,10 +46,13 @@ $t.selectbox = function (element, options) {
     }
 
     this.value = function (value) {
+        if (value == undefined)
+            return selectedValue;
+
         select(value);
 
         if (selectedValue != value)
-            text(options.title || value);
+            text(options.title || value);       
     }
 
     this.close = function () {
@@ -97,7 +100,7 @@ $.fn.tSelectBox = function (options) {
 };
 
 $.fn.tSelectBox.defaults = {
-    effects: $.fn.tDropDownList.defaults.effects
+    effects: $t.fx.slide.defaults()
 };
 
 /* color picker */
@@ -259,5 +262,5 @@ $.fn.tColorPicker = function (options) {
 $.fn.tColorPicker.defaults = {
     data: '000000,7f7f7f,880015,ed1c24,ff7f27,fff200,22b14c,00a2e8,3f48cc,a349a4,ffffff,c3c3c3,b97a57,ffaec9,ffc90e,efe4b0,b5e61d,99d9ea,7092be,c8bfe7'.split(','),
     selectedColor: null,
-    effects: $.fn.tDropDownList.defaults.effects
+    effects: $t.fx.slide.defaults()
 };

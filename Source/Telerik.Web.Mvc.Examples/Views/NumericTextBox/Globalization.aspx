@@ -43,7 +43,6 @@
         
         .example .t-numerictextbox
         {
-            display: block;
             margin-bottom: 1.3em;
         }
     </style>

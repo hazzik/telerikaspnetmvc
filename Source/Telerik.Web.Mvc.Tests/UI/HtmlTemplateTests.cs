@@ -50,7 +50,7 @@
         {
             var template = new HtmlTemplate<object>();
             template.Html = "<strong>foo</strong>";
-            var node = new HtmlTag("div");
+            var node = new HtmlElement("div");
             template.Apply(null, node);
             Assert.Equal(template.Html, node.InnerHtml);
         }
@@ -60,7 +60,7 @@
         {
             var template = new HtmlTemplate<object>();
             template.CodeBlockTemplate = delegate { };
-            var node = new HtmlTag("div");
+            var node = new HtmlElement("div");
             template.Apply(null, node);
             Assert.NotNull(node.Template());
         }
@@ -70,9 +70,10 @@
         {
             var template = new HtmlTemplate<object>();
             template.InlineTemplate = (value) => value;
-            var node = new HtmlTag("div");
+            var node = new HtmlElement("div");
             template.Apply("foo", node);
-            Assert.Equal("foo", node.InnerHtml);
+            
+            Assert.Equal("<div>foo</div>", node.ToString());
         }
 
         [Fact]

@@ -24,15 +24,15 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            IHtmlNode div = new HtmlTag("div")
+            IHtmlNode div = new HtmlElement("div")
                             .Attributes(Calendar.HtmlAttributes)
                             .Attribute("id", Calendar.Id)
                             .PrependClass(UIPrimitives.Widget, "t-calendar");
 
-            IHtmlNode headerDiv = new HtmlTag("div")
+            IHtmlNode headerDiv = new HtmlElement("div")
                                   .AddClass(UIPrimitives.Header);
 
-            IHtmlNode span = new HtmlTag("span")
+            IHtmlNode span = new HtmlElement("span")
                              .Text(Calendar.DetermineFocusedDate().Value.ToString("MMMM yyyy"));
 
             headerDiv.Children.Add(span);
@@ -44,21 +44,21 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode ContentTag()
         {
-            return new HtmlTag("table")
+            return new HtmlElement("table")
                    .AddClass(UIPrimitives.Content)
                    .Attributes(new { summary = "calendar widget", cellspacing = "0" });
         }
 
         public IHtmlNode HeaderTag()
         {
-            IHtmlNode header = new HtmlTag("thead").AddClass("t-week-header");
+            IHtmlNode header = new HtmlElement("thead").AddClass("t-week-header");
 
             return header;
         }
 
         public IHtmlNode HeaderCellTag(string dayOfWeek)
         {
-            IHtmlNode cell = new HtmlTag("th")
+            IHtmlNode cell = new HtmlElement("th")
                              .Attributes(new { scope = "col", title = dayOfWeek})
                              .Text(dayOfWeek.Substring(0, 1));
 
@@ -70,36 +70,36 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode MonthTag()
         {
-            return new HtmlTag("tbody");
+            return new HtmlElement("tbody");
         }
 
         public IHtmlNode RowTag()
         {
-            return new HtmlTag("tr");
+            return new HtmlElement("tr");
         }
 
-        public IHtmlNode CellTag(DateTime day, string urlFormat, bool isOtherMonth)
+        public IHtmlNode CellTag(DateTime currentDay, DateTime? selectedDate, string urlFormat, bool isOtherMonth)
         {
-            IHtmlNode cell = new HtmlTag("td");
+            IHtmlNode cell = new HtmlElement("td");
 
             if (isOtherMonth)
             {
                 cell.AddClass("t-other-month");
             }
-            else if(Calendar.Value != null && day.Day == Calendar.Value.Value.Day)
+            else if (selectedDate.HasValue && IsInRange(selectedDate.Value) && currentDay.Day == selectedDate.Value.Day)
             {
                 cell.AddClass(UIPrimitives.SelectedState);
             }
 
-            if (Calendar.IsDateInRange(day))
+            if (IsInRange(currentDay))
             {
-                var href = GetUrl(day, urlFormat);
+                var href = GetUrl(currentDay, urlFormat);
 
-                IHtmlNode link = new HtmlTag("a")
+                IHtmlNode link = new HtmlElement("a")
                                  .AddClass(UIPrimitives.Link + (href != "#" ? " t-action-link" : string.Empty))
                                  .Attribute("href", href)
-                                 .Attribute("title", day.ToLongDateString())
-                                 .Text(day.Day.ToString());
+                                 .Attribute("title", currentDay.ToLongDateString())
+                                 .Text(currentDay.Day.ToString());
 
                 cell.Children.Add(link);
             }
@@ -111,6 +111,11 @@ namespace Telerik.Web.Mvc.UI
             return cell;
         }
 
+        private bool IsInRange(DateTime date) 
+        {
+            return Calendar.MinDate <= date && date <= Calendar.MaxDate;
+        }
+
         private string GetUrl(DateTime day, string urlFormat)
         {
             string url = "#";
@@ -120,7 +125,7 @@ namespace Telerik.Web.Mvc.UI
                 {
                     if (Calendar.SelectionSettings.Dates.Contains(day))
                     {
-                        url = urlFormat.FormatWith(day.ToShortDateString());
+                        url = urlFormat.FormatWith(day);
                     }
                     else
                     {
@@ -129,7 +134,7 @@ namespace Telerik.Web.Mvc.UI
                 }
                 else
                 {
-                    url = urlFormat.FormatWith(day.ToShortDateString());
+                    url = urlFormat.FormatWith(day);
                 }
             }
             return url;

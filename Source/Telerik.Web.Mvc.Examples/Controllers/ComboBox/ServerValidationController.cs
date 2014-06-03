@@ -12,7 +12,7 @@ namespace Telerik.Web.Mvc.Examples
             ProductDto dto =
                 new ProductDto
                 {
-                    ProductID = -1,
+                    ProductID = 1,
                     UnitPrice = 12
                 };
 

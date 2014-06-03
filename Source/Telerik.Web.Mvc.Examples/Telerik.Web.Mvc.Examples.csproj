@@ -1,44 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6E626551-89A5-4625-8429-B442634725C0}</ProjectGuid>
-    <ProjectTypeGuids>{F85E285D-A4E0-4152-9332-AB1D724D3325};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Telerik.Web.Mvc.Examples</RootNamespace>
     <AssemblyName>Telerik.Web.Mvc.Examples</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
      
      
      
      
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MVC1</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;MVC1</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MVC3</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
@@ -46,9 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2|AnyCPU' ">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;MVC2</DefineConstants>
+    <DefineConstants>TRACE;MVC3</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -56,11 +40,26 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release MVC3|AnyCPU' ">
     <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;MVC3</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MVC3</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -93,12 +92,12 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-  </ItemGroup>
-  <ItemGroup Condition="$(TargetFrameworkVersion) == 'v4.0'">
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.WebPages, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Areas\Razor\RazorAreaRegistration.cs" />
     <Compile Include="Controllers\Calendar\ClientSideApiController.cs" />
     <Compile Include="Controllers\Calendar\ClientSideEventsController.cs" />
     <Compile Include="Controllers\Calendar\AccessibilityController.cs" />
@@ -120,6 +119,27 @@
     <Compile Include="Controllers\ComboBox\FilteringClientController.cs" />
     <Compile Include="Controllers\ComboBox\FirstLookController.cs" />
     <Compile Include="Controllers\ComboBox\ServerValidationController.cs" />
+    <Compile Include="Controllers\Editor\ImageToolController.cs" />
+    <Compile Include="Controllers\Editor\ImageBrowserController.cs" />
+    <Compile Include="Controllers\Slider\ClientSideApiController.cs" />
+    <Compile Include="Controllers\Slider\ClientSideEventsController.cs" />
+    <Compile Include="Controllers\Slider\ColorPickerController.cs" />
+    <Compile Include="Controllers\Slider\AccessibilityController.cs" />
+    <Compile Include="Controllers\Slider\EditTemplateController.cs" />
+    <Compile Include="Controllers\Splitter\ClientSideEventsController.cs" />
+    <Compile Include="Controllers\Splitter\ClientSideApiController.cs" />
+    <Compile Include="Controllers\Splitter\AjaxLoadingController.cs" />
+    <Compile Include="Controllers\Splitter\AccessibilityController.cs" />
+    <Compile Include="Controllers\Splitter\OrientationController.cs" />
+    <Compile Include="Controllers\Splitter\NestingComponentsController.cs" />
+    <Compile Include="Controllers\UploadController.cs" />
+    <Compile Include="Controllers\Grid\AggregatesServerSideController.cs" />
+    <Compile Include="Controllers\Grid\AggregatesAjaxController.cs" />
+    <Compile Include="Controllers\Grid\EditingBatchController.cs" />
+    <Compile Include="Controllers\SliderController.cs" />
+    <Compile Include="Controllers\Slider\FirstLookController.cs" />
+    <Compile Include="Controllers\Splitter\FirstLookController.cs" />
+    <Compile Include="Controllers\SplitterController.cs" />
     <Compile Include="Controllers\DatePicker\AccessibilityController.cs" />
     <Compile Include="Controllers\DatePicker\RtlSupportController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
@@ -155,6 +175,12 @@
     <Compile Include="Controllers\TabStrip\AccessibilityController.cs" />
     <Compile Include="Controllers\TreeView\AccessibilityController.cs" />
     <Compile Include="Controllers\TreeView\RtlSupportController.cs" />
+    <Compile Include="Controllers\TreeView\SpritesController.cs" />
+    <Compile Include="Controllers\Upload\ClientSideApiController.cs" />
+    <Compile Include="Controllers\Upload\ClientSideEventsController.cs" />
+    <Compile Include="Controllers\Upload\RtlSupportController.cs" />
+    <Compile Include="Controllers\Upload\SyncUploadController.cs" />
+    <Compile Include="Controllers\Upload\FirstLookController.cs" />
     <Compile Include="Controllers\WindowController.cs" />
     <Compile Include="Controllers\DatePicker\AnimationEffectsController.cs" />
     <Compile Include="Controllers\DatePicker\ClientSideApiController.cs" />
@@ -252,9 +278,11 @@
     <Compile Include="Controllers\Window\ClientSideApiController.cs" />
     <Compile Include="Controllers\Window\AnimationEffectsController.cs" />
     <Compile Include="Controllers\Window\AccessibilityController.cs" />
+    <Compile Include="Controllers\Window\PopupFormController.cs" />
     <Compile Include="Controllers\Window\LoadingExternalPageController.cs" />
     <Compile Include="Controllers\Window\FirstLookController.cs" />
     <Compile Include="Controllers\Window\RtlSupportController.cs" />
+    <Compile Include="Extensions\ControllerContextExtensions.cs" />
     <Compile Include="Extensions\CustomBindingExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\HtmlHelpersExtensions.cs" />
@@ -327,6 +355,143 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Razor\Views\Calendar\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Calendar\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Calendar\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Calendar\Globalization.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Calendar\RtlSupport.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Calendar\SelectAction.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\ComboBox\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\AjaxLoading.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\ClientSideBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\ClientValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\FilteringClient.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\FilteringServer.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\ComboBox\ServerValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\ClientValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\DateParsing.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\EditTemplate.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\Globalization.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\DatePicker\ServerValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\ClientValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\CustomTools.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\EditorInGrid.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\EditorTemplates\Editor.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\Localization.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\ServerValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\Snippets.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\Styles.cshtml" />
+    <Content Include="Areas\Razor\Views\Editor\ImageTool.cshtml" />
+    <None Include="Areas\Razor\Views\Grid\AggregatesServerSide.cshtml" />
+    <None Include="Areas\Razor\Views\Grid\AggregatesAjax.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\DisplayTemplates\Employee.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Grid\EditorTemplates\ClientEmployee.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Grid\EditorTemplates\Employee.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\Accessibility.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Grid\AjaxBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\AutoGenerateColumns.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CheckBoxesAjax.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CheckBoxesServerSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CheckedOrders.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ClientEditTemplates.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ColumnReordering.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ColumnResizing.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ColumnSettings.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CustomBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CustomCommand.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CustomFormatting.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CustomRoute.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CustomServerBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\CustomToolBar.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\DetailsAjax.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\DetailsServerSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\EditingAjax.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\EditingServerSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\EditingWebService.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ExternalServiceFacebook.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ExternalServiceTwitter.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\Filtering.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\Grouping.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\HeaderFooterTemplates.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\HierarchyAjax.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\HierarchyServerSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\Localization.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\Paging.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\SelectionClientSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\SelectionServerSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ServerBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\ServerEditTemplates.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\Sorting.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\TemplatesClientSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\TemplatesServerSide.cshtml" />
+    <Content Include="Areas\Razor\Views\Grid\WebService.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\DataBindingToModel.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\Orientation.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\SiteMapBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\Sprites.cshtml" />
+    <Content Include="Areas\Razor\Views\Menu\Templates.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\ClientValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\EditTemplate.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\Globalization.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\NumericTextBox\ServerValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\AjaxLoading.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\AjaxView_BasedOnJQuery.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\AjaxView_CrossBrowser.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\AjaxView_ExceptionalPerformance.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\AjaxView_OpenSource.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\DataBindingToModel.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\SiteMapBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\Sprites.cshtml" />
+    <Content Include="Areas\Razor\Views\PanelBar\Templates.cshtml" />
+    <None Include="Areas\Razor\Views\Shared\CodeFile.cshtml" />
     <Content Include="Content\Calendar\Descriptions\Accessibility.html" />
     <Content Include="Content\Calendar\Descriptions\RtlSupport.html" />
     <Content Include="Content\ComboBox\Descriptions\Accessibility.html" />
@@ -343,13 +508,14 @@
     <Content Include="Content\DatePicker\Descriptions\RtlSupport.html" />
     <Content Include="Content\Editor\CustomTools\insert-html-icon.png" />
     <Content Include="Content\Editor\Descriptions\Accessibility.html" />
+    <Content Include="Content\Editor\Descriptions\ImageTool.html" />
     <Content Include="Content\Editor\Descriptions\RtlSupport.html" />
     <Content Include="Content\Editor\Styles\blockquote.png" />
     <Content Include="Content\Editor\Styles\editorStyles.css" />
     <Content Include="Content\Editor\Descriptions\ClientSideApi.html" />
     <Content Include="Content\Editor\Descriptions\ClientSideEvents.html" />
-    <Content Include="Content\ComboBox\Descriptions\FilteringAjax.html" />
-    <Content Include="Content\ComboBox\Descriptions\FilteringServerSide.html" />
+    <Content Include="Content\ComboBox\Descriptions\FilteringClient.html" />
+    <Content Include="Content\ComboBox\Descriptions\FilteringServer.html" />
     <Content Include="Content\ComboBox\Descriptions\FirstLook.html" />
     <Content Include="Content\Editor\Descriptions\ClientValidation.html" />
     <Content Include="Content\Editor\Descriptions\Localization.html" />
@@ -365,14 +531,24 @@
     <Content Include="Content\Grid\Descriptions\ClientEditTemplates.html" />
     <Content Include="Content\Grid\Descriptions\Accessibility.html" />
     <Content Include="Content\Grid\Descriptions\ColumnReordering.html" />
+    <Content Include="Content\Grid\Descriptions\AggregatesServerSide.html" />
+    <Content Include="Content\Grid\Descriptions\AggregatesAjax.html" />
+    <Content Include="Content\Grid\Descriptions\EditingBatch.html" />
     <Content Include="Content\Grid\Descriptions\HeaderFooterTemplates.html" />
     <Content Include="Content\Grid\Descriptions\CustomToolBar.html" />
     <Content Include="Content\Grid\Descriptions\CustomServerBinding.html" />
+    <Content Include="Content\Images\background.png" />
+    <Content Include="Content\Images\menu.png" />
+    <Content Include="Content\Images\menu-separator.png" />
+    <Content Include="Content\Images\overview-sprite.jpg" />
+    <Content Include="Content\Images\telerik-logo.png" />
+    <Content Include="Content\Images\Themes\Calendar\Office2010Black.png" />
     <Content Include="Content\Images\Themes\ComboBox\Black.png" />
     <Content Include="Content\Images\Themes\ComboBox\Default.png" />
     <Content Include="Content\Images\Themes\ComboBox\Forest.png" />
     <Content Include="Content\Images\Themes\ComboBox\Hay.png" />
     <Content Include="Content\Images\Themes\ComboBox\Office2007.png" />
+    <Content Include="Content\Images\Themes\ComboBox\Office2010Black.png" />
     <Content Include="Content\Images\Themes\ComboBox\Outlook.png" />
     <Content Include="Content\Images\Themes\ComboBox\Simple.png" />
     <Content Include="Content\Images\Themes\ComboBox\Sitefinity.png" />
@@ -382,11 +558,13 @@
     <Content Include="Content\Images\Themes\ComboBox\Web20.png" />
     <Content Include="Content\Images\Themes\ComboBox\WebBlue.png" />
     <Content Include="Content\Images\Themes\ComboBox\Windows7.png" />
+    <Content Include="Content\Images\Themes\DatePicker\Office2010Black.png" />
     <Content Include="Content\Images\Themes\Editor\Black.png" />
     <Content Include="Content\Images\Themes\Editor\Default.png" />
     <Content Include="Content\Images\Themes\Editor\Forest.png" />
     <Content Include="Content\Images\Themes\Editor\Hay.png" />
     <Content Include="Content\Images\Themes\Editor\Office2007.png" />
+    <Content Include="Content\Images\Themes\Editor\Office2010Black.png" />
     <Content Include="Content\Images\Themes\Editor\Outlook.png" />
     <Content Include="Content\Images\Themes\Editor\Simple.png" />
     <Content Include="Content\Images\Themes\Editor\Sitefinity.png" />
@@ -396,11 +574,63 @@
     <Content Include="Content\Images\Themes\Editor\Web20.png" />
     <Content Include="Content\Images\Themes\Editor\WebBlue.png" />
     <Content Include="Content\Images\Themes\Editor\Windows7.png" />
+    <Content Include="Content\Images\Themes\Grid\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Menu\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\NumericTextBox\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\PanelBar\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Slider\Black.png" />
+    <Content Include="Content\Images\Themes\Slider\Default.png" />
+    <Content Include="Content\Images\Themes\Slider\Forest.png" />
+    <Content Include="Content\Images\Themes\Slider\Hay.png" />
+    <Content Include="Content\Images\Themes\Slider\Office2007.png" />
+    <Content Include="Content\Images\Themes\Slider\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Slider\Outlook.png" />
+    <Content Include="Content\Images\Themes\Slider\Simple.png" />
+    <Content Include="Content\Images\Themes\Slider\Sitefinity.png" />
+    <Content Include="Content\Images\Themes\Slider\Sunset.png" />
+    <Content Include="Content\Images\Themes\Slider\Telerik.png" />
+    <Content Include="Content\Images\Themes\Slider\Vista.png" />
+    <Content Include="Content\Images\Themes\Slider\Web20.png" />
+    <Content Include="Content\Images\Themes\Slider\WebBlue.png" />
+    <Content Include="Content\Images\Themes\Slider\Windows7.png" />
+    <Content Include="Content\Images\Themes\Splitter\Black.png" />
+    <Content Include="Content\Images\Themes\Splitter\Default.png" />
+    <Content Include="Content\Images\Themes\Splitter\Forest.png" />
+    <Content Include="Content\Images\Themes\Splitter\Hay.png" />
+    <Content Include="Content\Images\Themes\Splitter\Office2007.png" />
+    <Content Include="Content\Images\Themes\Splitter\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Splitter\Outlook.png" />
+    <Content Include="Content\Images\Themes\Splitter\Simple.png" />
+    <Content Include="Content\Images\Themes\Splitter\Sitefinity.png" />
+    <Content Include="Content\Images\Themes\Splitter\Sunset.png" />
+    <Content Include="Content\Images\Themes\Splitter\Telerik.png" />
+    <Content Include="Content\Images\Themes\Splitter\Vista.png" />
+    <Content Include="Content\Images\Themes\Splitter\Web20.png" />
+    <Content Include="Content\Images\Themes\Splitter\WebBlue.png" />
+    <Content Include="Content\Images\Themes\Splitter\Windows7.png" />
+    <Content Include="Content\Images\Themes\TabStrip\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\TreeView\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Upload\Black.png" />
+    <Content Include="Content\Images\Themes\Upload\Default.png" />
+    <Content Include="Content\Images\Themes\Upload\Forest.png" />
+    <Content Include="Content\Images\Themes\Upload\Hay.png" />
+    <Content Include="Content\Images\Themes\Upload\Office2007.png" />
+    <Content Include="Content\Images\Themes\Upload\Office2010Black.png" />
+    <Content Include="Content\Images\Themes\Upload\Outlook.png" />
+    <Content Include="Content\Images\Themes\Upload\Simple.png" />
+    <Content Include="Content\Images\Themes\Upload\Sitefinity.png" />
+    <Content Include="Content\Images\Themes\Upload\Sunset.png" />
+    <Content Include="Content\Images\Themes\Upload\Telerik.png" />
+    <Content Include="Content\Images\Themes\Upload\Vista.png" />
+    <Content Include="Content\Images\Themes\Upload\Web20.png" />
+    <Content Include="Content\Images\Themes\Upload\WebBlue.png" />
+    <Content Include="Content\Images\Themes\Upload\Windows7.png" />
     <Content Include="Content\Images\Themes\Window\Black.png" />
     <Content Include="Content\Images\Themes\Window\Default.png" />
     <Content Include="Content\Images\Themes\Window\Forest.png" />
     <Content Include="Content\Images\Themes\Window\Hay.png" />
     <Content Include="Content\Images\Themes\Window\Office2007.png" />
+    <Content Include="Content\Images\Themes\Window\Office2010Black.png" />
     <Content Include="Content\Images\Themes\Window\Outlook.png" />
     <Content Include="Content\Images\Themes\Window\Simple.png" />
     <Content Include="Content\Images\Themes\Window\Sitefinity.png" />
@@ -414,6 +644,19 @@
     <Content Include="Content\NumericTextBox\Descriptions\Accessibility.html" />
     <Content Include="Content\NumericTextBox\Descriptions\RtlSupport.html" />
     <Content Include="Content\PanelBar\Descriptions\Accessibility.html" />
+    <Content Include="Content\Slider\Descriptions\ClientSideApi.html" />
+    <Content Include="Content\Slider\Descriptions\ClientSideEvents.html" />
+    <Content Include="Content\Slider\Descriptions\ColorPicker.html" />
+    <Content Include="Content\Slider\Descriptions\Accessibility.html" />
+    <Content Include="Content\Slider\Descriptions\EditTemplate.html" />
+    <Content Include="Content\Slider\Descriptions\FirstLook.html" />
+    <Content Include="Content\Splitter\Descriptions\Accessibility.html" />
+    <Content Include="Content\Splitter\Descriptions\ClientSideApi.html" />
+    <Content Include="Content\Splitter\Descriptions\ClientSideEvents.html" />
+    <Content Include="Content\Splitter\Descriptions\AjaxLoading.html" />
+    <Content Include="Content\Splitter\Descriptions\NestingComponents.html" />
+    <Content Include="Content\Splitter\Descriptions\Orientation.html" />
+    <Content Include="Content\Splitter\Descriptions\FirstLook.html" />
     <Content Include="Content\TabStrip\Descriptions\Accessibility.html" />
     <Content Include="Content\TreeView\Descriptions\Accessibility.html" />
     <Content Include="Content\TreeView\Descriptions\ClientSideApi.html" />
@@ -431,10 +674,18 @@
     <Content Include="Content\Grid\Employees\8.jpg" />
     <Content Include="Content\Grid\Employees\9.jpg" />
     <Content Include="Content\TreeView\Descriptions\RtlSupport.html" />
+    <Content Include="Content\TreeView\Descriptions\Sprites.html" />
+    <Content Include="Content\Upload\Descriptions\ClientSideEvents.html" />
+    <Content Include="Content\Upload\Descriptions\ClientSideApi.html" />
+    <Content Include="Content\Upload\Descriptions\RtlSupport.html" />
+    <Content Include="Content\Upload\Descriptions\SyncUploadResult.html" />
+    <Content Include="Content\Upload\Descriptions\SyncUpload.html" />
+    <Content Include="Content\Upload\Descriptions\FirstLook.html" />
     <Content Include="Content\Window\Descriptions\Accessibility.html" />
     <Content Include="Content\Window\Descriptions\AnimationEffects.html" />
     <Content Include="Content\Window\Descriptions\ClientSideApi.html" />
     <Content Include="Content\Window\Descriptions\ClientSideEvents.html" />
+    <Content Include="Content\Window\Descriptions\PopupForm.html" />
     <Content Include="Content\Window\Descriptions\LoadingExternalPage.html" />
     <Content Include="Content\Window\Descriptions\FirstLook.html" />
     <Content Include="Content\Window\Descriptions\RtlSupport.html" />
@@ -443,7 +694,11 @@
     <Content Include="Global.asax" />
     <Content Include="Models\Products.asmx" />
     <Content Include="Models\Products.svc" />
-    <Content Include="Scripts\jquery-1.4.3.min.js" />
+    <Content Include="Scripts\jquery-1.5.1.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Views\Calendar\Accessibility.aspx" />
     <Content Include="Views\Calendar\RtlSupport.aspx" />
     <Content Include="Views\ComboBox\AjaxLoading.aspx" />
@@ -458,8 +713,37 @@
     <Content Include="Views\ComboBox\FirstLook.aspx" />
     <Content Include="Views\ComboBox\FilteringClient.aspx" />
     <Content Include="Views\ComboBox\ServerValidation.aspx" />
+    <Content Include="Views\Editor\ImageTool.aspx" />
+    <Content Include="Views\Grid\AggregatesServerSide.aspx" />
+    <Content Include="Views\Grid\AggregatesAjax.aspx" />
     <Content Include="Views\DatePicker\Accessibility.aspx" />
+    <Content Include="Views\DatePicker\AnimationEffects.aspx" />
+    <Content Include="Views\DatePicker\ClientSideApi.aspx" />
+    <Content Include="Views\DatePicker\ClientSideEvents.aspx" />
+    <Content Include="Views\DatePicker\ClientValidation.aspx" />
+    <Content Include="Views\DatePicker\DateParsing.aspx" />
+    <Content Include="Views\DatePicker\EditTemplate.aspx" />
+    <Content Include="Views\DatePicker\FirstLook.aspx" />
+    <Content Include="Views\DatePicker\Globalization.aspx" />
     <Content Include="Views\DatePicker\RtlSupport.aspx" />
+    <Content Include="Views\DatePicker\ServerValidation.aspx" />
+    <Content Include="Views\Grid\EditingBatch.aspx" />
+    <Content Include="Views\Shared\GetMoreThanExpected.ascx" />
+    <Content Include="Views\Slider\ClientSideApi.aspx" />
+    <Content Include="Views\Slider\ClientSideEvents.aspx" />
+    <Content Include="Views\Slider\ColorPicker.aspx" />
+    <Content Include="Views\Slider\Accessibility.aspx" />
+    <Content Include="Views\Slider\EditorTemplates\Slider.ascx" />
+    <Content Include="Views\Slider\EditTemplate.aspx" />
+    <Content Include="Views\Slider\FirstLook.aspx" />
+    <Content Include="Views\Splitter\AjaxView_Grid.ascx" />
+    <Content Include="Views\Splitter\ClientSideEvents.aspx" />
+    <Content Include="Views\Splitter\ClientSideApi.aspx" />
+    <Content Include="Views\Splitter\AjaxLoading.aspx" />
+    <Content Include="Views\Splitter\Accessibility.aspx" />
+    <Content Include="Views\Splitter\Orientation.aspx" />
+    <Content Include="Views\Splitter\NestingComponents.aspx" />
+    <Content Include="Views\Splitter\FirstLook.aspx" />
     <Content Include="Views\Editor\ClientSideApi.aspx" />
     <Content Include="Views\Editor\ClientSideEvents.aspx" />
     <Content Include="Views\Editor\ClientValidation.aspx" />
@@ -496,7 +780,14 @@
     <Content Include="Views\TabStrip\Accessibility.aspx" />
     <Content Include="Views\TreeView\Accessibility.aspx" />
     <Content Include="Views\TreeView\RtlSupport.aspx" />
-    <Content Include="Views\Shared\Search.ascx" />
+    <Content Include="Views\Shared\TopNavigation.ascx" />
+    <Content Include="Views\TreeView\Sprites.aspx" />
+    <Content Include="Views\Upload\ClientSideApi.aspx" />
+    <Content Include="Views\Upload\ClientSideEvents.aspx" />
+    <Content Include="Views\Upload\RtlSupport.aspx" />
+    <Content Include="Views\Upload\SyncUpload.aspx" />
+    <Content Include="Views\Upload\SyncUploadResult.aspx" />
+    <Content Include="Views\Upload\FirstLook.aspx" />
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -505,21 +796,115 @@
     <Content Include="App_Data\Northwind_log.ldf">
       <DependentUpon>Northwind.mdf</DependentUpon>
     </Content>
-    <Content Include="Content\Images\background.jpg" />
-    <Content Include="Content\Images\logos.png" />
     <Content Include="Content\Images\sprite.png" />
-    <Content Include="Content\Images\suitesSprite.png" />
     <Content Include="Views\Grid\CustomRoute.aspx" />
     <Content Include="Views\Grid\FirstLook.aspx" />
     <Content Include="Views\Menu\SiteMapBinding.aspx" />
     <Content Include="Views\Window\AnimationEffects.aspx" />
     <Content Include="Views\Window\Accessibility.aspx" />
+    <Content Include="Views\Window\PopupForm.aspx" />
     <Content Include="Views\Window\RtlSupport.aspx" />
     <Content Include="Web.sitemap">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Razor\Views\Home\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Web.config" />
+    <Content Include="Areas\Razor\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_LayoutExamples.cshtml" />
+    <Content Include="Areas\Razor\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_CodeViewer.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_Header.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_LeftNavigation.cshtml" />
+    <Content Include="Areas\Razor\Views\Calendar\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_TopNavigation.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_Footer.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_GoogleAnalytics.cshtml">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Shared\EditorTemplates\Currency.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Shared\EditorTemplates\Date.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Shared\EditorTemplates\DateTime.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\EditorTemplates\Integer.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Shared\EditorTemplates\Number.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\EditorTemplates\Time.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_AccessibilityValidation.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_CulturePicker.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Shared\_EventLog.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\TabStrip\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\AjaxLoading.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\AjaxView_BasedOnJQuery.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\AjaxView_CrossBrowser.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\AjaxView_ExceptionalPerformance.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\AjaxView_OpenSource.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\DataBindingToModel.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\SiteMapBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\TabStrip\Sprites.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\AjaxLoading.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\CheckBoxSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\ClientSideBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\DataBindingToModel.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\DragAndDrop.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\SiteMapBinding.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\Sprites.cshtml" />
+    <Content Include="Areas\Razor\Views\TreeView\Templates.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\AjaxView.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\AnimationEffects.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\LoadingExternalPage.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\PopupForm.cshtml" />
+    <Content Include="Areas\Razor\Views\Window\RtlSupport.cshtml" />
+    <Content Include="Views\Web.MVC2.config" />
+    <Content Include="Web.MVC2.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Areas\Razor\Views\Upload\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Upload\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Upload\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Upload\SyncUpload.cshtml" />
+    <Content Include="Areas\Razor\Views\Upload\SyncUploadResult.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\ColorPicker.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\EditTemplate.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\AjaxLoading.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\ClientSideApi.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\ClientSideEvents.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\FirstLook.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\FullScreen.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\NestingComponents.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\Orientation.cshtml" />
+    <Content Include="Areas\Razor\Views\Shared\_GetMoreThanExpected.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\EditorTemplates\Slider.cshtml" />
+    <Content Include="Areas\Razor\Views\Splitter\Accessibility.cshtml" />
+    <Content Include="Areas\Razor\Views\Upload\RtlSupport.cshtml" />
+    <Content Include="Areas\Razor\Views\Slider\Accessibility.cshtml" />
     <None Include="Models\Northwind.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
       <LastGenOutput>Northwind.designer.cs</LastGenOutput>
@@ -657,7 +1042,6 @@
     <Content Include="Content\Grid\ExternalServiceFacebook\loading.gif" />
     <Content Include="Content\Grid\ExternalServiceFacebook\xd_receiver.htm" />
     <Content Include="Content\Grid\ExternalServiceTwitter\twitter-logo.png" />
-    <Content Include="Content\Images\background-repeat.png" />
     <Content Include="Content\Grid\Customers\ALFKI.jpg" />
     <Content Include="Content\Grid\Customers\ANATR.jpg" />
     <Content Include="Content\Grid\Customers\ANTON.jpg" />
@@ -749,7 +1133,6 @@
     <Content Include="Content\Grid\Customers\WHITC.jpg" />
     <Content Include="Content\Grid\Customers\WILMK.jpg" />
     <Content Include="Content\Grid\Customers\WOLZA.jpg" />
-    <Content Include="Content\Images\product-first-glance.jpg" />
     <Content Include="Content\Images\Themes\TreeView\Black.png" />
     <Content Include="Content\Images\Themes\TreeView\Default.png" />
     <Content Include="Content\Images\Themes\TreeView\Forest.png" />
@@ -901,17 +1284,10 @@
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
     <Content Include="Scripts\telerik.examples.min.js" />
     <Content Include="Views\Calendar\ClientSideApi.aspx" />
-    <Content Include="Views\DatePicker\ClientSideApi.aspx" />
     <Content Include="Views\Calendar\ClientSideEvents.aspx" />
     <Content Include="Views\Calendar\Globalization.aspx" />
     <Content Include="Views\Calendar\SelectAction.aspx" />
     <Content Include="Views\Calendar\FirstLook.aspx" />
-    <Content Include="Views\DatePicker\ClientSideEvents.aspx" />
-    <Content Include="Views\DatePicker\ClientValidation.aspx" />
-    <Content Include="Views\DatePicker\DateParsing.aspx" />
-    <Content Include="Views\DatePicker\FirstLook.aspx" />
-    <Content Include="Views\DatePicker\Globalization.aspx" />
-    <Content Include="Views\DatePicker\ServerValidation.aspx" />
     <Content Include="Views\Grid\AjaxBinding.aspx" />
     <Content Include="Views\Grid\AutoGenerateColumns.aspx" />
     <Content Include="Views\Grid\ClientSideEvents.aspx" />
@@ -961,11 +1337,9 @@
     <Content Include="Views\Shared\GoogleAnalytics.ascx" />
     <Content Include="Views\Shared\Header.ascx" />
     <Content Include="Views\Shared\Footer.ascx" />
-    <Content Include="Views\Shared\Resources.ascx" />
     <Content Include="Views\Shared\EventLog.ascx" />
-    <Content Include="Views\Shared\Navigation.ascx" />
+    <Content Include="Views\Shared\LeftNavigation.ascx" />
     <Content Include="Views\Shared\Examples.Master" />
-    <Content Include="Views\Shared\ProductLines.ascx" />
     <Content Include="Views\Shared\Site.Master" />
     <Content Include="Views\TabStrip\AjaxLoading.aspx" />
     <Content Include="Views\TabStrip\AjaxView_BasedOnJQuery.ascx" />
@@ -1013,8 +1387,6 @@
     <Content Include="Content\TreeView\Common\file.png" />
     <Content Include="Content\TreeView\Common\folder.png" />
     <Content Include="Content\TreeView\Descriptions\AnimationEffects.html" />
-    <Content Include="Views\DatePicker\AnimationEffects.aspx" />
-    <Content Include="Views\DatePicker\EditTemplate.aspx" />
     <Content Include="Views\Grid\CheckBoxesServerSide.aspx" />
     <Content Include="Views\Grid\CheckBoxesAjax.aspx" />
     <Content Include="Views\Grid\CheckedOrders.ascx" />
@@ -1142,8 +1514,27 @@
       <LastGenOutput>EditorLocalization.pt-BR.designer.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\EditorLocalization.pl-PL.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>EditorLocalization.pl-PL.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\GridLocalization.pl-PL.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>GridLocalization.pl-PL.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\UploadLocalization.bg-BG.resx">
+      <SubType>Designer</SubType>
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>UploadLocalization.bg-BG.designer.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\WebApplications\Microsoft.WebApplication.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -1183,8 +1574,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>7777</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost/Telerik.Web.Mvc.Examples</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

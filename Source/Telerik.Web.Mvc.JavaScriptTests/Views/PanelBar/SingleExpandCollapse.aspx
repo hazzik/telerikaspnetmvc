@@ -64,28 +64,38 @@
         function getRootItem(index) {
             return $('#myPanelBar').find('.t-header').parent().eq(index)
         }
+    </script>
 
-        function test_clicking_second_item_should_collapse_other() {
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('clicking second item should collapse other', function() {
 
             var item = getRootItem(0);
             var item2 = getRootItem(1);
 
             item2.find('> .t-link').trigger('click');
 
-            assertEquals("none", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "none");
+        });
 
-        function test_clicking_item_twice_should_not_collapse_it() {
+        test('clicking item twice should not collapse it', function() {
 
             var item = getRootItem(0);
 
             item.find('> .t-link').trigger('click');
             item.find('> .t-link').trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "block");
+        });
 
-        function test_clicking_subItem_should_not_collapse_headerItem() {
+        test('clicking subItem should not collapse headerItem', function() {
             
             var item = getRootItem(4);
             var subItem = item.find('> .t-group').children()[0];
@@ -93,10 +103,10 @@
             item.find('> .t-link').trigger('click');
             $(subItem).find('> .t-link').trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
+            equal(item.find('.t-group').css("display"), "block");
+        });
 
-        function test_clicking_not_expandable_item_should_not_collapse_expanded_item() {
+        test('clicking not expandable item should not collapse expanded item', function() {
 
             var item = getRootItem(4);
             var item2 = getRootItem(6);
@@ -104,8 +114,9 @@
             item.find('> .t-link').trigger('click');
             item2.find('> .t-link').trigger('click');
 
-            assertEquals("block", item.find('.t-group').css("display"));
-        }
-    </script>
+            equal(item.find('.t-group').css("display"), "block");
+        });
+
+</script>
 
 </asp:Content>

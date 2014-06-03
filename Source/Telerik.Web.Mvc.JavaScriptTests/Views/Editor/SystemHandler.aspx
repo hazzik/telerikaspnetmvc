@@ -1,23 +1,29 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>SystemHandler</h2>
      <%= Html.Telerik().Editor().Name("Editor") %>
     
-    <script type="text/javascript">
-        
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
         var SystemHandler;
 
         var editor;
-        
-        function setUp() {
-            SystemHandler = $.telerik.editor.SystemHandler;
-            editor = $('#Editor').data('tEditor');
-            editor.focus();
-        }
 
-        function test_keydown_calls_endTyping_if_typing_in_progress() {
+        module("Editor / SystemHandler", {
+            setup: function() {
+                SystemHandler = $.telerik.editor.SystemHandler;
+                editor = $('#Editor').data('tEditor');
+                editor.focus();
+            }
+        });
+
+        test('keydown calls endTyping if typing in progress', function() {
              var force = false;
              editor.keyboard = {
                 isModifierKey: function() { return true},
@@ -28,10 +34,10 @@
             var handler = new SystemHandler(editor);
             handler.keydown();
 
-            assertTrue(force);
-        }
+            ok(force);
+        });
         
-        function test_keydown_does_not_call_endTyping_if_not_modifier_key() {
+        test('keydown does not call endTyping if not modifier key', function() {
             var called = false;
             editor.keyboard = {
                 isModifierKey: function () { return false },
@@ -44,10 +50,10 @@
             var handler = new SystemHandler(editor);
             handler.keydown();
 
-            assertFalse(called);
-        }
+            ok(!called);
+        });
         
-        function test_keydown_does_not_call_endTyping_if_typing_not_in_progress() {
+        test('keydown does not call endTyping if typing not in progress', function() {
             var called = false;
             editor.keyboard = {
                 isModifierKey: function() { return true},
@@ -59,11 +65,11 @@
             var handler = new SystemHandler(editor);
             handler.keydown();
 
-            assertTrue(called);
-        }
+            ok(called);
+        });
 
 
-        function test_keydown_if_modifier_key_creates_start_restore_point() {
+        test('keydown if modifier key creates start restore point', function() {
             editor.keyboard = {
                 isModifierKey: function() { return true},
                 typingInProgress: function () { return false }
@@ -72,20 +78,20 @@
             var handler = new SystemHandler(editor);
             handler.keydown();
 
-            assertNotUndefined(handler.startRestorePoint);
-        }
+            ok(undefined !== handler.startRestorePoint);
+        });
         
-        function test_keydown_returns_true_if_modifier_key() {
+        test('keydown returns true if modifier key', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false }
             };
 
             var handler = new SystemHandler(editor);
-            assertTrue(handler.keydown())
-        }
+            ok(handler.keydown())
+        });
 
-        function test_keydown_if_system_command_and_changed_creates_end_restore_point() {
+        test('keydown if system command and changed creates end restore point', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false },
@@ -101,10 +107,10 @@
             editor.keyboard.isModifierKey = function() { return false};
             handler.keydown();
 
-            assertNotUndefined(handler.endRestorePoint);
-        }
+            ok(undefined !== handler.endRestorePoint);
+        });
         
-        function test_keydown_if_system_command_and_changed_sets_start_restore_point_to_end_restore_point() {
+        test('keydown if system command and changed sets start restore point to end restore point', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false },
@@ -120,9 +126,9 @@
             editor.keyboard.isModifierKey = function () { return false };
             handler.keydown();
 
-            assertEquals(handler.endRestorePoint, handler.startRestorePoint);
-        }
-        function test_keydown_returns_true_if_system_command_and_changed() {
+            equal(handler.startRestorePoint, handler.endRestorePoint);
+        });
+        test('keydown returns true if system command and changed', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false },
@@ -135,10 +141,10 @@
             }
             handler.keydown();
             editor.keyboard.isModifierKey = function() { return false};
-            assertTrue(handler.keydown());
-        }
+            ok(handler.keydown());
+        });
 
-        function test_keydown_creates_undo_command_if_system_command_and_changed() {
+        test('keydown creates undo command if system command and changed', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false },
@@ -161,10 +167,10 @@
             }
             handler.keydown()
             
-            assertNotUndefined(command);
-        }
+            ok(undefined !== command);
+        });
 
-        function test_changed_returns_false_if_editor_contents_remain_the_same() {
+        test('changed returns false if editor contents remain the same', function() {
             editor.keyboard = {
                 isModifierKey: function() { return true},
                 typingInProgress: function () { return false }
@@ -173,10 +179,10 @@
             var handler = new SystemHandler(editor);
             handler.keydown();
 
-            assertFalse(handler.changed());
-        }
+            ok(!handler.changed());
+        });
 
-        function test_changed_returns_false_if_editor_contents_changed() {
+        test('changed returns false if editor contents changed', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false }
@@ -185,11 +191,11 @@
             var handler = new SystemHandler(editor);
             handler.keydown();
             editor.body.innerHTML = 'foo';
-            assertTrue(handler.changed());
-        }
+            ok(handler.changed());
+        });
 
 
-        function test_keyup_creates_undo_command_if_system_command_and_changed() {
+        test('keyup creates undo command if system command and changed', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false },
@@ -215,11 +221,11 @@
             
             handler.keyup()
             
-            assertNotUndefined(command);
-        }
+            ok(undefined !== command);
+        });
 
         
-        function test_keyup_does_not_create_undo_command_if_system_command_and_changed() {
+        test('keyup does not create undo command if system command and changed', function() {
             editor.keyboard = {
                 isModifierKey: function () { return true },
                 typingInProgress: function () { return false },
@@ -238,7 +244,9 @@
             
             handler.keyup()
             
-            assertUndefined(command);
-        }
-    </script>
+            ok(undefined === command);
+        });
+
+</script>
+
 </asp:Content>

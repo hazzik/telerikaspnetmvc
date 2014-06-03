@@ -6,6 +6,11 @@
     zoom: 1;
 }
 
+.t-rtl .t-button-icontext .t-icon
+{
+	margin: 0 -3px 0 3px;
+}
+
 /* Window */
 
 .t-rtl .t-window-actions
@@ -39,6 +44,13 @@
 .t-rtl .t-panelbar .t-tabstrip-items .t-item .t-sprite
 {
     margin: -4px -3px 0 3px;
+}
+
+.t-rtl .t-tabstrip-items .t-state-active,
+.t-rtl .t-panelbar .t-tabstrip-items .t-state-active
+{
+    padding-bottom: 1px;
+    margin-bottom: -1px;
 }
 
 /* PanelBar */
@@ -200,7 +212,13 @@
 .t-rtl .t-grid .t-button .t-icon
 {
     margin-left: 3px;
-    margin-right: -6px;
+    margin-right: -3px;
+}
+
+.t-rtl .t-grid .t-last
+{
+    border-left-width: 0;
+    border-right-width: 1px;
 }
 
 .t-rtl .t-grouping-header .t-button .t-icon {
@@ -302,7 +320,7 @@
 .t-rtl .t-treeview-lines .t-bot { background-position: 100% -22px; }
 .t-rtl .t-treeview-lines .t-mid { background-position: 100% -44px; }
 .t-rtl .t-treeview-lines .t-last .t-top { background-position: 100% -66px; }
-.t-rtl .t-treeview-lines .t-last .t-bot { background-position: 100% -22px; } 
+.t-rtl .t-treeview-lines .t-group .t-last .t-bot { background-position: 100% -22px; } 
 .t-rtl .t-treeview-lines .t-item { background-position: 100% 0; }
 .t-rtl .t-treeview-lines .t-first { background-position: 100% 16px; }
 
@@ -324,4 +342,54 @@
 .t-rtl .t-header .t-tabstrip-items .t-link
 {
     padding: .3em .9em;
+}
+
+/* ImageBrowser */
+
+.t-rtl .t-breadcrumbs
+{
+    float: right;
+    margin: 0 -1px 0 0;
+}
+
+.t-rtl .t-breadcrumbs-wrap
+{
+    left: auto;
+    right: 0;
+    padding-left: 0;
+    padding-right: 5px;
+}
+
+.t-rtl .t-breadcrumbs-input
+{
+    padding-left: 0;
+    padding-right: 2px;
+}
+
+.t-rtl .t-search-wrap
+{
+    float: left;
+}
+
+.t-rtl .t-search-wrap label
+{
+    left: auto;
+    right: 7px;
+}
+
+.t-rtl .t-search-wrap .t-search
+{
+    right: auto;
+    left: 2px;
+}
+
+.t-rtl .t-tile
+{
+    float: right;
+}
+
+.t-rtl .t-imagebrowser .t-thumb
+{
+    float: right;
+    margin: 4px 4px 0 10px;
 }

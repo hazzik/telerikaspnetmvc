@@ -8,115 +8,6 @@
         function getComboBox(selector) {
             return $(selector || '#ComboBox').data('tComboBox');
         }
-
-        function test_combobox_method_should_not_select_first_item_if_there_is_no_selectedItem_and_selectIndex_is_negative() {
-            
-            var ddl = getComboBox();
-            ddl.index = -1;
-            ddl.$input.val('');
-            ddl.dropDown.$items = null;
-            ddl.fill();
-
-            assertEquals(0, ddl.dropDown.$element.find('> li.t-state-selected').length);
-        }
-
-        function test_click_item_in_dropDown_list_when_it_is_shown_should_call_select_method() {
-
-            var isSelectCalled = false;
-
-            var ddl = getComboBox();
-            ddl.effects = $.telerik.fx.toggle.defaults();
-
-            var old = ddl.select;
-            ddl.select = function () { isSelectCalled = true; }
-
-            ddl.open();         
-
-            $(ddl.dropDown.$items[2]).click();
-
-            assertTrue(isSelectCalled);
-
-            ddl.select = old;
-        }
-
-        function test_dataBind_method_should_not_select_item_if_no_items_selected_and_selectedIndex_is_negative() {
-            var combo2 = getComboBox('#ComboBox2');
-
-            combo2.index = -1;
-            combo2.highlightFirst = false;
-            combo2.$input.val('');
-            combo2.data = [{ "Text": "Chai", "Value": "1" },
-                           { "Text": "Chang", "Value": "2" },
-                           { "Text": "Aniseed Syrup", "Value": "3"}];
-            combo2.dropDown.$items = null;
-            combo2.fill();
-
-            assertEquals(0, combo2.dropDown.$items.filter('.t-state-selected').length);
-            assertEquals(-1, combo2.selectedIndex);
-        }
-
-        function test_dataBind_method_should_select_second_item_when_selected_index_is_1() {
-            var combo2 = getComboBox('#ComboBox2');
-            combo2.index = 1;
-
-            combo2.data = [{ "Text": "Chai", "Value": "1" },
-                           { "Text": "Chang", "Value": "2" },
-                           { "Text": "Aniseed Syrup", "Value": "3"}];
-            combo2.$input.val('');
-            combo2.dropDown.$items = null;
-            combo2.fill();
-
-            assertEquals(1, combo2.selectedIndex);
-        }
-
-        function test_fill_method_should_highlight_first_item_if_no_selected_item_and_highlightFirst_option_is_true() {
-            var combo2 = getComboBox('#ComboBox2');
-            combo2.index = -1;
-            combo2.highlightFirst = true;
-
-            combo2.$input.val('');
-            combo2.data[{ "Text": "Chai", "Value": "1" },
-                           { "Text": "Chang", "Value": "2" },
-                           { "Text": "Aniseed Syrup", "Value": "3"}];
-            
-            combo2.dropDown.$items = null;
-            combo2.fill();
-
-            assertTrue(combo2.dropDown.$items.first().hasClass('t-state-selected'));
-        }
-
-        function test_select_should_set_text_defined_in_li_element() { //if text is encoded in the dataItem.Text
-
-            var combo = $('#ComboBox2').data('tComboBox');
-
-            combo.dataBind([{ "Text": "Calendar &raquo; Select Action", "Value": "1" },
-                           { "Text": "Chang", "Value": "2" },
-                           { "Text": "Aniseed Syrup", "Value": "3"}]);
-
-            var li = combo.dropDown.$items[0];
-            
-            combo.select(li);
-
-            assertEquals("Calendar » Select Action", combo.text());
-        }
-
-        function test_open_sets_dropdown_zindex() {
-            var combo = getComboBox();
-            combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
-            
-            var $combo = $(combo.element)
-
-            var lastZIndex = $combo.css('z-index');
-
-            $combo.css('z-index', 42);
-
-            combo.close();
-            combo.open();
-
-            assertEquals('43', '' + combo.dropDown.$element.parent().css('z-index'));
-
-            $combo.css('z-index', lastZIndex);
-        }
     </script>
 
     <%= Html.Telerik().ComboBox()
@@ -165,4 +56,136 @@
             .Name("ComboBox2")
             .Effects(e => e.Toggle())
     %>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+<script type="text/javascript">
+
+
+
+        test('combobox method should not select first item if there is no selectedItem and selectIndex is negative', function() {
+            
+            var ddl = getComboBox();
+            ddl.index = -1;
+            ddl.$element.val('');
+            ddl.dropDown.$items = null;
+            ddl.fill();
+
+            equal(ddl.dropDown.$element.find('> li.t-state-selected').length, 0);
+        });
+
+        test('click item in dropDown list when it is shown should call select method', function() {
+
+            var isSelectCalled = false;
+
+            var ddl = getComboBox();
+            ddl.effects = $.telerik.fx.toggle.defaults();
+
+            var old = ddl.select;
+            ddl.select = function () { isSelectCalled = true; }
+
+            ddl.open();         
+
+            $(ddl.dropDown.$items[2]).click();
+
+            ok(isSelectCalled);
+
+            ddl.select = old;
+        });
+
+        test('dataBind method should not select item if no items selected and selectedIndex is negative', function() {
+            var combo2 = getComboBox('#ComboBox2');
+
+            combo2.index = -1;
+            combo2.highlightFirst = false;
+            combo2.$element.val('');
+            combo2.data = [{ "Text": "Chai", "Value": "1" },
+                           { "Text": "Chang", "Value": "2" },
+                           { "Text": "Aniseed Syrup", "Value": "3"}];
+            combo2.dropDown.$items = null;
+            combo2.fill();
+
+            equal(combo2.dropDown.$items.filter('.t-state-selected').length, 0);
+            equal(combo2.selectedIndex, -1);
+        });
+
+        test('dataBind method should select second item when selected index is 1', function() {
+            var combo2 = getComboBox('#ComboBox2');
+            combo2.index = 1;
+
+            combo2.data = [{ "Text": "Chai", "Value": "1" },
+                           { "Text": "Chang", "Value": "2" },
+                           { "Text": "Aniseed Syrup", "Value": "3"}];
+            combo2.$element.val('');
+            combo2.dropDown.$items = null;
+            combo2.fill();
+
+            equal(combo2.selectedIndex, 1);
+        });
+
+        test('fill method should highlight first item if no selected item and highlightFirst option is true', function() {
+            var combo2 = getComboBox('#ComboBox2');
+            combo2.index = -1;
+            combo2.highlightFirst = true;
+
+            combo2.$element.val('');
+            combo2.data[{ "Text": "Chai", "Value": "1" },
+                           { "Text": "Chang", "Value": "2" },
+                           { "Text": "Aniseed Syrup", "Value": "3"}];
+            
+            combo2.dropDown.$items = null;
+            combo2.fill();
+
+            ok(combo2.dropDown.$items.first().hasClass('t-state-selected'));
+        });
+
+        test('select should set text defined in li element', function() { //if text is encoded in the dataItem.Text
+
+            var combo = $('#ComboBox2').data('tComboBox');
+
+            combo.dataBind([{ "Text": "Calendar &raquo; Select Action", "Value": "1" },
+                           { "Text": "Chang", "Value": "2" },
+                           { "Text": "Aniseed Syrup", "Value": "3"}]);
+
+            var li = combo.dropDown.$items[0];
+            
+            combo.select(li);
+
+            equal(combo.text(), "Calendar » Select Action");
+        });
+
+        test('open sets dropdown zindex', function () {
+            var combo = getComboBox();
+            combo.effects = combo.dropDown.effects = $.telerik.fx.toggle.defaults();
+
+            var $combo = combo.$wrapper;
+
+            var lastZIndex = $combo.css('z-index');
+
+            $combo.css('z-index', 42);
+
+            combo.close();
+            combo.open();
+
+            equal('' + combo.dropDown.$element.parent().css('z-index'), '43');
+
+            $combo.css('z-index', lastZIndex);
+        });
+
+        test('open sets dropdown width', function() {
+            var combo = getComboBox('#ComboWithServerAttr');
+
+            combo.close();
+            combo.open();
+            combo.close();
+            combo.open();
+            combo.close();
+            combo.open();
+
+            equal(combo.dropDown.$element.parent()[0].style.width, '402px');
+        });
+
+</script>
+
 </asp:Content>

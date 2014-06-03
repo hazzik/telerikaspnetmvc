@@ -8,7 +8,7 @@ namespace Telerik.Web.Mvc.UI
     
     public interface IGridActionColumn : IGridColumn
     {
-        IList<GridActionCommandBase> Commands 
+        IList<IGridActionCommand> Commands 
         { 
             get; 
         }

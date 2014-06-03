@@ -20,6 +20,8 @@ namespace Telerik.Web.Mvc.UI
             HtmlAttributes = new Dictionary<string, object>() { { "class", "t-" + Identifier } };
             ViewContext = viewContext;
             Enabled = true;
+            Encoded = true;
+            InputHtmlAttributes = new Dictionary<string, object>();
         }
 
         public string Identifier { get; private set; }
@@ -28,9 +30,9 @@ namespace Telerik.Web.Mvc.UI
 
         public IDictionary<string, object> HtmlAttributes { get; private set; }
 
-        string IDropDownRenderable.Id { get { return ""; } }
-        string IDropDownRenderable.Name { get { return ""; } }
-        IDictionary<string, object> IComboBoxRenderable.InputHtmlAttributes { get { return new Dictionary<string, object>(); } }
+        string IViewComponent.Id { get { return ""; } }
+        string IViewComponent.Name { get { return ""; } }
+        public IDictionary<string, object> InputHtmlAttributes { get; private set; }
 
         public IList<DropDownItem> Items
         {
@@ -39,8 +41,9 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public int SelectedIndex { get; set; }
-
+        public string Value { get; set; }
         public bool Enabled { get; set; }
+        public bool Encoded { get; set; }
 
         public IHtmlBuilder CreateHtmlBuilder()
         {

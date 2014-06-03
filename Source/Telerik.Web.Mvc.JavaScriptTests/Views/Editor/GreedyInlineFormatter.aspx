@@ -1,12 +1,15 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
 
-    <h2>GreedyInlineFormatter</h2>
-    
     <%= Html.Telerik().Editor().Name("Editor") %>
     
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
     <script type="text/javascript">
     
@@ -14,57 +17,42 @@
 
         var GreedyInlineFormatter;
 
-        function setUp() {
-            editor = getEditor();
-            GreedyInlineFormatter = $.telerik.editor.GreedyInlineFormatter;
-        }
+        module("Editor / GreedyInlineFormatter", {
+            setup: function() {
+                editor = getEditor();
+                GreedyInlineFormatter = $.telerik.editor.GreedyInlineFormatter;
+            }
+        });
 
-        function test_toggle_applies_format_on_simple_selection() {
+        test('toggle applies format on simple selection', function() {
             var range = createRangeFromText(editor, "|foo|");
             var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'Arial' } }, 'font-family');
             formatter.toggle(range);
-            assertEquals('<span style="font-family:Arial;">foo</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="font-family:Arial;">foo</span>');
+        });
 
-        function test_toggle_applies_format_on_suitable_node() {
+        test('toggle applies format on suitable node', function() {
             var range = createRangeFromText(editor, '|<span style="font-family:Courier;">foo</span>|');
             var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'Arial' } }, 'font-family');
             formatter.toggle(range);
-            assertEquals('<span style="font-family:Arial;">foo</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="font-family:Arial;">foo</span>');
+        });
 
-        function test_toggle_inserts_pending_format_in_collapsed_selection() {
-            editor.value('foo bar');
-
-            var range = editor.createRange();
-            range.setStart(editor.body.firstChild, 3);
-            range.collapse(true);
-        
-            var marker = new $.telerik.editor.Marker();
-            range = marker.add(range, true);
-
-            var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'Arial' } }, 'font-family');
-            formatter.editor = editor;
-            formatter.toggle(range);
-
-            marker.remove(range);
-
-            assertEquals('foo<span style="font-family:Arial;">\ufeff\ufeff</span> bar', editor.value());
-        }
-
-        function test_formats_split_existing_format_nodes() {
+        test('formats split existing format nodes', function() {
             var range = createRangeFromText(editor, '<span style="font-family:Courier;">fo|o</span>bar|');
             var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'Arial' } }, 'font-family');
             formatter.toggle(range);
-            assertEquals('<span style="font-family:Courier;">fo</span><span style="font-family:Arial;">obar</span>', editor.value());
-        }
+            equal(editor.value(), '<span style="font-family:Courier;">fo</span><span style="font-family:Arial;">obar</span>');
+        });
 
-        function test_format_splits_span_when_inherit_is_supplied() {
+        test('format splits span when inherit is supplied', function() {
             var range = createRangeFromText(editor, '<span style="font-family:Courier;">fo|o</span>bar|');
             var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'inherit' } }, 'font-family');
             
             formatter.toggle(range);
-            assertEquals('<span style="font-family:Courier;">fo</span>obar', editor.value());
-        }
+            equal(editor.value(), '<span style="font-family:Courier;">fo</span>obar');
+        });
+
     </script>
+
 </asp:Content>

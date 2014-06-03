@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
-using Xunit;
-
-namespace Telerik.Web.Mvc.UI.Tests
+﻿namespace Telerik.Web.Mvc.UI.Tests
 {
+    using System.Collections.Generic;
+    using Telerik.Web.Mvc.UI;
+    using Xunit;
+
     public class NavigationItemTests
     {
         NavigationItemTestDouble item;
 
         public NavigationItemTests()
         {
-            this.item = new NavigationItemTestDouble();
+            item = new NavigationItemTestDouble();
         }
 
         [Fact]
@@ -66,18 +67,6 @@ namespace Telerik.Web.Mvc.UI.Tests
         {
             get;
             set;
-        }
-
-    }
-
-    public class ContentNavigationItemTestDouble : NavigationItem<ContentNavigationItemTestDouble>, IAsyncContentContainer
-    {
-        public ContentNavigationItemTestDouble() { }
-
-        public string  ContentUrl
-        {
-	          get;
-	          set;
         }
 
     }

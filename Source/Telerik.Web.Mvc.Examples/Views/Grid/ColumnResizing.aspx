@@ -19,12 +19,13 @@
            i++;
        }
     %>
-    <button class="t-button t-state-default" type="submit">Save Column Widths</button>
+    <button class="t-button" type="submit">Save Column Widths</button>
 </p>
 <% Html.EndForm(); %>
 
 <%= Html.Telerik().Grid(Model)
         .Name("Grid")
+        .TableHtmlAttributes(new { style = "width:" + (config["GridWidth"] > 0 ? config["GridWidth"] + "px" : "100%") })
         .Columns(columns =>
         {
             columns.Bound(o => o.OrderID).Width(config["OrderIDWidth"]);

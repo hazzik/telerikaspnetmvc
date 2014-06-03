@@ -3,21 +3,81 @@
     var $t = $.telerik;
 
     $t.combobox = function (element, options) {
-
         $.extend(this, options);
 
-        var $element = $(element);
+        var isTextBox = element.nodeName.toLowerCase() == 'input' && element.type.toLowerCase() == 'text';
+        var isSelect = element.nodeName.toLowerCase() == 'select';
+
+        if ((isTextBox || isSelect) && !$(element).parent().hasClass("t-combobox")) {
+            if (isSelect && !this.data) {
+                this.data = $t.list.retrieveData(element);
+            }
+
+            var htmlBuilder = new $t.list.htmlBuilder(element, 't-combobox', isSelect);
+
+            htmlBuilder.text = function (options) {
+                var builder = options.builder;
+                builder.buffer = [];
+                return $(builder
+                        .cat('<input class="t-input" autocomplete="off" type="text" ')
+                        .catIf('value="', options.text, '" ', options.text)
+                        .catIf('name="', options.name, '-input" ', options.name)
+                        .cat('/>')
+                        .string());
+            }
+
+            htmlBuilder.render();
+
+            if (isSelect) {
+                element = element.previousSibling; //set element to input
+            }
+        }
 
         this.element = element;
-        this.$element = $element;
+        var $element = this.$element = $(element);
         this.loader = new $t.list.loader(this);
         this.trigger = new $t.list.trigger(this);
-        this.$text = $element.find('> .t-dropdown-wrap > .t-input').attr('autocomplete', 'off');
-        var $input = this.$input = this.$element.find('input:last');
-        var $selectIcon = $element.find('> .t-dropdown-wrap > .t-select');
+        var $wrapper = this.$wrapper = $element.closest('.t-combobox');
+        var $selectIcon = this.$wrapper.find('.t-select');
 
-        if(!$input.attr('disabled'))
+        var pasteMethod = $.browser.msie ? 'paste' : 'input';
+        var $text = this.$text = this.$wrapper.find('> .t-dropdown-wrap > .t-input')
+                                     .attr('autocomplete', 'off')
+                                     .bind(pasteMethod, $.proxy(function (e) {
+                                         var value = e.target.value;
+                                         if ($.browser.msie) {
+                                             var selectedText = element.document.selection.createRange().text;
+                                             var text = window.clipboardData.getData("Text");
+
+                                             if (selectedText && selectedText.length > 0) {
+                                                 value = value.replace(selectedText, text);
+                                             } else {
+                                                 value += text;
+                                             }
+                                         }
+
+                                         this.$element.val(value);
+                                         resetTimer(this);
+                                     }, this));
+
+        var updateCssOnPropertyChange = function (e) {
+            var attr = 'class',
+                classValue = $element.attr(attr)
+
+            if (classValue != $text.attr(attr))
+                $text.attr(attr, classValue).addClass('t-input');
+        }
+
+        if ($.browser.msie) {
+            element.attachEvent("onpropertychange", updateCssOnPropertyChange);
+
+        } else {
+            $element.bind("DOMAttrModified", updateCssOnPropertyChange);
+        }
+
+        if (!$element.attr('disabled')) {
             $selectIcon.bind('click', $.proxy(togglePopup, this));
+        }
 
         this.filtering = new $t.list.filtering(this);
         this.filtering.autoFill = function (component, itemText) {
@@ -65,40 +125,34 @@
                     this.isFiltered = false;
                 }
             }, this),
-            onClick: $.proxy(function (e) { // same as DDL
+            onClick: $.proxy(function (e) {
                 this.select(e.item);
                 this.trigger.change();
                 this.trigger.close();
+                $text.focus();
             }, this)
         });
 
-        this.dropDown.$element.css('direction', $element.closest('.t-rtl').length ? 'rtl' : '');
+        this.dropDown.$element.css('direction', $wrapper.closest('.t-rtl').length ? 'rtl' : '');
 
         this.enable = function () {
-            $element
-            .removeClass('t-state-disabled')
-            .find('.t-input')
-                .removeAttr("disabled");
-
+            $wrapper.removeClass('t-state-disabled');
+            $text.removeAttr("disabled");
             $selectIcon.bind('click', $.proxy(togglePopup, this));
         }
 
         this.disable = function () {
-            $element
-            .addClass('t-state-disabled')
-            .find('.t-input')
-                .attr('disabled', 'disabled');
-
+            $wrapper.addClass('t-state-disabled')
+            $text.attr('disabled', 'disabled');
             $selectIcon.unbind('click');
         }
 
         this.fill = function (callback) {
             function updateSelection(component) {
-                var value = component.value();
+                var value = component.selectedValue || component.value();
+
                 if (value) {
-                    component.select(function (dataItem) {
-                        return value == (dataItem.Value || dataItem.Text);
-                    });
+                    component.value(value);
                     return;
                 }
 
@@ -135,7 +189,6 @@
                     postData[this.queryString.text] = textValue;
 
                     loader.ajaxRequest(function (data) {
-                        this.data = data;
                         this.dataBind(data, true);
                         updateSelection(this);
 
@@ -180,17 +233,18 @@
             if (arguments.length) {
                 var value = arguments[0];
                 var index = this.select(function (dataItem) {
-                    return value == dataItem.Value;
+                    return value == (dataItem.Value || dataItem.Text);
                 });
 
                 if (index == -1) {
-                    this.$input.val(value);
+                    this.selectedIndex = index;
+                    this.$element.val(value);
                     this.text(value);
                 }
-                this.previousValue = this.$input.val(); //prevent change event
+                this.previousValue = this.$element.val(); //prevent change event
 
             } else {
-                return this.$input.val();
+                return this.$element.val();
             }
         }
 
@@ -198,31 +252,63 @@
         $t.list.filters.call(this);
         $t.list.initialize.call(this);
 
+        $(document.documentElement).bind('mousedown', $.proxy(function (e) {
+            var $dropDown = this.dropDown.$element;
+            var isDropDown = $dropDown && $dropDown.parent().length > 0;
+
+            if ($.contains(this.$wrapper[0], e.target)
+                || (isDropDown && $.contains($dropDown.parent()[0], e.target)))
+                return;
+
+            if (this._textChanged) {
+                this._textChanged = false;
+                var dataItem = findItemByText(this.data, this.$text.val());
+                if (dataItem) {
+                    this.text(dataItem.Text);
+                    this.$element.val(dataItem.Value || dataItem.Text);
+                }
+            }
+
+            this.trigger.change();
+            this.trigger.close();
+        }, this));
+
         this.$text
             .bind({
                 change: $.proxy(function (e) { e.stopPropagation(); }, this),
                 keydown: $.proxy(keydown, this),
                 keypress: $.proxy(keypress, this),
                 focus: $.proxy(function (e) {
-                    var trigger = this.trigger;
-                    var dropDown = this.dropDown;
-                    if (!dropDown.$items)
-                        this.fill(trigger.open);
-                    else
-                        trigger.open();
-
+                    if (this.openOnFocus) {
+                        var trigger = this.trigger;
+                        var dropDown = this.dropDown;
+                        if (!dropDown.$items) {
+                            this.fill(trigger.open);
+                        } else {
+                            trigger.open();
+                        }
+                    }
                     var $text = this.$text;
                     $t.list.selection($text[0], 0, $text.val().length);
 
                 }, this)
             });
 
-        function togglePopup(e){
+        function togglePopup(e) {
+            var dropDown = this.dropDown,
+                trigger = this.trigger;
+
             this.loader.ajaxError = false;
-            if (!this.dropDown.isOpened())
-                this.$text[0].focus();
-            else
-                this.trigger.close();
+            if (!dropDown.isOpened()) {
+                if (!dropDown.$items) {
+                    this.fill(trigger.open);
+                } else {
+                    trigger.open();
+                }
+                $text[0].focus();
+            } else {
+                trigger.close();
+            }
         }
 
         //PRIVATE
@@ -282,9 +368,9 @@
                 setTimeout($.proxy(function () {
                     if ($text.val() == '') {
                         this.selectedIndex = -1;
-                        this.$input.val('');
+                        this.$element.val('');
                     } else {
-                        this.$input.val(this.$text.val());
+                        this.$element.val(this.$text.val());
                     }
                 }, this), 0);
             }
@@ -297,7 +383,7 @@
                 if ($selectedItems.length > 0)
                     this.select($selectedItems[0]);
                 else
-                    this.$input.val(this.$text.val());
+                    this.$element.val(this.$text.val());
 
                 trigger.change();
                 trigger.close();
@@ -305,6 +391,12 @@
             }
 
             if (key == 27 || key == 9) {
+                var dataItem = findItemByText(this.data, this.$text.val());
+                if (dataItem) {
+                    this.text(dataItem.Text);
+                    this.$element.val(dataItem.Value || dataItem.Text);
+                }
+
                 trigger.change();
                 trigger.close();
                 if (key == 27) this.$text.blur();
@@ -312,17 +404,37 @@
         }
 
         function keypress(e) {
+            this._textChanged = true;
             var key = e.keyCode || e.charCode;
 
-            if (key == 0 || $.inArray(key, $t.list.keycodes) != -1) return true;
+            if (!e.shiftKey && (key == 0 || $.inArray(key, $t.list.keycodes) != -1 || e.ctrlKey)) return true;
 
             // always set value. Select(item) will override it if needed.
-            setTimeout($.proxy(function () { this.$input.val(this.$text.val()); }, this), 0);
+            setTimeout($.proxy(function () { this.$element.val(this.$text.val()); }, this), 0);
 
             resetTimer(this);
         }
     }
 
+    function findItemByText(data, inputText) {
+        if (!inputText) {
+            return;
+        }
+
+        inputText = inputText.toLowerCase();
+        if (data) {
+            //find if text has exact match with one of data items.
+            for (var i = 0, len = data.length; i < len; i++) {
+                var dataItem = data[i],
+                    text = dataItem.Text;
+
+                if (text.toLowerCase() == inputText) {
+                    return dataItem;
+                }
+            }
+        }
+    }
+    
     $.fn.tComboBox = function (options) {
         return $t.create(this, {
             name: 'tComboBox',
@@ -335,6 +447,8 @@
 
     // default options
     $.fn.tComboBox.defaults = {
+        encoded: true,
+        openOnFocus: false,
         effects: $t.fx.slide.defaults(),
         index: -1,
         autoFill: true,

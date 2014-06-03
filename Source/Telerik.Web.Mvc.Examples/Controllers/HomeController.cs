@@ -16,26 +16,6 @@
         
         public ActionResult FirstLook()
         {
-		    Assembly controlAssembly = typeof(Menu).Assembly;
-		    Version version = controlAssembly.GetName().Version;
-
-		    int quarter = version.Minor;
-		    int versionYear = version.Major;
-		    int year = versionYear;
-		    int date = version.Build;
-		    int month = date / 100;
-
-		    if (month > 12)
-		    {
-			    year++;
-			    month %= 12;
-		    }
-
-		    int day = date % 100;
-
-		    ViewData["ProductVersion"] = string.Format("Q{0} {1}, released {2:d2}/{3:d2}/{4}",
-                    quarter, versionYear, month, day, year);
-
             return View();
         }
 

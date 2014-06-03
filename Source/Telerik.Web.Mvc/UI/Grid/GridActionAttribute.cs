@@ -96,26 +96,38 @@ namespace Telerik.Web.Mvc
 
         public void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            if (filterContext.ActionParameters.ContainsKey(ActionParameterName))
-            {
-                GridCommand command = new GridCommand
-                {
-                    Page = filterContext.Controller.ValueOf<int>(Prefix(GridUrlParameters.CurrentPage)),
-                    PageSize = filterContext.Controller.ValueOf<int>(Prefix(GridUrlParameters.PageSize))
-                };
+            var parameterName = ActionParameterName;
 
-                string orderBy = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.OrderBy));
+            var parametersOfGridCommandType = filterContext.ActionParameters
+                .Where(parameter => parameter.Value is GridCommand);
+
+            if (parametersOfGridCommandType.Count() == 1)
+            {
+                parameterName = parametersOfGridCommandType.First().Key;
+            }
+
+            if (filterContext.ActionParameters.ContainsKey(parameterName))
+            {
+                var command = ((GridCommand)filterContext.ActionParameters[parameterName] ?? new GridCommand());
+                command.Page = filterContext.Controller.ValueOf<int>(Prefix(GridUrlParameters.CurrentPage));
+                command.PageSize = filterContext.Controller.ValueOf<int>(Prefix(GridUrlParameters.PageSize));
+
+                var orderBy = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.OrderBy));
 
                 command.SortDescriptors.AddRange(GridDescriptorSerializer.Deserialize<SortDescriptor>(orderBy));
 
-                string filter = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.Filter));
+                var filter = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.Filter));
 
                 command.FilterDescriptors.AddRange(FilterDescriptorFactory.Create(filter));
 
-                string groupBy = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.GroupBy));
+                var groupBy = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.GroupBy));
 
                 command.GroupDescriptors.AddRange(GridDescriptorSerializer.Deserialize<GroupDescriptor>(groupBy));
 
+                var aggregates = filterContext.Controller.ValueOf<string>(Prefix(GridUrlParameters.Aggregates));
+
+                command.Aggregates.AddRange(GridDescriptorSerializer.Deserialize<AggregateDescriptor>(aggregates));
+                
                 filterContext.ActionParameters[ActionParameterName] = command;
             }
         }
@@ -165,10 +177,21 @@ namespace Telerik.Web.Mvc
                 result["modelState"] = SerializeErrors(modelState);
             }
 
+            SerializeAggregateResults(result, dataProcessor.AggregatesResults);
+
             filterContext.Result = new JsonResult
             {
                 Data = result
             };
+        }
+
+        private void SerializeAggregateResults(Dictionary<string, object> result, IEnumerable<AggregateResult> aggregatesResults)
+        {
+            if (aggregatesResults.Any())
+            {
+                result["aggregates"] = aggregatesResults.GroupBy(a => a.Member)
+                    .ToDictionary(g => g.Key, g => g.ToDictionary(a => a.AggregateMethodName, a => a.Value));
+            }
         }       
         
         private object SerializeErrors(ModelStateDictionary modelState)

@@ -21,7 +21,7 @@
                 <%= Html.ValidationMessageFor(o => o.OrderDateTime) %>
             </li>
             <li>
-                <button class="t-button t-state-default" type="submit">Save</button>
+                <button class="t-button" type="submit">Save</button>
             </li>
         </ul>
     <% } %>   

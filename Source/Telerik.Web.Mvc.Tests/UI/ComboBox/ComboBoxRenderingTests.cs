@@ -173,12 +173,12 @@
             comboBox.WriteInitializationScript(textWriter.Object);
 
             ComboBoxTestHelper.clientSideObjectWriter.Verify(w => w.Append("index", It.IsAny<int>(), -1));
-        }
-
+        }        
+        
         [Fact]
         public void ObjectWriter_should_append_Load_property_of_clientEvents()
         {
-            comboBox.ClientEvents.OnLoad.InlineCode = () => { };
+            comboBox.ClientEvents.OnLoad.CodeBlock = () => { };
 
             ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onLoad", comboBox.ClientEvents.OnLoad)).Verifiable();
 
@@ -190,7 +190,7 @@
         [Fact]
         public void ObjectWriter_should_append_Select_property_of_clientEvents()
         {
-            comboBox.ClientEvents.OnChange.InlineCode = () => { };
+            comboBox.ClientEvents.OnChange.CodeBlock = () => { };
 
             ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onChange", comboBox.ClientEvents.OnChange)).Verifiable();
 
@@ -202,7 +202,7 @@
         [Fact]
         public void ObjectWriter_should_append_PopUpOpen_property_of_clientEvents()
         {
-            comboBox.ClientEvents.OnOpen.InlineCode = () => { };
+            comboBox.ClientEvents.OnOpen.CodeBlock = () => { };
 
             ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onOpen", comboBox.ClientEvents.OnOpen)).Verifiable();
 
@@ -214,7 +214,7 @@
         [Fact]
         public void ObjectWriter_should_append_PopUpClose_property_of_clientEvents()
         {
-            comboBox.ClientEvents.OnClose.InlineCode = () => { };
+            comboBox.ClientEvents.OnClose.CodeBlock = () => { };
 
             ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onClose", comboBox.ClientEvents.OnClose)).Verifiable();
 
@@ -226,7 +226,7 @@
         [Fact]
         public void ObjectWriter_should_append_databinding_property_of_clientEvents()
         {
-            comboBox.ClientEvents.OnDataBinding.InlineCode = () => { };
+            comboBox.ClientEvents.OnDataBinding.CodeBlock = () => { };
 
             ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onDataBinding", comboBox.ClientEvents.OnDataBinding)).Verifiable();
 
@@ -238,7 +238,7 @@
         [Fact]
         public void ObjectWriter_should_append_databound_property_of_clientEvents()
         {
-            comboBox.ClientEvents.OnDataBound.InlineCode = () => { };
+            comboBox.ClientEvents.OnDataBound.CodeBlock = () => { };
 
             ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.AppendClientEvent("onDataBound", comboBox.ClientEvents.OnDataBound)).Verifiable();
 
@@ -301,6 +301,30 @@
             comboBox.WriteInitializationScript(textWriter.Object);
 
             ComboBoxTestHelper.clientSideObjectWriter.Verify(w => w.Append("highlightFirst", It.IsAny<bool>(), It.IsAny<bool>()));
+        }
+
+        [Fact]
+        public void ObjectWriter_should_call_append_for_Encoded_property()
+        {
+            ComboBoxTestHelper.clientSideObjectWriter.Setup(w => w.Append("encoded", It.IsAny<bool>(), true));
+
+            comboBox.WriteInitializationScript(textWriter.Object);
+
+            ComboBoxTestHelper.clientSideObjectWriter.Verify(w => w.Append("encoded", It.IsAny<bool>(), true));
+        }
+
+        [Fact]
+        public void WriteInitializationScript_should_encode_text_property_of_Items_collection_if_Encoded_true()
+        {
+            var decodedText = "Test<script>alert('i can haz your data');</script>";
+
+            comboBox.Items.Clear();
+            comboBox.Items.Add(new DropDownItem { Text = decodedText, Value = decodedText, Selected = true });
+
+            comboBox.Render();
+
+            Assert.Equal(comboBox.Items[0].Text, System.Web.HttpUtility.HtmlEncode(decodedText));
+            Assert.Equal(comboBox.Items[0].Value, "Test<script>alert('i can haz your data');</script>");
         }
     }
 }

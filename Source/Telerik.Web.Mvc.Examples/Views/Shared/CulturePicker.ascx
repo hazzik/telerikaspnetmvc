@@ -12,5 +12,6 @@
          <option value="pt-BR">Português do Brasil</option>
          <option value="ru-RU">Русский</option>
          <option value="uk-UA">Українське</option>
+         <option value="pl-PL">Polska</option>
     </select>
 </div>

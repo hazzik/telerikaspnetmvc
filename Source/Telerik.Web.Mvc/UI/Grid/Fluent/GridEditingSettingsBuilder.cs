@@ -12,15 +12,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
     /// <summary>
     /// Defines the fluent interface for configuring grid editing.
     /// </summary>
-    public class GridEditingSettingsBuilder : IHideObjectMembers
+    public class GridEditingSettingsBuilder<T> : IHideObjectMembers
+        where T : class
     {
-        private readonly GridEditingSettings settings;
+        private readonly GridEditingSettings<T> settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GridEditingSettingsBuilder"/> class.
         /// </summary>
         /// <param name="settings">The settings.</param>
-        public GridEditingSettingsBuilder(GridEditingSettings settings)
+        public GridEditingSettingsBuilder(GridEditingSettings<T> settings)
         {
             this.settings = settings;
         }
@@ -39,21 +40,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <remarks>
         /// The Enabled method is useful when you need to enable grid editing on certain conditions.
         /// </remarks>
-        public GridEditingSettingsBuilder Enabled(bool value)
+        public GridEditingSettingsBuilder<T> Enabled(bool value)
         {
             settings.Enabled = value;
             
             return this;
         }
 
-        public GridEditingSettingsBuilder Mode(GridEditMode mode)
+        public GridEditingSettingsBuilder<T> Mode(GridEditMode mode)
         {
             settings.Mode = mode;
 
             return this;
         }
 
-        public GridEditingSettingsBuilder Window(Action<WindowBuilder> configurator)
+        public GridEditingSettingsBuilder<T> BeginEdit(GridBeginEditEvent value)
+        {
+            settings.BeginEdit = value;
+
+            return this;
+        }
+
+        public GridEditingSettingsBuilder<T> Window(Action<WindowBuilder> configurator)
         {
             Guard.IsNotNull(configurator, "configurator");
 
@@ -63,13 +71,23 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
 #if MVC2 || MVC3
+
+        public GridEditingSettingsBuilder<T> DefaultDataItem(T value)
+        {
+            Guard.IsNotNull(value, "value");
+
+            settings.DefaultDataItem = () => value;
+
+            return this;
+        }
+
         /// <summary>
         /// Specify an editor template which to be used for InForm or PopUp modes
         /// </summary>
         /// <param name="templateName">name of the editor template</param>
         /// <remarks>This settings is applicable only when Mode is <see cref="GridEditMode.InForm"/> 
         /// or <see cref="GridEditMode.PopUp"/></remarks>
-        public GridEditingSettingsBuilder TemplateName(string templateName)
+        public GridEditingSettingsBuilder<T> TemplateName(string templateName)
         {
             Guard.IsNotNullOrEmpty(templateName, "templateName");
 
@@ -88,7 +106,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public GridEditingSettingsBuilder DisplayDeleteConfirmation(bool value)
+        public GridEditingSettingsBuilder<T> DisplayDeleteConfirmation(bool value)
         {
             settings.DisplayDeleteConfirmation = value;
             
@@ -99,14 +117,23 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// Gets the HTML attributes of the form rendered during editing
         /// </summary>
         /// <param name="attributes">The attributes.</param>
-        public GridEditingSettingsBuilder FormHtmlAttributes(object attributes)
+        public GridEditingSettingsBuilder<T> FormHtmlAttributes(object attributes)
+        {
+            return FormHtmlAttributes(attributes.ToDictionary());
+        }        
+        
+        /// <summary>
+        /// Gets the HTML attributes of the form rendered during editing
+        /// </summary>
+        /// <param name="attributes">The attributes.</param>
+        public GridEditingSettingsBuilder<T> FormHtmlAttributes(IDictionary<string, object> attributes)
         {
             MergeAttributes(settings.FormHtmlAttributes, attributes);
 
             return this;
         }
-
-        private static void MergeAttributes(IDictionary<string, object> target, object attributes)
+        
+        private static void MergeAttributes(IDictionary<string, object> target, IDictionary<string, object> attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 

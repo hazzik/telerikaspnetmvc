@@ -16,6 +16,7 @@ namespace Telerik.Web.Mvc.UI
     using Telerik.Web.Mvc;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI.Fluent;
+    using Telerik.Web.Mvc.UI.Html;
 
     /// <summary>
     /// Provides the factory methods for creating Telerik View Components.
@@ -124,7 +125,8 @@ namespace Telerik.Web.Mvc.UI
         public virtual EditorBuilder Editor()
         {
             return EditorBuilder.Create(Register(() => new Editor(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IWebAssetCollectionResolver>(),
-                DI.Current.Resolve<ILocalizationServiceFactory>().Create("EditorLocalization", CultureInfo.CurrentUICulture))));
+                DI.Current.Resolve<ILocalizationServiceFactory>().Create("EditorLocalization", CultureInfo.CurrentUICulture),
+                DI.Current.Resolve<IUrlGenerator>())));
         }
 
         /// <summary>
@@ -144,8 +146,14 @@ namespace Telerik.Web.Mvc.UI
         /// </remarks>
         public virtual GridBuilder<T> Grid<T>() where T : class
         {
-            return GridBuilder<T>.Create(Register(() => new Grid<T>(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(),
-                DI.Current.Resolve<ILocalizationServiceFactory>().Create("GridLocalization", CultureInfo.CurrentUICulture))));
+            return GridBuilder<T>.Create(Register(() => new Grid<T>(ViewContext, 
+                        ClientSideObjectWriterFactory, 
+                        DI.Current.Resolve<IUrlGenerator>(),
+                        DI.Current.Resolve<ILocalizationServiceFactory>().Create("GridLocalization", CultureInfo.CurrentUICulture), 
+                        DI.Current.Resolve<IGridHtmlBuilderFactory>()
+                    )
+                )
+            );
         }
 
         /// <summary>
@@ -219,6 +227,21 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Creates a <see cref="Splitter"/>
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Splitter()
+        ///             .Name("Splitter");
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual SplitterBuilder Splitter()
+        {
+            return SplitterBuilder.Create(Register(() => new Splitter(ViewContext, ClientSideObjectWriterFactory)));
+        }
+
+        /// <summary>
         /// Creates a new <see cref="TabStrip"/>.
         /// </summary>
         /// <example>
@@ -266,7 +289,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public virtual DatePickerBuilder DatePicker()
         {
-            return DatePickerBuilder.Create(Register(() => new DatePicker(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IDatePickerHtmlBuilderFactory>())));
+            return DatePickerBuilder.Create(Register(() => new DatePicker(ViewContext, ClientSideObjectWriterFactory)));
         }
 
         /// <summary>
@@ -348,7 +371,7 @@ namespace Telerik.Web.Mvc.UI
         /// <returns>Returns <see cref="NumericTextBoxBuilder{double}"/>.</returns>
         public virtual NumericTextBoxBuilder<double> NumericTextBox()
         {
-            return NumericTextBoxBuilder<double>.Create(Register(() => new NumericTextBox<double>(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<double>())));
+            return NumericTextBoxBuilder<double>.Create(Register(() => new NumericTextBox<double>(ViewContext, ClientSideObjectWriterFactory, new TextBoxBaseHtmlBuilderFactory<double>())));
         }
 
         /// <summary>
@@ -363,7 +386,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public virtual NumericTextBoxBuilder<T> NumericTextBox<T>() where T: struct
         {
-            return NumericTextBoxBuilder<T>.Create(Register(() => new NumericTextBox<T>(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<T>())));
+            return NumericTextBoxBuilder<T>.Create(Register(() => new NumericTextBox<T>(ViewContext, ClientSideObjectWriterFactory, new TextBoxBaseHtmlBuilderFactory<T>())));
         }
 
         /// <summary>
@@ -378,7 +401,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public virtual CurrencyTextBoxBuilder CurrencyTextBox()
         {
-            return CurrencyTextBoxBuilder.Create(Register(() => new CurrencyTextBox(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<decimal>())));
+            return CurrencyTextBoxBuilder.Create(Register(() => new CurrencyTextBox(ViewContext, ClientSideObjectWriterFactory, new TextBoxBaseHtmlBuilderFactory<decimal>())));
         }
 
         /// <summary>
@@ -393,7 +416,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public virtual PercentTextBoxBuilder PercentTextBox()
         {
-            return PercentTextBoxBuilder.Create(Register(() => new PercentTextBox(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<double>())));
+            return PercentTextBoxBuilder.Create(Register(() => new PercentTextBox(ViewContext, ClientSideObjectWriterFactory, new TextBoxBaseHtmlBuilderFactory<double>())));
         }
 
         /// <summary>
@@ -408,7 +431,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public virtual IntegerTextBoxBuilder IntegerTextBox()
         {
-            return IntegerTextBoxBuilder.Create(Register(() => new IntegerTextBox(ViewContext, ClientSideObjectWriterFactory, new TextboxBaseHtmlBuilderFactory<int>())));
+            return IntegerTextBoxBuilder.Create(Register(() => new IntegerTextBox(ViewContext, ClientSideObjectWriterFactory, new TextBoxBaseHtmlBuilderFactory<int>())));
         }
 
         /// <summary>
@@ -486,15 +509,64 @@ namespace Telerik.Web.Mvc.UI
             return AutoCompleteBuilder.Create(Register(() => new AutoComplete(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>())));
         }
 
+        /// <summary>
+        /// Creates a new <see cref="Slider"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Slider()
+        ///             .Name("Slider")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual SliderBuilder<T> Slider<T>() where T: struct, IComparable
+        {
+            return SliderBuilder<T>.Create(Register(() => new Slider<T>(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<ISliderHtmlBuilderFactory>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="RangeSlider"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().RangeSlider()
+        ///             .Name("RangeSlider")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual RangeSliderBuilder<T> RangeSlider<T>() where T : struct, IComparable
+        {
+            return RangeSliderBuilder<T>.Create(Register(() => new RangeSlider<T>(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IRangeSliderHtmlBuilderFactory>())));
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Upload"/>
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Upload()
+        ///             .Upload("Upload")
+        ///             .Async(async => async
+        ///                 .Save("ProcessAttachments", "Home")
+        ///                 .Remove("RemoveAttachment", "Home")
+        ///             );
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual UploadBuilder Upload()
+        {
+            return UploadBuilder.Create(Register(() => 
+                new Upload(ViewContext, ClientSideObjectWriterFactory, DI.Current.Resolve<IUrlGenerator>(),
+                            DI.Current.Resolve<ILocalizationServiceFactory>().Create("UploadLocalization", CultureInfo.CurrentUICulture))));
+        }
+
         [EditorBrowsable(EditorBrowsableState.Never)]
         public TViewComponent Register<TViewComponent>(Func<TViewComponent> factory) where TViewComponent : ViewComponentBase
         {
-            TViewComponent component = factory();
+            var component = factory();
 
-            if (!component.IsSelfInitialized)
-            {
-                scriptRegistrarBuilder.ToRegistrar().Register(component);
-            }
+            scriptRegistrarBuilder.ToRegistrar().Register(component);
+            
             return component;
         }
     }
@@ -927,7 +999,8 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            return DropDownList().Name(GetName(expression));
+            return DropDownList().Name(GetName(expression))
+                                 .Value(Convert.ToString(ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model) ?? string.Empty);
         }
 
         /// <summary>
@@ -942,7 +1015,8 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            return ComboBox().Name(GetName(expression));
+            return ComboBox().Name(GetName(expression))
+                             .Value(Convert.ToString(ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model) ?? string.Empty);
         }
 
         /// <summary>
@@ -957,7 +1031,96 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(expression, "expression");
 
-            return AutoComplete().Name(GetName(expression));
+            return AutoComplete().Name(GetName(expression))
+                                 .Value(Convert.ToString(ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model) ?? string.Empty);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="SliderFor{TValue}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().SliderFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual SliderBuilder<TValue> SliderFor<TValue>(Expression<Func<TModel, TValue>> expression)
+            where TValue : struct, IComparable
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            var value = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            TValue? minimum = GetRangeValidationParameter<TValue>(validators, minimumValidator);
+            TValue? maximum = GetRangeValidationParameter<TValue>(validators, maximumValidator);
+
+            minimum = minimum.HasValue ? minimum : (TValue)Convert.ChangeType(0, typeof(TValue));
+            maximum = maximum.HasValue ? maximum : (TValue)Convert.ChangeType(10, typeof(TValue));
+
+            return Slider<TValue>()
+                    .Name(GetName(expression))
+                    .Value(value == null ? minimum : (TValue)value)
+                    .Min(minimum.Value)
+                    .Max(maximum.Value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="NumericTextBox{Nullable{TValue}}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().SliderFor(m=>m.NullableProperty) %&gt;
+        /// </code>
+        /// </example>
+        public virtual SliderBuilder<TValue> SliderFor<TValue>(Expression<Func<TModel, Nullable<TValue>>> expression)
+            where TValue : struct, IComparable
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            TValue? minimum = GetRangeValidationParameter<TValue>(validators, minimumValidator);
+            TValue? maximum = GetRangeValidationParameter<TValue>(validators, maximumValidator);
+
+            var value = (Nullable<TValue>)ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model;
+
+            minimum = minimum.HasValue ? minimum : (TValue)Convert.ChangeType(0, typeof(TValue));
+            maximum = maximum.HasValue ? maximum : (TValue)Convert.ChangeType(10, typeof(TValue));
+
+            return Slider<TValue>()
+                    .Name(GetName(expression))
+                    .Value(value.HasValue ? value.Value : minimum)
+                    .Min(minimum.Value)
+                    .Max(maximum.Value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="RangeSliderFor{TValue}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().RangeSliderFor(m=>m.Property) %&gt;
+        /// </code>
+        /// </example>
+        public virtual RangeSliderBuilder<TValue> RangeSliderFor<TValue>(Expression<Func<TModel, TValue[]>> expression)
+            where TValue : struct, IComparable
+        {
+            Guard.IsNotNull(expression, "expression");
+
+            IEnumerable<ModelValidator> validators = ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).GetValidators(HtmlHelper.ViewContext.Controller.ControllerContext);
+
+            TValue? minimum = GetRangeValidationParameter<TValue>(validators, minimumValidator);
+            TValue? maximum = GetRangeValidationParameter<TValue>(validators, maximumValidator);
+
+            minimum = minimum.HasValue ? minimum : (TValue)Convert.ChangeType(0, typeof(TValue));
+            maximum = maximum.HasValue ? maximum : (TValue)Convert.ChangeType(10, typeof(TValue));
+
+            return RangeSlider<TValue>()
+                    .Name(GetName(expression))
+                    .Values((TValue[])ModelMetadata.FromLambdaExpression(expression, HtmlHelper.ViewData).Model)
+                    .Min(minimum.Value)
+                    .Max(maximum.Value);
         }
 
         private string GetName(LambdaExpression expression)

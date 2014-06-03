@@ -110,7 +110,6 @@ namespace Telerik.Web.Mvc.UI
             set; 
         }
 
-        [ScriptIgnore]
         public string SpriteCssClasses 
         { 
             get; 

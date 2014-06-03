@@ -2,7 +2,6 @@
     Inherits="System.Web.Mvc.ViewPage" %>
 
 <asp:Content ContentPlaceHolderID="MainContent" runat="server">
-    <h2>Load on Demand tests</h2>
 
     <%= Html.Telerik().TreeView()
             .Name("myTreeView_clientBound")
@@ -40,7 +39,6 @@
                     .LoadOnDemand(true)
                     .Expanded(false);
 
-
                 treeview.Add().Text("Item 5")
                     .Value("5")
                     .LoadOnDemand(true)
@@ -65,23 +63,43 @@
 
     <script type="text/javascript">
         //<![CDATA[
-
-        var treeView;
         
         function getTreeView(selector) {
             return $(selector || "#myTreeView").data("tTreeView");
         }
-        
-        function setUp() {
-            treeView = getTreeView();
-        }
 
+        function onDataBinding(e) {
+            var treeview = getTreeView("#myTreeView_clientBound");
+
+            if (e.item != treeview.element) {
+                treeview.dataBind(e.item, [{ Text: "Abyss Node", LoadOnDemand: true, Value: "abyss" }]);
+            }
+        }
         
+        //]]>
+
+    </script>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+
+    <script type="text/javascript">
+
+        var treeView;
+
         function findItemByText(text) {
             return $('.t-in:contains(' + text + ')').closest('.t-item');
         }
+
+        module("TreeView / LoadOnDemand", {
+            setup: function() {
+                treeView = getTreeView();
+            }
+        });
         
-        function test_opening_ajaxified_nodes_with_server_side_rendered_children_does_not_trigger_ajax_request() {
+        test('opening ajaxified nodes with server side rendered children does not trigger ajax request', function() {
             var oldAjaxRequest = treeView.ajaxRequest;
             try {
                 var called = false;
@@ -90,13 +108,13 @@
 
                 treeView.expand('.t-item:eq(0)');
                 
-                assertFalse(called);
+                ok(!called);
             } finally {
                 treeView.ajaxRequest = oldAjaxRequest;
             }
-        }
+        });
         
-        function test_opening_ajaxified_nodes_with_dynamic_children_triggers_ajax_request() {
+        test('opening ajaxified nodes with dynamic children triggers ajax request', function() {
             var oldAjaxRequest = treeView.ajaxRequest;
             try {
                 var called = false;
@@ -109,13 +127,13 @@
 
                 treeView.nodeToggle(null, item, true);
                 
-                assertTrue(called);
+                ok(called);
             } finally {
                 treeView.ajaxRequest = oldAjaxRequest;
             }
-        }
+        });
         
-        function test_opening_ajaxified_nodes_with_dynamic_children_inserts_requested_children_at_top() {
+        test('opening ajaxified nodes with dynamic children inserts requested children at top', function() {
             var oldAjaxRequest = treeView.ajaxRequest;
             try {
                 treeView.ajaxRequest = function($item) { treeView.dataBind($item, [{ Text: 'NewNode' }]); }
@@ -126,15 +144,15 @@
 
                 treeView.nodeToggle(null, item, true);
 
-                assertEquals(1, item.find('> .t-group').length);
-                assertEquals(2, item.find('> .t-group').children().length);
-                assertEquals('NewNode', item.find('> .t-group .t-item:first > div').text());
+                equal(item.find('> .t-group').length, 1);
+                equal(item.find('> .t-group').children().length, 2);
+                equal(item.find('> .t-group .t-item:first > div').text(), 'NewNode');
             } finally {
                 treeView.ajaxRequest = oldAjaxRequest;
             }
-        }
+        });
                 
-        function test_expanding_ajaxified_nodes_appends_group() {
+        test('expanding ajaxified nodes appends group', function() {
             var oldAjaxRequest = treeView.ajaxRequest;
             try {
                 treeView.ajaxRequest = function($item) { treeView.dataBind($item, [{ Text: 'NewNode' }]); }
@@ -143,15 +161,15 @@
 
                 treeView.nodeToggle(null, item, true);
 
-                assertEquals(1, item.find('> .t-group').length);
-                assertEquals(1, item.find('> .t-group').children().length);
-                assertEquals('NewNode', item.find('> .t-group .t-item:first > div').text());
+                equal(item.find('> .t-group').length, 1);
+                equal(item.find('> .t-group').children().length, 1);
+                equal(item.find('> .t-group .t-item:first > div').text(), 'NewNode');
             } finally {
                 treeView.ajaxRequest = oldAjaxRequest;
             }
-        }
+        });
                 
-        function test_collapsing_expanded_ajaxified_nodes_hides_group() {
+        test('collapsing expanded ajaxified nodes hides group', function() {
             var oldAjaxRequest = treeView.ajaxRequest;
             try {
                 treeView.ajaxRequest = function($item) { treeView.dataBind($item, [{ Text: 'NewNode' }]); }
@@ -162,13 +180,13 @@
 
                 treeView.nodeToggle(null, item, true);
 
-                assertEquals(false, item.find('> .t-group').is(':visible'));
+                equal(item.find('> .t-group').is(':visible'), false);
             } finally {
                 treeView.ajaxRequest = oldAjaxRequest;
             }
-        }
+        });
                 
-        function test_ajaxRequest_rebinds_treeview() {
+        test('ajaxRequest rebinds treeview', function() {
             var treeview = getTreeView('#myTreeView_ajaxRequest');
 
             var $root = $(treeview.element);
@@ -178,40 +196,56 @@
 
             var group = $root.find('> .t-group');
 
-            assertEquals(1, group.children().length);
-            assertEquals(true, group.is(':visible'));
-            assertEquals(1, $root.children().length);
-        }
+            equal(group.children().length, 1);
+            equal(group.is(':visible'), true);
+            equal($root.children().length, 1);
+        });
 
-        function test_treeView_ajaxBinding_set_item_url() {
-            assertEquals("url", $('.t-item a').attr('href'));
-        }
+        test('treeView ajaxBinding set item url', function() {
+            equal($('.t-item a').attr('href'), "url");
+        });
 
-        function onDataBinding(e) {
+        test('opening lod nodes sets child loaded flags', function() {
             var treeview = getTreeView("#myTreeView_clientBound");
 
-            if (e.item != treeview.element) {
-                treeview.dataBind(e.item, [{ Text: "Abyss Node", LoadOnDemand: true, Value: "abyss" }]);
+            treeview.bindTo([
+                { Text: "Product 1", Expanded: false, LoadOnDemand: true, Value: "abyss" }
+            ]);
+
+            findItemByText('Product 1').find('> div > .t-plus').trigger('click');
+
+            ok(!findItemByText('Abyss Node').data('loaded'));
+        });
+
+        test('ajaxRequest allows sending of custom data', function() {
+            var treeview = getTreeView("#myTreeView_clientBound");
+
+            var dataBindingHandler = function(e) {
+                e.data = { foo: 'bar' };
             }
-        }
 
-        function test_opening_lod_nodes_sets_child_loaded_flags() {
-            var treeview = getTreeView("#myTreeView_clientBound");
+            var oldAjaxOptions = treeview.ajaxOptions;
 
             try {
-                treeview.bindTo([
-                    { Text: "Product 1", Expanded: false, LoadOnDemand: true, Value: "abyss" }
-                ]);
+                var data;
 
-                findItemByText('Product 1').find('> div > .t-plus').trigger('click');
+                treeview.ajax = true;
+                treeview.ajaxOptions = function(item, options) {
+                    data = options.data;
+                }
 
-                assertFalse(findItemByText('Abyss Node').data('loaded'));
+                $(treeview.element).bind('dataBinding', dataBindingHandler);
+
+                treeview.ajaxRequest();
+
+                equal(data.foo, 'bar');
+
             } finally {
-                $(treeview.element).unbind('dataBinding');
+                treeview.ajax = false;
+                treeview.ajaxOptions = oldAjaxOptions;
+                $(treeview.element).unbind('dataBinding', dataBindingHandler);
             }
-        }
-        
-        //]]>
+        });
 
     </script>
 

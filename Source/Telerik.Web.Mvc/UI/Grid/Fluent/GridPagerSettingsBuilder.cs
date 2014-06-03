@@ -64,6 +64,23 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
+        /// Sets the page size of the grid.
+        /// </summary>
+        /// <param name="value">The number of items to display in a single page.</param>
+        /// <param name="sizesInDropDown">The values shown in the pageSize dropdown</param>
+        /// <returns></returns>
+        public virtual GridPagerSettingsBuilder PageSize(int value, int[] sizesInDropDown)
+        {
+            Guard.IsNotNull(sizesInDropDown, "sizesInDropDown");
+
+            pager.PageSize = value;
+
+            pager.PageSizesInDropDown = sizesInDropDown;
+
+            return this;
+        }
+
+        /// <summary>
         /// Sets the current page of the grid.
         /// </summary>
         /// <param name="page">The page which the grid should display initially. Must be greater than zero.</param>

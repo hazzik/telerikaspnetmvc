@@ -7,19 +7,19 @@
             .HtmlAttributes(new { @class = "t-numerictextbox-rtl" })
             .Value(42) 
     %>
-
+    <br /><br />
     <%= Html.Telerik().CurrencyTextBox()
             .Name("CurrencyTextBox")
             .HtmlAttributes(new { @class = "t-numerictextbox-rtl" })
             .Value(42)
     %>
-
+    <br /><br />
     <%= Html.Telerik().PercentTextBox()
             .Name("PercentTextBox")
             .HtmlAttributes(new { @class = "t-numerictextbox-rtl" })
             .Value(42)
     %>
-
+    <br /><br />
     <%= Html.Telerik().IntegerTextBox()
             .Name("IntegerTextBox")
             .HtmlAttributes(new { @class = "t-numerictextbox-rtl" })
@@ -30,13 +30,4 @@
 </asp:content>
 
 <asp:content contentPlaceHolderID="HeadContent" runat="server">
-    <style type="text/css">
-        
-        .t-numerictextbox
-        {
-            margin-bottom: 30px;
-            display: block !important;
-        }
-        
-    </style>
 </asp:content>

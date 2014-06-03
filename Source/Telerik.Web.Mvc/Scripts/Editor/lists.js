@@ -35,6 +35,17 @@ function ListFormatter(tag, unwrapTag) {
                 continue;
             }
             
+            if (dom.is(node, "td")) {
+                while (node.firstChild) {
+                    li.appendChild(node.firstChild);
+                }
+                list.appendChild(li);
+                node.appendChild(list);
+                list = list.cloneNode(false);
+                li = li.cloneNode(false);
+                continue;
+            }
+
             li.appendChild(node);
 
             if (dom.isBlock(node)) {
@@ -80,7 +91,7 @@ function ListFormatter(tag, unwrapTag) {
         var commonAncestor = nodes.length == 1 ? dom.parentOfType(nodes[0], ['ul','ol']) : dom.commonAncestor.apply(null, nodes);
             
         if (!commonAncestor)
-            commonAncestor = nodes[0].ownerDocument.body;
+            commonAncestor = dom.parentOfType(nodes[0], ["td"]) || nodes[0].ownerDocument.body;
 
         if (dom.isInline(commonAncestor))
             commonAncestor = dom.blockParentOrBody(commonAncestor);
@@ -91,8 +102,12 @@ function ListFormatter(tag, unwrapTag) {
 
         if (!formatNode)
             formatNode = new ListFormatFinder(tag == 'ul' ? 'ol' : 'ul').findSuitable(nodes);
-            
+        
         var childNodes = dom.significantChildNodes(commonAncestor);
+        
+        if (/table|tbody/.test(dom.name(commonAncestor))) {
+            childNodes = $.map(nodes, function(node) { return dom.parentOfType(node, ["td"]) });
+        }
 
         for (var i = 0; i < childNodes.length; i++) {
             var child = childNodes[i];
@@ -109,7 +124,7 @@ function ListFormatter(tag, unwrapTag) {
             }
         }
 
-        if (ancestors.length == childNodes.length && commonAncestor != nodes[0].ownerDocument.body)
+        if (ancestors.length == childNodes.length && commonAncestor != nodes[0].ownerDocument.body && !/table|tbody|tr|td/.test(dom.name(commonAncestor)))
             ancestors = [commonAncestor];
 
         if (!formatNode) {

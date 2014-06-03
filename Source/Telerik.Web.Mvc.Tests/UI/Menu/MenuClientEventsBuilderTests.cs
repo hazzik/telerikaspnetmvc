@@ -25,7 +25,7 @@
 
             builder.OnOpen(param);
 
-            Assert.NotNull(clientEvents.OnOpen.InlineCode);
+            Assert.NotNull(clientEvents.OnOpen.CodeBlock);
         }
 
         [Fact]
@@ -65,7 +65,7 @@
 
             builder.OnClose(param);
 
-            Assert.NotNull(clientEvents.OnClose.InlineCode);
+            Assert.NotNull(clientEvents.OnClose.CodeBlock);
         }
 
         [Fact]
@@ -105,7 +105,7 @@
 
             builder.OnSelect(param);
 
-            Assert.NotNull(clientEvents.OnSelect.InlineCode);
+            Assert.NotNull(clientEvents.OnSelect.CodeBlock);
         }
 
         [Fact]
@@ -145,7 +145,7 @@
 
             builder.OnLoad(param);
 
-            Assert.NotNull(clientEvents.OnLoad.InlineCode);
+            Assert.NotNull(clientEvents.OnLoad.CodeBlock);
         }
 
         [Fact]

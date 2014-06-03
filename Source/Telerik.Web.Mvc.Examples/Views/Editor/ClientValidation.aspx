@@ -2,7 +2,7 @@
 
 <asp:content contentplaceholderid="MainContent" runat="server">
 
-<% Html.EnableClientValidation(); %>
+    <% Html.EnableClientValidation(); %>
     
     <% using (Html.BeginForm()) { %>
         <div class="editing-section">
@@ -23,6 +23,7 @@
                     <%= Html.LabelFor(e => e.Notes)%>
                     <%= Html.Telerik().EditorFor(e => e.Notes)
                             .Name("Notes")
+                            .Encode(false)
                             .HtmlAttributes(new { style = "float: left; width: 345px;" })
                             .Tools(tools => tools
                                 .Clear()
@@ -34,7 +35,7 @@
                     <div class="error"><%= Html.ValidationMessageFor(e => e.Notes) %></div>
                 </li>
                 <li class="action-row">
-                    <button class="t-button t-state-default" type="submit">Save</button>
+                    <button class="t-button" type="submit">Save</button>
                 </li>
             </ul>
         </div>

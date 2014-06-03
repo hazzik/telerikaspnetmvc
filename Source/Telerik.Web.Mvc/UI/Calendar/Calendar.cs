@@ -13,7 +13,6 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Resources;
-    using Telerik.Web.Mvc.UI;
     
     public class Calendar : ViewComponentBase
     {
@@ -100,7 +99,11 @@ namespace Telerik.Web.Mvc.UI
         {
             ICalendarHtmlBuilder renderer = rendererFactory.Create(this);
 
-            DefineUrlFormat();
+            urlFormat = SelectionSettings.GenerateUrl(ViewContext, UrlGenerator);
+            if (urlFormat.HasValue()) 
+            {
+                urlFormat = HttpUtility.UrlDecode(urlFormat).ToLower();
+            }
 
             IHtmlNode rootTag = renderer.Build();
 
@@ -111,6 +114,8 @@ namespace Telerik.Web.Mvc.UI
             rootTag.Children.Add(contentTag);
 
             rootTag.WriteTo(writer);
+
+            base.WriteHtml(writer);
         }
 
         private static IHtmlNode BuildWeekHeader(ICalendarHtmlBuilder renderer) 
@@ -118,9 +123,16 @@ namespace Telerik.Web.Mvc.UI
             IHtmlNode headerTag = renderer.HeaderTag();
             IHtmlNode row = renderer.RowTag();
 
-            foreach (string day in CultureInfo.CurrentCulture.DateTimeFormat.DayNames)
+            DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+            string[] dayNames = dateTimeFormat.DayNames;
+            int firstDayIndex = (int)dateTimeFormat.FirstDayOfWeek;
+
+            var modifiedDayNames = dayNames.Skip(firstDayIndex).Take(dayNames.Length);
+            modifiedDayNames = modifiedDayNames.Concat(dayNames.Take(firstDayIndex));
+
+            foreach(string dayName in modifiedDayNames)
             {
-                row.Children.Add(renderer.HeaderCellTag(day));
+                row.Children.Add(renderer.HeaderCellTag(dayName));
             }
 
             headerTag.Children.Add(row);
@@ -135,7 +147,7 @@ namespace Telerik.Web.Mvc.UI
             DateTime? focusedDate = this.DetermineFocusedDate();
             DateTime prevMonth = new DateTime(focusedDate.Value.Year, focusedDate.Value.Month, 1).AddDays(-1);
 
-            int firstDayOfMonthView = DateTime.DaysInMonth(prevMonth.Year, prevMonth.Month) - ((int)(prevMonth).DayOfWeek);
+            int firstDayOfMonthView = DateTime.DaysInMonth(prevMonth.Year, prevMonth.Month) - ((int)(prevMonth).DayOfWeek) + (int)CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
             DateTime startDate = new DateTime(prevMonth.Year, prevMonth.Month, firstDayOfMonthView);
             for (int weekRow = 0; weekRow < 6; weekRow++)
@@ -144,7 +156,7 @@ namespace Telerik.Web.Mvc.UI
 
                 for (int day = 0; day < 7; day++) 
                 {
-                    renderer.CellTag(startDate, urlFormat, startDate.Month != focusedDate.Value.Month).AppendTo(rowTag);
+                    renderer.CellTag(startDate, Value, urlFormat, startDate.Month != focusedDate.Value.Month).AppendTo(rowTag);
                     startDate = startDate.AddDays(1);
                 }
                 monthTag.Children.Add(rowTag);
@@ -158,23 +170,12 @@ namespace Telerik.Web.Mvc.UI
 
             if (MinDate > MaxDate)
             {
-                throw new ArgumentException(TextResource.MinDateShouldBeLessThanMaxDate);
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinDate", "MaxDate"));
             }
 
             if ((Value != null) && (MinDate > Value || Value > MaxDate))
             {
-                throw new ArgumentOutOfRangeException(TextResource.DateOutOfRange);
-            }
-        }
-
-        private void DefineUrlFormat()
-        {
-            if (this.SelectionSettings.RouteValues != null)
-            {
-                KeyValuePair<string, object> value = this.SelectionSettings.RouteValues.First();
-                SelectionSettings.RouteValues[value.Key] = "{0}";
-                urlFormat = HttpUtility.UrlDecode(SelectionSettings.GenerateUrl(ViewContext, UrlGenerator));
-                urlFormat = urlFormat.ToLower();
+                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Date", "MinDate", "MaxDate"));
             }
         }
     }

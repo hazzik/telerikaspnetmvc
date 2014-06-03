@@ -8,7 +8,8 @@
             {
                 tabstrip.Add()
                     .Text("ASP.NET MVC")
-					.ImageUrl("~/Content/Common/Icons/Suites/mvc.png")
+                    .ImageUrl("~/Content/Common/Icons/Suites/mvc.png")
+                    .ImageHtmlAttributes(new { alt = "ASP.NET MVC suite logo" })
                     .Url(Url.Action("Accessibility", "TabStrip", new { selectedIndex = 0 }))
                     .Content(() =>
                     {%>
@@ -25,6 +26,7 @@
                 tabstrip.Add()
                     .Text("Silverlight")
                     .ImageUrl("~/Content/Common/Icons/Suites/sl.png")
+                    .ImageHtmlAttributes(new { alt = "Silverlight suite logo" })
                     .Url(Url.Action("Accessibility", "TabStrip", new { selectedIndex = 1 }))
                     .Content(() =>
                     {%>
@@ -40,7 +42,8 @@
 
                 tabstrip.Add()
                     .Text("ASP.NET AJAX")
-					.ImageUrl("~/Content/Common/Icons/Suites/ajax.png")
+                    .ImageUrl("~/Content/Common/Icons/Suites/ajax.png")
+                    .ImageHtmlAttributes(new { alt = "ASP.NET AJAX suite logo" })
                     .Url(Url.Action("Accessibility", "TabStrip", new { selectedIndex = 2 }))
                     .Content(() =>
                     {%>
@@ -56,7 +59,8 @@
 
                 tabstrip.Add()
                     .Text("OpenAccess ORM")
-					.ImageUrl("~/Content/Common/Icons/Suites/orm.png")
+                    .ImageUrl("~/Content/Common/Icons/Suites/orm.png")
+                    .ImageHtmlAttributes(new { alt = "ORM suite logo" })
                     .Url(Url.Action("Accessibility", "TabStrip", new { selectedIndex = 3 }))
                     .Content(() =>
                     {%>
@@ -72,7 +76,8 @@
 
                 tabstrip.Add()
                     .Text("Reporting")
-					.ImageUrl("~/Content/Common/Icons/Suites/rep.png")
+                    .ImageUrl("~/Content/Common/Icons/Suites/rep.png")
+                    .ImageHtmlAttributes(new { alt = "Reporting suite logo" })
                     .Url(Url.Action("Accessibility", "TabStrip", new { selectedIndex = 4 }))
                     .Content(() =>
                     {%>
@@ -88,7 +93,8 @@
 
                 tabstrip.Add()
                     .Text("Sitefinity ASP.NET CMS")
-					.ImageUrl("~/Content/Common/Icons/Suites/sitefinity.png")
+                    .ImageUrl("~/Content/Common/Icons/Suites/sitefinity.png")
+                    .ImageHtmlAttributes(new { alt = "Sitefinity CRM logo" })
                     .Url(Url.Action("Accessibility", "TabStrip", new { selectedIndex = 5 }))
                     .Content(() =>
                     {%>
@@ -105,6 +111,10 @@
             .SelectedIndex(Convert.ToInt32(ViewData["selectedIndex"]))
             .Render();
 	%>
+
+    <noscript>
+        <p>Your browsing experience on this page will be better if you visit it with a JavaScript-enabled browser / if you enable JavaScript.</p>
+    </noscript>
 
     <% Html.RenderPartial("AccessibilityValidation"); %>
 </asp:Content>
