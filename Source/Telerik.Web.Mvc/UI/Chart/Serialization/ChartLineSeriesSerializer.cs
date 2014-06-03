@@ -28,7 +28,10 @@ namespace Telerik.Web.Mvc.UI
                 .Add("field", series.Member, () => { return series.Data == null && series.Member != null; })
                 .Add("data", series.Data, () => { return series.Data != null; })
                 .Add("width", series.Width, ChartDefaults.LineSeries.Width)
-                .Add("color", series.Color, string.Empty);
+                .Add("color", series.Color, string.Empty)
+                .Add("dashType", series.DashType.ToString().ToLowerInvariant(), ChartDefaults.LineSeries.DashType.ToString().ToLowerInvariant())
+                .Add("missingValues", series.MissingValues.ToString().ToLowerInvariant(),
+                                      ChartDefaults.LineSeries.MissingValues.ToString().ToLowerInvariant());
 
             var labelsData = series.Labels.CreateSerializer().Serialize();
             if (labelsData.Count > 0)

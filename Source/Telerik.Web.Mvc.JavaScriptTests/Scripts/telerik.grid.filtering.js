@@ -44,28 +44,30 @@
 
     $t.filtering.implementation = {
         createFilterCommands: function (html, column) {
-            var filters = {};
+            var filters = [];
 
             $.each(this.localization, function (key, value) {
                 var prefix = 'filter' + column.type;
                 var index = key.indexOf(prefix);
                 if (index > -1)
-                    filters[key.substring(index + prefix.length).toLowerCase()] = value;
+                    filters.push({
+                     key: key.substring(index + prefix.length).toLowerCase(),
+                     value: value
+                    });
             });
-
             if (column.type == "String") {
                 // put the ends with value last
-                var endswith = filters.endswith;
-                delete filters.endswith;
-                filters.endswith = endswith;
+                if (filters[0].key !== "eq") {
+                    filters.push(filters.shift());
+                }
             }
 
             html.cat('<select class="t-filter-operator">');
-            $.each(filters, function (key, value) {
+            $.each(filters, function (index, filter) {
                 html.cat('<option value="')
-					.cat(key)
+					.cat(filter.key)
 					.cat('">')
-					.cat(value)
+					.cat(filter.value)
 					.cat('</option>');
             });
 
@@ -228,10 +230,12 @@
             if (left + outerWidth > this.$header.outerWidth())
                 left = width - outerWidth + 1;
 
-            if ($(this.element).closest('.t-rtl').length)
-                position['right'] = left + ($.browser.mozilla || $.browser.safari ? 18 : 0);
-            else
+            if ($(this.element).closest('.t-rtl').length) {
+                var correction = (($.browser.mozilla && parseInt($.browser.version, 10) < 2) || $.browser.webkit) ? 18 : 0;
+                position['right'] = left + correction;
+            } else {
                 position['left'] = left;
+            }
 
             $filterMenu.css(position);
 
@@ -272,6 +276,7 @@
                 .attr('selected', 'selected');
 
             this.filter(this.filterExpr());
+            this.hideFilter();
         },
 
         filterClick: function (e) {
@@ -299,6 +304,13 @@
                     return true;
                 }
 
+                var numeric = $input.data("tTextBox");
+
+                if (numeric) {
+                    // the value should be used as a Number instead of String because we need the decimal separator to be "."
+                    value = numeric.value();
+                }
+
                 var operator = $input.prev('select').val() || $input.parent().prev('select').val() || $input.parent().parent().prev('select').val();
                 if (value != this.localization.filterSelectValue)
                     column.filters.push({ operator: operator, value: value });
@@ -307,6 +319,11 @@
             $element.parent().find('input:checked').each($.proxy(function (index, input) {
                 var $input = $(input);
                 var value = $(input).attr('value');
+
+                if (column.type === "Boolean" && value && typeof value === "string") {
+                    value = value.toLowerCase().indexOf("true") > -1 ? true : false;
+                }
+
                 column.filters.push({ operator: 'eq', value: value });
             }, this));
 

@@ -127,7 +127,9 @@
     background-color:#e3eeff;
 }
 
-.t-state-error
+.t-state-error,
+.t-widget.input-validation-error,
+.t-widget .input-validation-error
 {
     border-color: #f00;
     background-color: #ffc0cb;
@@ -174,6 +176,16 @@ a.t-button.t-state-disabled:hover,
 .t-panelbar .t-link
 {
     border-color: #4a70ae;
+}
+
+.t-grid-header-wrap
+{
+    border-color: #4a70ae;
+}
+
+.t-grid-footer-wrap
+{
+    border-color: #829cbf;
 }
 
 .t-grid td

@@ -16,13 +16,39 @@
         public void Serializes_font()
         {
             legend.Font = "Font";
-            GetJson()["font"].ShouldEqual("Font");
+            ((Dictionary<string, object>)GetJson()["labels"])["font"].ShouldEqual("Font");
         }
 
         [Fact]
         public void Does_not_serialize_default_font()
         {
-            GetJson().ContainsKey("font").ShouldBeFalse();
+            GetJson().ContainsKey("labels").ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Serializes_Color()
+        {
+            legend.Color = "Color";
+            ((Dictionary<string, object>)GetJson()["labels"])["color"].ShouldEqual("Color");
+        }
+
+        [Fact]
+        public void Does_not_serialize_default_color()
+        {
+            GetJson().ContainsKey("labels").ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Serializes_background()
+        {
+            legend.Background = "Background";
+            GetJson()["background"].ShouldEqual("Background");
+        }
+
+        [Fact]
+        public void Does_not_serialize_default_background()
+        {
+            GetJson().ContainsKey("background").ShouldBeFalse();
         }
 
         [Fact]
@@ -108,8 +134,10 @@
         {
             legend.Border.Color = "red";
             legend.Border.Width = 1;
+            legend.Border.DashType = ChartDashType.Dot;
             ((Dictionary<string, object>)GetJson()["border"])["width"].ShouldEqual(1);
             ((Dictionary<string, object>)GetJson()["border"])["color"].ShouldEqual("red");
+            ((Dictionary<string, object>)GetJson()["border"])["dashType"].ShouldEqual("dot");
         }
 
         [Fact]

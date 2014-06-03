@@ -55,9 +55,13 @@
             remove: this.onRemove
         });
 
-        // Load is triggered for the input by $t.bind,
-        // but we need it to trigger for the wrapper
-        $t.trigger(this.wrapper, 'load');
+        // Add a reference to the Upload in the wrapper data
+        var wrapper = $(this.wrapper).data("tUpload", this);
+        $(element).bind("load", function() {
+            // Load is triggered for the input by $t.bind,
+            // but we need it to trigger for the wrapper
+            $t.trigger(wrapper, "load");
+        });
     };
 
     $t.upload.prototype = {
@@ -70,7 +74,8 @@
         },
 
         toggle: function(enable) {
-            this.wrapper.toggleClass("t-state-disabled", !enable);
+            enable = typeof enable === "undefined" ? enable : !enable;
+            this.wrapper.toggleClass("t-state-disabled", enable);
         },
 
         _addInput: function(input) {
@@ -134,7 +139,8 @@
             }
 
             var existingFileEntries = $(".t-file", fileList);
-            var fileEntry = $("<li class='t-file'><span class='t-icon'></span><span class='t-filename'>" + name + "</span></li>")
+            var fileEntry =
+                $("<li class='t-file'><span class='t-icon'></span><span class='t-filename' title='" + name + "'>" + name + "</span></li>")
                 .appendTo(fileList)
                 .data(data);
 
@@ -224,7 +230,7 @@
 
                 if (icon.hasClass("t-delete")) {
                     if (!$t.trigger(this.wrapper, "remove", eventArgs)) {
-                        fileEntry.trigger("t:remove");
+                        fileEntry.trigger("t:remove", eventArgs.data);
                     }
                 } else if (icon.hasClass("t-cancel")) {
                     $t.trigger(this.wrapper, "cancel", eventArgs);
@@ -320,12 +326,12 @@
                 var input = $(element);
                 
                 // Prevent submitting an empty input
-                input.attr("name", "");
+                input.attr("disabled", "disabled");
 
                 window.setTimeout(function() {
-                    // Restore the input name so the Upload remains functional
+                    // Restore the input so the Upload remains functional
                     // in case the user cancels the form submit
-                    input.attr("name", upload.name);
+                    input.removeAttr("disabled");
                 }, 0);
             }
         },
@@ -380,8 +386,8 @@
             return this.async.removeUrl != undefined;
         },
 
-        _submitRemove: function(fileNames, onSuccess, onError) {
-            var params = $.extend({}, getAntiForgeryTokens());
+        _submitRemove: function(fileNames, data, onSuccess, onError) {
+            var params = $.extend(data, getAntiForgeryTokens());
             params["fileNames"] = fileNames;
 
             $.ajax({
@@ -507,7 +513,10 @@
         prepareUpload: function(sourceInput) {
             var upload = this.upload;
             var activeInput = $(upload.element);
+            var name = upload.async.saveField || sourceInput.attr("name");
             upload._addInput(sourceInput.clone().val(""));
+
+            sourceInput.attr("name", name);
 
             var iframe = this.createFrame(upload.name + "_" + this.iframes.length);
             this.registerFrame(iframe);
@@ -622,7 +631,7 @@
             this.performUpload(fileEntry); 
         },
 
-        onRemove: function(e) {
+        onRemove: function(e, data) {
             var fileEntry = getFileEntry(e);
 
             var iframe = fileEntry.data("frame");
@@ -632,7 +641,7 @@
                 this.upload._removeFileEntry(fileEntry);
                 this.cleanupFrame(iframe);
             } else {
-                removeUploadedFile(fileEntry, this.upload);
+                removeUploadedFile(fileEntry, this.upload, data);
             }
         },
 
@@ -812,11 +821,11 @@
             this.performUpload(fileEntry); 
         },
 
-        onRemove: function(e) {
+        onRemove: function(e, data) {
             var fileEntry = getFileEntry(e);
 
             if (fileEntry.children(".t-icon").is(".t-success")) {
-                removeUploadedFile(fileEntry, this.upload);
+                removeUploadedFile(fileEntry, this.upload, data);
             } else {
                 this.removeFileEntry(fileEntry);
             }
@@ -845,9 +854,10 @@
         },
 
         createFormData: function(fileInfo) {
-            var formData = new FormData();
+            var formData = new FormData(),
+                upload = this.upload;
 
-            formData.append(this.upload.name, fileInfo.rawFile);
+            formData.append(upload.async.saveField || upload.name, fileInfo.rawFile);
 
             return formData;
         },
@@ -858,6 +868,7 @@
             tryParseJSON(xhr.responseText,
                 function(jsonResult) {
                     fileEntry.trigger("t:upload-success", [ jsonResult, xhr ]);
+                    fileEntry.trigger("t:progress", [ 100 ]);
                     module.cleanupFileEntry(fileEntry);
                 },
                 function() {
@@ -944,7 +955,8 @@
     }
 
     function getFileExtension(fileName) {
-        return fileName.match(rFileExtension)[0] || "";
+        var matches = fileName.match(rFileExtension);
+        return matches ? matches[0] : "";
     }
 
     function stripPath(name) {
@@ -952,7 +964,7 @@
         return (slashIndex != -1) ? name.substr(slashIndex + 1) : name;
     }
 
-    function removeUploadedFile(fileEntry, upload) {
+    function removeUploadedFile(fileEntry, upload, data) {
         if (!upload._supportsRemove()) {
             return;
         }
@@ -960,7 +972,7 @@
         var files = fileEntry.data("fileNames");
         var fileNames = $.map(files, function(file) { return file.name });
 
-        upload._submitRemove(fileNames,
+        upload._submitRemove(fileNames, data,
             function onSuccess(data, textStatus, xhr) {
                 upload._removeFileEntry(fileEntry);
 

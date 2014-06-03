@@ -55,7 +55,7 @@
         test('should set the className of the validation span', function() {
             var $ui = $('<div><span id="ProductName_validationMessage" class="field-validation-valid"></span></div>')
             errorView.bind($ui, {ProductName:{errors:['Error']}});
-            equal($ui.find('span').attr('className'), 'field-validation-error');
+            equal($ui.find('span').attr('class'), 'field-validation-error');
         });
 
         test('should set all validators', function() {
@@ -64,30 +64,30 @@
             errorView.bind($ui, {ProductName:{errors:['Error']}, ProductID:{errors:['Error']}});
         
             equal($ui.find('span:eq(0)').html(), 'Error');
-            equal($ui.find('span:eq(0)').attr('className'), 'field-validation-error');
+            equal($ui.find('span:eq(0)').attr('class'), 'field-validation-error');
             equal($ui.find('span:eq(1)').html(), 'Error');
-            equal($ui.find('span:eq(1)').attr('className'), 'field-validation-error');
+            equal($ui.find('span:eq(1)').attr('class'), 'field-validation-error');
         });
 
         test('should not update validators which dont have errors', function() {
             var $ui = $('<div><span id="ProductName_validationMessage" class="field-validation-valid"></span></div>')
             errorView.bind($ui, {ProductName:{errors:[]}});
             equal($ui.find('span').html(), '');
-            equal($ui.find('span').attr('className'), 'field-validation-valid');
+            equal($ui.find('span').attr('class'), 'field-validation-valid');
         });    
     
         test('should not update validators when there are no errors', function() {
             var $ui = $('<div><span id="ProductName_validationMessage" class="field-validation-valid"></span></div>')
             errorView.bind($ui, {ProductName:{}});
             equal($ui.find('span').html(), '');
-            equal($ui.find('span').attr('className'), 'field-validation-valid');
+            equal($ui.find('span').attr('class'), 'field-validation-valid');
         });
 
         test('should clear previous validation errors', function() {
             var $ui = $('<div><span id="ProductName_validationMessage" class="field-validation-error">Error</span></div>');
             errorView.bind($ui, {ProductName:{}});
             equal($ui.find('span').html(), '');
-            equal($ui.find('span').attr('className'), 'field-validation-valid');
+            equal($ui.find('span').attr('class'), 'field-validation-valid');
         });
 
         test('should set className of textbox', function() {
@@ -95,7 +95,7 @@
         
             errorView.bind($ui, {ProductName:{errors:['Error']}});
         
-            equal($ui.find('input').attr('className'), 'input-validation-error');
+            equal($ui.find('input').attr('class'), 'input-validation-error');
         });
     
         test('should remove valid from the className of textbox', function() {

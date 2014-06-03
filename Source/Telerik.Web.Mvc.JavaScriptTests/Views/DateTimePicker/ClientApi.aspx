@@ -274,7 +274,7 @@
 
         dateTimePicker.disable();
 
-        equal(dateTimePicker.$element.attr('disabled'), true, 'input is not disabled')
+        equal(dateTimePicker.$element.attr('disabled'), 'disabled', 'input is not disabled')
 
         dateTimePicker.enable();
     });
@@ -284,7 +284,7 @@
 
         dateTimePicker.enable();
 
-        equal(dateTimePicker.$element.attr('disabled'), false, 'input is not disabled')
+        ok(!dateTimePicker.$element.attr('disabled'), 'input is not disabled')
 
         dateTimePicker.disable();
     });
@@ -306,25 +306,6 @@
         equal(minValue.date(), 10, 'day');
 
         dateTimePicker.dateView.min = oldM;
-    });
-
-
-    test('min method should set value to minValue if value is not in range', function () {
-        var dateTimePicker = getDateTimePicker();
-        dateTimePicker.value(new Date(2000, 10, 10));
-
-        dateTimePicker.min(new Date(2001, 10, 10));
-
-        equal(+dateTimePicker.value(), +dateTimePicker.min(), "value was not updated");
-    });
-
-    test('max method should set value to maxValue if value is not in range', function () {
-        var dateTimePicker = $('#DateTimePicker1').data('tDateTimePicker');
-        dateTimePicker.value(new Date(2000, 10, 10));
-
-        dateTimePicker.max(new Date(1999, 10, 10));
-
-        equal(+dateTimePicker.value(), +dateTimePicker.max(), "value was not updated");
     });
 
     test('min method should not set minValue if it is bigger then maxValue', function () {

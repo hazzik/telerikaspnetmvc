@@ -11,6 +11,8 @@
 
         [UIHint("ClientEmployee"), Required]
         public string Employee { get; set; }
+        
+        public int? EmployeeID { get; set; }
 
         [DataType(DataType.Date), Required]
         public DateTime OrderDate { get; set; }

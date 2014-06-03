@@ -21,6 +21,9 @@ namespace Telerik.Web.Mvc.UI
             Bar = new ChartBarSeries<T, object>(chart);
             Column = new ChartBarSeries<T, object>(chart);
             Line = new ChartLineSeries<T, object>(chart);
+            Pie = new ChartPieSeries<T, object>(chart);
+            Scatter = new ChartScatterSeries<T, object>(chart);
+            ScatterLine = new ChartScatterLineSeries<T, object>(chart);
         }
 
         /// <summary>
@@ -45,6 +48,33 @@ namespace Telerik.Web.Mvc.UI
         /// The default settings for all line series.
         /// </summary>
         public IChartLineSeries Line
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// The default settings for all pie series.
+        /// </summary>
+        public IChartPieSeries Pie
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// The default settings for all scatter series.
+        /// </summary>
+        public IChartScatterSeries Scatter
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// The default settings for all scatter line series.
+        /// </summary>
+        public IChartScatterLineSeries ScatterLine
         {
             get;
             private set;

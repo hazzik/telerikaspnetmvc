@@ -36,6 +36,19 @@
                 .Select("foo", "bar"))
     %>
 
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid4")
+            .Columns(columns => {
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate.Day);
+            })
+            .Sortable(sorting => sorting.OrderBy(columns => columns
+                .Add(c => c.Name)))
+            .Pageable(pager => pager.PageSize(1))
+            .DataBinding(dataBinding => dataBinding.Ajax().OperationMode(GridOperationMode.Client)
+                .Select("foo", "bar"))
+    %>
 </asp:Content>
 
 
@@ -143,6 +156,13 @@
                 
             grid.rebind();
             equal(grid.orderBy, '');
+        });
+
+        test("data of not grouped paged grid with operation mode client and initial server binding", function() {
+            var grid = getGrid("#Grid4");
+            equal(grid.data.length, 1);
+            equal(grid.dataSource.data().length, 2);                        
+            equal(grid.data[0].Name, "Customer1");
         });
 
         test('duplicate column icon cleared', function() {

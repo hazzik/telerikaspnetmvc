@@ -149,7 +149,7 @@ namespace Telerik.Web.Mvc.Extensions
         {
             Guard.IsNotNullOrEmpty(instance, "instance");
 
-            return instance[0].ToString().ToLower() + instance.Substring(1);
+            return instance[0].ToString().ToLowerInvariant() + instance.Substring(1);
         }
 
         public static string AsTitle(this string value)

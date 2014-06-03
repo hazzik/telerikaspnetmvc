@@ -43,8 +43,13 @@ namespace Telerik.Web.Mvc.UI
             Series = new List<ChartSeriesBase<T>>();
             CategoryAxis = new ChartCategoryAxis<T>(this);
             ValueAxis = new ChartNumericAxis<T>(this);
+            XAxis = new ChartNumericAxis<T>(this);
+            YAxis = new ChartNumericAxis<T>(this);
             DataBinding = new ChartDataBindingSettings(this);
             SeriesDefaults = new ChartSeriesDefaults<T>(this);
+            AxisDefaults = new ChartAxisDefaults<T>(this);
+            Tooltip = new ChartTooltip();
+            Transitions = true;
         }
 
         /// <summary>
@@ -137,6 +142,18 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Gets or sets the Chart transitions.
+        /// </summary>
+        /// <value>
+        /// The Chart Transitions.
+        /// </value>
+        public bool Transitions
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the chart series.
         /// </summary>
         public IList<ChartSeriesBase<T>> Series
@@ -173,6 +190,33 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Configuration for the default X axis in scatter charts
+        /// </summary>
+        public IChartNumericAxis XAxis
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Configuration for the default Y axis in scatter charts
+        /// </summary>
+        public IChartNumericAxis YAxis
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Configuration for the default axis 
+        /// </summary>
+        public IChartAxisDefaults AxisDefaults
+        {
+            get;
+            set;
+        }
+        
+        /// <summary>
         /// Gets the data binding configuration.
         /// </summary>
         public ChartDataBindingSettings DataBinding
@@ -191,6 +235,15 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Gets or sets the data point tooltip options
+        /// </summary>
+        public ChartTooltip Tooltip
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Writes the initialization script.
         /// </summary>
         /// <param name="writer">The writer object.</param>
@@ -200,25 +253,36 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Start();
 
-            SerializeChartArea(objectWriter);
+            SerializeData("chartArea", ChartArea.CreateSerializer().Serialize(), objectWriter);
+            SerializeData("plotArea", PlotArea.CreateSerializer().Serialize(), objectWriter);
 
             SerializeTheme(objectWriter);
 
-            SerializeTitle(objectWriter);
+            SerializeData("title", Title.CreateSerializer().Serialize(), objectWriter);
 
-            SerializeLegend(objectWriter);
+            SerializeData("legend", Legend.CreateSerializer().Serialize(), objectWriter);
 
             SerializeSeries(objectWriter);
 
-            SerializeSeriesDefaults(objectWriter);
+            SerializeData("seriesDefaults", SeriesDefaults.CreateSerializer().Serialize(), objectWriter);
 
-            SerializeCategoryAxis(objectWriter);
+            SerializeData("axisDefaults", AxisDefaults.CreateSerializer().Serialize(), objectWriter);
 
-            SerializeValueAxis(objectWriter);
+            SerializeData("categoryAxis", CategoryAxis.CreateSerializer().Serialize(), objectWriter);
+
+            SerializeData("valueAxis", ValueAxis.CreateSerializer().Serialize(), objectWriter);
+
+            SerializeData("xAxis", XAxis.CreateSerializer().Serialize(), objectWriter);
+
+            SerializeData("yAxis", YAxis.CreateSerializer().Serialize(), objectWriter);
+
+            SerializeTransitions(objectWriter);
 
             SerializeDataBinding(objectWriter);
 
             SerializeSeriesColors(objectWriter);
+
+            SerializeData("tooltip", Tooltip.CreateSerializer().Serialize(), objectWriter);
 
             ClientEvents.SerializeTo(objectWriter);
 
@@ -227,12 +291,11 @@ namespace Telerik.Web.Mvc.UI
             base.WriteInitializationScript(writer);
         }
 
-        private void SerializeChartArea(IClientSideObjectWriter objectWriter)
+        private void SerializeData(string key, IDictionary<string, object> data, IClientSideObjectWriter objectWriter)
         {
-            var chartArea = ChartArea.CreateSerializer().Serialize();
-            if (chartArea.Count > 0)
+            if (data.Count > 0)
             {
-                objectWriter.AppendObject("chartArea", chartArea);
+                objectWriter.AppendObject(key, data);
             }
         }
 
@@ -241,24 +304,6 @@ namespace Telerik.Web.Mvc.UI
             if (Theme.HasValue())
             {
                 objectWriter.Append("theme", Theme);
-            }
-        }
-
-        private void SerializeTitle(IClientSideObjectWriter objectWriter)
-        {
-            var titleData = Title.CreateSerializer().Serialize();
-            if (titleData.Count > 0)
-            {
-                objectWriter.AppendObject("title", titleData);
-            }
-        }
-
-        private void SerializeLegend(IClientSideObjectWriter objectWriter)
-        {
-            var legendData = Legend.CreateSerializer().Serialize();
-            if (legendData.Count > 0)
-            {
-                objectWriter.AppendObject("legend", legendData);
             }
         }
 
@@ -276,33 +321,6 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        private void SerializeSeriesDefaults(IClientSideObjectWriter objectWriter)
-        {
-            var seriesDefaultsData = SeriesDefaults.CreateSerializer().Serialize();
-            if (seriesDefaultsData.Count > 0)
-            {
-                objectWriter.AppendObject("seriesDefaults", seriesDefaultsData);
-            }
-        }
-
-        private void SerializeCategoryAxis(IClientSideObjectWriter objectWriter)
-        {
-            var categoryAxisData = CategoryAxis.CreateSerializer().Serialize();
-            if (categoryAxisData.Count > 0)
-            {
-                objectWriter.AppendObject("categoryAxis", categoryAxisData);
-            }
-        }
-
-        private void SerializeValueAxis(IClientSideObjectWriter objectWriter)
-        {
-            var valueAxisData = ValueAxis.CreateSerializer().Serialize();
-            if (valueAxisData.Count > 0)
-            {
-                objectWriter.AppendObject("valueAxis", valueAxisData);
-            }
-        }
-
         private void SerializeDataBinding(IClientSideObjectWriter objectWriter)
         {
             if (DataBinding.Ajax.Enabled)
@@ -316,6 +334,14 @@ namespace Telerik.Web.Mvc.UI
             if (SeriesColors != null)
             {
                 objectWriter.AppendCollection("seriesColors", SeriesColors);
+            }
+        }
+
+        private void SerializeTransitions(IClientSideObjectWriter objectWriter)
+        {
+            if (!Transitions)
+            {
+                objectWriter.Append("transitions", Transitions);
             }
         }
 

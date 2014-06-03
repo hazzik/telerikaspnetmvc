@@ -46,8 +46,23 @@ namespace Telerik.Web.Mvc.UI
         ChartLine Line { get; set; }
 
         /// <summary>
+        /// The value at which the first perpendicular axis crosses this axis
+        /// </summary>
+        double? AxisCrossingValue { get; set; }
+
+        /// <summary>
+        /// The axis labels
+        /// </summary>
+        ChartAxisLabels Labels { get; set; }
+
+        /// <summary>
         /// Gets the axis serializer.
         /// </summary>
         IChartSerializer CreateSerializer();
+
+        /// <summary>
+        /// The axis orientation
+        /// </summary>
+        ChartAxisOrientation? Orientation { get; set; }
     }
 }

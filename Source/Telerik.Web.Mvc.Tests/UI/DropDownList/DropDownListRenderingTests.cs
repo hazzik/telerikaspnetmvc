@@ -33,39 +33,6 @@
             textWriter = new Mock<TextWriter>();
         }
 
-#if MVC2 || MVC3
-        [Fact]
-        public void Render_method_should_set_selectedIndex_depending_on_returned_value_from_ValueProvider()
-        {
-            dropdownlist.Name = "DropDownList1";
-            dropdownlist.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
-            dropdownlist.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
-            dropdownlist.SelectedIndex = 0;
-
-            DropDownListTestHelper.valueProvider.Setup(v => v.GetValue("DropDownList1")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
-
-            dropdownlist.Render();
-
-            Assert.Equal(1, dropdownlist.SelectedIndex);
-        }
-
-        [Fact]
-        public void Render_method_should_set_selectedIndex_depending_on_Selected_property_if_viewData_has_incorrect_value()
-        {
-            dropdownlist.Name = "DropDownList1";
-            dropdownlist.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
-            dropdownlist.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
-            dropdownlist.Items.Add(new DropDownItem { Text = "Item3", Value = "3", Selected = true });
-            dropdownlist.Items.Add(new DropDownItem { Text = "Item4", Value = "4" });
-            dropdownlist.SelectedIndex = 0;
-
-            DropDownListTestHelper.valueProvider.Setup(v => v.GetValue("DropDownList1")).Returns(new System.Web.Mvc.ValueProviderResult("15", "15", CultureInfo.CurrentCulture));
-
-            dropdownlist.Render();
-
-            Assert.Equal(2, dropdownlist.SelectedIndex);
-        }
-#endif
         [Fact]
         public void Render_method_should_set_selectedIndex_depending_on_ViewData_value()
         {

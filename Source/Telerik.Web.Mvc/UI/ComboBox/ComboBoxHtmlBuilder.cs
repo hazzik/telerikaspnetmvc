@@ -43,37 +43,44 @@ using System.Collections.Generic;
             IHtmlNode input = new HtmlElement("input", TagRenderMode.SelfClosing)
                               .Attributes(new { type = "text"})
                               .ToggleAttribute("disabled", "disabled", !Component.Enabled)
+                              .ToggleClass("input-validation-error", !Component.IsValid())
                               .PrependClass(UIPrimitives.Input)
                               .AppendTo(root);
 
-            string text = string.Empty;
-            if (Component.Items.Any())
+            string name = string.Empty;
+            if (Component.Name.HasValue())
             {
-                text = Component.Value;
-                if (Component.SelectedIndex != -1)
+                name = Component.GetName("-input");
+            }
+
+            string text = Component.GetValue<string>(Component.Value);
+            if (!Component.Items.Any())
+            {
+                text = Component.GetValue<string>(name, null);
+                if (string.IsNullOrEmpty(text))
                 {
-                    text = Component.Items[Component.SelectedIndex].Text;
-                    if (Component.Encoded)
+                    try
                     {
-                        text = System.Web.HttpUtility.HtmlDecode(text);
+                        text = Component.ViewContext.Controller.ValueOf<string>(name);
+                    }
+                    catch (System.Web.HttpRequestValidationException)
+                    {
+                        text = string.Empty;
                     }
                 }
             }
-
-            if (Component.Name.HasValue())
-            {
-                string name = GetName(Component.HiddenInputHtmlAttributes) ?? Component.Name + "-input";
-
-                input.Attributes(new
+            else if (Component.SelectedIndex != -1)
+            {                
+                text = Component.Items[Component.SelectedIndex].Text;
+                if (Component.Encoded)
                 {
-                    id = Component.Id + "-input",
-                    name = name
-                });
-
-                text = Component.ViewContext.Controller.ValueOf<string>(name) ?? text;
+                    text = System.Web.HttpUtility.HtmlDecode(text);
+                }
             }
 
-            input.ToggleAttribute("value", text, text.HasValue())
+            input.Attribute("id", Component.Id + "-input")
+                 .ToggleAttribute("name", name, name.HasValue())
+                 .ToggleAttribute("value", text, text.HasValue())
                  .Attributes(Component.InputHtmlAttributes);
 
             IHtmlNode link = new HtmlElement("span").AddClass("t-select", UIPrimitives.Header);
@@ -95,18 +102,22 @@ using System.Collections.Generic;
                               });
 
             string value = string.Empty;
-            if (Component.Items.Any()) 
+            if (Component.Items.Any())
             {
-                value = Component.Value;
+                value = Component.GetValue<string>(Component.Value);
                 if (string.IsNullOrEmpty(value) && Component.SelectedIndex != -1)
                 {
                     DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
                     value = selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text;
                 }
             }
+            else if (Component.Name.HasValue() && Component.ViewContext.ViewData.ModelState.ContainsKey(Component.Name))
+            {
+                value = Component.GetValue<string>(null);
+            }
 
             if (Component.Name.HasValue()) {
-                string name = GetName(Component.HiddenInputHtmlAttributes) ?? Component.Name;
+                string name = Component.GetName(string.Empty);
 
                 input.Attributes(Component.GetUnobtrusiveValidationAttributes())
                      .Attributes(new 
@@ -114,27 +125,12 @@ using System.Collections.Generic;
                          id = Component.Id,
                          name = name
                      });
-
-                value = Component.ViewContext.Controller.ValueOf<string>(name) ?? value;
             }
 
             input.ToggleAttribute("value", value, value.HasValue())
                  .Attributes(Component.HiddenInputHtmlAttributes);
             
             return input;
-        }
-
-        private string GetName(IDictionary<string, object> attributes)
-        {
-            object value = null;
-            string name = null; 
-
-            if (attributes.TryGetValue("name", out value) && value != null)
-            {
-                name = value.ToString();
-            }
-
-            return name;
         }
     }
 }

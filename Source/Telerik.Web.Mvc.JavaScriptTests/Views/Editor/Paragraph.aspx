@@ -89,7 +89,8 @@
             range.selectNodeContents(editor.body.firstChild.firstChild);
             var command = new ParagraphCommand({range:range});
             command.exec();
-            equal(editor.value(), '<p></p>');
+            equal(editor.value(), '');
+            equal(editor.body.firstChild.nodeName.toLowerCase(), 'p');
         });
         
         test('exec when inside empty li and p', function() {
@@ -98,7 +99,8 @@
             range.selectNodeContents(editor.body.firstChild.firstChild.firstChild);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            equal(editor.value(), '<p></p>');
+            equal(editor.value(), '');
+            equal(editor.body.firstChild.nodeName.toLowerCase(), 'p');
         });
         
         test('exec creates new li when inside ul and p', function() {
@@ -146,7 +148,8 @@
             range.collapse(true);
             var command = new ParagraphCommand({ range: range });
             command.exec();
-            equal(editor.value(), '<p></p>');
+            equal(editor.value(), '');
+            equal(editor.body.firstChild.nodeName.toLowerCase(), 'p');
         });
 
         test('exec removes br', function() {

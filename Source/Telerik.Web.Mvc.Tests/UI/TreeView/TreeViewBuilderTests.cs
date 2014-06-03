@@ -136,6 +136,46 @@
         }
 
         [Fact]
+        public void Bind_for_IEnumerable_of_TreeViewItemModel()
+        {
+            var model = new List<TreeViewItemModel> {
+                new TreeViewItemModel() {
+                    Text = "foo",
+                    Value = "5",
+                    Enabled = false,
+                    Expanded = true,
+                    Checkable = true,
+                    Checked = true,
+                    Encoded = true,
+                    NavigateUrl = "http://telerik.com/",
+                    ImageUrl = "pic.jpg",
+                    Items = new List<TreeViewItemModel>() {
+                        new TreeViewItemModel() { 
+                            LoadOnDemand = true,
+                            Text = "bar"
+                        },
+                        new TreeViewItemModel() { Text = "baz" }
+                    }
+                }
+            };
+
+            builder.BindTo(model);
+
+            Assert.Equal(1, treeView.Items.Count);
+            Assert.Equal(2, treeView.Items[0].Items.Count);
+            Assert.Equal("foo", treeView.Items[0].Text);
+            Assert.Equal(false, treeView.Items[0].Enabled);
+            Assert.Equal(true, treeView.Items[0].Expanded);
+            Assert.Equal(true, treeView.Items[0].Items[0].LoadOnDemand);
+            Assert.Equal(true, treeView.Items[0].Checkable);
+            Assert.Equal(true, treeView.Items[0].Checked);
+            Assert.Equal(true, treeView.Items[0].Encoded);
+            Assert.Equal("5", treeView.Items[0].Value);
+            Assert.Equal("http://telerik.com/", treeView.Items[0].Url);
+            Assert.Equal("pic.jpg", treeView.Items[0].ImageUrl);
+        }
+
+        [Fact]
         public void ItemAction_should_set_ItemAction_property_of_treeView()
         {
             Action<TreeViewItem> action = (item) => { };

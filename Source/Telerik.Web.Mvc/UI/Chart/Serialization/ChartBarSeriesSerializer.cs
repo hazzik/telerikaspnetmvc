@@ -31,7 +31,7 @@ namespace Telerik.Web.Mvc.UI
                 .Add("data", series.Data, () => { return series.Data != null; })
                 .Add("border", series.Border.CreateSerializer().Serialize(), ShouldSerializeBorder)
                 .Add("color", series.Color, string.Empty)
-                .Add("overlay", series.Overlay.ToString().ToLowerInvariant(), ChartDefaults.BarSeries.Overlay.ToString().ToLowerInvariant());
+                .Add("overlay", series.Overlay.Value, () => { return series.Overlay != ChartDefaults.BarSeries.Overlay; });
 
             var labelsData = series.Labels.CreateSerializer().Serialize();
             if (labelsData.Count > 0)
@@ -45,7 +45,8 @@ namespace Telerik.Web.Mvc.UI
         private bool ShouldSerializeBorder()
         {
             return series.Border.Color.CompareTo(ChartDefaults.BarSeries.Border.Color) != 0 ||
-                   series.Border.Width != ChartDefaults.BarSeries.Border.Width;
+                   series.Border.Width != ChartDefaults.BarSeries.Border.Width ||
+                   series.Border.DashType != ChartDefaults.BarSeries.Border.DashType;
         }
     }
 }

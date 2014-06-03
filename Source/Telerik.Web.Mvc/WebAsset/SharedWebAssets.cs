@@ -107,9 +107,11 @@ namespace Telerik.Web.Mvc
 
                 foreach (WebAssetConfigurationElement configurationItem in configurationGroup.Items)
                 {
-                    string itemSource = configurationItem.Source.StartsWith("~/", StringComparison.OrdinalIgnoreCase) ?
-                                        configurationItem.Source :
-                                        PathHelper.CombinePath(group.DefaultPath, configurationItem.Source);
+                    string itemSource = configurationItem.Source;
+                  
+                    if (!itemSource.StartsWith("~/", StringComparison.OrdinalIgnoreCase) && !itemSource.Contains("://")) {
+                        itemSource = PathHelper.CombinePath(group.DefaultPath, itemSource);
+                    }
 
                     group.Items.Add(new WebAsset(itemSource));
                 }

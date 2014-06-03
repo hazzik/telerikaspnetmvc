@@ -3,6 +3,7 @@
 <% Html.Telerik().TreeView()
         .Name("TreeView")
         .HtmlAttributes(new { style = "width: 300px; float: left; margin-bottom: 30px;" })
+        .ShowCheckBox(true)
         .Items(treeViewItem =>
 		{
 			treeViewItem.Add().Text("UI Components")
@@ -51,9 +52,13 @@
     </p>
     
     <p>
-        <button onclick="ExpandItem()" class="t-button">Expand</button> / <button onclick="CollpaseItem()" class="t-button">Collapse</button>
+        <button onclick="ExpandItem()" class="t-button">Expand</button> / <button onclick="CollapseItem()" class="t-button">Collapse</button>
+        <br />
+        <button onclick="ExpandAll()" class="t-button">Expand All</button> / <button onclick="CollapseAll()" class="t-button">Collapse All</button>
 		<br />
         <button onclick="EnableItem()" class="t-button">Enable</button> / <button onclick="DisableItem()" class="t-button">Disable</button>
+		<br />
+        <button onclick="CheckItem()" class="t-button">Check</button> / <button onclick="UncheckItem()" class="t-button">Uncheck</button>
     </p>
 <% } %>
         
@@ -66,9 +71,23 @@
 	        treeView.expand(item);
 	    }
 
-	    function CollpaseItem() {
+	    function CollapseItem() {
 	        var treeView = $("#TreeView").data("tTreeView");
 	        var item = $("> ul > li", treeView.element)[$("#itemIndex").val()];
+	        
+	        treeView.collapse(item);
+	    }
+
+	    function ExpandAll() {
+	        var treeView = $("#TreeView").data("tTreeView");
+	        var item = $("> ul > li", treeView.element);
+	        
+	        treeView.expand(item);
+	    }
+
+	    function CollapseAll() {
+	        var treeView = $("#TreeView").data("tTreeView");
+	        var item = $("> ul > li", treeView.element);
 	        
 	        treeView.collapse(item);
 	    }
@@ -86,6 +105,20 @@
 
 	        treeView.disable(item);
 	    }
+
+        function CheckItem() {
+	        var treeView = $("#TreeView").data("tTreeView");
+	        var item = $("> ul > li", treeView.element)[$("#itemIndex").val()];
+
+	        treeView.nodeCheck(item, true);
+        }
+
+        function UncheckItem() {
+	        var treeView = $("#TreeView").data("tTreeView");
+	        var item = $("> ul > li", treeView.element)[$("#itemIndex").val()];
+
+	        treeView.nodeCheck(item, false);
+        }
 	</script>
 			
 </asp:content>

@@ -4,8 +4,9 @@ namespace Telerik.Web.Mvc.Examples
     using Telerik.Web.Mvc.Examples.Models;
     using Telerik.Web.Mvc.UI;
 
-    public partial class ChartController : Controller
+    public partial class ChartController
     {
+        [SourceCodeFile("Model", "~/Models/SalesData.cs")]
         public ActionResult FirstLook(bool? stack, string seriesType, bool? showTitle, bool? showLegend, ChartLegendPosition? legendPosition)
         {
             ViewBag.Stack = stack ?? false;

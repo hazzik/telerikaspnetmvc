@@ -47,6 +47,31 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
 #if MVC2 || MVC3
         /// <summary>
+        /// Provides additional view data in the editor template for that column (if any).
+        /// </summary>
+        /// <remarks>
+        /// The additional view data will be provided if the editing mode is set to in-line or in-cell. Otherwise
+        /// use <see cref="GridEditingSettingsBuilder{T}.AdditionalViewData"/> 
+        /// </remarks>
+        /// <param name="additionalViewData">An anonymous object which contains the additional data</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Columns(columns => {
+        ///                 columns.Bound(o => o.Customer).EditorViewData(new { customers = Model.Customers });
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBoundColumnBuilder<T> EditorViewData(object additionalViewData)
+        {
+            Column.AdditionalViewData = additionalViewData;
+
+            return this;
+        }
+
+        /// <summary>
         /// Makes the column read-only or not. By default bound columns are not read-only.
         /// </summary>
         /// <remarks>
@@ -234,7 +259,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
         public GridBoundColumnBuilder<T> Aggregate(Action<GridAggregatesFactory> aggregates)
         {
-            var factory = new GridAggregatesFactory(Column.Aggregates, Column.Member);
+            var factory = new GridAggregatesFactory(Column.Aggregates, Column.Member, Column.MemberType);
 
             aggregates(factory);
 

@@ -30,6 +30,13 @@
                         keydown: $.proxy(this._keydown, this),
                         focus: $.proxy(function (e) {
                             this.$element.removeClass('t-state-error');
+                        }, this),
+                        blur: $.proxy(function(e) {
+                            this._bluring = setTimeout($.proxy(function() {
+                                if (!this.dateView.isOpened() && this.dateView === this.dateView.$calendar.data("associatedDateView")) {
+                                    this._update($element.val());
+                                }
+                            }, this), 100);
                         }, this)
                     });
 
@@ -69,8 +76,10 @@
                 this.$element.val($t.datetime.format(date, this.format));
             }, this),
             onChange: $.proxy(function (value) {
+                clearTimeout(this._bluring);
                 this._update(this.parse(value, this.timeFormat));
                 this._close('time');
+                window.setTimeout(function(){$element.focus();}, 1);
             }, this)
         });
 
@@ -89,9 +98,14 @@
         this.dateView.$calendar
             .bind("click", $.proxy(function(e) {
                 e.stopPropagation();
+                clearTimeout(this._bluring);
+                if (this.dateView !== this.dateView.$calendar.data("associatedDateView")) {
+                    return;
+                }
                 if (e.target.parentNode.className.indexOf("t-state-selected") != -1) {
                     this._close("date");
                 }
+                window.setTimeout(function(){$element.focus();}, 1);
             }, this));
 
         this.inputValue = $element.val();
@@ -344,8 +358,6 @@
                 }
 
                 this.dateView[method](parsedValue);
-                if (!$t.datepicker.isInRange(this.selectedValue, this.minValue, this.maxValue))
-                    this.value(parsedValue);
             }
         };
     }, this));
@@ -361,8 +373,6 @@
                 if (parsedValue !== null) {
                     this[propertyName] = parsedValue;
                     method == 'startTime' ? this.timeView.min(parsedValue) : this.timeView.max(parsedValue)
-                    if (!$t.timeView.isInRange(this.selectedValue, this.minValue, this.maxValue))
-                        this.value(parsedValue);
                 }
             };
     }, this));

@@ -23,6 +23,7 @@ namespace Telerik.Web.Mvc.UI
 
             FluentDictionary.For(result)
                 .Add("width", border.Width)
+                .Add("dashType", border.DashType.ToString().ToLowerInvariant())
                 .Add("color", border.Color);
 
             return result;

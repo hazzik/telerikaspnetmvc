@@ -110,24 +110,24 @@
         }
 
         [Fact]
-        public void Should_throw_exception_if_selectionStart_is_bigger_then_maxValue_or_smaller_then_minValue()
+        public void Should_not_throw_exception_if_selectionStart_is_bigger_then_maxValue_or_smaller_then_minValue()
         {
             component.SelectionStart = 11;
             component.SelectionEnd = 11;
-            Assert.Throws<ArgumentOutOfRangeException>(() => component.Render());
+            Assert.DoesNotThrow(() => component.Render());
             component.SelectionStart = -1;
             component.SelectionEnd = -1;
-            Assert.Throws<ArgumentOutOfRangeException>(() => component.Render());
+            Assert.DoesNotThrow(() => component.Render());
         }
 
         [Fact]
-        public void Should_throw_exception_if_selectionEnd_is_bigger_then_maxValue_or_smaller_then_minValue()
+        public void Should_not_throw_exception_if_selectionEnd_is_bigger_then_maxValue_or_smaller_then_minValue()
         {
             component.SelectionEnd = 11;
-            Assert.Throws<ArgumentOutOfRangeException>(() => component.Render());
+            Assert.DoesNotThrow(() => component.Render());
             component.SelectionStart = -1;
             component.SelectionEnd = -1;
-            Assert.Throws<ArgumentOutOfRangeException>(() => component.Render());
+            Assert.DoesNotThrow(() => component.Render());
         }
     }
 }

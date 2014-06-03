@@ -147,7 +147,7 @@
             var item = $("ul li:nth-child(7)", treeView.element),
                 icon = item.find('.t-icon');
             
-            equal(icon.css("display"), "block");
+            ok(icon.css("display").indexOf("block") > -1);
         });
 
     </script>

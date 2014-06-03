@@ -59,6 +59,11 @@
     border-width: 1px 2px 2px 1px;
 }
 
+.t-window-content 
+{
+    border-width: 0;
+}
+
 .t-colorpicker .t-arrow-down
 {
     border-color: #ccc;
@@ -106,7 +111,9 @@
     background-color:#fffacd;
 }
 
-.t-state-error
+.t-state-error,
+.t-widget.input-validation-error,
+.t-widget .input-validation-error
 {
     border-color: #e50000;
 }
@@ -169,8 +176,8 @@ a.t-button.t-state-disabled:hover,
     border-color: #ccc;
 }
 
-.t-grid .t-header,
-.t-grid .t-header .t-link
+.t-grid th.t-header,
+.t-grid th.t-header .t-link
 {
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -178,6 +185,12 @@ a.t-button.t-state-disabled:hover,
     line-height: 2.6em;
     color: #666;
     background: none;
+}
+
+.t-grid-header-wrap,
+.t-grid-footer-wrap
+{
+    border-color: #eee;
 }
 
 .t-grid .t-header,

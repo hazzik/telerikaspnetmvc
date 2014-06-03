@@ -25,6 +25,8 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
         }
+
+        IEnumerable<IGridDataKey> GetDataKeys();
     }
 
     public class GridDataKeyStore : IGridDataKeyStore
@@ -40,6 +42,11 @@ namespace Telerik.Web.Mvc.UI
             CurrentDataKeyValues = currentDataKeyValues;
         }
         
+        public IEnumerable<IGridDataKey> GetDataKeys()
+        {
+            return dataKeys;
+        }
+
         public IDictionary<string, object> GetRouteValues(object dataItem)
         {
             if (dataItem != null)

@@ -65,9 +65,10 @@ namespace Telerik.Web.Mvc.UI.Tests
         [Fact]
         public void NumericTextBoxFor_should_return_new_instance_with_set_name_even_type_is_null()
         {
+            htmlHelper.ViewContext.ViewData.TemplateInfo.HtmlFieldPrefix = "innerView";
             var builder = factory.NumericTextBoxFor(m => m.NullableInt);
 
-            Assert.Equal("NullableInt", builder.ToComponent().Name);
+            Assert.Equal("innerView.NullableInt", builder.ToComponent().Name);
         }
 
         [Fact]

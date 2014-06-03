@@ -239,6 +239,33 @@ namespace Telerik.Web.Mvc.Tests.Menu
 
             Assert.IsType(typeof(MenuBuilder), returnedBuilder);
         }
+
+        [Fact]
+        public void BindTo_with_IEnumerable()
+        {
+            IEnumerable<MenuItem> items = new List<MenuItem>
+            {
+                new MenuItem { Text = "Item 1" },
+                new MenuItem { Text = "Item 2" }
+            };
+
+            builder.BindTo(items);
+            Assert.Equal(2, menu.Items.Count);
+        }
+
+        [Fact]
+        public void BindTo_with_IEnumerable_clears_previously_added_items()
+        {
+            IEnumerable<MenuItem> items = new List<MenuItem>
+            {
+                new MenuItem { Text = "Item 1" },
+                new MenuItem { Text = "Item 2" }
+            };
+
+            builder.BindTo(items);
+            builder.BindTo(items);
+            Assert.Equal(2, menu.Items.Count);
+        }
 	}
 }
 public class TestObject 

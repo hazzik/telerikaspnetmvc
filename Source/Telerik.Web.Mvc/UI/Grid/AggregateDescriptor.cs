@@ -71,7 +71,7 @@ namespace Telerik.Web.Mvc
         {
             var result = new StringBuilder(Member);
 
-            var aggregates = Aggregates.Select(aggregate => aggregate.FunctionName.Split('_')[0].ToLower());
+            var aggregates = Aggregates.Select(aggregate => aggregate.FunctionName.Split('_')[0].ToLowerInvariant());
 
             foreach (var aggregate in aggregates)
             {

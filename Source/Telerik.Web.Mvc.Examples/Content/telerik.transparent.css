@@ -125,7 +125,9 @@ a.t-state-selected.t-link
     background: url('Transparent/hover.png');
 }
 
-.t-state-error
+.t-state-error,
+.t-widget.input-validation-error,
+.t-widget .input-validation-error
 {
     color:#f20000;
 }
@@ -150,10 +152,12 @@ a.t-button.t-state-disabled:hover,
 }
 
 .t-state-disabled,
+.t-state-disabled:hover,
 .t-state-disabled .t-link,
 .t-state-disabled .t-button
 {
-    color: #c5c5c5;
+    color: #777;
+    border-color: #c5c5c5;
 }
 
 .t-combobox .t-input
@@ -183,6 +187,8 @@ a.t-button.t-state-disabled:hover,
     background:none transparent;
 }
 
+.t-grid-header-wrap,
+.t-grid-footer-wrap,
 .t-grid td
 {
     border-color: #c5c5c5;
@@ -220,6 +226,20 @@ a.t-button.t-state-disabled:hover,
 .t-other-month .t-link
 {
     color: #666;
+}
+
+/* TabStrip */
+
+.t-tabstrip-items .t-state-active,
+.t-panelbar .t-tabstrip-items .t-state-active
+{
+    margin-bottom: 0;
+}
+
+.t-tabstrip .t-content,
+.t-panelbar .t-tabstrip .t-content
+{
+    border-top-width: 0;
 }
 
 /* Slider */

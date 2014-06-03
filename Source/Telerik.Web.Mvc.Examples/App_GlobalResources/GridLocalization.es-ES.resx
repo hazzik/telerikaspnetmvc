@@ -222,20 +222,20 @@
   <data name="DeleteConfirmation" xml:space="preserve">
     <value>¿Está seguro de que quiere eliminar este registro?</value>
   </data>
-  <data name="NoRecords" xml:space="preserve">
-    <value>No records to display.</value>
-  </data>
   <data name="FilterBoolIsFalse" xml:space="preserve">
     <value>No</value>
   </data>
   <data name="FilterBoolIsTrue" xml:space="preserve">
     <value>Si</value>
   </data>
+  <data name="NoRecords" xml:space="preserve">
+    <value>No hay datos.</value>
+  </data>
   <data name="CancelChanges" xml:space="preserve">
-    <value>Cancel Changes</value>
+    <value>Cancelar Cambios</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Salvar Cambios</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Actualizar</value>

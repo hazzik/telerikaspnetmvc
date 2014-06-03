@@ -70,6 +70,7 @@ namespace Telerik.Web.Mvc.UI
             Sorting = new GridSortSettings(this);
             Scrolling = new GridScrollingSettings();
             KeyboardNavigation = new GridKeyboardNavigationSettings(this);
+            ColumnContextMenu = new GridColumnContextMenuSettings(this);
             Filtering = new GridFilteringSettings();
             Editing = new GridEditingSettings<T>(this)
             {
@@ -327,6 +328,15 @@ namespace Telerik.Web.Mvc.UI
         /// Gets the keyboard navigation configuration.
         /// </summary>
         public GridKeyboardNavigationSettings KeyboardNavigation
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the column context menu configuration.
+        /// </summary>
+        public GridColumnContextMenuSettings ColumnContextMenu
         {
             get;
             private set;
@@ -752,14 +762,20 @@ namespace Telerik.Web.Mvc.UI
         private void AppendPopupEditor(IHtmlNode container, GridRenderingData renderingData)
         {
             var popup = Editing.PopUp;
+            var cancelUrl = renderingData.UrlBuilder.CancelUrl(null);
 
             new WindowBuilder(popup)
                 .Content(renderingData.PopUpContainer.InnerHtml)
-                .HtmlAttributes(new { style = "top:10%;left:50%;margin-left: -" + (popup.Width == 0 ? 360 : popup.Width) / 4 + "px" })
+                .HtmlAttributes(new { style = "top:10%;left:50%;margin-left: -" + (popup.Width == 0 ? 360 : popup.Width) / 4 + "px" })                
                 .Buttons(buttons => buttons
-                    .Close(renderingData.UrlBuilder.CancelUrl(null))
+                    .Close(cancelUrl)
                 );
 
+            if (!IsClientBinding)
+            {
+                popup.ClientEvents.OnClose.InlineCodeBlock = obj => "function(e) { e.preventDefault();" + string.Format("window.location.href = '{0}';", cancelUrl) + "}";
+            }
+            
             if (!popup.Name.HasValue())
             {
                 popup.Name = Name + "PopUp";
@@ -789,7 +805,7 @@ namespace Telerik.Web.Mvc.UI
                 Mode = CurrentItemMode,
                 EditMode = Editing.Mode,
                 HasDetailView = HasDetailView,
-                Colspan = Colspan,
+                Colspan = Colspan - Columns.Count(column => column.Hidden),
                 DetailViewTemplate = MapDetailViewTemplate(HasDetailView ? DetailView.Template : null),
                 NoRecordsTemplate = FormatNoRecordsTemplate(),
                 Localization = Localization,
@@ -804,6 +820,7 @@ namespace Telerik.Web.Mvc.UI
 #if MVC2 || MVC3    
                 CreateNewDataItem = () => Editing.DefaultDataItem(),
                 EditTemplateName = Editing.TemplateName,
+                AdditionalViewData = Editing.AdditionalViewData,
                 FormId = ViewContext.FormContext.FormId,
 #endif
                 Callback = RowActionCallback
@@ -1115,7 +1132,7 @@ namespace Telerik.Web.Mvc.UI
             if (!DataKeys.Any() && (Editing.Enabled || (Selection.Enabled && !IsClientBinding)))
             {
                 throw new NotSupportedException(TextResource.DataKeysEmpty);
-            }
+            }          
 
             if (Editing.Enabled)
             {
@@ -1154,7 +1171,8 @@ namespace Telerik.Web.Mvc.UI
                     {
                         throw new NotSupportedException(TextResource.BatchUpdatesRequireUpdate);
                     }
-                }
+                }                
+
 #if MVC2 || MVC3
                 if (Editing.Mode == GridEditMode.InCell) 
                 {
@@ -1215,7 +1233,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 var container = new HtmlElement("div").AddClass(UIPrimitives.Grid.InFormContainer);
 
-                htmlHelper.EditorForModel(dataItem, Editing.TemplateName).AppendTo(container);
+                htmlHelper.EditorForModel(dataItem, Editing.TemplateName, Columns.OfType<IGridForeignKeyColumn>().Select(c => c.SerializeSelectList), Editing.AdditionalViewData).AppendTo(container);
 
                 EditorHtml = container.InnerHtml;
             }

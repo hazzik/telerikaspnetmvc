@@ -42,7 +42,7 @@ namespace Telerik.Web.Mvc.Infrastructure
 
         public IDictionary<string, string> ToJson()
         {
-            return localizationService.All().ToDictionary(k => k.Key[0].ToString(CultureInfo.CurrentCulture).ToLower() + k.Key.Substring(1), k => k.Value);
+            return localizationService.All().ToDictionary(k => k.Key[0].ToString(CultureInfo.CurrentCulture).ToLowerInvariant() + k.Key.Substring(1), k => k.Value);
         }
 
         public bool IsDefault

@@ -20,15 +20,9 @@ namespace Telerik.Web.Mvc.UI
         public ChartCategoryAxis(Chart<T> chart)
             : base(chart)
         {
-            MajorGridLines = new ChartLine(
-                ChartDefaults.Axis.Category.MajorGridLines.Width,
-                ChartDefaults.Axis.Category.MajorGridLines.Color,
-                ChartDefaults.Axis.Category.MajorGridLines.Visible);
-
-            MinorGridLines = new ChartLine(
-                ChartDefaults.Axis.Category.MinorGridLines.Width,
-                ChartDefaults.Axis.Category.MinorGridLines.Color,
-                ChartDefaults.Axis.Category.MinorGridLines.Visible);
+            MajorGridLines = new ChartLine();
+            MinorGridLines = new ChartLine();
+            Labels = new ChartAxisLabels();
         }
 
         /// <summary>

@@ -102,7 +102,7 @@ namespace Telerik.Web.Mvc.UI
             urlFormat = SelectionSettings.GenerateUrl(ViewContext, UrlGenerator);
             if (urlFormat.HasValue()) 
             {
-                urlFormat = HttpUtility.UrlDecode(urlFormat).ToLower();
+                urlFormat = HttpUtility.UrlDecode(urlFormat).ToLowerInvariant();
             }
 
             IHtmlNode rootTag = renderer.Build();
@@ -207,11 +207,6 @@ namespace Telerik.Web.Mvc.UI
             if (MinDate > MaxDate)
             {
                 throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinDate", "MaxDate"));
-            }
-
-            if ((Value != null) && (MinDate > Value || Value > MaxDate))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Date", "MinDate", "MaxDate"));
             }
         }
     }

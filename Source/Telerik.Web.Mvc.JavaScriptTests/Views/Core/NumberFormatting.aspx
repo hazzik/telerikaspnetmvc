@@ -103,6 +103,11 @@
             $t = $.telerik;
         }
 
+        test('number formatting supports n0 format', function() { //D
+            var number = 12123.12;
+            equal($t.formatNumber(number, "n0"), '<%= (12123.12).ToString("n0") %>', culture);
+        });
+
         test('number formatting supports decimal format', function() { //D
             var number = 12123.12;
             equal($t.formatNumber(number, "D"), '<%= (12123).ToString("D") %>', culture);
@@ -266,7 +271,6 @@
         });
 
         test('custom number format exact digits count as format', function() {
-        debugger;   
             var value = $t.formatNumber(6666666, "#,###,###.00");
             equal(value, '<%= 6666666.ToString("#,###,###.00") %>', culture);
         });

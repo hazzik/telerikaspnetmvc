@@ -1128,5 +1128,59 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        public GridClientEventsBuilder OnCommand(Action onCommandCallback)
+        {
+            Guard.IsNotNull(onCommandCallback, "onCommandCallback");
+
+            events.OnCommand.CodeBlock = onCommandCallback;
+
+            return this;
+        }
+
+        public GridClientEventsBuilder OnCommand(Func<object, object> onCommandInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCommandInlineCodeBlock, "onCommandInlineCodeBlock");
+
+            events.OnCommand.InlineCodeBlock = onCommandInlineCodeBlock;
+
+            return this;
+        }
+
+        public GridClientEventsBuilder OnCommand(string onCommandHandlerName)
+        {
+            Guard.IsNotNullOrEmpty(onCommandHandlerName, "onCommandHandlerName");
+
+            events.OnCommand.HandlerName = onCommandHandlerName;
+
+            return this;
+        }
+
+        public GridClientEventsBuilder OnComplete(Action onCompleteCallback)
+        {
+            Guard.IsNotNull(onCompleteCallback, "onCompleteCallback");
+
+            events.OnComplete.CodeBlock = onCompleteCallback;
+
+            return this;
+        }
+
+        public GridClientEventsBuilder OnComplete(Func<object, object> onCompleteInlineCodeBlock)
+        {
+            Guard.IsNotNull(onCompleteInlineCodeBlock, "onCompleteInlineCodeBlock");
+
+            events.OnComplete.InlineCodeBlock = onCompleteInlineCodeBlock;
+
+            return this;
+        }
+
+        public GridClientEventsBuilder OnComplete(string onCompleteHandlerName)
+        {
+            Guard.IsNotNullOrEmpty(onCompleteHandlerName, "onCompleteHandlerName");
+
+            events.OnComplete.HandlerName = onCompleteHandlerName;
+
+            return this;
+        }
     }
 }

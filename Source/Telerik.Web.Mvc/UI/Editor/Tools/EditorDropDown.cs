@@ -28,6 +28,7 @@ namespace Telerik.Web.Mvc.UI
         string IViewComponent.Id { get { return ""; } }
         string IViewComponent.Name { get { return ""; } }
         public IDictionary<string, object> HtmlAttributes { get; private set; }
+        public IDictionary<string, object> HiddenInputHtmlAttributes { get; private set; }
 
         public IList<DropDownItem> Items
         {

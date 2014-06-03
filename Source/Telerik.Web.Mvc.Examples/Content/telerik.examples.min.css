@@ -507,7 +507,7 @@ body, input, select, textarea, button
 
 #all-products
 {
-    width: 482px;
+    width: 510px;
 }
 
 #all-products a
@@ -758,18 +758,14 @@ body, input, select, textarea, button
     text-decoration: underline;
 }
 
-.theme-preview-office2010blue span,
-.theme-preview-office2010silver span,
-.theme-preview-transparent span
+.theme-preview-metro span
 {
     display: block;
     position: relative;
     z-index: 2;
 }
 
-.theme-preview-office2010blue span:after,
-.theme-preview-office2010silver span:after,
-.theme-preview-transparent span:after
+.theme-preview-metro span:after
 {
 	content: "NEW";
 	position: absolute;
@@ -1033,6 +1029,7 @@ kbd
 #about-example
 {
     position: relative;
+    zoom:1;
 }
 
 
@@ -1381,7 +1378,7 @@ h2#big-logo
 
 .t-transparent
 {
-    background: #014b7b url('images/transparent-skin-background.jpg') no-repeat 0 0;
+    background: #014b7b url('Images/transparent-skin-background.jpg') no-repeat 0 0;
 }
 
 .t-transparent .example-title,

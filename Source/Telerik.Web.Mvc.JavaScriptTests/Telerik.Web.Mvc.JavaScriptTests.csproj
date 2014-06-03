@@ -6,7 +6,7 @@
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{9AB0B48B-FB43-4EFF-A1DD-7A172CA4440F}</ProjectGuid>
-    <ProjectTypeGuids>{F85E285D-A4E0-4152-9332-AB1D724D3325};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Telerik.Web.Mvc.JavaScriptTests</RootNamespace>
@@ -274,6 +274,7 @@
     <Content Include="Views\Grid\ButtonBuilders.aspx" />
     <Content Include="Views\Grid\CellEditor.aspx" />
     <Content Include="Views\Grid\ChangeSet.aspx" />
+    <Content Include="Views\Grid\ColumnHiding.aspx" />
     <Content Include="Views\Grid\Navigation.aspx" />
     <Content Include="Views\Grid\PopUpEditor.aspx" />
     <Content Include="Views\Grid\FormContainerBuilder.aspx" />

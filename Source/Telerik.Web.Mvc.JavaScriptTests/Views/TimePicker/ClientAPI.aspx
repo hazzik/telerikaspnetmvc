@@ -449,29 +449,6 @@
 
         ok(!timepicker.$element.hasClass('t-state-error'), 't-error-state is not applied');
     });
-
-    test('min method should set value to minValue if value is not in range', function () {
-        var timepicker = getTimePicker();
-        timepicker.max("10:00 PM");
-        timepicker.value("10:00 AM");
-
-        timepicker.min("11:00 AM");
-
-        equal(timepicker.value().getHours(), timepicker.min().getHours(), "hours were not updated");
-        equal(timepicker.value().getMinutes(), timepicker.min().getMinutes(), "minutes were not updated");
-    });
-
-    test('max method should set value to maxValue if value is not in range', function () {
-        var timepicker = getTimePicker();
-
-        timepicker.min("8:00 AM");
-        timepicker.value("10:00 AM");
-
-        timepicker.max("9:00 AM");
-
-        equal(timepicker.value().getHours(), timepicker.max().getHours(), "hours were not updated");
-        equal(timepicker.value().getMinutes(), timepicker.max().getMinutes(), "minutes were not updated");
-    });
         
 </script>
 

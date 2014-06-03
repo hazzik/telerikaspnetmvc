@@ -261,7 +261,30 @@
             .Editable(editing => editing.Mode(GridEditMode.InLine))
             .Pageable(pager => pager.PageSize(10))
     %>
-
+    <%= Html.Telerik().Grid(Model)
+            .Name("GridGroupedInCell")
+            .DataKeys(keys => keys.Add(c => c.Name))
+            .ToolBar(toolbar => toolbar.Insert())
+            .Columns(columns => 
+                {
+                    columns.Bound(c => c.Name);
+                    columns.Bound(c => c.Address);
+                    columns.Command(commands =>
+                    {
+                        commands.Edit();
+                        commands.Delete();
+                    });
+                })            
+            .DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client)
+                .Select("Select", "Dummy")
+                .Insert("Insert", "Dummy")
+                .Delete("Delete", "Dummy")
+                .Update("Update", "Dummy")
+            )
+            .Editable(editing => editing.Mode(GridEditMode.InCell))
+            .Groupable(groupable => groupable.Groups(g => g.Add(c => c.Active)))
+            .Pageable(pager => pager.PageSize(10))
+    %>
     <% Html.Telerik().ScriptRegistrar().Globalization(true); %>
 </asp:Content>
 
@@ -614,6 +637,14 @@
             equal(values.bar, '10,11');
         });
         
+        test("data contains flat view of the data when operation mode is client and grid is populated from the server", function() {
+            var grid = getGrid('#GridGroupedInCell');
+            equal(grid.data.length, 10);
+            equal(grid.dataSource.data().length, 20);
+            equal(grid.data[0].Active, false);
+            equal(grid.data[1].Active, false);
+            equal(grid.data[2].Active, false);
+        });
 </script>
 
 </asp:Content>

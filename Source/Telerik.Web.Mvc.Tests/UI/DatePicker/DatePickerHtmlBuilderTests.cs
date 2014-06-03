@@ -145,6 +145,39 @@
         }
 
         [Fact]
+        public void Input_if_GetValue_returns_null_set_DatePicker_Value_to_null()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            datePicker.Name = "DatePicker1";
+            datePicker.Value = DateTime.Now;
+            datePicker.ViewContext.ViewData.ModelState.Add("DatePicker1", state);
+            datePicker.ViewContext.ViewData.ModelState.AddModelError("DatePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            datePicker.Value.ShouldBeNull();
+        }
+
+        [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            datePicker.Name = "DatePicker1";
+            datePicker.ViewContext.ViewData.ModelState.Add("DatePicker1", state);
+            datePicker.ViewContext.ViewData.ModelState.AddModelError("DatePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            tag.Attribute("class").ShouldContain("input-validation-error");
+        }
+
+        [Fact]
         public void Button_should_render_icon_with_default_title_and_class()
         {
             IHtmlNode tag = renderer.ButtonTag().Children[0];

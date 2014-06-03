@@ -106,5 +106,26 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        /// <summary>
+        /// Sets the axis orientation. The ValueAxis orientation should be set to match.
+        /// </summary>
+        /// <param name="orientation">The orientation. The default value is inferred from the series type.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart(Model)
+        ///             .Name("Chart")
+        ///             .CategoryAxis(c => c.Orientation(ChartAxisOrientation.Vertical))
+        ///             .ValueAxis(v => v.Orientation(ChartAxisOrientation.Horizontal))
+        ///             .Series(series => series.Line(s => s.Sales))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartCategoryAxisBuilder<TModel> Orientation(ChartAxisOrientation orientation)
+        {
+            Container.CategoryAxis.Orientation = orientation;
+
+            return this;
+        }
     }
 }

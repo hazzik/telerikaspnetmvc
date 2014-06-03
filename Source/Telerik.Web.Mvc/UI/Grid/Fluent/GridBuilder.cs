@@ -276,7 +276,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Guard.IsNotNull(configurator, "configurator");
 
-            configurator(new GridDataKeyFactory<T>(Component));
+            configurator(new GridDataKeyFactory<T>(Component.DataKeys, false));
 
             return this;
         }
@@ -853,6 +853,65 @@ namespace Telerik.Web.Mvc.UI.Fluent
             KeyboardNavigation();
 
             configurator(new GridKeyboardNavigationSettingsBuilder(Component.KeyboardNavigation));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Enables column context menu.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid()
+        ///             .Name("Grid")
+        ///             .Ajax(ajax => ajax.Action("_RelatedGrids_Orders", "Grid", new { customerID = "ALFKI" }))
+        ///             .Columns(columns=>
+        ///             {
+        ///                 columns.Add(c => c.OrderID).Width(100);
+        ///                 columns.Add(c => c.OrderDate).Width(200).Format("{0:dd/MM/yyyy}");
+        ///                 columns.Add(c => c.ShipAddress);
+        ///                 columns.Add(c => c.ShipCity).Width(200);
+        ///             })
+        ///             .BindTo((IEnumerable&lt;Order&gt;)ViewData["Orders"])
+        ///             .ColumnContextMenu();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBuilder<T> ColumnContextMenu()
+        {
+            Component.ColumnContextMenu.Enabled = true;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Enables column context menu.
+        /// </summary>
+        /// <param name="configurator">Use builder to column context menu settings.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid()
+        ///             .Name("Grid")
+        ///             .Ajax(ajax => ajax.Action("_RelatedGrids_Orders", "Grid", new { customerID = "ALFKI" }))
+        ///             .Columns(columns=>
+        ///             {
+        ///                 columns.Add(c => c.OrderID).Width(100);
+        ///                 columns.Add(c => c.OrderDate).Width(200).Format("{0:dd/MM/yyyy}");
+        ///                 columns.Add(c => c.ShipAddress);
+        ///                 columns.Add(c => c.ShipCity).Width(200);
+        ///             })
+        ///             .BindTo((IEnumerable&lt;Order&gt;)ViewData["Orders"])
+        ///             .ColumnContextMenu(navigation => navigation.Enabled(true));
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridBuilder<T> ColumnContextMenu(Action<GridColumnContextMenuSettingsBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            ColumnContextMenu();
+
+            configurator(new GridColumnContextMenuSettingsBuilder(Component.ColumnContextMenu));
 
             return this;
         }

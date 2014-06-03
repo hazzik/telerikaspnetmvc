@@ -167,7 +167,8 @@
            ok(!isChanged, "change event was raised incorrectly");
        });
 
-       asyncTest('change event should raise when DV is opened and Enter is clicked', function () {         
+       test('change event should raise when DV is opened and Enter is clicked', function () {       
+           stop(1000);
            var datetimepicker = getDateTimePicker();
            datetimepicker.close('time')
            datetimepicker.close('date')
@@ -181,7 +182,8 @@
            ok(isChanged);
        });
 
-       asyncTest('change event should not raise when TV is opened and Enter is clicked, user did not change anything', function () {
+       test('change event should not raise when TV is opened and Enter is clicked, user did not change anything', function () {
+           stop(1000);
            isChanged = false;
            var datetimepicker = getDateTimePicker();
            datetimepicker.close('time')

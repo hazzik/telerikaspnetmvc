@@ -100,10 +100,14 @@ function domToXhtml(root) {
                         var property = trim(propertyAndValue[0].toLowerCase()),
                             value = trim(propertyAndValue[1]);
 
+                        if (property == "font-size-adjust" || property == "font-stretch") {
+                            continue;
+                        }
+
                         if (property.indexOf('color') >= 0)
                             value = dom.toHex(value);
                         
-                        if (property.indexOf('font-family') >= 0) {
+                        if (property.indexOf('font') >= 0) {
                             value = value.replace(quoteRe, "'");
                         }
 
@@ -163,7 +167,11 @@ function domToXhtml(root) {
                 
             if (!skip && $.support.leadingWhitespace) {
                 var parent = node.parentNode;
-                var previous = (dom.isInline(parent) ? parent : node).previousSibling;
+                var previous = node.previousSibling;
+
+                if (!previous) {
+                     previous = (dom.isInline(parent) ? parent : node).previousSibling;
+                }
 
                 if (!previous || previous.innerHTML == '' || dom.isBlock(previous))
                     value = value.replace(/^[\r\n\v\f\t ]+/, '');
@@ -194,7 +202,7 @@ function domToXhtml(root) {
 
     result = result.join('');
 
-    // if serialized dom contains only whitespace elements, consider it empty (required filed validation)
+    // if serialized dom contains only whitespace elements, consider it empty (required field validation)
     if (result.replace(brRe, "").replace(emptyPRe, "") == "") {
         return "";
     }

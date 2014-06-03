@@ -43,8 +43,10 @@
         {
             plotArea.Border.Color = "red";
             plotArea.Border.Width = 1;
+            plotArea.Border.DashType = ChartDashType.Dot;
             ((Dictionary<string, object>)GetJson()["border"])["width"].ShouldEqual(1);
             ((Dictionary<string, object>)GetJson()["border"])["color"].ShouldEqual("red");
+            ((Dictionary<string, object>)GetJson()["border"])["dashType"].ShouldEqual("dot");
         }
 
         [Fact]

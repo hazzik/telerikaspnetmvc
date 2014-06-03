@@ -22,14 +22,14 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets the legend font
+        /// Sets the legend labels font
         /// </summary>
-        /// <param name="font">The legend font (CSS format).</param>
+        /// <param name="font">The legend labels font (CSS format).</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .Legend(legend => legend.Font("16px Verdana, sans-serif"))
+        ///            .Legend(legend => legend.Font("16px Arial,Helvetica,sans-serif"))
         ///            .Render();
         /// %&gt;
         /// </code>
@@ -37,6 +37,44 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public ChartLegendBuilder Font(string font)
         {
             legend.Font = font;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the legend labels color
+        /// </summary>
+        /// <param name="color">The labels color (CSS format).</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .Legend(legend => legend.Color("red"))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartLegendBuilder Color(string color)
+        {
+            legend.Color = color;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the legend background color
+        /// </summary>
+        /// <param name="background">The background color.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .Legend(legend => legend.Background("red"))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>        
+        public ChartLegendBuilder Background(string background)
+        {
+            legend.Background = background;
             return this;
         }
 
@@ -104,7 +142,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="top">The legend top margin.</param>
         /// <param name="right">The legend right margin.</param>
-        /// <param name="bottom">The legend top margin.</param>
+        /// <param name="bottom">The legend bottom margin.</param>
         /// <param name="left">The legend top margin.</param>
         /// <example>
         /// <code lang="CS">
@@ -148,8 +186,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="top">The legend top padding.</param>
         /// <param name="right">The legend right padding.</param>
-        /// <param name="bottom">The legend top padding.</param>
-        /// <param name="left">The legend top padding.</param>
+        /// <param name="bottom">The legend bottom padding.</param>
+        /// <param name="left">The legend left padding.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
@@ -192,18 +230,19 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="width">The legend border width.</param>
         /// <param name="color">The legend border color (CSS syntax).</param>
+        /// <param name="dashType">The legend border dash type.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .Legend(legend => legend.Border(1, "#000"))
+        ///            .Legend(legend => legend.Border(1, "#000", ChartDashType.Dot))
         ///            .Render();
         /// %&gt;
         /// </code>
         /// </example>        
-        public ChartLegendBuilder Border(int width, string color)
+        public ChartLegendBuilder Border(int width, string color, ChartDashType dashType)
         {
-            legend.Border = new ChartElementBorder(width, color);
+            legend.Border = new ChartElementBorder(width, color, dashType);
             return this;
         }
     }

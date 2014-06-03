@@ -21,12 +21,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Route(string routeName)
+        public  GridToolBarCustomCommandBuilder<T> Route(string routeName)
         {
             return Route(routeName, (object) null);
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Route(string routeName, object routeValues)
+        public  GridToolBarCustomCommandBuilder<T> Route(string routeName, object routeValues)
         {
             Command.Route(routeName, routeValues);
 
@@ -35,7 +35,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Route(string routeName, RouteValueDictionary routeValues)
+        public  GridToolBarCustomCommandBuilder<T> Route(string routeName, RouteValueDictionary routeValues)
         {
             Command.Route(routeName, routeValues);
 
@@ -44,7 +44,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Action<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
+        public  GridToolBarCustomCommandBuilder<T> Action<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
             MethodCallExpression call = (MethodCallExpression)controllerAction.Body;
 
@@ -100,7 +100,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Action(RouteValueDictionary routeValues)
+        public  GridToolBarCustomCommandBuilder<T> Action(RouteValueDictionary routeValues)
         {
              Command.Action(routeValues);
 
@@ -112,12 +112,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
              return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName)
+        public  GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName)
         {
             return Action(actionName, controllerName, (object)null);
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName, object routeValues)
+        public  GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName, object routeValues)
         {
             Command.Action(actionName, controllerName, routeValues);
 
@@ -126,7 +126,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName, RouteValueDictionary routeValues)
+        public  GridToolBarCustomCommandBuilder<T> Action(string actionName, string controllerName, RouteValueDictionary routeValues)
         {
             Command.Action(actionName, controllerName, routeValues);
 
@@ -135,16 +135,30 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Url(string value)
+        public  GridToolBarCustomCommandBuilder<T> Url(string value)
         {
             Command.Url(value);
 
             return this;
         }
 
-        public virtual GridToolBarCustomCommandBuilder<T> Text(string value)
+        public  GridToolBarCustomCommandBuilder<T> Text(string value)
         {
             Command.Text = value;
+
+            return this;
+        }
+
+        public GridToolBarCustomCommandBuilder<T> Ajax(bool enabled)
+        {
+            Command.Ajax = enabled;
+
+            return this;
+        }
+
+        public GridToolBarCustomCommandBuilder<T> Name(string name)
+        {
+            Command.Name = name;
 
             return this;
         }

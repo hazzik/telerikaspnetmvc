@@ -19,23 +19,23 @@
         }
 
         [Fact]
-        public void Render_should_throw_exception_if_value_is_not_in_range_minTicks_are_less_then_maxTicks() 
+        public void Render_should_not_throw_exception_if_value_is_not_in_range_minTicks_are_less_then_maxTicks() 
         {
             timePicker.MinValue = new DateTime(2000, 10, 10, 10, 0, 0);
             timePicker.MaxValue = new DateTime(2000, 10, 10, 20, 0, 0);
             timePicker.Value = new DateTime(2000, 10, 10, 22, 0, 0);
 
-            Assert.Throws(typeof(ArgumentOutOfRangeException), () => timePicker.Render());
+            Assert.DoesNotThrow(() => timePicker.Render());
         }
 
         [Fact]
-        public void Render_should_throw_exception_if_value_is_not_in_range_maxTicks_are_less_then_minTicks() 
+        public void Render_should_not_throw_exception_if_value_is_not_in_range_maxTicks_are_less_then_minTicks() 
         {
             timePicker.MinValue = new DateTime(2000, 10, 10, 20, 0, 0);
             timePicker.MaxValue = new DateTime(2000, 10, 10, 10, 0, 0);
             timePicker.Value = new DateTime(2000, 10, 10, 15, 0, 0);
 
-            Assert.Throws(typeof(ArgumentOutOfRangeException), () => timePicker.Render());
+            Assert.DoesNotThrow(() => timePicker.Render());
         }
 
         [Fact]

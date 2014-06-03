@@ -29,6 +29,23 @@
         }
 
         [Fact]
+        public void Filter_string_equals_with_nulls()
+        {
+            IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = null } };
+
+            var quearyablePeople = QueryableFactory.CreateQueryable(people);
+
+            var filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
+            {
+                Member = "Name",
+                Operator = FilterOperator.IsEqualTo,
+                Value = ""
+            }}).Cast<Person>();
+
+            Assert.Same(people.ElementAt(1), filteredPeople.FirstOrDefault());
+        }
+
+        [Fact]
         public void Filter_string_equals_caseinsensitive()
         {
             IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };

@@ -7,10 +7,24 @@ function ListFormatFinder(tag) {
         var formatNodes = [], formatNode;
             
         for (var i = 0; i < nodes.length; i++)
-            if ((formatNode = this.findFormat(nodes[i])) && dom.name(formatNode) == tag && $.inArray(formatNode, formatNodes) < 0)
+            if ((formatNode = this.findFormat(nodes[i])) && dom.name(formatNode) == tag)
                 formatNodes.push(formatNode);
 
-        return formatNodes.length == 1;
+        if (formatNodes.length < 1) {
+            return false;
+        }
+
+        if (formatNodes.length != nodes.length) {
+            return false;
+        }
+
+        for (i = 0; i < formatNodes.length; i++) {
+            if (formatNodes[i] != formatNode) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     this.findSuitable = function (nodes) {
@@ -32,6 +46,13 @@ function ListFormatter(tag, unwrapTag) {
 
             if (dom.is(node, 'li')) {
                 list.appendChild(node);
+                continue;
+            }
+
+            if (dom.is(node, 'ul') || dom.is(node, 'ol')) {
+                while (node.firstChild) {
+                    list.appendChild(node.firstChild);
+                }
                 continue;
             }
             
@@ -68,6 +89,20 @@ function ListFormatter(tag, unwrapTag) {
     }
 
     function suitable(candidate, nodes) {
+        if (candidate.className == "t-marker") {
+            var sibling = candidate.nextSibling;
+
+            if (sibling && dom.isBlock(sibling)) {
+                return false;
+            }
+
+            sibling = candidate.previousSibling;
+
+            if (sibling && dom.isBlock(sibling)) {
+                return false;
+            }
+        }
+
         return containsAny(candidate, nodes) || dom.isInline(candidate) || candidate.nodeType == 3;
     }
 
@@ -81,8 +116,14 @@ function ListFormatter(tag, unwrapTag) {
 
             for (var i = 0, l = nodes.length; i < l; i++) {
                 var formatNode = finder.findFormat(nodes[i]);
-                if (formatNode)
-                    split(range, formatNode, true);
+                if (formatNode) {
+                    var parents = $(formatNode).parents("ul,ol");
+                    if (parents[0]) {
+                        split(range, parents.last()[0], true);
+                    } else {
+                        split(range, formatNode, true);
+                    }
+                }
             }
         }
     }
@@ -136,23 +177,71 @@ function ListFormatter(tag, unwrapTag) {
 
         if (!dom.is(formatNode, tag))
             dom.changeTag(formatNode, tag);
+
+        var prev = formatNode.previousSibling;
+        while (prev && (prev.className == "t-marker" || (prev.nodeType == 3 && dom.isWhitespace(prev)))) prev = prev.previousSibling;
+
+        // merge with previous list
+        if (prev && dom.name(prev) == tag) {
+            while(formatNode.firstChild) {
+                prev.appendChild(formatNode.firstChild);
+            }
+            dom.remove(formatNode);
+            formatNode = prev;
+        }
+
+        var next = formatNode.nextSibling;
+        while (next && (next.className == "t-marker" || (next.nodeType == 3 && dom.isWhitespace(next)))) next = next.nextSibling;
+
+        // merge with next list
+        if (next && dom.name(next) == tag) {
+            while(formatNode.lastChild) {
+                next.insertBefore(formatNode.lastChild, next.firstChild);
+            }
+            dom.remove(formatNode);
+        }
     }
 
     function unwrap(ul) {
-        for (var li = ul.firstChild; li; li = li.nextSibling) {
-            var p = dom.create(ul.ownerDocument, unwrapTag || 'p');
+        var fragment = document.createDocumentFragment(), 
+            parents,
+            li,
+            p,
+            child;
+
+        for (li = ul.firstChild; li; li = li.nextSibling) {
+            p = dom.create(ul.ownerDocument, unwrapTag || 'p');
                 
             while(li.firstChild) {
-                var child = li.firstChild;
-                if (dom.isBlock(child))
-                    dom.insertBefore(child, ul);
-                else
+                child = li.firstChild;
+
+                if (dom.isBlock(child)) {
+
+                    if (p.firstChild) {
+                        fragment.appendChild(p);
+                        p = dom.create(ul.ownerDocument, unwrapTag || 'p');
+                    }
+
+                    fragment.appendChild(child);
+                } else {
                     p.appendChild(child);
+                }
             }
-            if (p.firstChild)
-                dom.insertBefore(p, ul);
+
+            if (p.firstChild) {
+                fragment.appendChild(p);
+            }
         }
             
+        parents = $(ul).parents('ul,ol');
+
+        if (parents[0]) {
+            dom.insertAfter(fragment, parents.last()[0]);
+            parents.last().remove();
+        } else {
+            dom.insertAfter(fragment, ul);
+        }
+
         dom.remove(ul);
     }
 
@@ -164,19 +253,26 @@ function ListFormatter(tag, unwrapTag) {
     }
 
     this.toggle = function (range) {
-        var nodes = textNodes(range);
+        var nodes = textNodes(range),
+            ancestor = range.commonAncestorContainer;
+
         if (!nodes.length) {
-            range.selectNodeContents(range.commonAncestorContainer);
+            range.selectNodeContents(ancestor);
             nodes = textNodes(range);
-            if (!nodes.length)
-                nodes = dom.significantChildNodes(range.commonAncestorContainer);
+            if (!nodes.length && (dom.is(range.startContainer, 'li') || dom.parentOfType(range.startContainer, ['li']))) {
+                var text = ancestor.ownerDocument.createTextNode("");
+                range.startContainer.appendChild(text);
+                nodes = [text];
+                range.selectNode(text.parentNode);
+            }
         }
             
         if (finder.isFormatted(nodes)) {
             this.split(range);
             this.remove(nodes);
-        } else
+        } else {
             this.apply(nodes);
+        }
     }
 }
 

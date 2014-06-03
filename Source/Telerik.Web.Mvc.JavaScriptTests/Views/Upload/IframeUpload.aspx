@@ -118,6 +118,17 @@
             equal($("form[action='" + uploadInstance.async.saveUrl + "'] input").length, 1);
         });
 
+        test("input name is preserved", function() {
+            simulateFileSelect();
+            equal($("form[action='" + uploadInstance.async.saveUrl + "'] input").attr("name"), "uploadInstance");
+        });
+
+        test("input name is set to saveField", function() {
+            uploadInstance.async.saveField = "field";
+            simulateFileSelect();
+            equal($("form[action='" + uploadInstance.async.saveUrl + "'] input").attr("name"), "field");
+        });
+
         test("list element is created for the selected file", function() {
             simulateFileSelect();
             equal($(".t-upload-files li.t-file", uploadInstance.wrapper).length, 1);
@@ -141,11 +152,14 @@
             }, 10);
         });
 
-        test("input is moved back to the original form when it's submitted", function() {
+        asyncTest("input is moved back to the original form when it's submitted", function() {
             simulateFileSelect();
             $("#parentForm").trigger("submit");
 
-            equal($("input[name='uploadInstance']", uploadInstance.wrapper).length, 1);
+            window.setTimeout(function() {
+                equal($("input[name='uploadInstance']", uploadInstance.wrapper).length, 2);
+                start();
+            }, 10);
         });
 
         asyncTest("clicking cancel should remove iframe", function() {

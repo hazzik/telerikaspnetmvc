@@ -22,9 +22,10 @@ namespace Telerik.Web.Mvc.UI
             var result = new Dictionary<string, object>();
             
             FluentDictionary.For(result)
-                .Add("width", line.Width)
-                .Add("color", line.Color)
-                .Add("visible", line.Visible);
+                .Add("width", line.Width, () => line.Width.HasValue)
+                .Add("color", line.Color, () => line.Color != null)
+                .Add("dashType", line.DashType.ToString().ToLowerInvariant(), () => line.DashType.HasValue)
+                .Add("visible", line.Visible, () => line.Visible.HasValue);
 
             return result;
         }

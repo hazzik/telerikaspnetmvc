@@ -10,11 +10,11 @@ namespace Telerik.Web.Mvc.UI
 
     internal class ChartAreaSerializer : IChartSerializer
     {
-        private readonly ChartArea charArea;
+        private readonly ChartArea chartArea;
 
         public ChartAreaSerializer(ChartArea charArea)
         {
-            this.charArea = charArea;
+            this.chartArea = charArea;
         }
 
         public virtual IDictionary<string, object> Serialize()
@@ -22,25 +22,26 @@ namespace Telerik.Web.Mvc.UI
             var result = new Dictionary<string, object>();
             
             FluentDictionary.For(result)
-                .Add("background", charArea.Background, "#fff")
-                .Add("margin", charArea.Margin.CreateSerializer().Serialize(), ShouldSerializeMargin)
-                .Add("border", charArea.Border.CreateSerializer().Serialize(), ShouldSerializeBorder);
+                .Add("background", chartArea.Background, "#fff")
+                .Add("margin", chartArea.Margin.CreateSerializer().Serialize(), ShouldSerializeMargin)
+                .Add("border", chartArea.Border.CreateSerializer().Serialize(), ShouldSerializeBorder);
 
             return result;
         }
 
         private bool ShouldSerializeMargin()
         {
-            return charArea.Margin.Top != ChartDefaults.ChartArea.Margin ||
-                   charArea.Margin.Right != ChartDefaults.ChartArea.Margin ||
-                   charArea.Margin.Bottom != ChartDefaults.ChartArea.Margin ||
-                   charArea.Margin.Left != ChartDefaults.ChartArea.Margin;
+            return chartArea.Margin.Top != ChartDefaults.ChartArea.Margin ||
+                   chartArea.Margin.Right != ChartDefaults.ChartArea.Margin ||
+                   chartArea.Margin.Bottom != ChartDefaults.ChartArea.Margin ||
+                   chartArea.Margin.Left != ChartDefaults.ChartArea.Margin;
         }
 
         private bool ShouldSerializeBorder()
         {
-            return charArea.Border.Color.CompareTo(ChartDefaults.ChartArea.Border.Color) != 0 ||
-                   charArea.Border.Width != ChartDefaults.ChartArea.Border.Width;
+            return chartArea.Border.Color.CompareTo(ChartDefaults.ChartArea.Border.Color) != 0 ||
+                   chartArea.Border.Width != ChartDefaults.ChartArea.Border.Width ||
+                   chartArea.Border.DashType != ChartDefaults.ChartArea.Border.DashType;
         }
     }
 }

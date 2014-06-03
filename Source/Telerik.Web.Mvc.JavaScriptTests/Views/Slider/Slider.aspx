@@ -316,5 +316,16 @@
         equal(value, 0.5);
     });
 
+    test('Slider should have number value', function () {
+        var value = $("#Slider3").data("tSlider").value();
+
+        equal(typeof (value), "number");
+    });
+
+    test('Slider should have integer number value', function () {
+        $("#Slider3").data("tSlider").value(1);
+        equal($("#Slider3").val(), "1");
+    });
+
 </script>
 </asp:Content>

@@ -25,7 +25,7 @@ namespace Telerik.Web.Mvc.UI
 
         public IHtmlNode Build()
         {
-            string value = Component.Value.HasValue() ? Component.Value : Component.GetValueFromViewDataByName();
+            string value = Component.GetValue<string>(Component.Value);
 
             return new HtmlElement("input", TagRenderMode.SelfClosing)
                         .Attributes(new
@@ -38,6 +38,7 @@ namespace Telerik.Web.Mvc.UI
                         .ToggleAttribute("value", value, value.HasValue())
                         .Attributes(Component.HtmlAttributes)
                         .Attributes(Component.GetUnobtrusiveValidationAttributes())
+                        .ToggleClass("input-validation-error", !Component.IsValid())
                         .PrependClass(UIPrimitives.Widget, "t-autocomplete", UIPrimitives.Input);
         }
     }

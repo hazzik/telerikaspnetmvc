@@ -61,5 +61,83 @@
         {
             builder.OnLoad(handlerName).ShouldBeType<ChartClientEventsBuilder>();
         }
+
+        [Fact]
+        public void OnDataBound_with_Action_should_set_CodeBlock()
+        {
+            builder.OnDataBound(emptyAction);
+            clientEvents.OnDataBound.CodeBlock.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void OnDataBound_with_Action_should_return_builder()
+        {
+            builder.OnDataBound(emptyAction).ShouldBeType<ChartClientEventsBuilder>();
+        }
+
+        [Fact]
+        public void OnDataBound_with_Func_should_set_InlineCodeBlock()
+        {
+            builder.OnDataBound(nullFunc);
+            clientEvents.OnDataBound.InlineCodeBlock.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void OnDataBound_with_Func_should_return_builder()
+        {
+            builder.OnDataBound(nullFunc).ShouldBeType<ChartClientEventsBuilder>();
+        }
+
+        [Fact]
+        public void OnDataBound_with_string_should_set_HandlerName()
+        {
+            builder.OnDataBound(handlerName);
+            clientEvents.OnDataBound.HandlerName.ShouldEqual(handlerName);
+        }
+
+        [Fact]
+        public void OnDataBound_with_string_should_return_builder()
+        {
+            builder.OnDataBound(handlerName).ShouldBeType<ChartClientEventsBuilder>();
+        }
+
+        [Fact]
+        public void OnSeriesClick_with_Action_should_set_CodeBlock()
+        {
+            builder.OnSeriesClick(emptyAction);
+            clientEvents.OnSeriesClick.CodeBlock.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void OnSeriesClick_with_Action_should_return_builder()
+        {
+            builder.OnSeriesClick(emptyAction).ShouldBeType<ChartClientEventsBuilder>();
+        }
+
+        [Fact]
+        public void OnSeriesClick_with_Func_should_set_InlineCodeBlock()
+        {
+            builder.OnSeriesClick(nullFunc);
+            clientEvents.OnSeriesClick.InlineCodeBlock.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void OnSeriesClick_with_Func_should_return_builder()
+        {
+            builder.OnSeriesClick(nullFunc).ShouldBeType<ChartClientEventsBuilder>();
+        }
+
+        [Fact]
+        public void OnSeriesClick_with_string_should_set_HandlerName()
+        {
+            builder.OnSeriesClick(handlerName);
+            clientEvents.OnSeriesClick.HandlerName.ShouldEqual(handlerName);
+        }
+
+        [Fact]
+        public void OnSeriesClick_with_string_should_return_builder()
+        {
+            builder.OnSeriesClick(handlerName).ShouldBeType<ChartClientEventsBuilder>();
+        }
     }
 }

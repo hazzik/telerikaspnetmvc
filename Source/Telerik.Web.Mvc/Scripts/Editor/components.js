@@ -2,7 +2,7 @@
 
 $t.selectbox = function (element, options) {
     var selectedValue;
-    var $element = $(element);
+    var $element = $(element).attr("tabIndex", 0);
     var $text = $element.find('.t-input');
 
     var dropDown = this.dropDown = new $t.dropDown({
@@ -61,7 +61,7 @@ $t.selectbox = function (element, options) {
 
     text(options.title || $text.text());
 
-    $element.bind('click', function (e) {
+    $element.click(function (e) {
         fill();
         if (dropDown.isOpened())
             dropDown.close();
@@ -73,8 +73,57 @@ $t.selectbox = function (element, options) {
                 zIndex: $t.getElementZIndex($element[0])
             });
     })
-            .find('*')
-            .attr('unselectable', 'on');
+    .find('*')
+    .attr('unselectable', 'on')
+    .end()
+    .keydown(function(e) {
+        var key = e.keyCode, selected, prev, next;
+
+        if (key === 40) {
+            if (!dropDown.isOpened()) {
+                $element.click();
+            } else {
+                selected = dropDown.$items.filter(".t-state-selected");
+                if (!selected[0]) {
+                    next = dropDown.$items.first();
+                } else {
+                    next = selected.next();
+                }
+                if (next[0]) {
+                    selected.removeClass("t-state-selected");
+                    next.addClass("t-state-selected");
+                }
+            }
+            e.preventDefault();
+        } else if (key === 38) {
+            if (dropDown.isOpened()) {
+                selected = dropDown.$items.filter(".t-state-selected");
+                prev = selected.prev();
+                if (prev[0]) {
+                    selected.removeClass("t-state-selected");
+                    prev.addClass("t-state-selected");
+                }
+            }
+            e.preventDefault();
+        } else if (key == 13) {
+            selected = dropDown.$items.filter(".t-state-selected");
+            if (selected[0]) {
+                selected.click();
+            }
+            e.preventDefault();
+        } else if (e.keyCode == 9 || e.keyCode == 39 || e.keyCode == 37) {
+            dropDown.close();
+        }
+    });
+
+    if ($.browser.msie) {
+        $element.focus(function() {
+            $element.css("outline", "1px dotted #000");
+        })
+        .blur(function() {
+            $element.css("outline", "");
+        });
+    }
 
     dropDown.$element.css('direction', $element.closest('.t-rtl').length > 0 ? 'rtl' : '');
 
@@ -106,27 +155,74 @@ $.fn.tSelectBox.defaults = {
 /* color picker */
 
 $t.colorpicker = function (element, options) {
-    this.element = element;
+    var that = this;
+
+    that.element = element;
     var $element = $(element);
 
-    $.extend(this, options);
+    $.extend(that, options);
 
-    $element.bind('click', $.proxy(this.click, this))
+    $element.attr("tabIndex", 0)
+            .click($.proxy(that.click, that))
+            .keydown(function(e) {
+                var popup = that.popup(), selected, next, prev;
+                if (e.keyCode == 40) {
+                    if (!popup.is(":visible")) {
+                        that.open();
+                    } else {
+                       selected = popup.find(".t-state-selected");
+                       if (selected[0]) {
+                           next = selected.next();
+                       } else {
+                           next = popup.find("li:first");
+                       }
+                       if (next[0]) {
+                            selected.removeClass("t-state-selected");
+                            next.addClass("t-state-selected");
+                       } 
+                    }
+                    e.preventDefault();
+                } else if (e.keyCode == 38) {
+                    if (popup.is(":visible")) {
+                       selected = popup.find(".t-state-selected");
+                       prev = selected.prev();
+                       if (prev[0]) {
+                            selected.removeClass("t-state-selected");
+                            prev.addClass("t-state-selected");
+                       } 
+                    }
+                    e.preventDefault();
+                } else if (e.keyCode == 9 || e.keyCode == 39 || e.keyCode == 37) {
+                    that.close();
+                } else if (e.keyCode == 13) {
+                   popup.find(".t-state-selected").click();
+                   e.preventDefault();
+                }
+            })
             .find('*')
             .attr('unselectable', 'on');
-    
-    if (this.selectedColor)
+
+    if ($.browser.msie) {
+        $element.focus(function () {
+            $element.css("outline", "1px dotted #000");
+        })
+        .blur(function() {
+            $element.css("outline", "");
+        });
+    }    
+
+    if (that.selectedColor)
         $element.find('.t-selected-color').css('background-color', this.selectedColor);
 
     $(element.ownerDocument.documentElement)
         .bind('mousedown', $.proxy(function (e) {
             if (!$(e.target).closest('.t-colorpicker-popup').length)
                 this.close();
-        }, this));
+        }, that));
 
-    $t.bind(this, {
-        change: this.onChange,
-        load: this.onLoad
+    $t.bind(that, {
+        change: that.onChange,
+        load: that.onLoad
     });
 }
 
@@ -169,7 +265,7 @@ $t.colorpicker.prototype = {
         
         $popup
             .find('.t-item').bind('click', $.proxy(function(e) {
-                var color = $(e.target, e.target.ownerDocument).css('background-color');
+                var color = $(e.currentTarget, e.target.ownerDocument).find("div").css('background-color');
                 this.select(color);
             }, this));
 
@@ -237,10 +333,10 @@ $.extend($t.colorpicker, {
 
         for (var i = 0, len = data.length; i < len; i++) {
             html.cat('<li class="t-item')
-                .catIf(' t-selected', data[i] == currentColor)
-                .cat('" style="background-color:#')
+                .catIf(' t-state-selected', data[i] == currentColor)
+                .cat('"><div style="background-color:#')
                 .cat(data[i])
-                .cat('"></li>');
+                .cat('"></div></li>');
         }
 
         html.cat('</ul></div>');

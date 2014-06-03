@@ -58,6 +58,61 @@
             equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
         });
 
+        test('apply on block element which is adjacent to list merges it with the list', function() {
+            editor.value('<ul><li>foo</li></ul><p>bar</p>');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.apply([editor.body.lastChild.firstChild]);
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
+
+        test('apply on block element which is adjacent to list merges it with the list when the list is selected', function() {
+            var range = createRangeFromText(editor, '|<ul><li>foo</li></ul><p>bar</p>|');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.toggle(range);
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
+
+        test('apply on block element which is adjacent to list and there is whitespace merges it with the list', function() {
+            editor.value('<ul><li>foo</li></ul>     <p>bar</p>');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.apply([editor.body.lastChild.firstChild]);
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
+        test('apply on block element which precedes a list merges it with the list', function() {
+            editor.value('<p>bar</p><ul><li>foo</li></ul>');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.apply([editor.body.firstChild.firstChild]);
+            equal(editor.value(), '<ul><li>bar</li><li>foo</li></ul>');
+        });
+
+        test('apply on block element which precedes a list and there is whitespace merges it with the list', function() {
+            editor.value('<p>bar</p>     <ul><li>foo</li></ul>');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.apply([editor.body.firstChild.firstChild]);
+            equal(editor.value(), '<ul><li>bar</li><li>foo</li></ul>');
+        });
+
+        test('apply on block element which is amongst lists creates a single list', function() {
+            editor.value('<ul><li>foo</li></ul><p>bar</p><ul><li>baz</li></ul>');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.apply([editor.body.firstChild.nextSibling.firstChild]);
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li><li>baz</li></ul>');
+        });
+
+        test("apply on single paragraph which contains inline elements", function() {
+            editor.value('<p><span class="t-marker"></span>f<span class="t-marker"></span><span class="t-marker"></span>oo</p>');
+            var formatter = new ListFormatter('ul');
+            
+            formatter.apply([editor.body.firstChild.childNodes[1], editor.body.firstChild.lastChild]);
+            equal(editor.value(), '<ul><li><span class="t-marker"></span>f<span class="t-marker"></span><span class="t-marker"></span>oo</li></ul>');
+        });
+
         test('apply applies to selected block contents only', function() {
             editor.value('<div>foo</div><div>bar</div>');
             var formatter = new ListFormatter('ul');
@@ -139,7 +194,25 @@
             equal(editor.value(), '<ol><li>foo</li><li>bar</li></ol>');
         });
 
-        test('remove unwraps', function() {
+        test('remove keeps order', function() {
+            editor.value('<ul><li>foo<p>bar</p></li></ul>');
+            var formatter = new ListFormatter('ul');
+            formatter.remove([editor.body.firstChild.firstChild.firstChild]);
+            equal(editor.value(), '<p>foo</p><p>bar</p>');
+        });
+         test('remove keeps order with multiple block children', function() {
+            editor.value('<ul><li>foo<p>bar</p><p>baz</p></li></ul>');
+            var formatter = new ListFormatter('ul');
+            formatter.remove([editor.body.firstChild.firstChild.firstChild]);
+            equal(editor.value(), '<p>foo</p><p>bar</p><p>baz</p>');
+        });
+        test('remove keeps order with mixed inline and block children', function () {
+            editor.value('<ul><li>foo<p>bar</p>baz</li></ul>');
+            var formatter = new ListFormatter('ul');
+            formatter.remove([editor.body.firstChild.firstChild.firstChild]);
+            equal(editor.value(), '<p>foo</p><p>bar</p><p>baz</p>');
+        });
+        test('remove unwraps', function () {
             editor.value('<ul><li>foo</li></ul>');
 
             var formatter = new ListFormatter('ul');
@@ -375,6 +448,77 @@
             equal(editor.value(), "<table><tbody><tr><td><ul><li>foo</li></ul></td></tr><tr><td><ul><li>bar</li></ul></td></tr></tbody></table>");
         });
 
+        test("apply in selection of paragraph and existing unordered list", function() {
+            editor.value("<p>foo</p><ul><li>bar</li></ul>");
+
+            var foo = editor.body.firstChild.firstChild;
+            var bar = editor.body.lastChild.firstChild.firstChild;
+            var formatter = new ListFormatter("ul");
+            
+            formatter.apply([foo, bar]);
+            equal(editor.value(), "<ul><li>foo</li><li>bar</li></ul>");
+        });
+
+        test("apply in selection of paragraph and existing ordered list", function() {
+            editor.value("<p>foo</p><ol><li>bar</li></ol>");
+
+            var foo = editor.body.firstChild.firstChild;
+            var bar = editor.body.lastChild.firstChild.firstChild;
+            var formatter = new ListFormatter("ol");
+            
+            formatter.apply([foo, bar]);
+            equal(editor.value(), "<ol><li>foo</li><li>bar</li></ol>");
+        });
+
+        test("remove from nested list", function() {
+            var range = createRangeFromText(editor, "<ul><li>foo<ul><li>|bar</li><li>baz|</li></ul></li></ul>");
+
+            var formatter = new ListFormatter("ul");
+            
+            formatter.toggle(range);
+            equal(editor.value(), "<ul><li>foo</li></ul><p>bar</p><p>baz</p>");
+        });
+
+        test("remove from deeply nested list", function() {
+            var range = createRangeFromText(editor, "<ul><li>foo<ul><li>bar<ul><li>|baz|</li></ul></li></ul></li></ul>")
+
+            var formatter = new ListFormatter("ul");
+            
+            formatter.toggle(range);
+            equal(editor.value(), "<ul><li>foo<ul><li>bar</li></ul></li></ul><p>baz</p>");
+        });
+
+        test("remove nested list in the middle of parent list", function() {
+            var range = createRangeFromText(editor, "<ul><li>foo<ul><li>|bar|</li></ul></li><li>baz</li></ul>");
+
+            var formatter = new ListFormatter("ul");
+            
+            formatter.toggle(range);
+            equal(editor.value(), "<ul><li>foo</li></ul><p>bar</p><ul><li>baz</li></ul>");
+        });
+
+        test("remove partially selected nested list in the middle of parent list", function() {
+            var range = createRangeFromText(editor, "<ul><li>foo<ul><li>|bar|</li><li>boo</li></ul></li><li>baz</li></ul>");
+
+            var formatter = new ListFormatter("ul");
+            
+            formatter.toggle(range);
+            equal(editor.value(), "<ul><li>foo</li></ul><p>bar</p><ul><li><ul><li>boo</li></ul></li><li>baz</li></ul>");
+        });
+
+        test("empty list item is removed", function() {
+            var range = createRangeFromText(editor, "<ul><li>foo</li><li>||</li></ul>");
+
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
+
+            var formatter = new ListFormatter("ul");
+            
+            formatter.toggle(range);
+
+            marker.remove(range);
+            equal(editor.value(), "<ul><li>foo</li></ul><p></p>");
+        });
 </script>
 
 </asp:Content>

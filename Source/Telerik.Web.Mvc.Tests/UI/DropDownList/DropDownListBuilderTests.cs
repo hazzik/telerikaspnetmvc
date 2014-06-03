@@ -200,5 +200,23 @@
 
             Assert.IsType(typeof(DropDownListBuilder), returnedBuilder);
         }
+
+        [Fact]
+        public void HiddenInputHtmlAttributes_should_return_builder()
+        {
+            builder.HiddenInputHtmlAttributes(new { }).ShouldBeSameAs(builder);
+            builder.HiddenInputHtmlAttributes(new Dictionary<string, object>() { }).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void HiddenInputHtmlAttributes_merges_wight_InputHtmlAttributes_property()
+        {
+            builder.HiddenInputHtmlAttributes(new { required = "true" });
+
+            object value = "";
+
+            Assert.True(dropDownList.HiddenInputHtmlAttributes.TryGetValue("required", out value));
+            Assert.Equal("true", value);
+        }
     }
 }

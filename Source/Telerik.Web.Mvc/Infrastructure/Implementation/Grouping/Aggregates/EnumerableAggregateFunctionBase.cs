@@ -36,7 +36,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             var sourceName = SourceField;
             if (sourceName.HasValue())
             {
-                sourceName = sourceName.Replace(".", string.Empty);
+                sourceName = sourceName.Replace(".", "-");
             }
 
             return string.Format(CultureInfo.InvariantCulture, "{0}_{1}_{2}", AggregateMethodName, sourceName, GetHashCode());

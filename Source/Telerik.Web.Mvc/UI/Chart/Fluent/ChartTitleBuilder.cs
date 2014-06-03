@@ -48,7 +48,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .Title(title => title.Font("16px Verdana, sans-serif"))
+        ///            .Title(title => title.Font("16px Arial,Helvetica,sans-serif"))
         ///            .Render();
         /// %&gt;
         /// </code>
@@ -56,6 +56,25 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public ChartTitleBuilder Font(string font)
         {
             title.Font = font;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the title background color
+        /// </summary>
+        /// <param name="background">The background color.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .Title(title => title.Background("red"))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>        
+        public ChartTitleBuilder Background(string background)
+        {
+            title.Background = background;
             return this;
         }
 
@@ -121,8 +140,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="top">The title top margin.</param>
         /// <param name="right">The title right margin.</param>
-        /// <param name="bottom">The title top margin.</param>
-        /// <param name="left">The title top margin.</param>
+        /// <param name="bottom">The title bottom margin.</param>
+        /// <param name="left">The title left margin.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
@@ -165,8 +184,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="top">The title top padding.</param>
         /// <param name="right">The title right padding.</param>
-        /// <param name="bottom">The title top padding.</param>
-        /// <param name="left">The title top padding.</param>
+        /// <param name="bottom">The title bottom padding.</param>
+        /// <param name="left">The title left padding.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
@@ -209,18 +228,19 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="width">The title border width.</param>
         /// <param name="color">The title border color.</param>
+        /// <param name="dashType">The title dash type.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .Title(title => title.Border(1, "#000"))
+        ///            .Title(title => title.Border(1, "#000", ChartDashType.Dot))
         ///            .Render();
         /// %&gt;
         /// </code>
         /// </example>        
-        public ChartTitleBuilder Border(int width, string color)
+        public ChartTitleBuilder Border(int width, string color, ChartDashType dashType)
         {
-            title.Border = new ChartElementBorder(width, color);
+            title.Border = new ChartElementBorder(width, color, dashType);
             return this;
         }
     }

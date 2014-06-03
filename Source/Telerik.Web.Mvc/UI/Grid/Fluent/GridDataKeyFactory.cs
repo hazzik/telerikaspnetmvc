@@ -5,10 +5,10 @@
 namespace Telerik.Web.Mvc.UI.Fluent
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq.Expressions;
-    using Infrastructure;
     using Extensions;
-
+    using Infrastructure;
     /// <summary>
     /// Creates data key for the <see cref="Grid{T}" />.
     /// </summary>
@@ -16,15 +16,18 @@ namespace Telerik.Web.Mvc.UI.Fluent
     public class GridDataKeyFactory<TModel> : IHideObjectMembers
         where TModel : class
     {
-        private readonly Grid<TModel> grid;
+        private readonly bool nameAsRouteKey;
+
+        public IList<IGridDataKey<TModel>> DataKeys { get;private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GridDataKeyFactory&lt;TModel&gt;"/> class.
         /// </summary>
         /// <param name="grid">The grid.</param>
-        public GridDataKeyFactory(Grid<TModel> grid)
+        public GridDataKeyFactory(IList<IGridDataKey<TModel>> dataKeys, bool nameAsRouteKey)
         {
-            this.grid = grid;
+            this.nameAsRouteKey = nameAsRouteKey;
+            DataKeys = dataKeys;
         }
 
         /// <summary>
@@ -36,7 +39,13 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public GridDataKeyBuilder<TModel> Add<TValue>(Expression<Func<TModel, TValue>> expression)
         {
             var dataKey = new GridDataKey<TModel, TValue>(expression);
-            grid.DataKeys.Add(dataKey);
+
+            if (nameAsRouteKey)
+            {
+                dataKey.RouteKey = dataKey.Name;
+            }
+
+            DataKeys.Add(dataKey);
 
             return new GridDataKeyBuilder<TModel>(dataKey);
         }
@@ -62,7 +71,12 @@ namespace Telerik.Web.Mvc.UI.Fluent
                 dataKey = GetDataKeyForField(fieldName);
             }
 
-            grid.DataKeys.Add(dataKey);
+            if (nameAsRouteKey)
+            {
+                dataKey.RouteKey = dataKey.Name;
+            }
+
+            DataKeys.Add(dataKey);
             return new GridDataKeyBuilder<TModel>(dataKey);
 
         }

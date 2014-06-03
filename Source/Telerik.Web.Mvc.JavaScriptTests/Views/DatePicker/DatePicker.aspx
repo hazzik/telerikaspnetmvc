@@ -174,6 +174,21 @@
             equal('12', day.text(), 'not correct day is selected');
         });
 
+        test('error class should be added on blur', function () {
+            var datepicker = $('#DatePickerWithInputAttr').data('tDatePicker'),
+                element = datepicker.$element;
+            
+            datepicker.close();   
+            element.focus().val("wrong value").blur();
+            
+            setTimeout(function() {
+                start();
+                ok(element.hasClass('t-state-error'));
+            }, 200);
+
+            stop(300);
+        });
+
     </script>
 
 </asp:Content>

@@ -109,7 +109,10 @@ namespace Telerik.Web.Mvc.UI
 
             if (Attributes().TryGetValue("style", out style))
             {
-                Attributes()["style"] = style + ";" + key + ":" + value;
+                if (!style.Contains("display:none"))
+                {
+                    Attributes()["style"] = style + ";" + key + ":" + value;
+                }
             }
             else
             {

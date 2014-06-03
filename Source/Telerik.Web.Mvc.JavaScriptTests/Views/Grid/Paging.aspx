@@ -326,15 +326,14 @@
             var grid = getGrid("#Grid_UpdatePager");
 
             grid.total = 10;
-            grid.dataBind([]);
+            grid.data = [];
+            grid._populate(grid.data);
 
-            equal($(".t-numeric", grid.element).children().length, 0);
+            equal($(".t-numeric", grid.element).children().length, 1);
         });
-
         test('numeric pager when current page is less than total number of numeric buttons', function() {
             var grid = getGrid("#Grid_UpdatePager");
             var pager = $(".t-pager .t-numeric", grid.element);
-
 
             grid.numericPager(pager[0], 1, 10);
             equal(pager.children().length, 10);

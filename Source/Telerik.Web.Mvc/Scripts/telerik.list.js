@@ -79,13 +79,14 @@
                 }
 
                 var $wrapper = this.$wrapper || this.$element,
-                    dropDown = this.dropDown;
+                    dropDown = this.dropDown,
+                    dropDownZ = dropDown.$element.css('z-index');
 
                 var position = {
                     offset: $wrapper.offset(),
                     outerHeight: $wrapper.outerHeight(),
                     outerWidth: $wrapper.outerWidth(),
-                    zIndex: $t.getElementZIndex($wrapper[0])
+                    zIndex: dropDownZ && dropDownZ != 'auto' ? dropDownZ : $t.getElementZIndex($wrapper[0])
                 }
 
                 if (dropDown.$items) {
@@ -630,7 +631,7 @@
             if (!dropDown.$items && !loader.ajaxError) {
                 if (loader.isAjax()) {
                     loader.ajaxRequest(function (data) {
-                        this.dataBind(data);
+                        this.dataBind(data, true);
                         updateSelectedItem(this);
 
                         $t.trigger(this.element, 'dataBound');

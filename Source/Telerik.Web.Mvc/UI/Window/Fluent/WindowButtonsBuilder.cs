@@ -124,9 +124,32 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return AddButton("Refresh", UIPrimitives.Icons.Refresh, url);
         }
 
+        /// <summary>
+        /// Configures the window to show no buttons in its titlebar.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Window()
+        ///             .Name("Window")
+        ///             .Buttons(buttons => buttons.Clear())
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public WindowButtonsBuilder Clear()
+        {
+            return ClearButtons();
+        }
+
         private WindowButtonsBuilder AddButton(string name, string cssClass, string url)
         {
             container.Container.Add(new HeaderButton { Name = name, CssClass = cssClass, Url = url });
+
+            return this;
+        }
+
+        private WindowButtonsBuilder ClearButtons()
+        {
+            container.Container.Clear();
 
             return this;
         }

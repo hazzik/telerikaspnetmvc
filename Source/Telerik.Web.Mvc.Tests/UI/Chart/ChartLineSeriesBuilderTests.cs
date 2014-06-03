@@ -43,7 +43,6 @@
             series.Stacked.ShouldBeTrue();
         }
 
-
         [Fact]
         public void Width_should_set_width()
         {
@@ -82,6 +81,20 @@
         {
             builder.Color("Blue");
             series.Color.ShouldEqual("Blue");
+        }
+
+        [Fact]
+        public void DashType_should_set_dash_type()
+        {
+            builder.DashType(ChartDashType.Dash);
+            series.DashType.ShouldEqual(ChartDashType.Dash);
+        }
+
+        [Fact]
+        public void MissingValues_should_set_missingValues()
+        {
+            builder.MissingValues(ChartLineMissingValues.Interpolate);
+            series.MissingValues.ShouldEqual(ChartLineMissingValues.Interpolate);
         }
     }
 }

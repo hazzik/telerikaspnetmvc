@@ -141,6 +141,14 @@
         ok(undefined === model.foo, 'bar');
     });
 
+    test('bind skips buttons', function() {
+        var $ui = $('<div><input type="button" name="foo" value="bar" /></div>');
+        
+        var model = binder.bind($ui);
+
+        ok(undefined === model.foo);
+    });
+
     test('bind checked checkbox yields true', function() {
         var $ui = $('<div><input type="checkbox" name="foo" checked="checked" /></div>');
         

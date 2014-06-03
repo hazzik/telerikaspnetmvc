@@ -178,6 +178,11 @@
                                 this._open();
                             }
                             this.$element.removeClass('t-state-error');
+                        }, this),
+                        blur: $.proxy(function(e) {
+                            this._bluring = setTimeout($.proxy(function() {
+                                this._update($element.val());
+                            }, this), 100);
                         }, this)
                     });
 
@@ -213,10 +218,12 @@
                 this.$element.val(value);
             }, this),
             onChange: $.proxy(function (value) {
+                clearTimeout(this._bluring);
                 if (value != this.inputValue) {
                     this._update(value);
                 }
                 this._close();
+                window.setTimeout(function(){$element.focus();}, 1);
             }, this)
         });
 
@@ -425,8 +432,6 @@
                 if (parsedValue !== null) {
                     this[propertyName] = parsedValue;
                     this.timeView[method](parsedValue);
-                    if (!$t.timeView.isInRange(this.selectedValue, this.minValue, this.maxValue))
-                        this.value(parsedValue);
                 }
             };
     }, this));

@@ -11,6 +11,8 @@ namespace Telerik.Web.Mvc.UI
     {
         IList<DropDownItem> Items { get; }
 
+        IDictionary<string, object> HiddenInputHtmlAttributes { get; }
+
         int SelectedIndex { get; set; }
 
         string Value { get; set; }

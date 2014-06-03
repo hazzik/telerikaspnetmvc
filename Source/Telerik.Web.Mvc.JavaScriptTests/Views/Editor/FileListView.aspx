@@ -433,7 +433,7 @@
             equal(listView._data.toArray().length, 0);
         });
 
-        test("error after upload does not remove the tile if it was existing", function() {
+        test("error after upload does not remove the tile if it existed", function() {
             listView.bindTo({directories:[], files:[{name:"foo"}] });
             
             ul.trigger("t:upload", [{name:"foo"}, function() {}]);

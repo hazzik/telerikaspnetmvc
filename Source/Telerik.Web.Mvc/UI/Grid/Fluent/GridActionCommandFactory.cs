@@ -2,10 +2,10 @@
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
+using Telerik.Web.Mvc.Infrastructure;
 
 namespace Telerik.Web.Mvc.UI.Fluent
 {
-
     /// <summary>
     /// Creates command for the <see cref="Grid{T}" />.
     /// </summary>
@@ -69,6 +69,22 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Column.Commands.Add(command);
 
             return new GridSelectActionCommandBuilder(command);
+        }
+
+        /// <summary>
+        /// Defines a custom command.
+        /// </summary>
+        /// <returns></returns>
+        public GridCustomActionCommandBuilder<T> Custom(string name)
+        {
+            Guard.IsNotNullOrEmpty(name, "name");
+
+            var command = new GridCustomActionCommand<T>();
+            command.Name = name;
+
+            Column.Commands.Add(command);
+
+            return new GridCustomActionCommandBuilder<T>(command);
         }
     }
 }

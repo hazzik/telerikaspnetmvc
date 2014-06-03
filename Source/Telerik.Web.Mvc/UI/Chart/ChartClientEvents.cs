@@ -17,6 +17,7 @@ namespace Telerik.Web.Mvc.UI
         {
             OnLoad = new ClientEvent();
             OnDataBound = new ClientEvent();
+            OnSeriesClick = new ClientEvent();
         }
 
         /// <summary>
@@ -38,12 +39,23 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Defines the SeriesClick client-side event handler
+        /// </summary>
+        public ClientEvent OnSeriesClick
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Serializes the client-side events.
         /// </summary>
         /// <param name="writer">The writer object to serialize to.</param>
         public void SerializeTo(IClientSideObjectWriter writer)
         {
             writer.AppendClientEvent("onLoad", OnLoad);
+            writer.AppendClientEvent("onDataBound", OnDataBound);
+            writer.AppendClientEvent("onSeriesClick", OnSeriesClick);
         }
     }
 }

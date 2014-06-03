@@ -13,19 +13,20 @@ function makeMap(items) {
     return obj;
 }
 
-var empty = makeMap('area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed'.split(','));
-var blockElements = 'div,p,h1,h2,h3,h4,h5,h6,address,applet,blockquote,button,center,dd,dir,dl,dt,fieldset,form,frameset,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,pre,script,table,tbody,td,tfoot,th,thead,tr,ul'.split(',');
-var block = makeMap(blockElements);
-var inline = makeMap('a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,span,strike,strong,sub,sup,textarea,tt,u,var'.split(','));
-var fillAttrs = makeMap('checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected'.split(','));
+var empty = makeMap('area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed'.split(',')),
+    blockElements = 'div,p,h1,h2,h3,h4,h5,h6,address,applet,blockquote,button,center,dd,dir,dl,dt,fieldset,form,frameset,hr,iframe,isindex,li,map,menu,noframes,noscript,object,ol,pre,script,table,tbody,td,tfoot,th,thead,tr,ul'.split(','),
+    block = makeMap(blockElements),
+    inlineElements = 'span,em,a,abbr,acronym,applet,b,basefont,bdo,big,br,button,cite,code,del,dfn,font,i,iframe,img,input,ins,kbd,label,map,object,q,s,samp,script,select,small,strike,strong,sub,sup,textarea,tt,u,var'.split(','),
+    inline = makeMap(inlineElements),
+    fillAttrs = makeMap('checked,compact,declare,defer,disabled,ismap,multiple,nohref,noresize,noshade,nowrap,readonly,selected'.split(','));
 
 
 var normalize = function (node) {
     if (node.nodeType == 1)
         node.normalize();
-}
+};
 
-if ($.browser.msie && parseInt($.browser.version) > 8) {
+if ($.browser.msie && parseInt($.browser.version) >= 8) {
     normalize = function(parent) {
         if (parent.nodeType == 1 && parent.firstChild) {
             var prev = parent.firstChild,
@@ -464,10 +465,14 @@ function domToXhtml(root) {
                         var property = trim(propertyAndValue[0].toLowerCase()),
                             value = trim(propertyAndValue[1]);
 
+                        if (property == "font-size-adjust" || property == "font-stretch") {
+                            continue;
+                        }
+
                         if (property.indexOf('color') >= 0)
                             value = dom.toHex(value);
                         
-                        if (property.indexOf('font-family') >= 0) {
+                        if (property.indexOf('font') >= 0) {
                             value = value.replace(quoteRe, "'");
                         }
 
@@ -527,7 +532,11 @@ function domToXhtml(root) {
                 
             if (!skip && $.support.leadingWhitespace) {
                 var parent = node.parentNode;
-                var previous = (dom.isInline(parent) ? parent : node).previousSibling;
+                var previous = node.previousSibling;
+
+                if (!previous) {
+                     previous = (dom.isInline(parent) ? parent : node).previousSibling;
+                }
 
                 if (!previous || previous.innerHTML == '' || dom.isBlock(previous))
                     value = value.replace(/^[\r\n\v\f\t ]+/, '');
@@ -558,7 +567,7 @@ function domToXhtml(root) {
 
     result = result.join('');
 
-    // if serialized dom contains only whitespace elements, consider it empty (required filed validation)
+    // if serialized dom contains only whitespace elements, consider it empty (required field validation)
     if (result.replace(brRe, "").replace(emptyPRe, "") == "") {
         return "";
     }
@@ -577,7 +586,7 @@ function documentFromRange(range) {
 }
 
 function selectionFromWindow(window) {
-    if ($.browser.msie) {
+    if ($.browser.msie && $.browser.version < 9) {
         return new W3CSelection(window.document);
     }
     
@@ -855,7 +864,7 @@ function updateRangeProperties(range) {
 }
 
 function createRange(document) {
-    if ($.browser.msie) {
+    if ($.browser.msie && $.browser.version < 9) {
         return new W3CRange(document);
     }
     
@@ -1026,6 +1035,31 @@ W3CSelection.prototype = {
 
             if (textRange.compareEndPoints('StartToEnd', textRange) == 0)
                 range.collapse(false);
+                
+            var startContainer = range.startContainer,
+                endContainer = range.endContainer,
+                body = this.ownerDocument.body;
+                
+            if (!range.collapsed && range.startOffset == 0 && range.endOffset == getNodeLength(range.endContainer) // check for full body selection
+            && !(startContainer == endContainer && isDataNode(startContainer) && startContainer.parentNode == body)) { // but not when single textnode is selected
+                var movedStart = false,
+                    movedEnd = false;
+
+                while (findNodeIndex(startContainer) == 0 && startContainer == startContainer.parentNode.firstChild && startContainer != body) {
+                    startContainer = startContainer.parentNode;
+                    movedStart = true;
+                }
+
+                while (findNodeIndex(endContainer) == getNodeLength(endContainer.parentNode) - 1 && endContainer == endContainer.parentNode.lastChild && endContainer != body) {
+                    endContainer = endContainer.parentNode;
+                    movedEnd = true;
+                }
+
+                if (startContainer == body && endContainer == body && movedStart && movedEnd) {
+                    range.setStart(startContainer, 0);
+                    range.setEnd(endContainer, getNodeLength(body));
+                }
+            }
         }
         return range;
     }
@@ -1699,7 +1733,8 @@ function Keyboard(handlers) {
 
     function stopTyping() {
         typingInProgress = false;
-        onEndTyping();
+        if (onEndTyping)
+            onEndTyping();
     }
 
     this.endTyping = function (force) {
@@ -1792,8 +1827,9 @@ function Clipboard (editor) {
                 
             var args = { html: clipboardNode.innerHTML };
             $t.trigger(editor.element, "paste", args);
-            editor.clipboard.paste(args.html);
+            editor.clipboard.paste(args.html, true);
             editor.undoRedoStack.push(new GenericCommand(startRestorePoint, new RestorePoint(editor.getRange())));
+            selectionChanged(editor);
         });
     }
 
@@ -1812,18 +1848,22 @@ function Clipboard (editor) {
         return parent;
     }
 
-    this.paste = function (html) {
+    this.paste = function (html, clean) {
         var i, l;
 
         for (i = 0, l = cleaners.length; i < l; i++)
             if (cleaners[i].applicable(html))
                 html = cleaners[i].clean(html);
             
+        if (clean) {
+            // remove br elements which immediately precede block elements
+            html = html.replace(/(<br>(\s|&nbsp;)*)+(<\/?(div|p|li|col|t))/ig, "$3");
+            // remove empty inline elements
+            html = html.replace(/<(a|span)[^>]*><\/\1>/ig, "");
+        }
+
         // It is possible in IE to copy just <li> tags
         html = html.replace(/^<li/i, '<ul><li').replace(/li>$/g, 'li></ul>');
-        // Excel pastes <br> inside table tags
-        
-        html = html.replace(/<br.*?<col/ig, "<col").replace(/<br.*?<(\/?)t(able|r|d|body|h|head|foot)/ig, "<$1t$2");
 
         var block = isBlock(html);
 
@@ -1876,9 +1916,19 @@ function Clipboard (editor) {
 
 function MSWordFormatCleaner() {
     var replacements = [
-        /<!--(.|\n)*?-->/g, '',
-        /mso-[^;"]*;?/ig, '',
-        /<\/?(meta|link|style|o:|v:)[^>]*>((?:.|\n)*?<\/(meta|link|style|o:|v:)[^>]*>)?/ig, ''
+        /<!--(.|\n)*?-->/g, '', /* comments */
+        /&quot;/g, "'", /* encoded quotes (in attributes) */
+        /(?:<br>&nbsp;[\s\r\n]+|<br>)*(<\/?(h[1-6]|hr|p|div|table|tbody|thead|tfoot|th|tr|td|li|ol|ul|caption|address|pre|form|blockquote|dl|dt|dd|dir|fieldset)[^>]*>)(?:<br>&nbsp;[\s\r\n]+|<br>)*/g, '$1',
+        /<br><br>/g, '<BR><BR>', 
+        /<br>/g, ' ',
+        /<BR><BR>/g, '<br>',
+        /^\s*(&nbsp;)+/gi, '',
+        /(&nbsp;|<br[^>]*>)+\s*$/gi, '',
+        /mso-[^;"]*;?/ig, '', /* office-related CSS attributes */
+        /<(\/?)b(\s[^>]*)?>/ig, '<$1strong$2>',
+        /<(\/?)i(\s[^>]*)?>/ig, '<$1em$2>',
+        /<\/?(meta|link|style|o:|v:)[^>]*>((?:.|\n)*?<\/(meta|link|style|o:|v:)[^>]*>)?/ig, '', /* external references and namespaced tags */
+        /style=(["|'])\s*\1/g, '' /* empty style attributes */
     ];
         
     this.applicable = function(html) {
@@ -1886,7 +1936,7 @@ function MSWordFormatCleaner() {
     }
         
     function listType(html) {
-        if (/^[\u2022\u00b7\u00a7\u00d8o\-]\u00a0+/.test(html))
+        if (/^[\u2022\u00b7\u00a7\u00d8o]\u00a0+/.test(html))
             return 'ul';
             
         if (/^\s*\w+[\.\)]\u00a0{2,}/.test(html))
@@ -1946,25 +1996,49 @@ function MSWordFormatCleaner() {
         return placeholder.innerHTML;
     }
 
+    function stripEmptyAnchors(html) {
+        return html.replace(/<a([^>]*)>\s*<\/a>/ig, function(a, attributes) {
+            if (!attributes || attributes.indexOf("href") < 0) {
+                return "";
+            }
+
+            return a;
+        });
+    }
+
     this.clean = function(html) {
         for (var i = 0, l = replacements.length; i < l; i+= 2)
             html = html.replace(replacements[i], replacements[i+1]);
-            
-        html = lists(html);
 
+        html = stripEmptyAnchors(html);
+        html = lists(html);
         html = html.replace(/\s+class="?[^"\s>]*"?/ig, '');
            
         return html;
     }
 };function InlineFormatFinder(format) {
     function numberOfSiblings(referenceNode) {
-        var count = 0;
+        var textNodesCount = 0, elementNodesCount = 0, markerCount = 0,
+            parentNode = referenceNode.parentNode;
 
-        for (var node = referenceNode.parentNode.firstChild; node; node = node.nextSibling)
-            if (node != referenceNode && node.className != 't-marker' && node.nodeType == 1)
-                count++;
+        for (var node = parentNode.firstChild; node; node = node.nextSibling) {
+            if (node != referenceNode) {
+                if (node.className == 't-marker') {
+                    markerCount++;
+                } else if (node.nodeType == 3) {
+                    textNodesCount++;
+                } else {
+                    elementNodesCount++;
+                }
+            }
+        }
 
-        return count;
+        if (markerCount > 1 && parentNode.firstChild.className == 't-marker' && parentNode.lastChild.className == 't-marker') {
+            // full node selection
+            return 0;
+        } else {
+            return elementNodesCount + textNodesCount;
+        }
     }
 
     this.findSuitable = function (sourceNode, skip) {
@@ -2048,8 +2122,16 @@ function InlineFormatter(format, values) {
     this.remove = function (nodes) {
         for (var i = 0, l = nodes.length; i < l; i++) {
             var formatNode = this.finder.findFormat(nodes[i]);
-            if (formatNode)
-                dom.unwrap(formatNode);
+            if (formatNode) {
+                if (attributes && attributes.style) {
+                    dom.unstyle(formatNode, attributes.style);
+                    if (!formatNode.style.cssText) {
+                        dom.unwrap(formatNode);
+                    }
+                } else {
+                    dom.unwrap(formatNode);
+                }
+            }
         }
     }
 
@@ -2074,7 +2156,7 @@ function InlineFormatter(format, values) {
                 last.appendChild(node.previousSibling);
             }
 
-            if (node.previousSibling == last && node.style.cssText == last.style.cssText) {
+            if (node.tagName == last.tagName && node.previousSibling == last && node.style.cssText == last.style.cssText) {
                 while (node.firstChild)
                     last.appendChild(node.firstChild);
                 dom.remove(node);
@@ -2218,23 +2300,20 @@ function FontTool(options){
             onChange: function (e) {
                 Tool.exec(editor, options.name, e.value);
             },
+            onItemCreate: function (e) {
+                e.html = '<span unselectable="on" style="display:block;">' + e.dataItem.Text + '</span>';
+            },
             highlightFirst: false
         });
 
-        var component = $ui.data(type);
-        component.value('inherit');
-        component.dropDown.onItemCreate =
-                function (e) {
-                    e.html = '<span unselectable="on" style="' + options.cssAttr + ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
-                };
+        $ui.data(type).value('inherit');
     }
 };
 
 function ColorTool (options) {
     Tool.call(this, options);
 
-    var format = [{ tags: ['span'] }],
-        finder = new GreedyInlineFormatFinder(format, options.cssAttr);
+    var format = [{ tags: inlineElements }];
     
     this.update = function($ui) {
         $ui.data('tColorPicker').close();
@@ -2526,43 +2605,44 @@ function FormatBlockTool() {
     this.exec = function () {
         var range = this.getRange(),
             document = documentFromRange(range),
-            next,
-            emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />';
-
-        // necessary while the emptyParagraphContent is empty under IE
-        var blocks = 'p,h1,h2,h3,h4,h5,h6'.split(','),
+            parent, previous, next,
+            emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />',
+            paragraph, marker, li, heading, rng,
+            // necessary while the emptyParagraphContent is empty under IE
+            blocks = 'p,h1,h2,h3,h4,h5,h6'.split(','),
             startInBlock = dom.parentOfType(range.startContainer, blocks),
             endInBlock = dom.parentOfType(range.endContainer, blocks),
             shouldTrim = (startInBlock && !endInBlock) || (!startInBlock && endInBlock);
 
         range.deleteContents();
 
-        var marker = dom.create(document, 'a');
+        marker = dom.create(document, 'a');
         range.insertNode(marker);
+
         normalize(marker.parentNode);
 
-        var li = dom.parentOfType(marker, ['li']),
-            heading = dom.parentOfType(marker, 'h1,h2,h3,h4,h5,h6'.split(','));
+        li = dom.parentOfType(marker, ['li']);
+        heading = dom.parentOfType(marker, 'h1,h2,h3,h4,h5,h6'.split(','));
 
         if (li) {
-            var rng = range.cloneRange();
+            rng = range.cloneRange();
             rng.selectNode(li);
-
+            
+            // hitting 'enter' in empty li
             if (textNodes(rng).length == 0) {
-                // hitting 'enter' in empty li
-                var paragraph = dom.create(document, 'p');
+                paragraph = dom.create(document, 'p');
 
-                if (li.nextSibling)
+                if (li.nextSibling) {
                     split(rng, li.parentNode);
+                }
 
                 dom.insertAfter(paragraph, li.parentNode);
                 dom.remove(li.parentNode.childNodes.length == 1 ? li.parentNode : li);
                 paragraph.innerHTML = emptyParagraphContent;
                 next = paragraph;
             }
-        }
-        else if (heading && !marker.nextSibling) {
-            var paragraph = dom.create(document, 'p');
+        } else if (heading && !marker.nextSibling) {
+            paragraph = dom.create(document, 'p');
 
             dom.insertAfter(paragraph, heading);
             paragraph.innerHTML = emptyParagraphContent;
@@ -2571,36 +2651,42 @@ function FormatBlockTool() {
         }
 
         if (!next) {
-            if (!(li || heading))
+            if (!(li || heading)) {
                 new BlockFormatter([{ tags: ['p']}]).apply([marker]);
+            }
 
             range.selectNode(marker);
 
-            var parent = dom.parentOfType(marker, [li ? 'li' : heading ? dom.name(heading) : 'p']);
+            parent = dom.parentOfType(marker, [li ? 'li' : heading ? dom.name(heading) : 'p']);
 
             split(range, parent, shouldTrim);
 
-            var previous = parent.previousSibling;
+            previous = parent.previousSibling;
 
-            if (dom.is(previous, 'li') && previous.firstChild && !dom.is(previous.firstChild, 'br'))
+            if (dom.is(previous, 'li') && previous.firstChild && !dom.is(previous.firstChild, 'br')) {
                 previous = previous.firstChild;
+            }
 
             next = parent.nextSibling;
 
-            if (dom.is(next, 'li') && next.firstChild && !dom.is(next.firstChild, 'br'))
+            if (dom.is(next, 'li') && next.firstChild && !dom.is(next.firstChild, 'br')) {
                 next = next.firstChild;
+            }
 
             dom.remove(parent);
 
             function clean(node) {
-                if (node.firstChild && dom.is(node.firstChild, 'br'))
+                if (node.firstChild && dom.is(node.firstChild, 'br')) {
                     dom.remove(node.firstChild);
+                }
 
-                if (isDataNode(node) && node.nodeValue == '')
+                if (isDataNode(node) && node.nodeValue == '') {
                     node = node.parentNode;
+                }
 
-                if (node && !dom.is(node, 'img') && node.innerHTML == '')
+                if (node && !dom.is(node, 'img') && node.innerHTML == '') {
                     node.innerHTML = emptyParagraphContent;
+                }
             }
 
             clean(previous);
@@ -2612,10 +2698,11 @@ function FormatBlockTool() {
 
         normalize(next);
 
-        if (!dom.is(next, 'img'))
-            range.selectNodeContents(next);
-        else
+        if (dom.is(next, 'img')) {
             range.setStartBefore(next);
+        } else {
+            range.selectNodeContents(next);
+        }
 
         range.collapse(true);
 
@@ -2654,10 +2741,24 @@ function NewLineCommand(options) {
         var formatNodes = [], formatNode;
             
         for (var i = 0; i < nodes.length; i++)
-            if ((formatNode = this.findFormat(nodes[i])) && dom.name(formatNode) == tag && $.inArray(formatNode, formatNodes) < 0)
+            if ((formatNode = this.findFormat(nodes[i])) && dom.name(formatNode) == tag)
                 formatNodes.push(formatNode);
 
-        return formatNodes.length == 1;
+        if (formatNodes.length < 1) {
+            return false;
+        }
+
+        if (formatNodes.length != nodes.length) {
+            return false;
+        }
+
+        for (i = 0; i < formatNodes.length; i++) {
+            if (formatNodes[i] != formatNode) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     this.findSuitable = function (nodes) {
@@ -2679,6 +2780,13 @@ function ListFormatter(tag, unwrapTag) {
 
             if (dom.is(node, 'li')) {
                 list.appendChild(node);
+                continue;
+            }
+
+            if (dom.is(node, 'ul') || dom.is(node, 'ol')) {
+                while (node.firstChild) {
+                    list.appendChild(node.firstChild);
+                }
                 continue;
             }
             
@@ -2715,6 +2823,20 @@ function ListFormatter(tag, unwrapTag) {
     }
 
     function suitable(candidate, nodes) {
+        if (candidate.className == "t-marker") {
+            var sibling = candidate.nextSibling;
+
+            if (sibling && dom.isBlock(sibling)) {
+                return false;
+            }
+
+            sibling = candidate.previousSibling;
+
+            if (sibling && dom.isBlock(sibling)) {
+                return false;
+            }
+        }
+
         return containsAny(candidate, nodes) || dom.isInline(candidate) || candidate.nodeType == 3;
     }
 
@@ -2728,8 +2850,14 @@ function ListFormatter(tag, unwrapTag) {
 
             for (var i = 0, l = nodes.length; i < l; i++) {
                 var formatNode = finder.findFormat(nodes[i]);
-                if (formatNode)
-                    split(range, formatNode, true);
+                if (formatNode) {
+                    var parents = $(formatNode).parents("ul,ol");
+                    if (parents[0]) {
+                        split(range, parents.last()[0], true);
+                    } else {
+                        split(range, formatNode, true);
+                    }
+                }
             }
         }
     }
@@ -2783,23 +2911,71 @@ function ListFormatter(tag, unwrapTag) {
 
         if (!dom.is(formatNode, tag))
             dom.changeTag(formatNode, tag);
+
+        var prev = formatNode.previousSibling;
+        while (prev && (prev.className == "t-marker" || (prev.nodeType == 3 && dom.isWhitespace(prev)))) prev = prev.previousSibling;
+
+        // merge with previous list
+        if (prev && dom.name(prev) == tag) {
+            while(formatNode.firstChild) {
+                prev.appendChild(formatNode.firstChild);
+            }
+            dom.remove(formatNode);
+            formatNode = prev;
+        }
+
+        var next = formatNode.nextSibling;
+        while (next && (next.className == "t-marker" || (next.nodeType == 3 && dom.isWhitespace(next)))) next = next.nextSibling;
+
+        // merge with next list
+        if (next && dom.name(next) == tag) {
+            while(formatNode.lastChild) {
+                next.insertBefore(formatNode.lastChild, next.firstChild);
+            }
+            dom.remove(formatNode);
+        }
     }
 
     function unwrap(ul) {
-        for (var li = ul.firstChild; li; li = li.nextSibling) {
-            var p = dom.create(ul.ownerDocument, unwrapTag || 'p');
+        var fragment = document.createDocumentFragment(), 
+            parents,
+            li,
+            p,
+            child;
+
+        for (li = ul.firstChild; li; li = li.nextSibling) {
+            p = dom.create(ul.ownerDocument, unwrapTag || 'p');
                 
             while(li.firstChild) {
-                var child = li.firstChild;
-                if (dom.isBlock(child))
-                    dom.insertBefore(child, ul);
-                else
+                child = li.firstChild;
+
+                if (dom.isBlock(child)) {
+
+                    if (p.firstChild) {
+                        fragment.appendChild(p);
+                        p = dom.create(ul.ownerDocument, unwrapTag || 'p');
+                    }
+
+                    fragment.appendChild(child);
+                } else {
                     p.appendChild(child);
+                }
             }
-            if (p.firstChild)
-                dom.insertBefore(p, ul);
+
+            if (p.firstChild) {
+                fragment.appendChild(p);
+            }
         }
             
+        parents = $(ul).parents('ul,ol');
+
+        if (parents[0]) {
+            dom.insertAfter(fragment, parents.last()[0]);
+            parents.last().remove();
+        } else {
+            dom.insertAfter(fragment, ul);
+        }
+
         dom.remove(ul);
     }
 
@@ -2811,19 +2987,26 @@ function ListFormatter(tag, unwrapTag) {
     }
 
     this.toggle = function (range) {
-        var nodes = textNodes(range);
+        var nodes = textNodes(range),
+            ancestor = range.commonAncestorContainer;
+
         if (!nodes.length) {
-            range.selectNodeContents(range.commonAncestorContainer);
+            range.selectNodeContents(ancestor);
             nodes = textNodes(range);
-            if (!nodes.length)
-                nodes = dom.significantChildNodes(range.commonAncestorContainer);
+            if (!nodes.length && (dom.is(range.startContainer, 'li') || dom.parentOfType(range.startContainer, ['li']))) {
+                var text = ancestor.ownerDocument.createTextNode("");
+                range.startContainer.appendChild(text);
+                nodes = [text];
+                range.selectNode(text.parentNode);
+            }
         }
             
         if (finder.isFormatted(nodes)) {
             this.split(range);
             this.remove(nodes);
-        } else
+        } else {
             this.apply(nodes);
+        }
     }
 }
 
@@ -3121,7 +3304,7 @@ function ImageCommand(options) {
 
 $t.selectbox = function (element, options) {
     var selectedValue;
-    var $element = $(element);
+    var $element = $(element).attr("tabIndex", 0);
     var $text = $element.find('.t-input');
 
     var dropDown = this.dropDown = new $t.dropDown({
@@ -3180,7 +3363,7 @@ $t.selectbox = function (element, options) {
 
     text(options.title || $text.text());
 
-    $element.bind('click', function (e) {
+    $element.click(function (e) {
         fill();
         if (dropDown.isOpened())
             dropDown.close();
@@ -3192,8 +3375,57 @@ $t.selectbox = function (element, options) {
                 zIndex: $t.getElementZIndex($element[0])
             });
     })
-            .find('*')
-            .attr('unselectable', 'on');
+    .find('*')
+    .attr('unselectable', 'on')
+    .end()
+    .keydown(function(e) {
+        var key = e.keyCode, selected, prev, next;
+
+        if (key === 40) {
+            if (!dropDown.isOpened()) {
+                $element.click();
+            } else {
+                selected = dropDown.$items.filter(".t-state-selected");
+                if (!selected[0]) {
+                    next = dropDown.$items.first();
+                } else {
+                    next = selected.next();
+                }
+                if (next[0]) {
+                    selected.removeClass("t-state-selected");
+                    next.addClass("t-state-selected");
+                }
+            }
+            e.preventDefault();
+        } else if (key === 38) {
+            if (dropDown.isOpened()) {
+                selected = dropDown.$items.filter(".t-state-selected");
+                prev = selected.prev();
+                if (prev[0]) {
+                    selected.removeClass("t-state-selected");
+                    prev.addClass("t-state-selected");
+                }
+            }
+            e.preventDefault();
+        } else if (key == 13) {
+            selected = dropDown.$items.filter(".t-state-selected");
+            if (selected[0]) {
+                selected.click();
+            }
+            e.preventDefault();
+        } else if (e.keyCode == 9 || e.keyCode == 39 || e.keyCode == 37) {
+            dropDown.close();
+        }
+    });
+
+    if ($.browser.msie) {
+        $element.focus(function() {
+            $element.css("outline", "1px dotted #000");
+        })
+        .blur(function() {
+            $element.css("outline", "");
+        });
+    }
 
     dropDown.$element.css('direction', $element.closest('.t-rtl').length > 0 ? 'rtl' : '');
 
@@ -3225,27 +3457,74 @@ $.fn.tSelectBox.defaults = {
 /* color picker */
 
 $t.colorpicker = function (element, options) {
-    this.element = element;
+    var that = this;
+
+    that.element = element;
     var $element = $(element);
 
-    $.extend(this, options);
+    $.extend(that, options);
 
-    $element.bind('click', $.proxy(this.click, this))
+    $element.attr("tabIndex", 0)
+            .click($.proxy(that.click, that))
+            .keydown(function(e) {
+                var popup = that.popup(), selected, next, prev;
+                if (e.keyCode == 40) {
+                    if (!popup.is(":visible")) {
+                        that.open();
+                    } else {
+                       selected = popup.find(".t-state-selected");
+                       if (selected[0]) {
+                           next = selected.next();
+                       } else {
+                           next = popup.find("li:first");
+                       }
+                       if (next[0]) {
+                            selected.removeClass("t-state-selected");
+                            next.addClass("t-state-selected");
+                       } 
+                    }
+                    e.preventDefault();
+                } else if (e.keyCode == 38) {
+                    if (popup.is(":visible")) {
+                       selected = popup.find(".t-state-selected");
+                       prev = selected.prev();
+                       if (prev[0]) {
+                            selected.removeClass("t-state-selected");
+                            prev.addClass("t-state-selected");
+                       } 
+                    }
+                    e.preventDefault();
+                } else if (e.keyCode == 9 || e.keyCode == 39 || e.keyCode == 37) {
+                    that.close();
+                } else if (e.keyCode == 13) {
+                   popup.find(".t-state-selected").click();
+                   e.preventDefault();
+                }
+            })
             .find('*')
             .attr('unselectable', 'on');
-    
-    if (this.selectedColor)
+
+    if ($.browser.msie) {
+        $element.focus(function () {
+            $element.css("outline", "1px dotted #000");
+        })
+        .blur(function() {
+            $element.css("outline", "");
+        });
+    }    
+
+    if (that.selectedColor)
         $element.find('.t-selected-color').css('background-color', this.selectedColor);
 
     $(element.ownerDocument.documentElement)
         .bind('mousedown', $.proxy(function (e) {
             if (!$(e.target).closest('.t-colorpicker-popup').length)
                 this.close();
-        }, this));
+        }, that));
 
-    $t.bind(this, {
-        change: this.onChange,
-        load: this.onLoad
+    $t.bind(that, {
+        change: that.onChange,
+        load: that.onLoad
     });
 }
 
@@ -3288,7 +3567,7 @@ $t.colorpicker.prototype = {
         
         $popup
             .find('.t-item').bind('click', $.proxy(function(e) {
-                var color = $(e.target, e.target.ownerDocument).css('background-color');
+                var color = $(e.currentTarget, e.target.ownerDocument).find("div").css('background-color');
                 this.select(color);
             }, this));
 
@@ -3356,10 +3635,10 @@ $.extend($t.colorpicker, {
 
         for (var i = 0, len = data.length; i < len; i++) {
             html.cat('<li class="t-item')
-                .catIf(' t-selected', data[i] == currentColor)
-                .cat('" style="background-color:#')
+                .catIf(' t-state-selected', data[i] == currentColor)
+                .cat('"><div style="background-color:#')
                 .cat(data[i])
-                .cat('"></li>');
+                .cat('"></div></li>');
         }
 
         html.cat('</ul></div>');
@@ -3382,12 +3661,26 @@ $.fn.tColorPicker.defaults = {
     data: '000000,7f7f7f,880015,ed1c24,ff7f27,fff200,22b14c,00a2e8,3f48cc,a349a4,ffffff,c3c3c3,b97a57,ffaec9,ffc90e,efe4b0,b5e61d,99d9ea,7092be,c8bfe7'.split(','),
     selectedColor: null,
     effects: $t.fx.slide.defaults()
-};function IndentFormatter() {
+};
+function indent(node, value) {
+    var property = dom.name(node) != 'td' ? 'marginLeft' : 'paddingLeft';
+    if (value === undefined) {
+        return node.style[property] || 0;
+    } else {
+        if (value > 0) {
+            node.style[property] = value + "px";
+        } else {
+            node.style[property] = "";
+            if (node.style.cssText == "") {
+                node.removeAttribute("style");
+            }
+        }
+    }
+}
+
+function IndentFormatter() {
     var finder = new BlockFormatFinder([{tags:blockElements}]);
     
-    function margin(node) {
-        return node.style.marginLeft || 0;
-    }
 
     this.apply = function (nodes) {
         var formatNodes = finder.findSuitable(nodes);
@@ -3408,20 +3701,34 @@ $.fn.tColorPicker.defaults = {
                 if (dom.is(formatNode, 'li')) {
                     var parentList = formatNode.parentNode;
                     var $sibling = $(formatNode).prev('li');
-                    var nestedList = $sibling.find('>ul')[0];
+                    var $siblingList = $sibling.find('ul,ol').last();
+
+                    var nestedList = $(formatNode).children('ul,ol')[0];
                     
-                    if (!nestedList) {
-                        nestedList = dom.create(formatNode.ownerDocument, dom.name(parentList));
-                        $sibling.append(nestedList);
-                    }
-                    
-                    while (formatNode && formatNode.parentNode == parentList) {
-                        nestedList.appendChild(formatNode);
-                        formatNode = targets.shift();
+                    if (nestedList && $sibling[0]) {
+                        if ($siblingList[0]) {
+                           $siblingList.append(formatNode);
+                           $siblingList.append($(nestedList).children()); 
+                           dom.remove(nestedList);
+                        } else {
+                            $sibling.append(nestedList);
+                            nestedList.insertBefore(formatNode, nestedList.firstChild);                        
+                        }
+                    } else {
+                        nestedList = $sibling.children('ul,ol')[0];
+                        if (!nestedList) {
+                            nestedList = dom.create(formatNode.ownerDocument, dom.name(parentList));
+                            $sibling.append(nestedList);
+                        }
+                        
+                        while (formatNode && formatNode.parentNode == parentList) {
+                            nestedList.appendChild(formatNode);
+                            formatNode = targets.shift();
+                        }
                     }
                 } else {
-                    var marginLeft = parseInt(margin(formatNode)) + 30;
-                    dom.style(formatNode, {marginLeft:marginLeft});
+                    var marginLeft = parseInt(indent(formatNode)) + 30;
+                    indent(formatNode, marginLeft);
                 }
             }
         } else {
@@ -3432,32 +3739,42 @@ $.fn.tColorPicker.defaults = {
     }
     
     this.remove = function(nodes) {
-        var formatNodes = finder.findSuitable(nodes);
+        var formatNodes = finder.findSuitable(nodes), targetNode;
         for (var i = 0; i < formatNodes.length; i++) {
             var $formatNode = $(formatNodes[i]);
             
             if ($formatNode.is('li')) {
                 var $list = $formatNode.parent();
                 var $listParent = $list.parent();
-                        
-                if ($listParent.is('li') && !margin($list[0])) {
+                // $listParent will be ul or ol in case of invalid dom - <ul><li></li><ul><li></li></ul></ul>   
+                if ($listParent.is('li,ul,ol') && !indent($list[0])) {
                     var $siblings = $formatNode.nextAll('li');
                     if ($siblings.length)
                         $($list[0].cloneNode(false)).appendTo($formatNode).append($siblings);
                                         
-                    $formatNode.insertAfter($listParent);
-                    
+                    if ($listParent.is("li")) {
+                        $formatNode.insertAfter($listParent);
+                    } else {
+                        $formatNode.appendTo($listParent);
+                    } 
+
                     if (!$list.children('li').length)
                         $list.remove();
                         
                     continue;
                 } else {
-                    $formatNode = $list;
+                    if (targetNode == $list[0]) {
+                        // removing format on sibling LI elements
+                        continue;
+                    }
+                    targetNode = $list[0];
                 }
+            } else {
+                targetNode = formatNodes[i];
             }
                 
-            var marginLeft = parseInt(margin($formatNode[0])) - 30;
-            dom[marginLeft <= 0 ? 'unstyle' : 'style']($formatNode[0], {marginLeft: marginLeft});
+            var marginLeft = parseInt(indent(targetNode)) - 30;
+            indent(targetNode, marginLeft);
         }
     }
 }
@@ -3496,11 +3813,11 @@ function OutdentTool() {
             isOutdentable, listParentsCount;
 
         for (var i = 0; i < suitable.length; i++) {
-            isOutdentable = suitable[i].style.marginLeft;
+            isOutdentable = indent(suitable[i]);
 
             if (!isOutdentable) {
                 listParentsCount = $(suitable[i]).parents('ul,ol').length;
-                isOutdentable = (dom.is(suitable[i], 'li') && listParentsCount > 1)
+                isOutdentable = (dom.is(suitable[i], 'li') && (listParentsCount > 1 || indent(suitable[i].parentNode)))
                              || (dom.ofType(suitable[i], ['ul','ol']) && listParentsCount > 0);
             }
 
@@ -3654,6 +3971,8 @@ function selectionChanged(editor) {
     $t.trigger(editor.element, 'selectionChange');
 }
 
+var focusable = ".t-colorpicker,a.t-tool-icon:not(.t-state-disabled),.t-selectbox, .t-combobox .t-input";
+
 function initializeContentElement(editor) {
     var isFirstKeyDown = true;
 
@@ -3664,10 +3983,29 @@ function initializeContentElement(editor) {
     $(editor.document)
         .bind({
             keydown: function (e) {
+                if (e.keyCode === 121) {
+                    //Using the timeout to avoid the default IE menu when F10 is pressed
+                    setTimeout(function() {
+                        var tabIndex = $(editor.element).attr("tabIndex");
+    
+                        //Chrome can't focus something which has already been focused
+                        $(editor.element).attr("tabIndex", tabIndex || 0).focus().find(focusable).first().focus();
+    
+                        if (!tabIndex && tabIndex !== 0) {
+                           $(editor.element).removeAttr("tabIndex"); 
+                        } 
+
+                    }, 100);
+                    e.preventDefault();
+                    return;
+                }
                 var toolName = editor.keyboard.toolFromShortcut(editor.tools, e);
 
                 if (toolName) {
                     e.preventDefault();
+                    if (!/undo|redo/.test(toolName)) {
+                        editor.keyboard.endTyping(true);
+                    }
                     editor.exec(toolName);
                     return false;
                 }
@@ -3807,10 +4145,33 @@ $t.editor = function (element, options) {
         enabledButtons = buttons + ':not(.t-state-disabled)',
         disabledButtons = buttons + '.t-state-disabled';
 
+     $element.find(".t-combobox .t-input").keydown(function(e) {
+        var combobox = $(this).closest(".t-combobox").data("tComboBox"),
+            key = e.keyCode;
+
+        if (key == 39 || key == 37) {
+            combobox.close();
+        } else if (key == 40) {
+            if (!combobox.dropDown.isOpened()) {
+                e.stopImmediatePropagation();
+                combobox.open();
+            }
+        }
+    });
+
     $element
         .delegate(enabledButtons, 'mouseenter', $t.hover)
         .delegate(enabledButtons, 'mouseleave', $t.leave)
         .delegate(buttons, 'mousedown', $t.preventDefault)
+        .delegate(focusable, "keydown", function(e) {
+            if (e.keyCode == 39) {
+                $(this).closest("li").nextAll("li:has(" + focusable + ")").first().find(focusable).focus();
+            } else if (e.keyCode == 37) {
+                $(this).closest("li").prevAll("li:has(" + focusable + ")").last().find(focusable).focus();
+            } else if (e.keyCode == 27) {
+                self.focus();
+            }
+        })
         .delegate(enabledButtons, 'click', $t.stopAll(function (e) {
             self.exec(toolFromClassName(this));
         }))
@@ -3841,8 +4202,6 @@ $t.editor = function (element, options) {
         .bind('selectionChange', function() {
             var range = self.getRange();
 
-            self.selectionRestorePoint = new RestorePoint(range);
-
             var nodes = textNodes(range);
 
             if (!nodes.length) {
@@ -3858,9 +4217,13 @@ $t.editor = function (element, options) {
                 });
         });
 
+   
     $(document)
         .bind('DOMNodeInserted', function(e) {
             if ($.contains(e.target, self.element) || self.element == e.target) {
+                // preserve updated value before re-initializing
+                // don't use update() to prevent the editor from encoding the content too early
+                self.textarea.value = self.value();
                 $(self.element).find('iframe').remove();
                 initializeContentElement(self);
             }
@@ -4050,26 +4413,27 @@ $t.editor.prototype = {
     },
 
     exec: function (name, params) {
+        var range, body, id, tool = '';
+
+        name = name.toLowerCase();
+
+        // restore selection
         if (!this.keyboard.typingInProgress()) {
             this.focus();
 
-            if (this.selectionRestorePoint) {
-                this.selectRange(this.selectionRestorePoint.toRange());
-                this.selectionRestorePoint = null;
-            }
+            range = this.getRange();
+            body = this.document.body;
         }
 
-        name = name.toLowerCase();
-        var tool = '';
-
-        for (var id in this.tools)
+        // exec tool
+        for (id in this.tools)
             if (id.toLowerCase() == name) {
                 tool = this.tools[id];
                 break;
             }
 
         if (tool) {
-            var range = this.getRange();
+            range = this.getRange();
 
             if (!/undo|redo/i.test(name) && tool.willDelayExecution(range)) {
                 this.pendingFormats.toggle({ name: name, params: params, command: tool.command });
@@ -4084,8 +4448,9 @@ $t.editor.prototype = {
             if (/undo|redo/i.test(name)) {
                 this.undoRedoStack[name]();
             } else if (command) {
-                if (!command.managesUndoRedo)
+                if (!command.managesUndoRedo) {
                     this.undoRedoStack.push(command);
+                }
                     
                 command.editor = this;
                 command.exec();

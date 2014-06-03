@@ -19,140 +19,140 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
 
 
         /// <exception cref="InvalidOperationException"><c>InvalidOperationException</c>.</exception>
-        internal static Expression CreateExpression(this FilterOperator filterOperator, Expression left, Expression right)
+        internal static Expression CreateExpression(this FilterOperator filterOperator, Expression left, Expression right, bool liftMemberAccess)
         {
             switch (filterOperator)
             {
                 case FilterOperator.IsLessThan:
-                    return GenerateLessThan(left, right);
+                    return GenerateLessThan(left, right, liftMemberAccess);
 
                 case FilterOperator.IsLessThanOrEqualTo:
-                    return GenerateLessThanEqual(left, right);
+                    return GenerateLessThanEqual(left, right, liftMemberAccess);
 
                 case FilterOperator.IsEqualTo:
-                    return GenerateEqual(left, right);
+                    return GenerateEqual(left, right, liftMemberAccess);
 
                 case FilterOperator.IsNotEqualTo:
-                    return GenerateNotEqual(left, right);
+                    return GenerateNotEqual(left, right, liftMemberAccess);
 
                 case FilterOperator.IsGreaterThanOrEqualTo:
-                    return GenerateGreaterThanEqual(left, right);
+                    return GenerateGreaterThanEqual(left, right, liftMemberAccess);
 
                 case FilterOperator.IsGreaterThan:
-                    return GenerateGreaterThan(left, right);
+                    return GenerateGreaterThan(left, right, liftMemberAccess);
 
                 case FilterOperator.StartsWith:
-                    return GenerateStartsWith(left, right);
+                    return GenerateStartsWith(left, right, liftMemberAccess);
 
                 case FilterOperator.EndsWith:
-                    return GenerateEndsWith(left, right);
+                    return GenerateEndsWith(left, right, liftMemberAccess);
 
                 case FilterOperator.Contains:
-                    return GenerateContains(left, right);
+                    return GenerateContains(left, right, liftMemberAccess);
 
                 case FilterOperator.IsContainedIn:
-                    return GenerateIsContainedIn(left, right);
+                    return GenerateIsContainedIn(left, right, liftMemberAccess);
             }
 
             throw new InvalidOperationException();
         }
 
-        private static Expression GenerateEqual(Expression left, Expression right)
+        private static Expression GenerateEqual(Expression left, Expression right, bool liftMemberAccess)
         {
             if (left.Type == typeof(string))
             {
-                left = GenerateToLowerCall(left);
-                right = GenerateToLowerCall(right);
+                left = GenerateToLowerCall(left, liftMemberAccess);
+                right = GenerateToLowerCall(right, liftMemberAccess);
             }
             return Expression.Equal(left, right);
         }
 
-        private static Expression GenerateNotEqual(Expression left, Expression right)
+        private static Expression GenerateNotEqual(Expression left, Expression right, bool liftMemberAccess)
         {
             if (left.Type == typeof(string))
             {
-                left = GenerateToLowerCall(left);
-                right = GenerateToLowerCall(right);
+                left = GenerateToLowerCall(left, liftMemberAccess);
+                right = GenerateToLowerCall(right, liftMemberAccess);
             }
             return Expression.NotEqual(left, right);
         }
 
-        private static Expression GenerateGreaterThan(Expression left, Expression right)
+        private static Expression GenerateGreaterThan(Expression left, Expression right, bool liftMemberAccess)
         {
             if (left.Type == typeof(string))
             {
                 return Expression.GreaterThan(
-                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right), 
+                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right, liftMemberAccess), 
                     ExpressionFactory.ZeroExpression);
             }
             return Expression.GreaterThan(left, right);
         }
 
-        private static Expression GenerateGreaterThanEqual(Expression left, Expression right)
+        private static Expression GenerateGreaterThanEqual(Expression left, Expression right, bool liftMemberAccess)
         {
             if (left.Type == typeof(string))
             {
                 return Expression.GreaterThanOrEqual(
-                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right),
+                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right, liftMemberAccess),
                     ExpressionFactory.ZeroExpression);
             }
             return Expression.GreaterThanOrEqual(left, right);
         }
 
-        private static Expression GenerateLessThan(Expression left, Expression right)
+        private static Expression GenerateLessThan(Expression left, Expression right, bool liftMemberAccess)
         {
             if (left.Type == typeof(string))
             {
                 return Expression.LessThan(
-                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right),
+                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right, liftMemberAccess),
                     ExpressionFactory.ZeroExpression);
             }
             return Expression.LessThan(left, right);
         }
 
-        private static Expression GenerateLessThanEqual(Expression left, Expression right)
+        private static Expression GenerateLessThanEqual(Expression left, Expression right, bool liftMemberAccess)
         {
             if (left.Type == typeof(string))
             {
                 return Expression.LessThanOrEqual(
-                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right), 
+                    GenerateCaseInsensitiveStringMethodCall(StringCompareMethodInfo, left, right, liftMemberAccess), 
                     ExpressionFactory.ZeroExpression);
             }
             return Expression.LessThanOrEqual(left, right);
         }
 
-        private static Expression GenerateContains(Expression left, Expression right)
+        private static Expression GenerateContains(Expression left, Expression right, bool liftMemberAccess)
         {
             return Expression.Equal(
-                GenerateCaseInsensitiveStringMethodCall(StringContainsMethodInfo, left, right),
+                GenerateCaseInsensitiveStringMethodCall(StringContainsMethodInfo, left, right, liftMemberAccess),
                 ExpressionConstants.TrueLiteral);
         }
 
-        private static Expression GenerateIsContainedIn(Expression left, Expression right)
+        private static Expression GenerateIsContainedIn(Expression left, Expression right, bool liftMemberAccess)
         {
             return Expression.Equal(
-                GenerateCaseInsensitiveStringMethodCall(StringContainsMethodInfo, right, left),
+                GenerateCaseInsensitiveStringMethodCall(StringContainsMethodInfo, right, left, liftMemberAccess),
                 ExpressionConstants.TrueLiteral);
         }
 
-        private static Expression GenerateStartsWith(Expression left, Expression right)
+        private static Expression GenerateStartsWith(Expression left, Expression right, bool liftMemberAccess)
         {
             return Expression.Equal(
-                GenerateCaseInsensitiveStringMethodCall(StringStartsWithMethodInfo, left, right), 
+                GenerateCaseInsensitiveStringMethodCall(StringStartsWithMethodInfo, left, right, liftMemberAccess), 
                 ExpressionConstants.TrueLiteral);
         }
 
-        private static Expression GenerateEndsWith(Expression left, Expression right)
+        private static Expression GenerateEndsWith(Expression left, Expression right, bool liftMemberAccess)
         {
             return Expression.Equal(
-                GenerateCaseInsensitiveStringMethodCall(StringEndsWithMethodInfo, left, right),
+                GenerateCaseInsensitiveStringMethodCall(StringEndsWithMethodInfo, left, right, liftMemberAccess),
                 ExpressionConstants.TrueLiteral);
         }
 
-        private static Expression GenerateCaseInsensitiveStringMethodCall(MethodInfo methodInfo, Expression left, Expression right)
+        private static Expression GenerateCaseInsensitiveStringMethodCall(MethodInfo methodInfo, Expression left, Expression right, bool liftMemberAccess)
 		{
-		    var leftToLower = GenerateToLowerCall(left);
-		    var rightToLower = GenerateToLowerCall(right);
+            var leftToLower = GenerateToLowerCall(left, liftMemberAccess);
+            var rightToLower = GenerateToLowerCall(right, liftMemberAccess);
 
             if (methodInfo.IsStatic)
             {
@@ -162,11 +162,14 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             return Expression.Call(leftToLower, methodInfo, rightToLower);
 		}
 
-        private static Expression GenerateToLowerCall(Expression stringExpression)
+        private static Expression GenerateToLowerCall(Expression stringExpression, bool liftMemberAccess)
         {
-            var liftedToEmpty = ExpressionFactory.LiftStringExpressionToEmpty(stringExpression);
+            if (liftMemberAccess)
+            {
+                stringExpression = ExpressionFactory.LiftStringExpressionToEmpty(stringExpression);
+            }
 
-            return Expression.Call(liftedToEmpty, StringToLowerMethodInfo);
+            return Expression.Call(stringExpression, StringToLowerMethodInfo);
         }
     }
 }

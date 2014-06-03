@@ -15,7 +15,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Initializes a new instance of the <see cref="PlotAreaBuilder" /> class.
         /// </summary>
-        /// <param name="chartArea">The chart area.</param>
+        /// <param name="plotArea">The plot area.</param>
         public PlotAreaBuilder(PlotArea plotArea)
         {
             this.plotArea = plotArea;
@@ -45,8 +45,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="top">The plot area top margin.</param>
         /// <param name="right">The plot area right margin.</param>
-        /// <param name="bottom">The plot area top margin.</param>
-        /// <param name="left">The plot area top margin.</param>
+        /// <param name="bottom">The plot area bottom margin.</param>
+        /// <param name="left">The plot area left margin.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
@@ -90,18 +90,19 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="width">The border width.</param>
         /// <param name="color">The border color (CSS syntax).</param>
+        /// <param name="dashType">The border dash type.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .PlotArea(plotArea => plotArea.Border(1, "#000"))
+        ///            .PlotArea(plotArea => plotArea.Border(1, "#000", ChartDashType.Dot))
         ///            .Render();
         /// %&gt;
         /// </code>
         /// </example>        
-        public PlotAreaBuilder Border(int width, string color)
+        public PlotAreaBuilder Border(int width, string color, ChartDashType dashType)
         {
-            plotArea.Border = new ChartElementBorder(width, color);
+            plotArea.Border = new ChartElementBorder(width, color, dashType);
             return this;
         }
     }

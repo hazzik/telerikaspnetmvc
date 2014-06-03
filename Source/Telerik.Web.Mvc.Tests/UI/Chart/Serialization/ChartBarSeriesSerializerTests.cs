@@ -127,8 +127,10 @@
         {
             barSeries.Border.Color = "red";
             barSeries.Border.Width = 1;
+            barSeries.Border.DashType = ChartDashType.Dot;
             ((Dictionary<string, object>)GetJson(barSeries)["border"])["width"].ShouldEqual(1);
             ((Dictionary<string, object>)GetJson(barSeries)["border"])["color"].ShouldEqual("red");
+            ((Dictionary<string, object>)GetJson(barSeries)["border"])["dashType"].ShouldEqual("dot");
         }
 
         [Fact]
@@ -154,7 +156,7 @@
         public void Bar_serializes_overlay()
         {
             barSeries.Overlay = ChartBarSeriesOverlay.None;
-            GetJson(barSeries)["overlay"].ShouldEqual("none");
+            GetJson(barSeries).ContainsKey("overlay").ShouldBeTrue();
         }
 
         [Fact]

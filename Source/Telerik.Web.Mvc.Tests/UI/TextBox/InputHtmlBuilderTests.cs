@@ -139,6 +139,39 @@
         }
 
         [Fact]
+        public void Input_value_method_should_render_ModelStateValue_even_Model_value_is_set()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("30", "30", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            input.Value = 10;
+            input.Name = "DatePicker1";            
+            input.ViewContext.ViewData.ModelState.Add("DatePicker1", state);
+            input.ViewContext.ViewData.ModelState.AddModelError("DatePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            tag.Attribute("value").ShouldEqual("30");
+        }
+
+        [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            input.Name = "input1";
+            input.ViewContext.ViewData.ModelState.Add("input1", state);
+            input.ViewContext.ViewData.ModelState.AddModelError("input1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            tag.Attribute("class").ShouldContain("input-validation-error");
+        }
+
+        [Fact]
         public void Up_Button_should_render_link_with_classes()
         {
             IHtmlNode tag = renderer.UpButtonTag();

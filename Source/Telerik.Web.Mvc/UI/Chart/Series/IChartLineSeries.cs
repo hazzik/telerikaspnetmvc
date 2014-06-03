@@ -22,7 +22,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Gets the line chart data labels configuration
         /// </summary>
-        ChartLineLabels Labels
+        ChartPointLabels Labels
         {
             get;
         }
@@ -30,7 +30,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// The line chart markers configuration.
         /// </summary>
-        ChartLineMarkers Markers
+        ChartMarkers Markers
         {
             get;
             set;
@@ -40,6 +40,24 @@ namespace Telerik.Web.Mvc.UI
         /// The line chart line width.
         /// </summary>
         double Width
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The line chart line dash type.
+        /// </summary>
+        ChartDashType DashType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The behavior for handling missing values in line series.
+        /// </summary>
+        ChartLineMissingValues MissingValues
         {
             get;
             set;

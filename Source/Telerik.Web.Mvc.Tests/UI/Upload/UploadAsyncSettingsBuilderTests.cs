@@ -76,17 +76,38 @@
         }
 
         [Fact]
-        public void Save_with_action_and_controller_object_should_set_saveRequestSettings()
+        public void Save_with_action_controller_field_and_routeValues_should_set_field()
         {
-            builder.Save("action", "controller");
+            builder.Save("action", "controller", "field", new RouteValueDictionary { { "id", 1 } });
+            settingsMock.VerifySet(s => s.SaveField = "field");
+        }
+
+        [Fact]
+        public void Save_with_action_controller_and_object_should_set_saveRequestSettings()
+        {
+            builder.Save("action", "controller", new { id = 1 });
             saveSettingsMock.VerifySet(s => s.ActionName = "action");
             saveSettingsMock.VerifySet(s => s.ControllerName = "controller");
         }
 
         [Fact]
-        public void Save_with_action_and_controller_object_should_return_builder()
+        public void Save_with_action_controller_and_object_should_return_builder()
         {
-            builder.Save("action", "controller").ShouldBeSameAs(builder);
+            builder.Save("action", "controller", new { id = 1 }).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void Save_with_action_controller_field_and_object_should_set_field()
+        {
+            builder.Save("action", "controller", "field", new { id = 1 });
+            settingsMock.VerifySet(s => s.SaveField = "field");
+        }
+
+        [Fact]
+        public void Save_with_action_controller_and_field_should_set_field()
+        {
+            builder.Save("action", "controller", "field");
+            settingsMock.VerifySet(s => s.SaveField = "field");
         }
 
         [Fact]

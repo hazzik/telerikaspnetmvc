@@ -49,7 +49,7 @@ namespace Telerik.Web.Mvc.UI.Html
             }
         }
 
-        private void SetCellContent(IHtmlNode td, string content)
+        protected void SetCellContent(IHtmlNode td, string content)
         {
             if (Encoded)
             {
@@ -61,7 +61,7 @@ namespace Telerik.Web.Mvc.UI.Html
             }
         }
 
-        private string ApplyFormat(object value)
+        protected string ApplyFormat(object value)
         {
             return Format.HasValue() ? Format.FormatWith(value) : value.ToString();
         }

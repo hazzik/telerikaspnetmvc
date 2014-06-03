@@ -13,11 +13,12 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Initializes a new instance of the <see cref="ChartLine" /> class.
         /// </summary>
-        public ChartLine(int width, string color, bool visible)
+        public ChartLine(int width, string color, ChartDashType dashType, bool visible)
         {
             Width = width;
             Color = color;
             Visible = visible;
+            DashType = dashType;
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Gets or sets the line width.
         /// </summary>
-        public int Width
+        public int? Width
         {
             get;
             set;
@@ -48,7 +49,16 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Gets or sets the line visibility.
         /// </summary>
-        public bool Visible
+        public bool? Visible
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the line dash type.
+        /// </summary>
+        public ChartDashType? DashType
         {
             get;
             set;

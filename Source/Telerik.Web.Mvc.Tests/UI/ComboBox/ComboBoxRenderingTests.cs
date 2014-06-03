@@ -35,22 +35,7 @@
 
             textWriter = new Mock<TextWriter>();
         }
-#if MVC2 || MVC3
-        [Fact]
-        public void Render_method_should_set_selectedIndex_depending_on_ViewData_value()
-        {
-            comboBox.Name = "ComboBox1";
-            comboBox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
-            comboBox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
-            comboBox.SelectedIndex = 0;
 
-            ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
-
-            comboBox.Render();
-
-            Assert.Equal(1, comboBox.SelectedIndex);
-        }
-#endif
         [Fact]
         public void Render_method_should_set_selectedIndex_depending_on_returned_value_from_ValueProvider()
         {

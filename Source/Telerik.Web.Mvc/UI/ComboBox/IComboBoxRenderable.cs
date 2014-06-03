@@ -5,7 +5,5 @@
     public interface IComboBoxRenderable : IDropDownRenderable
     {
         IDictionary<string, object> InputHtmlAttributes { get; }
-
-        IDictionary<string, object> HiddenInputHtmlAttributes { get; }
     }
 }

@@ -61,6 +61,36 @@
             .DataBinding(dataBinding => dataBinding.Ajax().Select("Foo", "Bar"))
         %>
                
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid5")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate);
+                columns.Bound(c => c.Active);
+            })
+            .Scrollable()
+            .Groupable(grouping => grouping.Groups(groups => 
+                {
+                    groups.Add(c => c.Active);                    
+                }))
+            .DataBinding(dataBinding => dataBinding.Ajax().OperationMode(GridOperationMode.Client).Select("Foo", "Bar"))
+            .Pageable()
+        %>
+
+    <%= Html.Telerik().Grid<Telerik.Web.Mvc.JavaScriptTests.Customer>()
+            .Name("Grid6")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Name);                
+                columns.Bound(c => c.Active);
+            })
+            .Scrollable()
+            .Groupable()
+            .DataBinding(dataBinding => dataBinding.Ajax().Select("Foo", "Bar"))
+            .Pageable()
+            .ClientEvents(events => events.OnDataBinding("grid6_dataBinding"))
+        %>
 </asp:Content>
 
 
@@ -78,8 +108,19 @@
                 getGrid('#Grid2').ajaxRequest = function() {};
                 getGrid('#Grid3').ajaxRequest = function() {};
                 getGrid('#Grid4').ajaxRequest = function() {};
+                getGrid('#Grid5').ajaxRequest = function() {};
+                //getGrid('#Grid6').ajaxRequest = function() {};
             }
         });
+
+        function grid6_dataBinding(e) {
+            var grid = $(this).data("tGrid"),
+                data = [ { Aggregates: {}, HasSubgroups: false, Items: [{Name: "foo", Active: false}, {Name: "bar", Active: false}], Key: false, Subgroups: [] }];
+
+            e.preventDefault();
+
+            grid.dataBind(data);
+        }
 
         test('ungrouping removes grouping columns', function() {
             var grid = getGrid('#Grid1');
@@ -113,7 +154,7 @@
             grid.group('Name');
             grid.normalizeColumns(grid.groups.length + grid.columns.length);
 
-            equal($('table:first col', grid.element).length, 4)
+            equal($('table:first col', grid.element).length, 3)
             equal($('tr:has(th):first .t-group-cell', grid.element).length, 1)
         });
 
@@ -122,6 +163,20 @@
             ok(!grid.columns[grid.columns.length - 1].groupable);
         });
 
+        test("data contains flat view of the data when operation mode is client and grid is populated from the server", function() {
+            var grid = getGrid('#Grid5');
+            equal(grid.data.length, 10);
+            equal(grid.data[0].Active, false);
+            equal(grid.data[1].Active, false);
+            equal(grid.data[2].Active, false);
+        });
+
+        test("custom binding with grouped data passed through dataBind method", function() {
+            var grid = getGrid('#Grid6');       
+            grid.group('Active');     
+            equal(grid.dataSource.group().length, 1);
+            equal(grid.data.length, 2);
+        });
 </script>
 
 </asp:Content>

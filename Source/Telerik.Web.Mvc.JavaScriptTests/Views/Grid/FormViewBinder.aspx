@@ -71,6 +71,11 @@
             )
     %>
     </div>
+    <div id="upload">
+         <%= Html.Telerik().Upload()
+            .Name("Upload1")
+    %>
+    </div>
 </asp:Content>
 
 
@@ -126,7 +131,7 @@
         
         binder.bind($ui, {foo:true});
 
-        equal($ui.find(':checkbox').attr('checked'), true);
+        equal($ui.find(':checkbox').attr('checked'), 'checked');
     });
     
     test('bind selects radiobutton', function() {
@@ -134,7 +139,7 @@
         
         binder.bind($ui, {foo:1});
 
-        equal($ui.find(':radio:first').attr('checked'), true);
+        equal($ui.find(':radio:first').attr('checked'), 'checked');
     });
 
     test('bind does not set null', function() {
@@ -197,6 +202,10 @@
 
     test('eval for nested property with prefix', function() {
         equal(binder.evaluate({Address:{Street:'foo'}}, 'm.Address.Street'), 'foo');
+    });
+    
+    test('eval for nested property with prefix and indexer', function() {
+        equal(binder.evaluate({Address:{Street:'foo'}}, 'm[0].Address.Street'), 'foo');
     });
 
     test('eval returns undefined with invalid expression with valid parts', function() {
@@ -296,6 +305,12 @@
         binder.bind($ui, {Editor1: 'bar'});
 
         equal($('#Editor1').data('tEditor').value(), 'bar');
+    });
+    
+    test('bind does not try to populate upload', function() {
+        var $ui = $('#upload');
+        
+        binder.bind($ui, {Upload1: 'bar'});
     });
 
 </script>

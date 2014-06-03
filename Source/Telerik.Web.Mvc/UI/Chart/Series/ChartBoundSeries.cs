@@ -58,7 +58,7 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChartBoundSeries" /> class.
+        /// Initializes a new instance of the <see cref="ChartBoundSeries{TModel, TValue}" /> class.
         /// </summary>
         /// <param name="chart">The chart.</param>
         protected ChartBoundSeries(Chart<TModel> chart)

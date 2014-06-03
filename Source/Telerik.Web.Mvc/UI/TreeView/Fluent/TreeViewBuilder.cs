@@ -123,6 +123,49 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
+        /// Binds the TreeView to a list of items.
+        /// Use if a hierarchy of items is being sent from the controller; to bind the TreeView declaratively, use the Items() method.
+        /// </summary>
+        /// <param name="items">The list of items</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TreeView()
+        ///             .Name("TreeView")
+        ///             .BindTo(model)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TreeViewBuilder BindTo(IEnumerable<TreeViewItemModel> items)
+        {
+            Guard.IsNotNull(items, "items");
+
+            Component.BindTo(items, mapping => mapping
+                .For<TreeViewItemModel>(binding => binding
+                    .ItemDataBound((item, node) => {
+                        item.Text = node.Text;
+                        item.Enabled = node.Enabled;
+                        item.Expanded = node.Expanded;
+                        item.LoadOnDemand = node.LoadOnDemand;
+                        item.Checked = node.Checked;
+                        item.Checkable = node.Checkable;
+                        item.Encoded = node.Encoded;
+                        item.Value = node.Value;
+                        
+                        if (!String.IsNullOrEmpty(node.NavigateUrl))
+                        {
+                            item.Url = node.NavigateUrl;
+                        }
+
+                        item.ImageUrl = node.ImageUrl;
+                    })
+                    .Children(item => item.Items)
+                )
+            );
+
+            return this;
+        }
+
+        /// <summary>
         /// Binds the TreeView to a list of objects. The TreeView will be "flat" which means a TreeView item will be created for 
         /// every item in the data source.
         /// </summary>

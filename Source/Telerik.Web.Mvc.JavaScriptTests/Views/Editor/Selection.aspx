@@ -4,13 +4,16 @@
     <h2>Selection</h2>
 
     <%= Html.Telerik().Editor().Name("Editor") %>
+
+</asp:Content>
+
+
+<asp:Content ContentPlaceHolderID="TestContent" runat="server">
     
     <script type="text/javascript" src="<%= Url.Content("~/Scripts/editorTestHelper.js") %>"></script>
 
     <script type="text/javascript">
         var editor;
-
-        /* helpers */
         
         function selectTextNodeContents(node, start, end)
         {
@@ -68,22 +71,11 @@
             }
         }
 
-        /* addRange */
-
-        /* getRangeAt */
-    </script>
-</asp:Content>
-
-
-<asp:Content ContentPlaceHolderID="TestContent" runat="server">
-
-<script type="text/javascript">
-
-
-
-        QUnit.testStart = function() {
-            editor = getEditor();
-        }
+        module('Editor / Selection', {
+            setup: function() {
+                editor = getEditor();
+            }
+        });
 
         test('getSelection returns selection like object', function() {
             var selection = editor.getSelection();
@@ -255,8 +247,16 @@
         test('getRangeAt on collapsed selection at end of paragraph', function() {
             editor.value('<p>foo</p>');
             
-            selectRange(editor.body.firstChild.firstChild, 3, editor.body.firstChild.firstChild, 3);
-            var range = editor.getSelection().getRangeAt(0);
+            var selection = editor.getSelection(),
+                range = editor.createRange();
+
+            range.setStart(editor.body.firstChild.firstChild, 3);
+            range.collapse(true);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            range = selection.getRangeAt(0);
             
             ok(range.collapsed);
             equal(range.startOffset, 3);

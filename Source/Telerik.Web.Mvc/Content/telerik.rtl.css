@@ -157,18 +157,35 @@
     border-collapse: separate;
 }
 
+.t-rtl .t-grid div.t-grid-header,
+.t-rtl .t-grid .t-header,
+.t-rtl .t-grid td
+{
+    text-align: right;
+}
+
 .t-rtl .t-grid div.t-grid-header
 {
     padding-right: 0;
     padding-left: 17px;
-    text-align: right;
+}
+
+.t-rtl .t-grid.t-grid-rightscroll div.t-grid-header
+{
+    padding-left: 0;
+    padding-right: 17px;
 }
 
 .t-rtl .t-grid .t-header,
 .t-rtl .t-grid td
 {
-    text-align: right;
     border-width: 0 0 0 1px;
+}
+
+.t-rtl .t-grid.t-grid-rightscroll .t-header,
+.t-rtl .t-grid.t-grid-rightscroll td
+{
+    border-width: 0 1px 0 0;
 }
 
 .t-rtl .t-grid .t-header .t-link
@@ -331,6 +348,24 @@
 {
     margin-left: 0;
     margin-right: -16px;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .t-rtl .t-numerictextbox .t-icon
+    {
+        position: relative;
+        z-index: 2;
+    }
+
+    .t-rtl .t-numerictextbox
+    {
+        position: relative;
+    }
+
+    .t-rtl .t-numerictextbox .t-formatted-value
+    {
+        right: 0;
+    }
 }
 
 /* Editor */

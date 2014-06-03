@@ -97,7 +97,9 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(writer, "writer");
 
-            VerifySettings();
+#if MVC2 || MVC3
+            Name = Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
+#endif
 
             DatePickerHtmlBuilder renderer = new DatePickerHtmlBuilder(this);
 
@@ -109,19 +111,11 @@ namespace Telerik.Web.Mvc.UI
 
         public override void VerifySettings()
         {
-#if MVC2 || MVC3
-            Name = Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
-#endif
             base.VerifySettings();
 
             if (MinValue > MaxValue)
             {
                 throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
-            }
-
-            if ((Value != null) && (MinValue > Value || Value > MaxValue))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Date", "MinValue", "MaxValue"));
             }
         }
     }

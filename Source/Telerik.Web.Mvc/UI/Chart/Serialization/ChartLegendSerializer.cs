@@ -20,15 +20,21 @@ namespace Telerik.Web.Mvc.UI
         public virtual IDictionary<string, object> Serialize()
         {
             var result = new Dictionary<string, object>();
+            var legendLabelOptions = new Dictionary<string, object>();
+
+            FluentDictionary.For(legendLabelOptions)
+                .Add("font", legend.Font, ChartDefaults.Legend.Font)
+                .Add("color", legend.Color, ChartDefaults.Legend.Color);
 
             FluentDictionary.For(result)
-                .Add("font", legend.Font, ChartDefaults.Legend.Font)
-                .Add("position", legend.Position.ToString().ToLower(), ChartDefaults.Legend.Position.ToString().ToLower())
+                .Add("labels", legendLabelOptions, () => { return legendLabelOptions.Count != 0; })
+                .Add("position", legend.Position.ToString().ToLowerInvariant(), ChartDefaults.Legend.Position.ToString().ToLowerInvariant())
                 .Add("offsetX", legend.OffsetX, 0)
                 .Add("offsetY", legend.OffsetY, 0)
                 .Add("margin", legend.Margin.CreateSerializer().Serialize(), ShouldSerializeMargin)
                 .Add("padding", legend.Padding.CreateSerializer().Serialize(), ShouldSerializePadding)
                 .Add("border", legend.Border.CreateSerializer().Serialize(), ShouldSerializeBorder)
+                .Add("background", legend.Background, string.Empty)
                 .Add("visible", legend.Visible, ChartDefaults.Legend.Visible);
 
             return result;
@@ -53,7 +59,8 @@ namespace Telerik.Web.Mvc.UI
         private bool ShouldSerializeBorder()
         {
             return legend.Border.Color.CompareTo(ChartDefaults.Legend.Border.Color) != 0 ||
-                   legend.Border.Width != ChartDefaults.Legend.Border.Width;
+                   legend.Border.Width != ChartDefaults.Legend.Border.Width ||
+                   legend.Border.DashType != ChartDefaults.Legend.Border.DashType;
         }
     }
 }

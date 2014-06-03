@@ -18,7 +18,7 @@
                 .Categories(s => s.DateString)
             )        
             .ValueAxis(axis => axis
-                .Numeric().Format("${0:#,##0}")
+                .Numeric().Labels(labels => labels.Format("${0:#,##0}"))
             )
             .HtmlAttributes(new { style = "width: 670px; height: 400px;" })
     %>

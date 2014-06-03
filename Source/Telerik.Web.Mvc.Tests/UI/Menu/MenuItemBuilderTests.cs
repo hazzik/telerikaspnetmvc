@@ -2,6 +2,7 @@
 {
     using Telerik.Web.Mvc.UI;
     using Xunit;
+    using System.Collections.Generic;
 
     public class MenuItemBuilderTests
     {
@@ -23,6 +24,35 @@
 			builder.Items(factory => { factoryIsMenuItemFactory = factory is MenuItemFactory; });
 
 			Assert.True(factoryIsMenuItemFactory);
+        }
+
+        [Fact]
+        public void Items_with_IEnumerable_adds_items()
+        {
+            IEnumerable<MenuItem> items = new List<MenuItem>
+            {
+                new MenuItem { Text = "Item 1" },
+                new MenuItem { Text = "Item 2" }
+            };
+
+            builder.Items(items);
+
+            Assert.Equal(2, item.Items.Count);
+        }
+
+        [Fact]
+        public void Items_with_IEnumerable_clears_items_before_adding_new_ones()
+        {
+            IEnumerable<MenuItem> items = new List<MenuItem>
+            {
+                new MenuItem { Text = "Item 1" },
+                new MenuItem { Text = "Item 2" }
+            };
+
+            builder.Items(items);
+            builder.Items(items);
+
+            Assert.Equal(2, item.Items.Count);
         }
     }
 }

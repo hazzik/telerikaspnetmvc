@@ -32,7 +32,8 @@
 }
 
 .t-header,
-.t-header .t-link
+.t-header .t-link,
+.t-state-active .t-header .t-state-default .t-link /*nested tabstrips*/
 {
     color: #fff;
 }
@@ -111,7 +112,8 @@
     border-color: #486b23;
 }
 
-.t-tabstrip .t-state-active .t-link
+.t-tabstrip .t-state-active .t-link,
+.t-state-active .t-tabstrip .t-state-active .t-link /*nested tabstrips*/
 {
     color: #2b2c20;
 }
@@ -123,7 +125,9 @@
     background-image: none;
 }
 
-.t-state-error
+.t-state-error,
+.t-widget.input-validation-error,
+.t-widget .input-validation-error
 {
     border-color: #f00;
     background-color: #ffc0cb;
@@ -169,6 +173,12 @@ a.t-button.t-state-disabled:hover,
 .t-editor-button .t-state-active
 {
     background-color: #527c30;
+}
+
+.t-grid-header-wrap,
+.t-grid-footer-wrap
+{
+    border-color: #486b23;
 }
 
 .t-grid td

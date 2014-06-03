@@ -40,7 +40,8 @@ namespace Telerik.Web.Mvc.UI
         private bool ShouldSerializeBorder()
         {
             return plotArea.Border.Color.CompareTo(ChartDefaults.PlotArea.Border.Color) != 0 ||
-                   plotArea.Border.Width != ChartDefaults.PlotArea.Border.Width;
+                   plotArea.Border.Width != ChartDefaults.PlotArea.Border.Width ||
+                   plotArea.Border.DashType != ChartDefaults.PlotArea.Border.DashType;
         }
     }
 }

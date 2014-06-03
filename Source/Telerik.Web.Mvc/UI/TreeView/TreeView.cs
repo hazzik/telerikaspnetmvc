@@ -342,7 +342,7 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (item.IsAccessible(Authorization, ViewContext))
                 {
-                    var hasAccessibleChildren = item.Items.Any() && item.Items.IsAccessible(Authorization, ViewContext);
+                    var hasAccessibleChildren = item.Items.Any(x => x.Visible) && item.Items.IsAccessible(Authorization, ViewContext);
 
                     IHtmlNode itemTag = builder.ItemTag(item, hasAccessibleChildren).AppendTo(parentTag);
 

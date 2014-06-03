@@ -40,7 +40,7 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChartBarSeries" /> class.
+        /// Initializes a new instance of the <see cref="ChartBarSeries{TModel, TValue}" /> class.
         /// </summary>
         /// <param name="chart">The chart.</param>
         public ChartBarSeries(Chart<TModel> chart)
@@ -139,7 +139,11 @@ namespace Telerik.Web.Mvc.UI
             Gap = ChartDefaults.BarSeries.Gap;
             Orientation = ChartBarSeriesOrientation.Horizontal;
             Labels = new ChartBarLabels();
-            Border = new ChartElementBorder(ChartDefaults.BarSeries.Border.Width, ChartDefaults.BarSeries.Border.Color);
+            Border = new ChartElementBorder(
+                    ChartDefaults.BarSeries.Border.Width,
+                    ChartDefaults.BarSeries.Border.Color,
+                    ChartDefaults.BarSeries.Border.DashType
+                );
             Spacing = ChartDefaults.BarSeries.Spacing;
             Overlay = ChartDefaults.BarSeries.Overlay;
         }

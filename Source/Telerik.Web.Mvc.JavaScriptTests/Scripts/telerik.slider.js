@@ -1,18 +1,23 @@
 ﻿(function ($) {
 
-    var $t = $.telerik;
+    var $t = $.telerik,
+        MOUSEDOWN = $t.isTouch ? "touchstart" : "mousedown",
+        PRECISION = 3;
 
     $t.scripts.push("telerik.slider.js");
 
     $t.slider = function (element, options) {
+        options = options || {};
         var $element = $(element);
+        element.type = "text";
         this.element = element;
+        options.val = round(parseValue($element.val()) || round(options.val));
         options.distance = options.maxValue - options.minValue;
         $.extend(this, options);
         options.position = this.orientation == "horizontal" ? "left" : "bottom";
         options.size = this.orientation == "horizontal" ? "width" : "height";
+        options.outerSize = this.orientation == "horizontal" ? "outerWidth" : "outerHeight";
         options.orientation = this.orientation;
-
         createHtml(element, options);
         this.wrapper = $element.closest(".t-slider");
         this.trackDiv = this.wrapper.find(".t-slider-track");
@@ -20,7 +25,7 @@
         $t.slider.setTrackDivWidth(this.wrapper, options);
 
         this.maxSelection = this.trackDiv[options.size]();
-        
+
         var sizeBetweenTicks = this.maxSelection / ((this.maxValue - this.minValue) / this.smallStep);
         var pixelWidths = $t.slider.calculateItemsWidth(this.wrapper, options, Math.floor(this.distance / this.smallStep));
 
@@ -38,6 +43,7 @@
             dragHandle: this.wrapper.find(".t-draghandle"),
             orientation: options.orientation,
             size: options.size,
+            outerSize: options.outerSize,
             position: options.position,
             owner: this
         };
@@ -65,12 +71,12 @@
             change: this.onChange,
             load: this.onLoad
         });
-    }
+    };
 
     $.extend($t.slider, {
         setTrackDivWidth: function (wrapper, options) {
             var trackDiv = wrapper.find('.t-slider-track');
-            var trackDivPosition = parseFloat(trackDiv.css(options.position), 10) * 2;
+            var trackDivPosition = round(trackDiv.css(options.position)) * 2;
             trackDiv[options.size]((wrapper[options.size]() - 2) - trackDivPosition);
         },
 
@@ -78,7 +84,7 @@
             var itemsCount = Math.floor(options.distance / options.smallStep),
                 items = wrapper.find(".t-tick"),
                 sum = 0,
-                maxSelection = trackDiv[options.size]()
+                maxSelection = trackDiv[options.size](),
                 arr = $.extend([], pixelWidths);
 
             if (options.orientation == "horizontal") {
@@ -100,8 +106,8 @@
                 $(items[items.length - 1]).addClass("t-first")[options.size](arr[0]);
                 $(items[0]).addClass("t-last")[options.size](arr[1]);
             }
-
-            if (options.distance % options.smallStep != 0 && options.orientation == "vertical") { 
+            
+            if (options.distance % options.smallStep != 0 && options.orientation == "vertical") {
                 for (var i = 0; i < arr.length; i++) {
                     sum += pixelWidths[i];
                 }
@@ -116,12 +122,12 @@
 
             if (options.orientation == "horizontal") {
                 for (var i = 0; i < items.length; i++) {
-                    $(items[i]).attr("title", $t.formatString(options.tooltip.format || "{0}", parseFloat(titleNumber.toFixed(3), 10)));
+                    $(items[i]).attr("title", $t.formatString(options.tooltip.format || "{0}", round(titleNumber)));
                     titleNumber += options.smallStep;
                 }
             } else {
                 for (var i = items.length - 1; i >= 0; i--) {
-                    $(items[i]).attr("title", $t.formatString(options.tooltip.format || "{0}", parseFloat(titleNumber.toFixed(3), 10)));
+                    $(items[i]).attr("title", $t.formatString(options.tooltip.format || "{0}", round(titleNumber)));
                     titleNumber += options.smallStep;
                 }
             }
@@ -131,17 +137,17 @@
             if ((1000 * options.largeStep) % (1000 * options.smallStep) == 0) {
                 var items = wrapper.find(".t-tick"),
                     item = {},
-                    step = parseFloat((options.largeStep / options.smallStep).toFixed(3), 10);
+                    step = round(options.largeStep / options.smallStep);
 
                 if (options.orientation == "horizontal") {
-                    for (var i = 0; i < items.length; i = parseFloat((i + step).toFixed(3), 10)) {
+                    for (var i = 0; i < items.length; i = round(i + step)) {
                         item = $(items[i]);
-                    
+
                         item.addClass("t-tick-large")
                             .html($("<span class='t-label'></span>").html(item.attr("title")));
                     }
                 } else {
-                    for (var i = items.length - 1; i >= 0; i = parseFloat((i - step).toFixed(3), 10)) {
+                    for (var i = items.length - 1; i >= 0; i = round(i - step)) {
                         item = $(items[i]);
 
                         item.addClass("t-tick-large")
@@ -164,7 +170,7 @@
             }
 
             var itemWidth = trackDivSize / itemsCount,
-                pixelWidths = new Array();
+                pixelWidths = [];
 
             for (var i = 0; i < itemsCount - 1; i++) {
                 pixelWidths[i] = itemWidth;
@@ -172,10 +178,10 @@
 
             pixelWidths[itemsCount - 1] = pixelWidths[itemsCount] = itemWidth / 2;
 
-            return this.roudWidths(pixelWidths);
+            return this.roundWidths(pixelWidths);
         },
 
-        roudWidths: function (pixelWidthsArray) {
+        roundWidths: function (pixelWidthsArray) {
             var balance = 0;
 
             for (i = 0; i < pixelWidthsArray.length; i++) {
@@ -197,8 +203,8 @@
             var step = parseFloat(pixelWidthsArray.length - 1) / parseFloat(additionalSize == 1 ? additionalSize : additionalSize - 1);
 
             for (var i = 0; i < additionalSize; i++) {
-			    pixelWidthsArray[parseInt(Math.round(step * i))] += 1;
-			}
+                pixelWidthsArray[parseInt(Math.round(step * i))] += 1;
+            }
 
             return pixelWidthsArray;
         },
@@ -220,11 +226,11 @@
 
             for (var i = 0; i < owner._pixelStepsArray.length; i++) {
                 if (Math.abs(owner._pixelStepsArray[i] - position) - 1 <= halfStep) {
-                    return parseFloat(owner._valuesArray[i].toFixed(3), 10);
+                    return round(owner._valuesArray[i]);
                 }
             }
         },
-
+        
         getDragableArea: function (trackDiv, maxSelection, orientation) {
             var offsetLeft = trackDiv.offset().left,
                 offsetTop = trackDiv.offset().top;
@@ -259,14 +265,14 @@
 
                 i++;
             }
-            
+
             var lastItem = that.maxValue % that.smallStep == 0 ? itemsCount - 1 : itemsCount;
 
             that._pixelStepsArray[lastItem] = that.maxSelection;
             that._valuesArray[lastItem] = that.maxValue;
         }
     });
-    
+
     function increaseValue(step) {
         return function (value) {
             return value + step;
@@ -285,8 +291,15 @@
         }
     }
 
-    function formatValue(value) {
-        return (value + "").replace(".", $t.cultureInfo.numericdecimalseparator);
+    function parseValue(value) {
+        return value.replace($t.cultureInfo.numericdecimalseparator, ".");
+    }
+
+    function round(value) {
+        (value + "").replace($t.cultureInfo.numericdecimalseparator, ".");
+        value = parseFloat(value, 10);
+        var power = Math.pow(10, PRECISION || 0);
+        return Math.round(value * power) / power;
     }
 
     $t.slider.prototype = {
@@ -300,18 +313,13 @@
                 if ($(e.target).hasClass("t-draghandle"))
                     return;
 
-                var mousePosition = this.orientation == "horizontal" ? e.pageX : e.pageY,
-                    dragableArea = $t.slider.getDragableArea(this.trackDiv, this.maxSelection, this.orientation);
-                
-                this._update($t.slider.getValueFromPosition(mousePosition, dragableArea, this));
-                
                 this._drag.start(e);
             }, this);
 
             this.wrapper
-                .find(".t-tick").bind("mousedown", clickHandler)
+                .find(".t-tick").bind(MOUSEDOWN, clickHandler)
                 .end()
-                .find(".t-slider-track").bind("mousedown", clickHandler);
+                .find(".t-slider-track").bind(MOUSEDOWN, clickHandler);
 
             var move = $.proxy(function (e, sign) {
                 var index = Math.ceil(this.val / this.smallStep);
@@ -326,7 +334,7 @@
             if (this.showButtons) {
                 var mouseDownHandler = $.proxy(function(e, sign) {
                     if (e.which == 1) {
-                        move(e, sign)
+                        move(e, sign);
 
                         this.timeout = setTimeout($.proxy(function () {
                             this.timer = setInterval(function () {
@@ -354,11 +362,13 @@
                     .eq(0)
                     .bind("mousedown", $.proxy(function (e) {
                         mouseDownHandler(e, 1);
+                        e.preventDefault();
                     }, this))
                     .end()
                     .eq(1)
                     .bind("mousedown", $.proxy(function (e) {
                         mouseDownHandler(e, -1);
+                        e.preventDefault();
                     }, this))
             }
 
@@ -390,37 +400,37 @@
                 .bind("mouseover", preventDefault);
 
             this.wrapper
-                .find(".t-tick").unbind("mousedown")
+                .find(".t-tick").unbind(MOUSEDOWN)
                 .end()
-                .find(".t-slider-track").unbind("mousedown");
+                .find(".t-slider-track").unbind(MOUSEDOWN);
 
             this.wrapper
                 .find(".t-draghandle")
                 .unbind("keydown")
-                .bind("keydown", preventDefault)
+                .bind("keydown", preventDefault);
 
             this.enabled = false;
         },
 
         _update: function (val) {
             var change = this.value() != val;
-            
+
             this.value(val);
-            
+
             if (change) {
                 $t.trigger(this.element, 'change', { value: this.val });
             }
         },
 
         value: function (val) {
-            val = parseFloat(parseFloat(val, 10).toFixed(3), 10);
+            val = round(val);
             if (isNaN(val)) {
                 return this.val;
             }
-            
+
             if (val >= this.minValue && val <= this.maxValue) {
                 if (this.val != val) {
-                    $(this.element).attr("value", formatValue(val));
+                    $(this.element).attr("value", round(parseValue($t.formatString("{0:N}", val))));
                     this.val = val;
                     this.refresh();
                 }
@@ -444,7 +454,7 @@
         },
 
         _setValueInRange: function (val) {
-            val = parseFloat(parseFloat(val, 10).toFixed(3), 10);
+            val = round(val);
 
             if (isNaN(val)) {
                 this._update(this.minValue);
@@ -455,35 +465,35 @@
             val = Math.min(val, this.maxValue);
             this._update(val);
         }
-    }
+    };
 
     $t.slider.Selection = function (options) {
-        var $element = $(options.element);
+        var $element = $(options.element),
+            owner = options.owner;
 
         function moveSelection (val) {
-            var owner = options.owner,
-                selectionValue = val - owner.minValue,
+            var selectionValue = val - owner.minValue,
                 index = Math.ceil(selectionValue / owner.smallStep),
                 selection = owner._pixelStepsArray[index],
                 selectionDiv = owner.trackDiv.find(".t-slider-selection"),
-                halfDragHanndle = parseInt(options.dragHandle[options.size]() / 2, 10) + 1;
+                halfDragHanndle = parseInt(options.dragHandle[options.outerSize]() / 2, 10) + 1;
 
             selectionDiv[options.size](selection);
             options.dragHandle.css(options.position, selection - halfDragHanndle);
         }
 
-        moveSelection(parseFloat($element.val(), 10));
+        moveSelection(owner.val);
 
         var handler = function (e) {
-            moveSelection(parseFloat(e.value, 10));
+            moveSelection(round(e.value));
         };
 
         $element.bind({ "change": handler, "slide": handler, "t:moveSelection": handler });
-    }
+    };
 
     $t.slider.Drag = function (options) {
-        options.dragHandleSize = options.dragHandle[options.size]();
-
+        options.dragHandleSize = options.dragHandle[options.outerSize]();
+        
         $.extend(this, options);
 
         var selector = "";
@@ -496,7 +506,7 @@
             default: selector = ".t-draghandle";
                 break;
         }
-        
+
         this.draggable = new $t.draggable({
             distance: 0,
             owner: options.owner.wrapper[0],
@@ -510,7 +520,10 @@
 
     $t.slider.Drag.prototype = {
         start: function (e) {
-            this.draggable._startDrag(e.currentTarget, { x: e.pageX, y: e.pageY })
+            var location = $t.touchLocation(e);
+            this.draggable._startDrag(e.currentTarget, location);
+            this.draggable._start(e);
+            this.draggable._drag(e); // distance is 0, we need to manually fire the slide.
         },
 
         _start: function (e) {
@@ -519,8 +532,8 @@
             }
 
             $(this.element).unbind('mouseover');
-            
-            this.val = parseFloat($(this.element).val());
+
+            this.val = round($(this.element).val());
             this.dragableArea = $t.slider.getDragableArea(this.owner.trackDiv, this.owner.maxSelection, this.orientation);
             this.step = Math.max(this.owner.smallStep * (this.owner.maxSelection / this.owner.distance), 0);
 
@@ -535,13 +548,13 @@
 
             if (this.owner.tooltip.enabled) {
                 this.tooltipDiv = $("<div class='t-widget t-tooltip'><!-- --></div>").appendTo(document.body);
-                
+
                 if (this.type) {
                     var formattedSelectionStart = $t.formatString(this.format, this.selectionStart),
                         formattedSelectionEnd = $t.formatString(this.format, this.selectionEnd);
 
                     this.tooltipDiv.html(formattedSelectionStart + ' - ' + formattedSelectionEnd );
-                } else {                 
+                } else {
                     var tooltipArrow = "t-callout-";
 
                     if (this.orientation == "horizontal") {
@@ -561,15 +574,17 @@
                     this.tooltipDiv.html($t.formatString(this.owner.tooltip.format || "{0}", this.val) + this.tooltipInnerDiv);
                 }
 
-                this.moveTooltip(this.tooltipDiv);
+                this.moveTooltip();
             }
         },
 
         drag: function (e) {
+            var location = $t.touchLocation(e);
+
             if (this.orientation == "horizontal") {
-                this.val = this.horizontalDrag(e);
+                this.val = this.horizontalDrag(location.x);
             } else {
-                this.val = this.verticalDrag(e);
+                this.val = this.verticalDrag(location.y);
             }
 
             if (this.oldVal != this.val) {
@@ -600,19 +615,22 @@
                     }
                 } else {
                     $t.trigger(this.element, "slide", { value: this.val });
-                    
+
                     if (this.owner.tooltip.enabled) {
                         this.tooltipDiv.html($t.formatString(this.format, this.val) + this.tooltipInnerDiv);
                     }
                 }
 
                 if (this.owner.tooltip.enabled) {
-                    this.moveTooltip(this.tooltipDiv);
+                    this.moveTooltip();
                 }
             }
         },
 
         stop: function (e) {
+            if ($t.isTouch)
+                e.preventDefault();
+            
             if (e.keyCode == 27) { // ESC
                 this.owner.refresh();
             } else {
@@ -628,20 +646,23 @@
             }
 
             $(this.element).bind('mouseover');
-            
+
             return false;
         },
 
-        moveTooltip: function (tooltipDiv) {
-            var top = 0,
-                left= 0;
+        moveTooltip: function () {
+            var that = this,
+                top = 0,
+                left= 0,
+                margin = 4,
+                callout = that.tooltipDiv.find(".t-callout");
 
-            if (this.type) {
-                var dragHandles = this.owner.wrapper.find(".t-draghandle"),
+            if (that.type) {
+                var dragHandles = that.owner.wrapper.find(".t-draghandle"),
                     firstDragHandleOffset = dragHandles.eq(0).offset(),
                     secondDragHandleOffset = dragHandles.eq(1).offset();
 
-                if (this.orientation == "horizontal") {
+                if (that.orientation == "horizontal") {
                     top = secondDragHandleOffset.top;
                     left = firstDragHandleOffset.left + ((secondDragHandleOffset.left - firstDragHandleOffset.left) / 2);
                 } else {
@@ -649,41 +670,29 @@
                     left = secondDragHandleOffset.left;
                 }
             } else {
-                var dragHandleOffset = this.dragHandle.offset();
+                var dragHandleOffset = that.dragHandle.offset();
 
                 top = dragHandleOffset.top;
                 left = dragHandleOffset.left;
             }
 
-            var halfTooltipDiv = tooltipDiv[this.size]() / 2;
-
-            if (this.orientation == "horizontal") {
-                left -= halfTooltipDiv;
-
-                if (this.owner.tickPlacement != "topLeft") {
-                    top -= 35;
-                } else {
-                    top += 33;
-                }
+            if (that.orientation == "horizontal") {
+                left -= Math.round((that.tooltipDiv.outerWidth() - that.dragHandle[that.outerSize]()) / 2);
+                top -= that.tooltipDiv.outerHeight() + callout.height() + margin;
             } else {
-                top -= halfTooltipDiv;
-
-                if (this.owner.tickPlacement != "topLeft") {
-                    left -= tooltipDiv.width() + 23;
-                } else {
-                    left += 31;
-                }
+                top -= Math.round((that.tooltipDiv.outerHeight() - that.dragHandle[that.outerSize]()) / 2);
+                left -= that.tooltipDiv.outerWidth() + callout.width() + margin;
             }
 
-            tooltipDiv.css({ top: top, left: left });
+            that.tooltipDiv.css({ top: top, left: left });
         },
 
-        horizontalDrag: function (mousePosition) {
+        horizontalDrag: function (x) {
             var val = 0;
 
-            if (this.dragableArea.startPoint < mousePosition.pageX && mousePosition.pageX < this.dragableArea.endPoint) {
-                val = $t.slider.getValueFromPosition(mousePosition.pageX, this.dragableArea, this.owner);
-            } else if (mousePosition.pageX >= this.dragableArea.endPoint) {
+            if (this.dragableArea.startPoint < x && x < this.dragableArea.endPoint) {
+                val = $t.slider.getValueFromPosition(x, this.dragableArea, this.owner);
+            } else if (x >= this.dragableArea.endPoint) {
                 val = this.owner.maxValue;
             } else {
                 val = this.owner.minValue;
@@ -692,12 +701,12 @@
             return val;
         },
 
-        verticalDrag: function (mousePosition) {
+        verticalDrag: function (y) {
             var val = 0;
 
-            if (this.dragableArea.startPoint > mousePosition.pageY && mousePosition.pageY > this.dragableArea.endPoint) {
-                val = $t.slider.getValueFromPosition(mousePosition.pageY, this.dragableArea, this.owner);
-            } else if (mousePosition.pageY <= this.dragableArea.endPoint) {
+            if (this.dragableArea.startPoint > y && y > this.dragableArea.endPoint) {
+                val = $t.slider.getValueFromPosition(y, this.dragableArea, this.owner);
+            } else if (y <= this.dragableArea.endPoint) {
                 val = this.owner.maxValue;
             } else {
                 val = this.owner.minValue;
@@ -705,7 +714,7 @@
 
             return val;
         }
-    }
+    };
 
     function createWrapper (options, element) {
         var $element = $(element),
@@ -733,7 +742,7 @@
                      .cat("'></div></div>")
                      .string();
     }
-    
+
     function createButton (options, type) {
         var buttonCssClass,
             isHorizontal = options.orientation == "horizontal";
@@ -807,7 +816,6 @@
         enabled: true,
         minValue: 0,
         maxValue: 10,
-        val: 0,
         smallStep: 1,
         largeStep: 5,
         showButtons: true,
@@ -823,12 +831,21 @@
     //
 
     $t.rangeSlider = function (element, options) {
-        var $element = $(element);
+        var $element = $(element),
+            inputs = $(element).find("input");
+        options = options || {};
+        inputs[0].type = "text";
+        inputs[1].type = "text";
+        options.selectionStart = round(parseValue(inputs.eq(0).val()) || options.selectionStart);
+        options.selectionEnd = round(parseValue(inputs.eq(1).val()) || options.selectionEnd);
+
+        this.values(options.selectionStart, options.selectionEnd);
         this.element = element;
         options.distance = options.maxValue - options.minValue;
         $.extend(this, options);
         options.position = this.orientation == "horizontal" ? "left" : "bottom";
         options.size = this.orientation == "horizontal" ? "width" : "height";
+        options.outerSize = this.orientation == "horizontal" ? "outerWidth" : "outerHeight";
 
         createHtml(element, options);
         this.wrapper = $element.closest(".t-slider");
@@ -857,6 +874,7 @@
             dragHandle: this.wrapper.find(".t-draghandle:first"),
             orientation: options.orientation,
             size: options.size,
+            outerSize: options.outerSize,
             position: options.position,
             owner: this
         };
@@ -867,6 +885,7 @@
         var rightDrag = {
             element: element,
             type: "lastHandle",
+            outerSize: options.outerSize,
             dragHandle: this.wrapper.find(".t-draghandle:last"),
             orientation: options.orientation,
             size: options.size,
@@ -894,7 +913,7 @@
             change: this.onChange,
             load: this.onLoad
         });
-    }
+    };
 
     $t.rangeSlider.prototype = {
         enable: function () {
@@ -907,31 +926,28 @@
                 if ($(e.target).hasClass("t-draghandle"))
                     return;
 
-                var mousePosition = this.orientation == "horizontal" ? e.pageX : e.pageY,
+                var location = $t.touchLocation(e),
+                    mousePosition = this.orientation == "horizontal" ? location.x : location.y,
                     dragableArea = $t.slider.getDragableArea(this.trackDiv, this.maxSelection, this.orientation),
                     val = $t.slider.getValueFromPosition(mousePosition, dragableArea, this);
 
                 if (val < this.selectionStart) {
-                    this._setValueInRange(val, this.selectionEnd);
                     this._firstHandleDrag.start(e);
                 } else if (val > this.selectionEnd) {
-                    this._setValueInRange(this.selectionStart, val);
                     this._lastHandleDrag.start(e);
                 } else {
                     if (val - this.selectionStart <= this.selectionEnd - val) {
-                        this._setValueInRange(val, this.selectionEnd);
                         this._firstHandleDrag.start(e);
                     } else {
-                        this._setValueInRange(this.selectionStart, val);
                         this._lastHandleDrag.start(e);
                     }
                 }
-            }, this)
+            }, this);
 
             this.wrapper
-                .find(".t-tick").bind("mousedown", clickHandler)
+                .find(".t-tick").bind(MOUSEDOWN, clickHandler)
                 .end()
-                .find(".t-slider-track").bind("mousedown", clickHandler);
+                .find(".t-slider-track").bind(MOUSEDOWN, clickHandler);
 
             this.wrapper.find(".t-draghandle")
                 .eq(0).bind({
@@ -956,15 +972,15 @@
                 .addClass("t-state-disabled");
 
             this.wrapper
-                .find(".t-tick").unbind("mousedown")
+                .find(".t-tick").unbind(MOUSEDOWN)
                 .end()
-                .find(".t-slider-track").unbind("mousedown");
+                .find(".t-slider-track").unbind(MOUSEDOWN);
 
             this.wrapper
                 .find(".t-draghandle")
                 .unbind("keydown")
-                .bind("keydown", $t.preventDefault)
-                
+                .bind("keydown", $t.preventDefault);
+
             this.enabled = false;
         },
 
@@ -975,7 +991,7 @@
             if (e.keyCode in this.keyMap) {
                 if (isFirstHandle) {
                     selectionStartValue = this.keyMap[e.keyCode](selectionStartValue);
-                    
+
                     if (selectionStartValue > selectionEndValue) {
                         selectionEndValue = selectionStartValue;
                     }
@@ -998,7 +1014,7 @@
             var change = values[0] != selectionStart || values[1] != selectionEnd;
 
             this.values(selectionStart, selectionEnd);
-            
+
             if (change) {
                 $t.trigger(this.element, 'change', { values: [selectionStart, selectionEnd] });
             }
@@ -1007,12 +1023,12 @@
         values: function (selectionStart, selectionEnd) {
             var values = [this.selectionStart, this.selectionEnd];
 
-            selectionStart = parseFloat(parseFloat(selectionStart, 10).toFixed(3), 10);
+            selectionStart = round(selectionStart);
             if (isNaN(selectionStart)) {
                 return values;
             }
 
-            selectionEnd = parseFloat(parseFloat(selectionEnd, 10).toFixed(3), 10);
+            selectionEnd = round(selectionEnd);
             if (isNaN(selectionEnd)) {
                 return values;
             }
@@ -1021,10 +1037,10 @@
             && selectionEnd >= this.minValue && selectionEnd <= this.maxValue && selectionStart <= selectionEnd) {
                 if (this.selectionStart != selectionStart || this.selectionEnd != selectionEnd) {
                     $(this.element).find("input")
-                                   .eq(0).attr("value", formatValue(selectionStart))
+                                   .eq(0).attr("value", round(parseValue($t.formatString("{0:N}", selectionStart))))
                                    .end()
-                                   .eq(1).attr("value", formatValue(selectionEnd));
-                    
+                                   .eq(1).attr("value", round(parseValue($t.formatString("{0:N}", selectionEnd))));
+
                     this.selectionStart = selectionStart;
                     this.selectionEnd = selectionEnd;
                     this.refresh();
@@ -1035,7 +1051,7 @@
         refresh: function() {
             $t.trigger(this.element, 't:moveSelection', { values: [this.selectionStart, this.selectionEnd] });
 
-            if (this.selectionStart == this.maxValue && this.slectionEnd == this.maxValue) {
+            if (this.selectionStart == this.maxValue && this.selectionEnd == this.maxValue) {
                 this._setZIndex("firstHandle");
             }
         },
@@ -1047,7 +1063,7 @@
             selectionEnd = Math.max(selectionEnd, this.minValue);
             selectionEnd = Math.min(selectionEnd, this.maxValue);
 
-            if (this.selectionStart == this.maxValue && this.slectionEnd == this.maxValue) {
+            if (this.selectionStart == this.maxValue && this.selectionEnd == this.maxValue) {
                 this._setZIndex("firstHandle");
             }
 
@@ -1076,7 +1092,7 @@
                 secondHandle.css(zIndex, "1");
             }
         }
-    }
+    };
 
     $t.rangeSlider.Selection = function (options) {
         var owner = options.owner;
@@ -1089,7 +1105,7 @@
                 selectionStart = owner._pixelStepsArray[selectionStartIndex],
                 selectionEnd = owner._pixelStepsArray[selectionEndIndex],
                 dragHandles = owner.wrapper.find(".t-draghandle"),
-                halfHandle = parseInt(dragHandles.eq(0)[options.size]() / 2, 10) + 1;
+                halfHandle = parseInt(dragHandles.eq(0)[options.outerSize]() / 2, 10) + 1;
 
             dragHandles.eq(0).css(options.position, selectionStart - halfHandle)
                        .end()
@@ -1110,16 +1126,14 @@
             selectionDiv.css(options.position, selectionPosition - 1);
         }
 
-        var inputs = $(owner.element).find("input");
-
-        moveSelection([parseFloat(inputs[0].getAttribute("value"), 10), parseFloat(inputs[1].getAttribute("value"), 10)]);
+        moveSelection(owner.values());
 
         var handler = function (e) {
             moveSelection(e.values);
         };
 
         $(owner.element).bind({ "change": handler, "slide": handler, "t:moveSelection": handler  });
-    }
+    };
 
     // jQuery extender
     $.fn.tRangeSlider = function (options) {
@@ -1137,10 +1151,10 @@
         enabled: true,
         minValue: 0,
         maxValue: 10,
-        slectionStart: 0,
-        slectionEnd: 10,
         smallStep: 1,
         largeStep: 5,
+        selectionStart: 0,
+        selectionEnd: 10,
         orientation: "horizontal",
         tickPlacement: "both",
         tooltip: { enabled: true, format: "{0}" }

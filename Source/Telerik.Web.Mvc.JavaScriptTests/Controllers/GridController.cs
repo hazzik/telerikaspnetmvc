@@ -68,6 +68,11 @@ namespace Telerik.Web.Mvc.JavaScriptTests.Controllers
             return View(TestData(20));
         }
 
+        public ActionResult ColumnHiding()
+        {
+            return View(TestData(20));
+        }
+
         public ActionResult Grouping()
         {
             return View(TestData(20));

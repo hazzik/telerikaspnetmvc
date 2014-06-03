@@ -67,6 +67,22 @@ using System.Collections.Generic;
         }
 
         [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            dropDownList.Name = "dropDownList1";
+            dropDownList.ViewContext.ViewData.ModelState.Add("dropDownList1", state);
+            dropDownList.ViewContext.ViewData.ModelState.AddModelError("dropDownList1", "error");
+
+            IHtmlNode tag = renderer.Build();
+
+            tag.Attribute("class").ShouldContain("input-validation-error");
+        }
+
+        [Fact]
         public void DropDownListInnerContentTag_should_output_wrapping_span_tag()
         {
             IHtmlNode tag = renderer.InnerContentTag();
@@ -259,6 +275,36 @@ using System.Collections.Generic;
             IHtmlNode tag = renderer.HiddenInputTag();
 
             Assert.False(tag.Attributes().ContainsKey("name"));
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_output_html_attributes()
+        {
+            dropDownList.HiddenInputHtmlAttributes.Add("height", "100px");
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            Assert.Equal("100px", tag.Attribute("height"));
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_set_id_from_inputHtmlAttr()
+        {
+            dropDownList.HiddenInputHtmlAttributes.Add("id", "test");
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            tag.Attribute("id").ShouldEqual("test");
+        }
+
+        [Fact]
+        public void HiddenInputTag_should_set_auto_name_if_not_set()
+        {
+            dropDownList.Name = "test";
+
+            IHtmlNode tag = renderer.HiddenInputTag();
+
+            tag.Attribute("name").ShouldEqual(dropDownList.Name);
         }
     }
 }

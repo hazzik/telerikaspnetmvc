@@ -51,6 +51,7 @@ namespace Telerik.Web.Mvc.UI
                    .ToggleAttribute("disabled", "disabled", !Input.Enabled)
                    .Attributes(Input.InputHtmlAttributes)
                    .Attributes(Input.GetUnobtrusiveValidationAttributes())
+                   .ToggleClass("input-validation-error", !Input.IsValid())
                    .PrependClass(UIPrimitives.Input);
         }
 

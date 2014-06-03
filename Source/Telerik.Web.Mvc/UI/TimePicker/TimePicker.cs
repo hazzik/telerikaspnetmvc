@@ -83,29 +83,11 @@ namespace Telerik.Web.Mvc.UI
 #if MVC2 || MVC3
             Name = Name ?? ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(string.Empty);
 #endif
-            VerifyValue();
-
             TimePickerHtmlBuilder renderer = new TimePickerHtmlBuilder(this);
 
             renderer.Build().WriteTo(writer);
 
             base.WriteHtml(writer);
         }
-
-        private void VerifyValue() 
-        {
-            var msMinTime = MinValue.TimeOfDay.Ticks;
-            var msMaxTime = MaxValue.TimeOfDay.Ticks;
-            var msValue = Value != null ? Value.Value.TimeOfDay.Ticks : msMinTime;
-
-            if (msMinTime > msMaxTime)
-                msMaxTime = msMaxTime + TimeSpan.TicksPerDay;
-            
-            if (msMinTime != msMaxTime && (msMinTime > msValue || msValue > msMaxTime))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.TimeOutOfRange);
-            }
-        }
-
     }
 }

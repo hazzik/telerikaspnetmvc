@@ -68,6 +68,30 @@
         }
 
         [Fact]
+        public void Should_set_type_when_bound_to_dataTable()
+        {
+            const string firstColumnName = "Column1";
+            const string secondColumnName = "Column2";
+
+            var dataTable = new DataTable();
+            dataTable.Columns.Add(firstColumnName, typeof(int));
+            dataTable.Columns.Add(secondColumnName, typeof(DateTime));
+
+            var grid = GridTestHelper.CreateGrid<DataRowView>();
+
+            var settings = new GridColumnSettings
+            {
+                Member = firstColumnName,
+                MemberType = typeof(int)
+            };
+
+            var dataTableColumnGenerator = new GridColumnGenerator<DataRowView>(grid);
+
+            var column = (IGridBoundColumn)dataTableColumnGenerator.CreateColumn(settings);
+            column.MemberType.ShouldEqual(typeof(int));
+        }
+
+        [Fact]
         public void Member_should_set_title()
         {
             var settings = new GridColumnSettings<Customer>
@@ -141,6 +165,7 @@
             public int? Bar { get; set; }
             public NonBindableValueType? NonBindableValueType { get; set; }
         }
+
         private struct NonBindableValueType
         {
         }

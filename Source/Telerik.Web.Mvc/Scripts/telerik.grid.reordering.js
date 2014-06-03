@@ -32,40 +32,19 @@
             $.each(grid.$tbody.children(), function () {
                 reorder($(this).find(' > td:not(.t-group-cell, .t-hierarchy-cell, .t-detail-cell)'), sourceIndex, destIndex);
             });
-        }
+        };
 
         grid.reorderColumn = reorderColumn;
-
-        function setLastColumnClass($source, sourceIndex, $dest, destIndex) {
-            switchClasses($source, sourceIndex, $dest, destIndex, "th", "t-last-header");
-            switchClasses($source, sourceIndex, $dest, destIndex, "td", "t-last");
-        }
-
-        function switchClasses($source, sourceIndex, $dest, destIndex, selector, className) {                
-
-            if ($dest.is(selector) && destIndex == lastColumnIndex) {
-                $source.addClass(className);
-                $dest.removeClass(className);
-            }
-
-            if ($source.is(selector) && sourceIndex == lastColumnIndex) {                
-                $source.removeClass(className)
-                       .prev(selector)
-                       .addClass(className);                
-            }
-        }
 
         function reorder(selector, sourceIndex, destIndex) {
             var $source = selector.eq(sourceIndex);
             var $dest = selector.eq(destIndex);
 
-            setLastColumnClass($source, sourceIndex, $dest, destIndex);
-            
             $source[sourceIndex > destIndex ? 'insertBefore' : 'insertAfter']($dest);
         }
 
         new $t.draggable({
-            owner: grid.$header,
+            owner: grid.$header[0],
             selector: '.t-header:not(.t-group-cell,.t-hierarchy-cell)',
             scope: grid.element.id + '-reodering',
             cue: function(e) {
@@ -77,19 +56,19 @@
         });
 
         new $t.droppable({
-            owner: grid.$header,
+            owner: grid.$header[0],
             scope: grid.element.id + '-reodering',
             selector: '.t-header:not(.t-group-cell,.t-hierarchy-cell)',
             over: function(e) {
                 var same = $.trim(e.$draggable.text()) == $.trim(e.$droppable.text());
                 $t.dragCueStatus(e.$cue, same? 't-denied' : 't-add');
-                
-                var top = 0; 
-                
+
+                var top = 0;
+
                 $('> .t-grid-top, > .t-grouping-header', grid.element).each(function() {
                     top += $(this).outerHeight();
                 });
-                
+
                 if (!same)
                     grid.$reorderDropCue.css({
                          height: e.$droppable.outerHeight(),
@@ -108,7 +87,7 @@
                 grid.$reorderDropCue.remove();
                 if (e.$cue.find('.t-drag-status').is('.t-add')) {
                     var column = grid.columnFromTitle($.trim(e.$draggable.text()));
-                    var position = grid.$columns().index(e.$droppable);                    
+                    var position = grid.$columns().index(e.$droppable.closest(".t-header"));
                     $t.trigger(grid.element, 'columnReorder', {
                         column: column,
                         oldIndex: $.inArray(column, grid.columns),

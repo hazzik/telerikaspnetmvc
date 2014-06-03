@@ -56,5 +56,21 @@
             Assert.Equal(UIPrimitives.Input + " t-test", tag.Attribute("class"));
         }
 
+        [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            dateTimePicker.Name = "dateTimePicker1";
+            dateTimePicker.ViewContext.ViewData.ModelState.Add("dateTimePicker1", state);
+            dateTimePicker.ViewContext.ViewData.ModelState.AddModelError("dateTimePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            tag.Attribute("class").ShouldContain("input-validation-error");
+        }
+
     }
 }

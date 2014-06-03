@@ -195,7 +195,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
             return new BooleanNode
                        {
-                           Value = Convert.ToBoolean(stringToken.Value, CultureInfo.CurrentCulture)
+                           Value = Convert.ToBoolean(stringToken.Value)
                        };
         }
 
@@ -205,7 +205,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
             return new NumberNode
                        {
-                           Value = Convert.ToDouble(number.Value, CultureInfo.CurrentCulture)
+                           // Always expect the decimal separator to be "." no matter what the current culture is
+                           Value = Convert.ToDouble(number.Value, CultureInfo.InvariantCulture)
                        };
         }
 

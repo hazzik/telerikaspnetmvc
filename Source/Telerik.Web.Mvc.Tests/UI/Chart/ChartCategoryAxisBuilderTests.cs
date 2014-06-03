@@ -1,7 +1,6 @@
 ﻿namespace Telerik.Web.Mvc.UI.Tests.Chart
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Telerik.Web.Mvc.UI;
     using Telerik.Web.Mvc.UI.Fluent;
     using Xunit;
@@ -62,22 +61,29 @@
         [Fact]
         public void MajorGridLines_should_set_Visible()
         {
-            builder.MajorGridLines(1, "green");
+            builder.MajorGridLines(1, "green", ChartDashType.Dot);
             axis.MajorGridLines.Visible.ShouldEqual(true);
         }
 
         [Fact]
         public void MajorGridLines_should_set_Width()
         {
-            builder.MajorGridLines(1, "green");
+            builder.MajorGridLines(1, "green", ChartDashType.Dot);
             axis.MajorGridLines.Width.ShouldEqual(1);
         }
 
         [Fact]
         public void MajorGridLines_should_set_Color()
         {
-            builder.MajorGridLines(1, "green");
+            builder.MajorGridLines(1, "green", ChartDashType.Dot);
             axis.MajorGridLines.Color.ShouldEqual("green");
+        }
+        
+        [Fact]
+        public void MajorGridLines_should_set_DashType()
+        {
+            builder.MajorGridLines(1, "green", ChartDashType.Dot);
+            axis.MajorGridLines.DashType.ShouldEqual(ChartDashType.Dot);
         }
 
         [Fact]
@@ -89,22 +95,29 @@
         [Fact]
         public void MinorGridLines_should_set_Visible()
         {
-            builder.MinorGridLines(1, "green");
+            builder.MinorGridLines(1, "green", ChartDashType.Dot);
             axis.MinorGridLines.Visible.ShouldEqual(true);
         }
 
         [Fact]
         public void MinorGridLines_should_set_Width()
         {
-            builder.MinorGridLines(1, "green");
+            builder.MinorGridLines(1, "green", ChartDashType.Dot);
             axis.MinorGridLines.Width.ShouldEqual(1);
         }
 
         [Fact]
         public void MinorGridLines_should_set_Color()
         {
-            builder.MinorGridLines(1, "green");
+            builder.MinorGridLines(1, "green", ChartDashType.Dot);
             axis.MinorGridLines.Color.ShouldEqual("green");
+        }
+
+        [Fact]
+        public void MinorGridLines_should_set_DashType()
+        {
+            builder.MinorGridLines(1, "green", ChartDashType.Dot);
+            axis.MinorGridLines.DashType.ShouldEqual(ChartDashType.Dot);
         }
 
         [Fact]
@@ -116,22 +129,55 @@
         [Fact]
         public void Line_should_set_Visible()
         {
-            builder.Line(1, "green");
+            builder.Line(1, "green", ChartDashType.Dot);
             axis.Line.Visible.ShouldEqual(true);
         }
 
         [Fact]
         public void Line_should_set_Width()
         {
-            builder.Line(1, "green");
+            builder.Line(1, "green", ChartDashType.Dot);
             axis.Line.Width.ShouldEqual(1);
         }
 
         [Fact]
         public void Line_should_set_Color()
         {
-            builder.Line(1, "green");
+            builder.Line(1, "green", ChartDashType.Dot);
             axis.Line.Color.ShouldEqual("green");
+        }
+
+        [Fact]
+        public void Line_should_set_DashType()
+        {
+            builder.Line(1, "green", ChartDashType.Dot);
+            axis.Line.DashType.ShouldEqual(ChartDashType.Dot);
+        }
+
+        [Fact]
+        public void Labels_should_set_Labels()
+        {
+            builder.Labels(true);
+            axis.Labels.Visible.ShouldEqual(true);
+        }
+
+        [Fact]
+        public void Labels_should_return_builder()
+        {
+            builder.Labels(labels => { }).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void Orientation_should_set_Orientation()
+        {
+            builder.Orientation(ChartAxisOrientation.Vertical);
+            axis.Orientation.ShouldEqual(ChartAxisOrientation.Vertical);
+        }
+
+        [Fact]
+        public void Orientation_should_return_builder()
+        {
+            builder.Orientation(ChartAxisOrientation.Vertical).ShouldBeSameAs(builder);
         }
 
         private void AssertCategories(IEnumerable<string> categories)

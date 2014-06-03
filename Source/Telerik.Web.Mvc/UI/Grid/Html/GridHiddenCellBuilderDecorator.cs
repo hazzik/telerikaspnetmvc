@@ -9,8 +9,7 @@ namespace Telerik.Web.Mvc.UI.Html
     {
         public void Decorate(IHtmlNode td)
         {
-            td.Css("display", "none")
-              .Css("width", "0");
+            td.Css("display", "none");              
         }
     }
 }

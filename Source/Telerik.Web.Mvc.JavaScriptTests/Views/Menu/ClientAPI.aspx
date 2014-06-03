@@ -62,6 +62,19 @@
             })
             .Effects(effects=> effects.Toggle())
             .Render(); %>
+
+     <% Html.Telerik().Menu()
+            .Name("Menu2")
+            .Items(items =>
+            {
+                items.Add().Text("Item 1").Url("http://www.telerik.com");
+            }
+            ).ClientEvents(events =>
+            {
+                events.OnSelect("select_prevented");
+            })
+            .Render(); 
+    %>
     
    <script type="text/javascript">
 
@@ -88,6 +101,9 @@
             isRaised = true;
         }
 
+        function select_prevented(e) {
+            e.preventDefault();
+        }
 
         var onLoadMenu;
 
@@ -104,8 +120,6 @@
 
 <script type="text/javascript">
 
-
-
         test('click method should call preventDefault method', function() {
             var item = getRootItem(7);
             var isCalled = false;
@@ -113,6 +127,18 @@
             var e = { preventDefault: function () { isCalled = true; }, stopPropagation: function () { } }
 
             getMenu().click(e, item);
+
+            ok(isCalled);
+        });
+
+        test('click method should call preventDefault method if select event handler is stopped', function() {
+            var item = $('#Menu2').find('> .t-item').eq(0),
+                menu = $('#Menu2').data('tMenu'),
+                isCalled = false;
+
+            var e = { preventDefault: function () { isCalled = true; }, stopPropagation: function () { } }
+
+            menu.click(e, item);
 
             ok(isCalled);
         });

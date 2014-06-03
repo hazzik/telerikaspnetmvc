@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Text;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Lexer")]
@@ -16,7 +15,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         private const char Separator = '~';
         private static readonly string[] ComparisonOperators = new[] { "eq", "ne", "lt", "le", "gt", "ge" };
         private static readonly string[] LogicalOperators = new[] { "and", "or", "not" };
-        private static readonly string[] Booleans = new[] { "true", "false"};
+        private static readonly string[] Booleans = new[] { "true", "false" };
         private static readonly string[] Functions = new[] { "substringof", "endswith", "startswith" };
 
         private int currentCharacterIndex;
@@ -94,12 +93,12 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         {
             return new FilterToken { TokenType = FilterTokenType.Comma, Value = result };
         }
-        
+
         private static FilterToken Boolean(string result)
         {
             return new FilterToken { TokenType = FilterTokenType.Boolean, Value = result };
         }
-        
+
         private static FilterToken RightParenthesis(string result)
         {
             return new FilterToken { TokenType = FilterTokenType.RightParenthesis, Value = result };
@@ -256,8 +255,6 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
 
         private bool TryParseNumber(out string number)
         {
-            char decimalSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
-
             SkipSeparators();
 
             char currentCharacter = Peek();
@@ -271,7 +268,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 currentCharacter = Next();
             }
 
-            if (currentCharacter == decimalSeparator)
+            if (currentCharacter == '.')
             {
                 decimalSymbols++;
                 result.Append(currentCharacter);
@@ -284,9 +281,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                 return false;
             }
 
-            number = Read( character =>
+            number = Read(
+                character =>
                 {
-                    if (character == decimalSeparator)
+                    if (character == '.')
                     {
                         if (decimalSymbols < 1)
                         {

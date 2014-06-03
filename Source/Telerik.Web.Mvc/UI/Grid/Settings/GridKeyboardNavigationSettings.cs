@@ -20,9 +20,25 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
+        public bool EditOnTab
+        {
+            get;
+            set;
+        }
+
         public void SerializeTo(string key, IClientSideObjectWriter writer)
         {
-            writer.Append("keyboardNavigation", Enabled);
+            if (Enabled)
+            {
+                if (EditOnTab)
+                {
+                    writer.AppendObject("keyboardNavigation", new { editOnTab = EditOnTab });
+                }
+                else
+                {
+                    writer.Append("keyboardNavigation", Enabled);
+                }
+            }
         }
     }
 }

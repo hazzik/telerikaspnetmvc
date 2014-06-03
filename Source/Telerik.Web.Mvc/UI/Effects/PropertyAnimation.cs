@@ -52,7 +52,7 @@ namespace Telerik.Web.Mvc.UI
         {
             return String.Format(CultureInfo.CurrentCulture, "{{name:'{0}',properties:['{1}']}}",
                                  Name,
-                                 AnimationType.ToString().ToLower(CultureInfo.InvariantCulture));
+                                 AnimationType.ToString().ToLowerInvariant());
         }
     }
 }

@@ -170,7 +170,7 @@
         },
 
         getElementZIndex: function (element) {
-            var zIndex = 'auto';
+            var zIndex;
             $(element).parents().andSelf().each(function () {
                 zIndex = $(this).css('zIndex');
                 if (Number(zIndex)) {
@@ -179,7 +179,21 @@
                 }
             });
 
-            return zIndex;
+            return zIndex == 'auto' ? 1 : zIndex; // 'auto' causes problems if there is Upload behind the dropdown
+        },
+
+        scrollbarWidth: function() {
+            var div = document.createElement("div"),
+                result;
+
+            div.style.cssText = "overflow:scroll;overflow-x:hidden;zoom:1";
+            div.innerHTML = "&nbsp;";
+            document.body.appendChild(div);
+
+            result = div.offsetWidth - div.scrollWidth;
+
+            document.body.removeChild(div);
+            return result;
         },
 
         lastIndexOf: function (value, character) {
@@ -864,6 +878,7 @@
 
     /* Number formatting ===================================*/
     var customFormatRegEx = /[0#?]/;
+    var standartFormatRegEx = /n|p|c/;
 
     function round(value, precision) {
         var power = Math.pow(10, precision || 0);
@@ -912,7 +927,7 @@
 
         return appendExtras ? result : reverse(result);
     }
-
+    
     $t.formatNumber = function (number,
                                 format,
                                 digits,
@@ -931,7 +946,7 @@
         format = format.split(':');
         format = format.length > 1 ? format[1].replace('}', '') : format[0];
 
-        var isCustomFormat = customFormatRegEx.test(format);
+        var isCustomFormat = customFormatRegEx.test(format) && !standartFormatRegEx.test(format);
 
         if (isCustomFormat) {
             format = format.split(';');
@@ -941,7 +956,7 @@
             format = (sign && negativeFormat ? negativeFormat : customFormat).indexOf('%') != -1 ? 'p' : 'n';
         }
 
-        switch (format.toLowerCase()) {
+        switch (format.toLowerCase().charAt(0)) {
             case 'd':
                 return Math.round(number).toString();
             case 'c':
@@ -956,12 +971,17 @@
                 return number.toString();
         }
 
+        var matches = format.match(dateCheck);
+        if (matches) {
+           digits = parseInt(matches[0], 10);
+        }
+
         var zeroPad = function (str, count, left) {
             for (var l = str.length; l < count; l++)
                 str = left ? ('0' + str) : (str + '0');
 
             return str;
-        }
+        };
 
         var addGroupSeparator = function (number, groupSeperator, groupSize) {
             if (groupSeparator && groupSize != 0) {
@@ -971,7 +991,7 @@
                 }
             }
             return number;
-        }
+        };
 
         var cultureInfo = cultureInfo || $t.cultureInfo,
             patterns = $t.patterns,
@@ -1023,7 +1043,7 @@
 
         var rightLength = right.length;
         if (digits < 1 || (isCustomFormat && lastIndexZero == -1 && rightLength === 0))
-            right = ''
+            right = '';
         else
             right = rightLength > digits ? right.slice(0, digits) : zeroPad(right, digits, false);
 
@@ -1031,7 +1051,7 @@
         if (isCustomFormat) {
             if (left == 0) left = '';
 
-            left = injectInFormat(reverse(left), reverse(leftF), true);
+            left = injectInFormat(reverse(left), reverse(leftF), true).replace(/,/g, "");
             left = leftF.indexOf(',') != -1 ? addGroupSeparator(left, groupSeparator, groupSize) : left;
 
             right = right && rightF ? injectInFormat(right, rightF) : '';
@@ -1052,7 +1072,7 @@
             result = pattern ? pattern.replace('n', numberString).replace('*', symbol) : numberString;
         }
         return result;
-    }
+    };
     /*============================*/
 
     $.extend($t.formatters, {
@@ -1114,7 +1134,7 @@
         if (jobs.length == 1) {
             resolve(dependencies, callback);
         }
-    }
+    };
 
     $t.stringBuilder.prototype = {
 
@@ -1141,24 +1161,24 @@
         string: function () {
             return this.buffer.join('');
         }
-    }
+    };
 
-    var isTouch = (/iphone|ipad|android/gi).test(navigator.appVersion);
+    $t.isTouch = "ontouchstart" in window;
 
-    if (isTouch) {
-        var moveEvent = "touchmove",
-            startEvent = "touchstart",
-            endEvent = "touchend";
-    } else {
-        var moveEvent = "mousemove",
-            startEvent = "mousedown",
-            endEvent = "mouseup";
+    var moveEvent = "mousemove",
+        startEvent = "mousedown",
+        endEvent = "mouseup";
+
+    if ($t.isTouch) {
+        moveEvent = "touchmove";
+        startEvent = "touchstart";
+        endEvent = "touchend";
     }
 
     $.extend($.fn, {
         tScrollable: function (options) {
             $(this).each(function () {
-                if (isTouch || (options && options.force)) {
+                if ($t.isTouch || (options && options.force)) {
                     new Scroller(this);
                 }
             });
@@ -1180,21 +1200,67 @@
         this._create();
     }
 
-    function touchLocation(e) {
-        var changedTouches = e.originalEvent.changedTouches;
-
-        if (changedTouches && changedTouches.length < 2) {
-            return {
-                x: changedTouches[0].pageX,
-                y: changedTouches[0].pageY
-            };
-        }
-
+    $t.touchLocation = function(e) {
         return {
+            idx: 0,
             x: e.pageX,
             y: e.pageY
         };
+    };
+
+    $t.eventTarget = function (e) {
+        return e.target;
+    };
+
+    $t.eventCurrentTarget = function (e) {
+        return e.currentTarget;
+    };
+
+    if ($t.isTouch) {
+        $t.touchLocation = function(e, id) {
+            var changedTouches = e.changedTouches || e.originalEvent.changedTouches;
+
+            if (id) {
+                var output = null;
+                each(changedTouches, function(idx, value) {
+                    if (id == value.identifier) {
+                        output = {
+                            idx: value.identifier,
+                            x: value.pageX,
+                            y: value.pageY
+                        };
+                    }
+                });
+                return output;
+            } else {
+                if (e.type in { touchstart: {}, touchmove: {}, touchend: {}, touchcancel: {} }) {
+                    return {
+                        idx: changedTouches[0].identifier,
+                        x: changedTouches[0].pageX,
+                        y: changedTouches[0].pageY
+                    };
+                } else {
+                    return {
+                        idx: 0,
+                        x: e.pageX,
+                        y: e.pageY
+                    };
+                }
+            }
+        };
+
+        $t.eventTarget = function(e) {
+            var touches = "originalEvent" in e ? e.originalEvent.changedTouches : "changedTouches" in e ? e.changedTouches : null;
+
+            return touches ? document.elementFromPoint(touches[0].clientX, touches[0].clientY) : null;
+        };
+        
+        $t.eventCurrentTarget = $t.eventTarget;
     }
+
+    $t.zoomLevel = function() {
+        return $t.isTouch ? (document.documentElement.clientWidth / window.innerWidth) : 1;
+    };
 
     Scroller.prototype = {
         _create: function () {
@@ -1204,7 +1270,7 @@
 
         },
         _wait: function (e) {
-            var startLocation = touchLocation(e);
+            var startLocation = $t.touchLocation(e);
 
             this.start = {
                 x: startLocation.x + this.wrapper.scrollLeft(),
@@ -1216,18 +1282,20 @@
                 .bind(endEvent, this._stopProxy);
         },
         _start: function (e) {
-            e.preventDefault();
-
-            var currentLocation = touchLocation(e);
+            var currentLocation = $t.touchLocation(e);
+            this._dragged = false;
 
             if (this.start.x - currentLocation.x > 10 || this.start.y - currentLocation.y > 10) {
+                e.preventDefault();
+
+                this._dragged = true;
 
                 $(document).unbind(moveEvent, this._startProxy)
                            .bind(moveEvent, this._dragProxy);
 
                 var width = this.wrapper.innerWidth(),
-                    height = this.wrapper.innerHeight()
-                offset = this.wrapper.offset(),
+                    height = this.wrapper.innerHeight(),
+                    offset = this.wrapper.offset(),
                     scrollWidth = this.wrapper.attr("scrollWidth"),
                     scrollHeight = this.wrapper.attr("scrollHeight");
 
@@ -1258,9 +1326,10 @@
         },
 
         _drag: function (e) {
-            e.preventDefault();
+            if (!this._dragged)
+                e.preventDefault();
 
-            var currentLocation = touchLocation(e),
+            var currentLocation = $t.touchLocation(e),
                 offset = this.wrapper.offset(),
                 startLeft = offset.left + parseInt(this.wrapper.css("borderLeftWidth")),
                 startTop = offset.top + parseInt(this.wrapper.css("borderTopWidth")),
@@ -1279,7 +1348,7 @@
                 .scrollLeft(horizontalDifference)
                 .scrollTop(verticalDifference);
         },
-        _stop: function (e) {
+        _stop: function () {
             $(document).unbind(moveEvent, this._startProxy)
                        .unbind(moveEvent, this._dragProxy)
                        .unbind(endEvent, this._stopProxy);
@@ -1288,7 +1357,7 @@
                 .stop()
                 .fadeTo(400, 0);
         }
-    }
+    };
 
     // Effects ($t.fx)
 
@@ -1352,7 +1421,6 @@
             if (afterAnimation === null) return;
 
             for (var i = effects.list.length - 1; i >= 0; i--) {
-
                 var effect = target.data('effect-' + i) || new $t.fx[effects.list[i].name](target);
 
                 effect.rewind(
@@ -1383,7 +1451,7 @@
             this.element.hide();
             if (end) end();
         }
-    }
+    };
 
     $t.fx.toggle.defaults = function () {
         return { list: [{ name: 'toggle'}] };
@@ -1443,7 +1511,7 @@
         rewind: function (options, end) {
             var animationContainer = this.animationContainer;
 
-            this.element.stop();
+            this.element.stop(false, true);
 
             animationContainer.css({
                 overflow: 'hidden'
@@ -1473,7 +1541,7 @@
                     }
                 });
         }
-    }
+    };
 
     $t.fx.slide.defaults = function () {
         return { list: [{ name: 'slide'}], openDuration: 'fast', closeDuration: 'fast' };
@@ -1741,8 +1809,8 @@
             for(idx = 0, length = expressions.length; idx < length; idx ++) {
                 expr = expressions[idx];
                 if(typeof expr.value === "string" && !expr.caseSensitive) {
-                     caseSensitive = function(value) {
-                        return value.toLowerCase();
+                     caseSensitive = function(value) {                        
+                        return typeof value === "string" ? value.toLowerCase() : value;
                      };
                 } else {
                     caseSensitive = function(value) {
@@ -1762,9 +1830,22 @@
         },
         selector: function(field, caseSensitive) {
             if (field) {
-                return $.isFunction(field) ? field : function(record) {
-                    return caseSensitive(record[field]);
-                };
+                if (isFunction(field)) {
+                    return field;
+                } else {
+                    var accessor = getter(field);
+                    return function(record) {
+                        var value = accessor(record);
+                        if (typeof value === "string") {
+                            var date = /^\/Date\((.*?)\)\/$/.exec(value);
+                            if (date) {
+                                value = new Date(parseInt(date[1]));
+                                return value;
+                            }
+                        }
+                        return caseSensitive(value);
+                    };
+                }
             }
             return function(record) {
                 return caseSensitive(record);
@@ -1818,11 +1899,11 @@
         },
         operatorStrings: {
             "eq": ["eq", "==", "isequalto", "equals", "equalto", "equal"],
-            "neq": ["neq", "!=", "isnotequalto", "notequals", "notequalto", "notequal", "not"],
+            "neq": ["neq", "!=", "isnotequalto", "notequals", "notequalto", "notequal", "not", "ne"],            
             "lt": ["lt", "<", "islessthan", "lessthan", "less"],
-            "lte": ["lte", "<=", "islessthanorequalto", "lessthanequal"],
+            "lte": ["lte", "<=", "islessthanorequalto", "lessthanequal", "le"],
             "gt": ["gt", ">", "isgreaterthan", "greaterthan", "greater"],
-            "gte": ["gte", ">=", "isgreaterthanorequalto", "greaterthanequal"],
+            "gte": ["gte", ">=", "isgreaterthanorequalto", "greaterthanequal", "ge"],
             "startswith": ["startswith"],
             "endswith": ["endswith"],
             "contains": ["contains", "substringof"]
@@ -1837,7 +1918,7 @@
             return function(record){
                 return selector(record) != value;
             };
-        },
+        },        
         lt: function(selector, value) {
             return function(record){
                 return selector(record) < value;
@@ -1866,7 +1947,7 @@
         endswith: function(selector, value) {
             return function(record){
                 var item = selector(record);
-                return item.lastIndexOf(value) == item.length - 1;
+                return item.lastIndexOf(value) == item.length - (value || "").length;
             };
         },
         contains: function(selector, value) {
@@ -1992,8 +2073,8 @@
             return result;
         },
         groupBy: function(descriptor) {
-            if ($.isEmptyObject(descriptor)) {
-                return new Query(result);
+            if (isEmptyObject(descriptor) || !this.data.length) {
+                return new Query([]);
             }
 
             var field = descriptor.field,
@@ -2126,8 +2207,18 @@
 
         return true;
     }
-    var getter = function(expression) {
-            return new Function("d", "return d" + (expression ? "." + expression : ""));
+    var getter = function(expression, safe) {
+            expression = expression || "";
+
+            if (expression && expression.charAt(0) !== "[") {
+                expression = "." + expression;
+            }
+
+            if (safe) {
+                return new Function("d", "return " + wrapExpression(expression.split(".")));
+            }
+
+            return new Function("d", "return d" + expression);
         },
         setter = function(expression) {
             return new Function("d,value", "d." + expression + "=value");
@@ -2139,6 +2230,35 @@
             }
         };
         
+    var wrapExpression = function(members) {
+        var result = "d",
+            index,
+            idx,
+            length,
+            member,
+            count = 1;
+
+        for (idx = 0, length = members.length; idx < length; idx++) {
+            member = members[idx];
+            if (member !== "") {
+                index = member.indexOf("[");
+
+                if (index != 0) {
+                    if (index == -1) {
+                        member = "." + member;
+                    } else {
+                        count++;
+                        member = "." + member.substring(0, index) + " || {})" + member.substring(index);
+                    }
+                }
+
+                count++;
+                result += member + ((idx < length - 1) ? " || {})" : ")");
+            }
+        }
+        return new Array(count).join("(") + result;
+    }
+
     var Model = Observable.extend({
         init: function(data) {
             var that = this;
@@ -2661,7 +2781,7 @@
                 destroyed,
                 batch = that.options.batch,
                 mode,
-                transport = that.transport
+                transport = that.transport,
                 promises = that._promises = [];
 
             updated = that._updatedModels();
@@ -2701,7 +2821,7 @@
             var that = this,
                 origValue,
                 origId,
-                models = that._models
+                models = that._models,
                 map = that._map,
                 deserializer= that._deserializer;
 
@@ -3097,7 +3217,7 @@
         dataSource.data = data;
 
         return dataSource instanceof DataSource ? dataSource : new DataSource(dataSource);
-    }
+    };
 
     function inferSelect(select, fields) {
         var options = $(select)[0].children,

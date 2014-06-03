@@ -29,7 +29,12 @@ namespace Telerik.Web.Mvc.UI
         {
             return model.Total;
         }
-        
+
+        public object GetAggregates()
+        {
+            return model.Aggregates;
+        }
+
         public ModelStateDictionary GetModelState()
         {
             return modelState;

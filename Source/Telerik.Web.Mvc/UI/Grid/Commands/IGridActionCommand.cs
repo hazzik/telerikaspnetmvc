@@ -6,13 +6,13 @@ namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
     using Telerik.Web.Mvc.UI.Html;
+using System.Web.Mvc;
 
     public interface IGridActionCommand
     {
-        GridButtonType ButtonType
-        {
-            get;
-        }
+        IDictionary<string, object> Serialize(IGridUrlBuilder urlBuilder);
+
+        GridButtonType ButtonType { get; }
         
         string Name
         {

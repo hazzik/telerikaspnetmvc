@@ -165,24 +165,6 @@
             datepicker.dateView.min = oldM;
         });
 
-        test('min method should set value to minValue if value is not in range', function () {
-            var datepicker = getDatePicker();
-            datepicker.value(new Date(2000, 10, 10));
-
-            datepicker.min(new Date(2001, 10, 10));
-
-            ok(datepicker.value() - datepicker.min() == 0, "value was not updated");
-        });
-
-        test('max method should set value to maxValue if value is not in range', function () {
-            var datepicker = $('#DatePicker1').data('tDatePicker');
-            datepicker.value(new Date(2000, 10, 10));
-
-            datepicker.max(new Date(1999, 10, 10));
-
-            ok(datepicker.value() - datepicker.max() == 0, "value was not updated");
-        });
-
         test('min method should not set minValue if it is bigger then maxValue', function () {
             var datepicker = $('#DatePicker1').data('tDatePicker');
             var oldMin = datepicker.min();

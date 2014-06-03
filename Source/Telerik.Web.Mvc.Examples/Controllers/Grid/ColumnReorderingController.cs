@@ -31,7 +31,7 @@ namespace Telerik.Web.Mvc.Examples
                 new GridColumnSettings
                 {
                     Member = "OrderDate",
-                    Width = "120px",
+                    Width = "130px",
                     Format = "{0:d}"
                 },
             };

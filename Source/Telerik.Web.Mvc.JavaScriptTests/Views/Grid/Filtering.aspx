@@ -387,6 +387,26 @@
             equal(grid.filterExpr(), 'BirthDate.Day~eq~1');
         });
 
+        test('boolean filtering value true', function() {            
+            var grid = getGrid();
+            $('th:eq(3)', grid.element).find('.t-grid-filter').click();
+            
+            $('.t-filter-options:last input:radio:eq(0)', grid.element).attr("checked",true);
+            $('.t-filter-options:last .t-filter-button', grid.element).click();
+
+            equal(grid.columns[3].filters[0].value, true);
+        });
+
+        test('boolean filtering value false', function() {            
+            var grid = getGrid();
+            $('th:eq(3)', grid.element).find('.t-grid-filter').click();
+            
+            $('.t-filter-options:last input:radio:eq(1)', grid.element).attr("checked",true);
+            $('.t-filter-options:last .t-filter-button', grid.element).click();
+
+            equal(grid.columns[3].filters[0].value, false);
+        });
+
         test('rebind removes formatted numberic filter value', function() {
             var grid = getGrid();
             $('th:eq(2)', grid.element).find('.t-grid-filter').click();

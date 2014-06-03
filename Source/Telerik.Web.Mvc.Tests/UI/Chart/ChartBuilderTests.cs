@@ -32,7 +32,7 @@
         }
 
         [Fact]
-        public void Theme_should_set_Title()
+        public void Theme_should_set_Theme()
         {
             builder.Theme("Telerik");
             chart.Theme.ShouldEqual("Telerik");
@@ -133,6 +133,71 @@
             builder.SeriesColors("red");
 
             builder.Component.SeriesColors.First().ShouldEqual("red");
+        }
+
+        [Fact]
+        public void Tooltip_should_set_visibility()
+        {
+            builder.Tooltip(true);
+            chart.Tooltip.Visible.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Tooltip_should_return_builder()
+        {
+            builder.Tooltip(true).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void Tooltip_with_builder_should_configure_tooltip()
+        {
+            builder.Tooltip(tooltip => { tooltip.Visible(true); });
+            chart.Tooltip.Visible.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Tooltip_with_builder_should_return_builder()
+        {
+            builder.Tooltip(legend => { }).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void XAxis_should_set_XAxis_properties()
+        {
+            builder.XAxis(x => x.Max(4));
+            chart.XAxis.Max.ShouldEqual(4);
+        }
+
+        [Fact]
+        public void XAxis_should_return_builder()
+        {
+            builder.XAxis(x => x.Max(4)).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void YAxis_should_set_YAxis_properties()
+        {
+            builder.YAxis(y => y.Max(4));
+            chart.YAxis.Max.ShouldEqual(4);
+        }
+
+        [Fact]
+        public void YAxis_should_return_builder()
+        {
+            builder.YAxis(y => y.Max(4)).ShouldBeSameAs(builder);
+        }
+
+        [Fact]
+        public void Transitions_should_set_Transitions()
+        {
+            builder.Transitions(false);
+            chart.Transitions.ShouldEqual(false);
+        }
+
+        [Fact]
+        public void Transitions_should_return_builder()
+        {
+            builder.Transitions(false).ShouldBeSameAs(builder);
         }
     }
 }

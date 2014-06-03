@@ -11,10 +11,10 @@ namespace Telerik.Web.Mvc.UI
 
     public interface IGridBoundColumn : IGridColumn
     {
-        string Format
-        {
+        string Format 
+        { 
             get;
-            set;
+            set; 
         }
 
         bool Groupable
@@ -53,6 +53,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
 #if MVC2 || MVC3
+        object AdditionalViewData 
+        { 
+            get;
+            set; 
+        }
+
         string EditorHtml
         {
             get;

@@ -68,24 +68,79 @@
             .Pageable(pager => pager.PageSize(10))
     %>
 
+     <%= Html.Telerik().Grid(Model)
+            .Name("Grid8")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Address);
+                columns.Bound(c => c.Name).Encoded(false);
+                columns.Bound(c => c.IntegerValue);
+                columns.Bound(c => c.Name).Format("<strong>{0}</strong>");
+            })
+            .DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))            
+            .Pageable(pager => pager.PageSize(10))
+    %>
+    <%= Html.Telerik().Grid<Customer>()
+            .Name("Grid9")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Address);
+                columns.Bound(c => c.Name).Encoded(false);
+                columns.Bound(c => c.IntegerValue);
+                columns.Bound(c => c.Name).Format("<strong>{0}</strong>");
+            })
+            .DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))
+            .ClientEvents(events => events.OnDataBinding("grid9_dataBinding"))            
+            .Pageable(pager => pager.PageSize(10))
+    %>
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid10")
+            .Columns(columns =>
+            {
+                columns.Bound(c => c.Address);
+                columns.Bound(c => c.Name).Encoded(false);
+                columns.Bound(c => c.IntegerValue);
+                columns.Bound(c => c.Name).Format("<strong>{0}</strong>");
+            })
+            .DataBinding(binding => binding.Ajax().OperationMode(GridOperationMode.Client))            
+            .Pageable(pager => pager.PageSize(10))    
+    %>
+
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid11")
+            .Columns(columns =>
+            {
+                columns.ForeignKey(c => c.Name, new[] { new { Key = "Customer2", Value ="Customer Name" } }, "Key", "Value").Format("<strong>{0}</strong>");
+                columns.ForeignKey(c => c.IntegerValue, new [] { new {Key = 1, Value = "Value1" } }, "Key", "Value" );                
+            })
+            .DataBinding(binding => binding.Ajax())            
+    %>
+
 </asp:Content>
 
 
 <asp:Content ContentPlaceHolderID="TestContent" runat="server">
 
     <script type="text/javascript">
+        var populated;
 
         function getGrid(selector) {
             return $(selector || "#Grid1").data("tGrid");
         }
 
         module("Grid / Binding", {
+            setup: function() {
+                populated = false;
+                $.mockjaxSettings.responseTime = 0;
+            },
             teardown: function() {
                 var grid = getGrid();
             
                 $("tbody tr", grid.element).remove();
-                for (var i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++) {
                     $("<tr><td/></tr>").appendTo($("tbody", grid.element));
+                }
+                $.mockjaxClear();
             }
         });
         
@@ -160,7 +215,7 @@
             ok(grid.localization.noRecords != null);
         });
 
-        test('binding to null result clears the grid', function() {
+        test('binding to null result clears the grid', function() {            
             var grid = getGrid('#Grid4');
             grid.dataBind(null);
             equal($('tbody tr', grid.element).length, 1);
@@ -186,6 +241,16 @@
             ok(!grid.columns[1].encoded);
         });        
         
+        test('should display foreign value', function() {
+            var grid = getGrid('#Grid11');
+            equal(grid.displayFor(grid.columns[1])({IntegerValue:1}), 'Value1');
+        });     
+
+        test('should apply format to foreign value', function() {
+            var grid = getGrid('#Grid11');
+            equal(grid.displayFor(grid.columns[0])({Name:"Customer2"}), '&lt;strong&gt;Customer Name&lt;/strong&gt;');
+        });     
+
         test('should encode html when binding', function() {
             var grid = getGrid('#Grid7');
             equal(grid.displayFor(grid.columns[0])({Address:'<strong>foo</strong>'}), '&lt;strong&gt;foo&lt;/strong&gt;');
@@ -229,6 +294,107 @@
             equal(raised, true);
         });
 
+        test("rebind using client operation mode and initially populated grid should make request", function() {        
+            var grid = getGrid('#Grid8');
+
+            grid.ajax.selectUrl = "foo";
+
+            $.mockjax({
+                url: "foo",
+                response: function() {
+                    ok(true);
+                    start();                    
+                    this.responseText = '{"data":[], "total": 0 }';
+                }
+            });
+            grid.rebind({foo: "bar"});
+            stop(1000);
+        });
+
+        test("ajaxRequest using client operation mode and initially populated grid should not make request", function() {            
+            var grid = getGrid('#Grid8'),
+                called = false;
+
+            grid.ajax.selectUrl = "foo";            
+            $.mockjax({
+                url: "foo",
+                response: function() {                    
+                    called = true;
+                    this.responseText = '{"data":[], "total": 0 }';
+                }
+            });
+            grid.ajaxRequest({foo: "bar"});
+            stop(1000);
+
+            ok(!called);
+            start();
+        });
+        
+        function grid9_dataBinding() {
+            if (!populated) {
+                var grid = getGrid('#Grid9');
+                grid.ajax.selectUrl = "foo";
+                $.mockjax({
+                    url: "foo",
+                    response: function() {                               
+                        this.responseText = '{"data":[], "total": 0 }';
+                    }
+                });
+            }
+        }
+
+        test("rebind using client operation mode and not initially populated grid should make request", function() {        
+            var grid = getGrid('#Grid9');
+
+            grid.ajax.selectUrl = "foo";
+
+            $.mockjax({
+                url: "foo",
+                response: function() {
+                    ok(true);
+                    start();                    
+                    this.responseText = '{"data":[], "total": 0 }';
+                }
+            });
+            grid.rebind({foo: "bar"});
+            stop(1000);
+        });
+
+        test("ajaxRequest using client operation mode and not initially populated grid should make request", function() {
+            var grid = getGrid('#Grid9'),
+                called = false;
+
+            grid.ajax.selectUrl = "foo";            
+            $.mockjax({
+                url: "foo",
+                response: function() {                    
+                    ok(true)
+                    start();
+                    this.responseText = '{"data":[], "total": 0 }';
+                }
+            });
+            grid.ajaxRequest({foo: "bar"});
+            stop(1000);      
+        });
+
+        test("data of not grouped paged grid with operation mode client and initial server binding", function() {
+            var grid = getGrid("#Grid10");
+            equal(grid.data.length, 10);
+            equal(grid.dataSource.data().length, 20);            
+        });
+
+        test("dataBinding event is raised when refresh button is clicked", function() {
+            var grid = getGrid("#Grid10"),
+                called = false;
+
+            $(grid.element).bind("dataBinding", function() {
+                called = true;
+            });
+
+            grid.refreshClick($.Event("click"));
+
+            ok(called);
+        });
     </script>
 
 </asp:Content>

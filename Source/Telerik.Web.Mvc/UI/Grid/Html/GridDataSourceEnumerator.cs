@@ -73,6 +73,7 @@ namespace Telerik.Web.Mvc.UI.Html
                         yield return new GridDetailViewItem
                         {
                             DataItem = dataItem,
+                            GroupLevel = result.GroupLevel,
                             Type = GridItemType.DetailRow,
                             Parent = result
                         };

@@ -23,7 +23,7 @@
                 .Categories(s => s.DateString)
             )
             .ValueAxis(axis => axis
-                .Numeric().Format("${0:#,##0}")
+                .Numeric().Labels(labels => labels.Format("${0:#,##0}"))
             )
             .DataBinding(dataBinding => dataBinding
                 .Ajax().Select("_SalesData", "Chart")

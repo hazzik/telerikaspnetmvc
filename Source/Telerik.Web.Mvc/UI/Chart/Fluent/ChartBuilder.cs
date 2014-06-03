@@ -223,7 +223,31 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </example>
         public ChartBuilder<T> SeriesDefaults(Action<ChartSeriesDefaultsBuilder<T>> configurator)
         {
+            Guard.IsNotNull(configurator, "configurator");
+
             configurator(new ChartSeriesDefaultsBuilder<T>(Component));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Defines the options for all chart axes of the specified type.
+        /// </summary>
+        /// <param name="configurator">The configurator.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart(Model)
+        ///             .Name("Chart")
+        ///             .AxisDefaults(axisDefaults => axisDefaults.MinorTickSize(5))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartBuilder<T> AxisDefaults(Action<ChartAxisDefaultsBuilder<T>> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            configurator(new ChartAxisDefaultsBuilder<T>(Component));
+
             return this;
         }
 
@@ -267,6 +291,50 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Guard.IsNotNull(configurator, "configurator");
 
             ChartValueAxisFactory<T> factory = new ChartValueAxisFactory<T>(Component);
+            configurator(factory);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures the X-axis for scatter charts.
+        /// </summary>
+        /// <param name="configurator">The configurator</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart(Model)
+        ///             .Name("Chart")
+        ///             .XAxis(a => a.Max(4))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartBuilder<T> XAxis(Action<ChartNumericAxisBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            ChartNumericAxisBuilder factory = new ChartNumericAxisBuilder(Component.XAxis);
+            configurator(factory);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures the Y-axis for scatter charts.
+        /// </summary>
+        /// <param name="configurator">The configurator</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart(Model)
+        ///             .Name("Chart")
+        ///             .YAxis(a => a.Max(4))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartBuilder<T> YAxis(Action<ChartNumericAxisBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            ChartNumericAxisBuilder factory = new ChartNumericAxisBuilder(Component.YAxis);
             configurator(factory);
 
             return this;
@@ -331,6 +399,72 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             Component.SeriesColors = colors;
 
+            return this;
+        }
+
+        /// <summary>
+        /// Use it to configure the data point tooltip.
+        /// </summary>
+        /// <param name="configurator">Use the configurator to set data tooltip options.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .Tooltip(tooltip =>
+        ///             {
+        ///                 tooltip.Visible(true).Format("{0:C}");
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartBuilder<T> Tooltip(Action<ChartTooltipBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            configurator(new ChartTooltipBuilder(Component.Tooltip));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the data point tooltip visibility.
+        /// </summary>
+        /// <param name="visible">
+        /// A value indicating if the data point tooltip should be displayed.
+        /// The tooltip is not visible by default.
+        /// </param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .Tooltip(true)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartBuilder<T> Tooltip(bool visible)
+        {
+            Component.Tooltip.Visible = visible;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Enables or disabled animated transitions on initial load and refresh. 
+        /// </summary>
+        /// <param name="transitions">
+        /// A value indicating if transition animations should be played.
+        /// </param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .Transitions(false)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartBuilder<T> Transitions(bool transitions)
+        {
+            Component.Transitions = transitions;
             return this;
         }
     }

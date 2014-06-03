@@ -8,7 +8,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
     /// <summary>
     /// Defines the fluent interface for configuring the chart data labels.
     /// </summary>
-    public class ChartBarLabelsBuilder : ChartDataLabelsBuilderBase<ChartBarLabelsBuilder>
+    public class ChartBarLabelsBuilder : ChartLabelsBuilderBase<ChartBarLabelsBuilder>
     {
         private readonly ChartBarLabels barLabels;
 
@@ -25,7 +25,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the labels position
         /// </summary>
-        /// <param name="position">The data labels position.</param>
+        /// <param name="position">The labels position.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()

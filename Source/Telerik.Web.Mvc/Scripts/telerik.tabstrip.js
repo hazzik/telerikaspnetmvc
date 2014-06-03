@@ -28,7 +28,7 @@
 
         $t.bind(this, {
             select: $.proxy(function (e) {
-                if (e.target == this.element && this.onSelect) this.onSelect(e);
+                if (e.target == this.element && this.onSelect) $.proxy(this.onSelect, this.element)(e);
             }, this),
             contentLoad: this.onContentLoad,
             error: this.onError,

@@ -13,10 +13,15 @@
     </siteMapNode>
     <siteMapNode title="Chart" isNew="true">
       <siteMapNode controller="Chart" action="FirstLook" title="First Look" />
-      <siteMapNode controller="Chart" action="AjaxBinding" title="Ajax Binding" />
-      <siteMapNode controller="Chart" action="ClientSideApi" title="Client-side API" />
-	  <siteMapNode controller="Chart" action="ClientSideEvents" title="Client-side Events" />
-	  <siteMapNode controller="Chart" action="CombinationChart" title="Combination Chart" />
+      <siteMapNode controller="Chart" action="PieChart" title="Pie chart" isNew="true" />
+		<siteMapNode controller="Chart" action="ScatterChart" title="Scatter chart" isNew="true" />
+		<siteMapNode controller="Chart" action="ScatterLineChart" title="Scatter line chart" isNew="true" />
+		<siteMapNode controller="Chart" action="AjaxBinding" title="Ajax Binding" />
+      <siteMapNode controller="Chart" action="ClientSideApi" title="Client-side API" isNew="true" />
+	    <siteMapNode controller="Chart" action="ClientSideEvents" title="Client-side Events" />
+		<siteMapNode controller="Chart" action="HighPerformance" title="High Performance" isNew="true" />
+		<siteMapNode controller="Chart" action="CombinationChart" title="Combination Chart" />
+	    <siteMapNode controller="Chart" action="MissingValues" title="Missing Values" />
 	</siteMapNode>
     <siteMapNode title="ComboBox">
       <siteMapNode controller="ComboBox" action="FirstLook" title="First Look" />
@@ -58,6 +63,7 @@
       <siteMapNode controller="Editor" action="ImageTool" title="Image Browser" />
       <siteMapNode controller="Editor" action="CustomTools" title="Custom Tools" />
       <siteMapNode controller="Editor" action="Localization" title="Localization" />
+      <siteMapNode controller="Editor" action="KeyboardNavigation" title="Keyboard navigation" isNew="true" />
       <siteMapNode controller="Editor" action="Accessibility" title="Accessibility" />
       <siteMapNode controller="Editor" action="RtlSupport" title="RTL support" />
       <siteMapNode controller="Editor" action="EditorInGrid" title="Editor In Grid" />
@@ -68,7 +74,7 @@
         <siteMapNode controller="Grid" action="ServerBinding" title="Server Binding" />
         <siteMapNode controller="Grid" action="AjaxBinding" title="Ajax Binding" />
         <siteMapNode controller="Grid" action="WebService" title="Web Service Binding" />
-        <siteMapNode controller="Grid" action="OperationMode" title="Operation Mode" isNew="true"/>
+        <siteMapNode controller="Grid" action="OperationMode" title="Operation Mode" />
         <siteMapNode controller="Grid" action="CustomBinding" title="Custom Ajax Binding" />
         <siteMapNode controller="Grid" action="CustomServerBinding" title="Custom Server Binding" />
         <siteMapNode controller="Grid" action="ExternalServiceTwitter" title="Twitter Binding" />
@@ -76,7 +82,7 @@
       </siteMapNode>
       <siteMapNode title="Paging">
         <siteMapNode controller="Grid" action="Paging" title="Paging" />
-        <siteMapNode controller="Grid" action="PageOnScroll" title="Page On Scroll" isNew="true"/>
+        <siteMapNode controller="Grid" action="PageOnScroll" title="Page On Scroll" />
       </siteMapNode>
             <siteMapNode controller="Grid" action="Sorting" title="Sorting" />
             <siteMapNode controller="Grid" action="Filtering" title="Filtering" />
@@ -100,8 +106,8 @@
             <siteMapNode title="Templates">
                 <siteMapNode controller="Grid" action="TemplatesServerSide" title="Server Templates" />
                 <siteMapNode controller="Grid" action="TemplatesClientSide" title="Client Templates" />
-                <siteMapNode controller="Grid" action="ServerRowTemplate" title="Server Row Template" isNew="true" />
-                <siteMapNode controller="Grid" action="ClientRowTemplate" title="Client Row Template" isNew="true" />
+                <siteMapNode controller="Grid" action="ServerRowTemplate" title="Server Row Template"  />
+                <siteMapNode controller="Grid" action="ClientRowTemplate" title="Client Row Template" />
                 <siteMapNode controller="Grid" action="ServerEditTemplates" title="Server Edit Templates" />
                 <siteMapNode controller="Grid" action="ClientEditTemplates" title="Client Edit Templates" />
                 <siteMapNode controller="Grid" action="CustomToolBar" title="Custom ToolBar Template" />
@@ -115,17 +121,22 @@
                 <siteMapNode controller="Grid" action="CheckBoxesServerSide" title="Server CheckBoxes" />
                 <siteMapNode controller="Grid" action="CheckBoxesAjax" title="Ajax CheckBoxes" />
             </siteMapNode>
+            <siteMapNode title="Custom Commands" isNew="true">
+                <siteMapNode controller="Grid" action="CustomCommand" title="Toolbar Command (CSV Export)" />
+                <siteMapNode controller="Grid" action="CustomColumnCommand" title="Column Command" isNew="true"/>
+            </siteMapNode>
             <siteMapNode controller="Grid" action="ColumnResizing" title="Column Resizing" />
             <siteMapNode controller="Grid" action="ColumnReordering" title="Column Reordering" />
             <siteMapNode controller="Grid" action="ColumnSettings" title="Column Settings" />
+            <siteMapNode controller="Grid" action="ColumnContextMenu" title="Column ContextMenu" isNew="true"/>
             <siteMapNode controller="Grid" action="AutoGenerateColumns" title="Auto Generated Columns" />
+            <siteMapNode controller="Grid" action="ForeignKeyColumn" title="ForeignKey Column" isNew="true"/>
             <siteMapNode controller="Grid" action="CustomRoute" title="Custom Route" />
-            <siteMapNode controller="Grid" action="CustomCommand" title="Custom Command (CSV Export)" />
             <siteMapNode controller="Grid" action="Localization" title="Localization" />
             <siteMapNode controller="Grid" action="CustomFormatting" title="Custom Formatting" />
             <siteMapNode controller="Grid" action="ClientSideEvents" title="Client-side Events" />
             <siteMapNode controller="Grid" action="Accessibility" title="Accessibility" />
-            <siteMapNode controller="Grid" action="KeyboardNavigation" title="Keyboard navigation" isNew="true" />
+            <siteMapNode controller="Grid" action="KeyboardNavigation" title="Keyboard navigation" />
             <siteMapNode controller="Grid" action="RtlSupport" title="RTL support" />
         </siteMapNode>
         <siteMapNode title="Menu">

@@ -20,7 +20,7 @@
             ViewData["Controllers"] =
                 from type in Assembly.GetExecutingAssembly().GetTypes()
                 where type.IsClass && type.Namespace == "Telerik.Web.Mvc.JavaScriptTests.Controllers" && type.Name != "HomeController"
-                where requestedController == "" || type.GetName().ToLower() == requestedController.ToLower()
+                where requestedController == "" || type.GetName().ToLowerInvariant() == requestedController.ToLowerInvariant()
                 orderby type.Name
                 select type;
 

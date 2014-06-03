@@ -41,11 +41,6 @@
             equal($(".t-upload-files li.t-file", uploadInstance.wrapper).length, 1);
         });
 
-        test("remove icon is rendered", function() {
-            simulateFileSelect();
-            equal($(".t-upload-files li.t-file button.t-upload-action span.t-delete", uploadInstance.wrapper).length, 1);                    
-        });
-
         test("clicking remove should remove file entry", function() {
             simulateFileSelect();
             simulateFileSelect();
@@ -79,17 +74,17 @@
             equal($(".t-upload-files li.t-file", uploadInstance.wrapper).length, 1);
         });
 
-        test("the empty input name is removed when the parent form is submitted", function() {
+        test("the empty input is disabled when the parent form is submitted", function() {
             $("#parentForm").trigger("submit");
 
-            equal(uploadInstance.element.attr("name"), "");
+            equal(uploadInstance.element.attr("disabled"), "disabled");
         });
 
         asyncTest("the empty input is restored when the parent submit is completed", function() {
             $("#parentForm").trigger("submit");
 
             setTimeout(function() {
-                equal(uploadInstance.element.parent().length, 1);
+                ok(!uploadInstance.element.attr("disabled"));
                 start();
             }, 50);
         });
@@ -111,12 +106,15 @@
             teardown: moduleTeardown
         });
 
-        test("load event fires", function() {
-            var loadFired = false;
-
-            uploadInstance = createUpload({ "onLoad" : (function() { loadFired = true; }) });
-
-            ok(loadFired);
+        test("load event fires", 1, function() {
+            uploadInstance = createUpload({ "onLoad" : (function() { ok(true); }) });
+        });
+        
+        test("upload instance can be obtained during load event", 1, function() {
+            uploadInstance = createUpload({ "onLoad" : (function() {
+                    equals(typeof $(this).data("tUpload"), "object");
+                })
+            });
         });
         
         test("remove event fires upon remove", function() {

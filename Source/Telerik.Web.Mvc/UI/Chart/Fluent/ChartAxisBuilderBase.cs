@@ -41,7 +41,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the axis minor tick size.
         /// </summary>
-        /// <param name="tickSize">The minor tick size.</param>
+        /// <param name="minorTickSize">The minor tick size.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;%= Html.Telerik().Chart(Model)
@@ -60,7 +60,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the axis major tick size.
         /// </summary>
-        /// <param name="tickSize">The major tick size.</param>
+        /// <param name="majorTickSize">The major tick size.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;%= Html.Telerik().Chart(Model)
@@ -149,15 +149,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Chart")
         ///             .CategoryAxis(axis => axis
         ///                 .Categories(s => s.DateString)
-        ///                 .MajorGridLines(2, "red")
+        ///                 .MajorGridLines(2, "red", ChartDashType.Dot)
         ///             )
         /// %&gt;
         /// </code>
         /// </example>
-        public TAxisBuilder MajorGridLines(int width, string color)
+        public TAxisBuilder MajorGridLines(int width, string color, ChartDashType dashType)
         {
             Axis.MajorGridLines.Width = width;
             Axis.MajorGridLines.Color = color;
+            Axis.MajorGridLines.DashType = dashType;
             Axis.MajorGridLines.Visible = true;
 
             return this as TAxisBuilder;
@@ -198,15 +199,16 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Chart")
         ///             .CategoryAxis(axis => axis
         ///                 .Categories(s => s.DateString)
-        ///                 .MinorGridLines(2, "red")
+        ///                 .MinorGridLines(2, "red", ChartDashType.Dot)
         ///             )
         /// %&gt;
         /// </code>
         /// </example>
-        public TAxisBuilder MinorGridLines(int width, string color)
+        public TAxisBuilder MinorGridLines(int width, string color, ChartDashType dashType)
         {
             Axis.MinorGridLines.Width = width;
             Axis.MinorGridLines.Color = color;
+            Axis.MinorGridLines.DashType = dashType;
             Axis.MinorGridLines.Visible = true;
 
             return this as TAxisBuilder;
@@ -247,16 +249,81 @@ namespace Telerik.Web.Mvc.UI.Fluent
         ///             .Name("Chart")
         ///             .CategoryAxis(axis => axis
         ///                 .Categories(s => s.DateString)
-        ///                 .Line(2, "#f00")
+        ///                 .Line(2, "#f00", ChartDashType.Dot)
         ///             )
         /// %&gt;
         /// </code>
         /// </example>
-        public TAxisBuilder Line(int width, string color)
+        public TAxisBuilder Line(int width, string color, ChartDashType dashType)
         {
             Axis.Line.Width = width;
             Axis.Line.Color = color;
+            Axis.Line.DashType = dashType;
             Axis.Line.Visible = true;
+
+            return this as TAxisBuilder;
+        }
+
+        /// <summary>
+        /// Sets value at which the first perpendicular axis crosses this axis.
+        /// </summary>
+        /// <param name="axisCrossingValue">The value at which the first perpendicular axis crosses this axis.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart(Model)
+        ///             .Name("Chart")
+        ///             .CategoryAxis(axis => axis.AxisCrossingValue(4))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TAxisBuilder AxisCrossingValue(double axisCrossingValue)
+        {
+            Axis.AxisCrossingValue = axisCrossingValue;
+
+            return this as TAxisBuilder;
+        }
+
+        /// <summary>
+        /// Configures the axis labels.
+        /// </summary>
+        /// <param name="configurator">The configuration action.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .CategoryAxis(axis => axis
+        ///                 .Labels(labels => labels
+        ///                     .Color("Red")
+        ///                     .Visible(true)
+        ///                 );
+        ///             )
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TAxisBuilder Labels(Action<ChartAxisLabelsBuilder> configurator)
+        {
+            Guard.IsNotNull(configurator, "configurator");
+
+            configurator(new ChartAxisLabelsBuilder(Axis.Labels));
+
+            return this as TAxisBuilder;
+        }
+
+        /// <summary>
+        /// Sets the visibility of numeric axis chart labels.
+        /// </summary>
+        /// <param name="visible">The visibility. The default value is false.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .CategoryAxis(axis => axis.Labels(true))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public TAxisBuilder Labels(bool visible)
+        {
+            Axis.Labels.Visible = visible;
 
             return this as TAxisBuilder;
         }

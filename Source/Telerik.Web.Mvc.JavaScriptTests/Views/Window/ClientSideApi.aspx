@@ -162,6 +162,29 @@
             ok(dialog.prev("div").is(".t-overlay"));
         });
 
+        test('ajaxRequest() sends provided data to url', function() {
+            var ajax = $.ajax;
+
+            try {
+
+                expect(2);
+
+                $.ajax = function(settings) {
+                    equal(settings.url, "/Window/foo");
+                    same(settings.data, { id: 1 });
+                };
+
+                $(".t-window,.t-overlay").remove();
+
+                var dialog = $t.window.create({ html: "foo" });
+
+                dialog.data("tWindow").ajaxRequest("/Window/foo", { id: 1 });
+                
+            } finally {
+                $.ajax = ajax;
+            }
+        });
+
     </script>
 
 </asp:Content>

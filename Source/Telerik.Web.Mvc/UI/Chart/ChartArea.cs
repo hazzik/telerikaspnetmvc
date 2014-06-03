@@ -17,7 +17,11 @@ namespace Telerik.Web.Mvc.UI
         {
             Background = ChartDefaults.ChartArea.background;
             Margin = new ChartSpacing(ChartDefaults.ChartArea.Margin);
-            Border = new ChartElementBorder(ChartDefaults.ChartArea.Border.Width, ChartDefaults.ChartArea.Border.Color);
+            Border = new ChartElementBorder(
+                    ChartDefaults.ChartArea.Border.Width,
+                    ChartDefaults.ChartArea.Border.Color,
+                    ChartDefaults.ChartArea.Border.DashType
+                );
         }
 
         /// <summary>

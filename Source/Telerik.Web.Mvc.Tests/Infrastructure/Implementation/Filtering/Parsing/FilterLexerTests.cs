@@ -1,13 +1,27 @@
 ﻿namespace Telerik.Web.Mvc.Infrastructure.Tests
 {
+    using System;
     using System.Collections.Generic;
 	
+    using System.Globalization;
     using Implementation;
 	
     using Xunit;
 	
-    public class FilterLexerTests
+    public class FilterLexerTests: IDisposable
     {
+        private CultureInfo currentCulture;
+
+        public FilterLexerTests()
+        {
+            currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+        }
+        
+        public void Dispose()
+        {
+             System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+        }
+
         [Fact]
         public void Tokenize_returns_empty_list_in_case_of_empty_input()
         {
@@ -263,6 +277,19 @@
             Assert.Equal(FilterTokenType.RightParenthesis, tokens[13].TokenType);
         }
 
+        [Fact]
+        public void Tokenize_should_return_function_when_decimal_separator_is_comma()
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("bg-BG");
+            
+            IList<FilterToken> tokens = Tokenize("startswith(Name,'John')");
+            Assert.Equal(FilterTokenType.Function, tokens[0].TokenType);
+            Assert.Equal(FilterTokenType.LeftParenthesis, tokens[1].TokenType);
+            Assert.Equal(FilterTokenType.Property, tokens[2].TokenType);
+            Assert.Equal(FilterTokenType.Comma, tokens[3].TokenType);
+            Assert.Equal(FilterTokenType.String, tokens[4].TokenType);
+            Assert.Equal(FilterTokenType.RightParenthesis, tokens[5].TokenType);
+        }
         private IList<FilterToken> Tokenize(string value)
         {
             FilterLexer tokenizer = new FilterLexer(value);
@@ -270,5 +297,6 @@
             IList<FilterToken> tokens = tokenizer.Tokenize();
             return tokens;
         }
+
     }
 }

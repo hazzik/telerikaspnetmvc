@@ -23,11 +23,8 @@ namespace Telerik.Web.Mvc.UI
             MinorTickType = ChartDefaults.Axis.MinorTickType;
             MajorGridLines = new ChartLine();
             MinorGridLines = new ChartLine();
-            Line = new ChartLine(
-                ChartDefaults.Axis.Line.Width,
-                ChartDefaults.Axis.Line.Color,
-                ChartDefaults.Axis.Line.Visible
-            );
+            Line = new ChartLine();
+            Labels = new ChartAxisLabels();
         }
 
         /// <summary>
@@ -98,6 +95,33 @@ namespace Telerik.Web.Mvc.UI
         /// The axis line configuration.
         /// </summary>
         public ChartLine Line
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The value at which the first perpendicular axis crosses this axis
+        /// </summary>
+        public double? AxisCrossingValue
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The axis labels
+        /// </summary>
+        public ChartAxisLabels Labels 
+        { 
+            get; 
+            set; 
+        }
+
+        /// <summary>
+        /// The axis orientation
+        /// </summary>
+        public ChartAxisOrientation? Orientation
         {
             get;
             set;

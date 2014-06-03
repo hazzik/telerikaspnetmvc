@@ -10,9 +10,9 @@ namespace Telerik.Web.Mvc.UI
 
     internal class ChartLineMarkersSerializer : IChartSerializer
     {
-        private readonly ChartLineMarkers lineMarker;
+        private readonly ChartMarkers lineMarker;
 
-        public ChartLineMarkersSerializer(ChartLineMarkers chartLineMarker)
+        public ChartLineMarkersSerializer(ChartMarkers chartLineMarker)
         {
             this.lineMarker = chartLineMarker;
         }
@@ -34,7 +34,8 @@ namespace Telerik.Web.Mvc.UI
         private bool ShouldSerializeBorder()
         {
             return lineMarker.Border.Color.CompareTo(ChartDefaults.LineSeries.Markers.Border.Color) != 0 ||
-                   lineMarker.Border.Width != ChartDefaults.LineSeries.Markers.Border.Width;
+                   lineMarker.Border.Width != ChartDefaults.LineSeries.Markers.Border.Width ||
+                   lineMarker.Border.DashType != ChartDefaults.LineSeries.Markers.Border.DashType;
         }
     }
 }

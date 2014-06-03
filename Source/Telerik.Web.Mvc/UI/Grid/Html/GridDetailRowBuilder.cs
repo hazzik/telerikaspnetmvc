@@ -51,10 +51,17 @@ namespace Telerik.Web.Mvc.UI.Html
             set;
         }
 
+        public bool IsMasterAlternate
+        {
+            get;
+            set;
+        }
+
         public IHtmlNode CreateRow()
         {
             var tr = new HtmlElement("tr")
                 .Attributes(HtmlAttributes)
+                .PrependClass(IsMasterAlternate ? UIPrimitives.Alt : "")
                 .PrependClass("t-detail-row");
 
             if (!Expanded)

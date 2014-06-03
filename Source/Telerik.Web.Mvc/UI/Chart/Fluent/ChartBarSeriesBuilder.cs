@@ -46,7 +46,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
         /// <summary>
         /// Set distance between category clusters. 
-        /// <param name="gap"></param>
+        /// <param name="gap">
         /// A value of 1 means that there is a total of 1 column width / bar height between categories.
         /// The distance is distributed evenly on each side.
         /// The default value is 1.5
@@ -70,7 +70,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets a value indicating the distance between bars / categories.
         /// </summary>
-        /// <param name="gap">
+        /// <param name="spacing">
         /// Value of 1 means that the distance between bars is equal to their width.
         /// The default value is 0
         /// </param>
@@ -143,18 +143,19 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="width">The bars border width.</param>
         /// <param name="color">The bars border color (CSS syntax).</param>
+        /// <param name="dashType">The bars border dash type.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .Series(series => series.Bar(s => s.Sales).Border("1", "#000"))
+        ///            .Series(series => series.Bar(s => s.Sales).Border("1", "#000", ChartDashType.Dot))
         ///            .Render();
         /// %&gt;
         /// </code>
         /// </example>        
-        public ChartBarSeriesBuilder<T> Border(int width, string color)
+        public ChartBarSeriesBuilder<T> Border(int width, string color, ChartDashType dashType)
         {
-            Series.Border = new ChartElementBorder(width, color);
+            Series.Border = new ChartElementBorder(width, color, dashType);
 
             return this;
         }
@@ -162,7 +163,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the bar effects overlay
         /// </summary>
-        /// <param name="color">The bar effects overlay. The default is ChartBarSeriesOverlay.Glass</param>
+        /// <param name="overlay">The bar effects overlay. The default is ChartBarSeriesOverlay.Glass</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()

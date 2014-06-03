@@ -14,23 +14,10 @@
             axisMock = new Mock<IChartCategoryAxis>();
             serializer = new ChartCategoryAxisSerializer(axisMock.Object);
 
-            axisMock.SetupGet(a => a.MajorGridLines).Returns(
-                new ChartLine(
-                    ChartDefaults.Axis.Category.MajorGridLines.Width,
-                    ChartDefaults.Axis.Category.MajorGridLines.Color,
-                    ChartDefaults.Axis.Category.MajorGridLines.Visible
-                )
-            );
-
-            axisMock.SetupGet(a => a.MinorGridLines).Returns(
-                new ChartLine(
-                    ChartDefaults.Axis.Category.MinorGridLines.Width,
-                    ChartDefaults.Axis.Category.MinorGridLines.Color,
-                    ChartDefaults.Axis.Category.MinorGridLines.Visible
-                )
-            );
-
+            axisMock.SetupGet(a => a.MajorGridLines).Returns(new ChartLine());
+            axisMock.SetupGet(a => a.MinorGridLines).Returns(new ChartLine());
             axisMock.SetupGet(a => a.Line).Returns(new ChartLine());
+            axisMock.SetupGet(a => a.Labels).Returns(new ChartAxisLabels());
         }
 
         [Fact]
@@ -44,14 +31,14 @@
         public void Should_serialize_field()
         {
             axisMock.SetupGet(a => a.Member).Returns("RepName");
-            axisMock.SetupGet(a => a.Categories).Returns((IEnumerable) null);
+            axisMock.SetupGet(a => a.Categories).Returns((IEnumerable)null);
             serializer.Serialize()["field"].ShouldEqual("RepName");
         }
 
         [Fact]
         public void Should_not_serialize_field_if_not_set()
         {
-            axisMock.SetupGet(a => a.Member).Returns((string) null);
+            axisMock.SetupGet(a => a.Member).Returns((string)null);
             axisMock.SetupGet(a => a.Categories).Returns((IEnumerable)null);
             serializer.Serialize().ContainsKey("field").ShouldBeFalse();
         }
@@ -69,12 +56,12 @@
         {
             serializer.Serialize().ContainsKey("majorGridLines").ShouldBeFalse();
         }
-        
+
         [Fact]
         public void Should_serialize_majorGridLines_if_set()
         {
             axisMock.SetupGet(a => a.MajorGridLines).Returns(
-                new ChartLine(1, "white", true)
+                new ChartLine(1, "white", ChartDashType.Dot, true)
             );
 
             serializer.Serialize().ContainsKey("majorGridLines").ShouldBeTrue();
@@ -90,10 +77,32 @@
         public void Should_serialize_minorGridLines_if_set()
         {
             axisMock.SetupGet(a => a.MinorGridLines).Returns(
-                new ChartLine(1, "white", true)
+                new ChartLine(1, "white", ChartDashType.Dot, true)
             );
 
             serializer.Serialize().ContainsKey("minorGridLines").ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_not_serialize_labels_if_not_set()
+        {
+            serializer.Serialize().ContainsKey("labels").ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Should_serialize_labels_if_set()
+        {
+            axisMock.SetupGet(a => a.Labels).Returns(new ChartAxisLabels() { Color = "Red" });
+
+            serializer.Serialize().ContainsKey("labels").ShouldBeTrue();
+        }
+
+        [Fact]
+        public void Should_serialize_visible_if_set()
+        {
+            axisMock.SetupGet(a => a.Labels).Returns(new ChartAxisLabels() { Visible = false });
+
+            serializer.Serialize().ContainsKey("visible").ShouldBeFalse();
         }
     }
 }

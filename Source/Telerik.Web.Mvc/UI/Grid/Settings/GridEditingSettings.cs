@@ -79,6 +79,12 @@ namespace Telerik.Web.Mvc.UI
             get; 
             set;
         }
+
+        public object AdditionalViewData 
+        { 
+            get;
+            set; 
+        }
 #endif
         /// <summary>
         /// Gets the HTML attributes of the form rendered during editing
@@ -90,15 +96,16 @@ namespace Telerik.Web.Mvc.UI
             private set; 
         }
 
+
         public IDictionary<string, object> Serialize()
         {
             var result = new Dictionary<string, object>();
 #if MVC2 || MVC3
             var editorHtml = grid.EditorHtml;
 
-            if (grid.IsSelfInitialized && editorHtml != null)
+            if (editorHtml != null)
             {
-                editorHtml = editorHtml.Replace("<", "%3c").Replace(">", "%3e");
+                editorHtml = editorHtml.Replace("%", "%25").Replace("<", "%3c").Replace(">", "%3e");
             }
 #endif            
             FluentDictionary.For(result)

@@ -21,7 +21,7 @@ namespace Telerik.Web.Mvc.UI
             Visible = ChartDefaults.Title.Visible;
             Margin = new ChartSpacing(ChartDefaults.Title.Margin);
             Padding = new ChartSpacing(ChartDefaults.Title.Padding);
-            Border = new ChartElementBorder(ChartDefaults.Legend.Border.Width, ChartDefaults.Legend.Border.Color);
+            Border = new ChartElementBorder(ChartDefaults.Title.Border.Width, ChartDefaults.Title.Border.Color, ChartDefaults.Title.Border.DashType);
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets or sets the title font.
         /// </summary>
         /// <value>
-        /// Specify a font in CSS format. For example "16px Verdana, sans-serif".
+        /// Specify a font in CSS format. For example "16px Arial,Helvetica,sans-serif".
         /// </value>
         public string Font
         {
@@ -82,6 +82,15 @@ namespace Telerik.Web.Mvc.UI
         /// Gets or sets the title margin
         /// </summary>
         public ChartSpacing Margin
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the title background color
+        /// </summary>
+        public string Background
         {
             get;
             set;

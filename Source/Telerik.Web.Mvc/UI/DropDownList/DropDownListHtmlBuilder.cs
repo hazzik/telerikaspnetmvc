@@ -24,7 +24,8 @@
             IHtmlNode root = new HtmlElement("div")
                                 .Attributes(Component.HtmlAttributes)
                                 .PrependClass(UIPrimitives.Widget, "t-dropdown", UIPrimitives.Header)
-                                .ToggleClass("t-state-disabled", !Component.Enabled);
+                                .ToggleClass("t-state-disabled", !Component.Enabled)
+                                .ToggleClass("input-validation-error", !Component.IsValid());
 
             this.InnerContentTag().AppendTo(root);
             
@@ -76,20 +77,23 @@
                         style = "display:none"
                     });
 
-            if (Component.Name.HasValue())
-                input.Attributes(Component.GetUnobtrusiveValidationAttributes())
-                     .Attributes(new
-                     {
-                         name = Component.Name,
-                         id = Component.Id
-                     });
-
             if (Component.Items.Any())
             {
                 DropDownItem selectedItem = Component.Items[Component.SelectedIndex];
                 input.Attribute("value", selectedItem.Value.HasValue() ? selectedItem.Value : selectedItem.Text);
             }
-           
+
+            if (Component.Name.HasValue())
+            {
+                input.Attributes(Component.GetUnobtrusiveValidationAttributes())
+                     .Attributes(new
+                     {
+                         name = Component.GetName(string.Empty),
+                         id = Component.Id
+                     })
+                     .Attributes(Component.HiddenInputHtmlAttributes);
+            }
+
             return input;
         }
     }

@@ -232,7 +232,7 @@
             ddl.disable();
             
             ok(ddl.$wrapper.hasClass('t-state-disabled'));
-            equal(ddl.$element.attr('disabled'), true);
+            equal(ddl.$element.attr('disabled'), 'disabled');
         });
 
         test('enable method should enable dropDownList', function () {

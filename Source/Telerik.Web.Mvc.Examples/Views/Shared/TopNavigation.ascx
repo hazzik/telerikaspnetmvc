@@ -69,20 +69,29 @@
 
                         <h3>Visual Studio Productivity Plugins</h3>
                         <ul>
-                            <li><a href="http://www.telerik.com/products/justcode.aspx">JustCode</a> <span class="product-info-regular">(Code Analysis, Refactoring)</span></li>
-                            <li><a href="http://www.telerik.com/products/mocking.aspx">JustMock</a> <span class="product-info-regular">(Unit Testing, Mocking)</span></li>
+                                <li><a href="http://www.telerik.com/products/justcode.aspx">JustCode</a> <span class="product-info-regular">(Code Analysis, Refactoring)</span></li>
+                                <li><a href="http://www.telerik.com/products/mocking.aspx">JustMock</a> <span class="product-info-regular">(Unit Testing, Mocking)</span></li>
+                                <li><a href="http://www.telerik.com/products/memory-performance-profiler.aspx">JustTrace</a> <span class="product-info-regular">(Memory &amp; Performance Profiling)</span></li>
+                                <li><a href="http://www.telerik.com/products/decompiling.aspx">JustDecompile</a> <span class="product-info-regular">(Free Decompiling)</span></li>
                         </ul>
                     </div>
                     <div class="column">
+                        <h2>HTML5/JavaScript Widgets</h2>
+						<ul>
+							<li><a href="http://www.kendoui.com/kendo-ui.aspx">Kendo UI Web</a></li>
+                            <li><a href="http://www.kendoui.com/kendo-ui-mobile.aspx">Kendo UI Mobile</a></li>
+						</ul>
                         <h2>Agile Project Management</h2>
                         <ul>
                             <li><a href="http://www.telerik.com/team-productivity-tools.aspx">TeamPulse</a></li>
+                            <li><a href="http://www.telerik.com/agile-project-management-tools/tour/feedback-portal.aspx">Ideas &amp; Feedback Portal (Extension)</a></li>
                         </ul>
 
                         <h2>Automated Testing</h2>
                         <ul>
-                            <li><a href="http://www.telerik.com/automated-testing-tools.aspx">Web UI Testing</a></li>
-                            <li><a href="http://www.telerik.com/automated-testing-tools/webaii-framework-features.aspx">Test Automation Framework</a></li>
+                               <li><a href="http://www.telerik.com/automated-testing-tools.aspx" title="Software Testing Tools">Software Testing Tools</a></li>
+                               <li><a href="http://www.telerik.com/automated-testing-tools.aspx" title="Test Studio (web and desktop testing)">Test Studio (web and desktop testing)</a></li>
+							   <li><a href="http://www.telerik.com/automated-testing-tools/test-studio-express.aspx" title="Test Studio Express (Visual Studio plugin)">Test Studio Express (Visual Studio plugin)</a></li>
                         </ul>
 
                         <h2>Web Content Management</h2>

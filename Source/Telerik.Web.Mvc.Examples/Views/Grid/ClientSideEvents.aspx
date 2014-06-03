@@ -21,6 +21,14 @@
         $console.log("OnDataBound");
     }
 
+    function onCommand(e) {
+        $console.log("OnCommand :: " + dump({ name: e.name }));
+    }
+
+    function onComplete(e) {
+        $console.log("OnComplete :: " + dump({ name: e.name }));
+    }
+
     function onRowDataBound(e) {        
         var dataItem = e.dataItem;
         $console.log("OnRowDataBound :: " + dump(dataItem));
@@ -110,6 +118,8 @@
                 .OnLoad("onLoad")
                 .OnEdit("onEdit")
                 .OnDetailViewCollapse("onDetailViewCollapse")
+                .OnCommand("onCommand")
+                .OnComplete("onComplete")
                 .OnDetailViewExpand("onDetailViewExpand")
                 .OnDelete("onDelete")
                 .OnSave("onSave")

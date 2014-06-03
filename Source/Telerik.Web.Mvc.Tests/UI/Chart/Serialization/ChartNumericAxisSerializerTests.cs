@@ -14,23 +14,10 @@
             axisMock = new Mock<IChartNumericAxis>();
             serializer = new ChartNumericAxisSerializer(axisMock.Object);
 
-            axisMock.SetupGet(a => a.MajorGridLines).Returns(
-                new ChartLine(
-                    ChartDefaults.Axis.Numeric.MajorGridLines.Width,
-                    ChartDefaults.Axis.Numeric.MajorGridLines.Color,
-                    ChartDefaults.Axis.Numeric.MajorGridLines.Visible
-                )
-            );
-
-            axisMock.SetupGet(a => a.MinorGridLines).Returns(
-                new ChartLine(
-                    ChartDefaults.Axis.Numeric.MinorGridLines.Width,
-                    ChartDefaults.Axis.Numeric.MinorGridLines.Color,
-                    ChartDefaults.Axis.Numeric.MinorGridLines.Visible
-                )
-            );
-
+            axisMock.SetupGet(a => a.MajorGridLines).Returns(new ChartLine());
+            axisMock.SetupGet(a => a.MinorGridLines).Returns(new ChartLine());
             axisMock.SetupGet(a => a.Line).Returns(new ChartLine());
+            axisMock.SetupGet(a => a.Labels).Returns(new ChartAxisLabels());
         }
 
         [Fact]
@@ -43,7 +30,7 @@
         [Fact]
         public void Should_not_serialize_Min_if_not_set()
         {
-            axisMock.SetupGet(a => a.Min).Returns((double?) null);
+            axisMock.SetupGet(a => a.Min).Returns((double?)null);
             serializer.Serialize().ContainsKey("min").ShouldBeFalse();
         }
 
@@ -99,7 +86,7 @@
         public void Should_serialize_majorGridLines_if_set()
         {
             axisMock.SetupGet(a => a.MajorGridLines).Returns(
-                new ChartLine(1, "white", true)
+                new ChartLine(1, "white", ChartDashType.Dot, true)
             );
 
             serializer.Serialize().ContainsKey("majorGridLines").ShouldBeTrue();
@@ -115,23 +102,24 @@
         public void Should_serialize_minorGridLines_if_set()
         {
             axisMock.SetupGet(a => a.MinorGridLines).Returns(
-                new ChartLine(1, "white", true)
+                new ChartLine(1, "white", ChartDashType.Dot, true)
             );
 
             serializer.Serialize().ContainsKey("minorGridLines").ShouldBeTrue();
         }
 
         [Fact]
-        public void Should_serialize_Format()
+        public void Should_not_serialize_labels_if_not_set()
         {
-            axisMock.SetupGet(a => a.Format).Returns("{0:C}");
-            ((Dictionary<string, object>)serializer.Serialize()["labels"])["format"].ShouldEqual("{0:C}");
+            serializer.Serialize().ContainsKey("labels").ShouldBeFalse();
         }
 
         [Fact]
-        public void Should_not_serialize_Format_if_not_set()
+        public void Should_serialize_labels_if_set()
         {
-            serializer.Serialize().ContainsKey("labels").ShouldBeFalse();
+            axisMock.SetupGet(a => a.Labels).Returns(new ChartAxisLabels() { Color = "Red" });
+
+            serializer.Serialize().ContainsKey("labels").ShouldBeTrue();
         }
     }
 }

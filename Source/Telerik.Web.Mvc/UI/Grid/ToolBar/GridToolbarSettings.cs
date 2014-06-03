@@ -12,7 +12,7 @@ namespace Telerik.Web.Mvc.UI
     {
         public GridToolBarSettings(Grid<T> grid)
         {
-            Commands = new List<GridToolBarCommandBase<T>>();
+            Commands = new List<GridActionCommandBase>();
             Grid = grid;
             Template = new HtmlTemplate();
         }
@@ -37,7 +37,7 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        public IList<GridToolBarCommandBase<T>> Commands
+        public IList<GridActionCommandBase> Commands
         {
             get;
             private set;

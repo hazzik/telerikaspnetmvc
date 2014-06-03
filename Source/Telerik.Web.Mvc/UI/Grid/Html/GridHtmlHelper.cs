@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI.Html
     using System.Web.Mvc;
     using System.Web.Mvc.Html;
     using Extensions;
+    using System.Collections.Generic;
 
     public class GridHtmlHelper<T> : IGridHtmlHelper
              where T : class
@@ -49,19 +50,25 @@ namespace Telerik.Web.Mvc.UI.Html
             return fragment;
         }
 
-        public IHtmlNode EditorForModel(object dataItem, string templateName)
+        public IHtmlNode EditorForModel(object dataItem, string templateName, IEnumerable<Action<IDictionary<string, object>, object>> foreignKeyData, object additionalViewData)
         {
             var html = string.Empty;
 
 #if MVC2 || MVC3
+
+            if (foreignKeyData != null)
+            {
+                foreignKeyData.Each(action => action(viewContext.ViewData, dataItem));
+            }
+
             var htmlHelper = CreateHtmlHelper(dataItem);
             if (templateName.HasValue())
             {
-                html = htmlHelper.EditorForModel(templateName).ToHtmlString();
+                html = htmlHelper.EditorForModel(templateName, additionalViewData).ToHtmlString();
             }
             else
             {
-                html = htmlHelper.EditorForModel().ToHtmlString();
+                html = htmlHelper.EditorForModel(additionalViewData).ToHtmlString();
             }
 #endif
             return new LiteralNode(html);

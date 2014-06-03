@@ -23,7 +23,7 @@ namespace Telerik.Web.Mvc.UI
     /// </summary>
     public class ScriptRegistrar : IScriptableComponentContainer
     {
-        internal const string jQuery = "jquery-1.5.1.js";
+        internal const string jQuery = "jquery-1.6.4.js";
         internal const string jQueryValidation = "jquery.validate.js";
 
         /// <summary>
@@ -347,11 +347,18 @@ namespace Telerik.Web.Mvc.UI
             }, Scripts);
         }
 
+        private bool OutputGlobalization
+        {
+            get
+            {
+                return (EnableGlobalization && CultureInfo.CurrentCulture.Name != "en-US");
+            }
+        }
         private void WriteScriptStatements(TextWriter writer)
         {
             string cleanUpScripts = WriteCleanUpScripts().ToString();
 
-            bool shouldWriteOnDocumentReady = scriptableComponents.Any() || OnDocumentReadyActions.Any() || OnDocumentReadyStatements.Any();
+            bool shouldWriteOnDocumentReady = scriptableComponents.Any() || OnDocumentReadyActions.Any() || OnDocumentReadyStatements.Any() || OutputGlobalization;
             bool shouldWriteOnWindowUnload = OnWindowUnloadActions.Any() || OnWindowUnloadStatements.Any() || cleanUpScripts.Trim().HasValue();
 
             if (shouldWriteOnDocumentReady || shouldWriteOnWindowUnload)
@@ -367,11 +374,11 @@ namespace Telerik.Web.Mvc.UI
                     writer.WriteLine(ScriptWrapper.OnPageLoadStart);
 
                     // globalization
-                    if (EnableGlobalization && CultureInfo.CurrentCulture.Name != "en-US")
+                    if (OutputGlobalization)
                     {
-                        writer.WriteLine("if (!jQuery.telerik) jQuery.telerik = {};");
-                        GlobalizationInfo globalizationInfo = new GlobalizationInfo(CultureInfo.CurrentCulture);
+                        var globalizationInfo = new GlobalizationInfo(CultureInfo.CurrentCulture);
 
+                        writer.WriteLine("if(!jQuery.telerik) jQuery.telerik = {};");
                         writer.Write("jQuery.telerik.cultureInfo=");
                         writer.Write(new JavaScriptSerializer().Serialize(globalizationInfo.ToDictionary()));
                         writer.WriteLine(";");

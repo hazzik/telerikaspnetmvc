@@ -144,11 +144,6 @@ namespace Telerik.Web.Mvc.UI
                 throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
             }
 
-            if (Value != null && ((MaxValue.HasValue && Nullable.Compare<T>(Value, MaxValue) == 1) || (MinValue.HasValue && Nullable.Compare<T>(Value, MinValue) == -1)))
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "MinValue", "MaxValue"));
-            }
-
             base.VerifySettings();
         }
 

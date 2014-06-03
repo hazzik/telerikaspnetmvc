@@ -72,7 +72,7 @@ namespace Telerik.Web.Mvc.UI
         {
             if (column.Aggregates.Any())
             {
-                result["aggregates"] = column.Aggregates.Select(aggregate => aggregate.AggregateMethodName.ToLower());
+                result["aggregates"] = column.Aggregates.Select(aggregate => aggregate.AggregateMethodName.ToLowerInvariant());
             }
         }
         

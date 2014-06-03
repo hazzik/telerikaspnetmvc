@@ -24,7 +24,7 @@
                         if (node.Attributes["controller"] == null)
                             continue;
 
-                        if (node.Attributes["controller"].Value.ToLower() == "home")
+                        if (node.Attributes["controller"].Value.ToLowerInvariant() == "home")
                             continue;
 
                         exampleList.Add(node);
@@ -51,7 +51,7 @@
                         new SearchResult
                         {
                             Text = string.Format("{0} &raquo; {1}", example.Attributes["controller"].Value, example.Attributes["title"].Value),
-                            Url = string.Format("{0}/{1}", example.Attributes["controller"].Value.ToLower(), example.Attributes["action"].Value.ToLower())
+                            Url = string.Format("{0}/{1}", example.Attributes["controller"].Value.ToLowerInvariant(), example.Attributes["action"].Value.ToLowerInvariant())
                         });
 
             foreach (string token in text.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))

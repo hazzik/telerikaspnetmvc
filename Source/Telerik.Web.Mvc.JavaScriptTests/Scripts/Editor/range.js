@@ -10,7 +10,7 @@ function documentFromRange(range) {
 }
 
 function selectionFromWindow(window) {
-    if ($.browser.msie) {
+    if ($.browser.msie && $.browser.version < 9) {
         return new W3CSelection(window.document);
     }
     
@@ -288,7 +288,7 @@ function updateRangeProperties(range) {
 }
 
 function createRange(document) {
-    if ($.browser.msie) {
+    if ($.browser.msie && $.browser.version < 9) {
         return new W3CRange(document);
     }
     
@@ -459,6 +459,31 @@ W3CSelection.prototype = {
 
             if (textRange.compareEndPoints('StartToEnd', textRange) == 0)
                 range.collapse(false);
+                
+            var startContainer = range.startContainer,
+                endContainer = range.endContainer,
+                body = this.ownerDocument.body;
+                
+            if (!range.collapsed && range.startOffset == 0 && range.endOffset == getNodeLength(range.endContainer) // check for full body selection
+            && !(startContainer == endContainer && isDataNode(startContainer) && startContainer.parentNode == body)) { // but not when single textnode is selected
+                var movedStart = false,
+                    movedEnd = false;
+
+                while (findNodeIndex(startContainer) == 0 && startContainer == startContainer.parentNode.firstChild && startContainer != body) {
+                    startContainer = startContainer.parentNode;
+                    movedStart = true;
+                }
+
+                while (findNodeIndex(endContainer) == getNodeLength(endContainer.parentNode) - 1 && endContainer == endContainer.parentNode.lastChild && endContainer != body) {
+                    endContainer = endContainer.parentNode;
+                    movedEnd = true;
+                }
+
+                if (startContainer == body && endContainer == body && movedStart && movedEnd) {
+                    range.setStart(startContainer, 0);
+                    range.setEnd(endContainer, getNodeLength(body));
+                }
+            }
         }
         return range;
     }

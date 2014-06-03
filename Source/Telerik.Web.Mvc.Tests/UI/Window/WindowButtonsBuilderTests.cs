@@ -127,5 +127,20 @@
 
             buttons.Container[0].Url.ShouldEqual("#");
         }
+
+        [Fact]
+        public void Clear_method_should_remove_all_buttons()
+        {
+            builder.Close();
+            builder.Clear();
+
+            buttons.Container.Count.ShouldEqual(0);
+        }
+
+        [Fact]
+        public void Clear_method_should_return_builder()
+        {
+            builder.Clear().ShouldBeSameAs(builder);
+        }
     }
 }

@@ -4,43 +4,44 @@ function ParagraphCommand(options) {
     this.exec = function () {
         var range = this.getRange(),
             document = documentFromRange(range),
-            next,
-            emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />';
-
-        // necessary while the emptyParagraphContent is empty under IE
-        var blocks = 'p,h1,h2,h3,h4,h5,h6'.split(','),
+            parent, previous, next,
+            emptyParagraphContent = $.browser.msie ? '' : '<br _moz_dirty="" />',
+            paragraph, marker, li, heading, rng,
+            // necessary while the emptyParagraphContent is empty under IE
+            blocks = 'p,h1,h2,h3,h4,h5,h6'.split(','),
             startInBlock = dom.parentOfType(range.startContainer, blocks),
             endInBlock = dom.parentOfType(range.endContainer, blocks),
             shouldTrim = (startInBlock && !endInBlock) || (!startInBlock && endInBlock);
 
         range.deleteContents();
 
-        var marker = dom.create(document, 'a');
+        marker = dom.create(document, 'a');
         range.insertNode(marker);
+
         normalize(marker.parentNode);
 
-        var li = dom.parentOfType(marker, ['li']),
-            heading = dom.parentOfType(marker, 'h1,h2,h3,h4,h5,h6'.split(','));
+        li = dom.parentOfType(marker, ['li']);
+        heading = dom.parentOfType(marker, 'h1,h2,h3,h4,h5,h6'.split(','));
 
         if (li) {
-            var rng = range.cloneRange();
+            rng = range.cloneRange();
             rng.selectNode(li);
-
+            
+            // hitting 'enter' in empty li
             if (textNodes(rng).length == 0) {
-                // hitting 'enter' in empty li
-                var paragraph = dom.create(document, 'p');
+                paragraph = dom.create(document, 'p');
 
-                if (li.nextSibling)
+                if (li.nextSibling) {
                     split(rng, li.parentNode);
+                }
 
                 dom.insertAfter(paragraph, li.parentNode);
                 dom.remove(li.parentNode.childNodes.length == 1 ? li.parentNode : li);
                 paragraph.innerHTML = emptyParagraphContent;
                 next = paragraph;
             }
-        }
-        else if (heading && !marker.nextSibling) {
-            var paragraph = dom.create(document, 'p');
+        } else if (heading && !marker.nextSibling) {
+            paragraph = dom.create(document, 'p');
 
             dom.insertAfter(paragraph, heading);
             paragraph.innerHTML = emptyParagraphContent;
@@ -49,36 +50,42 @@ function ParagraphCommand(options) {
         }
 
         if (!next) {
-            if (!(li || heading))
+            if (!(li || heading)) {
                 new BlockFormatter([{ tags: ['p']}]).apply([marker]);
+            }
 
             range.selectNode(marker);
 
-            var parent = dom.parentOfType(marker, [li ? 'li' : heading ? dom.name(heading) : 'p']);
+            parent = dom.parentOfType(marker, [li ? 'li' : heading ? dom.name(heading) : 'p']);
 
             split(range, parent, shouldTrim);
 
-            var previous = parent.previousSibling;
+            previous = parent.previousSibling;
 
-            if (dom.is(previous, 'li') && previous.firstChild && !dom.is(previous.firstChild, 'br'))
+            if (dom.is(previous, 'li') && previous.firstChild && !dom.is(previous.firstChild, 'br')) {
                 previous = previous.firstChild;
+            }
 
             next = parent.nextSibling;
 
-            if (dom.is(next, 'li') && next.firstChild && !dom.is(next.firstChild, 'br'))
+            if (dom.is(next, 'li') && next.firstChild && !dom.is(next.firstChild, 'br')) {
                 next = next.firstChild;
+            }
 
             dom.remove(parent);
 
             function clean(node) {
-                if (node.firstChild && dom.is(node.firstChild, 'br'))
+                if (node.firstChild && dom.is(node.firstChild, 'br')) {
                     dom.remove(node.firstChild);
+                }
 
-                if (isDataNode(node) && node.nodeValue == '')
+                if (isDataNode(node) && node.nodeValue == '') {
                     node = node.parentNode;
+                }
 
-                if (node && !dom.is(node, 'img') && node.innerHTML == '')
+                if (node && !dom.is(node, 'img') && node.innerHTML == '') {
                     node.innerHTML = emptyParagraphContent;
+                }
             }
 
             clean(previous);
@@ -90,10 +97,11 @@ function ParagraphCommand(options) {
 
         normalize(next);
 
-        if (!dom.is(next, 'img'))
-            range.selectNodeContents(next);
-        else
+        if (dom.is(next, 'img')) {
             range.setStartBefore(next);
+        } else {
+            range.selectNodeContents(next);
+        }
 
         range.collapse(true);
 

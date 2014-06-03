@@ -1,4 +1,4 @@
-﻿(function ($) {
+﻿(function ($, undefined) {
     var keys = {            
             TAB: 9,
             ENTER: 13,
@@ -15,7 +15,7 @@
     var $t = $.telerik;
     var rdate = /"+\\\/Date\((.*?)\)\\\/"+/g;
     var ROWSELECTOR = "tr:not(.t-grouping-row,.t-group-footer,.t-detail-row,.t-no-data,.t-footer-template):visible",
-        CELLSELECTOR = ">td:not(.t-group-cell,.t-hierarchy-cell)",
+        CELLSELECTOR = ">td:not(.t-group-cell,.t-hierarchy-cell):visible",
         FIRST_CELL_SELECTOR = ROWSELECTOR + CELLSELECTOR + ":first"
         FOCUSED = "t-state-focused";
 
@@ -39,7 +39,29 @@
                 .replace(/>/g, '&gt;');
     }    
 
-    
+    function normalizeCols(cols, columns, columnIndex) {
+        var col = $("<col />").css("width", columns[columnIndex].width),
+            idx,
+            length,
+            colIndex = 0;
+        
+        for(idx = 0, length = columns.length; idx < length; idx++) {                
+            if(idx >= columnIndex && colIndex) {
+                break;
+            }
+
+            if(!columns[idx].hidden) {
+                colIndex++;
+            }
+        }
+        
+        if(idx > columnIndex) {
+            cols.eq(colIndex - 1).before(col);
+        } 
+        else {
+            cols.eq(colIndex - 1).after(col);
+        }
+    }
 
     $t.grid = function (element, options) {
         this.element = element;
@@ -58,14 +80,28 @@
 
         if (!this.scrollable) {
             this.$tbody = $('> table > tbody', element);
-            this.$header = $('> table > thead tr', element);
+            this.$header = $('> table > thead > tr', element);
             this.$footer = $('> table > tfoot', element);
         } else {
             
             $('> .t-grid-content', element).tScrollable();
 
-            this.$header = $('> .t-grid-header tr', element);
+            this.$header = $('> .t-grid-header > .t-grid-header-wrap > table > tbody > tr', element);
             this.$footer = $('> .t-grid-footer', element);
+
+            var isRtl = $(element).closest('.t-rtl').length;
+
+            if (isRtl) {
+                if ($.browser.webkit || ($.browser.mozilla && parseInt($.browser.version, 10) < 2)) { // Firefox 3 and older
+                    $(element).addClass("t-grid-rightscroll"); //reverses header div padding
+                }
+            }
+
+            var isTouch = (/iphone|ipad|android/gi).test(navigator.appVersion);
+
+            if (isTouch) {
+                $(".t-grid-header", element).css("padding", "0").find(".t-grid-header-wrap").css("width", "auto");
+            }
         }
 
         this.$headerWrap = $('> .t-grid-header > .t-grid-header-wrap', element);
@@ -76,8 +112,9 @@
         var grid = this;        
         $('> .t-grid-content', element).bind('scroll', function () {
             if(grid.pageOnScroll) {
-                var pos = this.scrollTop + this.clientHeight;                
-                if(pos === this.scrollHeight && grid.currentPage < grid.totalPages()) {
+                var pos = this.scrollTop + this.clientHeight;
+                if(pos === this.scrollHeight && grid.currentPage < grid.totalPages() && !grid._pagingInProgress) {
+                    grid._pagingInProgress = true;
                     grid.pageTo(grid.currentPage + 1);    
                 }
             }
@@ -100,7 +137,9 @@
                 $.each(this.columns, function(){ if(!this.hidden){ colSpan++; } });                
 
                 $(new $t.stringBuilder()
-                        .cat('<tr class="t-detail-row">')
+                        .cat('<tr class="t-detail-row')
+                        .catIf(' t-alt', $tr.hasClass('t-alt'))
+                        .cat('">')
                         .rep('<td class="t-group-cell"></td>', $tr.find('.t-group-cell').length)
                         .cat('<td class="t-hierarchy-cell"></td>')
                         .cat('<td class="t-detail-cell" colspan="')
@@ -122,6 +161,10 @@
                 dropDown.close();   
             },this)
         });
+
+        $(element).delegate(".t-button", "click", $.proxy(function(e) {
+           this._command(e); 
+        }, this));
 
         dropDown.dataBind(options.pageSizesInDropDown || []);
         
@@ -156,7 +199,7 @@
                 $(this).toggleClass('t-state-hover');
             });
 
-        var nonSelectableRows = 'tr:not(.t-grouping-row,.t-detail-row,.t-no-data,:has(>.t-edit-container))';
+        var nonSelectableRows = 'tr:not(.t-grouping-row,.t-detail-row,.t-no-data,.t-group-footer,:has(>.t-edit-container))';
         
         if (this.selectable) {
             var tbody = this.$tbody[0];
@@ -174,6 +217,7 @@
                 }
             });
         }
+
         if (this.isAjax() || this.operationMode === "client") {
             this.$pager.delegate('.t-link:not(.t-state-disabled)', 'click', $t.stop(this.pagerClick, this));
             if (this.sort)
@@ -186,6 +230,8 @@
         $t.bind(this, {
             columnResize: this.onColumnResize,
             columnReorder: this.onColumnReorder,
+            command: this.onCommand,
+            complete: this.onComplete,
             'delete': this.onDelete,
             detailViewExpand: this.onDetailViewExpand,
             detailViewCollapse: this.onDetailViewCollapse,
@@ -208,7 +254,11 @@
 
         if(this.isAjax() || this.operationMode === "client") {
             this._dataSource();
-        }        
+        } 
+        
+        if(this.columnContextMenu) {
+            this.initializeContextMenu();
+        }
     }    
 
     $t.grid.prototype = {
@@ -263,6 +313,56 @@
                 });
             }
         },
+        _onCommand: function(e) {
+            if (e.row) {
+                e.dataItem = this.dataItem(e.row);
+            }
+            return  $t.trigger(this.element, 'command', e);
+        },
+        _onComplete: function(e) {
+            return  $t.trigger(this.element, 'complete', e);
+        },
+        _command: function(e) {
+            var button = $(e.currentTarget);
+
+            if (button.is(".t-ajax")) {
+                var name = /t-grid-([^\s]*)/.exec(button.attr("class"));
+                
+                if (name) {
+                    name = name[1];
+                }             
+    
+                var args = { 
+                    name: name, 
+                    row: button.closest("tr")[0] 
+                };
+
+
+                e.preventDefault();
+
+                if(this._onCommand(args)) {
+                    return;
+                }
+
+                $.ajax(this.ajaxOptions( {
+                    url: button.attr("href"),
+                    data: args.data || {},
+                    success: $.proxy(function(data) {
+                        try {
+                            data = eval('(' + data + ')');
+                        } catch (e) {
+                            // in case the result is not JSON raise the 'error' event
+                            if (!$t.ajaxError(this.element, 'error', xhr, 'parseeror'))
+                                alert('Error! The requested URL did not return JSON.');
+                            return;
+                        }
+
+                        this._onComplete({ name: name, response: data });
+                    }, this) 
+                }));
+            }
+        },
+
         _keyDown: function(e) {
             var that = this,
                 element = $(that.element),
@@ -294,7 +394,7 @@
             }
 
             if(canHandle) {
-                if(pageable && keys.PAGEUP == key) {
+                if(pageable && keys.PAGEDOWN == key) {
                     if(!that.pageOnScroll) {
                         element.one(DATABOUND, function () {
                             currentProxy(element.find(FIRST_CELL_SELECTOR));
@@ -305,13 +405,15 @@
                         that.pageTo(that.currentPage + 1);
                     }
                     handled = true;
-                } else if(pageable && keys.PAGEDOWN == key) { 
+                } else if(pageable && keys.PAGEUP == key) { 
                     if(!that.pageOnScroll) {
                         element.one(DATABOUND, function () {
                             currentProxy(element.find(FIRST_CELL_SELECTOR));
                             that._focusGridElement();
                         });
-                        that.pageTo(Math.max(that.currentPage - 1, 1));
+                        if(that.currentPage > 1) {
+                            that.pageTo(Math.max(that.currentPage - 1, 1));
+                        }
                     }
                     handled = true;
                 } else if(keys.UP === key) {                    
@@ -323,9 +425,9 @@
                 } else if (keys.LEFT === key) {
                     if(current) {
                         if(isRtl) {
-                            current = current.next();
+                            current = current.nextAll(":visible:first");
                         } else {
-                            current = current.prev(":not(.t-group-cell, .t-hierarchy-cell)");
+                            current = current.prevAll(":not(.t-group-cell, .t-hierarchy-cell):visible:first");
                         }
                     } else {
                         current = element.find(FIRST_CELL_SELECTOR);
@@ -335,9 +437,9 @@
                 } else if (keys.RIGHT === key) {
                     if(current) {
                         if(isRtl) {
-                            current = current.prev(":not(.t-group-cell, .t-hierarchy-cell)");
+                            current = current.prevAll(":not(.t-group-cell, .t-hierarchy-cell):visible:first");
                         } else {
-                            current = current.next();
+                            current = current.nextAll(":visible:first");
                         }
                     } else {
                         current = element.find(FIRST_CELL_SELECTOR);
@@ -367,6 +469,8 @@
         _handleEditing: function(e) {
             var that = this,
                 key = e.keyCode,
+                shiftKey = e.shiftKey,
+                nextCell,
                 currentProxy = $.proxy(that.current, that),
                 clearInputSelection = $.proxy(that._clearInputSelection, that),
                 focusGridElement = $.proxy(that._focusGridElement, that),
@@ -387,7 +491,12 @@
             
             if(keys.ENTER == key || keys.F12 == key) {
                 handled = true;                
-                if(isEdited) {                    
+                if(isEdited) {  
+                    if ($(e.target).is("textarea")) {
+                        handled = false;
+                        return;
+                    }
+                                      
                     clearInputSelection(current.find(firstInputSelector)[0]);
                     if(isInCell) {
                         valid = that.validate();                        
@@ -468,13 +577,27 @@
                     }                    
                     location.href = row.find(".t-grid-cancel:first").attr("href");
                 }
-            } else if(isEdited && isInCell && keys.TAB == key) {
-                handled = true;
-                clearInputSelection(current.find(firstInputSelector)[0]);
-                that.saveCell(current);
-                if(that.valid) {                    
-                    focusGridElement();
-                    currentProxy(e.shiftKey ? current.prev() : current.next());
+            } else if(isInCell && keys.TAB == key)  {               
+                if(isEdited) {
+                    clearInputSelection(current.find(firstInputSelector)[0]);
+                    that.saveCell(current);                    
+                    if(that.valid) {                    
+                        focusGridElement();                        
+                    } else {
+                        current.find(firstInputSelector).focus();
+                        return true;
+                    }                    
+                    handled = true;
+                } 
+                nextCell = shiftKey ? current.prev() : current.next();
+                if(!nextCell.length) {
+                    nextCell = current.parent()[shiftKey ? "prev" : "next"]().children(shiftKey ? ":last" : ":first");
+                }                
+                currentProxy(nextCell);
+                if(that.keyboardNavigation.editOnTab && nextCell.length) {                    
+                    that.editCell(nextCell[0]);
+                    nextCell.find(firstInputSelector).focus();                    
+                    handled = true;
                 }
             }
 
@@ -540,7 +663,7 @@
             }
         },
         _clearInputSelection: function(input) {
-            if(!input) {
+            if(!input || $(input).is(":checkbox, :radio")) {
                 return;
             }
             var browser = $.browser,
@@ -594,9 +717,10 @@
         },
         _transformParams: function(data) {
             var that = this, 
-                remoteOperations = that._isServerOperation();
+                remoteOperations = that._isServerOperation(),
                 params = {},
-                filter = $.isFunction(that.filterExpr) ?  that.filterExpr() : "";
+                filter = that.filterBy || "",
+                orderBy = that.orderBy || "";
 
             if (remoteOperations) {
                 if(data["page"]) {
@@ -607,8 +731,8 @@
                     params[that.queryString.size] = data["pageSize"];                    
                 }
 
-                if(data["sort"] && data["sort"].length) {
-                    params[that.queryString.orderBy] = $.map(data["sort"], function (s) { return s.field + '-' + s.dir; }).join('~');                                        
+                if(orderBy !== "") {
+                    params[that.queryString.orderBy] = orderBy;
                 }                                    
 
                 if(filter !== "") {
@@ -634,10 +758,10 @@
             delete data["group"];
             delete data["aggregates"];
 
-            params = $.extend(params, data);
-
             if (that.ws) {
-                params =  $t.toJson({ state: params });
+                params =  $t.toJson($.extend(data, { state: params }));
+            } else {
+                params = $.extend(params, data);
             }
 
             return params;
@@ -648,6 +772,11 @@
                 options,
                 data = that.data || [];
                 remoteOperations = that._isServerOperation(),
+                aggregates = $.map(that.columns || [], function(c) {
+                    return $.map(c.aggregates || [], function(a) {
+                        return { field: c.member, aggregate: a };
+                    });
+                }),
                 deserializer = {
                     translateGroup: function(group) {                        
                         return { 
@@ -704,7 +833,7 @@
                             currentData = dataSource.data(),
                             pageIndex = dataSource.page() - 1,
                             pageSize = dataSource.pageSize(),
-                            deleted = that.deletedIds || [];                
+                            deleted = that.deletedIds || [];
 
                         that.deletedIds = [];
                         if(data) {
@@ -712,7 +841,7 @@
                             data = !$.isArray(data) ? data.data || data.Data : data;
 
                             if (currentData && currentData.length && !remoteOperations && dataSource.id) {
-                                if(data.length && typeof data[0].HasSubgroups != 'undefined' && !remoteOperations) {                                
+                                if(data.length && typeof data[0].HasSubgroups != 'undefined' && !remoteOperations) {
                                     data = $.map(data, $.proxy(this.flatGroups, this));
                                 }
                                 return this.mergeChanges(currentData, data, deleted);
@@ -723,7 +852,7 @@
                     total: function(data) {
                         if(data) {
                             data = this.convert(data);  
-                            return !$.isArray(data) ? data.total || data.Total : data.length;
+                            return !$.isArray(data) ? data.total || data.Total || 0 : data.length;
                         }
                         return 0;
                     },
@@ -736,7 +865,7 @@
                         return data.aggregates || {};
                     }
                 };
-
+            
             options = {
                 serverSorting: remoteOperations,
                 serverPaging: remoteOperations,
@@ -745,8 +874,49 @@
                 serverAggregates: remoteOperations,
                 page: paging ? that.currentPage : undefined,
                 pageSize: paging ? that.pageSize : undefined,
-                aggregates: that.aggregates,
-                change: $.proxy(that._dataChange, that)
+                aggregates: that.aggregates || aggregates,
+                error: $.proxy(function (args) {
+                    var xhr = args[0],
+                        status = args[1];
+                    if ($t.ajaxError(this.element, 'error', xhr, status))
+                        return;
+                }, this),
+                //change: $.proxy(that._dataChange, that),
+                group: $.map(that.groups || [], function(group) {
+                    return { field: group.member, dir: group.order, aggregates: aggregates };
+                }),
+                sort: $.map(that.sorted, function(column) {
+                    return { 
+                        field: column.member,
+                        dir: column.order
+                    }
+                }),
+                filter: $.map($.grep(that.columns, function (column) {
+                    return column.filters;
+                }), function(column) {
+                    return $.map(column.filters, function(filter) {
+                        var value = filter.value;
+
+                        if (column.type == "Number") {
+                            value = parseFloat(value);
+                        } else if (column.type == "Date") {                                                        
+                            if (typeof value === "string") {
+                                var date = /^\/Date\((.*?)\)\/$/.exec(value);
+                                if (date) {
+                                    value = new Date(parseInt(date[1]));
+                                } else {
+                                    var format = column.format ? /\{0(:([^\}]+))?\}/.exec(column.format)[2] : $t.cultureInfo.shortDate;
+                                    value = $t.datetime.parse({ value: value, format: format }).toDate();
+                                }
+                            }
+                        }
+                        return {
+                            field: column.member,
+                            operator: filter.operator,
+                            value: value                       
+                        }; 
+                    });
+                })
             };
 
             if (remoteOperations || (that.isAjax() && !data.length)) {
@@ -762,7 +932,9 @@
                             dataFilter: function (data, dataType) {
                                 // convert "\/Date(...)\/" to "new Date(...)"
                                 try {
-                                    return eval('(' + data.replace(rdate, 'new Date($1)') + ')');
+                                    data = eval('(' + data.replace(rdate, 'new Date($1)') + ')');
+                                    that._onComplete({ name: "dataBinding", response: data });
+                                    return data;
                                 } catch (e) {
                                     // in case the result is not JSON raise the 'error' event
                                     if (!$t.ajaxError(that.element, 'error', {}, 'parseeror'))
@@ -775,11 +947,11 @@
                     },                   
                     deserializer: deserializer
                 });
-            } else if (data.length){
+            } else if (data.length) {
                 $.extend(options, {
                     data: {
                         data: that.data,
-                        total: that.total
+                        total: that.total || data.length
                     },
                     deserializer: deserializer
                 });
@@ -787,8 +959,44 @@
             return options;
         },
         _dataSource: function() {
+            var that = this,
+                options = that._dataSourceOptions(),
+                data = options.data;
+
+            that.dataSource = new $t.DataSource(options);            
+           
+            if (data && data.data) {
+                that._convertInitialData(data.data);
+            }
+
+            that.dataSource.bind("change", $.proxy(that._dataChange, that));
+        },
+
+        _convertInitialData: function(data) {
             var that = this;
-            that.dataSource = new $t.DataSource(that._dataSourceOptions());
+
+            if (!that._isServerOperation() && data && data.length) {
+                that.dataSource.read();
+                var view = that.dataSource.view();
+
+                if (view.length && view[0].hasSubgroups != undefined) {
+                    var result = [],
+                        extractor = function(group) {
+                            if (group.hasSubgroups) {
+                                return extractor(group.items);
+                            }
+                            return group.items;
+                        };
+
+                    for (var i=0, len=view.length; i < len; i++) {
+                        result = result.concat(extractor(view[i]));
+                    }
+
+                    that.data = result;
+                } else {
+                    that.data = view;
+                }
+            }
         },
         _mapAggregates: function(aggregates) {
             var result = {};
@@ -799,7 +1007,7 @@
         },
         rowClick: function (e) {
             var $target = $(e.target);
-            if (!$target.is(':button,a,:input,a>.t-icon')) {
+            if (!$target.is(':button,a,input,select,textarea,option,a>.t-icon')) {
                 e.stopPropagation();
                 var $row = $target.closest('tr')
                                   .addClass('t-state-selected')
@@ -835,10 +1043,10 @@
             if (this.isAjax()) {
                 e.preventDefault();
                 if(!this._isServerOperation()) {
-                    this.dataSource.read();
-                } else {
-                    this.ajaxRequest(true);
-                }
+                    this.dataSource.data([]);
+                } 
+
+                this.ajaxRequest(true);                
             }
         },
 
@@ -972,7 +1180,6 @@
         },
 
         pageTo: function (page) {
-            this._pagingInProgress = true;
             this.currentPage = page;
             if (this.isAjax())
                 this.ajaxRequest();
@@ -982,16 +1189,17 @@
         _dataChange: function() {
             var dataSource = this.dataSource;
 
-            this.total = dataSource.total();
+            if (!this._clientBindingInProgress) {
+                this.total = dataSource.total();
+            }
 
             this.aggregates = dataSource.aggregates();
             var data = dataSource.view();      
-                  
+                            
             if(this.pageOnScroll && this._pagingInProgress === true) {
                 data = (this.data || []).concat(data);
                 this._pagingInProgress = false;
             }
-
             this._current = null;
 
             this._populate(data);           
@@ -1032,6 +1240,10 @@
                         return;
                     }
 
+                    if (options.commandName) {
+                        this._onComplete( { name: options.commandName, response: data } );
+                    }
+
                     data = data.d || data; // Support the `d` returned by MS Web Services 
 
                     if (options.hasErrors && options.hasErrors(data)) {
@@ -1042,9 +1254,8 @@
                             })) {
                             options.displayErrors(data);
                         }
-                        return;
+                        return;B
                     }
-
                     this.dataSource.success(data);
                 }, this)
             };
@@ -1052,11 +1263,13 @@
 
             var state = this.ws ? result.data.state = {} : result.data;
 
-            state[this.queryString.page] = this.currentPage;
-            state[this.queryString.size] = this.pageSize;
-            state[this.queryString.orderBy] = this.orderBy || '';
-            state[this.queryString.groupBy] = this.groupBy;
-            state[this.queryString.filter] = (this.filterBy || '').replace(/\"/g, '\\"');
+            if (this._isServerOperation()) {
+                state[this.queryString.page] = this.currentPage;
+                state[this.queryString.size] = this.pageSize;
+                state[this.queryString.groupBy] = this.groupBy;
+                state[this.queryString.filter] = (this.filterBy || '').replace(/\"/g, '\\"');
+            }            
+            state[this.queryString.orderBy] = this.orderBy || '';                                    
             state[this.queryString.aggregates] = $.map(this.columns, function(c) {
                 if (c.aggregates)
                     return c.member + '-' + c.aggregates.join('-');
@@ -1093,6 +1306,7 @@
         },
         ajaxRequest: function (additionalData) {           
             var that = this,
+                paging = that.pageSize > 0,
                 pageSize = that.pageSize,                
                 currentPage = that.currentPage,
                 aggregates = $.map(that.columns, function(c) {
@@ -1127,10 +1341,10 @@
             if(that._isServerOperation()) {
                 that.showBusy();                
             }            
-
+            
             that.dataSource.query($.extend({
                 page: currentPage,
-                pageSize: pageSize,
+                pageSize: paging ? pageSize : undefined,
                 sort: $.map(that.sorted, function(column) {
                     return { 
                         field: column.member,
@@ -1141,16 +1355,25 @@
                     return column.filters;
                 }), function(column) {
                     return $.map(column.filters, function(filter) {
-                        if (column.type == "Number") {
-                            filter.value = parseFloat(filter.value);
-                        } else if (column.type == "Date") {
-                            var format = column.format ? /\{0(:([^\}]+))?\}/.exec(column.format)[2] : $t.cultureInfo.shortDate;
-                            filter.value = $t.datetime.parse({ value: filter.value, format: format }).toDate();
+                        var value = filter.value;
+
+                         if (column.type == "Number") {
+                            value = parseFloat(value);
+                        } else if (column.type == "Date") {                                                        
+                            if (typeof value === "string") {
+                                var date = /^\/Date\((.*?)\)\/$/.exec(value);
+                                if (date) {
+                                    value = new Date(parseInt(date[1]));
+                                } else {
+                                    var format = column.format ? /\{0(:([^\}]+))?\}/.exec(column.format)[2] : $t.cultureInfo.shortDate;
+                                    value = $t.datetime.parse({ value: value, format: format }).toDate();
+                                }
+                            }
                         }
                         return {
                             field: column.member,
                             operator: filter.operator,
-                            value: filter.value                       
+                            value: value                       
                         }; 
                     });
                 }),
@@ -1159,13 +1382,9 @@
                 }),
                 aggregates: aggregates                
             }, $.extend({}, e.data, additionalData)));
-//            $.ajax(this.ajaxOptions({
-//                data: $.extend({}, e.data, additionalData),
-//                url: this.url('selectUrl')
-//            }));
         },
         valueFor: function (column) {
-            if (column.type == 'Date')
+            if (column.type == 'Date')                
                 return new Function('data', 'var value = data.' + column.member +
                     '; if (!value) return null; return value instanceof Date? value : new Date(parseInt(value.replace(/\\/Date\\((.*?)\\)\\//, "$1")));');
 
@@ -1173,25 +1392,47 @@
         },
 
         displayFor: function (column) {
-            var localization = this.localization;
+            var localization = this.localization, grid = this;
 
             if (column.commands) {
-                var html = $.map(column.commands, function(command) {
-                    var builder = $t.grid.ButtonBuilder.create($.extend({text:localization[command.name]}, command));
-                    return builder.build();
-                }).join('');
+                var builders = $.map(column.commands, function(command) {
+                    return $t.grid.ButtonBuilder.create($.extend({text:localization[command.name]}, command));
+                });
 
-                return function() {
-                    return html;
+                return function(dataItem) {
+                    return $.map(builders, function(builder) {
+                        return builder.build($.extend({}, dataItem, {
+                           __page: grid.currentPage,
+                           __orderBy: grid.orderBy || "", 
+                           __filter: grid.filterBy || "",
+                           __groupBy: grid.groupBy || "" 
+                        }));
+                    }).join('');
                 };
             }
 
             if (!column.template) {
                 var result = column.value || function () { return "" };
 
+                var getter = result = !column.data ? result : function(dataItem) {
+                    var key = column.value(dataItem),
+                        records = column.data,
+                        value = "",
+                        idx,
+                        length;
+
+                    for (idx = 0, length = records.length; idx < length; idx++) {
+                        if (key == records[idx].Value) {
+                            return records[idx].Text;
+                        }
+                    }            
+                      
+                    return value;   
+                }
+
                 if (column.format || column.type == 'Date')
                     result = function (data) {
-                        var value = column.value(data);
+                        var value = getter(data);
                         return value == null ? '' : $t.formatString(column.format || '{0:G}', value);
                     };
 
@@ -1315,11 +1556,11 @@
         },
 
         dataItem: function (tr) {
-            return this.data[this.$tbody.find('> tr:not(.t-grouping-row,.t-detail-row,.t-grid-new-row,.t-group-footer)').index($(tr))];
+            return (this.data||[])[this.$tbody.find('> tr:not(.t-grouping-row,.t-detail-row,.t-grid-new-row,.t-group-footer)').index($(tr))];
         },
 
         _colspan: function() {
-            return this.groups.length + this.columns.length + (this.detail ? 1 : 0);
+            return this.groups.length + $.grep(this.columns, function(column) { return !column.hidden; }).length + (this.detail ? 1 : 0);
         }, 
         bindTo: function (data) {                    
             var html = new $t.stringBuilder();
@@ -1347,7 +1588,7 @@
             if (this.onRowDataBound) {
 
                 var rows = jQuery.grep(this.$tbody[0].rows, function (row) {
-                    return !$(row).hasClass('t-grouping-row')
+                    return !$(row).is('.t-grouping-row, .t-group-footer, .t-footer-template')
                 });
 
                 for (var i = 0, l = this.data.length; i < l; i++)
@@ -1384,7 +1625,7 @@
 
             this.$pager.find('.t-page-size').each(function () {
                 var html = '<div style="width: 50px;" class="t-dropdown t-header">' +
-                             '<div class="t-dropdown-wrap t-state-default"><span class="t-input">' + pageSize + '</span>' + 
+                         '<div class="t-dropdown-wrap t-state-default"><span class="t-input">' + pageSize + '</span>' + 
                                 '<span class="t-select"><span class="t-icon t-arrow-down">select</span></span>' + 
                              '</div>' + 
                            '</div>';
@@ -1487,7 +1728,12 @@
         },
 
         firstItemInPage: function () {
-            return this.total > 0 ? (this.currentPage - 1) * this.pageSize + 1 : 0;
+            var that = this;
+            return that.total > 0 
+                    ? that.pageOnScroll 
+                        ? 1 
+                        : (that.currentPage - 1) * that.pageSize + 1 
+                    : 0;
         },
 
         lastItemInPage: function () {
@@ -1495,32 +1741,50 @@
         },
 
         dataBind: function (data) {
-            this.dataSource.success(data);
+            var that = this;
+            if (!that.dataSource) {
+                that._dataSource();
+            } else if (data && data.length) {
+                that.dataSource._group = $.map(that.groups, function(group) {                    
+                    return { field: group.member, dir: group.order, aggregates: aggregates };
+                });
+            }            
+
+            that._clientBindingInProgress = true;
+            try{
+                that.dataSource.success(data || []);
+            } finally {
+                that._clientBindingInProgress = false;
+            }
         },
         
         bindFooter: function() {
             var that = this, 
                 $footerCells = that.$footer.find('td:not(.t-group-cell,.t-hierarchy-cell)'),
-                aggregates = that.aggregates;
+                aggregates = that.aggregates,
+                defaultAggregate = { Sum: 0, Count: 0, Average: 0, Max: 0, Min: 0 };
             
             $.each(that.columns, function(index) {
-                if (this.footer)
-                    $footerCells.eq(index).html(this.footer(that._mapAggregates(aggregates[this.member] || {})));
+                if (this.footer) {
+                    $footerCells.eq(index).html(this.footer(that._mapAggregates(aggregates[this.member] || defaultAggregate)));
+                }
             });
         },
 
         rebind: function (args) {
-            this.sorted = [];
-            this.orderBy = '';
-            this.filterBy = '';
-            this.currentPage = 1;
+            var that = this;
 
-            $.each(this.columns, function () {
+            that.sorted = [];
+            that.orderBy = '';
+            that.filterBy = '';
+            that.currentPage = 1;
+
+            $.each(that.columns, function () {
                 this.order = null;
                 this.filters = null;
             });
 
-            $('.t-filter-options', this.element)
+            $('.t-filter-options', that.element)
                 .find('input[type="text"], select')
                 .val('')
                 .removeClass('t-state-error')
@@ -1528,22 +1792,269 @@
                 .find('div.t-formatted-value')
                 .html('');
 
-            $('.t-grid-filter', this.element)
+            $('.t-grid-filter', that.element)
                 .removeClass('t-active-filter');
+            
+            if (this.isAjax()) {
+                that.data = [];
+            }
 
-            this.ajaxRequest(args);
+            if (!that._isServerOperation()) {                
+                that._dataSource();                
+            } 
+
+            that.ajaxRequest(args);
+        },
+
+        hideColumn: function(column) {
+            var that = this,
+                columns = that.columns,
+                columnIndex,
+                cols,
+                width,
+                rows = that.$tbody.children("tr"),
+                length, 
+                row, 
+                cell,
+                idx,                
+                tableWidth = 0,
+                browser = $.browser,
+                isIE8 = browser.msie && parseInt(browser.version) === 8,
+                tables,
+                attr,
+                editMode = that.editing.mode;
+
+            if (typeof column === "number") {                
+                column = columns[column];
+            } else {
+                column = that.columnFromMember(column);                
+            }
+
+            columnIndex = $.inArray(column, $.grep(columns, function(col) { return !col.hidden; }));
+
+            if(columnIndex < 0 || !column) {
+                return;
+            }            
+
+            cols = $("col:not(.t-group-col,.t-hierarchy-col)", that.$header.parent().prev());
+            if(that.scrollable) {
+                cols.eq(columnIndex).remove();
+                cols = $("col:not(.t-group-col,.t-hierarchy-col)", that.$tbody.prev());
+            }
+            width = cols.eq(columnIndex).remove()[0].style.width;
+
+            that.$columns().filter(":visible").eq(columnIndex).hide();
+            that.$footer.find("td:not(.t-group-cell):visible").eq(columnIndex).hide();
+
+            for(idx = 0, length = rows.length ; idx < length; idx++) {
+                row = rows.eq(idx);
+                if(row.is(".t-grouping-row,.t-detail-row")) {
+                    cell = row.children(":not(.t-group-cell):first,.t-detail-cell").last();
+                    cell.attr("colspan", cell.attr("colspan") - 1);
+                } else {
+                    if(row.hasClass("t-grid-edit-row")) {
+                        if(editMode === "InLine" && !that.isAjax()) {
+                            cell = row.children(".t-edit-container");
+                            cell.attr("colspan", cell.attr("colspan") - 1);
+                            cell.find("col").eq(columnIndex).remove();
+                            row = cell.find("tr:first");
+                        } else if(editMode === "InForm") {
+                            cell = row.children().first();
+                            cell.attr("colspan", cell.attr("colspan") - 1);
+                            continue;
+                        }
+                    }
+                    row.children("td:not(.t-group-cell,.t-hierarchy-cell):visible").eq(columnIndex).hide();
+                }
+            }
+           
+            for(idx= 0, length = cols.length; idx < length; idx++) {
+                if(idx != columnIndex) {
+                    if(cols[idx].style.width) {
+                        tableWidth += parseInt(cols[idx].style.width);
+                    } else {
+                        tableWidth = 0;
+                        break;
+                    }
+                }
+            }        
+
+            tables = $(">table,>.t-grid-header table,>.t-grid-content>table", that.element);
+            if(tableWidth) {            
+                tables.width(tableWidth);                
+            }
+            
+            if(isIE8) {
+                tables.css("display", "inline-table");              
+                setTimeout(function() { 
+                    tables.css("display", "table");
+                }, 1);
+            }
+
+            column.hidden = true;
+            column.width = width;
+            
+            attr = column.attr;
+            if(!attr || attr.indexOf("style") < 0) {
+                attr = (attr || "") + ' style="display:none" ';
+            } else {
+                attr = column.attr.replace(/(style="(.*)?display):([^;]*)/i, "$1:none");
+                if(attr === column.attr) {
+                    attr = attr.replace(/(style=")/i, "$1display:none;");
+                }
+            }                        
+            column.attr = attr;
+        },
+
+        showColumn: function(column) {
+            var that = this,
+                columnIndex,
+                columns = that.columns,
+                cols,               
+                rows = that.$tbody.children("tr"),
+                row,
+                cell,
+                idx,
+                length;
+
+            if (typeof column === "number") {                
+                column = columns[column];
+            } else {
+                column = that.columnFromMember(column);                
+            }
+
+            columnIndex = $.inArray(column, columns);
+
+            if(!column || !column.hidden) {
+                return;
+            }
+            
+            cols = $("col:not(.t-group-col,.t-hierarchy-col)", that.$header.parent().prev());
+
+            normalizeCols(cols, columns, columnIndex);
+            if(that.scrollable) {
+                cols = $("col:not(.t-group-col,.t-hierarchy-col)", that.$tbody.prev());
+                normalizeCols(cols, columns, columnIndex);
+            }
+
+            that.$columns().eq(columnIndex).show();
+            that.$footer.find("td:not(.t-group-cell)").eq(columnIndex).show();
+
+            for(idx = 0, length = rows.length ; idx < length; idx++) {
+                row = rows.eq(idx);
+                if(row.is(".t-grouping-row,.t-detail-row")) {
+                    cell = row.children(":not(.t-group-cell):first,.t-detail-cell").last();
+                    cell.attr("colspan", cell.attr("colspan") + 1);
+                } else {
+                    if(row.hasClass("t-grid-edit-row")) {
+                        if(that.editing.mode === "InLine" && !that.isAjax()) {
+                            cell = row.children(".t-edit-container");
+                            cell.attr("colspan", cell.attr("colspan") + 1); 
+                            normalizeCols(cell.find(">form>table>colgroup>col"), columns, columnIndex);
+                            row = cell.find("tr:first");
+                        } else if(that.editing.mode === "InForm") {
+                            cell = row.children().first();
+                            cell.attr("colspan", cell.attr("colspan") + 1);
+                            continue;
+                        }
+                    }                    
+                    row.children("td:not(.t-group-cell,.t-hierarchy-cell)").eq(columnIndex).show();
+                }
+            }
+
+            if(!column.width) {
+                $(">table,>.t-grid-header table,>.t-grid-content>table", that.element).width("");
+            }
+
+            column.hidden = false;
+            delete column.width; 
+            if(column.attr) {           
+                column.attr = column.attr.replace(/(style="(.*)?)(display\s*:\s*none)\s*;?/i, "$1");
+            }
+        },
+
+        initializeContextMenu: function() {
+            var that = this,
+                html,
+                fx = $t.fx.slide.defaults(),
+                columns = $.grep(that.columns, function(col) { return col.title !== "" }),
+                id = that.element.id + "_contextMenu",
+                menu;
+
+            $(document).bind("mouseup", function(e) {                
+                if(menu && e.which != 3 && $(e.target).closest("#" + id).length == 0) {
+                    $t.fx.rewind(fx, menu.find(".t-group"), { direction: 'bottom' }, function() { menu.remove(); });                    
+                }
+            });
+
+            that.$header.closest(".t-grid-header").bind("contextmenu", function(e) {
+                if(menu && menu.is(":visible")) {
+                    $t.fx.rewind(fx, menu.find(".t-group"), { direction: "bottom" });
+                    menu.remove();
+                }
+
+                html = new $t.stringBuilder();
+                html.cat('<div class="t-animation-container t-menu t-menu-context" id="' + id + '" style="display:none">')
+                .cat('<ul class="t-group">');
+                $.each(columns, function() {
+                    html.cat('<li class="t-item"><label class="t-link">')
+                        .cat('<input type="checkbox" data-field="' + $.inArray(this, that.columns) +'"')
+                        .catIf('checked="checked"', !this.hidden)                    
+                        .cat("/>")
+                        .cat(this.title)
+                        .cat("</label></li>");
+                });
+                html.cat("</ul></div>");
+
+                menu = $(html.string())
+                        .delegate("[type=checkbox]", "change", function() {                        
+                            var checkbox = $(this),
+                                enabledCheckboxes;
+                            that[checkbox.is(":checked") ? "showColumn" : "hideColumn"](checkbox.data("field"));
+
+                            enabledCheckboxes = menu.find(":checked");
+                            enabledCheckboxes.attr("disabled", enabledCheckboxes.length == 1);
+                        })
+                        .appendTo(document.body);
+
+                menu.css({ 
+                    left: e.clientX + $(document).scrollLeft(),
+                    top: e.clientY + $(document).scrollTop()
+                });                
+
+                $t.fx.play(fx, menu.find(".t-group"), { direction: "bottom" });
+                return false;
+            });
         }
     }
     
     $t.grid.ButtonBuilder = function (button) {
-        this.classNames = ['t-button', 't-grid-' + button.name];
-        
-        this.content = function () {
-            return button.text;
+        var classRegExp = /class="([^"]*)"/i;
+        this.classNames = ['t-button'];
+
+        var className = classRegExp.exec(button.attr);
+
+        if (className) {
+            this.classNames.push(className[1]);
+            button.attr = $.trim(button.attr.replace(classRegExp, ""));
         }
 
-        this.build = function() {
-            return '<a href="#" class="' + this.classNames.join(' ') +  '" ' + (button.attr? button.attr : '') + '>' +
+        if (button.name) {
+            this.classNames.push("t-grid-" + button.name);
+        }
+
+        if (button.ajax) {
+            this.classNames.push("t-ajax");
+        }
+
+        this.url = button.url ? template(unescape(button.url)) : function() { return "#" };
+        
+        this.content = function () {
+            return button.text || "";
+        }
+
+        this.build = function(dataItem) {
+            return '<a href="' + this.url(dataItem) + '" class="' + this.classNames.join(' ') +  '" ' + (button.attr || '') + '>' +
                         this.content() +
                    '</a>';
         }

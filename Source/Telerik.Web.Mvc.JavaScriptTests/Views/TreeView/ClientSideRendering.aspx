@@ -425,7 +425,7 @@
 
             var $item = $(html.string());
 
-            equal($item.find('.t-input[type="checkbox"]').attr('disabled'), true);
+            equal($item.find('.t-input[type="checkbox"]').attr('disabled'), 'disabled');
         });
 
         test('getItemHtml should render checked checkbox Checked property is true', function() {
@@ -449,7 +449,7 @@
 
             var $item = $(html.string());
 
-            equal($item.find('[type=checkbox]').attr('checked'), true);
+            equal($item.find('[type=checkbox]').attr('checked'), 'checked');
         });
 
         test('getItemHtml should render hidden inputs containing dataItem values if item is checked', function() {

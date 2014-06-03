@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Web.Mvc;
     using Infrastructure;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Defines the fluent interface for configuring child menu items.
@@ -57,6 +58,33 @@ namespace Telerik.Web.Mvc.UI
             MenuItemFactory factory = new MenuItemFactory(item, viewContext);
 
             addAction(factory);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures the child items of a <see cref="MenuItem"/>.
+        /// When declaratively binding the menu item, use <see cref="Items(Action<MenuItemFactory>)"/>.
+        /// </summary>
+        /// <param name="items">items</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Menu()
+        ///             .Name("Menu")
+        ///             .Items(items =>
+        ///             {
+        ///                 items.Add().Text("First Item").Items(model);
+        ///             })
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual MenuItemBuilder Items(IEnumerable<MenuItem> items)
+        {
+            Guard.IsNotNull(items, "items");
+
+            item.Items.Clear();
+
+            (items as List<MenuItem>).ForEach(menuItem => item.Items.Add(menuItem));
 
             return this;
         }

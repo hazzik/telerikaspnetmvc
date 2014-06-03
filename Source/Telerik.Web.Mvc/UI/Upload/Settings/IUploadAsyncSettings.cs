@@ -11,6 +11,12 @@ namespace Telerik.Web.Mvc.UI
         INavigatable Save { get; set; }
 
         /// <summary>
+        /// Defines the name of the form field submitted to the Save action.
+        /// The default value is the Upload name.
+        /// </summary>
+        string SaveField { get; set; }
+
+        /// <summary>
         /// Defines the Remove action
         /// </summary>
         INavigatable Remove { get; set; }

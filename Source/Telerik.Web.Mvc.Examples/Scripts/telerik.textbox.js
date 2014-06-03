@@ -44,17 +44,19 @@
             throw "Target element is not a INPUT";
         }
 
-        $.extend(this, options);
+        var that = this;
 
-        this.element = element;
-        var $element = this.$element = $(element)
+        $.extend(that, options);
+
+        that.element = element;
+        var $element = that.$element = $(element)
             .bind({
-                keydown: $.proxy(this._keydown, this),
-                keypress: $.proxy(this._keypress, this)
+                keydown: $.proxy(that._keydown, that),
+                keypress: $.proxy(that._keypress, that)
             })
-            .bind("paste", $.proxy(this._paste, this));
+            .bind("paste", $.proxy(that._paste, that));
 
-        $element.closest("form").bind("reset", $.proxy(this._onParentFormReset, this));
+        $element.closest("form").bind("reset", $.proxy(that._onParentFormReset, that));
 
         var builder = new $t.stringBuilder();
 
@@ -62,15 +64,15 @@
             $element.addClass('t-input')
                     .wrap($('<div class="t-widget t-numerictextbox"></div>'));
 
-            if (this.showIncreaseButton) {
+            if (that.showIncreaseButton) {
                 builder.cat('<a class="t-link t-icon t-arrow-up" href="#" tabindex="-1" title="')
-                       .cat(this.increaseButtonTitle)
+                       .cat(that.increaseButtonTitle)
                        .cat('">Increment</a>');
             }
 
-            if (this.showDecreaseButton) {
+            if (that.showDecreaseButton) {
                 builder.cat('<a class="t-link t-icon t-arrow-down" href="#" tabindex="-1" title="')
-                       .cat(this.decreaseButtonTitle)
+                       .cat(that.decreaseButtonTitle)
                        .cat('">Decrement</a>');
             }
 
@@ -79,7 +81,7 @@
             }
         }
 
-        this.$wrapper = $element.closest('.t-numerictextbox')
+        that.$wrapper = $element.closest('.t-numerictextbox')
             .find('.t-arrow-up, .t-arrow-down')
                 .bind({
                     click: $t.preventDefault,
@@ -87,54 +89,56 @@
                 })
             .end()
             .bind({
-                focusin: $.proxy(this._focus, this),
-                focusout: $.proxy(this._blur, this)
+                focusin: $.proxy(that._focus, that),
+                focusout: $.proxy(that._blur, that)
             });
 
-        this.enabled = !$element.is('[disabled]');
+        that.enabled = !$element.is('[disabled]');
 
         builder.buffer = [];
         builder.cat('[ |')
-               .cat(this.groupSeparator)
-               .catIf('|' + this.symbol, this.symbol)
+               .cat(that.groupSeparator)
+               .catIf('|' + that.symbol, that.symbol)
                .cat(']');
-        this.replaceRegExp = new RegExp(builder.string(), 'g');
+        that.replaceRegExp = new RegExp(builder.string(), 'g');
 
         var inputValue = $element.attr('value'),
-            cssClass = $element.attr('class').replace("t-input", "");
+            cssClass = $element.attr('class').replace("t-input", "").replace("input-validation-error", "");
 
         builder.buffer = [];
         builder.cat('<div class="t-formatted-value')
-               .catIf(' t-state-empty', inputValue == '' && this.enabled)
+               .catIf(' t-state-empty', inputValue == '' && that.enabled)
                .catIf(cssClass, cssClass)
                .cat('">')
-               .cat(inputValue || (this.enabled ? this.text : ''))
+               .cat(inputValue || (that.enabled ? that.text : ''))
                .cat('</div>');
 
-        this.$text = $(builder.string())
+        that.$text = $(builder.string())
                         .insertBefore($element)
                         .css(getStyles($element))
                         .click(function (e) {
-                            element.focus();
+                            if (that.enabled) {
+                                element.focus();
+                            }
                         });
 
         //set text color to the background-color
-        this._blur();
-        this[this.enabled ? 'enable' : 'disable']();
+        that._blur();
+        that[that.enabled ? 'enable' : 'disable']();
 
-        this.numFormat = this.numFormat === undefined ? this.type.charAt(0) : this.numFormat;
-        this.step = this.parse(this.step);
-        this.val = this.parse(this.val);
-        this.minValue = this.parse(this.minValue);
-        this.maxValue = this.parse(this.maxValue);
-        this.decimals = { '190': '.', '188': ',' };
-        this.specialDecimals = { '110': this.separator };
+        that.numFormat = that.numFormat === undefined ? that.type.charAt(0) : that.numFormat;
+        that.step = that.parse(that.step);
+        that.val = that.parse(that.val);
+        that.minValue = that.parse(that.minValue);
+        that.maxValue = that.parse(that.maxValue);
+        that.decimals = { '190': '.', '188': ',' };
+        that.specialDecimals = { '110': that.separator };
 
-        this.value(inputValue || this.val);
+        that.value(inputValue || that.val);
 
-        $t.bind(this, {
-            load: this.onLoad,
-            valueChange: this.onChange
+        $t.bind(that, {
+            load: that.onLoad,
+            valueChange: that.onChange
         });
     }
 
@@ -256,7 +260,7 @@
                 this._showTextBoxValue();
                 this.$text.hide();
                 var input = this.$element[0];
-                setTimeout(function () {
+                this._focusing = setTimeout(function () {
                     input.focus();
                     if ($.browser.msie) {
                         input.select();
@@ -269,6 +273,7 @@
         },
 
         _blur: function () {
+            clearTimeout(this._focusing);
             this.$element.removeClass('t-state-error');
 
             if (this.enabled) {

@@ -22,28 +22,10 @@ namespace Telerik.Web.Mvc.UI
         {
             var result = base.Serialize();
             FluentDictionary.For(result)
-                .Add("categories", axis.Categories, () => { return axis.Categories != null; } )
-                .Add("field", axis.Member, () => { return axis.Categories == null && axis.Member != null; });
+                .Add("categories", axis.Categories, () => axis.Categories != null )
+                .Add("field", axis.Member, () => axis.Categories == null && axis.Member != null);
 
             return result;
-        }
-
-        protected override bool ShouldSerializeMajorGridlines()
-        {
-            var majorGridLines = axis.MajorGridLines;
-
-            return  majorGridLines.Visible != ChartDefaults.Axis.Category.MajorGridLines.Visible ||
-                    majorGridLines.Width != ChartDefaults.Axis.Category.MajorGridLines.Width ||
-                    majorGridLines.Color != ChartDefaults.Axis.Category.MajorGridLines.Color;
-        }
-
-        protected override bool ShouldSerializeMinorGridlines()
-        {
-            var minorGridLines = axis.MinorGridLines;
-
-            return minorGridLines.Visible != ChartDefaults.Axis.Category.MinorGridLines.Visible ||
-                   minorGridLines.Width != ChartDefaults.Axis.Category.MinorGridLines.Width ||
-                   minorGridLines.Color != ChartDefaults.Axis.Category.MinorGridLines.Color;
         }
     }
 }

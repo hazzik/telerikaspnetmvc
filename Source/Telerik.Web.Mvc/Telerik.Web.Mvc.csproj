@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TELERIK_DATA;MVC1</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MVC1</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
@@ -39,11 +39,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Telerik.Web.Mvc.XML</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug MVC2\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TELERIK_DATA;MVC2;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -59,15 +61,17 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC3|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug MVC3\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TELERIK_DATA;MVC3;</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MVC3</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -84,11 +88,13 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NoWarn>1591</NoWarn>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -187,9 +193,12 @@
     <Compile Include="UI\AutoComplete\Fluent\AutoCompleteMultipleValuesSettingsBuilder.cs" />
     <Compile Include="UI\AutoComplete\IAutoCompleteHtmlBuilder.cs" />
     <Compile Include="UI\AutoComplete\Settings\AutoCompleteMultipleValuesSettings.cs" />
+    <Compile Include="UI\Chart\Axes\ChartAxisLabels.cs" />
     <Compile Include="UI\Chart\Axes\ChartCategoryAxis.cs" />
     <Compile Include="UI\Chart\Axes\ChartAxisBase.cs" />
     <Compile Include="UI\Chart\Axes\ChartNumericAxis.cs" />
+    <Compile Include="UI\Chart\Axes\ChartAxisDefaults.cs" />
+    <Compile Include="UI\Chart\Axes\IChartAxisDefaults.cs" />
     <Compile Include="UI\Chart\Axes\IChartNumericAxis.cs" />
     <Compile Include="UI\Chart\Axes\IChartAxis.cs" />
     <Compile Include="UI\Chart\Axes\IChartValueAxis.cs" />
@@ -203,16 +212,47 @@
     <Compile Include="UI\Chart\ChartElementBorder.cs" />
     <Compile Include="UI\Chart\ChartArea.cs" />
     <Compile Include="UI\Chart\ChartLine.cs" />
-    <Compile Include="UI\Chart\Serialization\ChartLineSeriesSerializer.cs" />
-    <Compile Include="UI\Chart\Series\ChartLineMarkers.cs" />
+    <Compile Include="UI\Chart\ChartTooltip.cs" />
+    <Compile Include="UI\Chart\Enums\ChartAxisTickType.cs" />
+    <Compile Include="UI\Chart\Enums\ChartBarLabelsPosition.cs" />
+    <Compile Include="UI\Chart\Enums\ChartLegendPosition.cs" />
+    <Compile Include="UI\Chart\Enums\ChartPointLabelsPosition.cs" />
+    <Compile Include="UI\Chart\Enums\ChartLineMissingValues.cs" />
     <Compile Include="UI\Chart\Enums\ChartMarkerShape.cs" />
-    <Compile Include="UI\Chart\Enums\ChartLineLabelsPosition.cs" />
+    <Compile Include="UI\Chart\Enums\ChartTextAlignment.cs" />
+    <Compile Include="UI\Chart\Enums\ChartTitlePosition.cs" />
+    <Compile Include="UI\Chart\Enums\ChartDashType.cs" />
+    <Compile Include="UI\Chart\Enums\ChartPieSeriesOverlay.cs" />
+    <Compile Include="UI\Chart\Enums\ChartPieLabelsAlign.cs" />
+    <Compile Include="UI\Chart\Enums\ChartScatterLineMissingValues.cs" />
+    <Compile Include="UI\Chart\Enums\ChartPieLabelsPosition.cs" />
+    <Compile Include="UI\Chart\Enums\ChartAxisOrientation.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartAxisDefaultsBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartAxisLabelsBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartPieLabelsBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartTooltipBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartPieSeriesBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartScatterSeriesBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartScatterLineSeriesBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartScatterSeriesBuilderBase.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartPieConnectorsBuilder.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartAxisSerializerBase.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartLabelsBase.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartLineSeriesSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartAxisLabelsSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartPieLabelsSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartPieSeriesSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartTooltipSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartScatterSeriesSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartScatterLineSeriesSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartPieConnectorsSerializer.cs" />
+    <Compile Include="UI\Chart\Series\ChartMarkers.cs" />
     <Compile Include="UI\Chart\Fluent\ChartLineSeriesBuilder.cs" />
-    <Compile Include="UI\Chart\Fluent\ChartLineLabelsBuilder.cs" />
-    <Compile Include="UI\Chart\Fluent\ChartLineMarkersBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartPointLabelsBuilder.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartMarkersBuilder.cs" />
     <Compile Include="UI\Chart\Fluent\PlotAreaBuilder.cs" />
     <Compile Include="UI\Chart\PlotArea.cs" />
-    <Compile Include="UI\Chart\Fluent\ChartDataLabelsBuilderBase.cs" />
+    <Compile Include="UI\Chart\Fluent\ChartLabelsBuilderBase.cs" />
     <Compile Include="UI\Chart\Fluent\ChartBarLabelsBuilder.cs" />
     <Compile Include="UI\Chart\Fluent\ChartAreaBuilder.cs" />
     <Compile Include="UI\Chart\Fluent\ChartLineBuilder.cs" />
@@ -223,14 +263,9 @@
     <Compile Include="UI\Chart\Serialization\ChartLineSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\ChartSeriesDefaultsSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\ChartLineMarkersSerializer.cs" />
-    <Compile Include="UI\Chart\Serialization\ChartLineLabelsSerializer.cs" />
+    <Compile Include="UI\Chart\Serialization\ChartPointLabelsSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\PlotAreaSerializer.cs" />
     <Compile Include="UI\Chart\Series\ChartBarLabels.cs" />
-    <Compile Include="UI\Chart\Enums\ChartTitlePosition.cs" />
-    <Compile Include="UI\Chart\Enums\ChartTextAlignment.cs" />
-    <Compile Include="UI\Chart\Enums\ChartAxisTickType.cs" />
-    <Compile Include="UI\Chart\Enums\ChartLegendPosition.cs" />
-    <Compile Include="UI\Chart\Enums\ChartBarLabelsPosition.cs" />
     <Compile Include="UI\Chart\Fluent\ChartBindingSettingsBuilder.cs" />
     <Compile Include="UI\Chart\Fluent\ChartValueAxisFactory.cs" />
     <Compile Include="UI\Chart\Fluent\ChartAxisBuilderBase.cs" />
@@ -250,21 +285,29 @@
     <Compile Include="UI\Chart\Serialization\ChartBarSeriesSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\ChartCategoryAxisSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\ChartNumericAxisSerializer.cs" />
-    <Compile Include="UI\Chart\Serialization\ChartAxisSerializerBase.cs" />
     <Compile Include="UI\Chart\Serialization\ChartTitleSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\ChartLegendSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\ChartSpacingSerializer.cs" />
     <Compile Include="UI\Chart\Serialization\IChartSerializer.cs" />
     <Compile Include="UI\Chart\Series\ChartBarSeries.cs" />
+    <Compile Include="UI\Chart\Series\ChartPieConnectors.cs" />
+    <Compile Include="UI\Chart\Series\ChartPieLabels.cs" />
+    <Compile Include="UI\Chart\Series\ChartPieSeries.cs" />
     <Compile Include="UI\Chart\Series\ChartSeriesBase.cs" />
     <Compile Include="UI\Chart\Series\ChartBoundSeries.cs" />
-    <Compile Include="UI\Chart\Series\ChartBarSeriesOrientation.cs" />
-    <Compile Include="UI\Chart\Series\ChartDataLabels.cs" />
+    <Compile Include="UI\Chart\Enums\ChartBarSeriesOrientation.cs" />
+    <Compile Include="UI\Chart\ChartLabels.cs" />
     <Compile Include="UI\Chart\Series\ChartSeriesDefaults.cs" />
-    <Compile Include="UI\Chart\Series\ChartLineLabels.cs" />
+    <Compile Include="UI\Chart\Series\ChartPointLabels.cs" />
     <Compile Include="UI\Chart\Series\ChartLineSeries.cs" />
-    <Compile Include="UI\Chart\Series\ChartBarSeriesOverlay.cs" />
+    <Compile Include="UI\Chart\Enums\ChartBarSeriesOverlay.cs" />
+    <Compile Include="UI\Chart\Series\ChartScatterSeries.cs" />
+    <Compile Include="UI\Chart\Series\ChartScatterLineSeries.cs" />
+    <Compile Include="UI\Chart\Series\IChartScatterLineSeries.cs" />
+    <Compile Include="UI\Chart\Series\IChartScatterSeries.cs" />
+    <Compile Include="UI\Chart\Series\IChartLabels.cs" />
     <Compile Include="UI\Chart\Series\IChartLineSeries.cs" />
+    <Compile Include="UI\Chart\Series\IChartPieSeries.cs" />
     <Compile Include="UI\Chart\Series\IChartSeriesDefaults.cs" />
     <Compile Include="UI\Chart\Series\IChartBoundSeries.cs" />
     <Compile Include="UI\Chart\Series\IChartBarSeries.cs" />
@@ -379,7 +422,13 @@
     <Compile Include="UI\Effects\IEffectsBuilderFactory.cs" />
     <Compile Include="UI\ExpressionBuilder.cs" />
     <Compile Include="Infrastructure\Implementation\BindingHelper.cs" />
+    <Compile Include="UI\Grid\Columns\GridForeignKeyColumn.cs" />
+    <Compile Include="UI\Grid\Columns\IGridForeignKeyColumn.cs" />
+    <Compile Include="UI\Grid\Commands\GridCustomActionCommand.cs" />
+    <Compile Include="UI\Grid\Commands\GridCustomCommandBase.cs" />
+    <Compile Include="UI\Grid\Fluent\GridColumnContextMenuSettingsBuilder.cs" />
     <Compile Include="UI\Grid\Fluent\GridAjaxBindingSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\Fluent\GridCustomActionCommandBuilder.cs" />
     <Compile Include="UI\Grid\Fluent\GridKeyboardNavigationSettingsBuilder.cs" />
     <Compile Include="UI\Grid\Fluent\GridServerBindingSettingsBuilder.cs" />
     <Compile Include="UI\Grid\GridActionResultAdapterFactory.cs" />
@@ -392,6 +441,8 @@
     <Compile Include="UI\Grid\GridGroupAggregateResult.cs" />
     <Compile Include="UI\Grid\GridActionResultFactory.cs" />
     <Compile Include="UI\Grid\GridOperationMode.cs" />
+    <Compile Include="UI\Grid\Html\GridForeignKeyDataCellBuilder.cs" />
+    <Compile Include="UI\Grid\Html\GridForeignKeyEditorForCellBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridPagerPageSizeSection.cs" />
     <Compile Include="UI\Grid\Html\GridSelectedRowBuilderDecorator.cs" />
     <Compile Include="UI\Grid\Html\GridTemplateRowBuilder.cs" />
@@ -399,6 +450,8 @@
     <Compile Include="UI\Grid\Html\IGridPagerPageSizeSection.cs" />
     <Compile Include="UI\Grid\Html\IGridPagerPagingSectionsBuilder.cs" />
     <Compile Include="UI\Grid\IGridActionResultFactory.cs" />
+    <Compile Include="UI\Grid\Serialization\GridForeignKeyColumnSerializer.cs" />
+    <Compile Include="UI\Grid\Settings\GridColumnContextMenuSettings.cs" />
     <Compile Include="UI\Grid\Settings\GridKeyboardNavigationSettings.cs" />
     <Compile Include="UI\Grid\ToolBar\GridToolBarPosition.cs" />
     <Compile Include="UI\Grid\Html\GridButtonBuilder.cs" />
@@ -428,7 +481,6 @@
     <Compile Include="UI\Grid\Html\GridHiddenCellBuilderDecorator.cs" />
     <Compile Include="UI\Grid\Html\GridHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridHtmlBuilderFactory.cs" />
-    <Compile Include="UI\Grid\Html\GridLastCellBuilderDecorator.cs" />
     <Compile Include="UI\Grid\Html\GridScrollingHtmlBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridSortableHeaderCellBuilder.cs" />
     <Compile Include="UI\Grid\Html\GridTableBuilderDetailViewColDecorator.cs" />
@@ -571,13 +623,13 @@
     <Compile Include="UI\Grid\Serialization\GridUrlFormatSerializer.cs" />
     <Compile Include="UI\Grid\Serialization\IGridColumnSerializer.cs" />
     <Compile Include="UI\Grid\Settings\GridResizingSettings.cs" />
-    <Compile Include="UI\Grid\ToolBar\GridToolBarCustomCommand.cs" />
+    <Compile Include="UI\Grid\Commands\GridToolBarCustomCommand.cs" />
     <Compile Include="UI\Grid\Fluent\GridToolBarCustomCommandBuilder.cs" />
-    <Compile Include="UI\Grid\ToolBar\GridToolBarInsertCommand.cs" />
+    <Compile Include="UI\Grid\Commands\GridToolBarInsertCommand.cs" />
     <Compile Include="UI\Grid\Fluent\GridGroupDescriptorBuilder.cs" />
     <Compile Include="UI\Grid\Fluent\GridGroupDescriptorFactory.cs" />
     <Compile Include="UI\Grid\Fluent\GridGroupingSettingsBuilder.cs" />
-    <Compile Include="UI\Grid\ToolBar\GridToolBarCommandBase.cs" />
+    <Compile Include="UI\Grid\Commands\GridToolBarCommandBase.cs" />
     <Compile Include="UI\Grid\Fluent\GridToolBarCommandBuilderBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1079,6 +1131,13 @@
     <Content Include="Content\Black\slider-v.gif" />
     <Content Include="Content\Black\sprite-vertical.png" />
     <Content Include="Content\Black\treeview-nodes-rtl.png" />
+    <Content Include="Content\telerik.metro.css" />
+    <Content Include="Content\Metro\editor.png" />
+    <Content Include="Content\Metro\imagebrowser.png" />
+    <Content Include="Content\Metro\loading.gif" />
+    <Content Include="Content\Metro\slider-h.gif" />
+    <Content Include="Content\Metro\slider-v.gif" />
+    <Content Include="Content\Metro\sprite.png" />
     <Content Include="Content\Default\imagebrowser.png" />
     <Content Include="Content\Default\slider-h.gif" />
     <Content Include="Content\Default\slider-v.gif" />
@@ -1133,7 +1192,6 @@
     <Content Include="Content\Simple\imagebrowser.png" />
     <Content Include="Content\Simple\slider-h.gif" />
     <Content Include="Content\Simple\slider-v.gif" />
-    <Content Include="Content\Simple\sprite-vertical.png" />
     <Content Include="Content\Simple\treeview-nodes-rtl.png" />
     <Content Include="Content\Sitefinity\imagebrowser.png" />
     <Content Include="Content\Sitefinity\slider-h.gif" />
@@ -1199,8 +1257,11 @@
     <Content Include="Content\Windows7\slider-h.gif" />
     <Content Include="Content\Windows7\slider-v.gif" />
     <Content Include="Content\Windows7\sprite-vertical.png" />
-    <Content Include="Scripts\jquery-1.5.1.min.js" />
-    <Content Include="Scripts\telerik.chart.js" />
+    <Content Include="Scripts\Chart\main.js" />
+    <Content Include="Scripts\Chart\svg.js" />
+    <Content Include="Scripts\Chart\themes.js" />
+    <Content Include="Scripts\Chart\vml.js" />
+    <Content Include="Scripts\jquery-1.6.4.min.js" />
     <Content Include="Scripts\telerik.imagebrowser.js" />
     <Content Include="Scripts\telerik.upload.js" />
     <Content Include="Scripts\telerik.slider.js" />
@@ -1249,6 +1310,7 @@
     <Content Include="Build\EcmaScript.NET.modified.dll" />
     <Content Include="Build\GetVersion.dll" />
     <Content Include="Build\Yahoo.Yui.Compressor.dll" />
+    <Content Include="Build\Yahoo.Yui.Compressor.MsBuildTask.dll" />
     <Content Include="Content\Black\loading.gif" />
     <Content Include="Content\Black\sprite.png" />
     <Content Include="Content\Black\treeview-line.png" />
@@ -1336,7 +1398,7 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- Reference the YUI CompressorTask -->
-  <UsingTask TaskName="CompressorTask" AssemblyFile="Build\Yahoo.Yui.Compressor.dll" />
+  <UsingTask TaskName="CompressorTask" AssemblyFile="Build\Yahoo.Yui.Compressor.MsBuildTask.dll" />
   <UsingTask TaskName="MergeFiles" AssemblyFile="Build\Telerik.MSBuildTasks.dll" />
   <UsingTask TaskName="Replace" AssemblyFile="Build\Telerik.MSBuildTasks.dll" />
   <UsingTask TaskName="GetVersion" AssemblyFile="Build\GetVersion.dll" />
@@ -1384,9 +1446,25 @@
       <Visible>false</Visible>
     </EditorJavaScriptFiles>
   </ItemGroup>
+  <ItemGroup>
+    <ChartScripts Include="Scripts\Chart\main.js">
+      <Visible>false</Visible>
+    </ChartScripts>
+    <ChartScripts Include="Scripts\Chart\svg.js">
+      <Visible>false</Visible>
+    </ChartScripts>
+    <ChartScripts Include="Scripts\Chart\vml.js">
+      <Visible>false</Visible>
+    </ChartScripts>
+    <ChartScripts Include="Scripts\Chart\themes.js">
+      <Visible>false</Visible>
+    </ChartScripts>
+  </ItemGroup>
   <Target Name="AfterBuildDebug">
     <MergeFiles Targets="@(EditorJavaScriptFiles)" Output="Scripts\telerik.editor.js" />
-    <Replace Files="Scripts\telerik.editor.js" Pattern="NONEXISTINGINVALIDJABASCRIPT" Replacement="" Multiline="false" />
+    <Replace Files="Scripts\telerik.editor.js" Pattern="DearReplaceCommandPleaseRemoveTheBomCharacter" Replacement="" Multiline="false" />
+    <MergeFiles Targets="@(ChartScripts)" Output="Scripts\telerik.chart.js" />
+    <Replace Files="Scripts\telerik.chart.js" Pattern="DearReplaceCommandPleaseRemoveTheBomCharacter" Replacement="" Multiline="false" />
     <!-- Copy the CSS files to Scripts -->
     <Copy SourceFiles="@(Content)" DestinationFolder="$(OutputPath)\Scripts" Condition="'%(Extension)'=='.js'">
       <Output TaskParameter="DestinationFiles" ItemName="Resources" />
@@ -1415,7 +1493,9 @@
       <Version>%(Info.Version)</Version>
     </PropertyGroup>
     <MergeFiles Targets="@(EditorJavaScriptFiles)" Output="Scripts\telerik.editor.js" />
-    <Replace Files="Scripts\telerik.editor.js" Pattern="NONEXISTENTINVALIDJABASCRIPT" Replacement="" Multiline="false" Encoding="Windows-1252" />
+    <Replace Files="Scripts\telerik.editor.js" Pattern="DearReplaceCommandPleaseRemoveTheBomCharacter" Replacement="" Multiline="false" Encoding="Windows-1252" />
+    <MergeFiles Targets="@(ChartScripts)" Output="Scripts\telerik.chart.js" />
+    <Replace Files="Scripts\telerik.chart.js" Pattern="DearReplaceCommandPleaseRemoveTheBomCharacter" Replacement="" Multiline="false" />
     <!-- Copy all JavaScript to $(OutputPath)\Scripts, add versioning and ".min" suffix -->
     <ItemGroup>
       <JavaScriptFilesToSkip Include="Scripts\*.min.js" />

@@ -65,6 +65,24 @@
         }
 
         [Fact]
+        public void OnDataBound_client_side_event_serialized()
+        {
+            chart.ClientEvents.OnDataBound.HandlerName = "dataBoundHandler";
+            chart.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Chart').tChart({onDataBound:dataBoundHandler});");
+        }
+
+        [Fact]
+        public void OnSeriesClick_client_side_event_serialized()
+        {
+            chart.ClientEvents.OnSeriesClick.HandlerName = "seriesClickHandler";
+            chart.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Chart').tChart({onSeriesClick:seriesClickHandler});");
+        }
+
+        [Fact]
         public void Series_should_be_serialized_when_defined()
         {
             chart.Series.Add(new ChartBarSeries<SalesData, decimal>(chart, s => s.RepSales));
@@ -112,6 +130,24 @@
         }
 
         [Fact]
+        public void XAxis_should_be_serialized()
+        {
+            chart.XAxis.Max = 4;
+            chart.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Chart').tChart({xAxis:{\"max\":4}});");
+        }
+
+        [Fact]
+        public void YAxis_should_be_serialized()
+        {
+            chart.YAxis.Max = 4;
+            chart.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Chart').tChart({yAxis:{\"max\":4}});");
+        }
+
+        [Fact]
         public void DataBinding_should_be_serialized_when_using_Ajax_binding()
         {
             chart.DataBinding.Ajax.Enabled = true;
@@ -128,6 +164,24 @@
             chart.WriteInitializationScript(textWriter.Object);
 
             output.ShouldEqual("jQuery('#Chart').tChart({seriesColors:[\"red\",\"green\",\"blue\"]});");
+        }
+
+        [Fact]
+        public void Tooltip_should_be_serialized()
+        {
+            chart.Tooltip.Visible = true;
+            chart.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Chart').tChart({tooltip:{\"visible\":true}});");
+        }
+
+        [Fact]
+        public void Transitions_serialized()
+        {
+            chart.Transitions = false;
+            chart.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Chart').tChart({transitions:false});");
         }
     }
 }

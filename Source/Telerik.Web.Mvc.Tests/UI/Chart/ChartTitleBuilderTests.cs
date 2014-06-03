@@ -23,6 +23,13 @@
         }
 
         [Fact]
+        public void Background_sets_background()
+        {
+            builder.Background("Background");
+            title.Background.ShouldEqual("Background");
+        }
+
+        [Fact]
         public void Font_sets_Font()
         {
             builder.Font("Font");
@@ -85,9 +92,10 @@
         [Fact]
         public void Border_sets_width_and_color()
         {
-            builder.Border(1, "red");
+            builder.Border(1, "red", ChartDashType.Dot);
             title.Border.Color.ShouldEqual("red");
             title.Border.Width.ShouldEqual(1);
+            title.Border.DashType.ShouldEqual(ChartDashType.Dot);
         }
     }
 }

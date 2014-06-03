@@ -66,11 +66,11 @@ namespace Telerik.Web.Mvc.UI.Tests
         [Fact]
         public void Should_output_value_attribute()
         {
-            renderingData.Value = 2;
+            renderingData.Value = "2";
 
             IHtmlNode tag = builder.Build();
 
-            renderingData.Value.ShouldEqual(int.Parse(tag.Attribute("value")));
+            renderingData.Value.ShouldEqual(tag.Attribute("value"));
         }
 
         [Fact]

@@ -57,9 +57,15 @@
         }
 
         function start(e) {
-            var $th = e.$draggable.data('th');
+            var $th = e.$draggable.data('th'),
+                contentTable = grid.$tbody.parent();
 
-            $col = $('colgroup', grid.element).find('col:eq(' + $th.index() + ')');
+            if (!grid.scrollable) {
+                $col = contentTable.children('colgroup').find('col:eq(' + $th.index() + ')');
+            } else {
+                $col = grid.$header.parent().prev().find('col:eq(' + $th.index() + ')')
+                    .add(contentTable.children('colgroup').find('col:eq(' + $th.index() + ')'));
+            }
 
             columnStart = e.pageX;
             columnWidth = $th.outerWidth();
@@ -100,7 +106,8 @@
 
         function init() {
            var left = 0,
-               scope = grid.element.id + '-column-resizing';
+               scope = grid.element.id + '-column-resizing',
+               activeHandler;
            
            var draggable = $t.draggable.get(scope);
            
@@ -122,15 +129,21 @@
                 })
                 .appendTo(grid.scrollable ? grid.$headerWrap : grid.element)
                 .data('th', $th)
-                .mousedown(function () {
+                .mousedown(function() {
                     positionResizeHandle($th);
-                    cursor(grid.element, $(this).css('cursor'));
-                })
-                .mouseup(function () {
-                    cursor(grid.element, '');
+                    activeHandler = $(this);
+                    cursor(grid.element, activeHandler.css('cursor'));
                 });
             });
             
+            $(document).mouseup(function() {                
+                if(activeHandler) {
+                    stop({ $draggable: activeHandler });
+                    cursor(grid.element, '');
+                    activeHandler = null;
+                }
+            });
+
             new $t.draggable({
                 owner: grid.element,
                 selector: '.t-resize-handle',

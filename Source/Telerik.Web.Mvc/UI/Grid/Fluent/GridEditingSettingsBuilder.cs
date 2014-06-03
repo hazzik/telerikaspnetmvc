@@ -24,6 +24,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public GridEditingSettingsBuilder(GridEditingSettings<T> settings)
         {
             this.settings = settings;
+            this.settings.Enabled = true;
         }
 
         /// <summary>
@@ -92,6 +93,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
             Guard.IsNotNullOrEmpty(templateName, "templateName");
 
             settings.TemplateName = templateName;
+            return this;
+        }
+        /// <summary>
+        /// Provides additional view data in the editor template.
+        /// </summary>
+        /// <remarks>
+        /// The additional view data will be provided if the editing mode is set to in-form or popup. For other editing modes 
+        /// use <see cref="GridBoundColumnBuilder{T}.EditorViewData"/> 
+        /// </remarks>
+        /// <param name="additionalViewData">An anonymous object which contains the additional data</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .Editable(editing => editing.AdditionalViewData(new { customers = Model.Customers }))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public GridEditingSettingsBuilder<T> AdditionalViewData(object additionalViewData)
+        {
+            settings.AdditionalViewData = additionalViewData;
+
             return this;
         }
 #endif

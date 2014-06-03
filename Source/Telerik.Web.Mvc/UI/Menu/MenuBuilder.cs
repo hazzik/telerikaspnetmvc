@@ -217,6 +217,31 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Binds the menu to a list of items.
+        /// Use if the menu items are being sent from the controller.
+        /// To bind the Menu declaratively, use the <seealso cref="Items(Action<MenuItemFactory>)"> method.
+        /// </summary>
+        /// <param name="items">The list of items</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Menu()
+        ///             .Name("TreeView")
+        ///             .BindTo(model)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public MenuBuilder BindTo(IEnumerable<MenuItem> items)
+        {
+            Guard.IsNotNull(items, "items");
+
+            Component.Items.Clear();
+
+            (items as List<MenuItem>).ForEach(item => Component.Items.Add(item));
+
+            return this;
+        }
+
+        /// <summary>
         /// Configures the effects of the menu.
         /// </summary>
         /// <param name="effectsAction">The action which configures the effects.</param>
@@ -240,6 +265,11 @@ namespace Telerik.Web.Mvc.UI
             EffectsBuilderFactory factory = new EffectsBuilderFactory();
 
             addEffects(factory.Create(Component.Effects));
+
+            if (Component.Effects.Container.Count == 0)
+            {
+                factory.Create(Component.Effects).Slide();
+            }
 
             return this;
         }

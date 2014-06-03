@@ -180,7 +180,19 @@ namespace Telerik.Web.Mvc
                 result["modelState"] = SerializeErrors(modelState);
             }
 
-            SerializeAggregateResults(result, dataProcessor.AggregatesResults);
+            if (EnableCustomBinding)
+            {
+                var aggregates = actionResultAdapter.GetAggregates();
+                if (aggregates != null)
+                {
+                    result["aggregates"] = aggregates;
+                }
+
+            }
+            else
+            {
+                SerializeAggregateResults(result, dataProcessor.AggregatesResults);
+            }            
 
             filterContext.Result = resultFactory.Create(result);
         }

@@ -25,7 +25,8 @@ namespace Telerik.Web.Mvc.UI
             FluentDictionary.For(result)
                   .Add("attr", column.HtmlAttributes.ToAttributeString(), () => column.HtmlAttributes.Any())
                   .Add("title", column.Title)
-                  .Add("hidden", column.Hidden, false);
+                  .Add("hidden", column.Hidden, false)
+                  .Add("width", column.Width, () => column.Hidden && !string.IsNullOrEmpty(column.Width));
 
             if (column.ClientTemplate.HasValue())                  
             {

@@ -77,36 +77,27 @@ namespace Telerik.Web.Mvc.UI.Fluent
         }
 
         /// <summary>
-        /// Sets value at which the first perpendicular axis crosses this axis.
+        /// Sets the axis orientation. The CategoryAxis orientation should be set to match.
         /// </summary>
-        /// <param name="axisCrossingValue">The value at which the first perpendicular axis crosses this axis.</param>
+        /// <param name="orientation">The orientation. The default value is inferred from the series type.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;%= Html.Telerik().Chart(Model)
         ///             .Name("Chart")
-        ///             .ValueAxis(a => a.Numeric().AxisCrossingValue(4))
+        ///             .CategoryAxis(c => c.Orientation(ChartAxisOrientation.Vertical))
+        ///             .ValueAxis(v => v.Orientation(ChartAxisOrientation.Horizontal))
+        ///             .Series(series => series.Line(s => s.Sales))
         /// %&gt;
         /// </code>
         /// </example>
-        public ChartNumericAxisBuilder AxisCrossingValue(double axisCrossingValue)
+        public ChartNumericAxisBuilder Orientation(ChartAxisOrientation orientation)
         {
-            Axis.AxisCrossingValue = axisCrossingValue;
+            Axis.Orientation = orientation;
 
             return this;
         }
 
-        /// <summary>
-        /// Sets the axis labels format
-        /// </summary>
-        /// <param name="format">The axis labels format.</param>
-        /// <example>
-        /// <code lang="CS">
-        ///  &lt;%= Html.Telerik().Chart(Model)
-        ///             .Name("Chart")
-        ///             .ValueAxis(a => a.Numeric().Format("{0:C}"))
-        /// %&gt;
-        /// </code>
-        /// </example>
+        [System.Obsolete("Use Labels(labels => labels.Format(...)) instead of Numeric(axis => axis.Format(...)).", true)]
         public ChartNumericAxisBuilder Format(string format)
         {
             Axis.Format = format;

@@ -29,16 +29,22 @@
             ok(!finder.isFormatted([editor.body.firstChild]));
         });
 
+        test('isFormatted returns false for mixed selection node', function () {
+            editor.value('<ul><li>foo</li></ul><p>bar</p>');
+            var finder = new ListFormatFinder('ul');
+            ok(!finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild.firstChild]));
+        });
+
         test('isFormatted returns true for list', function() {
             editor.value('<ul><li>foo</li></ul>');
             var finder = new ListFormatFinder('ul');
             ok(finder.isFormatted([editor.body.firstChild.firstChild.firstChild]));
         });
 
-        test('isFormatted returns true for partial selection', function() {
-            editor.value('<ul><li>foo</li></ul>bar');
+        test('isFormatted returns true for list items from the same list', function() {
+            editor.value('<ul><li>foo</li><li>bar</li></ul>');
             var finder = new ListFormatFinder('ul');
-            ok(finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.lastChild]));
+            ok(finder.isFormatted([editor.body.firstChild.firstChild.firstChild, editor.body.firstChild.lastChild.firstChild]));
         });
 
         test('isFormatted returns false for two lists', function() {

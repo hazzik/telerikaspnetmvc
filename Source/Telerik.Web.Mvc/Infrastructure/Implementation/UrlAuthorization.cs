@@ -21,7 +21,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             Guard.IsNotNull(requestContext, "requestContext");
             Guard.IsNotNullOrEmpty(url, "url");
 
-            InternalSiteMapNode node = new InternalSiteMapNode(provider, url.ToLower(CultureInfo.InvariantCulture), url);
+            InternalSiteMapNode node = new InternalSiteMapNode(provider, url.ToLowerInvariant(), url);
             bool allowed = node.IsAccessibleToUser(requestContext.HttpContext);
 
             return allowed;

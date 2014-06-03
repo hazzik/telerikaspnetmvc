@@ -13,10 +13,11 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Initializes a new instance of the <see cref="ChartSpacing" /> class.
         /// </summary>
-        public ChartElementBorder(int width, string color)
+        public ChartElementBorder(int width, string color, ChartDashType dashType)
         {
             Width = width;
             Color = color;
+            DashType = dashType;
         }
 
         /// <summary>
@@ -32,6 +33,15 @@ namespace Telerik.Web.Mvc.UI
         /// Gets or sets the color of the border.
         /// </summary>
         public string Color
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the dash type of the border.
+        /// </summary>
+        public ChartDashType DashType
         {
             get;
             set;

@@ -64,36 +64,11 @@
             var value = "item2";
             dropdownlist.Name = "DDL";
             dropdownlist.ViewContext.ViewData["DDL"] = value;
-            dropdownlist.Value = "";
+            dropdownlist.Value = null;
 
             dropdownlist.SyncSelectedIndex();
 
             Assert.Equal(true, dropdownlist.Items[1].Selected);
-        }
-
-        [Fact]
-        public void GetValueFromViewDataByName_should_not_throw_exception_find_value_but_is_not_from_correct_type()
-        {
-            dropdownlist.Name = "DDL";
-            dropdownlist.ViewContext.ViewData["DDL"] = new System.Collections.Generic.List<DropDownItem> { new DropDownItem { Text = "item1" } };
-            Assert.DoesNotThrow(() => dropdownlist.GetValueFromViewDataByName());
-        }
-
-        [Fact]
-        public void GetValueFromViewDataByName_should_return_value_even_it_is_not_of_T_but_can_be_converted()
-        {
-            var value = 1;
-            dropdownlist.Name = "DDL";
-            dropdownlist.ViewContext.ViewData["DDL"] = value;
-            dropdownlist.GetValueFromViewDataByName().ShouldEqual(value.ToString());
-        }
-
-        [Fact]
-        public void GetValueFromViewDataByName_should_return_empty_string_is_model_type_is_not_predifined_type()
-        {
-            dropdownlist.Name = "DDL";
-            dropdownlist.ViewContext.ViewData["DDL"] = new DropDownItem { Text = "item1", Value = "item1" };
-            dropdownlist.GetValueFromViewDataByName().ShouldEqual(string.Empty);
         }
         
         [Fact]

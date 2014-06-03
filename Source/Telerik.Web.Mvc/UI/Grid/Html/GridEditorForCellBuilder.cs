@@ -20,6 +20,12 @@ namespace Telerik.Web.Mvc.UI.Html
             set;
         }
 
+        public object AdditionalViewData
+        {
+            get;
+            set;
+        }
+
         public ViewContext ViewContext
         {
             get;
@@ -61,7 +67,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private void AppendEditorFor(HtmlHelper<TModel> htmlHelper, IHtmlNode container)
         {
-            var editor = htmlHelper.EditorFor(Expression);
+            var editor = htmlHelper.EditorFor(Expression, AdditionalViewData);
 
             if (editor != null)
             {
@@ -71,7 +77,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private void AppendEditorTemplate(HtmlHelper<TModel> htmlHelper, IHtmlNode container)
         {
-            var editor = htmlHelper.Editor(Member, TemplateName);
+            var editor = htmlHelper.Editor(Member, TemplateName, AdditionalViewData);
 
             if (editor != null)
             {

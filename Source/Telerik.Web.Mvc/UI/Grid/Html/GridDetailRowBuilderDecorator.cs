@@ -31,7 +31,7 @@ namespace Telerik.Web.Mvc.UI.Html
                 a.AppendTo(td);
             }
 
-            htmlNode.Children.Insert(0, td);
+            htmlNode.Children.Insert(CurrentGridItem.GroupLevel, td);
         }
 
         private bool IsHeaderRow()

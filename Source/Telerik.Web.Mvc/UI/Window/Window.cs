@@ -243,9 +243,11 @@ namespace Telerik.Web.Mvc.UI
 
             builder.TitleTag().AppendTo(headerTag);
 
-            IHtmlNode buttonContainerTag = builder.ButtonContainerTag().AppendTo(headerTag);
-
-            Buttons.Container.Each(button => builder.ButtonTag(button).AppendTo(buttonContainerTag));
+            if (Buttons.Container.Count > 0)
+            {
+                IHtmlNode buttonContainerTag = builder.ButtonContainerTag().AppendTo(headerTag);
+                Buttons.Container.Each(button => builder.ButtonTag(button).AppendTo(buttonContainerTag));
+            }
 
             //Content
             builder.ContentTag().AppendTo(windowTag);

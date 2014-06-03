@@ -92,21 +92,6 @@
             Assert.Equal("disabled", tag.Attribute("disabled"));
         }
 
-#if MVC2 || MVC3
-        [Fact]
-        public void Render_method_should_set_selectedIndex_depending_on_ViewData_value()
-        {
-            AutoComplete.Name = "AutoComplete1";
-            AutoComplete.Items.Add("Item1");
-            AutoComplete.Items.Add("Item2");
-
-            AutoCompleteTestHelper.valueProvider.Setup(v => v.GetValue("AutoComplete1")).Returns(new System.Web.Mvc.ValueProviderResult("Item2", "Item2", CultureInfo.CurrentCulture));
-
-            var tag = renderer.Build();
-
-            Assert.Equal("Item2", tag.Attribute("value"));
-        }
-#endif
         [Fact]
         public void Render_method_should_set_selectedIndex_depending_on_returned_value_from_ValueProvider()
         {
@@ -120,6 +105,38 @@
             var tag = renderer.Build();
 
             Assert.Equal("Item3", tag.Attribute("value"));
+        }
+
+        [Fact]
+        public void Input_if_GetValue_returns_null_set_DatePicker_Value_to_null()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            AutoComplete.Name = "AutoComplete1";
+            AutoComplete.Value = "test";
+            AutoComplete.ViewContext.ViewData.ModelState.Add("AutoComplete1", state);
+            AutoComplete.ViewContext.ViewData.ModelState.AddModelError("AutoComplete1", "error");
+
+            IHtmlNode tag = renderer.Build();
+            tag.Attribute("value").ShouldEqual("s");
+        }
+
+        [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            AutoComplete.Name = "AutoComplete1";
+            AutoComplete.ViewContext.ViewData.ModelState.Add("AutoComplete1", state);
+            AutoComplete.ViewContext.ViewData.ModelState.AddModelError("AutoComplete1", "error");
+
+            IHtmlNode tag = renderer.Build();
+
+            tag.Attribute("class").ShouldContain("input-validation-error");
         }
 
         [Fact]

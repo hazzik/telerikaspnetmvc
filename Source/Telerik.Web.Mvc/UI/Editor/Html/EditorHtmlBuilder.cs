@@ -39,11 +39,11 @@ namespace Telerik.Web.Mvc.UI.Html
                             .Attributes(editor.GetUnobtrusiveValidationAttributes())
                             .PrependClass(UIPrimitives.Content, UIPrimitives.Editor.RawContent);
 
-            var value = editor.ViewContext.ViewData.Eval(editor.Name) ?? editor.Value;
+            var value = editor.GetValue<string>(editor.Value);
 
-            if (value != null)
+            if (!string.IsNullOrEmpty(value))
             {
-                content.Text(value.ToString());
+                content.Text(value);
             }
             else if (editor.Content != null)
             {
@@ -51,8 +51,7 @@ namespace Telerik.Web.Mvc.UI.Html
             }
             else if (editor.Template.InlineTemplate != null)
             {
-                value = editor.Template.InlineTemplate(null);
-                content.Text(value.ToString());
+                content.Text(editor.Template.InlineTemplate(null).ToString());
             }
 
             return content;
@@ -77,6 +76,7 @@ namespace Telerik.Web.Mvc.UI.Html
 
             var editableCell = new HtmlElement("td")
                 .AddClass("t-editable-area")
+                .ToggleClass("input-validation-error", !editor.IsValid())
                 .AppendTo(new HtmlElement("tr").AppendTo(root));
 
             var textarea = CreateTextArea();

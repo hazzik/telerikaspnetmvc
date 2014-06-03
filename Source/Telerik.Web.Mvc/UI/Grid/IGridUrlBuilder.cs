@@ -4,8 +4,9 @@
 // All other rights reserved.
 namespace Telerik.Web.Mvc.UI
 {
-    using System.Web.Routing;
     using System;
+    using System.Collections.Generic;
+    using System.Web.Routing;
 
     public interface IGridUrlBuilder
     {
@@ -29,6 +30,12 @@ namespace Telerik.Web.Mvc.UI
 
         string Url(INavigatable settings);
 
+        string Url(INavigatable settings, bool copy);
+
         string Url(INavigatable navigatable, Action<RouteValueDictionary> configurator);
+
+        IEnumerable<IGridDataKey> GetDataKeys();
+
+        IDictionary<string, object> GetState();
     }
 }

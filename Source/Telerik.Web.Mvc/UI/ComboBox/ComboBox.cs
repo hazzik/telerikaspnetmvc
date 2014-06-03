@@ -187,7 +187,7 @@ namespace Telerik.Web.Mvc.UI
             }
             else
             {
-                objectWriter.Append("selectedValue", Value.HasValue() ? Value : this.GetValueFromViewDataByName());
+                objectWriter.Append("selectedValue", this.GetValue<string>(Value));
             }
 
             objectWriter.Append("index", SelectedIndex, -1);

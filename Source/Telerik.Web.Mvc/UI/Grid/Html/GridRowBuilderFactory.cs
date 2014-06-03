@@ -91,10 +91,11 @@ namespace Telerik.Web.Mvc.UI.Html
         {
             return new GridDetailRowBuilder
             {
-                Colspan = renderingData.Colspan - 1,
+                Colspan = (renderingData.Colspan - 1) - item.GroupLevel,
                 DataItem = item.DataItem,
                 Template = renderingData.DetailViewTemplate,
                 Expanded = item.Expanded,
+                IsMasterAlternate = item is GridDetailViewItem && ((item as GridDetailViewItem).Parent.State & GridItemStates.Alternating) == GridItemStates.Alternating,
                 Html = item.DetailRowHtml,
                 HtmlAttributes = item.DetailRowHtmlAttributes
             };
@@ -127,6 +128,31 @@ namespace Telerik.Web.Mvc.UI.Html
             return new GridEmptyRowBuilder(renderingData.Colspan, renderingData.NoRecordsTemplate);
         }
 
+        private object ExtractForeignKeyText(IGridBoundColumn column, object key) 
+        {
+            var foreignKeyColumn = column as IGridForeignKeyColumn;
+            if (foreignKeyColumn != null && foreignKeyColumn.Data != null)
+            {
+                var data = foreignKeyColumn.Data;
+                if (!data.Any(i => i.Selected))
+                {
+                    if (key != null)
+                    {
+                        var selectedItem = data.FirstOrDefault(i => i.Value.Equals(key.ToString()));
+                        if (selectedItem != null)
+                        {
+                            return selectedItem.Text;
+                        }
+                    }
+                }
+                else
+                {
+                    return data.First(i => i.Selected).Text;
+                }
+            }
+            return key;
+        }
+
         protected virtual IGridRowBuilder CreateGroupRowBuilder(GridRenderingData renderingData, GridItem item)
         {
             var groupKey = ((IGroup) item.DataItem).Key;
@@ -138,10 +164,11 @@ namespace Telerik.Web.Mvc.UI.Html
             var column = renderingData.Columns.OfType<IGridBoundColumn>().FirstOrDefault(c => c.Member == member);
 
             var format = column != null && column.Format.HasValue() ? column.Format : "{0}";
+                       
 
             var template = new HtmlTemplate<GridGroupAggregateResult>
             {
-                InlineTemplate = (result) => "{0}: {1}".FormatWith(result.Title, format.FormatWith(result.Key))
+                InlineTemplate = (result) => "{0}: {1}".FormatWith(result.Title, format.FormatWith(ExtractForeignKeyText(column, result.Key)))
             };
 
             var title = member.AsTitle();
@@ -238,7 +265,14 @@ namespace Telerik.Web.Mvc.UI.Html
 
             var formHtmlAttributes = CreateFormAttributes(renderingData.FormId, action(item.DataItem));
             formHtmlAttributes.Merge(renderingData.EditFormHtmlAttributes);
-            return new GridEditFormBuilder(new GridFormBuilder(formHtmlAttributes), () => renderingData.HtmlHelper.EditorForModel(item.DataItem, renderingData.EditTemplateName), buttonBuilders);
+
+            return new GridEditFormBuilder(new GridFormBuilder(formHtmlAttributes), 
+                () => renderingData.HtmlHelper.EditorForModel(item.DataItem, 
+                    renderingData.EditTemplateName, 
+                    renderingData.Columns.OfType<IGridForeignKeyColumn>().Select(c => c.SerializeSelectList),
+                    renderingData.AdditionalViewData
+                ), 
+                buttonBuilders);
         }
 
         private Dictionary<string, object> CreateFormAttributes(string formId, string action)

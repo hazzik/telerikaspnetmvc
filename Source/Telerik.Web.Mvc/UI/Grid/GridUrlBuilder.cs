@@ -6,6 +6,7 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Web.Routing;
     using Telerik.Web.Mvc.Extensions;
@@ -22,6 +23,43 @@ namespace Telerik.Web.Mvc.UI
             this.grid = grid;
         }
 
+        private IDictionary<string, object> GetDataKeyRouteValues(object dataItem)
+        {
+            return dataKeyStore.GetRouteValues(dataItem);
+        }
+
+        public IEnumerable<IGridDataKey> GetDataKeys()
+        {
+            return dataKeyStore.GetDataKeys();
+        }
+
+        public IDictionary<string, object> GetState()
+        {
+            var state = new Dictionary<string, object>();
+
+            if (grid.Paging.Enabled)
+            {
+                state[grid.Prefix(GridUrlParameters.CurrentPage)] = "<#=__page#>";
+            }
+
+            if (grid.Sorting.Enabled)
+            {
+                state[grid.Prefix(GridUrlParameters.OrderBy)] = "<#=__orderBy#>";
+            }
+
+            if (grid.Grouping.Enabled)
+            {
+                state[grid.Prefix(GridUrlParameters.GroupBy)] = "<#=__groupBy#>";
+            }
+
+            if (grid.Filtering.Enabled)
+            {
+                state[grid.Prefix(GridUrlParameters.Filter)] = "<#=__filter#>";
+            }
+
+            return state;
+        }
+
         public string SelectUrl()
         {
             return Url(grid.Server.Select);
@@ -34,7 +72,7 @@ namespace Telerik.Web.Mvc.UI
 
         public string SelectUrl(object dataItem)
         {
-            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+            var routeValues = GetDataKeyRouteValues(dataItem);
 
             var navigatable = grid.Server.Select;
 
@@ -49,7 +87,7 @@ namespace Telerik.Web.Mvc.UI
 
         public string DeleteUrl(object dataItem)
         {
-            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+            var routeValues = GetDataKeyRouteValues(dataItem);
             
             var navigatable = grid.Server.Delete;
 
@@ -80,7 +118,7 @@ namespace Telerik.Web.Mvc.UI
 
         public string EditUrl(object dataItem)
         {
-            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+            var routeValues = GetDataKeyRouteValues(dataItem);
 
             var navigatable = grid.Server.Select;
             
@@ -115,7 +153,7 @@ namespace Telerik.Web.Mvc.UI
 
         public string UpdateUrl(object dataItem)
         {
-            var routeValues = dataKeyStore.GetRouteValues(dataItem);
+            var routeValues = GetDataKeyRouteValues(dataItem);
 
             var navigatable = grid.Server.Update;
 
@@ -145,7 +183,17 @@ namespace Telerik.Web.Mvc.UI
 
         public string Url(INavigatable navigatable)
         {
-            RouteValueDictionary routeValues = PrepareRouteValues(navigatable.RouteValues);
+            return Url(navigatable, true);
+        }
+
+        public string Url(INavigatable navigatable, bool copy)
+        {
+            var routeValues = new RouteValueDictionary(navigatable.RouteValues);
+
+            if (copy)
+            {
+                routeValues = PrepareRouteValues(navigatable.RouteValues);
+            }
 
             return navigatable.GenerateUrl(grid.ViewContext, grid.UrlGenerator, routeValues);
         }

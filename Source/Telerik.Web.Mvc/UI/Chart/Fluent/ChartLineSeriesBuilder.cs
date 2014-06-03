@@ -10,7 +10,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
     using Telerik.Web.Mvc.UI;
 
     /// <summary>
-    /// Defines the fluent interface for configuring bar series.
+    /// Defines the fluent interface for configuring line series.
     /// </summary>
     /// <typeparam name="T">The type of the data item</typeparam>
     public class ChartLineSeriesBuilder<T> : ChartSeriesBuilderBase<IChartLineSeries, ChartLineSeriesBuilder<T>>
@@ -28,7 +28,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets a value indicating if the lines should be stacked.
         /// </summary>
-        /// <param name="stacked">A value indicating if the bars should be stacked.</param>
+        /// <param name="stacked">A value indicating if the lines should be stacked.</param>
         /// <example>
         /// <code lang="CS">
         ///  &lt;%= Html.Telerik().Chart(Model)
@@ -62,11 +62,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public ChartLineSeriesBuilder<T> Labels(Action<ChartLineLabelsBuilder> configurator)
+        public ChartLineSeriesBuilder<T> Labels(Action<ChartPointLabelsBuilder> configurator)
         {
             Guard.IsNotNull(configurator, "configurator");
 
-            configurator(new ChartLineLabelsBuilder(Series.Labels));
+            configurator(new ChartPointLabelsBuilder(Series.Labels));
 
             return this;
         }
@@ -96,7 +96,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// <summary>
         /// Sets the line chart line width.
         /// </summary>
-        /// <param name="color">The line width.</param>
+        /// <param name="width">The line width.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
@@ -109,6 +109,26 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public ChartLineSeriesBuilder<T> Width(double width)
         {
             Series.Width = width;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the line chart line dash type.
+        /// </summary>
+        /// <param name="dashType">The line dash type.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .Series(series => series.Line(s => s.Sales).DashType(ChartDashType.Dot))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>        
+        public ChartLineSeriesBuilder<T> DashType(ChartDashType dashType)
+        {
+            Series.DashType = dashType;
 
             return this;
         }
@@ -130,11 +150,11 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// %&gt;
         /// </code>
         /// </example>
-        public ChartLineSeriesBuilder<T> Markers(Action<ChartLineMarkersBuilder> configurator)
+        public ChartLineSeriesBuilder<T> Markers(Action<ChartMarkersBuilder> configurator)
         {
             Guard.IsNotNull(configurator, "configurator");
 
-            configurator(new ChartLineMarkersBuilder(Series.Markers));
+            configurator(new ChartMarkersBuilder(Series.Markers));
 
             return this;
         }
@@ -157,6 +177,28 @@ namespace Telerik.Web.Mvc.UI.Fluent
         public ChartLineSeriesBuilder<T> Markers(bool visible)
         {
             Series.Markers.Visible = visible;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Configures the behavior for handling missing values in line series.
+        /// </summary>
+        /// <param name="missingValues">The missing values behavior. The default is to leave gaps.</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .Series(series => series
+        ///                 .Line(s => s.Sales)
+        ///                 .MissingValues(ChartLineMissingValues.Interpolate);
+        ///              )
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartLineSeriesBuilder<T> MissingValues(ChartLineMissingValues missingValues)
+        {
+            Series.MissingValues = missingValues;
 
             return this;
         }

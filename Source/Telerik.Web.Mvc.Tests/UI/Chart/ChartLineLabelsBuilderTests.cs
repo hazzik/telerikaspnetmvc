@@ -6,13 +6,13 @@
 
     public class ChartLineLabelsBuilderTests
     {
-        private readonly ChartLineLabels labels;
-        private readonly ChartLineLabelsBuilder builder;
+        private readonly ChartPointLabels labels;
+        private readonly ChartPointLabelsBuilder builder;
 
         public ChartLineLabelsBuilderTests()
         {
-            labels = new ChartLineLabels();
-            builder = new ChartLineLabelsBuilder(labels);
+            labels = new ChartPointLabels();
+            builder = new ChartPointLabelsBuilder(labels);
         }
 
         [Fact]
@@ -32,8 +32,8 @@
         [Fact]
         public void Position_sets_Position()
         {
-            builder.Position(ChartLineLabelsPosition.Left);
-            labels.Position.ShouldEqual(ChartLineLabelsPosition.Left);
+            builder.Position(ChartPointLabelsPosition.Left);
+            labels.Position.ShouldEqual(ChartPointLabelsPosition.Left);
         }
 
         [Fact]
@@ -85,9 +85,10 @@
         [Fact]
         public void Border_sets_width_and_color()
         {
-            builder.Border(1, "red");
+            builder.Border(1, "red", ChartDashType.Dot);
             labels.Border.Color.ShouldEqual("red");
             labels.Border.Width.ShouldEqual(1);
+            labels.Border.DashType.ShouldEqual(ChartDashType.Dot);
         }
 
         [Fact]
@@ -95,6 +96,27 @@
         {
             builder.Format("{0:C}");
             labels.Format.ShouldEqual("{0:C}");
+        }
+
+        [Fact]
+        public void Template_sets_template()
+        {
+            builder.Template("<# CustomerID #>");
+            labels.Template.ShouldEqual("<# CustomerID #>");
+        }
+
+        [Fact]
+        public void Opacity_sets_Opacity()
+        {
+            builder.Opacity(0.5);
+            labels.Opacity.ShouldEqual(0.5);
+        }
+
+        [Fact]
+        public void Rotation_sets_Rotation()
+        {
+            builder.Rotation(20);
+            labels.Rotation.ShouldEqual(20);
         }
     }
 }

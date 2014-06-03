@@ -6,10 +6,11 @@
 namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
-    using System.Collections.Generic;
     using System.Web;
+    using System.Linq;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using System.Collections.Generic;
 
     public class ControllerAuthorization : IControllerAuthorization
     {
@@ -67,7 +68,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             Guard.IsNotNullOrEmpty(controllerName, "controllerName");
             Guard.IsNotNullOrEmpty(actionName, "actionName");
 
-            IEnumerable<AuthorizeAttribute> authorizeAttributes = authorizeAttributeCache.GetAuthorizeAttributes(requestContext, controllerName, actionName, routeValues);
+            List<AuthorizeAttribute> authorizeAttributes = authorizeAttributeCache.GetAuthorizeAttributes(requestContext, controllerName, actionName, routeValues).ToList();      
+#if MVC3
+            authorizeAttributes.AddRange(GlobalFilters.Filters.Select(f => f.Instance).OfType<AuthorizeAttribute>());
+#endif
             bool allowed = true;
 
             foreach (AuthorizeAttribute authorizeAttribute in authorizeAttributes)
@@ -95,6 +99,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                             objectCopier.Copy(authorizeAttribute, subclassedAttribute, "Order", "Roles", "Users" /* Excluded properties */);
                         }
 
+                        
                         allowed = subclassedAttribute.IsAuthorized(requestContext.HttpContext);
                     }
                     catch

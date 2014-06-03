@@ -39,13 +39,11 @@ namespace Telerik.Web.Mvc.UI.Html
 
         private void AppendCol(HtmlElement colgroup, string columnWidth, bool hidden)
         {
-            var col = new HtmlElement("col",TagRenderMode.SelfClosing);
+            if (hidden) return;
 
-            if (hidden)
-            {
-                col.Css("display", "none").Css("width", "0");
-            }
-            else if (columnWidth.HasValue())
+            var col = new HtmlElement("col",TagRenderMode.SelfClosing);            
+
+            if (columnWidth.HasValue())
             {
                 col.Css("width", columnWidth);
             }

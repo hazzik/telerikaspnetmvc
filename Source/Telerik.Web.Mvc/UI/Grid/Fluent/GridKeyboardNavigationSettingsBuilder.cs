@@ -43,5 +43,26 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return this;
         }
+
+        /// <summary>
+        /// Enables or disables edit when TAB key is pressed.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Grid(Model)
+        ///             .Name("Grid")
+        ///             .KeyboardNavigation(setting => setting.EditOnTab((bool)ViewData["enableEditOnTab"]))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        /// <remarks>
+        /// The EditOnTab method is useful when InCell edit mode and use TAB key to edit the cell.
+        /// </remarks>
+        public virtual GridKeyboardNavigationSettingsBuilder EditOnTab(bool value)
+        {
+            settings.EditOnTab = value;
+
+            return this;
+        }
     }
 }

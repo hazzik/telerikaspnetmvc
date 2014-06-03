@@ -184,22 +184,6 @@ namespace Telerik.Web.Mvc.UI.Tests
             Assert.Equal("Test", tag.Children[0].Attribute("value"));
         }
 
-#if MVC2 || MVC3
-        [Fact]
-        public void InnerContentTag_should_add_attr_value_if_value_is_posted()
-        {
-            combobox.Name = "ComboBox1";
-            combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
-            combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
-            combobox.SelectedIndex = -1;
-
-            ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1-input")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
-
-            IHtmlNode tag = renderer.InnerContentTag();
-
-            Assert.Equal("2", tag.Children[0].Attribute("value"));
-        }
-#endif
         [Fact]
         public void InnerContentTag_should_output_span_tag()
         {
@@ -286,6 +270,17 @@ namespace Telerik.Web.Mvc.UI.Tests
             IHtmlNode tag = renderer.InnerContentTag();
 
             tag.Children[0].Attribute("name").ShouldEqual(combobox.Name + "-input");
+        }
+
+        [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            combobox.Name = "combobox1";
+            combobox.ViewContext.ViewData.ModelState.AddModelError("combobox1", "error");
+
+            IHtmlNode tag = renderer.InnerContentTag();
+
+            tag.Children[0].Attribute("class").ShouldContain("input-validation-error");
         }
 
         [Fact]
@@ -408,8 +403,10 @@ namespace Telerik.Web.Mvc.UI.Tests
             combobox.Items.Add(new DropDownItem { Text = "Item1", Value = "1" });
             combobox.Items.Add(new DropDownItem { Text = "Item2", Value = "2" });
             combobox.SelectedIndex = 1;
-
+            combobox.Value = "10";
             ComboBoxTestHelper.valueProvider.Setup(v => v.GetValue("ComboBox1")).Returns(new System.Web.Mvc.ValueProviderResult("2", "2", CultureInfo.CurrentCulture));
+
+            combobox.SyncSelectedIndex();
 
             IHtmlNode tag = renderer.HiddenInputTag();
 

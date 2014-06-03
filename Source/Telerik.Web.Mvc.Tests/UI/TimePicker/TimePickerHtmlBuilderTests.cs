@@ -126,6 +126,22 @@
         }
 
         [Fact]
+        public void InputTag_should_render_input_validation_class_if_ModelState_Error()
+        {
+            System.Web.Mvc.ValueProviderResult result = new System.Web.Mvc.ValueProviderResult("s", "s", System.Threading.Thread.CurrentThread.CurrentCulture);
+            System.Web.Mvc.ModelState state = new System.Web.Mvc.ModelState();
+            state.Value = result;
+
+            timePicker.Name = "timePicker1";
+            timePicker.ViewContext.ViewData.ModelState.Add("timePicker1", state);
+            timePicker.ViewContext.ViewData.ModelState.AddModelError("timePicker1", new Exception());
+
+            IHtmlNode tag = renderer.InputTag();
+
+            tag.Attribute("class").ShouldContain("input-validation-error");
+        }
+
+        [Fact]
         public void Button_should_render_span_tag_with_select_class()
         {
             IHtmlNode tag = renderer.ButtonTag();

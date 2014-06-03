@@ -124,19 +124,25 @@
     <value>Insérer un lien hypertexte</value>
   </data>
   <data name="DeleteFile" xml:space="preserve">
-    <value>Are you sure you want to delete "{0}"?</value>
+    <value>Êtes-vous spur de vouloir supprimer "{0}"?</value>
   </data>
   <data name="DirectoryNotFound" xml:space="preserve">
-    <value>A directory with this name was not found.</value>
+    <value>Un répertoire avec ce nom n'a pas été trouvé.</value>
   </data>
   <data name="EmptyFolder" xml:space="preserve">
-    <value>Empty Folder</value>
+    <value>Vider le dossier</value>
   </data>
   <data name="FontName" xml:space="preserve">
-    <value>Famille de polices</value>
+    <value>Police</value>
+  </data>
+  <data name="FontNameInherit" xml:space="preserve">
+    <value>(police héritée)</value>
   </data>
   <data name="FontSize" xml:space="preserve">
-    <value>Dimension</value>
+    <value>Taille de police</value>
+  </data>
+  <data name="FontSizeInherit" xml:space="preserve">
+    <value>(taille héritée)</value>
   </data>
   <data name="FormatBlock" xml:space="preserve">
     <value>Style du paragraphe</value>
@@ -145,10 +151,10 @@
     <value>Augmenter le retrait</value>
   </data>
   <data name="InsertHtml" xml:space="preserve">
-    <value>Insèrer HTML</value>
+    <value>Insérer HTML</value>
   </data>
   <data name="InsertImage" xml:space="preserve">
-    <value>Insèrer Image</value>
+    <value>Insérer image</value>
   </data>
   <data name="InsertOrderedList" xml:space="preserve">
     <value>Liste numérotée</value>
@@ -157,7 +163,7 @@
     <value>Liste à puces</value>
   </data>
   <data name="InvalidFileType" xml:space="preserve">
-    <value>The selected file "{0}" is not valid. Supported file types are {1}.</value>
+    <value>Le fichier sélectionné "{0}" n'est pas valide. Les types de fichiers supportés sont {1}.</value>
   </data>
   <data name="Italic" xml:space="preserve">
     <value>Italique</value>
@@ -169,39 +175,39 @@
     <value>Justifier</value>
   </data>
   <data name="JustifyLeft" xml:space="preserve">
-    <value>Alignement à gauche</value>
+    <value>Aligner le texte à gauche</value>
   </data>
   <data name="JustifyRight" xml:space="preserve">
-    <value>Alignement à droite</value>
+    <value>Aligner le texte à droite</value>
   </data>
   <data name="OrderBy" xml:space="preserve">
-    <value>Arrange by:</value>
+    <value>Organiser par:</value>
   </data>
   <data name="OrderByName" xml:space="preserve">
-    <value>Name</value>
+    <value>Nom</value>
   </data>
   <data name="OrderBySize" xml:space="preserve">
-    <value>Size</value>
+    <value>Taille</value>
   </data>
   <data name="Outdent" xml:space="preserve">
-    <value>Réduire le retrait</value>
+    <value>Diminuer le retrait</value>
   </data>
   <data name="OverwriteFile" xml:space="preserve">
-    <value>A file with name "{0}" already exists in the current directory. Do you want to overwrite it?</value>
+    <value>Un fichier avec le nom "{0}" existe déjà dans le répertoire courant. Voulez-vous le remplacer?</value>
   </data>
   <data name="Strikethrough" xml:space="preserve">
-    <value>Texte barré</value>
+    <value>Barré</value>
   </data>
   <data name="Style" xml:space="preserve">
-    <value>Style</value>
+    <value>Styles</value>
   </data>
   <data name="Underline" xml:space="preserve">
     <value>Souligné</value>
   </data>
   <data name="Unlink" xml:space="preserve">
-    <value>Supprimer hyperlien</value>
+    <value>Supprimer le lien hypertexte</value>
   </data>
   <data name="UploadFile" xml:space="preserve">
-    <value>Upload</value>
+    <value>Télécharger</value>
   </data>
 </root>

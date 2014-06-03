@@ -103,12 +103,12 @@ using Telerik.Web.Mvc.UI.Html;
         }
 
         [Fact]
-        public void Should_throw_exception_if_value_is_big_then_zero()
+        public void Should_not_throw_exception_if_value_is_big_then_zero()
         {
             component.Value = 11;
             component.MinValue = 0;
             component.MaxValue = 10;
-            Assert.Throws<ArgumentOutOfRangeException>(() => component.Render());
+            Assert.DoesNotThrow(() => component.Render());
         }
     }
 }

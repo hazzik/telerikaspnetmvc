@@ -90,6 +90,138 @@ namespace Telerik.Web.Mvc.UI.Fluent
             return HandlerName(events.OnLoad, onLoadHandlerName);
         }
 
+        /// <summary>
+        /// Defines the inline handler of the OnDataBound client-side event
+        /// </summary>
+        /// <param name="codeBlock">The action defining the inline handler.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .ClientEvents(events => events.OnDataBound(() =>
+        ///            {
+        ///                 %&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;%
+        ///            }))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>        
+        public ChartClientEventsBuilder OnDataBound(Action codeBlock)
+        {
+            return CodeBlock(events.OnDataBound, codeBlock);
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnDataBound client-side event
+        /// </summary>
+        /// <param name="inlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .ClientEvents(events => events.OnDataBound(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartClientEventsBuilder OnDataBound(Func<object, object> inlineCodeBlock)
+        {
+            return InlineCodeBlock(events.OnDataBound, inlineCodeBlock);
+        }
+
+        /// <summary>
+        ///  Defines the name of the JavaScript function that will handle the the OnDataBound client-side event.
+        /// </summary>
+        /// <param name="onDataBoundHandlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .ClientEvents(events => events.OnDataBound("onDataBound"))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartClientEventsBuilder OnDataBound(string onDataBoundHandlerName)
+        {
+            return HandlerName(events.OnDataBound, onDataBoundHandlerName);
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnSeriesClick client-side event
+        /// </summary>
+        /// <param name="codeBlock">The action defining the inline handler.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .ClientEvents(events => events.OnSeriesClick(() =>
+        ///            {
+        ///                 %&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;%
+        ///            }))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>        
+        public ChartClientEventsBuilder OnSeriesClick(Action codeBlock)
+        {
+            return CodeBlock(events.OnSeriesClick, codeBlock);
+        }
+
+        /// <summary>
+        /// Defines the inline handler of the OnSeriesClick client-side event
+        /// </summary>
+        /// <param name="inlineCodeBlock">The handler code wrapped in a text tag (Razor syntax).</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().Chart()
+        ///            .Name("Chart")
+        ///            .ClientEvents(events => events.OnSeriesClick(
+        ///                 @&lt;text&gt;
+        ///                 function(e) {
+        ///                     //event handling code
+        ///                 }
+        ///                 &lt;/text&gt;
+        ///            ))
+        ///            .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartClientEventsBuilder OnSeriesClick(Func<object, object> inlineCodeBlock)
+        {
+            return InlineCodeBlock(events.OnSeriesClick, inlineCodeBlock);
+        }
+
+        /// <summary>
+        ///  Defines the name of the JavaScript function that will handle the the OnSeriesClick client-side event.
+        /// </summary>
+        /// <param name="onSeriesClickHandlerName">The name of the JavaScript function that will handle the event.</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().Chart()
+        ///             .Name("Chart")
+        ///             .ClientEvents(events => events.OnSeriesClick("onSeriesClick"))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public ChartClientEventsBuilder OnSeriesClick(string onSeriesClickHandlerName)
+        {
+            return HandlerName(events.OnSeriesClick, onSeriesClickHandlerName);
+        }
+
         private ChartClientEventsBuilder CodeBlock(ClientEvent e, Action codeBlock)
         {
             Guard.IsNotNull(codeBlock, "codeBlock");

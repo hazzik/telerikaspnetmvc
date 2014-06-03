@@ -44,5 +44,31 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
             decorator.Decorate(new Mock<IGridRowBuilder>().Object, gridItem, true);
             decorator.ShouldDecorate(gridItem).ShouldBeTrue();
         }
+
+        [Fact]
+        public void Should_insert_as_first_cell_if_not_groups()
+        {
+            var gridItem = new GridItem { Type = GridItemType.DataRow };
+            var builder = new Mock<IGridRowBuilder>();
+            builder.Setup(b => b.CreateRow()).Returns(new HtmlElement("tr"));
+            decorator.Decorate(builder.Object, gridItem, true);
+            var node = decorator.CreateRow();
+            node.Children.Count.ShouldEqual(1);
+        }
+
+        [Fact]
+        public void Should_insert_cell_after_group_cell_if_grouped()
+        {
+            var gridItem = new GridItem { Type = GridItemType.DataRow, GroupLevel = 1 };
+            var builder = new Mock<IGridRowBuilder>();            
+            var container = new HtmlElement("tr");
+            new HtmlElement("td").AppendTo(container);
+            builder.Setup(b => b.CreateRow()).Returns(container);
+
+            decorator.Decorate(builder.Object, gridItem, true);
+            var node = decorator.CreateRow();
+            node.Children.Count.ShouldEqual(2);
+            node.Children[1].Attribute("class").ShouldEqual(UIPrimitives.Grid.HierarchyCell);
+        }
     }
 }

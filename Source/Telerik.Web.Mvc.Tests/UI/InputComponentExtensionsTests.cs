@@ -68,5 +68,13 @@
         {
             datepicker.GetAttemptedValue().ShouldEqual("s");
         }
+
+        [Fact]
+        public void GetAttempedValue_should_return_empty_string_if_value_is_null()
+        {
+            state.Value = null;
+
+            datepicker.GetAttemptedValue().ShouldEqual("");
+        }
     }
 }

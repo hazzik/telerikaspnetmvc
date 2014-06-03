@@ -20,17 +20,16 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         }
 
         [Fact]
-        public void Should_create_col_with_zero_width_for_hidden_column()
+        public void Should_not_create_col_for_hidden_column()
         {
             var colData = new[] {new GridColData {Hidden = true}};
             var builder = new GridTableBuilder(colData);
 
             var table = builder.CreateTable();
             var colGroup = table.Children[0];
-            var col = colGroup.Children[0];
+            var col = colGroup.Children;
 
-            col.Attribute("style").ShouldContain("width:0");
-            col.Attribute("style").ShouldContain("display:none");
+            col.ShouldBeEmpty();
         }
 
         [Fact]

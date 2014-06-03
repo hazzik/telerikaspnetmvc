@@ -41,9 +41,10 @@
         [Fact]
         public void Border_sets_width_and_color()
         {
-            builder.Border(1, "red");
+            builder.Border(1, "red", ChartDashType.Dot);
             charArea.Border.Color.ShouldEqual("red");
             charArea.Border.Width.ShouldEqual(1);
+            charArea.Border.DashType.ShouldEqual(ChartDashType.Dot);
         }
     }
 }

@@ -21,6 +21,7 @@
             ClientEvents = new DropDownClientEvents();
             DataBinding = new DropDownListDataBindingConfiguration();
             DropDownHtmlAttributes = new RouteValueDictionary();
+            HiddenInputHtmlAttributes = new RouteValueDictionary();
             
             Effects = new Effects();
             defaultEffects.Each(el => Effects.Container.Add(el));
@@ -30,6 +31,22 @@
             Enabled = true;
             Encoded = true;
             Delay = 500;
+        }
+
+        /// <summary>
+        /// Gets the id.
+        /// </summary>
+        /// <value>The id.</value>
+        public new string Id
+        {
+            get
+            {
+                // Return from htmlattributes if user has specified
+                // otherwise build it from name
+                return HiddenInputHtmlAttributes.ContainsKey("id") ?
+                       HiddenInputHtmlAttributes["id"].ToString() :
+                       (!string.IsNullOrEmpty(Name) ? Name.Replace(".", HtmlHelper.IdAttributeDotReplacement) : null);
+            }
         }
 
         public bool Encoded
@@ -57,6 +74,12 @@
         }
 
         public IDictionary<string, object> DropDownHtmlAttributes
+        {
+            get;
+            private set;
+        }
+
+        public IDictionary<string, object> HiddenInputHtmlAttributes
         {
             get;
             private set;
@@ -125,7 +148,7 @@
             }
             else
             {
-                objectWriter.Append("selectedValue", Value.HasValue() ? Value : this.GetValueFromViewDataByName());
+                objectWriter.Append("selectedValue", this.GetValue<string>(Value));
             }
 
             objectWriter.Append("index", SelectedIndex, 0);

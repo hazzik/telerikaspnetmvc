@@ -10,9 +10,10 @@ namespace Telerik.Web.Mvc.Infrastructure
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Web.Script.Serialization;
-
+    using System.Runtime.Serialization;
+    
     public class Group : IGroup
-    {
+    {        
         private ReadOnlyCollection<IGroup> subgroups;
 
         /// <summary>
@@ -35,6 +36,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         /// Gets the subgroups, if <see cref="HasSubgroups"/> is true, otherwise empty collection.
         /// </summary>
         /// <value>The subgroups.</value>
+        [IgnoreDataMember]
         public ReadOnlyCollection<IGroup> Subgroups
         {
             get

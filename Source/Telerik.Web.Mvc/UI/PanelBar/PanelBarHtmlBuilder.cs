@@ -58,7 +58,7 @@ namespace Telerik.Web.Mvc.UI
                     tag.PrependClass(UIPrimitives.Header);
                 }
 
-                if (item.Parent != null && item.Selected)
+                if (item.Selected)
                 {
                     tag.PrependClass(UIPrimitives.SelectedState);
                 }

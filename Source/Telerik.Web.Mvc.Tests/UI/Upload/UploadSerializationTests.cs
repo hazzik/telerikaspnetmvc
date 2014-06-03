@@ -82,6 +82,17 @@
         }
 
         [Fact]
+        public void Async_SaveField_should_be_serialized_when_set()
+        {
+            upload.Async.Save.ActionName = "Index";
+            upload.Async.Save.ControllerName = "Home";
+            upload.Async.SaveField = "attachments";
+            upload.WriteInitializationScript(textWriter.Object);
+
+            output.ShouldEqual("jQuery('#Upload').tUpload({async:{\"saveUrl\":\"Home/Index\",\"saveField\":\"attachments\",\"autoUpload\":true}});");
+        }
+
+        [Fact]
         public void Remove_action_should_be_serialized()
         {
             upload.Async.Save.ActionName = "Index";

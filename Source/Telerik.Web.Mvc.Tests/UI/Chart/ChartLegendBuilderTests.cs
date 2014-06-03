@@ -23,6 +23,13 @@
         }
 
         [Fact]
+        public void Background_sets_background()
+        {
+            builder.Background("Background");
+            legend.Background.ShouldEqual("Background");
+        }
+
+        [Fact]
         public void Position_sets_Position()
         {
             builder.Position(ChartLegendPosition.Bottom);
@@ -85,9 +92,10 @@
         [Fact]
         public void Border_sets_width_and_color()
         {
-            builder.Border(1, "red");
+            builder.Border(1, "red", ChartDashType.Dot);
             legend.Border.Color.ShouldEqual("red");
             legend.Border.Width.ShouldEqual(1);
+            legend.Border.DashType.ShouldEqual(ChartDashType.Dot);
         }
     }
 }

@@ -1,6 +1,6 @@
 <%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Telerik.Web.Mvc.JavaScriptTests.Customer>>" %>
 
-<asp:Content ContentPlaceHolderID="MainContent" runat="server">
+<asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
     <%= Html.Telerik().Grid(Model)
             .Name("Grid")
             .DataKeys(keys => keys.Add(c => c.IntegerValue))
@@ -91,12 +91,47 @@
                 columns.Bound(c => c.Name);
                 columns.Bound(c => c.Active); 
                 columns.Command(commands => commands.Edit());
+                columns.Command(commands => commands.Delete());
             })
             .DataBinding(binding => binding.Ajax().Select("foo", "bar").Update("foo", "bar").Insert("foo", "bar").Delete("foo", "bar"))
-            .ClientEvents(events => events.OnEdit("onEdit").OnSave("onSave").OnSubmitChanges("onSubmitChanges"))
+            .ClientEvents(events => events.OnEdit("onEdit").OnSave("onSave").OnSubmitChanges("onSubmitChanges").OnDelete("onDelete"))
             .Editable(editing => editing.Mode(GridEditMode.InCell))
     %>
-
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid6")
+            .DataKeys(keys => keys.Add(c => c.IntegerValue))
+            .ToolBar(commands => {
+                commands.Insert();
+                commands.SubmitChanges();
+            })
+            .Columns(columns => 
+            {
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.Active); 
+                columns.Command(commands => commands.Edit());
+                columns.Command(commands => commands.Delete());
+            })
+            .DataBinding(binding => binding.Ajax().Select("foo", "bar").Update("foo", "bar").Insert("foo", "bar").Delete("foo", "bar"))
+            .ClientEvents(events => events.OnCommand("onCommand").OnEdit("onEdit").OnSave("onSave").OnSubmitChanges("onSubmitChanges").OnDelete("onDelete"))
+            .Editable(editing => editing.Mode(GridEditMode.InCell))
+    %>    
+    <%= Html.Telerik().Grid(Model)
+            .Name("Grid7")
+            .DataKeys(keys => keys.Add(c => c.IntegerValue))
+            .ToolBar(commands => {
+                commands.Insert();
+                commands.Custom().Text("Custom").Action("foo", "bar").Ajax(true).Name("custom");
+            })
+            .Columns(columns => 
+            {
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.Active); 
+                columns.Command(commands => commands.Edit());
+                columns.Command(commands => commands.Delete());
+            })
+            .DataBinding(binding => binding.Ajax().Select("foo", "bar").Update("foo", "bar").Insert("foo", "bar").Delete("foo", "bar"))
+            .ClientEvents(events => events.OnCommand("onCommand").OnEdit("onEdit").OnSave("onSave").OnSubmitChanges("onSubmitChanges").OnDelete("onDelete"))
+    %>
     <script type="text/javascript">
         var onLoadGrid;
         var onEditArguments;
@@ -106,10 +141,16 @@
         var onDetailViewExpandArguments;
         var onDetailViewCollapseArguments;
         var onSelectArguments;
+        var onCommandArguments;
         
         function onSubmitChanges(e) {
             onSubmitChangesArguments = e;
         }
+
+        function onCommand(e) {
+            onCommandArguments = e;
+        }
+
         function onRowSelect(e) {
             onSelectArguments = e;
         }
@@ -146,7 +187,7 @@
 </asp:Content>
 
 
-<asp:Content ContentPlaceHolderID="TestContent" runat="server">
+<asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
 
 <script type="text/javascript">
 
@@ -158,11 +199,9 @@
 
         module("Grid / Client events", {
             setup: function() {
-                onSubmitChangesArguments = onDetailViewCollapseArguments = onDetailViewExpandArguments = onDeleteArguments = onSaveArguments = onEditArguments = onSelectArguments = undefined;
+                onSubmitChangesArguments = onDetailViewCollapseArguments = onDetailViewExpandArguments = onDeleteArguments = onSaveArguments = onEditArguments = onSelectArguments = onCommandArguments = undefined;
                 getGrid().sendValues = function() {};
-                getGrid('#Grid1').sendValues = function() {};
-                getGrid('#Grid2').sendValues = function() {};
-                getGrid('#Grid5').sendValues = function() {};
+                $.ajax = $.noop;
             },
             teardown: function() {
                 var wnd = $('.t-window').data('tWindow');
@@ -227,6 +266,7 @@
             ok(undefined !== onSaveArguments.form);
             ok(undefined !== onSaveArguments.values);
         });
+
         test('clicking edit raises onEdit popup mode', function() {
             $('#Grid2 .t-grid-edit:first').click();
             ok(undefined !== onEditArguments);
@@ -337,6 +377,18 @@
             ok(undefined !== onDeleteArguments.values);
         });
 
+        test('clicking delete raises on delete in cell mode', function() {
+            $('#Grid5 .t-grid-delete:first').click();
+            ok(undefined !== onDeleteArguments);
+            ok(undefined !== onDeleteArguments.dataItem);
+            ok(undefined !== onDeleteArguments.values);
+        });
+
+        test('cancelling delete in cell mode', function() {            
+            $('#Grid5 .t-grid-delete:first').click();
+            ok($('#Grid5 .t-grid-delete:first').closest("tr").is(":visible"));
+        });
+
         test('cancelling delete', function() {
             var called = false;
             getGrid('#Grid').sendValues = function () {
@@ -367,6 +419,62 @@
             ok(undefined == onSelectArguments);
         });
 
+        test('onCommand is raised when the edit button is clicked', function() {
+            $('#Grid6 .t-grid-edit:first').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "edit");
+        });
+
+        test('onCommand is raised when the delete button is clicked', function() {
+            $('#Grid6 .t-grid-delete:first').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "delete");
+        });
+
+        test('onCommand is raised when the add button is clicked', function() {
+            $('#Grid6 .t-grid-add:first').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "add");
+        });
+
+        test('onCommand is raised when the cancel button is clicked', function() {
+            $('#Grid7 .t-grid-edit:first').click();
+            $('#Grid7 .t-grid-cancel:first').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "cancel");
+        });
+
+        test('onCommand is raised when the update button is clicked', function() {
+            $('#Grid7 .t-grid-edit:first').click();
+            $('#Grid7 .t-grid-update:first').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "update");
+        });
+
+        test('onCommand is raised when the insert button is clicked', function() {
+            $('#Grid7 .t-grid-add:first').click();
+            $('#Grid7 .t-grid-insert:first').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "insert");
+        });
+
+        test('onCommand is raised when the submit changes button is clicked', function () {
+            $('#Grid6 .t-grid-save-changes').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "submitChanges");
+        });
+
+        test('onCommand is raised when the cancel changes button is clicked', function () {
+            $('#Grid6 .t-grid-cancel-changes').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "cancelChanges");
+        });
+
+        test('onCommand is raised when a custom toolbar command is clicked', function () {
+            $('#Grid7 .t-grid-custom').click();
+            ok(onCommandArguments);
+            equal(onCommandArguments.name, "custom");
+        });
 </script>
 
 </asp:Content>

@@ -645,7 +645,7 @@ namespace Telerik.Web.Mvc.UI
             var component = factory();
 
             scriptRegistrarBuilder.ToRegistrar().Register(component);
-            
+
             return component;
         }
     }

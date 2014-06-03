@@ -31,6 +31,13 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         }
 
         [Fact]
+        public void Should_set_alternate_class_if_master_is_alternate()
+        {
+            builder.IsMasterAlternate = true;
+            builder.CreateRow().Attribute("class").ShouldContain(UIPrimitives.Alt);
+        }
+
+        [Fact]
         public void Should_create_cell()
         {
             var tr = builder.CreateRow();

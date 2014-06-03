@@ -172,15 +172,7 @@ namespace Telerik.Web.Mvc.UI
                 return Settings.Hidden;
             }
             set
-            {
-                if (value)
-                {
-                    HtmlAttributes["style"] += "display:none;width:0;";
-                }
-                else if (HtmlAttributes.ContainsKey("style"))
-                {
-                   HtmlAttributes["style"] = ((string)HtmlAttributes["style"]).Replace("display:none;width:0;", "");                
-                }
+            {                
                 Settings.Hidden = value;
             }
         }
@@ -280,13 +272,8 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        protected void Decorate(IGridDecoratableCellBuilder cellBuilder, string lastCssClass)
+        protected void Decorate(IGridDecoratableCellBuilder cellBuilder)
         {
-            if (IsLast && lastCssClass.HasValue())
-            {
-                cellBuilder.Decorators.Add(new GridLastCellBuilderDecorator(lastCssClass));
-            }
-
             if (Hidden)
             {
                 cellBuilder.Decorators.Add(new GridHiddenCellBuilderDecorator());
@@ -334,7 +321,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var builder = CreateDisplayBuilderCore(htmlHelper);
             
-            Decorate(builder, UIPrimitives.Last);
+            Decorate(builder);
 
             builder.Callback = CreateCallback(builder, false, false);
             
@@ -364,7 +351,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var builder = CreateEditBuilderCore(htmlHelper);
 
-            Decorate(builder, UIPrimitives.Last);
+            Decorate(builder);
 
             builder.Callback = CreateCallback(builder, false, true);
 
@@ -379,7 +366,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var builder = CreateInsertBuilderCore(htmlHelper);
 
-            Decorate(builder, UIPrimitives.Last);
+            Decorate(builder);
 
             builder.Callback = CreateCallback(builder, true, false);
 
@@ -390,7 +377,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var builder = CreateHeaderBuilderCore();
             
-            Decorate(builder, UIPrimitives.LastHeader);
+            Decorate(builder);
 
             return builder;
         }
@@ -404,7 +391,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var builder = CreateFooterBuilderCore(aggregateResults);
             
-            Decorate(builder, string.Empty);
+            Decorate(builder);
 
             return builder;
         }
@@ -413,7 +400,7 @@ namespace Telerik.Web.Mvc.UI
         {
             var builder = CreateGroupFooterBuilderCore(aggregateResults);
 
-            Decorate(builder, UIPrimitives.Last);
+            Decorate(builder);
 
             return builder;
         }

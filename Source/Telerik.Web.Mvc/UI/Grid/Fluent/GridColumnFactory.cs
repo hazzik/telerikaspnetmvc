@@ -14,6 +14,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI;
+    using System.Web.Mvc;
+    using System.Collections;
 
     /// <summary>
     /// Creates columns for the <see cref="Grid{TModel}" />.
@@ -126,7 +128,38 @@ namespace Telerik.Web.Mvc.UI.Fluent
 
             return new GridBoundColumnBuilder<TModel>(column);
         }
-        
+
+        /// <summary>
+        /// Defines a foreign key column.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public virtual GridBoundColumnBuilder<TModel> ForeignKey<TValue>(Expression<Func<TModel, TValue>> expression, IEnumerable data, string dataFieldValue, string dataFieldText)
+        {
+            return ForeignKey(expression, new SelectList(data, dataFieldValue, dataFieldText));
+        }
+
+        /// <summary>
+        /// Defines a foreign key column.
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
+        public virtual GridBoundColumnBuilder<TModel> ForeignKey<TValue>(Expression<Func<TModel, TValue>> expression, SelectList data)
+        {
+            Guard.IsNotNull(expression, "expression");
+            Guard.IsNotNull(data, "data");
+
+            GridForeignKeyColumn<TModel, TValue> column = new GridForeignKeyColumn<TModel, TValue>(Container, expression, data);
+
+            column.Data = data;
+
+            Container.Columns.Add(column);
+
+            return new GridBoundColumnBuilder<TModel>(column);
+        }
+
         protected virtual void AutoGenerate(bool shouldGenerate, Action<GridColumnBase<TModel>> columnAction)
         {
             if (hasGeneratedColumn) return;

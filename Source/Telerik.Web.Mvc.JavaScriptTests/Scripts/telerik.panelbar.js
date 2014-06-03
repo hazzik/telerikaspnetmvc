@@ -28,7 +28,7 @@
                 expand: this.onExpand,
                 collapse: this.onCollapse,
                 select: $.proxy(function (e) {
-                    if (e.target == this.element && this.onSelect) this.onSelect(e);
+                    if (e.target == this.element && this.onSelect) $.proxy(this.onSelect, this.element)(e);
                 }, this),
                 error: this.onError,
                 load: this.onLoad

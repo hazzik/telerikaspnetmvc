@@ -6,8 +6,13 @@
     <input id="slider1" />
     <input id="slider2" />
     <input id="slider3" />
+    <input id="slider5" value="5" />
     <div id="hiddenDiv" style="display: none;">
         <input id="slider4" />
+    </div>
+    <div id="rangeSlider">
+        <input value="1" />
+        <input value="5" />
     </div>
 
     <% Html.Telerik().ScriptRegistrar().DefaultGroup(group => group
@@ -90,6 +95,39 @@
             var selectionDivWidth = slider.wrapper.find(".t-slider-selection").width();
 
             equal(trackDivWidth, selectionDivWidth);
+        });
+
+        test("slider should get value from the input", function () {
+            var slider = $("#slider5").tSlider().data("tSlider");
+
+            equal(slider.val, 5);
+        });
+
+        test("slider should have default values", function () {
+            var slider = $("<input />").tSlider().data("tSlider");
+
+            equal(slider.val, 0);
+        });
+
+        test("range slider should get values from the inputs", function () {
+            var rangesSider = $("#rangeSlider").tRangeSlider().data("tRangeSlider");
+
+            equal(rangesSider.selectionStart, 1);
+            equal(rangesSider.selectionEnd, 5);
+        });
+
+        test("range slider should get values from the inputs", function () {
+            var rangesSider = $("<div><input /><input /></div>").tRangeSlider().data("tRangeSlider");
+
+            equal(rangesSider.selectionStart, 0);
+            equal(rangesSider.selectionEnd, 10);
+        });
+
+        test("range slider should get values from the inputs", function () {
+            var rangesSider = $("<div><input value='0' /><input value='0' /></div>").tRangeSlider().data("tRangeSlider");
+
+            equal(rangesSider.selectionStart, 0);
+            equal(rangesSider.selectionEnd, 0);
         });
 
     </script>

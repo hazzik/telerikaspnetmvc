@@ -38,20 +38,20 @@
         $.telerik.upload.prototype._getSupportsMultiple = function() { return true; };
         createUpload();
 
-        equal($("#uploadInstance").attr("multiple"), $.browser.msie ? "true" : true);
+        equal($("#uploadInstance").attr("multiple"), 'multiple');
     });
 
     test("multiple attribute not rendered when multiple is set to false", function() {
         createUpload({ multiple: false });    
-        equal($("#uploadInstance").attr("multiple"), $.browser.msie ? "false" : false);
+        ok(!$("#uploadInstance").attr("multiple"));
     });
 
     test("multiple attribute not rendered when multiple is not supported", function() {
         $.telerik.upload.prototype._getSupportsMultiple = function() { return false; };
         createUpload();    
-        equal($("#uploadInstance").attr("multiple"), $.browser.msie ? "false" : false);
+        ok(!$("#uploadInstance").attr("multiple"));
     });
-    
+
     test("disable renders t-state-disabled class", function () {
         uploadInstance.disable();
         ok(uploadInstance.wrapper.hasClass("t-state-disabled"));
@@ -60,14 +60,36 @@
     test("enable removes t-state-disabled class", function () {
         uploadInstance.disable();
         uploadInstance.enable();
-        ok(!$("#uploadInstance").hasClass("t-state-disabled"));
+        ok(!uploadInstance.wrapper.hasClass("t-state-disabled"));
     });
-    
+
     test("initially disabled state is applied", function () {
         uploadInstance = createUpload({ enabled: false });
         ok(uploadInstance.wrapper.hasClass("t-state-disabled"));
     });
-    
+
+    test("toggle alternates between states", function() {
+        uploadInstance.toggle();
+        ok(uploadInstance.wrapper.hasClass("t-state-disabled"));
+        uploadInstance.toggle();
+        ok(!uploadInstance.wrapper.hasClass("t-state-disabled"));
+    });
+
+    test("remove icon is rendered", function() {
+        simulateFileSelect();
+        equal($(".t-upload-files li.t-file button.t-upload-action span.t-delete", uploadInstance.wrapper).length, 1);                    
+    });
+
+    test("file name is rendered", function() {
+        simulateFileSelect();
+        equal($(".t-filename", uploadInstance.wrapper).text(), "first.txt");                    
+    });
+
+    test("file name is rendered as tooltip", function() {
+        simulateFileSelect();
+        equal($(".t-filename", uploadInstance.wrapper).attr("title"), "first.txt");                    
+    });
+
     // -----------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------
     module("Upload / Rendering / Drag and drop", {

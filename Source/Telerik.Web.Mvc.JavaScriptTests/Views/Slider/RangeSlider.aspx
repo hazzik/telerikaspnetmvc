@@ -11,6 +11,15 @@
            .LargeStep(3)
    %>
 
+   <%= Html.Telerik().RangeSlider<int>()
+           .Name("RangeSlider1")
+           .Min(0)
+           .Max(10)
+           .Values(1, 8)
+           .SmallStep(1)
+           .LargeStep(3)
+   %>
+
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="TestContent" runat="server">
@@ -308,6 +317,20 @@
         equal(0, values[1]);
 
         rangeSlider.values(3, 6);
+    });
+
+    test('RangeSlider should have array of number values', function () {
+        var values = $("#RangeSlider1").data("tRangeSlider").values();
+
+        equal(typeof (values[0]), "number");
+        equal(typeof (values[1]), "number");
+    });
+
+    test('RangeSlider should have integer number value', function () {
+        $("#RangeSlider1").data("tRangeSlider").values(5, 9);
+
+        equal($("#RangeSlider1").find("input").eq(0).val(), "5");
+        equal($("#RangeSlider1").find("input").eq(1).val(), "9");
     });
 
 </script>

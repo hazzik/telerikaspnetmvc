@@ -45,8 +45,8 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="top">The chart area top margin.</param>
         /// <param name="right">The chart area right margin.</param>
-        /// <param name="bottom">The chart area top margin.</param>
-        /// <param name="left">The chart area top margin.</param>
+        /// <param name="bottom">The chart area bottom margin.</param>
+        /// <param name="left">The chart area left margin.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
@@ -90,18 +90,19 @@ namespace Telerik.Web.Mvc.UI.Fluent
         /// </summary>
         /// <param name="width">The border width.</param>
         /// <param name="color">The border color (CSS syntax).</param>
+        /// <param name="dashType">The border dash type.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;% Html.Telerik().Chart()
         ///            .Name("Chart")
-        ///            .ChartArea(chartArea => chartArea.Border(1, "#000"))
+        ///            .ChartArea(chartArea => chartArea.Border(1, "#000", ChartDashType.Dot))
         ///            .Render();
         /// %&gt;
         /// </code>
         /// </example>        
-        public ChartAreaBuilder Border(int width, string color)
+        public ChartAreaBuilder Border(int width, string color, ChartDashType dashType)
         {
-            chartArea.Border = new ChartElementBorder(width, color);
+            chartArea.Border = new ChartElementBorder(width, color, dashType);
             return this;
         }
     }

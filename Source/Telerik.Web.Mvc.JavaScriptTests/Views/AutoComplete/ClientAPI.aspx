@@ -40,7 +40,7 @@
             autoComplete.disable();
 
             ok($('#AutoComplete').hasClass('t-state-disabled'));
-            equal($('#AutoComplete').attr('disabled'), true);
+            equal($('#AutoComplete').attr('disabled'), 'disabled');
         });
 
         test('enable method should disable autoComplete', function() {

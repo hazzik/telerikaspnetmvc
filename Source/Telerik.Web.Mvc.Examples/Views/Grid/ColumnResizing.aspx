@@ -25,7 +25,7 @@
 
 <%= Html.Telerik().Grid(Model)
         .Name("Grid")
-        .TableHtmlAttributes(new { style = "width:" + (config["GridWidth"] > 0 ? config["GridWidth"] + "px" : "100%") })
+        .TableHtmlAttributes(new { style = "width:" + (config["GridWidth"] > 0 ? config["GridWidth"] + "px" : (Request.Browser.Browser == "IE" && Request.Browser.MajorVersion < 8 ? "auto" : "100%")) })
         .Columns(columns =>
         {
             columns.Bound(o => o.OrderID).Width(config["OrderIDWidth"]);

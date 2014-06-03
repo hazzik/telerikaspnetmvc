@@ -220,7 +220,7 @@
             var column = new GridBoundColumn<Customer, int>(grid, c => c.Id);
             column.Hidden = true;
 
-            ((string)column.HtmlAttributes["style"]).ShouldContain("display:none;width:0;");
+            ((string)column.HtmlAttributes["style"]).ShouldContain("display:none;");
         }
 
         [Fact]

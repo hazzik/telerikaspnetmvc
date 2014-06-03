@@ -44,6 +44,7 @@
         .note {
             clear: left;
             float: left;
+            min-width: 300px;
         }
         
         .example .configurator

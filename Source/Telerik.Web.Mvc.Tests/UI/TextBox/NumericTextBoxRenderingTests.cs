@@ -296,19 +296,19 @@
         }
 
         [Fact]
-        public void Render_should_throw_exception_if_value_is_bigger_then_minValue_and_less_then_maxValue()
+        public void Render_not_should_throw_exception_if_value_is_bigger_then_minValue_and_less_then_maxValue()
         {
             input.Value = 10;
             input.MinValue = 11;
             input.MaxValue = 100;
 
-            Assert.Throws(typeof(ArgumentOutOfRangeException), () => input.Render());
+            Assert.DoesNotThrow(() => input.Render());
 
             input.Value = 101;
             input.MinValue = 11;
             input.MaxValue = 100;
 
-            Assert.Throws(typeof(ArgumentOutOfRangeException), () => input.Render());
+            Assert.DoesNotThrow(() => input.Render());
         }
 
         [Fact]

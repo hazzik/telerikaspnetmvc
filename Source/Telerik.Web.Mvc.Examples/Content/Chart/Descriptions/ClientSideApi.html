@@ -17,6 +17,10 @@ function getChart(){
 </p>
 <ul>
     <li>
-        <em>refresh()</em> reloads the data and repaints the Chart.
+        <em>refresh()</em> repaints the Chart. <strong>Starting with the 2011 Q3 release this method no longer rebinds the Chart!</strong>
+    </li>
+    <li>
+        <em>rebind(data)</em> rebinds a client-side bound chart.
+        You can pass a data object containing additional arguments to the action method.
     </li>
 </ul>

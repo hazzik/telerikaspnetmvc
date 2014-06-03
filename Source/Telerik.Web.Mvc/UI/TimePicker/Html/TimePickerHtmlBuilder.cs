@@ -72,9 +72,10 @@ namespace Telerik.Web.Mvc.UI.Html
                 .Attributes(new { id = Component.Id, name = Component.Name, type = "text" })
                 .Attributes(Component.InputHtmlAttributes)
                 .Attributes(Component.GetUnobtrusiveValidationAttributes())
-                .PrependClass(UIPrimitives.Input)
+                .ToggleClass("input-validation-error", !Component.IsValid())
                 .ToggleAttribute("disabled", "disabled", !Component.Enabled)
-                .ToggleAttribute("value", value, value.HasValue());
+                .ToggleAttribute("value", value, value.HasValue())
+                .PrependClass(UIPrimitives.Input);
         }
 
         public IHtmlNode ButtonTag()

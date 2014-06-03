@@ -200,7 +200,12 @@ namespace Telerik.Web.Mvc.UI
                 throw new InvalidOperationException(Resources.TextResource.NameCannotBeBlank);
             }
 
-            this.ThrowIfClassIsPresent("t-" + GetType().GetTypeName().ToLower() + "-rtl", TextResource.Rtl);
+            if (!Name.Contains("<#=") && Name.IndexOf(" ") != -1)
+            {
+                throw new InvalidOperationException(Resources.TextResource.NameCannotContainSpaces);
+            }
+
+            this.ThrowIfClassIsPresent("t-" + GetType().GetTypeName().ToLowerInvariant() + "-rtl", TextResource.Rtl);
         }
 
         public string ToHtmlString()

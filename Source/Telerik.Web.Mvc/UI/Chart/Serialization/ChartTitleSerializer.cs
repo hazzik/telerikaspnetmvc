@@ -24,11 +24,12 @@ namespace Telerik.Web.Mvc.UI
             FluentDictionary.For(result)
                 .Add("text", title.Text, string.Empty)
                 .Add("font", title.Font, ChartDefaults.Title.Font)
-                .Add("position", title.Position.ToString().ToLower(), ChartDefaults.Title.Position.ToString().ToLower())
-                .Add("align", title.Align.ToString().ToLower(), ChartDefaults.Title.Align.ToString().ToLower())
+                .Add("position", title.Position.ToString().ToLowerInvariant(), ChartDefaults.Title.Position.ToString().ToLowerInvariant())
+                .Add("align", title.Align.ToString().ToLowerInvariant(), ChartDefaults.Title.Align.ToString().ToLowerInvariant())
                 .Add("margin", title.Margin.CreateSerializer().Serialize(), ShouldSerializeMargin)
                 .Add("padding", title.Padding.CreateSerializer().Serialize(), ShouldSerializePadding)
                 .Add("border", title.Border.CreateSerializer().Serialize(), ShouldSerializeBorder)
+                .Add("background", title.Background, string.Empty)
                 .Add("visible", title.Visible, ChartDefaults.Title.Visible);
 
             return result;
@@ -52,8 +53,8 @@ namespace Telerik.Web.Mvc.UI
 
         private bool ShouldSerializeBorder()
         {
-            return title.Border.Color.CompareTo(ChartDefaults.Legend.Border.Color) != 0 ||
-                   title.Border.Width != ChartDefaults.Legend.Border.Width;
+            return title.Border.Color.CompareTo(ChartDefaults.Title.Border.Color) != 0 ||
+                   title.Border.Width != ChartDefaults.Title.Border.Width;
         }
     }
 }

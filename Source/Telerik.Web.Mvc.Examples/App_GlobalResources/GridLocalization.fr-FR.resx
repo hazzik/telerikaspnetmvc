@@ -127,13 +127,13 @@
     <value>Annuler</value>
   </data>
   <data name="Update" xml:space="preserve">
-    <value>Rafraîchir</value>
+    <value>Mettre à jour</value>
   </data>
   <data name="Insert" xml:space="preserve">
     <value>Insérer</value>
   </data>
   <data name="Edit" xml:space="preserve">
-    <value>Edition</value>
+    <value>Éditer</value>
   </data>
   <data name="Select" xml:space="preserve">
     <value>Sélectionner</value>
@@ -142,7 +142,7 @@
     <value>Page</value>
   </data>
   <data name="DisplayingItems" xml:space="preserve">
-    <value>Afficher les items {0} - {1} of {2}</value>
+    <value>Afficher les items {0} - {1} de {2}</value>
   </data>
   <data name="PageOf" xml:space="preserve">
     <value>de {0}</value>
@@ -151,13 +151,13 @@
     <value>Filtrer</value>
   </data>
   <data name="FilterAnd" xml:space="preserve">
-    <value>et</value>
+    <value>Et</value>
   </data>
   <data name="FilterClear" xml:space="preserve">
-    <value>Annuler Filtrer</value>
+    <value>Effacer Filtrer</value>
   </data>
   <data name="FilterDateEq" xml:space="preserve">
-    <value>égal à</value>
+    <value>Est égal à</value>
   </data>
   <data name="FilterDateGe" xml:space="preserve">
     <value>est postérieur ou égal à</value>
@@ -175,7 +175,7 @@
     <value>n’est pas égal à</value>
   </data>
   <data name="FilterNumberEq" xml:space="preserve">
-    <value>égal à</value>
+    <value>Est égal à</value>
   </data>
   <data name="FilterNumberGe" xml:space="preserve">
     <value>est supérieur ou égal à</value>
@@ -184,22 +184,22 @@
     <value>est supérieur à</value>
   </data>
   <data name="FilterNumberLe" xml:space="preserve">
-    <value>est moins ou égal à</value>
+    <value>est inférieur ou égal à</value>
   </data>
   <data name="FilterNumberLt" xml:space="preserve">
-    <value>est moins de</value>
+    <value>est inférieur à</value>
   </data>
   <data name="FilterNumberNe" xml:space="preserve">
     <value>n’est pas égal à</value>
   </data>
   <data name="FilterShowRows" xml:space="preserve">
-    <value>Montrer les lignes avec la valeur de</value>
+    <value>Afficher les lignes avec la valeur qui</value>
   </data>
   <data name="FilterStringEndsWith" xml:space="preserve">
-    <value>Finit par</value>
+    <value>Se termine par</value>
   </data>
   <data name="FilterStringEq" xml:space="preserve">
-    <value>égal à</value>
+    <value>Est égal à</value>
   </data>
   <data name="FilterStringNe" xml:space="preserve">
     <value>n’est pas égal à</value>
@@ -211,10 +211,10 @@
     <value>contient</value>
   </data>
   <data name="GroupHint" xml:space="preserve">
-    <value>Faites glisser la tête de colonne et posez-la ici pour la grouper avec cette colonne.</value>
+    <value>Faites glisser un en-tête de colonne et déposer ici pour grouper par cette colonne.</value>
   </data>
   <data name="FilterEnumEq" xml:space="preserve">
-    <value>égal à</value>
+    <value>Est égal à</value>
   </data>
   <data name="FilterEnumNe" xml:space="preserve">
     <value>n’est pas égal à</value>
@@ -223,7 +223,7 @@
     <value>-Sélectionner-</value>
   </data>
   <data name="DeleteConfirmation" xml:space="preserve">
-    <value>Etes-vous surs de vouloir effacer le contenu ?</value>
+    <value>Êtes-vous sûr de vouloir supprimer cet enregistrement?</value>
   </data>
   <data name="FilterBoolIsFalse" xml:space="preserve">
     <value>est fausse</value>
@@ -232,13 +232,13 @@
     <value>est vrai</value>
   </data>
   <data name="NoRecords" xml:space="preserve">
-    <value>No records to display.</value>
+    <value>Aucun enregistrement à afficher.</value>
   </data>
   <data name="CancelChanges" xml:space="preserve">
-    <value>Cancel Changes</value>
+    <value>Annuler les modifications</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Entregistrer les modifications</value>
   </data>
   <data name="Refresh" xml:space="preserve">
     <value>Actualiser</value>
@@ -250,6 +250,6 @@
     <value>triés décroissant</value>
   </data>
   <data name="UnGroup" xml:space="preserve">
-    <value>supprimer groupement</value>
+    <value>dissocier</value>
   </data>
 </root>

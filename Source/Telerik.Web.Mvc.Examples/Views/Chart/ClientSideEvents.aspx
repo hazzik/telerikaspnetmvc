@@ -6,6 +6,14 @@
         function onLoad(e) {
             $console.log("Chart loaded");
         }
+
+        function onDataBound(e) {
+            $console.log("Chart data bound");
+        }
+
+        function onSeriesClick(e) {
+            $console.log("Series clicked: " + e.series.name + " (" + e.category  + "): " + e.value);
+        }
     </script>
 
     <%= Html.Telerik().Chart<SalesData>()
@@ -26,10 +34,16 @@
                 .Ajax().Select("_SalesData", "Chart")
             )
             .ValueAxis(axis => axis
-                .Numeric().Format("${0:#,##0}")
+                .Numeric().Labels(labels => labels.Format("${0:#,##0}"))
             )
             .ClientEvents(events => events
                 .OnLoad("onLoad")
+                .OnDataBound("onDataBound")
+                .OnSeriesClick("onSeriesClick")
+            )
+            .Tooltip(tooltip => tooltip
+                .Visible(true)
+                .Format("${0:#,##0}")
             )
             .HtmlAttributes(new { style = "width: 670px; height: 400px; margin-bottom: 4em;" })
     %>

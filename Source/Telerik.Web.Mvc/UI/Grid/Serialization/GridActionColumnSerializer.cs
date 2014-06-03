@@ -7,7 +7,6 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
     using System.Linq;
     using Extensions;
-    using Telerik.Web.Mvc.Infrastructure;
     
     class GridActionColumnSerializer : GridColumnSerializer
     {
@@ -26,17 +25,9 @@ namespace Telerik.Web.Mvc.UI
 
             var commands = new List<IDictionary<string,object>>();
             
-            column.Commands.Each(c =>
+            column.Commands.Each(command =>
             {
-                var command = new Dictionary<string, object>();
-
-                FluentDictionary.For(command)
-                    .Add("name", c.Name)
-                    .Add("attr", c.HtmlAttributes.ToAttributeString(), () => c.HtmlAttributes.Any())
-                    .Add("buttonType", c.ButtonType.ToString())
-                    .Add("imageAttr", c.ImageHtmlAttributes.ToAttributeString(), () => c.ImageHtmlAttributes.Any());
-                
-                commands.Add(command);
+                commands.Add(command.Serialize(column.Grid.UrlBuilder));
             });
         
             if (commands.Any())

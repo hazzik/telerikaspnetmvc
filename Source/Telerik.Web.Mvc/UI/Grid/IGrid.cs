@@ -13,7 +13,12 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
         }
-        
+
+        GridPagingSettings Paging
+        {
+            get;
+        }
+
         GridSortSettings Sorting
         {
             get;
@@ -25,6 +30,11 @@ namespace Telerik.Web.Mvc.UI
         }
 
         GridKeyboardNavigationSettings KeyboardNavigation
+        {
+            get;
+        }
+
+        GridColumnContextMenuSettings ColumnContextMenu
         {
             get;
         }

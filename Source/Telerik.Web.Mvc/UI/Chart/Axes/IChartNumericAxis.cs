@@ -26,11 +26,6 @@ namespace Telerik.Web.Mvc.UI
         double? MajorUnit { get; set; }
 
         /// <summary>
-        /// The value at which the first perpendicular axis crosses this axis
-        /// </summary>
-        double? AxisCrossingValue { get; set; }
-
-        /// <summary>
         /// The axis label format
         /// </summary>
         string Format { get; set; }

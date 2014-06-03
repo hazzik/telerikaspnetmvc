@@ -5,6 +5,8 @@
     using System.Linq.Expressions;
     using Telerik.Web.Mvc.UI;
     using Xunit;
+    using System.Web.Mvc;
+    using System.Collections;
 
 
     public class GridColumnSerializerTests
@@ -33,6 +35,14 @@
             where T : class
         {
             var column = new GridActionColumn<T>(GridTestHelper.CreateGrid<T>());
+            configure(column);
+            return column.CreateSerializer().Serialize();
+        }
+
+        private static IDictionary<string, object> JsonForForeignKeyColumn<T, TValue>(Expression<Func<T, TValue>> expression, SelectList data, Action<GridForeignKeyColumn<T, TValue>> configure)
+            where T : class
+        {
+            var column = new GridForeignKeyColumn<T, TValue>(GridTestHelper.CreateGrid<T>(), expression, data);
             configure(column);
             return column.CreateSerializer().Serialize();
         }
@@ -362,6 +372,46 @@
             var result = JsonForBoundColumn((Customer c) => c.Id, c => c.Hidden = false);
 
             result.ContainsKey("hidden").ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Should_serialize_select_list()
+        {
+            var result = JsonForForeignKeyColumn((Customer c) => c.Id, new SelectList(new[] { new { Key = 1, Value = 2 }, new { Key = 3, Value = 4 } }), c => c.Grid.DataBinding.Ajax.Enabled = true);
+
+            result.ContainsKey("data").ShouldBeTrue();
+            ((IEnumerable)result["data"]).ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public void Should_not_serialize_select_list_when_server_binding()
+        {
+            var result = JsonForForeignKeyColumn((Customer c) => c.Id, new SelectList(new[] { new { Key = 1, Value = 2 }, new { Key = 3, Value = 4 } }), c => c.Grid.DataBinding.Server.Enabled = true);            
+            result.ContainsKey("data").ShouldBeFalse();            
+        }
+
+        [Fact]
+        public void Should_serialize_width_if_hidden_and_has_width_set()
+        {
+            var result = JsonForBoundColumn((Customer c) => c.Id, c => { c.Hidden = true; c.Width = "100px"; });
+
+            result["width"].ShouldBeSameAs("100px");
+        }
+
+        [Fact]
+        public void Should_not_serialize_width_if_not_hidden()
+        {
+            var result = JsonForBoundColumn((Customer c) => c.Id, c => { c.Hidden = false; c.Width = "100px"; });
+
+            result.ContainsKey("width").ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Should_not_serialize_width_if_width_not_set()
+        {
+            var result = JsonForBoundColumn((Customer c) => c.Id, c => { c.Hidden = true; });
+
+            result.ContainsKey("width").ShouldBeFalse();
         }
     }
 }

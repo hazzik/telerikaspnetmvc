@@ -8,20 +8,14 @@ namespace Telerik.Web.Mvc.UI
     /// <summary>
     /// Represents the options of the bar chart labels
     /// </summary>
-    public class ChartBarLabels : ChartDataLabels
+    public class ChartBarLabels : ChartLabels
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ChartBarLabels" /> class.
         /// </summary>
         public ChartBarLabels()
         {
-            Font = ChartDefaults.DataLabels.Font;
             Position = ChartDefaults.BarSeries.Labels.Position;
-            Visible = ChartDefaults.DataLabels.Visible;
-            Margin = new ChartSpacing(ChartDefaults.DataLabels.Margin);
-            Padding = new ChartSpacing(ChartDefaults.DataLabels.Padding);
-            Border = new ChartElementBorder(ChartDefaults.DataLabels.Border.Width, ChartDefaults.DataLabels.Border.Color);
-            Color = ChartDefaults.DataLabels.Color;
         }
 
         /// <summary>

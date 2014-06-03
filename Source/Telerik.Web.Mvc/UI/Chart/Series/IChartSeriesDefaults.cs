@@ -33,5 +33,29 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
         }
+
+        /// <summary>
+        /// The default settings for all line series
+        /// </summary>
+        IChartPieSeries Pie
+        {
+            get;
+        }
+
+        /// <summary>
+        /// The default settings for all scatter series
+        /// </summary>
+        IChartScatterSeries Scatter
+        {
+            get;
+        }
+
+        /// <summary>
+        /// The default settings for all scatter line series
+        /// </summary>
+        IChartScatterLineSeries ScatterLine
+        {
+            get;
+        }
     }
 }

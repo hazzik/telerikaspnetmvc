@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI.Fluent
     
     public abstract class GridToolBarCommandBuilderBase<TModel, TCommand, TBuilder> : IHideObjectMembers
         where TModel : class
-        where TCommand : GridToolBarCommandBase<TModel>
+        where TCommand : GridActionCommandBase
         where TBuilder : GridToolBarCommandBuilderBase<TModel, TCommand, TBuilder>
     {
         protected GridToolBarCommandBuilderBase(TCommand command)

@@ -6,11 +6,11 @@
 
     public class ChartLineMarkerSerializerTests
     {
-        private readonly ChartLineMarkers lineMarkers;
+        private readonly ChartMarkers lineMarkers;
 
         public ChartLineMarkerSerializerTests()
         {
-            lineMarkers = new ChartLineMarkers();
+            lineMarkers = new ChartMarkers();
         }
 
         [Fact]
@@ -44,8 +44,10 @@
         {
             lineMarkers.Border.Color = "red";
             lineMarkers.Border.Width = 1;
+            lineMarkers.Border.DashType = ChartDashType.Dot;
             ((Dictionary<string, object>)GetJson()["border"])["width"].ShouldEqual(1);
             ((Dictionary<string, object>)GetJson()["border"])["color"].ShouldEqual("red");
+            ((Dictionary<string, object>)GetJson()["border"])["dashType"].ShouldEqual("dot");
         }
 
         [Fact]

@@ -205,6 +205,21 @@
             }
         });
 
+        test('dataBound event reports which node has been databound', function() {
+            var treeview = $("#ClientSideTreeView").data("tTreeView"),
+                node = $(treeview.element).find('.t-item');
+
+            expect(1);
+        
+            $(treeview.element).bind("dataBound", function(e) {
+                equal(e.item, node[0]);
+            });
+
+            treeview.dataBind(node, [{ Text: "Foo" }]);
+
+            $(treeview.element).unbind("dataBound");
+        });
+
 </script>
 
 </asp:Content>

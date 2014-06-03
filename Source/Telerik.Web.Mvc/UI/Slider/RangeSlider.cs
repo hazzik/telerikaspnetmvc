@@ -119,8 +119,6 @@ namespace Telerik.Web.Mvc.UI
         {
             objectWriter.Append("orientation", Orientation, SliderOrientation.Horizontal);
             objectWriter.Append("tickPlacement", TickPlacement, SliderTickPlacement.Both);
-            objectWriter.AppendObject("selectionStart", SelectionStart);
-            objectWriter.AppendObject("selectionEnd", SelectionEnd);
             objectWriter.AppendObject("smallStep", SmallStep);
             objectWriter.AppendObject("largeStep", LargeStep);
             objectWriter.AppendObject("minValue", MinValue);
@@ -137,37 +135,9 @@ namespace Telerik.Web.Mvc.UI
                 SelectionStart = MinValue;
             }
 
-            if (!SelectionEnd.HasValue) 
+            if (!SelectionEnd.HasValue)
             {
                 SelectionEnd = MaxValue;
-            }
-
-            T[] componentValues = new T[] { SelectionStart.Value, SelectionEnd.Value };
-
-            Func<object, T[]> converter = val =>
-            {
-                return (T[])val;
-            };
-
-            T[] values = null;
-            ModelState state;
-            ViewDataDictionary viewData = ViewContext.ViewData;
-
-            object valueFromViewData = viewData.Eval(Name);
-
-            if (viewData.ModelState.TryGetValue(Name, out state)
-             && viewData.ModelState.IsValidField(Name)
-             && (state.Value != null))
-            {
-                values = state.Value.ConvertTo(typeof(T), state.Value.Culture) as T[];
-            }
-            else if (componentValues != null)
-            {
-                values = componentValues;
-            }
-            else if (valueFromViewData != null)
-            {
-                values = converter(valueFromViewData);
             }
 
             var builder = rendererFactory.Create(new RangeSliderRenderingData
@@ -178,8 +148,8 @@ namespace Telerik.Web.Mvc.UI
                 MaxValue = MaxValue,
                 MinValue = MinValue,
                 SmallStep = SmallStep,
-                SelectionStart = values[0],
-                SelectionEnd = values[1],
+                SelectionStart = this.GetValue("{0}[0]".FormatWith(Name), SelectionStart.Value),
+                SelectionEnd = this.GetValue("{0}[1]".FormatWith(Name), SelectionEnd.Value),
                 Enabled = Enabled
             });
 
@@ -197,19 +167,13 @@ namespace Telerik.Web.Mvc.UI
                 throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("Min", "Max"));
             }
 
-            if (SelectionStart.Value.CompareTo(SelectionEnd.Value) > 0)
-            {
-                throw new ArgumentException(TextResource.FirstPropertyShouldNotBeBiggerThenSecondProperty.FormatWith("SelectionStart", "SelectionEnd"));
-            }
 
-            if (SelectionStart.Value.CompareTo(MinValue) < 0 || SelectionStart.Value.CompareTo(MaxValue) > 0)
+            if (SelectionStart != null && SelectionEnd != null)
             {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("SelectionStart", "Min", "Max"));
-            }
-
-            if (SelectionEnd.Value.CompareTo(MinValue) < 0 || SelectionEnd.Value.CompareTo(MaxValue) > 0)
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("SelectionEnd", "Min", "Max"));
+                if (SelectionStart.Value.CompareTo(SelectionEnd.Value) > 0)
+                {
+                    throw new ArgumentException(TextResource.FirstPropertyShouldNotBeBiggerThenSecondProperty.FormatWith("SelectionStart", "SelectionEnd"));
+                }
             }
 
             if (SmallStep.CompareTo(LargeStep) > 0)

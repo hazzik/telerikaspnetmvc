@@ -33,7 +33,8 @@
 .t-header,
 .t-header .t-link,
 .t-grid-header .t-header .t-link,
-.t-grid-header .t-header
+.t-grid-header .t-header,
+.t-state-active .t-header .t-state-default .t-link /*nested tabstrips*/
 {
     color: #fbfbc7;
 }
@@ -110,7 +111,8 @@
 }
 
 .t-state-active,
-.t-state-active .t-link
+.t-state-active .t-link,
+.t-state-active .t-tabstrip .t-state-active .t-link /*nested tabstrips*/
 {
     color: #333;
 }
@@ -121,7 +123,9 @@
     color: #fff;
 }
 
-.t-state-error
+.t-state-error,
+.t-widget.input-validation-error,
+.t-widget .input-validation-error
 {
     border-color: #f00;
     background-color: #ffc0cb;
@@ -188,6 +192,16 @@ button.t-button.t-state-disabled,
 .t-editor-button .t-state-active
 {
     background-color: #d3751a;
+}
+
+.t-grid-header-wrap
+{
+    border-color: #854324;
+}
+
+.t-grid-footer-wrap
+{
+    border-color: #cabaab;
 }
 
 .t-grid td

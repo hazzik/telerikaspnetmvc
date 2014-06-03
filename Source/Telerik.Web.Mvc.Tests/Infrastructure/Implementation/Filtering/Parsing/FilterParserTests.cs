@@ -1,11 +1,23 @@
 ﻿namespace Telerik.Web.Mvc.Infrastructure.Tests
 {
     using System;
+    using System.Globalization;
     using Implementation;
     using Xunit;
 
-    public class FilterParserTests
+    public class FilterParserTests : IDisposable
     {
+        private CultureInfo currentCulture;
+
+        public FilterParserTests()
+        {
+            currentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+        }
+
+        public void Dispose()
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = currentCulture;
+        }
         [Fact]
         public void Should_parse_comparison_expression_and_number()
         {
@@ -41,6 +53,14 @@
         {
             NumberNode result = (NumberNode)Parse("10");
             Assert.Equal(10, Convert.ToInt32(result.Value));
+        }
+
+        [Fact]
+        public void Should_parse_number_when_decimal_separator_is_of_the_current_culture_is_comma()
+        {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("bg-BG");
+            NumberNode result = (NumberNode)Parse("10.5");
+            Assert.Equal(10.5, result.Value);
         }
 
         [Fact]

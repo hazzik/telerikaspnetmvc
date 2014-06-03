@@ -40,7 +40,7 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ChartBarSeries" /> class.
+        /// Initializes a new instance of the <see cref="ChartLineSeries{TModel, TValue}" /> class.
         /// </summary>
         /// <param name="chart">The chart.</param>
         public ChartLineSeries(Chart<TModel> chart)
@@ -61,7 +61,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Gets the line chart data labels configuration
         /// </summary>
-        public ChartLineLabels Labels
+        public ChartPointLabels Labels
         {
             get;
             set;
@@ -70,7 +70,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// The line chart markers configuration.
         /// </summary>
-        public ChartLineMarkers Markers
+        public ChartMarkers Markers
         {
             get;
             set;
@@ -80,6 +80,24 @@ namespace Telerik.Web.Mvc.UI
         /// The line chart line width.
         /// </summary>
         public double Width
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The behavior for handling missing values in line series.
+        /// </summary>
+        public ChartLineMissingValues MissingValues
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The line chart line dashType.
+        /// </summary>
+        public ChartDashType DashType
         {
             get;
             set;
@@ -97,8 +115,10 @@ namespace Telerik.Web.Mvc.UI
         {
             Stacked = false;
             Width = ChartDefaults.LineSeries.Width;
-            Labels = new ChartLineLabels();
-            Markers = new ChartLineMarkers();
+            Labels = new ChartPointLabels();
+            Markers = new ChartMarkers();
+            MissingValues = ChartDefaults.LineSeries.MissingValues;
+            DashType = ChartDefaults.LineSeries.DashType;
         }
     }
 }

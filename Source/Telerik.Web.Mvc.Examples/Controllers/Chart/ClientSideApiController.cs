@@ -1,30 +1,25 @@
 namespace Telerik.Web.Mvc.Examples
 {
-    using System;
     using System.Web.Mvc;
     using Telerik.Web.Mvc.Examples.Models;
 
-    public partial class ChartController : Controller
+    public partial class ChartController
     {
+        [SourceCodeFile("Model", "~/Models/SalesData.cs")]
         public ActionResult ClientSideApi()
         {
             return View();
         }
 
-        public ActionResult _SalesDataRandom()
+        public ActionResult _SalesDataByYear(int? year)
         {
-            var salesData = SalesDataBuilder.GetCollection();
-            var rnd = new Random();
+            ViewBag.Year = year ?? 2010;
 
-            // Randomize data
-            foreach (var data in salesData)
-            {
-                var multiplier = (decimal) rnd.NextDouble();
-                data.RepSales = Math.Round(data.RepSales * multiplier);
-                data.TotalSales = Math.Round(data.TotalSales * multiplier);
-            }
-
-            return Json(salesData);
+            return Json(
+                SalesDataBuilder.GetCollection().FindAll(
+                    s => s.DateString.Contains(ViewBag.Year.ToString())
+                )
+            );
         }
     }
 }

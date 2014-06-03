@@ -189,7 +189,7 @@ namespace Telerik.Web.Mvc.UI
 
         private void CalculateAggregates()
         {
-            if (aggregatesAreCalculated)
+            if (aggregatesAreCalculated || bindingContext.EnableCustomBinding)
             {
                 return;
             }

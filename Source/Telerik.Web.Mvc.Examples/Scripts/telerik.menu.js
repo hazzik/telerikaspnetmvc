@@ -151,7 +151,10 @@
                 return; 
             }
 
-            $t.trigger(this.element, 'select', { item: $li[0] });
+            if ($t.trigger(this.element, 'select', { item: $li[0] })) {
+                e.preventDefault();
+                return;
+            }
 
             if (!$li.parent().hasClass('t-menu') || !this.openOnClick)
                 return;

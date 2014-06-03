@@ -21,6 +21,11 @@ namespace Telerik.Web.Mvc
         {
             get;
         }
+
+        object Aggregates
+        {
+            get;
+        }
     }
 
     public class GridModel : IGridModel
@@ -51,6 +56,12 @@ namespace Telerik.Web.Mvc
             get;
             set;
         }
+
+        public object Aggregates
+        {
+            get;
+            set;
+        } 
     }
 
     public class GridModel<T> : IGridModel
@@ -84,5 +95,13 @@ namespace Telerik.Web.Mvc
                 return Data;
             }
         }
+
+
+        public object Aggregates
+        {
+            get;
+            set;
+        }
+        
     }
 }

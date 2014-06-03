@@ -307,4 +307,7 @@ The request for '{0}' has found the following matching controllers:{2}</value>
   <data name="ScrollingMustBeEnabledToUsePageOnScroll" xml:space="preserve">
     <value>Scrolling must be enabled to use PageOnScroll.</value>
   </data>
+  <data name="NameCannotContainSpaces" xml:space="preserve">
+    <value>Name cannot contain spaces.</value>
+  </data>
 </root>

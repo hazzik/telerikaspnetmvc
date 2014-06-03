@@ -102,6 +102,11 @@ namespace Telerik.Web.Mvc.UI
         }
 
 #if MVC2 || MVC3
+        public object AdditionalViewData
+        {
+            get;
+            set;
+        }
 
         public bool ReadOnly
         {
@@ -310,6 +315,7 @@ namespace Telerik.Web.Mvc.UI
                 var builder = new GridEditorForCellBuilder<TModel, TValue>()
                 {
                     Expression = Expression,
+                    AdditionalViewData = AdditionalViewData,
                     ViewContext = Grid.ViewContext,
                     TemplateName = EditorTemplateName,
                     Member = Member

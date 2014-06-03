@@ -8,6 +8,23 @@
 
     $t.grouping = {};
 
+    function groupItem(container, title)
+    {
+        return container
+            .find("div")
+            .filter(function() {
+                var div = $(this);
+                if(div.children(".t-link").contents()
+                    .filter(function() { 
+                        if($(this).text() === title) {
+                            return $(this);
+                        } 
+                }).length) {
+                    return $(this);
+                }
+            });
+    }
+
     $t.grouping.initialize = function (grid) {
         $.extend(grid, $t.grouping.implementation);
 
@@ -30,15 +47,17 @@
         }
 
         function drag(e) {
-            var title = e.$cue.text();
+            var title = e.$cue.text(),
+                target = $t.eventTarget(e),
+                location = $t.touchLocation(e);
             
-            if (!$.contains(grid.element, e.target) 
-                || !$(e.target).closest('.t-grouping-header').length
+            if (!$.contains(grid.element, target)
+                || !$(target).closest('.t-grouping-header').length
                 || (grid.groupFromTitle(title) && e.$draggable.closest('.t-header').length)) {
                 grid.$groupDropCue.remove();
                 return;
             }
-            
+
             var $grid = $(grid.element),
                 $toolbar = $grid.find('> .t-grid-toolbar'),
                 top = $toolbar.outerHeight() + dropCueOffsetTop,
@@ -59,13 +78,13 @@
             var rightMargin = parseInt(firstGroupIndicator.$group.css('marginRight'));
 
             var currentGroupIndicator = $.grep(state.all, function (g) {
-                return e.pageX >= g.left - leftMargin - rightMargin && e.pageX <= g.right;
+                return location.x >= g.left - leftMargin - rightMargin && location.x <= g.right;
             })[0];
 
             if (!currentGroupIndicator && firstGroupIndicator) {
-                if (!isRtl && e.pageX < firstGroupIndicator.left) {
+                if (!isRtl && location.x < firstGroupIndicator.left) {
                     currentGroupIndicator = firstGroupIndicator;
-                } else if (isRtl && e.pageX < lastGroupIndicator.left) {
+                } else if (isRtl && location.x < lastGroupIndicator.left) {
                     currentGroupIndicator = lastGroupIndicator;
                 }
             }
@@ -116,7 +135,7 @@
         function destroy(e) {
             e.$cue.remove();
         }
-
+        if (grid.$groupHeader.length) {
         new $t.draggable({
             owner: grid.$header,
             selector: '.t-header:not(.t-group-cell,.t-hierarchy-cell)',
@@ -132,7 +151,7 @@
         });
         
         new $t.draggable({
-            owner: grid.$groupingHeader,
+            owner: grid.$groupHeader,
             selector: '.t-group-indicator',
             scope: grid.element.id + '-grouping',
             cue: cue,
@@ -166,16 +185,16 @@
                 grid.$groupDropCue.remove();
             }
         });
-
+        }
         if (grid.isAjax()) {
             grid.$groupHeader
-                .delegate('.t-button', 'click', function (e) {
+                .delegate('.t-button', $t.isTouch ? 'touchend' : 'click', function (e) {
                     e.preventDefault();
                     var groupButtonLink = $(this).parent().find('.t-link');
                     var columnTitle = groupButtonLink.text().substr($('.t-icon', groupButtonLink).text().length);
                     grid.unGroup(columnTitle);
                 })
-                .delegate('.t-link', 'click', function (e) {
+                .delegate('.t-link', $t.isTouch ? 'touchend' : 'click', function (e) {
                     e.preventDefault();
                     var groupButtonLink = $(this);
                     var columnTitle = groupButtonLink.text().substr($('.t-icon', groupButtonLink).text().length);
@@ -203,7 +222,7 @@
 
         grid.groupFromTitle = function (title) {
             return $.grep(grid.groups, function (g) { return g.title == title; })[0];
-        }
+        };
 
         grid.expandGroup = function (group) {
             var $group = $(group);
@@ -226,21 +245,31 @@
             });
 
             $group.find('.t-icon').addClass('t-collapse').removeClass('t-expand');
-        }
+        };
 
         grid.collapseGroup = function (group) {
-            var $group = $(group);
-            var depth = $group.find('.t-group-cell').length;
+            var $group = $(group),
+                depth = $group.find('.t-group-cell').length,
+                footerCount = 1;
+
             $group.nextAll('tr').each(function () {
-                var $tr = $(this);
-                var offset = $tr.find('.t-group-cell').length;
-                if (offset <= depth)
+                var $tr = $(this),
+                    offset = $tr.find('.t-group-cell').length;
+
+                if ($tr.hasClass("t-grouping-row")) {
+                    footerCount++;
+                } else if ($tr.hasClass("t-group-footer")) {
+                    footerCount--;
+                }
+                        
+                if (offset <= depth || ($tr.hasClass("t-group-footer") && footerCount < 0)) {
                     return false;
+                }
 
                 $tr.hide();
             });
             $group.find('.t-icon').addClass('t-expand').removeClass('t-collapse');
-        }
+        };
 
         grid.group = function (title, position) {
             if (this.groups.length == 0 && this.isAjax())
@@ -261,10 +290,10 @@
                 grid.groups.splice(position, 0, group);
             }
 
-            grid.groupBy = $.map(grid.groups, function (g) { return g.member + '-' + g.order; }).join('~')
+            grid.groupBy = $.map(grid.groups, function (g) { return g.member + '-' + g.order; }).join('~');
 
             if (this.isAjax()) {
-                var $groupItem = this.$groupHeader.find('div:contains("' + title + '")');
+                var $groupItem = groupItem(this.$groupHeader, title);
                 if ($groupItem.length == 0) {
                     var html = new $.telerik.stringBuilder()
                         .cat('<div class="t-group-indicator">')
@@ -287,7 +316,7 @@
             } else {
                 this.serverRequest();
             }
-        }
+        };
 
         grid.unGroup = function (title) {
             var group = grid.groupFromTitle(title);
@@ -299,12 +328,12 @@
             grid.groupBy = $.map(grid.groups, function (g) { return g.member + '-' + g.order; }).join('~');
 
             if (grid.isAjax()) {
-                grid.$groupHeader.find('div:contains("' + group.title + '")').remove();
+                groupItem(grid.$groupHeader, title).remove();
                 grid.ajaxRequest();
             } else {
                 grid.serverRequest();
             }
-        },
+        };
 
         grid.normalizeColumns = function(colspan) {
             var groups = grid.groups.length;
@@ -316,7 +345,7 @@
                 // ie8 goes into compatibility mode if the columns get removed
                 if (diff > 0) {
                     $(new $t.stringBuilder().rep('<col class="t-group-col" />', diff).string())
-                        .prependTo($tables.find('colgroup'))
+                        .prependTo($tables.find('colgroup'));
                     $(new $t.stringBuilder().rep('<th class="t-group-cell t-header">&nbsp;</th>', diff).string())
                         .insertBefore($tables.find('th.t-header:first'));
                     $(new $t.stringBuilder().rep('<td class="t-group-cell">&nbsp;</td>', diff).string())
@@ -353,15 +382,34 @@
                 $(new $t.stringBuilder().rep('<td class="t-group-cell">&nbsp;</td>', groups).string())
                         .insertBefore($tables.find('tr.t-footer-template > td:first'));
             }            
-        },
+        };
+
+        function getForeignKeyText(records, key) {
+            var value = key,
+                idx,
+                length;
+
+            for (idx = 0, length = records.length; idx < length; idx++) {
+                if (key == records[idx].Value) {
+                    return records[idx].Text;
+                }
+            }
+            return key;
+        }
 
         grid.bindGroup = function (dataItem, colspan, html, level) {
             var group = grid.groups[level];
             var key = dataItem.value;
-            var column = $.grep(grid.columns, function (column) { return group.member == column.member })[0];
+            var column = $.grep(grid.columns, function (column) { return group.member == column.member })[0],
+            date;
 
-            if (column && (column.format || column.type == 'Date'))
+            if (column && (column.format || column.type == 'Date')) {
+                date = /^\/Date\((.*?)\)\/$/.exec(key);
+                if(date) {
+                    key = new Date(parseInt(date[1]));
+                }
                 key = $t.formatString(column.format || '{0:G}', key);
+            }
 
             html.cat('<tr class="t-grouping-row">')
                 .rep('<td class="t-group-cell"></td>', level)
@@ -369,10 +417,13 @@
                 .cat(colspan - level)
                 .cat('"><p class="t-reset"><a class="t-icon t-collapse" href="#"></a>');
             
-            if (column)                            
-                html.cat(column.groupHeader($.extend( { Title: group.title, Key: key }, grid._mapAggregates(dataItem.aggregates[column.member]) )));
-            else
+            if (column) {                
+                var value = !column.data ? key : getForeignKeyText(column.data, key);
+                html.cat(column.groupHeader($.extend( { Title: group.title, Key: value }, grid._mapAggregates(dataItem.aggregates[column.member]) )));
+            }
+            else {
                 html.cat(group.title + ': ' + key);
+            }
             
             html.cat('</p></td></tr>');
 
@@ -385,10 +436,13 @@
             
             if (grid.showGroupFooter) {
                 html.cat('<tr class="t-group-footer">')
-                    .rep('<td class="t-group-cell"></td>', grid.groups.length);
+                    .rep('<td class="t-group-cell"></td>', grid.groups.length)
+                    .rep('<td class="t-hierarchy-cell"></td>', grid.detail ? 1 : 0);
             
                 $.each(grid.columns, function() {
-                    html.cat('<td>');
+                    html.cat('<td');
+                    html.catIf(' style="display:none;"', this.hidden);
+                    html.cat('>');
                     if (this.groupFooter)
                         html.cat(this.groupFooter(grid._mapAggregates(dataItem.aggregates[this.member])));
                     html.cat('</td>');

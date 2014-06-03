@@ -6,14 +6,18 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Web.Routing;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI.Html;
 
     public abstract class GridActionCommandBase : IGridActionCommand
     {
-        public abstract string Name
+        public virtual string Name
         {
             get;
+            set;
         }
 
         public GridButtonType ButtonType
@@ -39,6 +43,19 @@ namespace Telerik.Web.Mvc.UI
             ButtonType = GridButtonType.Text;
             HtmlAttributes = new RouteValueDictionary();
             ImageHtmlAttributes = new RouteValueDictionary();
+        }
+
+        public virtual IDictionary<string, object> Serialize(IGridUrlBuilder urlBuilder)
+        {
+            var command = new Dictionary<string, object>();
+
+            FluentDictionary.For(command)
+                .Add("name", Name)
+                .Add("attr", HtmlAttributes.ToAttributeString(), () => HtmlAttributes.Any())
+                .Add("buttonType", ButtonType.ToString())
+                .Add("imageAttr", ImageHtmlAttributes.ToAttributeString(), () => ImageHtmlAttributes.Any());
+
+            return command;
         }
 
         protected T CreateButton<T>(string text, string @class) where T : IGridButtonBuilder, new()

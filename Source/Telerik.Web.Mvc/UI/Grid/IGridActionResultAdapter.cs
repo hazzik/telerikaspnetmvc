@@ -14,5 +14,7 @@ namespace Telerik.Web.Mvc.UI
         int GetTotal();
 
         ModelStateDictionary GetModelState();
+
+        object GetAggregates();
     }
 }

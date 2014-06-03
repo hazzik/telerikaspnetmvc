@@ -288,7 +288,6 @@
 
         this.$text
             .bind({
-                change: $.proxy(function (e) { e.stopPropagation(); }, this),
                 keydown: $.proxy(keydown, this),
                 keypress: $.proxy(keypress, this),
                 focus: $.proxy(function (e) {
@@ -302,8 +301,7 @@
                         }
                     }
                     var $text = this.$text;
-                    $t.list.selection($text[0], 0, $text.val().length);
-
+                    window.setTimeout(function(){$t.list.selection($text[0], 0, $text.val().length);}, 130); //depends on the PC :(
                 }, this)
             });
 
@@ -385,7 +383,7 @@
                 selectItem();
             }
 
-            if (key == 8 || key == 46) {
+            if (key == 8 || key == 46 || (e.ctrlKey && key == 88)) {
                 var $text = this.$text;
 
                 if ($text.val() != '') resetTimer(this); //reset and start filtering after delay

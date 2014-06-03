@@ -164,7 +164,7 @@ namespace Telerik.Web.Mvc
 
                         if (node.ChangeFrequency != SiteMapChangeFrequency.Automatic)
                         {
-                            writer.WriteElementString("changefreq", SiteMapNameSpace, node.ChangeFrequency.ToString().ToLower(CultureInfo.InvariantCulture));
+                            writer.WriteElementString("changefreq", SiteMapNameSpace, node.ChangeFrequency.ToString().ToLowerInvariant());
                         }
 
                         if (node.UpdatePriority != SiteMapUpdatePriority.Automatic)

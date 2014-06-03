@@ -1,7 +1,6 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<SalesData>>" %>
 
-<asp:Content contentPlaceHolderID="MainContent" runat="server">
-
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
     <%= Html.Telerik().Chart(Model)
             .Name("chart")
             .Theme(Html.GetCurrentTheme())
@@ -16,7 +15,9 @@
             .SeriesDefaults(series => {
                 series.Bar().Stack(ViewBag.Stack);
                 series.Column().Stack(ViewBag.Stack);
-                series.Line().Stack(ViewBag.Stack).Labels(true);
+                series.Line()
+                      .Labels(labels => labels.Format("${0:#,##0}").Visible(true))
+                      .Stack(ViewBag.Stack);
             })
             .Series(series => {
                 if (ViewBag.SeriesType == "bar")
@@ -28,7 +29,9 @@
                 {
                     series.Column("RepSales").Name("Rep. Sales");
                     series.Column(s => s.TotalSales).Name("Total Sales");
-                } else {
+                }
+                else if (ViewBag.SeriesType == "line")
+                {
                     series.Line("RepSales").Name("Rep. Sales")
                         .Markers(markers => markers.Type(ChartMarkerShape.Circle));
                     series.Line(s => s.TotalSales).Name("Total Sales");
@@ -38,18 +41,21 @@
                 .Categories(s => s.DateString)
             )
             .ValueAxis(axis => axis
-                .Numeric().Format("${0:#,##0}")
+                .Numeric().Labels(labels => labels.Format("${0:#,##0}"))
+            )
+            .Tooltip(tooltip => tooltip
+                .Visible(true)
+                .Format("${0:#,##0}")
             )
             .HtmlAttributes(new { style = "width: 600px; height: 400px;" })
     %>
-
     <% using (Html.Configurator("The chart should show...")
                   .PostTo("FirstLook", "Chart")
                   .Begin())
        { %>
-        <ul id="chart-options">
-            <li>
-                <%= Html.Telerik().DropDownList()
+    <ul id="chart-options">
+        <li>
+            <%= Html.Telerik().DropDownList()
                         .Name("seriesType")
                         .HtmlAttributes(new { style = "width: 80px; vertical-align: middle" })
                         .Items(items => {
@@ -57,21 +63,25 @@
                             items.Add().Text("column").Value("column");
                             items.Add().Text("line").Value("line");
                         })
-                %>
-                <label for="seriesType">series</label>
-            </li>
-            <li>
-                <%= Html.CheckBox("stack", (bool) ViewBag.Stack) %>
-		        <label for="stack">stacked series</label>
-            </li>
-            <li>
-                <%= Html.CheckBox("showTitle", (bool) ViewBag.ShowTitle) %>
-		        <label for="showTitle">a title</label>
-            </li>
-            <li>
-                <%= Html.CheckBox("showLegend", (bool) ViewBag.ShowLegend) %>
-		        <label for="showLegend">a legend</label><label for="legendPosition">on the</label>
-                <%= Html.Telerik().DropDownList()
+            %>
+            <label for="seriesType">
+                series</label>
+        </li>
+        <li>
+            <%= Html.CheckBox("stack", (bool) ViewBag.Stack) %>
+            <label for="stack">
+                stacked series</label>
+        </li>
+        <li>
+            <%= Html.CheckBox("showTitle", (bool) ViewBag.ShowTitle) %>
+            <label for="showTitle">
+                a title</label>
+        </li>
+        <li>
+            <%= Html.CheckBox("showLegend", (bool) ViewBag.ShowLegend) %>
+            <label for="showLegend">
+                a legend</label><label for="legendPosition">on the</label>
+            <%= Html.Telerik().DropDownList()
                         .Name("legendPosition")
                         .HtmlAttributes(new { style = "width: 100px; vertical-align: middle" })
                         .Items(items =>
@@ -92,24 +102,24 @@
                                 .Value(ChartLegendPosition.Left.ToString())
                                 .Selected(ViewBag.LegendPosition == ChartLegendPosition.Left);
                         })
-                %>
-            </li>
-        </ul>
-
-        <button type="submit" class="t-button">Apply</button>
+            %>
+        </li>
+    </ul>
+    <button type="submit" class="t-button">
+        Apply</button>
     <% } %>
-
 </asp:Content>
-
-<asp:Content contentPlaceHolderID="HeadContent" runat="server">
+<asp:Content ContentPlaceHolderID="HeadContent" runat="server">
     <style type="text/css">
-        .example .configurator {
+        .example .configurator
+        {
             float: right;
             margin: 0 0 0 0;
             display: inline;
         }
         
-        .t-chart {
+        .t-chart
+        {
             float: left;
         }
     </style>

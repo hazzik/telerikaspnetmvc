@@ -106,6 +106,13 @@
             formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
             equal(editor.value(), '<span style="color:#ff0000;">foo</span><span style="font-family:Courier;">bar</span>');
         });
+    
+        test('consolidate does not merge different tags', function() {
+            editor.value('<span style="color:#ff0000;">f</span><a href="#" style="color:#ff0000;">oo</a>');
+            var formatter = new InlineFormatter([{ tags: ['span'] }], { style: { color: '#ff0000' } }, 'color');
+            formatter.consolidate([editor.body.firstChild, editor.body.lastChild]);
+            equal(editor.value(), '<span style="color:#ff0000;">f</span><a href="#" style="color:#ff0000;">oo</a>');
+        });
 
         test('remove removes format whole node contents selected', function() {
             var range = createRangeFromText(editor, "<strong>|foo|</strong>");
@@ -171,7 +178,7 @@
             ok($.isArray(argument));
         });
 
-        test('toggle split format if format is found', function() {
+        test('toggle splits format if format is found', function() {
             var range = createRangeFromText(editor, '<strong>|fo|</strong>');
 
             var formatter = new InlineFormatter(editor.formats.bold);
@@ -202,8 +209,19 @@
             formatter.toggle(range);
             marker.remove(range);
             equal(editor.value(), 'foo ');
-        });    
-    
+        });
+
+        test('removeing format preserves the format element and removes the format attributes', function () {
+            var range = createRangeFromText(editor, '<span style="font-size:xx-small;text-decoration:underline;">|foo|</span>');
+            var formatter = new InlineFormatter(editor.formats.underline);
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
+        
+            formatter.toggle(range);
+            marker.remove(range);
+            equal(editor.value(), '<span style="font-size:xx-small;">foo</span>');
+        });
+
         test('space before and after content preserved after removing format', function() {
             var range = createRangeFromText(editor, 'foo<strong> |bar| baz</strong>');
             var formatter = new InlineFormatter(editor.formats.bold);

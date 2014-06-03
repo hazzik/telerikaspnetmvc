@@ -6,12 +6,13 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Web.Mvc;
-    using System.Globalization;
-    using System.Collections.Generic;
-    
-    using Extensions;
+    using Telerik.Web.Mvc.Extensions;
+    using Telerik.Web.Mvc.Resources;
+    using Telerik.Web.Mvc.UI;
 
     public class DateTimePicker : DatePickerBase
     {
@@ -97,6 +98,16 @@ namespace Telerik.Web.Mvc.UI
             renderer.Build().WriteTo(writer);
 
             base.WriteHtml(writer);
+        }
+
+        public override void VerifySettings()
+        {
+            base.VerifySettings();
+
+            if (MinValue > MaxValue)
+            {
+                throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("MinValue", "MaxValue"));
+            }
         }
     }
 }

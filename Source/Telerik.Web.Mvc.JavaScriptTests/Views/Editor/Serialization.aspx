@@ -116,7 +116,7 @@
         
         test('cdata encoding', function() {
             editor.value('<![CDATA[test]]>');
-            equal(editor.body.innerHTML, '<!--[CDATA[test]]-->');
+            ok(editor.body.innerHTML.indexOf('<!--[CDATA[test]]-->') > -1);
         });
 
         test('cdata', function() {
@@ -359,8 +359,14 @@
         });        
         
         test('whitespace at beginning of inline element before text', function() {
+            editor.value('<span>boo <span style="color:red;">foo</span> bar</span>');
+            equal(editor.value(), '<span>boo <span style="color:red;">foo</span> bar</span>');
+        });
+
+        test('whitespace after inline element is preserved', function() {
             editor.value('<p><strong>foo</strong> bar</p>');
             equal(editor.value(), '<p><strong>foo</strong> bar</p>');
+
         });
 
         test('complete attribute ignored', function() {
@@ -463,6 +469,16 @@
             equal(editor.value(), '');
         });
 
-</script>
+        test('strips font-size-adjust and font-stretch properties', function() {
+            editor.value('<span style="font:12px/normal Verdana;">foo</span>');
+            equal(editor.value(), '<span style="font:12px/normal Verdana;">foo</span>');
+        });
+
+        test('reversing quotes in style attribute', function() {
+            editor.body.innerHTML = '<span style=\'font:12px/normal "Times New Roman";\'>foo</span>';
+            equal(editor.value(), '<span style="font:12px/normal \'Times New Roman\';">foo</span>');
+        });
+
+    </script>
 
 </asp:Content>

@@ -23,37 +23,11 @@ namespace Telerik.Web.Mvc.UI
             var result = base.Serialize();
 
             FluentDictionary.For(result)
-                .Add("min", axis.Min, () => { return axis.Min.HasValue; })
-                .Add("max", axis.Max, () => { return axis.Max.HasValue; })
-                .Add("majorUnit", axis.MajorUnit, () => { return axis.MajorUnit.HasValue; })
-                .Add("axisCrossingValue", axis.AxisCrossingValue, () => { return axis.AxisCrossingValue.HasValue; });
-
-            var labelsFormat = new Dictionary<string, object>();
-            FluentDictionary.For(labelsFormat).Add("format", axis.Format, string.Empty);
-            if (labelsFormat.Count > 0)
-            {
-                result.Add("labels", labelsFormat);
-            }
+                .Add("min", axis.Min, () => axis.Min.HasValue)
+                .Add("max", axis.Max, () => axis.Max.HasValue)
+                .Add("majorUnit", axis.MajorUnit, () => axis.MajorUnit.HasValue);
 
             return result;
-        }
-
-        protected override bool ShouldSerializeMajorGridlines()
-        {
-            var majorGridLines = axis.MajorGridLines;
-
-            return majorGridLines.Visible != ChartDefaults.Axis.Numeric.MajorGridLines.Visible ||
-                   majorGridLines.Width != ChartDefaults.Axis.Numeric.MajorGridLines.Width ||
-                   majorGridLines.Color != ChartDefaults.Axis.Numeric.MajorGridLines.Color;
-        }
-
-        protected override bool ShouldSerializeMinorGridlines()
-        {
-            var minorGridLines = axis.MinorGridLines;
-
-            return minorGridLines.Visible != ChartDefaults.Axis.Numeric.MinorGridLines.Visible ||
-                   minorGridLines.Width != ChartDefaults.Axis.Numeric.MinorGridLines.Width ||
-                   minorGridLines.Color != ChartDefaults.Axis.Numeric.MinorGridLines.Color;
         }
     }
 }

@@ -255,6 +255,25 @@ namespace Telerik.Web.Mvc.UI.Html.Tests
         }
 
         [Fact]
+        public void Should_set_group_level_of_detail_row_if_grouped()
+        {
+            var dataSource = ArrangeGroupedDataSource();
+
+            factory.Setup(c => c.CreateItem(It.IsAny<Customer>())).Returns((Customer c) => new GridItem
+            {
+                Type = GridItemType.DataRow,
+                State = GridItemStates.Master,
+                DataItem = c
+            });
+
+            enumerator = new GridDataSourceEnumerator(dataSource, factory.Object);
+
+            var all = enumerator.ToArray();
+
+            all[2].GroupLevel.ShouldEqual(1);
+        }
+
+        [Fact]
         public void Should_set_odd_item_as_alternating()
         {
             var dataSource = ArrangeCustomers();

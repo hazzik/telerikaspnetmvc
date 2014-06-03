@@ -10,14 +10,21 @@ namespace Telerik.Web.Mvc.Extensions
     using System.Web.Mvc;
     using System.Web.Routing;
     using Telerik.Web.Mvc.UI;
+    using System.Collections.Generic;
+    using System.Web;    
+#if MVC3
+    using System.Web.Helpers;    
+#endif
 
     public static class GridControllerExtensions
     {
         public static RouteValueDictionary GridRouteValues(this ControllerBase controller)
-        {
+        {            
             var routeValues = new RouteValueDictionary();
 
-            foreach (string key in controller.ControllerContext.HttpContext.Request.Params)
+            var values = GetParams(controller.ControllerContext.HttpContext.Request);            
+
+            foreach (string key in values.Keys)
             {
                 if (key.EndsWith(GridUrlParameters.CurrentPage, StringComparison.OrdinalIgnoreCase) ||
                     key.EndsWith(GridUrlParameters.Filter, StringComparison.OrdinalIgnoreCase) ||
@@ -25,13 +32,30 @@ namespace Telerik.Web.Mvc.Extensions
                     key.EndsWith(GridUrlParameters.GroupBy, StringComparison.OrdinalIgnoreCase) ||
                     key.EndsWith(GridUrlParameters.PageSize, StringComparison.OrdinalIgnoreCase))
                 {
-                    routeValues[key] = controller.ControllerContext.HttpContext.Request.Params[key];
+                    routeValues[key] = values[key];
                 }
             }
 
             return routeValues;
-        }
+        }        
 
+#if MVC3
+        private static IDictionary<string, object> GetParams(HttpRequestBase request)
+        {
+            var result = new Dictionary<string, object>();
+            var unvalidated = request.Unvalidated();
+            unvalidated.Form.CopyTo(result);
+            unvalidated.QueryString.CopyTo(result);
+            return result;
+        }
+#else
+        private static IDictionary<string, object> GetParams(HttpRequestBase request)
+        {
+            var result = new Dictionary<string, object>();
+            request.Params.CopyTo(result);
+            return result;
+        }
+#endif
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
         public static T ValueOf<T>(this ControllerBase controller, string key)
         {

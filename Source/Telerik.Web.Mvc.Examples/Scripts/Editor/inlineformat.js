@@ -1,12 +1,26 @@
 function InlineFormatFinder(format) {
     function numberOfSiblings(referenceNode) {
-        var count = 0;
+        var textNodesCount = 0, elementNodesCount = 0, markerCount = 0,
+            parentNode = referenceNode.parentNode;
 
-        for (var node = referenceNode.parentNode.firstChild; node; node = node.nextSibling)
-            if (node != referenceNode && node.className != 't-marker' && node.nodeType == 1)
-                count++;
+        for (var node = parentNode.firstChild; node; node = node.nextSibling) {
+            if (node != referenceNode) {
+                if (node.className == 't-marker') {
+                    markerCount++;
+                } else if (node.nodeType == 3) {
+                    textNodesCount++;
+                } else {
+                    elementNodesCount++;
+                }
+            }
+        }
 
-        return count;
+        if (markerCount > 1 && parentNode.firstChild.className == 't-marker' && parentNode.lastChild.className == 't-marker') {
+            // full node selection
+            return 0;
+        } else {
+            return elementNodesCount + textNodesCount;
+        }
     }
 
     this.findSuitable = function (sourceNode, skip) {
@@ -90,8 +104,16 @@ function InlineFormatter(format, values) {
     this.remove = function (nodes) {
         for (var i = 0, l = nodes.length; i < l; i++) {
             var formatNode = this.finder.findFormat(nodes[i]);
-            if (formatNode)
-                dom.unwrap(formatNode);
+            if (formatNode) {
+                if (attributes && attributes.style) {
+                    dom.unstyle(formatNode, attributes.style);
+                    if (!formatNode.style.cssText) {
+                        dom.unwrap(formatNode);
+                    }
+                } else {
+                    dom.unwrap(formatNode);
+                }
+            }
         }
     }
 
@@ -116,7 +138,7 @@ function InlineFormatter(format, values) {
                 last.appendChild(node.previousSibling);
             }
 
-            if (node.previousSibling == last && node.style.cssText == last.style.cssText) {
+            if (node.tagName == last.tagName && node.previousSibling == last && node.style.cssText == last.style.cssText) {
                 while (node.firstChild)
                     last.appendChild(node.firstChild);
                 dom.remove(node);
@@ -260,23 +282,20 @@ function FontTool(options){
             onChange: function (e) {
                 Tool.exec(editor, options.name, e.value);
             },
+            onItemCreate: function (e) {
+                e.html = '<span unselectable="on" style="display:block;">' + e.dataItem.Text + '</span>';
+            },
             highlightFirst: false
         });
 
-        var component = $ui.data(type);
-        component.value('inherit');
-        component.dropDown.onItemCreate =
-                function (e) {
-                    e.html = '<span unselectable="on" style="' + options.cssAttr + ': ' + e.dataItem.Value + '">' + e.dataItem.Text + '</span>';
-                };
+        $ui.data(type).value('inherit');
     }
 };
 
 function ColorTool (options) {
     Tool.call(this, options);
 
-    var format = [{ tags: ['span'] }],
-        finder = new GreedyInlineFormatFinder(format, options.cssAttr);
+    var format = [{ tags: inlineElements }];
     
     this.update = function($ui) {
         $ui.data('tColorPicker').close();

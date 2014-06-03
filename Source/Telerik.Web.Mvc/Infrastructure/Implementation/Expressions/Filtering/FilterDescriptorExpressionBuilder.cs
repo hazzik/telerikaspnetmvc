@@ -73,7 +73,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
                         valueExpression.Type.GetTypeName()));
             }
 
-            return this.descriptor.Operator.CreateExpression(memberExpression, valueExpression);
+            return this.descriptor.Operator.CreateExpression(memberExpression, valueExpression, Options.LiftMemberAccessToNull);
         }
 
         public FilterDescription CreateFilterDescription()

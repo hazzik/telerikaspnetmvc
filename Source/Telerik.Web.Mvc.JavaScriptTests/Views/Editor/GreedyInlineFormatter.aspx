@@ -41,7 +41,12 @@
         test('formats split existing format nodes', function() {
             var range = createRangeFromText(editor, '<span style="font-family:Courier;">fo|o</span>bar|');
             var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'Arial' } }, 'font-family');
+            
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
             formatter.toggle(range);
+            marker.remove(range);
+
             equal(editor.value(), '<span style="font-family:Courier;">fo</span><span style="font-family:Arial;">obar</span>');
         });
 
@@ -49,7 +54,11 @@
             var range = createRangeFromText(editor, '<span style="font-family:Courier;">fo|o</span>bar|');
             var formatter = new GreedyInlineFormatter([{ tags: ['span'] }], { style: { fontFamily: 'inherit' } }, 'font-family');
             
+            var marker = new $.telerik.editor.Marker();
+            marker.add(range);
             formatter.toggle(range);
+            marker.remove(range);
+
             equal(editor.value(), '<span style="font-family:Courier;">fo</span>obar');
         });
 

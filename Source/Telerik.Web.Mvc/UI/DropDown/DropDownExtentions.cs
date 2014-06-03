@@ -17,11 +17,11 @@ namespace Telerik.Web.Mvc.UI
         {
             int selectedItemIndex = -1;
             IList<DropDownItem> items = instance.Items;
-            string value = instance.Value.HasValue() ? instance.Value : instance.GetValueFromViewDataByName();
+            string value = instance.GetValue<string>(instance.Value);
 
             if (value.HasValue())
             {
-                selectedItemIndex = items.IndexOf(items.FirstOrDefault(item => (item.Value ?? item.Text).ToLower() == value.ToLower()));
+                selectedItemIndex = items.IndexOf(items.FirstOrDefault(item => (item.Value ?? item.Text).ToLowerInvariant() == value.ToLowerInvariant()));
             }
 
             if (selectedItemIndex == -1)
@@ -57,6 +57,19 @@ namespace Telerik.Web.Mvc.UI
             {
                 item.Text = HttpUtility.HtmlEncode(item.Text);
             }
+        }
+
+        internal static string GetName(this IDropDownRenderable instance, string suffix)
+        {
+            object value = null;
+            string name = instance.Name + suffix; 
+
+            if (instance.HiddenInputHtmlAttributes.TryGetValue("name", out value) && value != null)
+            {
+                name = value.ToString();
+            }
+
+            return name;
         }
     }
 }

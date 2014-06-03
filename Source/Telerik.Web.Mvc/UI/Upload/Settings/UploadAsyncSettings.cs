@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
     using System.Web;
+    using Telerik.Web.Mvc.Extensions;
     
     /// <summary>
     /// Defines the asynchronous uploading settings
@@ -31,6 +32,12 @@ namespace Telerik.Web.Mvc.UI
         /// Defines the Save action
         /// </summary>
         public INavigatable Save { get; set; }
+
+        /// <summary>
+        /// Defines the name of the form field submitted to the Save action.
+        /// The default value is the Upload name.
+        /// </summary>
+        public string SaveField { get; set; }
         
         /// <summary>
         /// Defines the Remove action
@@ -57,6 +64,11 @@ namespace Telerik.Web.Mvc.UI
                 var config = new Dictionary<string, object>();
 
                 config["saveUrl"] = encoder(Save.GenerateUrl(upload.ViewContext, upload.UrlGenerator));
+
+                if (SaveField.HasValue())
+                {
+                    config["saveField"] = SaveField;
+                }
 
                 if (Remove.HasValue())
                 {

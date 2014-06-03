@@ -109,11 +109,14 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (value)
                 {
-                    HtmlAttributes["style"] += "display:none;width:0;";
+                    if (!Convert.ToString(HtmlAttributes["style"]).Contains("display:none;"))
+                    {
+                        HtmlAttributes["style"] += "display:none;";
+                    }
                 }
                 else if (HtmlAttributes.ContainsKey("style"))
                 {
-                    HtmlAttributes["style"] = ((string)HtmlAttributes["style"]).Replace("display:none;width:0;", "");
+                    HtmlAttributes["style"] = ((string)HtmlAttributes["style"]).Replace("display:none;", "");
                 }
                 hidden = value;
             }
@@ -140,6 +143,12 @@ namespace Telerik.Web.Mvc.UI
                     Title = member.AsTitle();
                 }
             }
+        }
+
+        public Type MemberType
+        {
+            get;
+            set;
         }
 
         public bool ReadOnly

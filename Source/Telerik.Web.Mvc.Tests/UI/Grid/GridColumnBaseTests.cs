@@ -20,16 +20,6 @@
         }
 
         [Fact]
-        public void Should_apply_last_header_css_class_if_the_column_is_last()
-        {
-            grid.Columns.Add(column.Object);
-           
-            var builder = column.Object.CreateHeaderBuilder();
-
-            builder.CreateCell().Attribute("class").ShouldContain(UIPrimitives.LastHeader);
-        }
-
-        [Fact]
         public void Should_set_header_title()
         {
             const string title = "title";
@@ -94,23 +84,6 @@
             var builder = column.Object.CreateDisplayBuilder(new Mock<IGridHtmlHelper>().Object);
 
             builder.Decorators.OfType<GridHiddenCellBuilderDecorator>().Count().ShouldEqual(1);
-        }
-
-        [Fact]
-        public void Should_last_decorator_for_last_column()
-        {
-            var grid = GridTestHelper.CreateGrid<Customer>();
-            
-            var column = new Mock<GridColumnBase<Customer>>(grid)
-            {
-                CallBase = true
-            };
-
-            grid.Columns.Add(column.Object);
-
-            var builder = column.Object.CreateDisplayBuilder(new Mock<IGridHtmlHelper>().Object);
-
-            builder.Decorators.OfType<GridLastCellBuilderDecorator>().Count().ShouldEqual(1);
         }
 
         private IHtmlNode GetSpan(IHtmlNode cell)

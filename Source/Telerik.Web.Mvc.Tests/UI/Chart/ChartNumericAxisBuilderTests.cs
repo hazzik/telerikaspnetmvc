@@ -56,29 +56,29 @@
         }
 
         [Fact]
-        public void AxisCrossingValue_should_set_AxisCrossingValue()
+        public void Labels_should_set_Labels()
         {
-            builder.AxisCrossingValue(10);
-            axis.AxisCrossingValue.ShouldEqual(10);
+            builder.Labels(true);
+            axis.Labels.Visible.ShouldEqual(true);
         }
 
         [Fact]
-        public void AxisCrossingValue_should_return_builder()
+        public void Labels_should_return_builder()
         {
-            builder.AxisCrossingValue(10).ShouldBeSameAs(builder);
+            builder.Labels(true).ShouldBeSameAs(builder);
         }
 
         [Fact]
-        public void Format_should_set_Format()
+        public void Orientation_should_set_Orientation()
         {
-            builder.Format("{0:C}");
-            axis.Format.ShouldEqual("{0:C}");
+            builder.Orientation(ChartAxisOrientation.Vertical);
+            axis.Orientation.ShouldEqual(ChartAxisOrientation.Vertical);
         }
 
         [Fact]
-        public void Format_should_return_builder()
+        public void Orientation_should_return_builder()
         {
-            builder.Format("{0:C}").ShouldBeSameAs(builder);
+            builder.Orientation(ChartAxisOrientation.Vertical).ShouldBeSameAs(builder);
         }
     }
 }

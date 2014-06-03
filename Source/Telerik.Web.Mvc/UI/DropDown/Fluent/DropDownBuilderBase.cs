@@ -188,6 +188,29 @@
         }
 
         /// <summary>
+        /// Sets the HTML attributes of the hidden input element.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public TDropDownBuilder HiddenInputHtmlAttributes(object attributes)
+        {
+            return HiddenInputHtmlAttributes(attributes.ToDictionary());
+        }
+
+        /// <summary>
+        /// Sets the HTML attributes of the hidden input element.
+        /// </summary>
+        /// <param name="attributes">The HTML attributes.</param>
+        public TDropDownBuilder HiddenInputHtmlAttributes(IDictionary<string, object> attributes)
+        {
+            Guard.IsNotNull(attributes, "attributes");
+
+            Component.HiddenInputHtmlAttributes.Clear();
+            Component.HiddenInputHtmlAttributes.Merge(attributes);
+
+            return this as TDropDownBuilder;
+        }
+
+        /// <summary>
         /// Sets whether the Text property of the DropDownItem should be encoded when it is rendered.
         /// </summary>
         /// <param name="isEncoded">Whether the property should be encoded. Default: true.</param>

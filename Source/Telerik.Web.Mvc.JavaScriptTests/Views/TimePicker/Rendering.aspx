@@ -90,6 +90,21 @@
             equal('11:00 AM', time.text(), 'not correct day is selected');
         });
 
+        test('error class should be added on blur', function () {
+            var timepicker = $('#TimePickerWithInputAttr').data('tTimePicker'),
+                element = timepicker.$element;
+            
+            timepicker.close();   
+            element.focus().val("wrong value").blur();
+            
+            setTimeout(function() {
+                start();
+                ok(element.hasClass('t-state-error'));
+            }, 200);
+
+            stop(300);
+        });
+
 </script>
 
 </asp:Content>

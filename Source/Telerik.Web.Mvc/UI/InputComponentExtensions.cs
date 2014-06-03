@@ -9,7 +9,7 @@ namespace Telerik.Web.Mvc.UI
 {
     public static class InputComponentExtensions
     {
-        public static T? GetValue<T>(this IInputComponent<T> instance, Func<object, T?> converter) where T: struct
+        public static T? GetValue<T>(this IInputComponent<T> instance, Func<object, T?> converter) where T : struct
         {
             T? value = null;
             ModelState state;
@@ -17,11 +17,16 @@ namespace Telerik.Web.Mvc.UI
 
             object valueFromViewData = viewData.Eval(instance.Name);
 
-            if (viewData.ModelState.TryGetValue(instance.Name, out state) 
-             && viewData.ModelState.IsValidField(instance.Name)
-             && (state.Value != null))
+            if (viewData.ModelState.TryGetValue(instance.Name, out state) && (state.Value != null))
             {
-                value = state.Value.ConvertTo(typeof(T), state.Value.Culture) as T?;
+                if (viewData.ModelState.IsValidField(instance.Name))
+                {
+                    try
+                    {
+                        value = state.Value.ConvertTo(typeof(T), state.Value.Culture) as T?;
+                    }
+                    catch (InvalidOperationException) { }
+                }
             }
             else if (instance.Value != null)
             {
@@ -32,13 +37,15 @@ namespace Telerik.Web.Mvc.UI
                 value = converter(valueFromViewData);
             }
 
+            instance.Value = value;
+
             return value;
         }
 
         public static string GetAttemptedValue<T>(this IInputComponent<T> instance) where T: struct
         {
             ModelState state;
-            if (instance.ViewContext.ViewData.ModelState.TryGetValue(instance.Name, out state)) 
+            if (instance.ViewContext.ViewData.ModelState.TryGetValue(instance.Name, out state) && state.Value != null) 
             {
                 return state.Value.AttemptedValue;
             }

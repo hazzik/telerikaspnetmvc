@@ -397,6 +397,11 @@ namespace Telerik.Web.Mvc.Extensions
                 return "Object";
             }
 
+            if (type == typeof(char) || type == typeof(char?))
+            {
+                return "String";
+            }
+
             if (IsNumericType(type))
             {
                 return "Number";

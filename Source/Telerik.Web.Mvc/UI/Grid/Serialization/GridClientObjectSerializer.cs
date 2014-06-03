@@ -60,6 +60,7 @@ namespace Telerik.Web.Mvc.UI
             }
 
             grid.KeyboardNavigation.SerializeTo("keyboardNavigation", writer);
+            grid.ColumnContextMenu.SerializeTo("columnContextMenu", writer);
 
             if (shouldSerializeDataSource)
             {

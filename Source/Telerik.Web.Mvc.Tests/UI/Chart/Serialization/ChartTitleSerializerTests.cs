@@ -39,6 +39,19 @@
         }
 
         [Fact]
+        public void Serializes_background()
+        {
+            title.Background = "Background";
+            GetJson()["background"].ShouldEqual("Background");
+        }
+
+        [Fact]
+        public void Does_not_serialize_default_background()
+        {
+            GetJson().ContainsKey("background").ShouldBeFalse();
+        }
+
+        [Fact]
         public void Serializes_position()
         {
             title.Position = ChartTitlePosition.Bottom;

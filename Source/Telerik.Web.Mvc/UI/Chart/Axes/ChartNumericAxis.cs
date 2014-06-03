@@ -18,15 +18,10 @@ namespace Telerik.Web.Mvc.UI
         public ChartNumericAxis(Chart<T> chart)
             : base(chart)
         {
-            MajorGridLines = new ChartLine(
-                ChartDefaults.Axis.Numeric.MajorGridLines.Width,
-                ChartDefaults.Axis.Numeric.MajorGridLines.Color,
-                ChartDefaults.Axis.Numeric.MajorGridLines.Visible);
-
-            MinorGridLines = new ChartLine(
-                ChartDefaults.Axis.Numeric.MinorGridLines.Width,
-                ChartDefaults.Axis.Numeric.MinorGridLines.Color,
-                ChartDefaults.Axis.Numeric.MinorGridLines.Visible);
+            MajorGridLines = new ChartLine();
+            MinorGridLines = new ChartLine();
+            Labels = new ChartAxisLabels();
+            Format = "";
         }
 
         /// <summary>
@@ -48,15 +43,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// The value at which the first perpendicular axis crosses this axis
-        /// </summary>
-        public double? AxisCrossingValue 
-        { 
-            get; 
-            set; 
-        }
-
-        /// <summary>
         /// The interval between major divisions
         /// </summary>
         public double? MajorUnit
@@ -68,11 +54,7 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// The axis label format
         /// </summary>
-        public string Format
-        {
-            get;
-            set;
-        }
+        public string Format { get; set; }
 
         /// <summary>
         /// Gets the axis serializer.

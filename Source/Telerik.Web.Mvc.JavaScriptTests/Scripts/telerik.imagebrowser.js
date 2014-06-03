@@ -226,7 +226,7 @@
             return this.read("files", data);
         },
         thumbUrl: function(path, name) {
-            return this._thumbnailUrl + "/?path=" + path + name;
+            return this._thumbnailUrl + "/?path=" + path + encodeURIComponent(name);
         },
         size: function(item) {
             var value = this.read("size", item);
@@ -259,7 +259,7 @@
             if(path === undefined || !path.match(/\/$/)) {
                 path = (path || "") + "/";
             }
-            return path + name;
+            return path + encodeURIComponent(name);
         }
     };
 
@@ -274,7 +274,6 @@
         this.wrapper.bind({
                         "t:refresh": $.proxy(this._refresh, this),
                         "t:upload": $.proxy(this._upload, this),
-                        "t:completeFile": $.proxy(this._completeFile, this),
                         "t:completeDirectory": $.proxy(this._completeDirectory, this),
                         "t:delete": $.proxy(this._delete, this),
                         "t:errorFile": $.proxy(this._errorFile, this),
@@ -329,19 +328,23 @@
                 '</li>';        
     }
 
-    function load(li) {
+    function load(li) {        
         var element = $(li);
-        var img = $("<img />", { 
-            src: element.data("thumbUrl"), 
-            alt: element.data("filename") 
-            })
+        var img = $("<img />", {                           
+                alt: element.data("filename") 
+            })            
             .hide()
-            .bind("load", function() {
+            .bind("load", function() {                       
                 $(this).prev().remove().end().addClass("t-image").fadeIn();
             });
+            
                     
         element.find(".t-loading").after(img);
-                    
+               
+        // IE8 will trigger the load event immediately when the src is assign 
+        // if the image is loaded from the cache
+        img.attr("src", element.data("thumburl"));
+
         li.loaded = true;        
     }
 
@@ -410,19 +413,19 @@
             }
         },
 
-        _completeFile: function(e, file) {
+        _completeFile: function(file, originalFileName) {
             var name = this._reader.name(file);
             var path = this._reader.path(file);
             
-                var li = $(fileHtml({ 
-                    kind:"f", 
+            var li = $(fileHtml({
+                kind: "f",
                 thumbUrl: this._reader.thumbUrl(path, name),
                 url: this._reader.concatPaths(path, name),
                     name: name,
                 size: this._reader.size(file)
-                }));
+            }));
                 
-            this.wrapper.find("li").eq(this.fileIndex(name)).replaceWith(li);
+            this.wrapper.find("li").eq(this.fileIndex(originalFileName)).replaceWith(li);
      
             load(li[0]);
                     
@@ -469,7 +472,7 @@
                     var top = offsetTop(this);
                     var bottom = top + this.offsetHeight;
 
-                    if ((top >= viewTop && top < viewBottom) || (bottom >= viewTop && bottom < viewBottom)) {
+                    if ((top >= viewTop && top < viewBottom) || (bottom >= viewTop && bottom < viewBottom)) {                        
                        load(this);
                     }
                 
@@ -486,9 +489,10 @@
         },
 
         _upload: function(e, file, preventDefault) {
-            var existingFileIndex = this.fileIndex(file.name);
+            var fileName = file.name;
+            var existingFileIndex = this.fileIndex(fileName);
             
-            if (existingFileIndex > -1 && !confirm($t.formatString(this._localization.overwriteFile, file.name))) {
+            if (existingFileIndex > -1 && !confirm($t.formatString(this._localization.overwriteFile, fileName))) {
                 preventDefault();
             } else {
                 this.wrapper.find(".t-tile-empty").remove();
@@ -511,12 +515,16 @@
                     var data = this._data.toArray();
 
                     data.splice(li.index(), 0, {
-                        name: file.name,
+                        name: fileName,
                         kind: "f"
                     });
                 }
 
                 this.wrapper.scrollTop(li.attr("offsetTop") - this.element.offsetHeight);
+
+                this.wrapper.one("t:completeFile", $.proxy(function(e, file) {
+                    this._completeFile(file, fileName);                                        
+                }, this));
             }
         },
         _nameDirectory: function() {

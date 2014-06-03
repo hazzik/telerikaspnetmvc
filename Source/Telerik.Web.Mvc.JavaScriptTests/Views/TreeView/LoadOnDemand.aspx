@@ -201,6 +201,38 @@
             equal($root.children().length, 1);
         });
 
+        asyncTest('ajaxRequest() clears animation flag', function() {
+            var treeview = getTreeView('#myTreeView_ajaxRequest');
+
+            var $root = $(treeview.element);
+            
+            treeview.dataBind($root, [{ Text: 'Foo', LoadOnDemand: true }]);
+
+            var item = $('.t-item', treeview.element);
+
+            $.mockjax({
+                url: '<%= Url.Action("LoadOnDemand", "TreeView") %>',
+                contentType: "text/json",
+                responseTime: 100,
+                responseText: "[{ Text: 'Bar' }]"
+            });
+
+            var counter = 0;
+
+            $root.bind("ajaxComplete", function() {
+                if (++counter == 2) {
+                    // not clearing the animating flag will disable the node toggle...
+                    item.find(".t-minus").trigger("click");
+                    start();
+                    equal(item.find(".t-plus").length, 1);
+                }
+            });
+
+            treeview.ajaxRequest(item);
+            treeview.ajaxRequest(item);
+        });
+
+
         test('treeView ajaxBinding set item url', function() {
             equal($('.t-item a').attr('href'), "url");
         });

@@ -35,5 +35,19 @@
             builder.Line().Width(4);
             chart.SeriesDefaults.Line.Width.ShouldEqual(4);
         }
+
+        [Fact]
+        public void Scatter_sets_ScatterSeries_options()
+        {
+            builder.Scatter().Opacity(.5);
+            chart.SeriesDefaults.Scatter.Opacity.ShouldEqual(0.5);
+        }
+
+        [Fact]
+        public void ScatterLine_sets_ScatterLineSeries_options()
+        {
+            builder.ScatterLine().Opacity(.5);
+            chart.SeriesDefaults.ScatterLine.Opacity.ShouldEqual(0.5);
+        }
     }
 }

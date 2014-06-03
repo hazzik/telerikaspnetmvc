@@ -44,12 +44,12 @@ namespace Telerik.Web.Mvc.UI.Html
             get;
             set;
         }
-        public object SelectionStart 
+        public string SelectionStart 
         { 
             get; 
             set; 
         }
-        public object SelectionEnd
+        public string SelectionEnd
         {
             get;
             set;

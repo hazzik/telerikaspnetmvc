@@ -277,12 +277,12 @@
         }
 
         [Fact]
-        public void Render_should_throw_exception_if_selectedDate_is_out_of_limits()
+        public void Render_should_not_throw_exception_if_selectedDate_is_out_of_limits()
         {
             calendar.MinDate = DateTime.Now.AddMonths(1);
             calendar.Value = DateTime.Now;
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => calendar.VerifySettings());
+            Assert.DoesNotThrow(() => calendar.VerifySettings());
         }
 
         [Fact]

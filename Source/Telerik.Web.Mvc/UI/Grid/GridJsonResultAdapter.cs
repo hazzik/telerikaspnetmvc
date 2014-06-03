@@ -53,6 +53,11 @@ namespace Telerik.Web.Mvc.UI
             }
 
             return default(T);
-        }    
+        }
+        
+        public object GetAggregates()
+        {
+            return Get<object>("aggregates");
+        }
     }
 }

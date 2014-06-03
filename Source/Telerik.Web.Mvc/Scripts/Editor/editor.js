@@ -49,6 +49,8 @@ function selectionChanged(editor) {
     $t.trigger(editor.element, 'selectionChange');
 }
 
+var focusable = ".t-colorpicker,a.t-tool-icon:not(.t-state-disabled),.t-selectbox, .t-combobox .t-input";
+
 function initializeContentElement(editor) {
     var isFirstKeyDown = true;
 
@@ -59,10 +61,29 @@ function initializeContentElement(editor) {
     $(editor.document)
         .bind({
             keydown: function (e) {
+                if (e.keyCode === 121) {
+                    //Using the timeout to avoid the default IE menu when F10 is pressed
+                    setTimeout(function() {
+                        var tabIndex = $(editor.element).attr("tabIndex");
+    
+                        //Chrome can't focus something which has already been focused
+                        $(editor.element).attr("tabIndex", tabIndex || 0).focus().find(focusable).first().focus();
+    
+                        if (!tabIndex && tabIndex !== 0) {
+                           $(editor.element).removeAttr("tabIndex"); 
+                        } 
+
+                    }, 100);
+                    e.preventDefault();
+                    return;
+                }
                 var toolName = editor.keyboard.toolFromShortcut(editor.tools, e);
 
                 if (toolName) {
                     e.preventDefault();
+                    if (!/undo|redo/.test(toolName)) {
+                        editor.keyboard.endTyping(true);
+                    }
                     editor.exec(toolName);
                     return false;
                 }
@@ -202,10 +223,33 @@ $t.editor = function (element, options) {
         enabledButtons = buttons + ':not(.t-state-disabled)',
         disabledButtons = buttons + '.t-state-disabled';
 
+     $element.find(".t-combobox .t-input").keydown(function(e) {
+        var combobox = $(this).closest(".t-combobox").data("tComboBox"),
+            key = e.keyCode;
+
+        if (key == 39 || key == 37) {
+            combobox.close();
+        } else if (key == 40) {
+            if (!combobox.dropDown.isOpened()) {
+                e.stopImmediatePropagation();
+                combobox.open();
+            }
+        }
+    });
+
     $element
         .delegate(enabledButtons, 'mouseenter', $t.hover)
         .delegate(enabledButtons, 'mouseleave', $t.leave)
         .delegate(buttons, 'mousedown', $t.preventDefault)
+        .delegate(focusable, "keydown", function(e) {
+            if (e.keyCode == 39) {
+                $(this).closest("li").nextAll("li:has(" + focusable + ")").first().find(focusable).focus();
+            } else if (e.keyCode == 37) {
+                $(this).closest("li").prevAll("li:has(" + focusable + ")").last().find(focusable).focus();
+            } else if (e.keyCode == 27) {
+                self.focus();
+            }
+        })
         .delegate(enabledButtons, 'click', $t.stopAll(function (e) {
             self.exec(toolFromClassName(this));
         }))
@@ -236,8 +280,6 @@ $t.editor = function (element, options) {
         .bind('selectionChange', function() {
             var range = self.getRange();
 
-            self.selectionRestorePoint = new RestorePoint(range);
-
             var nodes = textNodes(range);
 
             if (!nodes.length) {
@@ -253,9 +295,13 @@ $t.editor = function (element, options) {
                 });
         });
 
+   
     $(document)
         .bind('DOMNodeInserted', function(e) {
             if ($.contains(e.target, self.element) || self.element == e.target) {
+                // preserve updated value before re-initializing
+                // don't use update() to prevent the editor from encoding the content too early
+                self.textarea.value = self.value();
                 $(self.element).find('iframe').remove();
                 initializeContentElement(self);
             }
@@ -445,26 +491,27 @@ $t.editor.prototype = {
     },
 
     exec: function (name, params) {
+        var range, body, id, tool = '';
+
+        name = name.toLowerCase();
+
+        // restore selection
         if (!this.keyboard.typingInProgress()) {
             this.focus();
 
-            if (this.selectionRestorePoint) {
-                this.selectRange(this.selectionRestorePoint.toRange());
-                this.selectionRestorePoint = null;
-            }
+            range = this.getRange();
+            body = this.document.body;
         }
 
-        name = name.toLowerCase();
-        var tool = '';
-
-        for (var id in this.tools)
+        // exec tool
+        for (id in this.tools)
             if (id.toLowerCase() == name) {
                 tool = this.tools[id];
                 break;
             }
 
         if (tool) {
-            var range = this.getRange();
+            range = this.getRange();
 
             if (!/undo|redo/i.test(name) && tool.willDelayExecution(range)) {
                 this.pendingFormats.toggle({ name: name, params: params, command: tool.command });
@@ -479,8 +526,9 @@ $t.editor.prototype = {
             if (/undo|redo/i.test(name)) {
                 this.undoRedoStack[name]();
             } else if (command) {
-                if (!command.managesUndoRedo)
+                if (!command.managesUndoRedo) {
                     this.undoRedoStack.push(command);
+                }
                     
                 command.editor = this;
                 command.exec();

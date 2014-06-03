@@ -6,11 +6,11 @@
 
     public class ChartLineLabelSerializerTests
     {
-        private readonly ChartLineLabels lineLabels;
+        private readonly ChartPointLabels lineLabels;
 
         public ChartLineLabelSerializerTests()
         {
-            lineLabels = new ChartLineLabels();
+            lineLabels = new ChartPointLabels();
         }
 
         [Fact]
@@ -27,9 +27,22 @@
         }
 
         [Fact]
+        public void Serializes_template()
+        {
+            lineLabels.Template = "<# customerID #>";
+            GetJson()["template"].ShouldEqual("<# customerID #>");
+        }
+
+        [Fact]
+        public void Does_not_serialize_default_template()
+        {
+            GetJson().ContainsKey("template").ShouldBeFalse();
+        }
+
+        [Fact]
         public void Serializes_position()
         {
-            lineLabels.Position = ChartLineLabelsPosition.Left;
+            lineLabels.Position = ChartPointLabelsPosition.Left;
             GetJson()["position"].ShouldEqual("left");
         }
 
@@ -105,12 +118,40 @@
         }
 
         [Fact]
+        public void Serializes_Opacity()
+        {
+            lineLabels.Opacity = 0.5;
+            GetJson()["opacity"].ShouldEqual(0.5);
+        }
+
+        [Fact]
+        public void Does_not_serialize_default_Opacity()
+        {
+            GetJson().ContainsKey("opacity").ShouldBeFalse();
+        }
+
+        [Fact]
+        public void Serializes_rotation()
+        {
+            lineLabels.Rotation = 20;
+            GetJson()["rotation"].ShouldEqual(20.0);
+        }
+
+        [Fact]
+        public void Does_not_serialize_default_rotation()
+        {
+            GetJson().ContainsKey("rotation").ShouldBeFalse();
+        }
+
+        [Fact]
         public void Serializes_border()
         {
             lineLabels.Border.Color = "red";
             lineLabels.Border.Width = 1;
+            lineLabels.Border.DashType = ChartDashType.Dot;
             ((Dictionary<string, object>)GetJson()["border"])["width"].ShouldEqual(1);
             ((Dictionary<string, object>)GetJson()["border"])["color"].ShouldEqual("red");
+            ((Dictionary<string, object>)GetJson()["border"])["dashType"].ShouldEqual("dot");
         }
 
         [Fact]

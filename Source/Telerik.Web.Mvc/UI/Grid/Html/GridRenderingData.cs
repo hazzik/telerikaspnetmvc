@@ -150,6 +150,12 @@ namespace Telerik.Web.Mvc.UI.Html
             set;
         }
 
+        public object AdditionalViewData
+        {
+            get;
+            set;
+        }
+
         public IEnumerable<AggregateResult> AggregateResults
         {
             get;

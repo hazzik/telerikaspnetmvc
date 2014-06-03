@@ -41,5 +41,29 @@ namespace Telerik.Web.Mvc.UI.Fluent
         {
             return new ChartLineSeriesBuilder<TModel>(Chart.SeriesDefaults.Line);
         }
+
+        /// <summary>
+        /// Defines the default settings for pie series.
+        /// </summary>
+        public virtual ChartPieSeriesBuilder<TModel> Pie()
+        {
+            return new ChartPieSeriesBuilder<TModel>(Chart.SeriesDefaults.Pie);
+        }
+
+        /// <summary>
+        /// Defines the default settings for scatter series.
+        /// </summary>
+        public virtual ChartScatterSeriesBuilder<TModel> Scatter()
+        {
+            return new ChartScatterSeriesBuilder<TModel>(Chart.SeriesDefaults.Scatter);
+        }
+
+        /// <summary>
+        /// Defines the default settings for scatter line series.
+        /// </summary>
+        public virtual ChartScatterLineSeriesBuilder<TModel> ScatterLine()
+        {
+            return new ChartScatterLineSeriesBuilder<TModel>(Chart.SeriesDefaults.ScatterLine);
+        }
     }
 }

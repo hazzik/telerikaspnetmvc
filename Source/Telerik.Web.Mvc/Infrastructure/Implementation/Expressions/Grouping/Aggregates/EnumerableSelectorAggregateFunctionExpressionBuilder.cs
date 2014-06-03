@@ -42,8 +42,9 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             var memberAccessBuilder = ExpressionBuilderFactory.MemberAccess(this.ItemType, null, this.Function.SourceField);
             memberAccessBuilder.Options.CopyFrom(this.Options);
 
-            var memberExpression = memberAccessBuilder.CreateMemberAccessExpression();
-            memberExpression = ConvertMemberAccessExpressionIfNecessary(memberExpression);
+            var memberExpression = memberAccessBuilder.CreateMemberAccessExpression();           
+
+            memberExpression = ConvertMemberAccessExpression(memberExpression);            
 
             return Expression.Lambda(memberExpression, memberAccessBuilder.ParameterExpression);
         }
@@ -69,8 +70,17 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             }
         }
 
-        private static Expression ConvertMemberAccessExpressionIfNecessary(Expression memberExpression)
+        private Expression ConvertMemberAccessExpression(Expression memberExpression)
         {
+            if ((ItemType.IsDataRow()
+#if MVC3
+                || ItemType.IsDynamicObject()
+#endif
+                ) && Function.MemberType != null)
+            {
+                memberExpression = Expression.Convert(memberExpression, Function.MemberType);
+            }
+
             //Numeric types with less bits than Int32 have to be converted to Int32, 
             //so that appropriate extension method will be called.
             var memberType = memberExpression.Type.GetNonNullableType();
@@ -79,7 +89,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
                 memberExpression = ConvertMemberExpressionToInteger(memberExpression);
             }
             return memberExpression;
-        }
+        }       
 
         private static Expression ConvertMemberExpressionToInteger(Expression expression)
         {

@@ -168,12 +168,12 @@
         }
 
         [Fact]
-        public void Render_should_throw_exception_if_selectedDate_is_out_of_limits() 
+        public void Render_should_not_throw_exception_if_selectedDate_is_out_of_limits() 
         {
             datePicker.MinValue = DateTime.Now.AddMonths(1);
             datePicker.Value = DateTime.Now;
 
-            Assert.Throws(typeof(ArgumentOutOfRangeException), () => datePicker.Render());
+            Assert.DoesNotThrow(() => datePicker.Render());
         }
 
         [Fact]

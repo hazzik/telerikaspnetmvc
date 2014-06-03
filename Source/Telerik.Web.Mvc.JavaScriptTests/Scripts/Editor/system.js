@@ -249,7 +249,8 @@ function Keyboard(handlers) {
 
     function stopTyping() {
         typingInProgress = false;
-        onEndTyping();
+        if (onEndTyping)
+            onEndTyping();
     }
 
     this.endTyping = function (force) {
@@ -342,8 +343,9 @@ function Clipboard (editor) {
                 
             var args = { html: clipboardNode.innerHTML };
             $t.trigger(editor.element, "paste", args);
-            editor.clipboard.paste(args.html);
+            editor.clipboard.paste(args.html, true);
             editor.undoRedoStack.push(new GenericCommand(startRestorePoint, new RestorePoint(editor.getRange())));
+            selectionChanged(editor);
         });
     }
 
@@ -362,18 +364,22 @@ function Clipboard (editor) {
         return parent;
     }
 
-    this.paste = function (html) {
+    this.paste = function (html, clean) {
         var i, l;
 
         for (i = 0, l = cleaners.length; i < l; i++)
             if (cleaners[i].applicable(html))
                 html = cleaners[i].clean(html);
             
+        if (clean) {
+            // remove br elements which immediately precede block elements
+            html = html.replace(/(<br>(\s|&nbsp;)*)+(<\/?(div|p|li|col|t))/ig, "$3");
+            // remove empty inline elements
+            html = html.replace(/<(a|span)[^>]*><\/\1>/ig, "");
+        }
+
         // It is possible in IE to copy just <li> tags
         html = html.replace(/^<li/i, '<ul><li').replace(/li>$/g, 'li></ul>');
-        // Excel pastes <br> inside table tags
-        
-        html = html.replace(/<br.*?<col/ig, "<col").replace(/<br.*?<(\/?)t(able|r|d|body|h|head|foot)/ig, "<$1t$2");
 
         var block = isBlock(html);
 
@@ -426,9 +432,19 @@ function Clipboard (editor) {
 
 function MSWordFormatCleaner() {
     var replacements = [
-        /<!--(.|\n)*?-->/g, '',
-        /mso-[^;"]*;?/ig, '',
-        /<\/?(meta|link|style|o:|v:)[^>]*>((?:.|\n)*?<\/(meta|link|style|o:|v:)[^>]*>)?/ig, ''
+        /<!--(.|\n)*?-->/g, '', /* comments */
+        /&quot;/g, "'", /* encoded quotes (in attributes) */
+        /(?:<br>&nbsp;[\s\r\n]+|<br>)*(<\/?(h[1-6]|hr|p|div|table|tbody|thead|tfoot|th|tr|td|li|ol|ul|caption|address|pre|form|blockquote|dl|dt|dd|dir|fieldset)[^>]*>)(?:<br>&nbsp;[\s\r\n]+|<br>)*/g, '$1',
+        /<br><br>/g, '<BR><BR>', 
+        /<br>/g, ' ',
+        /<BR><BR>/g, '<br>',
+        /^\s*(&nbsp;)+/gi, '',
+        /(&nbsp;|<br[^>]*>)+\s*$/gi, '',
+        /mso-[^;"]*;?/ig, '', /* office-related CSS attributes */
+        /<(\/?)b(\s[^>]*)?>/ig, '<$1strong$2>',
+        /<(\/?)i(\s[^>]*)?>/ig, '<$1em$2>',
+        /<\/?(meta|link|style|o:|v:)[^>]*>((?:.|\n)*?<\/(meta|link|style|o:|v:)[^>]*>)?/ig, '', /* external references and namespaced tags */
+        /style=(["|'])\s*\1/g, '' /* empty style attributes */
     ];
         
     this.applicable = function(html) {
@@ -436,7 +452,7 @@ function MSWordFormatCleaner() {
     }
         
     function listType(html) {
-        if (/^[\u2022\u00b7\u00a7\u00d8o\-]\u00a0+/.test(html))
+        if (/^[\u2022\u00b7\u00a7\u00d8o]\u00a0+/.test(html))
             return 'ul';
             
         if (/^\s*\w+[\.\)]\u00a0{2,}/.test(html))
@@ -496,12 +512,22 @@ function MSWordFormatCleaner() {
         return placeholder.innerHTML;
     }
 
+    function stripEmptyAnchors(html) {
+        return html.replace(/<a([^>]*)>\s*<\/a>/ig, function(a, attributes) {
+            if (!attributes || attributes.indexOf("href") < 0) {
+                return "";
+            }
+
+            return a;
+        });
+    }
+
     this.clean = function(html) {
         for (var i = 0, l = replacements.length; i < l; i+= 2)
             html = html.replace(replacements[i], replacements[i+1]);
-            
-        html = lists(html);
 
+        html = stripEmptyAnchors(html);
+        html = lists(html);
         html = html.replace(/\s+class="?[^"\s>]*"?/ig, '');
            
         return html;

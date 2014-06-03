@@ -622,8 +622,8 @@
             combo.disable();
 
             ok($('#ComboBox3').closest(".t-combobox").hasClass('t-state-disabled'));
-            equal($('#ComboBox3').closest(".t-combobox").find('.t-input').attr('disabled'), true);
-            equal($('#ComboBox3').attr('disabled'), true);
+            equal($('#ComboBox3').closest(".t-combobox").find('.t-input').attr('disabled'), 'disabled');
+            equal($('#ComboBox3').attr('disabled'), 'disabled');
         });
 
         test('enable method should enable comboBox', function() {

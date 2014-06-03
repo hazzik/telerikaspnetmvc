@@ -13,6 +13,7 @@
              <option value="ru-RU">Русский</option>
              <option value="uk-UA">Українське</option>
              <option value="pl-PL">Polska</option>
+             <option value="zh-CN">Simplified Chinese</option>
         </select>
     </div>
 

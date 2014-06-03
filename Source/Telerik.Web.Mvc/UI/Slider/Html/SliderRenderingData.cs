@@ -34,7 +34,7 @@ namespace Telerik.Web.Mvc.UI.Html
             get;
             set;
         }
-        public object Value
+        public string Value
         {
             get;
             set;

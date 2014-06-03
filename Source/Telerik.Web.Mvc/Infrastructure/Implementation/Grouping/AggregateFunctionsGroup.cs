@@ -31,7 +31,7 @@ namespace Telerik.Web.Mvc.Infrastructure
                 {
                     var values = ExtractPropertyValues(AggregateFunctionsProjection);
 
-                    return values.GroupBy(entry => entry.Key.Split('_')[1])
+                    return values.GroupBy(entry => entry.Key.Split('_')[1].Replace("-", "."))
                         .ToDictionary(g => g.Key, g => (object)g.ToDictionary(entry => entry.Key.Split('_')[0], entry => entry.Value));
                 }
 

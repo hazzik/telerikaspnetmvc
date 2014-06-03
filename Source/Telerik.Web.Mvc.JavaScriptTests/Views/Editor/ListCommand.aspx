@@ -64,6 +64,13 @@
             equal(editor.value(), '<ul><li>foo</li></ul>');
         });
 
+        test('apply on block element which is adjacent to list merges it with the list when the list is selected', function() {
+            var range = createRangeFromText(editor, '|<ul><li>foo</li></ul><p>bar</p>|');
+            var command = new ListCommand({ tag: 'ul', range: range });
+            command.exec();
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>');
+        });
+
         test('exec keeps selection', function() {
             editor.value('foo');
             var range = editor.createRange();
@@ -84,7 +91,7 @@
             range.collapse(true);
             var command = new ListCommand({ tag: 'ul', range: range });
             command.exec();
-            equal(editor.value(), '<ul><li>foo</li></ul><ul><li>bar</li></ul>')
+            equal(editor.value(), '<ul><li>foo</li><li>bar</li></ul>')
         });
 
         test('exec puts cursor in empty li', function() {

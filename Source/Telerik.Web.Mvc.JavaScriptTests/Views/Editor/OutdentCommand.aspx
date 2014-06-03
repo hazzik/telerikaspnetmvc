@@ -77,7 +77,15 @@
             editor.focus();
             $(editor.element).trigger('selectionChange');
             ok($('.t-outdent').hasClass('t-state-disabled'));
-        });    
+        });
+        
+        test('tool is enabled for first-level lists with marginLeft', function() {
+            var range = createRangeFromText(editor, '<ul style="margin-left:30px;"><li>|foo|</li></ul>');
+            editor.selectRange(range);
+            editor.focus();
+            $(editor.element).trigger('selectionChange');
+            ok(!$('.t-outdent').hasClass('t-state-disabled'));
+        });
 
     </script>
 

@@ -7,6 +7,7 @@ namespace Telerik.Web.Mvc
 {
     using System.Globalization;
     using System.Linq.Expressions;
+    using System;
 
     public abstract class AggregateFunction
     {
@@ -53,6 +54,12 @@ namespace Telerik.Web.Mvc
             {
                 this.functionName = value;
             }
+        }
+
+        public Type MemberType
+        {
+            get;
+            set;
         }
 
         /// <summary>

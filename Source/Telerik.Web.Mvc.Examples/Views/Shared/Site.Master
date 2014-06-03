@@ -13,6 +13,8 @@
                           .Combined(true)
                           .Compress(true))
                      %>
+   
+
     <asp:ContentPlaceHolder runat="server" ID="HeadContent" />
     <% Html.RenderPartial("Header"); %>
 </head>
@@ -31,7 +33,7 @@
         <% Html.RenderPartial("Footer"); %>
     </div>
     <% Html.Telerik().ScriptRegistrar()
-                     .DefaultGroup(group => group
+                      .DefaultGroup(group => group
                          .Add("telerik.examples.js")
                          .Compress(true))
                      .OnDocumentReady(() => { %>prettyPrint();<% })

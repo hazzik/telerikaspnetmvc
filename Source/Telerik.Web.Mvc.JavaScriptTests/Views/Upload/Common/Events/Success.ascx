@@ -131,8 +131,9 @@
 
     // -----------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------
-    asyncTest("success is fired when remove action succeeds", function() {
+    test("success is fired when remove action succeeds", function() {
         var successFired;
+        stop(1000);
         uploadInstance = createUpload({ onSuccess:
             function(e) {
                 successFired = true;
@@ -163,8 +164,9 @@
         simulateRemove();
     });
 
-    asyncTest("success event arguments contain remove operation name", function() {
+    test("success event arguments contain remove operation name", function() {
         var operation = null;
+        stop(1000);
         uploadInstance = createUpload({ onSuccess:
             function(e) {
                 operation = e.operation;
@@ -180,8 +182,9 @@
         }, 100);
     });
 
-    asyncTest("success event arguments contain remove action response", function() {
+    test("success event arguments contain remove action response", function() {
         var data = null;
+        stop(1000);
         uploadInstance = createUpload({ onSuccess:
             function(e) {
                 data = e.response;
@@ -197,8 +200,9 @@
         }, 100);
     });
 
-    asyncTest("success event arguments contain original XHR for remove action", function() {
+    test("success event arguments contain original XHR for remove action", function() {
         var xhr = null;
+        stop(1000);
         uploadInstance = createUpload({ onSuccess:
             function(e) {
                 xhr = e.XMLHttpRequest;
@@ -215,8 +219,9 @@
         }, 100);
     });
     
-    asyncTest("success event arguments contain XHR with responseText for remove action", function() {
+    test("success event arguments contain XHR with responseText for remove action", function() {
         var responseText;
+        stop(1000);
         uploadInstance = createUpload({ onSuccess:
             function(e) {
                 responseText = e.XMLHttpRequest.responseText;
@@ -232,8 +237,9 @@
         }, 100);
     });
     
-    asyncTest("success event arguments contain XHR with status for remove action", function() {
+    test("success event arguments contain XHR with status for remove action", function() {
         var status;
+        stop(1000);
         uploadInstance = createUpload({ onSuccess:
             function(e) {
                 status = e.XMLHttpRequest.status;

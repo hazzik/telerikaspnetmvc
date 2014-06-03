@@ -139,7 +139,6 @@ namespace Telerik.Web.Mvc.UI
             objectWriter.Append("decreaseButtonTitle", DecreaseButtonTitle);
             objectWriter.AppendObject("showButtons", ShowButtons);
             objectWriter.AppendObject("enabled", Enabled);
-            objectWriter.AppendObject("val", Value);
             objectWriter.AppendObject("smallStep", SmallStep);
             objectWriter.AppendObject("largeStep", LargeStep);
             objectWriter.AppendObject("minValue", MinValue);
@@ -150,21 +149,20 @@ namespace Telerik.Web.Mvc.UI
 
         protected override void WriteHtml(HtmlTextWriter writer)
         {
-            if (!Value.HasValue)
-            {
-                Value = MinValue;
-            }
-
             Func<object, T?> converter = val =>
             {
                 return ((T)Convert.ChangeType(val, typeof(T)));
             };
 
+            string value = this.GetAttemptedValue();
             T? result = this.GetValue(converter);
-            if (result.HasValue)
+
+            if (!result.HasValue)
             {
-                Value = result.Value;
+                result = MinValue;
             }
+
+            value = "{0}".FormatWith(result);
 
             var builder = rendererFactory.Create(new SliderRenderingData
             {
@@ -174,7 +172,7 @@ namespace Telerik.Web.Mvc.UI
                 MaxValue = MaxValue,
                 MinValue = MinValue,
                 SmallStep = SmallStep,
-                Value = Value,
+                Value = value,
                 Enabled = Enabled
             });
 
@@ -190,11 +188,6 @@ namespace Telerik.Web.Mvc.UI
             if (MinValue.CompareTo(MaxValue) >= 0)
             {
                 throw new ArgumentException(TextResource.MinPropertyMustBeLessThenMaxProperty.FormatWith("Min", "Max"));
-            }
-
-            if (MinValue.CompareTo(Value.Value) > 0 || MaxValue.CompareTo(Value.Value) < 0)
-            {
-                throw new ArgumentOutOfRangeException(TextResource.PropertyShouldBeInRange.FormatWith("Value", "Min", "Max"));
             }
 
             if (SmallStep.CompareTo((T)Convert.ChangeType(0, typeof(T))) <= 0)

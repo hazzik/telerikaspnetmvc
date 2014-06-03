@@ -142,10 +142,6 @@
             equal(clean('<p class="MsoListParagraphCxSpFirst" style="text-indent: -0.25in;"><span style="">o<span style="font: 7pt &quot;Times New Roman&quot;;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span>foo</p>'), '<ul><li>foo</li></ul>');
         });
     
-        test('unordered list from dash', function() {
-            equal(clean('<p class="MsoListParagraphCxSpFirst"><span><span>-</span>&nbsp;</span>foo</p>'), '<ul><li>foo</li></ul>');
-        });
-    
         test('nested lists of different type and same margin', function() {
             equal(clean('<p><span><span>1.</span>&nbsp;&nbsp;</span>foo</p><p><span><span>o</span>&nbsp;</span>bar</p>'), '<ol><li>foo<ul><li>bar</li></ul></li></ol>');
         });
@@ -179,7 +175,21 @@
         });
 
         test('handling unclosed tags', function() {
-            equal(clean('<h2>foo<br></h2><div>bar</div>'), '<h2>foo<br></h2><div>bar</div>')
+            equal(clean('<h2>foo<br></h2><div>bar</div>'), '<h2>foo</h2><div>bar</div>')
+        });
+
+        test('cleaning attribute values with encoded quotes', function() {
+            equal(clean('<span style="mso-bidi-font-family:&quot;Times New Roman&quot;;">foo</span>'), '<span>foo</span>')
+        });
+
+        test('converting bold tags to strong', function() {
+            equal(clean('<b>foo</b>'), '<strong>foo</strong>');
+            equal(clean('<blockquote>foo</blockquote>'), '<blockquote>foo</blockquote>');
+        });
+
+        test('converting italics tags to emphasis', function() {
+            equal(clean('<i>foo</i>'), '<em>foo</em>');
+            equal(clean('<img />foo'), '<img>foo');
         });
 
     </script>

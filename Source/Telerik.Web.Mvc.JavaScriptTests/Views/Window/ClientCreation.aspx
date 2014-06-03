@@ -8,6 +8,10 @@
     <div id="Window4"></div>
     <div id="Window5"></div>
     <div id="Window6"></div>
+    <div id="Window7"></div>
+    <div id="Window8"></div>
+    <div id="Window9"></div>
+    <div id="Window10"></div>
 
     <% Html.Telerik().ScriptRegistrar().DefaultGroup(group => group
            .Add("telerik.common.js")
@@ -82,7 +86,7 @@
             var isActivated = false,
                 isOpened = false;
 
-            var dialog = $('#Window6').tWindow({
+            var dialog = $('#Window5').tWindow({
                     onOpen: function () { isOpened = true; },
                     onActivate: function () {isActivated = true; }
                 }).data('tWindow');
@@ -111,6 +115,15 @@
                 }).data('tWindow');
 
             ok($('.t-overlay').is(':visible'));
+        });
+
+        test('construction of modal window renders overlay with a z-index smaller by 1', function() {
+            var dialog = $t.window.create({
+                    html: '<div id="content">content</div>',
+                    modal: true
+                }).data('tWindow');
+
+            ok(parseInt($('.t-overlay').css('zIndex'), 10) == parseInt($(dialog.element).css('zIndex'), 10) - 1);
         });
 
         test('hiding second modal window does not hide first overlay', function() {
@@ -232,6 +245,60 @@
             ok(!dialog.prev("div").is(".t-overlay"));
             ok(overlappingDialog.prev("div").is(".t-overlay"));
             same(dialog.next("div")[0], overlappingDialog.prev("div")[0]);
+        });
+
+        test('creating a hidden modal window does not hide overlay', function() {
+            $t.window.create({
+                html: "foo",
+                modal: true
+            });
+
+            $("<div style='display: none' />").appendTo(document.body).tWindow({ modal: true });
+
+            ok($(".t-overlay").is(":visible"));
+        });
+
+        test('opening a Window moves it on top of all others', function() {
+            var w1 = $('#Window6').tWindow().data("tWindow");
+            var w2 = $('#Window7').tWindow().data("tWindow");
+            var w3 = $('#Window8').tWindow().data("tWindow");
+
+            w3.open();
+            w1.open();
+            w2.open();
+
+            var z1 = parseInt($(w1.element).css("zIndex"), 10);
+            var z2 = parseInt($(w2.element).css("zIndex"), 10);
+            var z3 = parseInt($(w3.element).css("zIndex"), 10);
+
+            ok(z2 > z1);
+            ok(z1 > z3);
+        });
+
+        test('opening a modal Window on top of another changes the z-index of the overlay', function() {
+            var w1 = $('#Window9').tWindow({modal: true}).data("tWindow");
+            var w2 = $('#Window10').tWindow({modal: true}).data("tWindow");
+
+            w2.open();
+            w1.open();
+
+            var windowZ = parseInt($(w1.element).css("zIndex"), 10);
+            var overlayZ = parseInt($(".t-overlay").css("zIndex"), 10);
+
+            ok(windowZ == overlayZ + 1);
+        });
+
+        test('creating a window from element with script content', function() {
+            var calls = 0;
+            window.temp = function() {
+                calls++;
+            }
+            var dialog = $t.window.create({
+                html: "foo<script>temp();<\/script>bar"
+            });
+
+            ok(dialog);
+            equal(calls, 1);
         });
 
     </script>

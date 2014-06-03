@@ -115,13 +115,20 @@ namespace Telerik.Web.Mvc.UI
         
         private GridColumnBase<T> CreateBoundColumn(GridColumnSettings settings)
         {
-            var lambdaExpression = ExpressionBuilder.Lambda<T>(null, settings.Member, false);
+            var memberType = settings.MemberType;
+
+            var lambdaExpression = ExpressionBuilder.Lambda<T>(memberType, settings.Member, false);
 
             var columnType = typeof(GridBoundColumn<,>).MakeGenericType(new[] { typeof(T), lambdaExpression.Body.Type });
 
             var constructor = columnType.GetConstructor(new[] { grid.GetType(), lambdaExpression.GetType() });
 
             var column = (GridColumnBase<T>)constructor.Invoke(new object[] { grid, lambdaExpression });
+
+            if (memberType != null)
+            {
+                (column as IGridBoundColumn).MemberType = memberType;
+            }
 
             column.Settings = settings;
             if (settings is GridColumnSettings<T>)

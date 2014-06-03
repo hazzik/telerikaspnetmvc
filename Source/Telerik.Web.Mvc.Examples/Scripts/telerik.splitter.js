@@ -119,7 +119,7 @@
                 });
 
         this.resizing = new $t.splitter.PaneResizing(this);
-    }
+    };
 
     function panePropertyAccessor(propertyName, triggersResize) {
         return function(pane, value) {
@@ -193,7 +193,7 @@
                 }
             }, options);
         },
-        ajaxRequest: function(pane, url) {
+        ajaxRequest: function(pane, url, data) {
             var $pane = $(pane),
                 paneConfig = $pane.data("pane");
 
@@ -201,13 +201,14 @@
                 $pane.append("<span class='t-icon t-loading t-pane-loading' />");
 
                 $.ajax(this.ajaxOptions($pane, {
-                    url: url || paneConfig.contentUrl
+                    url: url || paneConfig.contentUrl,
+                    data: data || {}
                 }));
             }
         },
         resize: function() {
             var $element = this.$element,
-                panes = $element.children(":not(.t-splitbar)"),
+                panes = $element.children(":not(.t-splitbar):not(.t-ghost-splitbar)"),
                 isHorizontal = this.orientation == "horizontal",
                 splitBarsCount = $element.children(".t-splitbar").length,
                 sizingProperty = isHorizontal ? "width" : "height",
@@ -258,28 +259,32 @@
             var sizedPanesWidth = 0,
                 sizedPanesCount = 0,
                 freeSizedPanes = $();
-        
+            
             panes.css({ position: "absolute", top: 0 })
                 [sizingProperty](function() {
                     var config = $(this).data("pane"), size;
 
-                    if (config.collapsed) {
-                        size = 0;
-                    } else if (isFluid(config.size)) {
-                        freeSizedPanes = freeSizedPanes.add(this);
-                        return;
-                    } else { // sized in px/%, not collapsed
-                        size = parseInt(config.size, 10);
+                    if (!config["collapsed"] && config["size"] && config.size.indexOf("NaN") != -1) { // resizing issues in iOS
+                        return false;
+                    } else {
+                        if (config.collapsed) {
+                            size = 0;
+                        } else if (isFluid(config.size)) {
+                            freeSizedPanes = freeSizedPanes.add(this);
+                            return;
+                        } else { // sized in px/%, not collapsed
+                            size = parseInt(config.size, 10);
 
-                        if (isPercentageSize(config.size)) {
-                            size = Math.floor(size * totalSize / 100);
+                            if (isPercentageSize(config.size)) {
+                                size = Math.floor(size * totalSize / 100);
+                            }
                         }
+
+                        sizedPanesCount++;
+                        sizedPanesWidth += size;
+
+                        return size;
                     }
-
-                    sizedPanesCount++;
-                    sizedPanesWidth += size;
-
-                    return size;
                 });
 
             totalSize -= sizedPanesWidth;
@@ -304,7 +309,7 @@
                     sum += child[sizingDomProperty];
                 });
         }
-    }
+    };
     
     $t.splitter.PaneResizing = function(splitter) {
         this.owner = splitter;
@@ -322,25 +327,29 @@
 
     $t.splitter.PaneResizing.prototype = {
         start: function(e) {
+            if ($t.isTouch)
+                e.stopImmediatePropagation();
+
             var splitBar = e.$draggable,
                 previousPane = splitBar.prev(), nextPane = splitBar.next(),
                 previousPaneConfig = previousPane.data("pane"), nextPaneConfig = nextPane.data("pane"),
                 isHorizontal = this.owner.orientation === "horizontal",
                 sizingProperty = isHorizontal ? "width" : "height",
                 sizingDomProperty = isHorizontal ? "offsetWidth" : "offsetHeight",
-                alternateSizingProperty = isHorizontal ? "height" : "width";
+                alternateSizingProperty = isHorizontal ? "height" : "width",
+                location = $t.touchLocation(e);
 
             this.positioningProperty = isHorizontal ? "left" : "top";
-            this.mousePositioningProperty = isHorizontal ? "pageX" : "pageY";
+            this.mousePositioningProperty = isHorizontal ? "x" : "y";
             this.previousPane = previousPane;
             this.nextPane = nextPane;
             this.initialSplitBarPosition = parseInt(splitBar[0].style[this.positioningProperty]);
-            this.initialMousePosition = e[this.mousePositioningProperty];
+            this.initialMousePosition = location[this.mousePositioningProperty];
             this.ghostSplitBar =
                 $("<div class='t-ghost-splitbar t-ghost-splitbar-" + this.owner.orientation + " t-state-default' />")
                     .css(alternateSizingProperty, e.$draggable[alternateSizingProperty]())
                     .css(this.positioningProperty, this.initialSplitBarPosition)
-                    .appendTo(this.owner.element);
+                    .appendTo(this.owner.$element);
 
             // set this.minSize and this.maxSize to the lowest and highest values that the ghost splitbar can go to
             // keep in mind the minSize/maxSize of both the previous and next panes
@@ -359,16 +368,23 @@
             this.maxSize = Math.min(nextBoundary - nextMinSize, prevBoundary + prevMaxSize);
             this.minSize = Math.max(prevBoundary + prevMinSize, nextBoundary - nextMaxSize);
 
-            $(document.body).css("cursor", splitBar.css("cursor"));  
+            $(document.body).css("cursor", splitBar.css("cursor"));
         },
         drag: function(e) {
-            var position = Math.min(this.maxSize, Math.max(this.minSize, this.initialSplitBarPosition + (e[this.mousePositioningProperty] - this.initialMousePosition)));
+            if ($t.isTouch)
+                e.stopImmediatePropagation();
+
+            var location = $t.touchLocation(e),
+                position = Math.min(this.maxSize, Math.max(this.minSize, this.initialSplitBarPosition + (location[this.mousePositioningProperty] - this.initialMousePosition)));
 
             this.ghostSplitBar
                 .toggleClass("t-restricted-size-" + this.owner.orientation, position == this.maxSize || position == this.minSize)
                 [0].style[this.positioningProperty] = position + "px";
         },
         stop: function(e) {
+            if ($t.isTouch)
+                e.stopImmediatePropagation();
+
             if (e.keyCode !== 27) {
 
                 var ghostPosition = parseInt(this.ghostSplitBar[0].style[this.positioningProperty]),
@@ -379,28 +395,29 @@
                     nextPaneConfig = this.nextPane.data("pane"),
                     previousPaneNewSize = ghostPosition - parseInt(this.previousPane[0].style[this.positioningProperty]),
                     nextPaneNewSize = parseInt(this.nextPane[0].style[this.positioningProperty]) + this.nextPane[0][sizingDomProperty] - ghostPosition - splitBarSize,
-                    totalSize = this.owner.$element[sizingProperty]();
-                
+                    totalSize = this.owner.$element[sizingProperty](),
+                    resized = !$t.isTouch || ($t.isTouch && !isNaN(previousPaneNewSize) && !isNaN(nextPaneNewSize));
+
                 totalSize -= splitBarSize * this.owner.$element.children('.t-splitbar').length;
-            
+
                 var fluidPanesCount = this.owner.$element.children(".t-pane").filter(function() { return isFluid($(this).data("pane").size); }).length;
-            
+
                 if (!isFluid(previousPaneConfig.size) || fluidPanesCount > 1) {
                     if (isFluid(previousPaneConfig.size)) {
                         fluidPanesCount--;
                     }
-                    
+
                     previousPaneConfig.size = previousPaneNewSize + "px";
                 }
-            
+
                 if (!isFluid(nextPaneConfig.size) || fluidPanesCount > 1) {
                     nextPaneConfig.size = nextPaneNewSize + "px";
-                }   
+                }
             }
 
             this.ghostSplitBar.remove();
 
-            if (e.keyCode !== 27) {
+            if (e.keyCode !== 27 && resized) {
                 this.owner.$element.trigger("resize");
             }
 

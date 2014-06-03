@@ -63,7 +63,8 @@
                 commands.Delete().ButtonType(type);
             }).Width(180).Title("Commands");
         })
-        .Editable(editing => editing.Mode(mode))
+            .Editable(editing => editing
+                .Mode(mode))
         .Pageable()
         .Scrollable()
         .Sortable()
@@ -72,6 +73,7 @@
 </asp:content>
 
 <asp:content contentplaceholderid="HeadContent" runat="server">
+
 <style type="text/css">
     .field-validation-error
     {

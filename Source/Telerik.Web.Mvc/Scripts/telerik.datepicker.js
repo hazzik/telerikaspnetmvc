@@ -3,7 +3,9 @@
     var $t = $.telerik;
     $t.scripts.push("telerik.datepicker.js");
 
-    var sharedCalendar = null;
+    var sharedCalendar = null,
+		mobileSafari = (navigator.userAgent.search(/like\sMac\sOS\sX;.*Mobile\/\S+/) != -1),
+		mobileSafari41 = (navigator.userAgent.search(/4_1\slike\sMac\sOS\sX;.*Mobile\/\S+/) != -1); // The bug is undetectable there.
 
     $t.datetime.parseByToken = function (value, today) {
         if (value === null || value === '') return null;
@@ -178,6 +180,10 @@
                                     minDate: this.minValue,
                                     maxDate: this.maxValue
                                 });
+                
+                if ($.browser.msie && parseInt($.browser.version) < 7) {
+                    sharedCalendar.prepend('<iframe src="javascript:\'\';" style="position:absolute; width: 100%; height: 190px; border: 0; top: 0; left: 0; opacity: 0; filter:alpha(opacity=0);"></iframe>');
+                }
 
                 $t.fx._wrap(sharedCalendar).css('display', 'none');
 
@@ -251,6 +257,13 @@
             // reposition & rewire the shared calendar
             elementPosition = position.offset;
             elementPosition.top += position.outerHeight;
+
+            if (mobileSafari) {
+                if (!document.body.scrollLeft && !mobileSafari41)
+                    elementPosition.left -= window.pageXOffset;
+                if (!document.body.scrollTop && !mobileSafari41)
+                    elementPosition.top -= window.pageYOffset;
+            }
 
             if (isRtl)
                 elementPosition.left -= (sharedCalendar.outerWidth() || sharedCalendar.parent().outerWidth()) - position.outerWidth;
@@ -435,8 +448,11 @@
                     return this[propertyName];
 
                 this[propertyName] = new Date(value.value ? value.value : value);
-                sharedCalendar.data("associatedDateView", null);
-                this._reassignSharedCalendar();
+
+                if (sharedCalendar.data("associatedDateView") === this) {
+                    sharedCalendar.data("associatedDateView", null);
+                    this._reassignSharedCalendar();
+                }
             };
     }, this));
 
@@ -458,6 +474,13 @@
                                 this._open();
                             }
                             this.$element.removeClass('t-state-error');
+                        }, this),
+                        blur: $.proxy(function(e) {
+                            this._bluring = setTimeout($.proxy(function() {
+                                if (!this.dateView.isOpened() && this.dateView === this.dateView.$calendar.data("associatedDateView")) {
+                                    this._update($element.val());
+                                }
+                            }, this), 100);
                         }, this)
                     }); ;
 
@@ -495,9 +518,14 @@
         this.dateView.$calendar
             .bind("click", $.proxy(function(e) {
                 e.stopPropagation();
+                clearTimeout(this._bluring);
+                if (this.dateView !== this.dateView.$calendar.data("associatedDateView")) {
+                    return;
+                }
                 if (e.target.parentNode.className.indexOf("t-state-selected") != -1) {
                     this._close();
                 }
+                window.setTimeout(function(){$element.focus();}, 1);
             }, this));
 
         this.inputValue = $element.val();
@@ -545,7 +573,7 @@
         _togglePopup: function () {
             if (this.dateView.isOpened()) {
                 this._close();
-            } else {
+            } else {                
                 this.element.focus();
                 this._open();
             }
@@ -726,8 +754,6 @@
                 }
 
                 this.dateView[method](parsedValue);
-                if (!$t.datepicker.isInRange(this.selectedValue, this.minValue, this.maxValue))
-                    this.value(parsedValue);
             }
         };
     }, this));

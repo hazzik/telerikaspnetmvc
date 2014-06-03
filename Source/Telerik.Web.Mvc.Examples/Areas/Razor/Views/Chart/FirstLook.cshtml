@@ -15,7 +15,9 @@
     {
         series.Bar().Stack(ViewBag.Stack);
         series.Column().Stack(ViewBag.Stack);
-        series.Line().Stack(ViewBag.Stack).Labels(true);
+        series.Line()
+                .Labels(labels => labels.Format("${0:#,##0}").Visible(true))
+                .Stack(ViewBag.Stack);
     })
     .Series(series =>
     {
@@ -36,8 +38,15 @@
             series.Line(s => s.TotalSales).Name("Total Sales");
         }
     })
-        .CategoryAxis(axis => axis
+    .CategoryAxis(axis => axis
         .Categories(s => s.DateString)
+    )
+    .ValueAxis(axis => axis
+        .Numeric().Labels(labels => labels.Format("${0:#,##0}"))
+    )
+    .Tooltip(tooltip => tooltip
+        .Visible(true)
+        .Format("${0:#,##0}")
     )
     .HtmlAttributes(new { style = "width: 600px; height: 400px;" })
 )
