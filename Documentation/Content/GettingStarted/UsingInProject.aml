@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+      <!-- <autoOutline /> -->
+		<para>
+      		This topic shows how to use <token>TelerikMvc</token> in an <token>Mvc</token>
+      		application.
+		</para>
+    </introduction>
+    <prerequisites>
+    	<content>
+    		Before proceeding with <token>TelerikMvc</token> make sure you have all the 
+    		<link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    	</content>
+    </prerequisites>
+    <!-- One or more procedure or section with procedure -->
+    <procedure>
+      <title>Using <token>TelerikMvc</token> in an <token>Mvc</token> web application</title>
+      <steps class="ordered">
+        <step>
+          <content>
+            <para>
+            	Open an existing <token>Mvc</token> application in Visual Studio or create a new one.
+            </para>
+          </content>
+        </step>
+        <step>
+          <content>
+            <para>Add a reference to <token>TelerikMvcDll</token> which is located in the <localUri>Binaries</localUri> folder of 
+            <token>TelerikMvc</token> install location:</para>
+			<list class="bullet">
+			  <listItem>Right click the "References" item in Solution Explorer.
+			  <mediaLink><image xlink:href="AddReference"/></mediaLink>
+			  </listItem>
+			  <listItem>Choose the <ui>Browse</ui> tab in the "Add Reference" dialog and browse to
+			  the location where you extracted the <token>TelerikMvc</token> zip file. In case you have chosen
+			  the suggested location this would be <token>InstallationLocation</token>. Open the <localUri>Binaries</localUri>
+			  folder.
+			  </listItem>
+			  <listItem>Select <localUri>Telerik.Web.Mvc.dll</localUri> and click the <ui>OK</ui> button.
+			  <mediaLink><image xlink:href="PickReference"/></mediaLink>
+			  </listItem>
+			</list>
+          </content>
+        </step>
+        <step>
+        	<content>
+ 				<para>Register the <token>TelerikMvc</token> namespaces:</para>
+				<list class="bullet">
+					<listItem>
+						Open the <localUri>web.config</localUri> file of your <token>Mvc</token> application.
+					</listItem>
+					<listItem>
+						Locate the <codeInline>&lt;namespaces&gt;</codeInline> tag which is within the <codeInline>&lt;pages&gt;</codeInline> tag.
+					</listItem>
+					<listItem>
+						Add the following line at the end of the <codeInline lang="xml">&lt;namespaces&gt;</codeInline> tag:
+						<code lang="xml">
+						<![CDATA[
+						<add namespace="Telerik.Web.Mvc.UI" />
+						]]>
+						</code>
+						Here is the how the <codeInline>&lt;namespaces&gt;</codeInline> tag should look like:
+						<code lang="xml">
+						<![CDATA[
+						<namespaces>
+							<add namespace="System.Web.Mvc" />
+							<add namespace="System.Web.Mvc.Ajax" />
+							<add namespace="System.Web.Mvc.Html" />
+							<add namespace="System.Web.Routing" />
+							<add namespace="System.Linq" />
+							<add namespace="System.Collections.Generic" />
+			
+			                <add namespace="Telerik.Web.Mvc.UI" />
+			            </namespaces>							
+						]]>
+						</code>
+					</listItem>
+				</list>
+        	</content>
+        </step>
+        <step>
+        	<content>
+        		<para>Now you can start using <token>TelerikMvc</token>! Let's try the
+        		<codeEntityReference>T:Telerik.Web.Mvc.UI.ScriptRegistrar</codeEntityReference>
+        		and register a few JavaScript files in the <token>Mvc</token> application.
+        		</para>
+        		<list class="bullet">
+        			<listItem>Open the master page of your application. If using the defaults the master page is <localUri>Views\Shared\Site.master</localUri>.
+        			<alert class="note">
+        				You can use the <codeEntityReference>T:Telerik.Web.Mvc.UI.ScriptRegistrar</codeEntityReference> in any
+        				master page or view. Picking <localUri>Site.master</localUri> is for the example purpose.
+        			</alert>
+        			</listItem>
+        			<listItem>
+        			Go at the end of your page and paste the following code just before the end of the <codeInline>&lt;body&gt;</codeInline>
+        			tag:
+        			<code lang="C#">
+        			<![CDATA[
+				    <% 
+				        Html.Telerik()
+				           .ScriptRegistrar()
+				           .Scripts(scripts => scripts.Add("~/Scripts/MicrosoftMvcAjax.debug.js"))
+				           .Render();
+				     %>        			
+        			]]>
+        			</code>
+        			<alert class="note">
+        				Registering your JavaScript files at the end of the HTML document is not mandatory but is 
+        				considered a good practice.
+        			</alert>
+        			</listItem>
+        			<listItem>
+        			Rebuild the application and run it in your browser. If you check the generated output you will find this
+        			at the end of the page:
+        			<code lang="xml">
+        			<![CDATA[
+        			<script type="text/javascript" src="/Scripts/MicrosoftMvcAjax.debug.js"></script>
+        			]]>
+        			</code>
+        			This is the output of the ScriptRegistrar component generated by its
+        			<codeEntityReference>M:Telerik.Web.Mvc.UI.ScriptRegistrar.Render</codeEntityReference>
+        			method. 
+        			</listItem>
+        			<listItem>
+        			Now let's execute some JavaScript code when the page is loaded. Modify the ScriptRegistrar declaration like this:
+        			<code lang="C#">
+        			<![CDATA[
+				    <% 
+				        Html.Telerik()
+				           .ScriptRegistrar()
+				           .Scripts(scripts => scripts.Add("~/Scripts/MicrosoftMvcAjax.debug.js"))
+				           .OnDocumentReady(()=>{ %>
+				                alert("Using jQuery version " + $().jquery);
+				            <%})
+				           .Render();
+				     %>
+        			]]>
+        			</code>
+        			</listItem>
+        			<listItem>
+        			Rebuild the application and run it in your browser. You should see an alert box showing the
+        			version of the jQuery library which is implicitly loaded by the ScriptRegistrar:
+        			<mediaLink><image xlink:href="AlertJQuery"/></mediaLink>
+        			</listItem>
+        		</list>
+        	</content>
+        </step>
+      </steps>
+      <conclusion>These are the basics required to start using <token>TelerikMvc</token>. Please check the other
+      topics in this manual for additional info.</conclusion>
+    </procedure>
+    
+    <relatedTopics>
+    	<link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369" />
+    	<link xlink:href="cb7aba78-ad8a-4e00-b83f-0772daba75fe" />
+    	<link xlink:href="7fc6d783-ce22-443d-9999-20fe4299e2b3" />
+    	<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801" />
+    </relatedTopics>
+    
+  </developerWalkthroughDocument>
+</topic>

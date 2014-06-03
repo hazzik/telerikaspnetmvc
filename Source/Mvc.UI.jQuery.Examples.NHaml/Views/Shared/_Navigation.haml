@@ -1,0 +1,28 @@
+- var navigation = Html.jQuery().Accordion().Name("navigation").Items() (parent) =>
+  - parent.Add().Text("Accordion").Selected(string.Equals(ViewContext.RouteData.Values["controller"] as string, "Accordion")).Content() () =>
+    %ul
+	   %li
+	     = Html.ActionLink("Basic example", "Basic", "Accordion")
+  - parent.Add().Text("DatePicker").Selected(string.Equals(ViewContext.RouteData.Values["controller"] as string, "DatePicker")).Content() () =>
+    %ul
+	   %li
+	     = Html.ActionLink("Basic example", "Basic", "DatePicker")
+  - parent.Add().Text("MessageBox").Selected(string.Equals(ViewContext.RouteData.Values["controller"] as string, "MessageBox")).Content() () =>
+    %ul
+	   %li
+	     = Html.ActionLink("Info box", "Info", "MessageBox")
+	   %li
+	     = Html.ActionLink("Error box", "Error", "MessageBox")
+  - parent.Add().Text("ProgressBar").Selected(string.Equals(ViewContext.RouteData.Values["controller"] as string, "ProgressBar")).Content() () =>
+    %ul
+	   %li
+	     = Html.ActionLink("Basic example", "Basic", "ProgressBar")
+  - parent.Add().Text("Slider").Selected(string.Equals(ViewContext.RouteData.Values["controller"] as string, "Slider")).Content() () =>
+    %ul
+	   %li
+	     = Html.ActionLink("Basic example", "Basic", "Slider")
+  - parent.Add().Text("Tab").Selected(string.Equals(ViewContext.RouteData.Values["controller"] as string, "Tab")).Content() () =>
+    %ul
+	   %li
+	     = Html.ActionLink("Basic example", "Basic", "Tab")
+- navigation.Render()

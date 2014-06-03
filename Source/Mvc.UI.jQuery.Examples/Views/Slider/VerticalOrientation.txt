@@ -1,0 +1,3 @@
+﻿Change the orientation of the slider to vertical by setting the orientation option to "vertical."<br /><br />
+
+<strong>Orientation(jQuerySliderOrientation.Vertical)</strong>

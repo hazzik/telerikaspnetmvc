@@ -1,0 +1,254 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="cb7aba78-ad8a-4e00-b83f-0772daba75fe" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <autoOutline lead="none" /> 
+      <para>This topic will guide you how to use <token>TelerikMvc</token> web asset management
+      in order to combine, group, compress and cache your JavaScript files.
+      </para>
+    </introduction>
+    <prerequisites>
+		<content>
+    		Before proceeding make sure you have all the <link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    		This topic assumes that <token>TelerikMvc</token> have been integrated in your
+    		<token>Mvc</token> application. Please check <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8" /> for additional info.
+    	</content>
+    </prerequisites>
+    <section address="CreateGroup">
+    	<title>Creating web asset groups</title>
+    	<content>
+    		<para>
+    		Asset groups can be defined in various locations:
+    		</para>
+    		<list class="bullet">
+    			<listItem>master page</listItem>
+    			<listItem>view page</listItem>
+    			<listItem>partial view</listItem>
+    		</list>
+    		<alert class="note">
+    		JavaScript and CSS files which are commonly used should be registered as web asset groups in the master page file.
+    		</alert>
+    		<para>
+    			Let's define a web asset group for the commonly used JavaScript files. To do so paste the following
+    			code at the end of your master page file (before the closing <codeInline>&lt;/body&gt;</codeInline> tag):
+    		</para>
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    			Html.Telerik().ScriptRegistrar().Scripts(scripts =>
+    				    scripts.AddGroup("CommonScript", group => 
+    					    group.Add("~/Scripts/Core.js")
+    						     .Add("~/Scripts/Stuff.js")
+                        )
+                     )
+    				.Render();
+    		%>
+    		]]>
+    		</code>
+    		<para>
+    			That code defines a new web asset group called "CommonScript" and adds two JavaScript files
+    			to the group. If you run your web application you would see that both files are output in the
+    			result HTML. You would also notice that the jQuery script is also output despite you have not 
+    			registered it with the <codeInline>ScriptRegistrar</codeInline>.
+    			<code lang="xml">
+    			<![CDATA[
+    			<script type="text/javascript" src="/Scripts/jquery-1.3.2.js"></script>
+				<script type="text/javascript" src="/Scripts/Core.js"></script>
+				<script type="text/javascript" src="/Scripts/Stuff.js"></script>
+    			]]>
+    			</code>
+    		</para>
+    		<alert class="important">
+    			By default the jQuery script is always included when you use the <codeInline>ScriptRegistrar</codeInline>.
+    			It is included in the so called "default" web asset group. You can add files to that group too if you
+    			wish to later combine them with the jQuery JavaScript. Here is how:
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    			Html.Telerik().ScriptRegistrar().Scripts(scripts=>
+    				    scripts.DefaultGroup(group => 
+    					    group.Add("~/Scripts/Core.js")
+    						     .Add("~/Scripts/Stuff.js")
+                        )
+                     )
+    				.Render();
+    		%>    		
+    		]]>
+    		</code>
+    		</alert>
+    	</content>
+    </section>
+    <section address="Combination">
+    	<title>Web asset combination</title>
+    	<content>
+    		<para>
+    			In the previous section we have defined our first web asset group. However the registered JavaScript files
+    			were output as separate <codeInline>&lt;script&gt;</codeInline> tags. While there is nothing wrong with that
+    			when the number of JavaScript files increases so will the number of requests the web browser must make in order
+    			to download them. That's where script combination comes into play.
+    		</para>
+    		<alert class="note">
+    			Web asset combination must be enabled if you intend to use compression and caching.
+    		</alert>
+    		<para>
+				Web asset combination relies on the <codeEntityReference>T:Telerik.Web.WebAssetHttpHandler</codeEntityReference>
+				so the same should be registered in your <token>Mvc</token> application.
+    		</para>
+    		<procedure>
+    			<title>Registering the asset HTTP handler</title>
+    			<steps class="ordered">
+	    			<step>
+	    				<content>
+		    				Open the <localUri>web.config</localUri> file of your <token>Mvc</token> application.
+	    				</content>
+	    			</step>
+	    			<step>
+	    				<content>
+	    					Locate the <codeInline>&lt;httpHandlers&gt;</codeInline> tag within
+	    					<codeInline>&lt;system.web&gt;</codeInline>
+	    				</content>
+	    			</step>
+	    			<step>
+	    				<content>
+	    					Paste the following markup within the <codeInline>&lt;httpHandlers&gt;</codeInline> tag:
+	    					<code lang="xml">
+	    						<![CDATA[
+	    						 <add verb="GET,HEAD" path="asset.axd" validate="false" type="Telerik.Web.Mvc.WebAssetHttpHandler, Telerik.Web.Mvc"/>
+	    						]]>
+	    					</code>
+	    				</content>
+	    				<alert class="note">
+	    					The <codeInline>&lt;httpHandlers&gt;</codeInline> tag is used when your <token>Mvc</token> application
+	    					is hosted in IIS6, IIS7 in classic mode or Visual Studio's built-in web server.
+	    				</alert>
+	    			</step>
+	    			<step>
+						<content>
+	    					Locate the <codeInline>&lt;handlers&gt;</codeInline> tag within
+	    					<codeInline>&lt;system.webServer&gt;</codeInline>
+	    				</content>
+	    			</step>
+	    			<step>
+	    				<content>
+	    					Paste the following markup within the <codeInline>&lt;handlers&gt;</codeInline> tag:
+	    					<code lang="xml">
+	    						<![CDATA[
+	    						 <add name="AssetHandler" preCondition="integratedMode" verb="GET,HEAD" path="asset.axd" type="Telerik.Web.Mvc.WebAssetHttpHandler, Telerik.Web.Mvc"/>
+	    						]]>
+	    					</code>
+	    				</content>
+	    				<alert class="note">
+	    					The <codeInline>&lt;handlers&gt;</codeInline> tag is used when your <token>Mvc</token> application
+	    					is hosted in IIS7 integrated mode.
+	    				</alert>
+	    			</step>	    			
+    			</steps>
+    		</procedure>
+    		<para>
+    			After successfully registering the HTTP handler we can enable combination for the asset group
+    			which we defined in the previous section by using the <codeEntityReference>M:Telerik.Web.UI.WebAssetGroupBuilder.Combined</codeEntityReference> method:
+    		</para>
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    			Html.Telerik().ScriptRegistrar().Scripts(scripts =>
+    				    scripts.AddGroup("CommonScript", group => 
+    					    group.Add("~/Scripts/Core.js")
+    						     .Add("~/Scripts/Stuff.js")
+    						     .Combined(true)
+                        )
+                     )
+    				.Render();
+    		%>
+    		]]>
+    		</code>
+    		<para>
+    			Now if you run the web application again you will see only a single <codeInline>&lt;script&gt;</codeInline>
+    			tag output for the asset group.
+    		</para>
+    	</content>
+    </section>
+    <section address="Caching">
+    	<title>Caching web asset groups</title>
+    	<content>
+    		To enable enable HTTP caching of your combined web asset group you should use the
+			<codeEntityReference>M:Telerik.Web.UI.WebAssetGroupBuilder.CacheDurationInDays</codeEntityReference>
+			method:
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    			Html.Telerik().ScriptRegistrar().Scripts(scripts =>
+    				    scripts.AddGroup("CommonScript", group => 
+    					    group.Add("~/Scripts/Core.js")
+    						     .Add("~/Scripts/Stuff.js")
+    						     .Combined(true)
+    						     .CacheDurationInDays(365)
+                        )
+                     )
+    				.Render();
+    		%>
+    		]]>
+    		</code>
+    		<alert class="note">
+    			Caching is always disabled when your application is in debug mode 
+    			(<codeInline>&lt;compilation debug="true"&gt;</codeInline>).
+    		</alert>
+    	</content>
+    </section>
+	<section address="Compressing">
+    	<title>Compressing web asset groups</title>
+    	<content>
+    		<para>
+    		To enable compression of your combined web asset group you should use the
+			<codeEntityReference>M:Telerik.Web.UI.WebAssetGroupBuilder.Compress</codeEntityReference>
+			method:
+			</para>
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    			Html.Telerik().ScriptRegistrar().Scripts(scripts =>
+    				    scripts.AddGroup("CommonScript", group => 
+    					    group.Add("~/Scripts/Core.js")
+    						     .Add("~/Scripts/Stuff.js")
+    						     .Combined(true)
+    						     .CacheDurationInDays(365)
+    						     .Compress(true)
+                        )
+                     )
+    				.Render();
+    		%>
+    		]]>
+    		</code>
+    		<alert class="important">
+    			GZIP compression dramatically reduces the size of your web assets which in turn improves
+    			the loading time of web sites. It is highly recommended to enable GZIP compression for your
+    			web assets.
+    		</alert>
+    	</content>
+    </section>
+    <section address="CDN">
+    	<title>Content Delivery Network support</title>
+    	<content>
+    		To distribute your web asset group via content delivery network you should use the
+    		<codeEntityReference>M:Telerik.Web.UI.WebAssetGroupBuilder.ContentDeliveryNetworkUrl</codeEntityReference> method:
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    			Html.Telerik().ScriptRegistrar().Scripts(scripts =>
+    				    scripts.AddGroup("CommonScript", group => 
+    					    group.Add("~/Scripts/Core.js")
+    						     .Add("~/Scripts/Stuff.js")
+    						     .Combined(true)
+    						     .CacheDurationInDays(365)
+    						     .Compress(true)
+    						     .ContentDeliveryNetworkUrl("http://mycdn.com/CommonScript.js")
+                        )
+                     )
+    				.Render();
+    		%>
+    		]]>
+    		</code>    		
+    	</content>
+    </section>
+  </developerConceptualDocument>
+</topic>

@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="6d09f01d-a242-4038-bc6a-b6c65c35cc86" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!--
+    <summary>
+      <para>Optional summary abstract</para>
+    </summary>
+    -->
+    <introduction>
+      <!-- Uncomment this to generate an outline of the section and sub-section
+           titles.  Specify a numeric value as the inner text to limit it to
+           a specific number of sub-topics when creating the outline.  Specify
+           zero (0) to limit it to top-level sections only.  -->
+      	
+        <para><newTerm>Web assets</newTerm> represent the JavaScript and CSS files which you are using
+        in your <token>Mvc</token> application.
+        </para>
+        <para>
+        	<token>TelerikMvc</token> helps you manage your web assets easily by providing the following features:
+        </para>
+        <autoOutline lead="none"/>
+    </introduction>
+      <section address="Combination">
+        	<title>Combination</title>
+        	<content>
+        		Web asset combination allows you to decrease the total number of requests made to
+        		the web server in order to improve the loading time of your page. 
+        		<alert class="important">
+	        		Combined scripts are served by
+	        		the <codeEntityReference>T:Telerik.Web.WebAssetHttpHandler</codeEntityReference> so it must
+	        		be registered in the <codeInline>web.config</codeInline> of your <token>Mvc</token>
+	        		application.
+        		</alert>
+        	</content>
+        </section>
+        <section address="Grouping">
+        	<title>Grouping</title>
+        	<content>
+        		By arranging your web assets in groups you can combine the related assets in a single request. This
+        		is beneficial if you have web assets specific to the whole web site and to the page itself. 
+        		The common JavaScript files (such as jQuery) are served in all pages and can be groupped together. Page
+        		specific JavaScript files can be also groupped toghether (but not with the site-specific ones).
+        		<para>
+        		Consider the following example:
+        		</para>
+        		<table>
+        			<title>Standalone JavaScript files</title>
+        			<tableHeader>
+        				<row>
+        					<entry><fictitiousUri>http://example.com/list</fictitiousUri></entry>
+        					<entry><fictitiousUri>http://example.com/view/3</fictitiousUri></entry>
+        					<entry><fictitiousUri>http://example.com/edit/3</fictitiousUri></entry>
+        				</row>
+        			</tableHeader>
+        			<row>
+        				<entry>
+        					<list class="ordered">
+        						<listItem>jquery-1.3.2.js</listItem>
+        						<listItem>jquery-ui-1.7.2.custom.js</listItem>
+        						<listItem>jquery.template.js</listItem>
+        						<listItem>jquery.pagination.js</listItem>
+        						<listItem>Utility.js</listItem>
+        						<listItem>Search.js</listItem>
+        						<listItem>List.js</listItem>
+        					</list>
+        				</entry>
+        				<entry>
+        					<list class="ordered">
+        						<listItem>jquery-1.3.2.js</listItem>
+        						<listItem>jquery-ui-1.7.2.custom.js</listItem>
+        						<listItem>jquery.template.js</listItem>
+        						<listItem>jquery.pagination.js</listItem>
+        						<listItem>Utility.js</listItem>
+        						<listItem>View.js</listItem>
+        					</list>
+        				</entry>
+        				<entry>
+							<list class="ordered">
+								<listItem>jquery-1.3.2.js</listItem>
+        						<listItem>jquery-ui-1.7.2.custom.js</listItem>
+        						<listItem>jquery.validate.js</listItem>
+        						<listItem>jquery.form.js</listItem>
+        						<listItem>jqery.watermark.js</listItem>
+        						<listItem>Utility.js</listItem>
+        						<listItem>Edit.js</listItem>
+        					</list>
+						</entry>
+        			</row>
+        		</table>
+        		<para>
+        			We can arrange those scripts in the following groups:
+        		</para>
+				<definitionTable>
+					<definedTerm>jQueryBase</definedTerm>
+					<definition>
+						<list class="bullet">
+							<listItem>jquery-1.3.2.js</listItem>
+							<listItem>jquery-ui 1.7.2.custom.js</listItem>
+						</list>
+					</definition>
+					<definedTerm>ListView</definedTerm>
+					<definition>
+						<list class="bullet">
+							<listItem>jquery.template.js</listItem>
+							<listItem>jquery.pagination.js</listItem>
+						</list>
+					</definition>
+					<definedTerm>Form</definedTerm>
+					<definition>
+						<list class="bullet">
+							<listItem>jquery.validate.js</listItem>
+							<listItem>jquery.form.js</listItem>
+							<listItem>jquery.watermark.js</listItem>
+						</list>
+					</definition>
+					<definedTerm>ListLocal</definedTerm>
+					<definition>
+						<list class="bullet">
+							<listItem>Utility.js</listItem>
+							<listItem>Search.js</listItem>
+							<listItem>List.js</listItem>
+						</list>
+					</definition>
+					<definedTerm>ViewLocal</definedTerm>
+					<definition>
+						<list class="bullet">
+							<listItem>Utility.js</listItem>
+							<listItem>View.js</listItem>
+						</list>
+					</definition>
+					<definedTerm>EditLocal</definedTerm>
+					<definition>
+						<list class="bullet">
+							<listItem>Utility.js</listItem>
+							<listItem>Edit.js</listItem>
+						</list>
+					</definition>
+				</definitionTable>	
+				<para>Now the scripts will be output like this:</para>
+        		<table>
+        			<title>Groupped and combined JavaScript files</title>
+        			<tableHeader>
+        				<row>
+        					<entry><fictitiousUri>http://example.com/list</fictitiousUri></entry>
+        					<entry><fictitiousUri>http://example.com/view/3</fictitiousUri></entry>
+        					<entry><fictitiousUri>http://example.com/edit/3</fictitiousUri></entry>
+        				</row>
+        			</tableHeader>
+        			<row>
+        				<entry>
+        					<list class="ordered">
+        						<listItem>jQueryBase</listItem>
+        						<listItem>ListView</listItem>
+        						<listItem>ListLocal</listItem>
+        					</list>
+        				</entry>
+        				<entry>
+        					<list class="ordered">
+        						<listItem>jQueryBase</listItem>
+        						<listItem>ListView</listItem>
+        						<listItem>ViewLocal</listItem>
+        					</list>
+        				</entry>
+        				<entry>
+							<list class="ordered">
+								<listItem>jQueryBase</listItem>
+        						<listItem>Form</listItem>
+        						<listItem>EditLocal</listItem>
+        					</list>
+						</entry>
+        			</row>
+        		</table>
+        		<para>
+        			The benefits of grouping and combining over individual files or single combined file are:
+        		</para>
+        		<list class="ordered">
+        			<listItem>Sending less request to the web server (as the files are now grouped and combined).</listItem>
+        			<listItem>Not downloading the same files between the page visits (comparing to single combined file response).</listItem>
+        			<listItem>Downloading only the files that are required for the current page.</listItem>
+        		</list>
+        	</content>
+        </section>
+        <section address="Compression">
+        	<title>Compression</title>
+        	<content>
+        		<token>TelerikMvc</token> web asset support allows you to compress your JavaScript and CSS files. Compressed
+        		web assets will save traffic bandwidth and as a result will improve the loading time of your page.
+        		<alert class="important">
+        			Compression works only for combined web asset groups. Only then are the web resources
+        			served through the web asset HTTP handler which is mandatory for compressing the output.
+        		</alert>
+        		<alert class="note">
+        			Most modern browsers support compressed content. The only notable exception is Internet Explorer 6.0 - some
+        			older minor versions do not properly support compressed JavaScript. As a result the web asset HTTP handler
+        			will not serve compressed output to Internet Explorer 6.
+        		</alert>
+        	</content>
+        </section>
+        <section address="Caching">
+        	<title>Caching</title>
+        	<content>
+        		<token>TelerikMvc</token> web asset support allows you to configure the time duration for which
+        		the browser should cache the files.
+        		<alert class="important">
+        			Caching works only for combined web asset groups. Only then are the web resources
+        			served through the web asset HTTP handler which is mandatory to output the HTTP caching headers.
+        		</alert>
+        	</content>
+        </section>
+        <section address="CDN">
+        	<title>Content Delivery Network Support</title>
+        	<content>
+        		<para>
+        		Content Delivery Networks (CDN) improve the overal performance and latency of a web site
+        		by hosting commonly used static resources (JavaScript, CSS and images). 
+        		<token>TelerikMvc</token> web asset support allows you to transparantly use CDN for your web assets. Once your 
+        		<token>Mvc</token> is ready you can upload a web asset group to a CDN provider of your choice and then enable
+        		CDN support for that. Here is how easy is that:
+        		</para>
+        		<code lang="C#">
+        			<![CDATA[
+					<% Html.jQuery().ScriptRegistrar()
+					    .Scripts(script => script.AddGroup( "jQueryBase", group => 
+					        group.Add("~/Scripts/jquery-1.3.2.js")
+					            .Add("~/Scripts/jquery-ui-1.7.2.custom.js")
+					            .ContentDeliveryNetworkPath("http//mycdn.com/jQueryBase.js")
+					    )
+					    .Render();
+					%>
+        			]]>
+        		</code>
+        		<alert class="important">
+        			When CDN support is enabled combination, compression and caching settings of the asset group will not be 
+        			taken into account. The CDN provider will controll those settings.
+        		</alert>
+        	</content>
+        </section>
+    <relatedTopics>
+    	<link xlink:href="cb7aba78-ad8a-4e00-b83f-0772daba75fe"/>
+      <!-- One or more of the following:
+           - A local link
+           - An external link
+           - A code entity reference
+
+      <link xlink:href="Other Topic's ID"/>
+      <link xlink:href="Other Topic's ID">Link inner text</link>
+
+      <externalLink>
+          <linkText>Link text</linkText>
+          <linkAlternateText>Optional alternate link text</linkAlternateText>
+          <linkUri>URI</linkUri>
+      </externalLink>
+
+      <codeEntityReference>API member ID</codeEntityReference>
+
+      Examples:
+
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8270" />
+      <link xlink:href="00e97994-e9e6-46e0-b420-5be86b2f8278">Some other topic</link>
+
+      <externalLink>
+          <linkText>SHFB on CodePlex</linkText>
+          <linkAlternateText>Go to CodePlex</linkAlternateText>
+          <linkUri>http://shfb.codeplex.com</linkUri>
+      </externalLink>
+
+      <codeEntityReference>T:TestDoc.TestClass</codeEntityReference>
+      <codeEntityReference>P:TestDoc.TestClass.SomeProperty</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.#ctor(System.String,System.Int32)</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.ToString</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.FirstMethod</codeEntityReference>
+      <codeEntityReference>M:TestDoc.TestClass.SecondMethod(System.Int32,System.String)</codeEntityReference>
+      -->
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

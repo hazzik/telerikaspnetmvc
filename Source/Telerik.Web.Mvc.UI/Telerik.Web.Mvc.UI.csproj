@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A44AA636-4A46-4216-8E29-2FD498441A5D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Telerik.Web.Mvc.UI</RootNamespace>
+    <AssemblyName>Telerik.Web.Mvc.UI</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\SharedFiles\Telerik.Web.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Routing">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedFiles\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Breadcrumb\Breadcrumb.cs" />
+    <Compile Include="Breadcrumb\BreadcrumbBuilder.cs" />
+    <Compile Include="Common\INavigationItem.cs" />
+    <Compile Include="Common\LinkedObjectBase.cs" />
+    <Compile Include="Common\LinkedObjectCollection.cs" />
+    <Compile Include="Common\UrlGenerator.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Menu\IMenuItemContainer.cs" />
+    <Compile Include="Menu\Menu.cs" />
+    <Compile Include="Menu\MenuBuilder.cs" />
+    <Compile Include="Menu\MenuExtension.cs" />
+    <Compile Include="Menu\MenuItem.cs" />
+    <Compile Include="Menu\MenuItemBuilder.cs" />
+    <Compile Include="Menu\MenuItemFactory.cs" />
+    <Compile Include="Menu\MenuItemJsonConverter.cs" />
+    <Compile Include="Menu\MenuItemsJsonResult.cs" />
+    <Compile Include="Menu\MenuOrientation.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\ActionAuthorizationCache.cs" />
+    <Compile Include="Security\AuthorizationInfo.cs" />
+    <Compile Include="Security\ControllerAuthorization.cs" />
+    <Compile Include="Security\ControllerTypeCache.cs" />
+    <Compile Include="Security\NavigationItemAuthorization.cs" />
+    <Compile Include="Security\UrlAuthorization.cs" />
+    <Compile Include="SiteMap\PopulateSiteMapAttribute.cs" />
+    <Compile Include="SiteMap\SiteMapBase.cs" />
+    <Compile Include="SiteMap\SiteMapBuilder.cs" />
+    <Compile Include="SiteMap\SiteMapChangeFrequency.cs" />
+    <Compile Include="SiteMap\SiteMapDictionary.cs" />
+    <Compile Include="SiteMap\SiteMapHandler.cs" />
+    <Compile Include="SiteMap\SiteMapManager.cs" />
+    <Compile Include="SiteMap\SiteMapNode.cs" />
+    <Compile Include="SiteMap\SiteMapNodeBuilder.cs" />
+    <Compile Include="SiteMap\SiteMapNodeFactory.cs" />
+    <Compile Include="SiteMap\SiteMapUpdatePriority.cs" />
+    <Compile Include="SiteMap\XmlSiteMap.cs" />
+    <Compile Include="ViewComponentFactory.cs" />
+    <Compile Include="HtmlHelperExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Telerik.Web.Mvc\Telerik.Web.Mvc.csproj">
+      <Project>{A7F7C110-D7F0-49B7-8DDA-FD2D1CC6F3B1}</Project>
+      <Name>Telerik.Web.Mvc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\SharedFiles\CodeAnalysisDictionary.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SharedFiles\Telerik.Web.snk">
+      <Link>Telerik.Web.snk</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

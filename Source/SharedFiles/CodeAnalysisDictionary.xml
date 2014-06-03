@@ -1,0 +1,24 @@
+﻿<Dictionary>
+    <Acronyms>
+        <CasingExceptions>
+            <Acronym>j</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+    <Words>
+        <Compound>
+            <Term CompoundAlternate="jQuery">jquery</Term>
+        </Compound>
+        <Deprecated>
+        </Deprecated>
+        <Recognized>
+            <Word>Telerik</Word>
+            <Word>Cacher</Word>
+            <Word>Mvc</Word>
+            <Word>Json</Word>
+            <Word>jQuery</Word>
+            <Word>Styleable</Word>
+        </Recognized>
+        <Unrecognized>
+        </Unrecognized>
+    </Words>
+</Dictionary>

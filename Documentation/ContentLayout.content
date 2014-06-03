@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics defaultTopic="52e4eff1-8d88-464a-80ab-6cc9821e66ca">
+  <Topic id="52e4eff1-8d88-464a-80ab-6cc9821e66ca" visible="True" />
+  <Topic id="96e2b27b-7272-4e4e-aa00-e684e01c958e" visible="True" title="Getting Started">
+    <Topic id="3e4595a7-3c2f-429d-8cdd-a3c638417369" visible="True" title="Installation instructions" />
+    <Topic id="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8" visible="True" title="Using Telerik Extensions for ASP.NET MVC in your project" />
+    <Topic id="7fc6d783-ce22-443d-9999-20fe4299e2b3" visible="True" title="Using the sample projects" />
+  </Topic>
+  <Topic id="db35889a-8b3e-487b-8c38-3bf2fa350147" visible="True" title="Web Assets">
+    <Topic id="6d09f01d-a242-4038-bc6a-b6c65c35cc86" visible="True" />
+    <Topic id="cb7aba78-ad8a-4e00-b83f-0772daba75fe" visible="True" title="Working with JavaScript web assets" />
+  </Topic>
+  <Topic id="bfa0e0bc-f66d-4b29-b81d-5114f80cf215" visible="True" />
+  <Topic id="a0d8c577-9d66-4c97-a9b8-e535c70e5c0e" visible="True" title="jQuery UI Components">
+    <Topic id="1bc2bcc6-1b20-4dc0-a5e5-577629eb63cb" visible="True" title="Introduction" />
+    <Topic id="0e611471-2c62-4f18-a5a6-508fdd93f801" visible="True" title="Using the jQuery UI Components in your project" />
+    <Topic id="0ac77d87-88b2-49b5-b819-9493d7830f3d" visible="True" noFile="True" title="Components">
+      <Topic id="8f4a4331-5bf2-467f-ae04-f5901cecf880" visible="True" />
+      <Topic id="FF4218F7-2E35-44e2-829B-6299E18385D5" visible="True" />
+      <Topic id="55313146-9B84-40d3-9282-048BB569BE17" visible="True" />
+      <Topic id="80c59d42-014f-4dac-8234-3e5e980ba15d" visible="True" />
+      <Topic id="4BC1FD9D-A3B6-4c2f-B7D0-901A7881726C" visible="True" />
+      <Topic id="1BCB7F42-8D1A-4415-AE7E-599E009D3B82" visible="True" />
+    </Topic>
+  </Topic>
+</Topics>

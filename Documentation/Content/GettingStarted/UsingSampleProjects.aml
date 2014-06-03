@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="7fc6d783-ce22-443d-9999-20fe4299e2b3" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <!-- <autoOutline /> -->
+      <para>
+      	<token>TelerikMvc</token> comes with three sample projects showing how to use
+      	the product with three different view engines:
+      	<list class="bullet">
+      		<listItem>ASP.NET default view engine</listItem>
+      		<listItem><token>SparkLink</token></listItem>
+      		<listItem><token>NHamlLink</token></listItem>
+      	</list>
+      </para>
+    </introduction>
+    <prerequisites>
+    	<content>
+    		Before proceeding with <token>TelerikMvc</token> make sure you have all the 
+    		<link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    	</content>
+    </prerequisites>
+    <section address="Default">
+      <title>Using the default <token>jQueryUI</token> sample application</title>
+      <content>
+        <procedure>
+          <steps class="ordered">
+            <step>
+              <content>
+                <para>
+                	Start Visual Studio and choose the <ui>File > Open > Project/Solution</ui>.
+                </para>
+              </content>
+            </step>
+            <step>
+              <content>
+                <para>
+                Browse to the location where you extracted the <token>TelerikMvc</token> zip file. 
+                In case you have chosen the suggested location this would be <token>InstallationLocation</token>. 
+                Open the <localUri>Examples\Mvc.UI.jQuery.Examples</localUri> folder.
+                </para>
+              </content>
+            </step>
+            <step>
+            	<content>
+            		<para>
+            		Select the <localUri>Mvc.UI.jQuery.Examples.csproj</localUri> and click the <ui>OK</ui> button.
+            		 <mediaLink><image xlink:href="jQueryUIExamplesDefault"/></mediaLink>
+            		</para>
+            	</content>
+            </step>
+            <step>
+            	<content>
+            		<para>
+            			Build and run the sample application. Here is how it should look like in your browser:
+            			<mediaLink><image xlink:href="jQueryUIExamplesHomePage"/></mediaLink>
+            		</para>
+            	</content>
+            </step>
+          </steps>
+      	  <conclusion>
+      	  		These are the steps required to run the <token>jQueryUI</token> default sample application. You can
+      	  		browse the available examples through the left-hand navigation. The code is available in the tab component
+      	  		below the example's content area.
+      	  </conclusion>
+        </procedure>
+      </content>
+    </section>
+    <section>
+    	<title>Using the Spark and NHaml sample applications</title>
+    	<content>
+			<para>
+				The steps required to run the Spark and NHaml applications are exactly the same as running
+				the default application. The only difference is the name of the Visual Studio projects and their location
+				in the <localUri>Examples</localUri> folder.
+			</para>
+			<list class="bullet">
+				<listItem>The Spark application is located in <localUri>Examples\Mvc.UI.jQuery.Examples.Spark</localUri>.
+				The Visual Studio project file is <localUri>Mvc.UI.jQuery.Examples.Spark.csproj</localUri>.
+				</listItem>
+				<listItem>The NHaml application is located in <localUri>Examples\Mvc.UI.jQuery.Examples.NHaml</localUri>.
+				The Visual Studio project file is <localUri>Mvc.UI.jQuery.Examples.NHaml.csproj</localUri>.
+				</listItem>
+			</list>
+    	</content>
+    </section>
+    <relatedTopics>
+    	<link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369" />
+    	<link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8" />
+    	<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801" />
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

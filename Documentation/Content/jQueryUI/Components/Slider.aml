@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="4BC1FD9D-A3B6-4c2f-B7D0-901A7881726C" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+  	 <introduction>
+      <para>
+      		This topic shows how to use jQuery UI Slider component in an <token>Mvc</token>
+      		application.
+      		<autoOutline lead="true" />
+      </para>
+    </introduction>
+    <prerequisites>
+    	<content>
+    		Before proceeding make sure that:
+    		<list class="bullet">
+    			<listItem>
+    				You have all the <link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    			</listItem>
+    			<listItem>
+    				Make sure that your <token>Mvc</token> project refers the <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8"><token>TelerikMvcDll</token></link>
+    				and <link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801"><token>jQueryUIDll</token></link> assemblies.
+    			</listItem>
+    			<listItem>
+    				The <localUri><token>jQueryUICss</token></localUri> should be included in the <codeInline>&lt;head&gt;</codeInline>
+    				tag of your master page. This is outlined in <link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801#jQueryUICss">here</link>
+    			</listItem>
+    			<listItem>
+    				All jQuery UI components require a valid ScriptRegistrar definition. Adding a ScriptRegistrar is described 
+    				<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801#Registrar">here</link>
+    			</listItem>
+    		</list>
+		</content>
+    </prerequisites>
+    
+    <section address="Definition">
+    	<title>Slider definition</title>
+    	<content>
+    		<para>
+    		Here is how to define a <codeEntityReference autoUpgrade="true">T:Mvc.UI.jQuery.Slider</codeEntityReference>
+    		component:
+    		</para>
+    		<code lang="C#">
+    		<![CDATA[
+                <% 
+  				     Html.jQuery().Slider()
+                         .Name("slider")
+                         .Value(20)
+                         .Render(); 
+                %>
+    		]]>
+    		</code>
+    		<para>
+    			And now the explanation of that code:
+    		</para>
+    		<list class="bullet">
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Name(System.String)</codeEntityReference> method is used
+    				to specify the unique name of the Slider component which is later output as the HTML id 
+    				attribute and used by jQuery UI. Setting the name is mandatory and exception would be thrown
+    				otherwise.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Value(System.Int32)</codeEntityReference> method is used
+    				to sets the value of the Slider.
+    			</listItem>
+    			<listItem>
+    		    	Finally the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Render</codeEntityReference> method
+    				outputs the HTML of the Slider component.
+    				<alert class="important">
+    					It is mandatory that the <codeInline>Render</codeInline> method is called. If not
+    					the component will not output any HTML.
+    				</alert>
+    			</listItem>
+    		</list>
+    	</content>
+    </section>
+    <section address="UpdateAssociated">
+    	<title>
+    	 	Update associated elements
+    	</title>
+    	<content>
+    		To automatically update associated HTML elements when Slider value is changed, you can use the 
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.UpdateElements(System.String[])</codeEntityReference> method. 
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.UpdateElements(System.String[])</codeEntityReference>
+    		method accepts a string param array where you can specify multiple jQuery selectors. 
+    		The following code shows how to update two individual HTML spans with the slider latest 
+    		value.
+    		<code lang="C#">
+            <![CDATA[
+            <%
+                Html.jQuery().Slider()
+                             .Name("slider")
+                             .UpdateElements("#span1", "#span2")
+                             .Render();
+             %>
+             ]]>
+    		</code>
+    	</content>
+    </section>
+    <section address="Range">
+    	<title>Range</title>
+    	<content>
+    		You can use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Range(Mvc.UI.jQuery.SliderRange)</codeEntityReference>
+    		method to change the range behavior. By default the range behavior is set to <codeEntityReference autoUpgrade="true">F:Mvc.UI.jQuery.SliderRange.False</codeEntityReference>,
+    		which means only one drag handler will be rendered. When range is set to <codeEntityReference autoUpgrade="true">F:Mvc.UI.jQuery.SliderRange.True</codeEntityReference>, 
+    		two drag handler will appear to specify the range of values. The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Values(System.Int32,System.Int32)</codeEntityReference>
+    		should be used to explicitly set the range of values. The following shows the code how to change the
+    		behavior to range with explicit values.
+    		<code lang="C#">
+            <![CDATA[
+            <%
+                Html.jQuery().Slider()
+                             .Name("slider")
+                             .Range(SliderRange.True)
+                             .Values(40, 60)
+                             .Render();
+             %>
+             ]]>
+    		</code>
+    	</content>
+    </section>
+    <section address="MinMaxSteps">
+    	<title>Minimum, Maximum, Steps</title>
+    	<content>
+    			<listItem>
+    				To set the minimum value use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Minimum(System.Int32)</codeEntityReference>
+    				By default the value is set to 0.
+    			</listItem>    	
+    			<listItem>
+    				To set the maximum value use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Maximum(System.Int32)</codeEntityReference>
+    				By default the value is set to 100.
+    			</listItem>
+    			<listItem>
+    				To set the steps use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Steps(System.Int32)</codeEntityReference>
+    				By default the value is set to 1.
+    			</listItem>
+    	</content>
+    </section>
+    <section address="Orientation">
+    	<title>Orientations</title>
+    	<content>
+			To change the Orientation, use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Orientation(Mvc.UI.jQuery.SliderOrientation)</codeEntityReference>
+			By default the value is set to <codeEntityReference autoUpgrade="true">F:Mvc.UI.jQuery.SliderOrientation.Horizontal</codeEntityReference>.
+    	</content>
+    </section>
+    <section address="AutoPopulation">
+    	<title>Automatic Population from <codeInline>ViewData</codeInline></title>
+    	<content>
+    		The slider value can be automatically populated from <codeInline>ViewData</codeInline>, to lookup the
+    		value the slider uses it's name, depending upon <codeEntityReference autoUpgrade="true">P:Mvc.UI.jQuery.Slider.Range</codeEntityReference>
+    		it can perform the automatic convertion. The following shows the code of automatic population
+    		when slider <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Range(Mvc.UI.jQuery.SliderRange)</codeEntityReference>
+    		is set to <codeEntityReference autoUpgrade="true">F:Mvc.UI.jQuery.SliderRange.False</codeEntityReference>
+    		<code lang="C#" title="Controller">
+    		<![CDATA[
+                public ActionResult Index()
+                {  
+                   ViewData["slider1"] = 50; // the key is the same as the name of the slider
+   
+                   return View();  
+                }
+    		]]>
+    		</code>
+    		<code lang="C#" title="View">
+    		<![CDATA[
+            <% 
+                Html.jQuery().Slider()
+                    .Name("slider1")  /* the name is the same as the key in ViewData */
+                    .Render(); 
+            %>
+    		]]>
+    		</code>
+    		<para>
+    			The following shows the code of automatic population when slider <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.Range(Mvc.UI.jQuery.SliderRange)</codeEntityReference>
+    			is set to <codeEntityReference autoUpgrade="true">F:Mvc.UI.jQuery.SliderRange.True</codeEntityReference>
+    		</para>
+    		<code lang="C#" title="Controller">
+    		<![CDATA[
+                public ActionResult Index()
+                {  
+                   ViewData["slider1"] = new int[]{ 30, 50}; // the key is the same as the name of the slider
+   
+                   return View();  
+                }
+    		]]>
+    		</code>
+    		<code lang="C#" title="View">
+    		<![CDATA[
+            <% 
+                Html.jQuery().Slider()
+                    .Name("slider1")  /* the name is the same as the key in ViewData */
+                    .Range(SliderRange.True)
+                    .Render(); 
+            %>
+    		]]>
+    		</code>    		
+    	</content>
+    </section>    
+    <section address="FormSubmit">
+    	<title>Form Submit</title>
+    	<content>
+    		The slider can be used in HTML forms instead of regular input text field. Use the same naming convention as you follow for 
+    		the regular HTML input fields. Internaly Slider is generated with HTML hidden field(s) with the same name as slider, so
+    		the form submit becomes seamless. The following code snippet shows how to submit form when slider is not ranged.
+    		<code lang="C#" title="Controller">
+    		<![CDATA[
+                public ActionResult Query(string code, int rowPerPage)
+                {  
+                   // Your Query logic goes here
+                   return View();  
+                }
+    		]]>
+    		</code>
+    		<code lang="C#" title="View">
+    		<![CDATA[
+    		<% using(Html.BeginForm()){ %>
+    		<%= Html.TextBox("code") %>
+            <% Html.jQuery().Slider()
+                    .Name("rowPerPage")
+                    .Minimum(10)
+                    .Maximum(100)
+                    .Steps(10)
+                    .Render(); %>
+            <input type="submit" value="Submit"/>
+			<% } %>
+    		]]>
+    		</code>
+    		<para>
+    			The following shows the form submit when slider is ranged. When slider is ranged we will be accepting multiple values
+    			in the <codeInline>Controller</codeInline>.
+    		</para>
+    		<code lang="C#" title="Controller">
+    		<![CDATA[
+                public ActionResult Query(IList<int> salaryRange)
+                {  
+                	int start = salaryRange[0];
+                	int end = salaryRange[1];
+                   // Your Query logic goes here
+                   return View();  
+                }
+    		]]>
+    		</code>
+    		<code lang="C#" title="View">
+    		<![CDATA[
+    		<% using(Html.BeginForm()){ %>
+            <% Html.jQuery().Slider()
+                    .Name("salaryRange")
+                    .Minimum(1000)
+                    .Maximum(100000)
+                    .Steps(1000)
+                    .Range(SliderRange.True)                    
+                    .Render(); %>
+            <input type="submit" value="Submit"/>
+			<% } %>
+    		]]>
+    		</code>    		
+    	</content>
+    </section>
+    <section address="ClientEvents">
+    	<title>Client-side events</title>
+    	<content>
+    		The jQuery UI Slider component exposes the following client-side events.
+    		<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.OnStart(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.OnSlide(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.OnStop(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.OnChange(System.Action)</codeEntityReference>
+    		</listItem>
+    		<para>
+    		Handling any of the above event is pretty much same, for example the following shows the
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.SliderBuilder.OnSlide(System.Action)</codeEntityReference> event handling:
+    		</para>
+			<code lang="C#">
+				<![CDATA[
+				<%
+				    Html.jQuery().Slider()
+				        .Name("slider")
+                    	.OnSlide(() =>
+                                    {%>
+                                        function(event, ui)
+                                        {
+                                            alert('Item Index:' + ui.value);
+                                        }
+                                    <%}
+                            )				        
+				        .Render();
+				%>
+				]]>
+			</code>    		
+    	</content>    	
+    </section>    
+    <relatedTopics>
+    	<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801"/>
+      	<link xlink:href="8f4a4331-5bf2-467f-ae04-f5901cecf880"/>
+      	<link xlink:href="FF4218F7-2E35-44e2-829B-6299E18385D5"/>
+      	<link xlink:href="55313146-9B84-40d3-9282-048BB569BE17"/>
+      	<link xlink:href="80c59d42-014f-4dac-8234-3e5e980ba15d"/>
+      	<link xlink:href="1BCB7F42-8D1A-4415-AE7E-599E009D3B82"/>
+    </relatedTopics>    
+  </developerWalkthroughDocument>
+</topic>

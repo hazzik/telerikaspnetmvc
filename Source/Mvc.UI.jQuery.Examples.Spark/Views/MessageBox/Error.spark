@@ -1,0 +1,14 @@
+<content name="TitleContent">
+    MessageBox Error Example
+</content>
+<content name="MainContent">
+    <% Html.jQuery().MessageBox()
+                    .Name("error")
+                    .MessageType(MessageBoxType.Info)
+                    .Content(() =>
+                                 {%>
+                                    <strong>Alert:</strong> There is something wrong.
+                                 <%}
+                             )
+                    .Render(); %>
+</content>

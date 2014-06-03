@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="80c59d42-014f-4dac-8234-3e5e980ba15d" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      		This topic shows how to use ProgressBar jQuery UI component in an <token>Mvc</token>
+      		application. 
+      </para>
+      <autoOutline lead="none" />
+    </introduction>
+    <prerequisites>
+    	<content>
+    		Before proceeding make sure that:
+    		<list class="bullet">
+    			<listItem>
+    				You have all the <link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    			</listItem>
+    			<listItem>
+    				Make sure that your <token>Mvc</token> project refers the <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8"><token>TelerikMvcDll</token></link>
+    				and <link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801"><token>jQueryUIDll</token></link> assemblies.
+    			</listItem>
+    			<listItem>
+    				The <localUri><token>jQueryUICss</token></localUri> should be included in the <codeInline>&lt;head&gt;</codeInline>
+    				tag of your master page. This is outlined in <link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801#jQueryUICss">here</link>
+    			</listItem>
+    			<listItem>
+    				All jQuery UI components require a valid ScriptRegistrar definition. Adding a ScriptRegistrar is described 
+    				<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801#Registrar">here</link>
+    			</listItem>
+    		</list>
+		</content>
+    </prerequisites>
+    <section address="Definition">
+    	<title>ProgressBar definition</title>
+    	<content>
+    		<para>
+    		Here is how to define a <codeEntityReference autoUpgrade="true">T:Mvc.UI.jQuery.ProgressBar</codeEntityReference>
+    		component:
+    		</para>
+    		<code lang="C#">
+    		<![CDATA[
+                <% 
+  				     Html.jQuery().ProgressBar()
+                         .Name("ProgressBar")  
+                         .Value(60)  
+                         .Render(); 
+                %>
+    		]]>
+    		</code>
+    		<para>
+    			And now the explanation of that code:
+    		</para>
+    		<list class="bullet">
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Name(System.String)</codeEntityReference> method is used
+    				to specify the unique name of the ProgressBar control which is later output as the id HTML
+    				attribute and used by jQuery UI. Setting the name is mandatory and exception would be thrown
+    				otherwise.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.ProgressBarBuilder.Value(System.Int32)</codeEntityReference> method is used
+    				to set the value of the ProgressBar. The value determines the progress which will be
+    				displayed as complete.
+    			</listItem>
+    			<listItem>
+    		    	Finally the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Render</codeEntityReference> method
+    				outputs the HTML of the ProgressBar component.
+    				<alert class="important">
+    					It is mandatory that the <codeInline>Render</codeInline> method is called. If not
+    					the component will not output any HTML.
+    				</alert>
+    			</listItem>
+    		</list>
+    	</content>
+    </section>
+    <section address="AutoPopulation">
+    	<title>Automatic population</title>
+    	<content>
+    		<para>
+    		If the <codeEntityReference autoUpgrade="true">P:Mvc.UI.jQuery.ProgressBar.Value</codeEntityReference> is not used the ProgressBar
+    		can populate automatically from the <codeInline>ViewData</codeInline>. Here is how:
+    		</para>
+    		<code lang="C#" title="Controller">
+    		<![CDATA[
+                public ActionResult Index()  
+                {  
+                   ViewData["myProgressBar"] = 50; // the key is the same as the name of the ProgressBar
+   
+                   return View();  
+                }
+    		]]>
+    		</code>
+    		<code lang="C#" title="View">
+    		<![CDATA[
+            <% 
+                Html.jQuery().ProgressBar()
+                    .Name("myProgressBar")  /* the name is the same as the key in ViewData */
+                    .Render(); 
+            %>
+    		]]>
+    		</code>
+    	</content>
+    </section>
+    <section address="ChangingValue">
+    	<title>Changing the value</title>
+    	<content>
+    		You can change the value of the ProgressBar using its JavaScript API. Here is a short example:
+    		<code lang="C#">
+    			<![CDATA[
+    	         <input type="button" value="change" id="changeProgressBarValue"/>
+    	         <%
+    	         Html.jQuery().ProgressBar()
+    		         .Name("ProgressBar")
+                     .Render();
+
+                 Html.Telerik().ScriptRegistrar()  
+                     .OnPageLoad(() => {%>  
+                        $('#changeProgressBarValue').click(function(){  
+                            var pb = $("#myProgressBar");
+                            //get the current value of the progressbar
+                            var value = pb.progressbar("option","value");
+                            //update the value
+                            pb.progressbar("value", value + 10);
+        				});
+    				<%}
+    				)
+                    .Render();
+                %>
+    			]]>
+    		</code>
+    	</content>
+    </section>
+    <section address="ClientEvents">
+    	<title>Client-side events</title>
+    	<content>
+    		The ProgressBar component exposes the <codeInline>onchange</codeInline> client-side event
+    		which occurs when the user selects a new item. You can handle that event by using the
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.ProgressBarBuilder.OnChange(System.Action)</codeEntityReference> method:
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    		     Html.jQuery().ProgressBar()
+    		         .Name("ProgressBar")
+    		         .OnChange(()=>{%>
+    		                function (event, ui) {
+                               var pb = $(this);
+                               var value = pb.progressbar("option", "value");
+                               alert(value);
+    		              }
+    		          <%
+    		          })
+                     .Render();
+    		%>
+    		]]>
+    		</code>
+    		You can also specify the name of an existing JavaScript function:
+    		<code lang="JavaScript">
+    			<![CDATA[
+    			<script type="text/javascript">
+    			function onChangeHandler(event, ui) {
+                    var pb = $(this);
+                    var value = pb.progressbar("option", "value");
+                    alert(value);
+    			}
+    			</script>
+    			]]>
+    		</code>
+    		<code lang="C#">
+    		<![CDATA[
+    		<%
+    		     Html.jQuery().Accordion()
+    		         .Name("ProgressBar")
+    		         .OnChange(()=>{%> onChangeHandler <%}) /* call the "onChangeHandler" */
+                     .Render();
+    		%>
+    		]]>
+    		</code>
+    	</content>
+    </section>
+    <relatedTopics>
+    	<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801"/>
+      	<link xlink:href="8f4a4331-5bf2-467f-ae04-f5901cecf880"/>
+      	<link xlink:href="FF4218F7-2E35-44e2-829B-6299E18385D5"/>
+      	<link xlink:href="55313146-9B84-40d3-9282-048BB569BE17"/>
+      	<link xlink:href="4BC1FD9D-A3B6-4c2f-B7D0-901A7881726C"/>
+      	<link xlink:href="1BCB7F42-8D1A-4415-AE7E-599E009D3B82"/>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

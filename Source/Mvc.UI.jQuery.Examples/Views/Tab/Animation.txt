@@ -1,0 +1,3 @@
+﻿Choose your favorite animation using Animation option.<br /><br />
+
+<strong>Animation(opacity, duration)</strong>

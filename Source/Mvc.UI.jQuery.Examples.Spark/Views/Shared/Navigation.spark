@@ -1,0 +1,88 @@
+﻿<use namespace="System"/>
+<macro:ShouldSelectTab controllerName="string">
+	<if condition="string.Compare(ViewContext.RouteData.Values['controller'] as string, controllerName, StringComparison.OrdinalIgnoreCase) == 0">
+		#return bool.TrueString;
+	</if>
+	<else>
+		#return bool.FalseString;
+	</else>
+</macro:ShouldSelectTab>
+<% Html.jQuery().Accordion()
+                .Name("navigation")
+                .Items(parent =>
+                               {
+                                   parent.Add()
+                                       .Text("Accordion")
+                                       .Selected(Convert.ToBoolean(ShouldSelectTab("Accordion")))
+                                       .Content(() =>
+                                                        {%>
+                                                            <ul>
+                                                                <li>
+                                                                    !{Html.ActionLink("Basic example", "Basic", "Accordion") }</li>
+                                                            </ul>
+                                                        <%}
+                                                );
+                                   parent.Add()
+                                       .Text("DatePicker")
+                                       .Selected(Convert.ToBoolean(ShouldSelectTab("DatePicker")))
+                                       .Content(() =>
+                                                        {%>
+                                                            <ul>
+                                                                <li>
+                                                                    !{Html.ActionLink("Basic example", "Basic", "DatePicker") }</li>
+                                                            </ul>
+                                                        <%}
+                                                );
+                                                
+                                   parent.Add()
+                                       .Text("MessageBox")
+                                       .Selected(Convert.ToBoolean(ShouldSelectTab("MessageBox")))
+                                       .Content(() =>
+                                                        {%>
+                                                            <ul>
+                                                                <li>
+                                                                    !{Html.ActionLink("Info box", "Info", "MessageBox") }</li>
+                                                                <li>
+                                                                    !{Html.ActionLink("Error box", "Error", "MessageBox") }</li>
+                                                            </ul>
+                                                        <%}
+                                                );
+                                                
+                                   parent.Add()
+                                       .Text("ProgressBar")
+                                       .Selected(Convert.ToBoolean(ShouldSelectTab("ProgressBar")))
+                                       .Content(() =>
+                                                        {%>
+                                                            <ul>
+                                                                <li>
+                                                                    !{ Html.ActionLink("Basic example", "Basic", "ProgressBar") }</li>                                                                
+                                                            </ul>
+                                                        <%}
+                                                );
+
+                                   parent.Add()
+                                       .Text("Slider")
+                                       .Selected(Convert.ToBoolean(ShouldSelectTab("Slider")))
+                                       .Content(() =>
+                                                        {%>
+                                                            <ul>
+                                                                <li>
+                                                                    !{ Html.ActionLink("Basic example", "Basic", "Slider") }</li>                                                                
+                                                            </ul>
+                                                        <%}
+                                                );
+
+                                   parent.Add()
+                                       .Text("Tab")
+                                       .Selected(Convert.ToBoolean(ShouldSelectTab("Tab")))
+                                       .Content(() =>
+                                                        {%>
+                                                            <ul>
+                                                                <li>
+                                                                    !{ Html.ActionLink("Basic example", "Basic", "Tab") }</li>                                                                
+                                                            </ul>
+                                                        <%}
+                                                );
+                               }
+                      )
+                .Render(); %>

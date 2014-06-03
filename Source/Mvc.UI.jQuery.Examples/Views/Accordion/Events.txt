@@ -1,0 +1,2 @@
+﻿<strong>Change</strong><br/>
+This event is triggered every time the accordion changes. If the accordion is animated, the event will be triggered upon completion of the animation; otherwise, it is triggered immediately. 

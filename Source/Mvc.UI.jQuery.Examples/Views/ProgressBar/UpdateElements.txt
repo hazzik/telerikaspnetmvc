@@ -1,0 +1,3 @@
+﻿Update UI element with the current value of progressbar simply passing the element using UpdateElements option.<br /><br />
+
+<strong>UpdateElements(selector)</strong>

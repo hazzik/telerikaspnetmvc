@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8B8CD7CD-01F9-430B-852A-3B11DE1C2854}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Telerik.Web.Mvc.UnitTest</RootNamespace>
+    <AssemblyName>Telerik.Web.Mvc.UnitTest</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\SharedFiles\Telerik.Web.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Moq, Version=3.0.307.1, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Routing">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="xunit, Version=1.1.0.1323, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\References\xunit.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedFiles\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SharedFiles\TestHelper.cs">
+      <Link>TestHelper.cs</Link>
+    </Compile>
+    <Compile Include="Infrastructure\PathHelperTests.cs" />
+    <Compile Include="UI\ClientSideObjectWriterTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetDefaultSettingsTests.cs" />
+    <Compile Include="WebAssetLocatorTests.cs" />
+    <Compile Include="WebAssetRegistryTests.cs" />
+    <Compile Include="WebAssetTests.cs" />
+    <Compile Include="Extensions\ArrayExtensionsTests.cs" />
+    <Compile Include="UI\ClientSideEnumValueAttributeTests.cs" />
+    <Compile Include="Extensions\CollectionExtensionsTests.cs" />
+    <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
+    <Compile Include="Extensions\HttpContextBaseExtensionsTests.cs" />
+    <Compile Include="Infrastructure\Implementation\CacheManagerWrapperTests.cs" />
+    <Compile Include="Infrastructure\HttpHandlerBaseTests.cs" />
+    <Compile Include="Infrastructure\GuardTests.cs" />
+    <Compile Include="Extensions\EnumerableExtensionsTests.cs" />
+    <Compile Include="Infrastructure\CultureTests.cs" />
+    <Compile Include="Extensions\ReaderWriterLockSlimExtensionsTests.cs" />
+    <Compile Include="Extensions\StringExtensionsTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetItemGroupBuilderTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetItemGroupTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetItemCollectionBuilderTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetItemCollectionTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetItemTests.cs" />
+    <Compile Include="UI\WebAsset\WebAssetItemMergerTests.cs" />
+    <Compile Include="UI\ClientSideObjectWriterFactoryTests.cs" />
+    <Compile Include="UI\HtmlHelperExtensionTests.cs" />
+    <Compile Include="UI\ViewComponentFactoryTests.cs" />
+    <Compile Include="UI\ViewComponentBaseTestDouble.cs" />
+    <Compile Include="UI\ViewComponentBaseTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\ViewComponentBuilderBaseTests.cs" />
+    <Compile Include="Infrastructure\Implementation\UrlResolverTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\ScriptRegistrar\ScriptWrapperTests.cs" />
+    <Compile Include="UI\StyleSheetRegistrar\StyleSheetRegistrarBuilderTests.cs" />
+    <Compile Include="UI\StyleSheetRegistrar\StyleSheetRegistrarTests.cs" />
+    <Compile Include="UI\ScriptRegistrar\ScriptRegistrarTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\ScriptRegistrar\ScriptRegistrarBuilderTests.cs" />
+    <Compile Include="WebAssetHttpHandlerTests.cs" />
+    <Compile Include="Infrastructure\Implementation\HttpResponseCacherTests.cs" />
+    <Compile Include="Infrastructure\Implementation\HttpResponseCompressorTests.cs" />
+    <Compile Include="Infrastructure\Implementation\ConfigurationManagerWrapperTests.cs" />
+    <Compile Include="Infrastructure\Implementation\FileSystemWrapperTests.cs" />
+    <Compile Include="Infrastructure\Implementation\PathResolverTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Telerik.Web.Mvc\Telerik.Web.Mvc.csproj">
+      <Project>{A7F7C110-D7F0-49B7-8DDA-FD2D1CC6F3B1}</Project>
+      <Name>Telerik.Web.Mvc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SharedFiles\Telerik.Web.snk">
+      <Link>Telerik.Web.snk</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

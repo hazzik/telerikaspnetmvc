@@ -1,0 +1,3 @@
+﻿Setting auto height option allows accordion panels to keep their native height.<br /><br />
+
+<strong>AutoHeight(false)</strong>

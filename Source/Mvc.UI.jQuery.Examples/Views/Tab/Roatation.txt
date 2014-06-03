@@ -1,0 +1,3 @@
+﻿Rotate the tab selection. To enable this functionality, set the RotateWithContinue option.<br /><br />
+
+<strong>RotateWithContinue(durationInMilliseconds)</strong>

@@ -1,0 +1,3 @@
+﻿Toggle sections open/closed on mouseover with the OpenOn option. The default value for event is "click." <br /><br />
+
+<strong>OpenOn("mouseover")</strong>

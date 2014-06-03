@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="96e2b27b-7272-4e4e-aa00-e684e01c958e" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      	The topics in this section will help you install <token>TelerikMvc</token>, become familiar with
+      	the product and use it in your first <token>Mvc</token> project.
+      </para>
+    </introduction>
+    <section>
+      <title>Installation</title>
+      <content>
+        <para>Select one of the topics below to learn more:</para>
+        <list class="bullet">
+        	<listItem><link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369" /></listItem>
+        	<listItem><link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8" /></listItem>
+        	<listItem><link xlink:href="7fc6d783-ce22-443d-9999-20fe4299e2b3" /></listItem>
+        </list>
+      </content>
+    </section>
+  </developerConceptualDocument>
+</topic>

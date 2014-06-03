@@ -1,0 +1,11 @@
+﻿<strong>Start</strong><br />
+This event is triggered when the user starts sliding.<br />
+
+<strong>Slide</strong><br />
+This event is triggered on every mouse move during slide.<br />
+
+<strong>Change</strong><br />
+This event is triggered on slide stop, or if the value is changed programmatically.<br />
+
+<strong>Stop</strong><br />
+This event is triggered when the user stops sliding.<br />

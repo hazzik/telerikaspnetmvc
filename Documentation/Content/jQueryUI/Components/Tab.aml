@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="1BCB7F42-8D1A-4415-AE7E-599E009D3B82" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+  	 <introduction>
+      <para>
+      		This topic shows how to use jQuery UI Tab component in an <token>Mvc</token>
+      		application.
+      		<autoOutline lead="true" />
+      </para>
+    </introduction>
+    <prerequisites>
+    	<content>
+    		Before proceeding make sure that:
+    		<list class="bullet">
+    			<listItem>
+    				You have all the <link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    			</listItem>
+    			<listItem>
+    				Make sure that your <token>Mvc</token> project refers the <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8"><token>TelerikMvcDll</token></link>
+    				and <link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801"><token>jQueryUIDll</token></link> assemblies.
+    			</listItem>
+    			<listItem>
+    				The <localUri><token>jQueryUICss</token></localUri> should be included in the <codeInline>&lt;head&gt;</codeInline>
+    				tag of your master page. This is outlined in <link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801#jQueryUICss">here</link>
+    			</listItem>
+    			<listItem>
+    				All jQuery UI components require a valid ScriptRegistrar definition. Adding a ScriptRegistrar is described 
+    				<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801#Registrar">here</link>
+    			</listItem>
+    		</list>
+		</content>
+    </prerequisites>
+    
+    <section address="Definition">
+    	<title>Tab definition</title>
+    	<content>
+    		<para>
+    		The <codeEntityReference autoUpgrade="true">T:Mvc.UI.jQuery.Tab</codeEntityReference>
+    		is made of <codeEntityReference autoUpgrade="true">T:Mvc.UI.jQuery.TabItem</codeEntityReference> objects
+    		which represents each item of the tab. Here is how to define a simple tab
+    		with two items:
+    		</para>
+    		<code lang="C#">
+    		<![CDATA[
+			<%
+                Html.jQuery().Tab()
+                    .Name("tab")
+                    .Items(parent => {
+                        parent
+                            .Add()
+                            .Text("First Item")
+                            .Content(() => {%>
+                                   <strong>First Item's content</strong>
+                            <%});
+                        
+                        parent
+                            .Add()
+                            .Text("Second Item")
+                            .Content(() => {%>
+                                   <strong>Second Item's content</strong>
+                            <%});
+                        }
+                    )
+                    .Render();
+             %>
+    		]]>
+    		</code>
+    		<para>
+    			And now the explanation of that code:
+    		</para>
+    		<list class="bullet">
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Name(System.String)</codeEntityReference> is used
+    				to specify the unique name of the Tab component which is later output as the id HTML
+    				attribute and used by jQuery UI. Setting the name is mandatory and exception would be thrown
+    				otherwise.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.Items(System.Action{Mvc.UI.jQuery.TabItemFactory})</codeEntityReference> method
+    				is used to define the items of the Tab component. It accepts a single argument - 
+    				<codeInline>Action&lt;TabItemFactory&gt;</codeInline>. That action builds the items.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabItemFactory.Add</codeEntityReference> method
+    				adds a new TabItem to the Tab component.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabItemBuilder.Text(System.String)</codeEntityReference> method
+    				sets the text of the header displayed by the TabItem.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabItemBuilder.Content(System.Action)</codeEntityReference> method
+    				is used to specify the content of the TabItem.
+    			</listItem>
+    			<listItem>
+    				Finally the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Render</codeEntityReference> method
+    				outputs the HTML of the Tab component.
+    				<alert class="important">
+    					It is mandatory that the <codeInline>Render</codeInline> method is called. If not
+    					the component will not output any HTML.
+    				</alert>    				
+    			</listItem>
+    		</list>
+    	</content>
+    </section>
+    <section address="Ajax">
+    	<title>
+    	 	Load via ajax
+    	</title>
+    	<content>
+    		To load item content with ajax call you can use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabItemBuilder.LoadContentFrom(System.String)</codeEntityReference> method.
+    		You can use the built-in Urlhelper to sepcify the url from which the content will be loaded. The 
+    		following example shows how you can use the UrlHelper to set the url, the second and 
+    		third item's content will be loaded  via ajax call.
+    		<code lang="C#">
+            <![CDATA[
+            <%
+                Html.jQuery().Tab()
+                    .Name("tab")
+                    .Items(parent => {
+                        parent
+                            .Add()
+                            .Text("First Item")
+                            .Content(() => {%>
+                                   <strong>First Item's content</strong>
+                            <%});
+                        
+                        parent
+                            .Add()
+                            .Text("Second Item")
+                            .LoadContentFrom(Url.Action("AjaxView1", "Tab"));
+                            
+                        parent
+                            .Add()
+                            .Text("Third Item")
+                            .LoadContentFrom(Url.Action("AjaxView2", "Tab"));                            
+                        }
+                    )
+                    .Render();
+             %>
+             ]]>
+    		</code>    		
+    		You can also specify the loading text in <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.SpinnerText(System.String)</codeEntityReference>
+    		which will be shown when ajax call is in progress. To cache the ajax response use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.CacheAjaxResponse(System.Boolean)</codeEntityReference>
+    		method.    		
+    	</content>
+    </section>
+    <section address="Selection">
+    	<title>Selecting items</title>
+    	<content>
+    		By default the first item in the Tab will be selected. You can control
+    		what the selected item is by using the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabItemBuilder.Selected(System.Boolean)</codeEntityReference> 
+    		method:
+    		<code lang="C#">
+            <![CDATA[
+            <%
+                Html.jQuery().Tab()
+                    .Name("tab")
+                    .Items(parent => {
+                        parent
+                            .Add()
+                            .Text("First Item")
+                            .Content(() => {%>
+                                   <strong>First Item's content</strong>
+                            <%});
+                        
+                        parent
+                            .Add()
+                            .Selected(true)
+                            .Text("Second Item")
+                            .Content(() => {%>
+                                   <strong>Second Item's content</strong>
+                            <%});
+                        }
+                    )
+                    .Render();
+             %>
+             ]]>
+    		</code>
+    	</content>
+    </section>
+    <section address="Disabling">
+    	<title>Disabling items</title>
+    	<content>
+    		Disabling the items, is similar to the selectng items, but unlike the selecting, multiple items
+    		can be disabled. To disable item you have to use <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabItemBuilder.Disabled(System.Boolean)</codeEntityReference> 
+    		method. For example, in following code the first and thrid item is disabled:
+    		<code lang="C#">
+            <![CDATA[
+            <%
+                Html.jQuery().Tab()
+                    .Name("tab")
+                    .Items(parent => {
+                        parent
+                            .Add()
+                            .Disabled(true)                            
+                            .Text("First Item")
+                            .Content(() => {%>
+                                   <strong>First Item's content</strong>
+                            <%});
+                        
+                        parent
+                            .Add()
+                            .Selected(true)
+                            .Text("Second Item")
+                            .Content(() => {%>
+                                   <strong>Second Item's content</strong>
+                            <%});
+                            
+                        parent
+                            .Add()
+                            .Disabled(true)
+                            .Text("Third Item")
+                            .Content(() => {%>
+                                   <strong>Third Item's content</strong>
+                            <%});                            
+                        }
+                    )
+                    .Render();
+             %>
+             ]]>
+    		</code>
+    	</content>
+    </section>
+    <section address="Tab">
+    	<title>Tab animation</title>
+    	<content>
+    		You can specify the animation of the tab with the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.Animation(System.String,Mvc.UI.jQuery.AnimationDuration)</codeEntityReference> method.
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.Animation(System.String,Mvc.UI.jQuery.AnimationDuration)</codeEntityReference> method takes the opacity and duration as an argument. You can
+    		specify <codeEntityReference autoUpgrade="true">T:Mvc.UI.jQuery.AnimationDuration</codeEntityReference> as a duration or a custom integer value. To customize the 
+    		open and close animation individually use the <codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OpenAnimation(System.String,Mvc.UI.jQuery.AnimationDuration)</codeEntityReference> and
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.CloseAnimation(System.String,Mvc.UI.jQuery.AnimationDuration)</codeEntityReference> method. The follwing shows
+    		how you can set the animation:
+    				<code lang="C#">
+    					<![CDATA[
+    					<%
+    					    Html.jQuery().Tab()
+    					        .Name("tab")
+    					        .Animation("toggle", AnimationDuration.Slow)
+    					        .Items(parent=>{ /*item definition */})
+    					        .Render();
+    					%>
+    					]]>
+    				</code>    		
+    	</content>
+	</section>
+    <section address="Tab">
+    	<title>Tab behavior</title>
+    	<content>
+    		You can use the following methods in order to control the visual behavior
+    		of the Tab component:
+    		<list class="bullet">
+    			<listItem>
+    				<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.CollapsibleContent(System.Boolean)</codeEntityReference> controls
+    				whether to automatically collapse the Tab when the header is clicked. By default this is set to <codeInline>false</codeInline>. 
+    				<code lang="C#">
+    					<![CDATA[
+    					<%
+    					    Html.jQuery().Tab()
+    					        .Name("tab")
+    					        .CollapsibleContent(true) /* collapse content*/
+    					        .Items(parent=>{ /*item definition */})
+    					        .Render();
+    					%>
+    					]]>
+    				</code>
+    			</listItem>
+    			<listItem>
+    				<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OpenOn(System.String)</codeEntityReference> specifies
+    				the DOM event on which the items will be opened. By default is set to "click". Here is how to
+    				override that:
+    				<code lang="C#">
+    					<![CDATA[
+    					<%
+    					    Html.jQuery().Tab()
+    					        .Name("tab")
+    					        .OpenOn("mouseover") /* the item will open when the user hovers it with the mouse */
+    					        .Items(parent=>{ /*item definition */})
+    					        .Render();
+    					%>
+    					]]>
+    				</code>
+    			</listItem>
+    			<listItem>
+    				<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.Rotate(System.Int32)</codeEntityReference> and 
+    				<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.RotateWithContinue(System.Int32)</codeEntityReference> specifies
+    				whether the tab items will be automatically rotated after the specified interval, use the
+    				<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.Rotate(System.Int32)</codeEntityReference> to rotate only once.
+    				<code lang="C#">
+    					<![CDATA[
+    					<%
+    					    Html.jQuery().Accordion()
+    					        .Name("tab")
+    					        .Items(parent=>{ /*item definition */})
+    					        .RotateWithContinue(2000) // Each item will be rotated after 2 seconds
+    					        .Render();
+    					%>
+    					]]>
+    				</code>
+    			</listItem>
+    		</list>
+    	</content>
+    </section>
+    <section address="ClientEvents">
+    	<title>Client-side events</title>
+    	<content>
+    		The jQuery UI Tab component exposes the following client-side events.
+    		<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnSelect(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnShow(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnAdd(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnRemove(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnEnable(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnDisable(System.Action)</codeEntityReference>
+    		</listItem>
+			<listItem>
+    			<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnLoad(System.Action)</codeEntityReference>
+    		</listItem>
+    		<para>
+    		Handling any of the above event is pretty much same, for example the following shows the
+    		<codeEntityReference autoUpgrade="true">M:Mvc.UI.jQuery.TabBuilder.OnSelect(System.Action)</codeEntityReference> event handling:
+    		</para>
+			<code lang="C#">
+				<![CDATA[
+				<%
+				    Html.jQuery().Tab()
+				        .Name("tab")
+				        .Items(parent=>{ /*item definition */})
+                    	.OnSelect(() =>
+                                    {%>
+                                        function(event, ui)
+                                        {
+                                            alert('Item Index:' + ui.index);
+                                        }
+                                    <%}
+                            )				        
+				        .Render();
+				%>
+				]]>
+			</code>    		
+    	</content>    	
+    </section>
+    <relatedTopics>
+    	<link xlink:href="0e611471-2c62-4f18-a5a6-508fdd93f801"/>
+      	<link xlink:href="8f4a4331-5bf2-467f-ae04-f5901cecf880"/>
+      	<link xlink:href="FF4218F7-2E35-44e2-829B-6299E18385D5"/>
+      	<link xlink:href="55313146-9B84-40d3-9282-048BB569BE17"/>
+      	<link xlink:href="80c59d42-014f-4dac-8234-3e5e980ba15d"/>
+      	<link xlink:href="4BC1FD9D-A3B6-4c2f-B7D0-901A7881726C"/>
+    </relatedTopics>    
+  </developerWalkthroughDocument>
+</topic>

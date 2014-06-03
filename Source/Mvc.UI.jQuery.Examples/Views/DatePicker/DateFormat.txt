@@ -1,0 +1,3 @@
+﻿Display date feedback in a variety of ways. Choose a date format from the dropdown, then click on the input and select a date to see it in that format.<br /><br />
+
+<strong>DateFormat(format)</strong>

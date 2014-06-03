@@ -1,0 +1,3 @@
+﻿Set the date to highlight on first opening if the field is blank.<br /><br />
+
+<strong>Value(date)</strong>

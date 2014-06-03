@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5" DefaultTargets="DropDeliverables">
+    <Import Project="Config.proj" />
+    <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\TeamBuild\Microsoft.TeamFoundation.Build.targets" />
+    <Import Project="MSBuildTasks\MSBuild.Community.Tasks.Targets"/>
+    <Import Project="MSBuildTasks\Microsoft.Sdc.Common.tasks"/>
+
+    <UsingTask TaskName="Telerik.MSBuildTasks.GenerateVersionDependentSuffix" AssemblyFile="MSBuildTasks\Telerik.MSBuildTasks.dll"/>
+    <PropertyGroup>
+        <DeployBinariesLocation>$(DeployLocation)\Binaries</DeployBinariesLocation>
+    </PropertyGroup>
+
+    <Target Name="CopyBinaries">
+        <ItemGroup>
+            <BinariesToExclude Include="$(OutDir)\*.*Test.dll" />
+            <BinariesToExclude Include="$(OutDir)\xunit.dll" />
+            <BinariesToExclude Include="$(OutDir)\Moq.dll" />
+            <BinariesToExclude Include="$(OutDir)\Spark.dll" />
+            <BinariesToExclude Include="$(OutDir)\NHaml.dll" />
+            <BinariesToExclude Include="$(OutDir)\Spark.Web.Mvc.dll" />
+            <BinariesToExclude Include="$(OutDir)\NHaml.Web.Mvc.dll" />
+            <BinariesToExclude Include="$(OutDir)\*Examples.dll" />
+            <BinariesToExclude Include="$(OutDir)\*Examples.Spark.dll" />
+            <BinariesToExclude Include="$(OutDir)\*Examples.NHaml.dll" />
+            <BinariesToExclude Include="$(OutDir)\*unit*.xml" />
+            <BinariesToInclude Include="$(OutDir)\*.dll" />
+            <BinariesToInclude Include="$(OutDir)\*.xml" />
+            <Binaries Include="@(BinariesToInclude)" Exclude="@(BinariesToExclude)" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(Binaries)" DestinationFolder="$(DeployBinariesLocation)" />
+    </Target>
+
+    <Target Name="DropDeliverables">
+        <BuildStep TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Name="XUnitTestStep" Message="Deploying deliverables">
+            <Output TaskParameter="Id" PropertyName="StepId" />
+        </BuildStep>
+
+        <CallTarget Targets="CopyBinaries" />
+
+        <ItemGroup>
+            <CoreBinaries Include="$(DeployBinariesLocation)\*.*" />
+            <SparkBinaries Include="@(CoreBinaries)"/>
+            <SparkBinaries Include="$(SourceRoot)\References\Spark*.dll"/>
+            <NHamlBinaries Include="@(CoreBinaries)"/>
+            <NHamlBinaries Include="$(SourceRoot)\References\NHaml*.dll"/>
+
+            <ProjectToBuild Include="CopyExamples.proj">
+                <AdditionalProperties>
+                    ExamplesDir=Mvc.UI.jQuery.Examples;
+                    DeployLocation=$(DeployLocation);
+                    SourceRoot=$(SourceRoot);
+                    ExampleReferences=@(CoreBinaries)
+                </AdditionalProperties>
+            </ProjectToBuild>
+
+            <ProjectToBuild Include="CopyExamples.proj">
+                <AdditionalProperties>
+                    ExamplesDir=Mvc.UI.jQuery.Examples.Spark;
+                    DeployLocation=$(DeployLocation);
+                    SourceRoot=$(SourceRoot);
+                    ExampleReferences=@(SparkBinaries)
+                </AdditionalProperties>
+            </ProjectToBuild>
+
+            <ProjectToBuild Include="CopyExamples.proj">
+                <AdditionalProperties>
+                    ExamplesDir=Mvc.UI.jQuery.Examples.NHaml;
+                    DeployLocation=$(DeployLocation);
+                    SourceRoot=$(SourceRoot);
+                    ExampleReferences=@(NHamlBinaries)
+                </AdditionalProperties>
+            </ProjectToBuild>
+
+            <ProjectToBuild Include="CopySource.proj">
+                <AdditionalProperties>
+                    DeployLocation=$(DeployLocation);
+                    SourceRoot=$(SourceRoot);
+                    SolutionToCopy=$(SolutionToCopy)
+                </AdditionalProperties>
+            </ProjectToBuild>
+
+            <ProjectToBuild Include="CopyDocumentation.proj">
+                <AdditionalProperties>
+                    DeployLocation=$(DeployLocation);
+                    SourceRoot=$(SourceRoot)
+                </AdditionalProperties>
+            </ProjectToBuild>
+
+        </ItemGroup>
+
+        <MSBuild Projects="@(ProjectToBuild)" BuildInParallel="true" />
+
+        <ItemGroup>
+            <Resources Include="$(SourceRoot)\..\Resources\**" />
+        </ItemGroup>
+        
+        <Copy SourceFiles="@(Resources)" DestinationFolder="$(DeployLocation)" />
+        
+        <ItemGroup>
+            <OutputFiles Include="$(DeployLocation)\**" />
+        </ItemGroup>
+
+        <GenerateVersionDependentSuffix ReleaseYear="$(Year)" ReleaseQ="$(Release)">
+            <Output TaskParameter="Suffix" PropertyName="Suffix" />
+        </GenerateVersionDependentSuffix>
+
+        <Zip Files="@(OutputFiles)" WorkingDirectory="$(DeployLocation)"
+                ZipFileName="$(DropLocation)\Telerik_Extensions_for_ASPNET_MVC_$(Suffix).zip"
+                ZipLevel="9" />
+
+        <CallTarget Targets="PrepareOnlineHelp;PrepareOnlineDemo" />
+        
+        <BuildStep  TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)"
+                    Id="$(StepId)"
+                    Status="Succeeded" />
+        
+
+        <OnError ExecuteTargets="MarkBuildStepAsFailed" />
+    </Target>
+    
+    <Target Name="PrepareOnlineHelp">
+        <Exec Command="MSBuildTasks\Telerik.Web.Mvc.HelpProcessor.exe &quot;$(SourceRoot)..\Documentation\Help&quot;"  />
+
+        <ItemGroup>
+            <HelpFiles Include="$(SourceRoot)..\Documentation\Help\html\**"/>
+            <HelpFiles Include="$(SourceRoot)..\Documentation\Help\*.hxt"/>
+        </ItemGroup>
+
+        <Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(SourceRoot)..\Documentation\Help\aspnet-mvc" />
+        
+        <ItemGroup>
+            <HelpResourcesToInclude Include="$(SourceRoot)..\Documentation\Help\media\**"/>
+            <HelpResourcesToInclude Include="$(SourceRoot)..\Documentation\Help\icons\**"/>
+            <HelpResourcesToInclude Include="$(SourceRoot)..\Documentation\Help\aspnet-mvc\**"/>
+            
+            <HelpResourcesToExclude Include="$(SourceRoot)..\Documentation\Help\html\**"/>
+
+            <HelpResources Include="@(HelpResourcesToInclude)" Exclude="@(HelpResourcesToExclude)" />
+        </ItemGroup>
+
+        <Zip Files="@(HelpResources)" WorkingDirectory="$(SourceRoot)..\Documentation\Help\"
+                ZipFileName="$(DropLocation)\OnlineHelp.zip"
+                ZipLevel="9" />
+
+    </Target>
+    
+    <Target Name="PrepareOnlineDemo">
+        <ItemGroup>
+            <ExampleBinaries Include="$(OutDir)\*Examples.dll"/>
+            <ExampleBinaries Include="$(MSBuildExtensionsPath32)\..\Microsoft ASP.NET\ASP.NET MVC 1.0\Assemblies\System.Web.Mvc.dll"/>
+        </ItemGroup>
+        
+        <Copy SourceFiles="@(ExampleBinaries)" DestinationFolder="$(DeployLocation)\Examples\Mvc.UI.jQuery.Examples\bin" />
+        
+        <ItemGroup>
+            <ExampleFiles Include="$(DeployLocation)\Examples\Mvc.UI.jQuery.Examples\**" />
+        </ItemGroup>
+        
+        <Zip Files="@(ExampleFiles)" WorkingDirectory="$(DeployLocation)\Examples"
+                ZipFileName="$(DropLocation)\OnlineDemo.zip"
+                ZipLevel="9" />
+    </Target>
+    
+    <Target Name="MarkBuildStepAsFailed">
+        <BuildStep
+            TeamFoundationServerUrl="$(TeamFoundationServerUrl)"
+            BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Failed" />
+    </Target>
+</Project>

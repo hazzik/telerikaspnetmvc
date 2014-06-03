@@ -1,0 +1,2 @@
+﻿The progress bar is designed to simply display the current % complete for a process. 
+The bar is coded to be flexibly sized through CSS and will scale to fit inside it's parent container by default. 

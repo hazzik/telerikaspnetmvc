@@ -1,0 +1,3 @@
+﻿True if the input field is constrained to the current date format.<br /><br />
+
+<strong>ConstrainInput(false)</strong>
