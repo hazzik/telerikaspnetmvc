@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="04ab6aeb-dd51-43f7-abdd-f468d1efc994" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      	<autoOutline lead="none" />
+      </para>
+    </introduction>
+    <section address="BindToSiteMap">
+      <title>Binding to SiteMap</title>
+      <content>
+      <list class="bullet">
+      	<listItem>
+	      	<para>
+	      		How the sitemap is defined:
+	      	</para>
+	      	<para>
+	      		The sitemap used in the example is defined with <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.SiteMapDictionary.Register``1(System.String,System.Action{``0})</codeEntityReference> method
+	      		of <codeEntityReference>T:Telerik.Web.Mvc.SiteMapDictionary</codeEntityReference> class. We used <codeInline>SiteMapManager</codeInline> static class
+	      		which contains <codeInline>SiteMapDictionary</codeInline> object and gives the ability to manipulate with it. Here is the action method used to
+	      		return the View:
+	      	</para>
+	      	<code lang="C#" title="Controller">
+				<![CDATA[
+					[PopulateSiteMap(SiteMapName = "sample", ViewDataKey = "sample")]
+			        public ActionResult SiteMapBinding()
+					{
+			            if (!SiteMapManager.SiteMaps.ContainsKey("sample"))
+			            {
+			                SiteMapManager.SiteMaps.Register<XmlSiteMap>("sample", sitmap => sitmap.LoadFrom("~/sample.sitemap"));
+			            }
+						return View();
+					}
+				]]>
+			</code>
+			<para>
+				The <codeEntityReference>T:Telerik.Web.Mvc.PopulateSiteMapAttribute</codeEntityReference> attribute gets from the <codeInline>SiteMapManager.SiteMaps</codeInline>
+				dictionary the corresponding <codeInline>sitemap</codeInline> defined with <codeEntityReference>P:Telerik.Web.Mvc.PopulateSiteMapAttribute.SiteMapName</codeEntityReference> and puts it in the
+				<codeInline>ViewData</codeInline> dinctionary with key defined by <codeEntityReference>P:Telerik.Web.Mvc.PopulateSiteMapAttribute.ViewDataKey</codeEntityReference> property.
+			</para>
+      	</listItem>
+      <listItem>
+      	  <para>
+      	  	Binding to sitemap:
+      	  </para>
+	      <para>
+			The <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBar</codeEntityReference> component is a hierarchical control and can be bound
+			to SiteMap using <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.BindTo(System.String)</codeEntityReference> method. 
+			Next code snippet describes simple binding to SiteMap object:
+			</para>
+			<code lang="C#" title="View">
+			<![CDATA[
+			    <% Html.Telerik().PanelBar()
+			           .Name("PanelBar")
+			           .BindTo("sample")
+			           .Render();
+			    %>
+			]]>
+			</code>
+		<para>
+		Now what BindTo method does:
+			<para>
+				BindTo method gets the string parameter and retrieves a SiteMap object from ViewData.
+				From here traverses all SiteMapNodes from SiteMap object, gets the required data and sets
+				the properties of the newly created <codeInline>PanelBarItem</codeInline> object. You can add <codeInline>Action</codeInline>
+				which can be used to set different properties than the standard one defined in the <codeEntityReference>T:Telerik.Web.Mvc.INavigatable</codeEntityReference> interface.
+				
+			</para>		
+			BindTo methods has two overloads:
+				<list class="ordered">		
+				  <listItem>
+				  	<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.BindTo(System.String)</codeEntityReference>:
+				  	<para>
+					  	String parameter represents ViewDataKey value. This value is used to search the ViewData for SiteMap object. Hence to bind the panelbar,
+					  	you should in advance add the required SiteMap to the ViewData with unique ViewDataKey. This method will set the following properties
+					  	if they are present in the SiteMapNode:
+					  	<list class="bullet">
+					  		<listItem>
+					  			<codeInline>PanelBarItem.Text(String)</codeInline>
+					  		</listItem>
+					  		<listItem>
+					  			<codeInline>PanelBarItem.Visible(Boolean)</codeInline>
+					  		</listItem>
+					  		<listItem>
+					  			<codeInline>PanelBarItem.RouteName(String)</codeInline>
+					  		</listItem>
+					  		<listItem>
+					  			<codeInline>PanelBarItem.ControllerName(String)</codeInline>
+					  		</listItem>
+					  		<listItem>
+					  			<codeInline>PanelBarItem.ActionName(String)</codeInline>
+					  		</listItem>
+					  		<listItem>
+					  			<codeInline>PanelBarItem.Url(String)</codeInline>
+					  		</listItem>
+					  	</list>
+					  	
+						<alert class="important">
+						  <para>Please note that if you set RouteName property, ControllerName, ActionName and Url properties become <codeInline>null</codeInline></para>
+						  <para>Also if set ActionName or ControllerName property, Url and RouteName properties become  <codeInline>null</codeInline>.</para>
+						  <para>Similar behavior can be observed when Url property is set: RouteName, ControllerName, ActionName properties become  <codeInline>null</codeInline>.</para>
+						</alert>
+	
+				  	</para>
+				  </listItem>
+				  <listItem>
+				  	<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.BindTo(System.String,System.Action{Telerik.Web.Mvc.UI.PanelBarItem,Telerik.Web.Mvc.SiteMapNode})</codeEntityReference>:
+				  	<para>
+				  		The second parameter is <codeInline>System.Action&lt;PanelBarItem, SiteMapNode&gt;&gt;</codeInline>. 
+				  		It is a callback for each created <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference>: object.
+				  	</para>
+				  	<para>
+				  		Below is a code excerpt which shows how to manipulate the settings for each created item:
+				  		
+					<code lang="C#" title="View">
+					<![CDATA[
+					<% 
+						Html.Telerik().PanelBar()
+							.BindTo("telerik.mvc.examples", (item, siteMapNode) =>
+							{
+								if (item.Parent == null)
+								{
+									item.SpriteCssClasses = "t" + item.Text;
+								}
+							})
+							.Name("PanelBar")
+							.HighlightPath(true)
+							.Render();
+					%>
+					]]>
+					</code>
+	
+				  	</para>
+				  </listItem>
+				</list>
+			</para>
+		</listItem>
+      </list>
+      </content>
+    </section>
+    <section address="BindToModel">
+      <title>Binding to Model</title>
+      <content>
+      	<list class="bullet">
+      		<listItem>
+      			<para>
+      				Binding to Model (IEnumerable collection):
+      			</para>
+      			<para>
+					The <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBar</codeEntityReference> component can be bound
+					to IEnumerable generic collection of <codeInline>TDataItem</codeInline> type using <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.BindTo``1(System.Collections.Generic.IEnumerable{``0},System.Action{Telerik.Web.Mvc.UI.PanelBarItem,``0})</codeEntityReference> method. 
+					The following code snippet describes how to perform binding to IEnumerable collection:
+				</para>
+				<code lang="C#" title="View">
+				<![CDATA[
+					<% 
+					   Html.Telerik().PanelBar()
+					       .Name("PanelBar")
+					       .HighlightPath(false)
+					       .SelectedIndex(2)
+					       .BindTo(Model,(item, navigationData) => 
+		                   {
+		                       item.Text = navigationData.Text;
+		                       item.ImageUrl = navigationData.ImageUrl;
+		                       item.ImageHtmlAttributes.Add("style", "margin-right: 10px");
+		                       item.Url = navigationData.Url;
+		                   })
+					      .Render();
+					%>
+				]]>
+				</code>
+      		</listItem>
+      		<listItem>
+      			<para>
+      				Action, which returns View with data in the Model.
+      			</para>
+      			<code lang="C#" title="Controller">
+				<![CDATA[				
+             	    [SourceCodeFile("NavigationDataBuilder", "~/Models/NavigationData.cs")]
+                    public ActionResult DataBindingToModel()
+                    {
+                       ViewData.Model = NavigationDataBuilder.GetCollection();
+ 
+                       return View();
+                    }
+				]]>
+				</code>
+      		</listItem>
+      		<listItem>
+      			<para>
+					Declaration of NavigationData class:
+				</para>
+				<code language="C#">
+					<![CDATA[
+			          public class NavigationData
+		              {
+		                 public string Text { get; set; }
+		                 public string ImageUrl { get; set; }
+		                 public string NavigateUrl { get; set; }
+		              }
+					]]>
+				</code>
+      		</listItem>
+      		<listItem>
+				<para>
+				Now what BindTo method does:
+					<para>
+						BindTo method gets the IEnumerable collection passed as first parameter and depending on the defined action 
+						sets the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference>'s properties.
+						Using this method you should set the required properties.
+					</para>
+					<para>
+						In the given example the panelbar is bound to a collection of custom object, which has <codeInline>Text</codeInline>, 
+						<codeInline>ImageUrl</codeInline>, <codeInline>NavigationUrl </codeInline> properties. In the Action&lt;PanelBarItem, NavigationData&gt; methodmethod the NavigationData's
+						properties are used to set the
+						<codeInline>PanelBarItem.Text(String)</codeInline>,
+						<codeInline>PanelBarItem.ImageUrl(String)</codeInline> and
+						<codeInline>PanelBarItem.Url(String)</codeInline> properties. 
+						You maybe noticed that the ImageHtmlAttributes are used to style the rendered image. You can also set which item to be selected
+						on initial rendering with <codeInline>PanelBar.SelectedIndex(System.Int32)</codeInline>.
+					</para>
+				</para>      			
+      		</listItem>
+      	</list>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="f7761b49-ae82-4570-8266-fba7f4591210">First look</link>
+      <link xlink:href="09537707-dd41-4ca7-9d43-52d95abc664d">Expand/Collapse feature</link>
+      <link xlink:href="54157497-10eb-4be8-a87c-e0482c082d14">Effects in PanelBar</link>
+      <link xlink:href="8e72f629-4cef-4406-acbd-e824586e2bae">Server API</link>
+      <link xlink:href="a1ec354a-a556-4577-ad93-4fd7cd0525fd">Client API</link>
+      <link xlink:href="cfb2af47-921f-42c9-936b-bc01dc602704">Templates</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

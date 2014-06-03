@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="a3a06972-c013-4ada-aea7-b7cc9dde2751" revisionNumber="1">
+   <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+     <para>
+      		This topic shows how to use menu effects in an <token>Mvc</token>
+      		application.
+      		<autoOutline lead="none" />
+      </para>
+    <prerequisites>
+    	<content>
+    		The required resources are outlined <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8">here</link>.
+    	</content>
+   	</prerequisites>
+    
+    <section address="Effects">
+      <title>Menu effects</title>
+      <content>
+      	<para>
+      		Telerik Menu for ASP.NET MVC has the ability to animate the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuItem</codeEntityReference> objects.
+      		Here is how to define simple animation effects in the menu:
+      	</para>
+        <list class="bullet">
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.Effects(System.Action{Telerik.Web.Mvc.UI.EffectFactory})</codeEntityReference> method
+				is used to control the available animation effects. The action builds the animation effects.
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Toggle</codeEntityReference> effect 
+				open and close the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuItem</codeEntityReference> objects without animation.
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Slide</codeEntityReference> effect animate
+			     <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuItem</codeEntityReference>s' content.
+				 with gradually showing the child group from the bottom of the corresponding item.
+				 <para>
+				 	Slide animation has two overloads:
+				 </para>
+				 		<list class="ordered">
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Slide</codeEntityReference> method creates
+				  		new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.SlideAnimation</codeEntityReference>
+				  		object. The default values for the open and close duration
+				  		is <codeInline>DurationAnimation.Fast</codeInline>.
+					</listItem>
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Slide(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference>
+						method gives you ability to set animation using <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.AnimationBuilder</codeEntityReference>. This builder
+						allows you to set open/close duration. Here is a code snippet showing how you can use it in your project:
+						<code language="C#" title="View">
+							<![CDATA[
+								<% 	
+									Html.Telerik().Menu()
+						                .Name("Menu")
+						                .Effects(fx =>
+ 						                { 
+						                	fx
+						                	  .Slide(properties =>
+						           				  properties
+						           				 	.OpenDuration(AnimationDuration.Normal)
+											        .CloseDuration(AnimationDuration.Normal));
+						                })
+			                            .Items(items =>{/*items definition */})
+							            .Render(); 
+						        %>
+							]]>
+						</code>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference> method
+				animates the height property of the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuItem</codeEntityReference>s' content.
+				<para>
+					Height animation has two overloads:
+				</para>
+				<list class="ordered">
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand</codeEntityReference> method creates
+				  		new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PropertyAnimation</codeEntityReference>
+				  		object of <codeInline>PropertyAnimationType.Height</codeInline> type. The default values for the open and close duration
+				  		is <codeInline>DurationAnimation.Fast</codeInline>.
+					</listItem>
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference>
+						method gives you ability to set animation using <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.AnimationBuilder</codeEntityReference>. This builder
+						allows you to set open/close duration. Here is a code snippet showing how you can use it in your project:
+						<code language="C#" title="View">
+							<![CDATA[
+								<% 	
+									Html.Telerik().Menu()
+						                .Name("Menu")
+						                .Effects(fx =>
+ 						                { 
+						                	fx
+						                	  .Height(properties =>
+						           				  properties
+						           				 	.OpenDuration(AnimationDuration.Normal)
+											        .CloseDuration(AnimationDuration.Normal));
+						                })
+			                            .Items(items =>{/*items definition */})
+							            .Render(); 
+						        %>
+							]]>
+						</code>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Opacity</codeEntityReference> effect 
+				turns on the fade-in/fade-out transition of <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuItem</codeEntityReference>s' content.
+				<para>
+					Opacity animation has two overloads:
+				</para>
+				<list class="ordered">
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Opacity</codeEntityReference> method creates
+				  		new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PropertyAnimation</codeEntityReference>
+				  		object of <codeInline>PropertyAnimationType.Opacity</codeInline> type. The default values for the open and close duration
+				  		is <codeInline>DurationAnimation.Fast</codeInline>.
+				  	</listItem>
+				  	<listItem>				  		
+				  		<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Opacity(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference> method
+					  	creates new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PropertyAnimation</codeEntityReference> and and runs the code defined with <codeInline>Action&lt;AnimationBuilder&gt;</codeInline> parameter.
+					  	PropertyAnimation object gives ability to set animation using <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.AnimationBuilder</codeEntityReference>. This builder
+						allows you to set open/close duration. Here is a code snippet showing how you can use it in your project:
+						<code language="C#" title="View">
+							<![CDATA[
+								<% 	
+									Html.Telerik().Menu()
+						                .Name("Menu")
+						                .Effects(fx =>
+ 						                { 
+						                	fx
+						                	  .Opacity(properties =>
+						           				  properties
+						           				 	.OpenDuration(AnimationDuration.Normal)
+											        .CloseDuration(AnimationDuration.Normal));
+						                })
+			                            .Items(items =>{/*items definition */})
+							            .Render(); 
+						        %>
+							]]>
+						</code>
+				  	</listItem>
+				</list>
+			</listItem>
+        </list>
+        
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="5300fb2e-72f1-4a3c-be4e-1d978c126c3b">Introduction</link>
+      <link xlink:href="4cfa1cae-3ec4-4e1f-8346-905bdc8eb5c3">Menu Binding</link>
+      <link xlink:href="6ee16ae2-c15a-4417-ad8f-e085be3957ca">Server API</link>
+      <link xlink:href="d4c13fcc-5e31-46eb-a9f0-15f978d263c1">Client API</link>
+      <link xlink:href="b226ab1a-93cd-4e35-a0c1-7cb023599969">Templates</link>
+      <link xlink:href="7046c1ff-50c9-4540-adf9-0c76ce94617c">Orientataion</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

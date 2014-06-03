@@ -17,7 +17,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         public WebAssetItemCollectionBuilderTests()
         {
             _collection = new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath);
-            _builder = new WebAssetItemCollectionBuilder(_collection);
+            _builder = new WebAssetItemCollectionBuilder(WebAssetType.JavaScript, _collection);
         }
 
         [Fact]

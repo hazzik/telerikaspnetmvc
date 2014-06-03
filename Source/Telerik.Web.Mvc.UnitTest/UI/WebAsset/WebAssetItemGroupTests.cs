@@ -15,7 +15,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
         public WebAssetItemGroupTests()
         {
-            _assetItemGroup = new WebAssetItemGroup("Dummy") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
+            _assetItemGroup = new WebAssetItemGroup("Dummy", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
         }
 
         [Fact]

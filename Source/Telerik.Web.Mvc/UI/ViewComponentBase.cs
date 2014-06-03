@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -10,6 +10,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Diagnostics;
     using System.IO;
     using System.Web.Mvc;
+    using System.Web.UI;
     using System.Web.Routing;
 
     using Infrastructure;
@@ -17,11 +18,10 @@ namespace Telerik.Web.Mvc.UI
     /// <summary>
     /// View component base class.
     /// </summary>
-    public abstract class ViewComponentBase : IStyleableComponent, IScriptableComponent
+    public abstract class ViewComponentBase : IScriptableComponent, IHtmlAttributesContainer
     {
         private string name;
 
-        private string styleSheetFilesLocation;
         private string scriptFilesLocation;
 
         /// <summary>
@@ -37,8 +37,6 @@ namespace Telerik.Web.Mvc.UI
             ViewContext = viewContext;
             ClientSideObjectWriterFactory = clientSideObjectWriterFactory;
 
-            StyleSheetFilesPath = WebAssetDefaultSettings.StyleSheetFilesPath;
-            StyleSheetFileNames = new List<string>();
             ScriptFilesPath = WebAssetDefaultSettings.ScriptFilesPath;
             ScriptFileNames = new List<string>();
 
@@ -104,37 +102,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Gets or sets the style sheet files path. Path must be a virtual path.
-        /// </summary>
-        /// <value>The style sheet files path.</value>
-        public string StyleSheetFilesPath
-        {
-            [DebuggerStepThrough]
-            get
-            {
-                return styleSheetFilesLocation;
-            }
-
-            [DebuggerStepThrough]
-            set
-            {
-                Guard.IsNotVirtualPath(value, "value");
-
-                styleSheetFilesLocation = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the style sheet file names.
-        /// </summary>
-        /// <value>The style sheet file names.</value>
-        public IList<string> StyleSheetFileNames
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Gets or sets the script files path. Path must be a virtual path.
         /// </summary>
         /// <value>The script files path.</value>
@@ -179,7 +146,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets or sets the view context to rendering a view.
         /// </summary>
         /// <value>The view context.</value>
-        protected ViewContext ViewContext
+        public ViewContext ViewContext
         {
             get;
             private set;
@@ -191,7 +158,7 @@ namespace Telerik.Web.Mvc.UI
         public void Render()
         {
             EnsureRequired();
-            WriteHtml();
+            WriteHtml(ViewContext.HttpContext.Request.Browser.CreateHtmlTextWriter(ViewContext.HttpContext.Response.Output));
         }
 
         /// <summary>
@@ -224,8 +191,15 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Writes the HTML.
         /// </summary>
-        protected virtual void WriteHtml()
+        protected virtual void WriteHtml(HtmlTextWriter writer)
         {
+            if (ViewContext.HttpContext.Request.IsAjaxRequest())
+            {
+                writer.AddAttribute(HtmlTextWriterAttribute.Type, "text/javascript");
+                writer.RenderBeginTag(HtmlTextWriterTag.Script);
+                WriteInitializationScript(writer);
+                writer.RenderEndTag();
+            }
         }
     }
 }

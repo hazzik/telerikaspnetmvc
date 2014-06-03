@@ -24,7 +24,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
                                               ViewData = new ViewDataDictionary()
                                           };
 
-            _styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), new List<IStyleableComponent>(), viewContext, new Mock<IWebAssetItemMerger>().Object);
+            _styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, new Mock<IWebAssetItemMerger>().Object);
 
             _builder = new StyleSheetRegistrarBuilder(_styleSheetRegistrar);
         }

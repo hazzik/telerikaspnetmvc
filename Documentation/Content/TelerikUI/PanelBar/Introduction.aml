@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="f7761b49-ae82-4570-8266-fba7f4591210" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      		This topic shows how to use Telerik PanelBar for ASP.NET MVC in an <token>Mvc</token>
+      		application.
+      </para>
+    </introduction>
+    
+<prerequisites>
+    	<content>
+    		Before proceeding make sure that:
+    		<list class="bullet">
+    			<listItem>
+    				You have all the <link xlink:href="3e4595a7-3c2f-429d-8cdd-a3c638417369">required components</link> installed.
+    			</listItem>
+    			<listItem>
+    				Make sure that your <token>Mvc</token> project refers the <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8"><token>TelerikMvcDll</token></link>
+    				assembly and you have a <codeInline>ScriptRegistrar</codeInline> and a <codeInline>StyleSheetRegistrar</codeInline> defined in your application (either in the master page
+    				or in the view where you are going to use the panelbar).
+    			</listItem>
+    			<listItem>
+    				All required JavaScript and CSS files are properly copied to your project. This is outlined in <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8">here - step 4.</link>
+    			</listItem>
+    		</list>
+		</content>
+    </prerequisites>
+    
+        <section address="Definition">
+      <title>PanelBar definition</title>
+      <content>
+        <para>
+        	The <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBar</codeEntityReference>
+    		is made of <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference> objects
+    		which represent the headers of the collapsible content. Here is how to define a simple panelbar
+    		with two items:
+    	</para>
+        	
+		<code lang="C#" title="View">
+			<![CDATA[
+			<% 
+			   Html.Telerik().PanelBar()
+                   .Name("PanelBar")
+                   .Items(items =>
+                   {
+                       items.Add().Text("Item 1");
+                       items.Add().Text("Item 2");
+                   })
+                   .Render(); 
+	        %>
+	        ]]>
+		</code>
+		<para>
+			And now the explanation of that code:
+		</para>
+			<list class="bullet">
+				<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Name(System.String)</codeEntityReference> is used
+    				to specify the unique name of the panelbar which is later output as the id HTML
+    				attribute and used by Telerik UI. Setting the name is mandatory and exception would be thrown
+    				otherwise.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.Items(System.Action{Telerik.Web.Mvc.UI.PanelBarItemFactory})</codeEntityReference> method
+    				is used to define the items of the panelbar. The passed action sets the properties of the items.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarItemFactory.Add</codeEntityReference> method
+    				adds new <codeInline>PanelBarItem</codeInline> object to the panelbar.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.NavigationItemBuilder`2.Text(System.String)</codeEntityReference> method
+    				sets the text displayed by the <codeInline>PanelBarItem</codeInline> object.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.NavigationItemBuilder`2.Content(System.Action)</codeEntityReference> method
+    				is used to specify the content of the <codeInline>PanelBarItem</codeInline> object.
+    			</listItem>
+    			<listItem>
+    				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarItemBuilder.LoadContentFrom(System.String)</codeEntityReference> method
+    				is used to specify the content's url, which will be loaded asynchroniously.
+    			</listItem>
+    			<listItem>
+    				Finally the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.ViewComponentBuilderBase`2.Render</codeEntityReference> method
+    				outputs the HTML of the panelbar.
+    				<alert class="important">
+    					It is mandatory that the <codeInline>Render</codeInline> method is called. If not
+    					the component will not output any HTML.
+    				</alert>
+    			</listItem>
+			</list>
+      </content>
+      </section>
+    <relatedTopics>
+      <link xlink:href="04ab6aeb-dd51-43f7-abdd-f468d1efc994">PanelBar binding</link>
+      <link xlink:href="09537707-dd41-4ca7-9d43-52d95abc664d">Expand/Collapse feature</link>
+      <link xlink:href="54157497-10eb-4be8-a87c-e0482c082d14">Effects in PanelBar</link>
+      <link xlink:href="8e72f629-4cef-4406-acbd-e824586e2bae">Server API</link>
+      <link xlink:href="a1ec354a-a556-4577-ad93-4fd7cd0525fd">Client API</link>
+      <link xlink:href="cfb2af47-921f-42c9-936b-bc01dc602704">Templates</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

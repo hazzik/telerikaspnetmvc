@@ -39,5 +39,10 @@ namespace Mvc.UI.jQuery.Examples
         {
             return View();
         }
+
+        public ActionResult ContentWithRenderPartial()
+        {
+            return View();
+        }
     }
 }

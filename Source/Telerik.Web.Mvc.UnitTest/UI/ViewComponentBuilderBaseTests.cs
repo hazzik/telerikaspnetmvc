@@ -62,23 +62,6 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         }
 
         [Fact]
-        public void Should_be_able_to_set_stylesheet_files_path()
-        {
-            _builder.StyleSheetFilesPath("~/assets/stylesheets");
-
-            Assert.Equal("~/assets/stylesheets", _component.Object.StyleSheetFilesPath);
-        }
-
-        [Fact]
-        public void Should_be_able_to_set_stylesheet_file_names()
-        {
-            _builder.StyleSheetFileNames("dummy1.css", "dummy2.css");
-
-            Assert.Contains("dummy1.css", _component.Object.StyleSheetFileNames);
-            Assert.Contains("dummy2.css", _component.Object.StyleSheetFileNames);
-        }
-
-        [Fact]
         public void Should_be_able_to_set_script_files_path()
         {
             _builder.ScriptFilesPath("~/assets/scripts");

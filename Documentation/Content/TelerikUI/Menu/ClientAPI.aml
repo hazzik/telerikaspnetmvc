@@ -1,0 +1,484 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="d4c13fcc-5e31-46eb-a9f0-15f978d263c1" revisionNumber="1">
+ <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+     <introduction>
+      <para>
+      	<autoOutline lead="none" />
+      </para>
+    </introduction>
+    <prerequisites>
+    	<content>
+    		You should add JavaScript files and other resources to your <token>Mvc</token> project. 
+    		The required actions are outlined <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8">here</link>.
+    	</content>
+   	</prerequisites>
+   	<section address="GetClientObjectOfMenu">
+   		<title>How to get the menu client object?</title>
+   		<content>
+   			<para>
+   				Here is a code snippet showing how to retrieve the client object of the menu.
+   			</para>
+   			
+			<code language="C#" title="View">
+			<![CDATA[
+				<% 
+				    Html.Telerik().Menu()
+		                .Name("Menu")
+		                .Items(items =>{/*items definition */})
+		                ...
+		                .Render(); 
+				%>
+		    ]]>
+			</code>
+			
+			<code language="JavaScript">
+			<![CDATA[
+			   <script type="text/javascript">
+			   		function getMenu(){
+			   		
+			   			var menu = $("#Menu").data("tMenu");
+			   			
+			   			return menu;
+			   			
+			   		}
+			   </script>
+			]]>
+			</code>
+
+   		</content>
+   	</section>
+    <section address="ClientEvents">
+      <title>Client events</title>
+      <content>
+      	<para>
+      		Telerik Menu for ASP.NET MVC provides client-side event handling. 
+      		Here is a code snippet showing how to subscribe the client events:
+      	</para>
+      	
+		<code language="C#" title="View">
+		<![CDATA[
+			<% 
+			    Html.Telerik().Menu()
+		            .Name("Menu")
+		            .Items(items =>{/*items definition */})
+					.ClientEvents(events =>
+					{
+						events.OnOpen("Open");
+		                events.OnClose("Close");
+		                events.OnSelect("Select");
+						events.OnLoad(() =>
+						{%>
+							function(e) {
+								/*TODO: actions when the control is loaded.*/
+								// "this" is the sender. In this event handler will be the menu.
+							}
+						<%});
+					})
+		            .Render(); %>
+		]]>
+		</code>
+		
+		<code language="JavaScript">
+			<![CDATA[
+			<script type="text/javascript">
+			    function Open(e) {
+			        // "this" in this event handler will be the link element.
+			        // the "e" is an object passed by the jQuery event trigger. 
+			    }
+		
+			    function Close(e) {
+			        // "this" in this event handler will be the link element.
+			        // the "e" is an object passed by the jQuery event trigger. 
+			    }
+		
+			    function Select(e) {
+			        // "this" in this event handler will be the link element.
+			        // the "e" is an object passed by the jQuery event trigger. 
+			    }
+			</script>
+			]]>
+		</code>
+
+		<para>
+			Explanation of code snippet:
+		</para>
+		<list class="bullet">
+			<listItem>
+				The OnLoad event is raised when the component is loaded on the client. To handle OnLoad event use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuClientEventsBuilder.OnLoad(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string parameter or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+			<listItem>
+				The OnOpen event is raised on opening of the item. To handle OnOpen event you can use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuClientEventsBuilder.OnOpen(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string parameter or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+			<listItem>
+				The OnClose event is raised on closing of the item. To handle OnClose event you can use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuClientEventsBuilder.OnClose(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string param or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+			<listItem>
+				The OnSelect event is raised when one of the component items is selected. To handle OnSelect event you can use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuClientEventsBuilder.OnSelect(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string param or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+		</list>
+	  </content>
+    </section>
+    <section address="ClientAPI">
+      <title>Client API</title>
+            <content>
+      	<para>
+      		Telerik Menu for ASP.NET MVC provides client-side API to handle its items. 
+      		Below is a code exceprts which describes how to subscribe and use the client API:
+      	</para>
+      	
+		<code language="C#" title="View">
+		<![CDATA[
+		<% 
+		    Html.Telerik().Menu()
+	            .Name("Menu")
+	            .Items(items =>
+	            {
+	                items.Add().Text("Item 1")
+	                     .Items(items =>
+	                     {
+	                         item.Add().Text("Child Item 1.1");
+	                         item.Add().Text("Child Item 1.2");
+	                     });
+	                items.Add().Text("Item 2");
+	            })
+	            .Render(); %>
+			]]>
+		</code>
+		
+<code language="javascript">
+<![CDATA[
+	<script type="text/javascript">
+		function OpenItem(e) {
+	        e.stopPropagation();
+	        
+	        var menu = $("#Menu").data("tMenu");
+
+	        menu.open($(".t-item", menu.element)[0]);
+	    }
+
+	    function CloseItem(e) {
+	        e.stopPropagation();
+	        
+	        var menu = $("#Menu").data("tMenu");
+
+	        menu.close($(".t-item", menu.element)[0]);
+	    }
+
+	    function EnableItem(e) {
+	        e.stopPropagation();
+	        
+	        var menu = $("#Menu").data("tMenu");
+
+	        menu.enable($(".t-item", menu.element)[0]);
+	    }
+
+	    function DisableItem(e) {
+	        e.stopPropagation();
+	        
+	        var menu = $("#Menu").data("tMenu");
+
+	        menu.disable($(".t-item", menu.element)[0]);
+	    }
+	</script>
+]]>
+</code>
+		<alert class="important">
+			<para>
+				Note that you should stop propagation of the event of the button with e.stopPropagation()!
+			</para>
+		</alert>
+		<para>
+			Explanation of code snippet:
+		</para>
+		<para>
+		The open, close, enable, disable methods internally convert passed parameter
+		to jQuery object. They can accept three types of arguments:
+		<list class="bullet">
+			<listItem>
+				DOM element (with some code showing how to get a dom element)
+			</listItem>
+			<listItem>
+				jQuery object (again with a sample)
+			</listItem>
+			<listItem>
+				String selector (again with a sample)
+			</listItem>
+		</list>
+		</para>
+		<list class="bullet">
+			<listItem>
+				The <codeInline>open</codeInline> method can be used trough "tMenu" object.
+				Here is an example which shows how to open &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function OpenItem() {
+								e.stopPropagation();
+								
+						        var menu = $("#Menu").data("tMenu");
+					
+								var domElement = $("li:first", menu.element).element; //first <li> element you can use $(".t-item:first", menu.element)
+					
+						        menu.open(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be opened.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[		                    
+		                    function OpenItem() {
+								e.stopPropagation();
+								
+						        var menu = $("#Menu").data("tMenu");
+					
+								var items = $("li", menu.element); //jQuery collection of <li> elements
+					
+						        menu.open(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be opened. This method will open all 
+							&lt;li&gt; elements in the menu.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+		                    function OpenItem() {
+								e.stopPropagation();
+								
+						        var menu = $("#Menu").data("tMenu");
+					
+						        menu.open("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are opened. In this example first item will open.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeInline>close</codeInline> method can be used through "tMenu" object.
+				Here is an example which shows how to close &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function CloseItem() {
+								e.stopPropagation();
+								
+						        var menu = $("#Menu").data("tMenu");
+					
+								var domElement = $("li:first", menu.element).element; //first <li> element you can use $(".t-item:first", menu.element)
+					
+						        menu.close(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be closed.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							 function CloseItem() {
+								e.stopPropagation();
+								
+						        var menu = $("#Menu").data("tMenu");
+					
+								var items = $("li", menu.element); //jQuery collection of <li> elements
+					
+						        menu.close(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be closed. This method will close all 
+							&lt;li&gt; elements in the menu.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function CloseItem() {
+								e.stopPropagation();
+								
+						        var menu = $("#Menu").data("tMenu");
+					
+						        menu.close("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are closed. In this example first item will close.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeInline>enable</codeInline> method can be used trough "tMenu" object.
+				Here is an example which shows how to enable &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function EnableItem() {
+			                   var menu = $("#Menu").data("tMenu");
+                               var domElement = $("li:first", menu.element)[0]; //first <li> element
+			                   menu.enable(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be enabled.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function EnableItem() {
+			                  var menu = $("#Menu").data("tMenu");
+		                      var items = $("li", menu.element); //jQuery collection of <li> elements
+		                      menu.enable(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be enabled. This method will enable all 
+							&lt;li&gt; elements in the menu.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function EnableItem() {
+			                   var menu = $("#Menu").data("tMenu");
+			                   menu.enable("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are enabled. In this example first item will enable.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeInline>disable</codeInline> method can be used trough "tMenu" object.
+				Here is an example which shows how to disable &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function DisableItem() {
+			                   var menu = $("#Menu").data("tMenu");
+                               var domElement = $("li:first", menu.element)[0]; //first <li> element
+			                   menu.disable(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be disabled.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function DisableItem() {
+			                  var menu = $("#Menu").data("tMenu");
+		                      var items = $("li", menu.element); //jQuery collection of <li> elements
+		                      menu.disable(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be disabled. This method will disable all 
+							&lt;li&gt; elements in the menu.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function DisableItem() {
+			                   var menu = $("#Menu").data("tMenu");
+			                   menu.disable("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are disabled. In this example first item will disable.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+		</list>
+	  </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="5300fb2e-72f1-4a3c-be4e-1d978c126c3b">Introduction</link>
+      <link xlink:href="a3a06972-c013-4ada-aea7-b7cc9dde2751">Effects in Menu</link>
+      <link xlink:href="4cfa1cae-3ec4-4e1f-8346-905bdc8eb5c3">Menu Binding</link>
+      <link xlink:href="6ee16ae2-c15a-4417-ad8f-e085be3957ca">Server API</link>
+      <link xlink:href="b226ab1a-93cd-4e35-a0c1-7cb023599969">Templates</link>
+      <link xlink:href="7046c1ff-50c9-4540-adf9-0c76ce94617c">Orientataion</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

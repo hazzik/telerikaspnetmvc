@@ -46,6 +46,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -57,6 +58,7 @@
     <Reference Include="System.Web.Routing">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="xunit, Version=1.1.0.1323, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\xunit.dll</HintPath>
@@ -69,12 +71,96 @@
     <Compile Include="..\SharedFiles\TestHelper.cs">
       <Link>TestHelper.cs</Link>
     </Compile>
+    <Compile Include="Data\QueryableExtensionsTests.cs" />
+    <Compile Include="Extensions\HtmlAttributesContainerExtensionsTests.cs" />
+    <Compile Include="Infrastructure\CacheBaseTests.cs" />
+    <Compile Include="Infrastructure\DisposableBaseTests.cs" />
+    <Compile Include="Infrastructure\FilterDescriptorFactoryTests.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterLexerTests.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeTests.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeVisitorTests.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterParserTests.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastructure\Implementation\ActionMethodCacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\AuthorizeAttributeBuilderTests.cs" />
+    <Compile Include="Infrastructure\Implementation\FieldCacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\ObjectCopierTests.cs" />
+    <Compile Include="Infrastructure\Implementation\PropertyCacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\ReflectedAuthorizeAttributeCacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\ServiceLocatorImplTests.cs" />
+    <Compile Include="Infrastructure\Implementation\UrlEncoderTests.cs" />
+    <Compile Include="Infrastructure\Implementation\VirtualPathProviderWrapperTests.cs" />
     <Compile Include="Infrastructure\PathHelperTests.cs" />
+    <Compile Include="LinkedObjectCollectionTests.cs" />
+    <Compile Include="Infrastructure\Implementation\AuthorizeAttributeCacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\ControllerAuthorizationTests.cs" />
+    <Compile Include="Infrastructure\Implementation\ControllerTypeCacheTests.cs" />
+    <Compile Include="Infrastructure\Implementation\DummyControllers.cs" />
+    <Compile Include="Infrastructure\Implementation\NavigationItemAuthorizationTests.cs" />
+    <Compile Include="Infrastructure\Implementation\UrlAuthorizationTests.cs" />
+    <Compile Include="SiteMap\PopulateSiteMapAttributeTests.cs" />
+    <Compile Include="SiteMap\SiteMapBaseTests.cs" />
+    <Compile Include="SiteMap\SiteMapBuilderTests.cs" />
+    <Compile Include="SiteMap\SiteMapDictionaryTests.cs" />
+    <Compile Include="SiteMap\SiteMapHandlerTests.cs" />
+    <Compile Include="SiteMap\SiteMapManagerTests.cs" />
+    <Compile Include="SiteMap\SiteMapNodeBuilderTests.cs" />
+    <Compile Include="SiteMap\SiteMapNodeFactoryTests.cs" />
+    <Compile Include="SiteMap\SiteMapNodeTests.cs" />
+    <Compile Include="SiteMap\XmlSiteMapTests.cs" />
+    <Compile Include="UI\AnimationDurationConverterTests.cs" />
     <Compile Include="UI\ClientSideObjectWriterTests.cs" />
+    <Compile Include="UI\Customer.cs" />
+    <Compile Include="UI\Effects\EffectFactoryTests.cs" />
+    <Compile Include="UI\Effects\EffectPropertyBuildersTests.cs" />
+    <Compile Include="UI\Grid\GridActionAttributeTests.cs" />
+    <Compile Include="UI\Grid\GridActionBindingContextTests.cs" />
+    <Compile Include="UI\Grid\GridAjaxSettingsBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridColumnBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridDataProcessorTests.cs" />
+    <Compile Include="UI\Grid\GridRequestSettingsBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridSortDescriptorSerializerTests.cs" />
+    <Compile Include="UI\Grid\GridColumnTests.cs" />
+    <Compile Include="UI\Grid\GridPagerBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridPagerTests.cs" />
+    <Compile Include="UI\Grid\GridRendererFactoryTests.cs" />
+    <Compile Include="UI\Grid\GridRendererTests.cs" />
+    <Compile Include="UI\Grid\GridRenderingTests.cs" />
+    <Compile Include="UI\Grid\GridTestHelper.cs" />
+    <Compile Include="UI\Grid\GridWorkingConditionsTests.cs" />
+    <Compile Include="UI\Menu\MenuBuilderTests.cs" />
+    <Compile Include="UI\Menu\MenuClientEventsBuilderTests.cs" />
+    <Compile Include="UI\Menu\MenuRendererFactoryTests.cs" />
+    <Compile Include="UI\Menu\MenuRendererTests.cs" />
+    <Compile Include="UI\Menu\MenuRenderingTests.cs" />
+    <Compile Include="UI\Menu\MenuTestHelper.cs" />
+    <Compile Include="UI\Menu\MenuItemBuilderTests.cs" />
+    <Compile Include="UI\Menu\MenuSerializationTests.cs" />
+    <Compile Include="UI\NavigationItemBuilderTests.cs" />
+    <Compile Include="UI\NavigationItemImageRendererTests.cs" />
+    <Compile Include="UI\NavigationItemTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarBuilderTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarClientEventsBuilderTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarItemBuilderTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarItemFactoryTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarRendererTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarRenderingTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarTestHelper.cs" />
+    <Compile Include="UI\TabStrip\TabStripClientEventsBuilderTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripItemBuilderTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripItemFactoryTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripItemTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripBuilderTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripRendererTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripRenderingTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripTestHelper.cs" />
     <Compile Include="UI\WebAsset\WebAssetDefaultSettingsTests.cs" />
-    <Compile Include="WebAssetLocatorTests.cs" />
-    <Compile Include="WebAssetRegistryTests.cs" />
-    <Compile Include="WebAssetTests.cs" />
+    <Compile Include="UrlGeneratorTests.cs" />
+    <Compile Include="WebAsset\WebAssetLocatorTests.cs" />
+    <Compile Include="WebAsset\WebAssetRegistryTests.cs" />
+    <Compile Include="WebAsset\WebAssetTests.cs" />
     <Compile Include="Extensions\ArrayExtensionsTests.cs" />
     <Compile Include="UI\ClientSideEnumValueAttributeTests.cs" />
     <Compile Include="Extensions\CollectionExtensionsTests.cs" />
@@ -111,7 +197,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UI\ScriptRegistrar\ScriptRegistrarBuilderTests.cs" />
-    <Compile Include="WebAssetHttpHandlerTests.cs" />
+    <Compile Include="WebAsset\WebAssetHttpHandlerTests.cs" />
     <Compile Include="Infrastructure\Implementation\HttpResponseCacherTests.cs" />
     <Compile Include="Infrastructure\Implementation\HttpResponseCompressorTests.cs" />
     <Compile Include="Infrastructure\Implementation\ConfigurationManagerWrapperTests.cs" />

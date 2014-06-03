@@ -1,0 +1,27 @@
+﻿<p>
+This example shows how to configure templated pre-set content for Telerik TabStrip for ASP.NET MVC. The tabstrip allows you to render regular HTML
+mark-up code as a content of the corresponding item, instead of child items .
+</p>
+<p>
+    To render templated content use <strong>Content</strong> method which accepts <strong>Action</strong>.
+	Html should be added between %&gt; and &lt;% as in the example.
+</p>
+<pre class="prettyprint">
+&lt;%
+Html.Telerik().TabStrip()
+    .Name("TabStrip")
+    .Items(parent => 
+    {
+        parent.Add()
+            .Text("Products > Books")
+            .Content(() => 
+            { %&gt;
+            
+                &lt;!-- Content --&gt;
+                
+            &lt;% });
+        ...
+    })
+    .Render();
+ %&gt;
+</pre>

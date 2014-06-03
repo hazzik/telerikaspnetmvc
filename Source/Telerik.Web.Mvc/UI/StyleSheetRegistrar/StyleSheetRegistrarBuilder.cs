@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     using Infrastructure;
 
     /// <summary>
-    /// The Builder class for managing stylesheet files fluently in ASP.NET MVC View.
+    /// Defines the fluent interface for configuring the <see cref="StyleSheetRegistrar"/> component.
     /// </summary>
     public class StyleSheetRegistrarBuilder : IHideObjectMembers
     {
@@ -54,7 +54,13 @@ namespace Telerik.Web.Mvc.UI
         /// Sets the asset handler path. Path must be a virtual path.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().StyleSheetRegistrar()
+        ///            .AssetHandlerPath("~/asset.axd")
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual StyleSheetRegistrarBuilder AssetHandlerPath(string value)
         {
             styleSheetRegistrar.AssetHandlerPath = value;
@@ -63,10 +69,20 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Executes the provided delegate that is used to register the stylesheet files fluently in default group.
+        /// Configures the <see cref="StyleSheetRegistrar.DefaultGroup"/>.
         /// </summary>
         /// <param name="configureAction">The configure action.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().StyleSheetRegistrar()
+        ///            .DefaultGroup(group => group
+        ///                 .Add("style1.css")
+        ///                 .Add("style2.css")
+        ///                 .Combined(true)
+        ///            )
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual StyleSheetRegistrarBuilder DefaultGroup(Action<WebAssetItemGroupBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
@@ -86,7 +102,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemCollectionBuilder builder = new WebAssetItemCollectionBuilder(styleSheetRegistrar.StyleSheets);
+            WebAssetItemCollectionBuilder builder = new WebAssetItemCollectionBuilder(WebAssetType.StyleSheet, styleSheetRegistrar.StyleSheets);
 
             configureAction(builder);
 
@@ -94,11 +110,25 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Renders the internal style sheet registrar.
+        /// Renders the <see cref="StyleSheetRegistrar"/>
         /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().StyleSheetRegistrar()
+        ///           .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual void Render()
         {
             styleSheetRegistrar.Render();
+        }
+
+        public override string ToString()
+        {
+            Render();
+
+            return null;
         }
     }
 }

@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="2512933f-ff08-42ea-ba84-e5d2c69cc7f2" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      	This help topic discusses the Server binding of Telerik Grid for ASP.NET MVC
+      </para>
+    </introduction>
+    <section address="ServerBinding">
+      <content>
+        <para>
+        	By default the Telerik Grid for ASP.NET MVC will perform server side requests (HTTP GET)
+        	when doing paging, sorting and filtering. This is called "Server binding".
+        </para>
+        <para>
+        	To bind the grid with data you just need to set its data source and render the view.
+        	There are a few ways to do so:
+        </para>
+        <list class="bullet">
+        	<listItem>
+        		If the view is strongly typed you can use its <codeInline>Model</codeInline> property:
+        		<code lang="C#" title="View">
+        		<![CDATA[
+        		   <%= Html.Telerik().Grid(Model)
+        		           .Name("Orders")
+        		           .Pagealbe()
+        		           .Sortable()
+        		   %>
+        		]]>
+        		</code>
+        		<code lang="C#" title="Controller">
+        		<![CDATA[
+        	     public ActionResult Index()
+                 {
+                     NorthwindDataContext northwind = new NorthwindDataContext();
+    
+                     return View(northwind.Orders);
+                 }
+        	    ]]>
+        		</code>
+        	</listItem>
+        	<listItem>
+        		You can also use the <codeInline>BindTo</codeInline> method. Then you need
+        		to explicetly specify the type of the data item:
+        		<code lang="C#" title="View">
+        		<![CDATA[
+        		   <%= Html.Telerik().Grid<Order>()
+                           .Name("Orders")
+        		           .BindTo((IEnumerable<Order>)ViewData["orders"])
+        		           .Pagealbe()
+        		           .Sortable()
+        		   %>
+        		]]>
+        		</code>
+        		<code lang="C#" title="Controller">
+        		<![CDATA[
+        	     public ActionResult Index()
+                 {
+                     NorthwindDataContext northwind = new NorthwindDataContext();
+                     ViewData["orders"] = northwind.Orders;
+                     
+                     return View();
+                 }
+        	    ]]>
+        		</code>
+        	</listItem>
+        	<listItem>
+        		There is also an overload allowing you to specify the key in the <codeInline>ViewData</codeInline>:
+        		<code lang="C#" title="View">
+        		<![CDATA[
+        		   <%= Html.Telerik().Grid<Order>("orders")
+        		           .Name("Orders")
+        		           .Pagealbe()
+        		           .Sortable()
+        		   %>
+        		]]>
+        		</code>
+        		<code lang="C#" title="Controller">
+        		<![CDATA[
+        	     public ActionResult Index()
+                 {
+                     NorthwindDataContext northwind = new NorthwindDataContext();
+                     ViewData["orders"] = northwind.Orders;
+                     
+                     return View();
+                 }
+        	    ]]>
+        		</code>
+        	</listItem>
+        </list>
+        <para>
+        	Telerik Grid for ASP.NET MVC is using its build-in Linq expression engine.
+        	This means that you don't need to care for paging, sorting and filtering the data. You only need
+        	to provide an <codeInline>IQueryable&lt;T&gt;</codeInline> and the grid will do the rest pushing
+        	the paging, sorting and filtering expressions to the underlying IQueryable provider. The provider
+        	is responsible for executing those expressions to the database server.
+        </para>	
+        <para>
+        	Here is how to configure your action method in order to bind the grid to the Orders table from
+        	the Northwind database:
+        	<code lang="C#">
+        	<![CDATA[
+        	public ActionResult Index()
+            {
+               NorthwindDataContext northwind = new NorthwindDataContext();
+    
+               return View(northwind.Orders);
+            }
+        	]]>
+        	</code>
+        	This is all the required code. The grid will use the same action method and add various query
+        	string parameters in order to perform paging, sorting and filtering. Here is how a typical URL
+        	would look like:
+        	<localUri>http://localhost:4939/?OrdersGrid-orderBy=OrderID-asc&amp;OrdersGrid-page=8</localUri>
+        </para>
+        <section address="Query String Parameters">
+        	<title>Query String Parameters</title>
+        	<content>
+        		<para>
+        		The grid will use its <codeInline>Name</codeInline> to prefix the query string parameters
+        		as can be seen from the aforementioned sample URL. This is required so more than one
+        		grid configured with server binding can exist in the same view. 
+        		<alert class="important">
+        			There is a limit of the query string length which varies between the different browsers. If using
+        			more than one grid in your view consider using <link xlink:href="f526622b-542e-4eb6-a831-c358a590c495" />
+        			to avoid exceeding the maximum query string length. If it is exceeded the URL will be truncated which will cause
+        			loss of grid state.
+        		</alert>
+        		If only one grid is needed
+        		the prefix can be easily disabled via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.PrefixUrlParameters(System.Boolean)</codeEntityReference>
+        		method:
+        		<code lang="C#">
+        		<![CDATA[
+        		 <%= Html.Telerik().Grid(Model)
+        		         .Name("Orders")
+        		         .PrefixUrlParameters(false)
+        		         .Pagealbe()
+        		         .Sortable()
+        		]]>
+        		</code>
+        		Then the url would like like:
+        		<localUri>http://localhost:4939/?orderBy=OrderID-asc&amp;page=8</localUri>
+        		</para>
+        	</content>
+        </section>
+        <section address="Configuration">
+        	<title>Configuring the Server binding</title>
+        	<content>
+        		<para>
+        		Sometimes the action method which renders the view containing the grid may need
+        		additional arguments. You can configure the Server binding using the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.ServerBinding(System.Action{Telerik.Web.Mvc.UI.GridRequestSettingsBuilder})</codeEntityReference>
+				method:
+				<code lang="C#" title="Controller">
+				<![CDATA[
+        	     public class HomeController : Controller
+        	     {
+	        	     public ActionResult Index(string id)
+	                 {
+	                    NorthwindDataContext northwind = new NorthwindDataContext();
+	                    IQueryable<Order> orders = northwind.Orders;
+	                    
+	                    if (!string.IsNullOrEmpty(id))
+	                    {
+	                    	//Select the orders for the specified CustomerID
+	                    	orders = from o in orders
+	                    	         where o.CustomerID == id
+	                    	         select o;
+	                    }
+	                    
+	                    ViewData["id"] = id ?? string.Empty;
+	    
+	                    return View(orders);
+	                 }
+                 }
+        	    ]]>
+        	    </code>
+				<code lang="C#" title="View">
+        		<![CDATA[
+        		 <%= Html.Telerik().Grid(Model)
+        		         .Name("Orders")
+        		         .ServerBinding(serverBinding => serverBinding
+        		         	.Action("Index", "Home", new {id = (string)ViewData["id"]})
+        		         )
+        		         .Pagealbe()
+        		         .Sortable()
+        		]]>
+        		</code>
+            	Here the method <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridRequestSettingsBuilderBase`2.Action(System.String,System.String,System.Object)</codeEntityReference> is used to supply the additional <codeInline>id</codeInline> argument.
+            	The grid will now pass the <codeInline>id</codeInline> parameter when doing paging, sorting and filtering.
+            	</para>
+			</content>
+        </section>
+      </content>
+    </section>
+    <relatedTopics>
+    	<link xlink:href="34ac75d0-5ce3-4bab-ac2a-208c720b4c99" />
+    	<link xlink:href="f526622b-542e-4eb6-a831-c358a590c495" />
+    	<link xlink:href="4609082c-4319-4274-ae29-d19412f4836f" />
+    	<link xlink:href="7872ef72-956e-4cb3-8872-b068f7833def" />
+    	<link xlink:href="9cc3719b-22e5-41d8-9dad-22fc203c0b58" />
+	</relatedTopics>
+  </developerConceptualDocument>
+</topic>

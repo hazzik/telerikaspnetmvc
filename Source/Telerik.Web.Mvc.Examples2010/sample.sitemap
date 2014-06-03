@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap>
+	<siteMapNode title="Home" controller="Home" action="Overview">
+		<siteMapNode title="Grid">
+			<siteMapNode controller="Grid" action="Basic" title="Basic" />
+			<siteMapNode controller="Grid" action="CustomPagingAndSorting" title="Custom binding" />
+			<siteMapNode controller="Grid" action="InMemory" title="In-memory" />
+			<siteMapNode controller="Grid" action="Multi" title="Multiple grids" />
+			<siteMapNode controller="Grid" action="PrettyUrl" title="Pretty Urls" />
+            <siteMapNode controller="Grid" action="AutoGenerateColumns" title="Auto generate columns" />
+		</siteMapNode>
+		<siteMapNode title="Menu">
+			<siteMapNode controller="Menu" action="Basic" title="Basic" />
+			<siteMapNode controller="Menu" action="Effects" title="Effects" />
+			<siteMapNode controller="Menu" action="Vertical" title="Vertical" />
+			<siteMapNode controller="Menu" action="SiteMap" title="Binding To SiteMap" />
+		</siteMapNode>
+		<siteMapNode title="PanelBar">
+      <siteMapNode controller="PanelBar" action="FirstLook" title="First Look"/>
+      <siteMapNode controller="PanelBar" action="AjaxLoading" title="Loading tab content with ajax" />
+      <siteMapNode controller="PanelBar" action="AnimationEffects" title="Animation Effects" />
+      <siteMapNode controller="PanelBar" action="ClientEvents" title="ClientEvents" />
+      <siteMapNode controller="PanelBar" action="DataBindingToModel" title="Data binding to model" />
+      <siteMapNode controller="PanelBar" action="SiteMapBinding" title="SiteMap Binding" />
+		</siteMapNode>
+		<siteMapNode title="TabStrip">
+			<siteMapNode controller="TabStrip" action="Basic" title="Basic" />
+			<siteMapNode controller="TabStrip" action="AjaxLoading" title="Loading tab content with ajax" />
+			<siteMapNode controller="TabStrip" action="Effects" title="Effects" />
+			<siteMapNode controller="TabStrip" action="SiteMap" title="Binding To SiteMap" />
+		</siteMapNode>
+    <siteMapNode title="Other product lines">
+		<siteMapNode title="UI controls for ASP.NET AJAX" url="http://www.telerik.com/products/aspnet-ajax.aspx"/>
+		<siteMapNode title="UI controls for Silverlight" url="http://www.telerik.com/products/silverlight.aspx"/>
+    </siteMapNode>
+	</siteMapNode>
+</siteMap>

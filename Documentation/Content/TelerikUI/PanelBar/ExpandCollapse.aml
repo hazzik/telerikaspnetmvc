@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="09537707-dd41-4ca7-9d43-52d95abc664d" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>Expand/Collapse bahavior of Telerik PanelBar for ASP.NET MVC</para>
+    </introduction>
+    
+    <section address="ExpandCollapse">
+      <title>Expand/Collapse Behavior</title>
+      <content>
+      	Every Telerik PanelBar for ASP.NET MVC can show/hide his content or child items
+      	on client side. Expanding/collapsing the item will show/hide its content.
+        <para>
+        	Using <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.ExpandAll(System.Boolean)</codeEntityReference> method you can control when an item will be expanded on initial render.
+        </para>
+        <alert class="important">
+			<para>If <codeInline>Items</codeInline> collection is empty or no content is set the <codeInline>PanelBarItem</codeInline> object will not be expandable.</para>
+			<para>
+				You can not expand/collapse or render item as initially expanded if its 
+				<codeEntityReference>P:Telerik.Web.Mvc.UI.NavigationItem`1.Enabled</codeEntityReference> property is set to <codeInline>false</codeInline>.
+				You can set the <codeInline>Enabled</codeInline> property using the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.NavigationItemBuilder`2.Enabled(System.Boolean)</codeEntityReference> method.
+			</para>
+		</alert>
+      </content>
+      <content>
+			<para>
+			  All items could be expanded on initial render with <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.ExpandAll(System.Boolean)</codeEntityReference> method.
+			  <alert class="important">
+			    <para>Note that items which are disabled will not expand on initial render.
+			    <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.ExpandAll(System.Boolean)</codeEntityReference> method works only in "Multiple" expand mode.</para> <!-- add link to the article below-->
+			  </alert>
+			</para>
+      </content>
+    </section>
+	<section address="ExpandMode">
+	<title>Expand modes</title>
+		<content>
+			<list class="bullet">
+				<title>Telerik PanelBar for ASP.NET MVC has two expand/collapse modes:</title>
+				<listItem>
+					<para><legacyBold>Single mode:</legacyBold></para>
+					This mode allows only one item to be expanded at a time. Once expanded the item cannot be collapsed.
+					You can expand only one item on initial rendering using Expanded method. The other option is to render all items
+					collapsed. Thus user can expand one item and hence only one item will be expanded at a time.
+					
+					For further information how to set Single expand mode review the following code snippet:	
+					<code language="C#" title="View">
+					<![CDATA[
+						<% 
+						    Html.Telerik().PanelBar()
+					            .Name("PanelBar")
+					            .Items(items =>
+					            {
+					                items.Add()
+					                     .Text("Item 1")
+					                     .Items(item =>
+					                     {
+					                         item.Add().Text("Child Item 1.1");
+					                         item.Add().Text("Child Item 1.2");
+					                         item.Add().Text("Child Item 1.3");
+					                         item.Add().Text("Child Item 1.4");
+					                     });
+					
+									items.Add()
+										 .Text("Item 2")
+										 .Items(item =>
+										 {
+										 	 item.Add().Text("Child Item 3.1");
+											 item.Add().Text("Child Item 3.2");
+											 item.Add().Text("Child Item 3.3");
+											 item.Add().Text("Child Item 3.4");
+										 })
+										 .Enabled(false);
+					                items.Add()
+					                     .Text("Item 3")
+					                     .Items(item =>
+					                     {
+					                        item.Add()
+					                            .Text("Child Item 3.1")
+					                            .Items(subitem =>
+					                            {
+					                                subitem.Add().Text("Grand Child Item 3.1.1");
+					                                subitem.Add().Text("Grand Child Item 3.1.2");
+					                            });
+					
+					                        item.Add().Text("Child Item 3.2");
+					                     });
+					                items.Add().Text("Item 4");
+					            }
+					            )
+					            .ExpandMode(PanelBarExpandMode.Single)
+					            .Render(); 
+					     %>
+					]]>
+					</code>
+					<alert class="important">
+					  <para>Please note that the Single expand mode refer to the header items only. Inner items has the Multiple expand behavior.</para>
+					  <para>In this mode only one item will be expanded, even more items are set as expanded with <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarItemBuilder.Expanded(System.Boolean)</codeEntityReference> method.</para>
+					</alert>
+				</listItem>
+				<listItem>
+					<para><legacyBold>Multiple mode:</legacyBold></para>
+					The <legacyItalic>Multiple</legacyItalic> mode allows multiple expanded items. In this mode user can expand and
+					collapse as many items as he wants. You can render one, several or all items expanded.
+					
+					Below is code excerpt which covers the described functionality:
+					<code language="C#" title="View">
+					<![CDATA[
+						<% 
+						    Html.Telerik().PanelBar()
+					            .Name("PanelBar")
+					            .Items(items =>
+					            {
+					                items.Add()
+					                     .Text("Item 1")
+					                     .Items(item =>
+					                     {
+					                         item.Add().Text("Child Item 1.1");
+					                         item.Add().Text("Child Item 1.2");
+					                         item.Add().Text("Child Item 1.3");
+					                         item.Add().Text("Child Item 1.4");
+					                     })
+					                     .Expanded(true);
+					
+									items.Add()
+									     .Text("Item 2")
+									 	 .Items(item =>
+										 {
+										   	 item.Add().Text("Child Item 3.1");
+											 item.Add().Text("Child Item 3.2");
+											 item.Add().Text("Child Item 3.3");
+											 item.Add().Text("Child Item 3.4");
+										 })
+										 .Enabled(false);
+					                items.Add()
+					                     .Text("Item 3")
+					                     .Items(item =>
+					                     {
+					                        item.Add()
+					                            .Text("Child Item 3.1")
+					                            .Items(subitem =>
+					                            {
+					                                subitem.Add().Text("Grand Child Item 3.1.1");
+					                                subitem.Add().Text("Grand Child Item 3.1.2");
+					                            });
+					
+					                        item.Add().Text("Child Item 3.2");
+					                    })
+					                    .Expanded(true);
+					                items.Add().Text("Item 4");
+					            }
+					            )
+					            .ExpandMode(PanelBarExpandMode.Multiple)
+					            .Render(); %>
+					]]>
+					</code>
+				</listItem>
+			</list>
+		</content>
+	</section>
+    <relatedTopics>
+      <link xlink:href="f7761b49-ae82-4570-8266-fba7f4591210">First look</link>
+      <link xlink:href="04ab6aeb-dd51-43f7-abdd-f468d1efc994">PanelBar binding</link>
+      <link xlink:href="54157497-10eb-4be8-a87c-e0482c082d14">Effects in PanelBar</link>
+      <link xlink:href="8e72f629-4cef-4406-acbd-e824586e2bae">Server API</link>
+      <link xlink:href="a1ec354a-a556-4577-ad93-4fd7cd0525fd">Client API</link>
+      <link xlink:href="cfb2af47-921f-42c9-936b-bc01dc602704">Templates</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

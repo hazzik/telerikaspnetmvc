@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="b226ab1a-93cd-4e35-a0c1-7cb023599969" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<introduction>
+      <para>
+      	<autoOutline lead="none" />
+      </para>
+    </introduction>
+	<para>
+		 Telerik Menu for ASP.NET MVC has the ability to 
+		 render content template instead of child items.
+	</para>
+    <section address="ContentTemplate">
+      <title>Content</title>
+      <content>
+        <para>
+        	The <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.Menu</codeEntityReference> gives you the ability to define
+        	regular HTML as a content of the corresponding <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuItem</codeEntityReference>.
+        </para>
+        <para>
+        	Here is an example, which shows how to define content template for the <codeInline>MenuItem</codeInline>:
+        </para>
+        
+		<code language="C#" title="View">
+			<![CDATA[
+			<% 
+				Html.Telerik().Menu()
+		            .Name("Menu")
+		            .Items(items =>
+		            {
+		                items.Add()
+		                     .Text("Item 1")
+		                     .Items(item =>
+			                 {
+			                     item.Add().Text("Child Item 1.1");
+			                     item.Add().Text("Child Item 1.2");
+			                     item.Add().Text("Child Item 1.3");
+			                     item.Add().Text("Child Item 1.4");
+			                 })
+		                    .Content(() => { 
+                    		%>
+                    			<p>Content</p>
+                    		<%
+                        });
+		
+						items.Add()
+						     .Text("Item 2")
+							 .Items(item =>
+						 	 {
+							 	 item.Add().Text("Child Item 3.1");
+								 item.Add().Text("Child Item 3.2");
+								 item.Add().Text("Child Item 3.3");
+								 item.Add().Text("Child Item 3.4");
+							 })
+							 .Enabled(false);
+						
+						items.Add()
+						     .Text("Item 3")
+						    	.Content(() => { %>
+							
+                    		    	<p>Content</p>
+                    		
+                    		 <%});
+		            })
+		            .Render(); 
+		    %>
+			]]>
+		</code>
+		<para>
+			To render content template use <codeEntityReference>P:Telerik.Web.Mvc.UI.NavigationItem`1.Content</codeEntityReference> method.
+			As you can see it take Action as parameter. Html should be added between %&gt; and &lt;% as in the example.
+		</para>
+		
+		<alert class="note">
+		  <para>Note that this content is output immediately.</para>
+		</alert>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="5300fb2e-72f1-4a3c-be4e-1d978c126c3b">Introduction</link>
+      <link xlink:href="a3a06972-c013-4ada-aea7-b7cc9dde2751">Effects in Menu</link>
+      <link xlink:href="4cfa1cae-3ec4-4e1f-8346-905bdc8eb5c3">Menu Binding</link>
+      <link xlink:href="6ee16ae2-c15a-4417-ad8f-e085be3957ca">Server API</link>
+      <link xlink:href="d4c13fcc-5e31-46eb-a9f0-15f978d263c1">Client API</link>
+      <link xlink:href="7046c1ff-50c9-4540-adf9-0c76ce94617c">Orientataion</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

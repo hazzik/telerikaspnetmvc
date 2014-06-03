@@ -23,7 +23,7 @@ namespace Mvc.UI.jQuery.UnitTest
         private readonly Mock<HttpContextBase> _httpContext;
         private readonly Mock<IClientSideObjectWriterFactory> _clientSideObjectWriterFactory;
 
-        private readonly Tab _tab;
+        private readonly Mvc.UI.jQuery.Tab _tab;
 
         public TabTests()
         {
@@ -32,7 +32,7 @@ namespace Mvc.UI.jQuery.UnitTest
 
             _clientSideObjectWriterFactory = new Mock<IClientSideObjectWriterFactory>();
 
-            _tab = new Tab(_viewContext, _clientSideObjectWriterFactory.Object) { AssetKey = jQueryViewComponentFactory.DefaultAssetKey };
+            _tab = new Mvc.UI.jQuery.Tab(_viewContext, _clientSideObjectWriterFactory.Object) { AssetKey = jQueryViewComponentFactory.DefaultAssetKey };
         }
 
         [Fact]
@@ -151,9 +151,9 @@ namespace Mvc.UI.jQuery.UnitTest
         public void WriteInitializationScript_should_write_scripts()
         {
             _tab.Name = "myTab";
-            _tab.Items.Add(new TabItem { Text = "Tab1", LoadContentFromUrl = "/content/1" });
-            _tab.Items.Add(new TabItem { Text = "Tab2", LoadContentFromUrl = "/content/2", Disabled = true });
-            _tab.Items.Add(new TabItem { Text = "Tab3", LoadContentFromUrl = "/content/3", Selected = true });
+            _tab.Items.Add(new Mvc.UI.jQuery.TabItem { Text = "Tab1", LoadContentFromUrl = "/content/1" });
+            _tab.Items.Add(new Mvc.UI.jQuery.TabItem { Text = "Tab2", LoadContentFromUrl = "/content/2", Disabled = true });
+            _tab.Items.Add(new Mvc.UI.jQuery.TabItem { Text = "Tab3", LoadContentFromUrl = "/content/3", Selected = true });
             _tab.OpenOn = "mouseover";
             _tab.AnimationDuration = (int) AnimationDuration.Slow;
             _tab.AnimationOpacity = "toggle";
@@ -199,9 +199,9 @@ namespace Mvc.UI.jQuery.UnitTest
             _tab.Theme = "custom";
             _tab.HtmlAttributes.Add("style", "border:#000 1px solid");
             _tab.HtmlAttributes.Add("class", "myClass");
-            _tab.Items.Add(new TabItem { Text = "Tab1", Content = delegate { } });
-            _tab.Items.Add(new TabItem { Text = "Tab2", Content = delegate { }, Selected = true });
-            _tab.Items.Add(new TabItem { Text = "Tab3", Content = delegate { }, Disabled = true });
+            _tab.Items.Add(new Mvc.UI.jQuery.TabItem { Text = "Tab1", Content = delegate { } });
+            _tab.Items.Add(new Mvc.UI.jQuery.TabItem { Text = "Tab2", Content = delegate { }, Selected = true });
+            _tab.Items.Add(new Mvc.UI.jQuery.TabItem { Text = "Tab3", Content = delegate { }, Disabled = true });
 
             _tab.Items[0].HtmlAttributes.Add("class", "myClass");
             _tab.Items[1].HtmlAttributes.Add("style", "text-align:left");

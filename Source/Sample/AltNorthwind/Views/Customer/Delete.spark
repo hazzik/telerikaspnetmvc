@@ -1,0 +1,12 @@
+<content name="TitleContent">
+    Customer Delete
+</content>
+<content name="MainContent">
+    <h2>Customer</h2>
+    <viewdata model="Customers"/>
+    <% using (Html.BeginForm()) { %>
+        Are you sure you want to delete !{ Html.Encode(Model.CompanyName) } ?
+        <br />
+        <input type="submit" value="Submit" /> or !{Html.ActionLink("Cancel", "Index") }
+    <% } %>
+</content>

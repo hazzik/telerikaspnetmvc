@@ -79,6 +79,14 @@ namespace Mvc.UI.jQuery.UnitTest
         }
 
         [Fact]
+        public void Should_be_able_to_set_no_active_selection()
+        {
+            _builder.NoActiveSelection(true);
+
+            Assert.True(_accordion.NoActiveSelection);
+        }
+
+        [Fact]
         public void Should_be_able_to_set_fill_space()
         {
             _builder.FillSpace(true);

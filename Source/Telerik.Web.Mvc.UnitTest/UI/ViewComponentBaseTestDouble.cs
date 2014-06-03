@@ -7,6 +7,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 {
     using System.IO;
     using System.Web.Mvc;
+    using System.Web.UI;
     
     public class ViewComponentBaseTestDouble : ViewComponentBase
     {
@@ -34,7 +35,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
         public void Html()
         {
-            base.WriteHtml();
+            base.WriteHtml(new HtmlTextWriter(TextWriter.Null));
         }
 
         protected override void EnsureRequired()
@@ -43,9 +44,9 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             HasEnsuredRequired = true;
         }
 
-        protected override void WriteHtml()
+        protected override void WriteHtml(HtmlTextWriter writer)
         {
-            base.WriteHtml();
+            base.WriteHtml(writer);
             HasWrittenHtml = true;
         }
     }

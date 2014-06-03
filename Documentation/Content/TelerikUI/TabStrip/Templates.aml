@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="91daaeb2-3298-4e4d-9b3b-bff34add4676" revisionNumber="1">
+ <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<introduction>
+      <para>
+      	<autoOutline lead="none" />
+      </para>
+    </introduction>
+	<para>
+		 The Telerik TabStrip for ASP.NET MVC has the ability to render content template.
+	</para>
+    <section address="ContentTemplate">
+      <title>Content</title>
+      <content>
+        <para>
+        	The <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.TabStrip</codeEntityReference> gives you the ability to define
+        	regular HTML as a content of the corresponding <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.TabStripItem</codeEntityReference>.
+        </para>
+        <para>
+        	Here is an example, which shows how to define content template for the <codeInline>TabStripItem</codeInline> object:
+        </para>
+        
+		<code language="C#" title="View">
+			<![CDATA[
+				<% 				
+				    Html.Telerik().TabStrip()
+		                .Name("TabStrip")
+		                .Items(items =>
+		                {
+		                    items.Add()
+		                         .Text("Item 1")
+		                         .Content(() => { 
+                    		     %>
+                    		       	<p>Content</p>
+                    		     <%
+                             });
+		
+						     items.Add().Text("Item 2")
+						          .Content(() => { 
+	                    		  %>
+	                    		     <p>Content</p>
+	                    		  <%
+							      .Enabled(false);
+						
+						     items.Add()
+						          .Text("Item 3")
+							      .Content(() => { 
+							      %>
+                       			     <p>Content</p>
+                    		
+                    		      <%
+                    		 });
+		            })
+		            .Render(); 
+		         %>
+			]]>
+		</code>
+		<para>
+			To render content template use <codeEntityReference>P:Telerik.Web.Mvc.UI.NavigationItem`1.Content</codeEntityReference> method.
+			As you can see it take Action as parameter. Html should be added between %&gt; and &lt;% as in the example.
+		</para>
+		
+		<alert class="note">
+		  <para>Note that this content is output immediately.</para>
+		</alert>
+      </content>
+    </section>
+    <section address="LoadFromUrl">
+      <title>Asynchronious content</title>
+      <content>
+      	<para>
+      		Asynchronous content loaded on demand via Ajax when the user expands the item for the first time. In other words the defined content is not loaded until the client requests it.
+      		We can call this action load-on-demand. The code exceprt shows how to declare the tabstrip in the View in order to load content asynchroniously:
+      	</para>
+      	
+		<code language="C#" title="View">
+			<![CDATA[
+				<% 
+					Html.Telerik().TabStrip()
+						.Name("TabStrip")
+						.Items(items => 
+						{
+			                items.Add().Text("Item 1")
+									   .Content(() => {
+									    %>
+											<p>Content</p>
+										<%
+										});
+	
+			                items.Add().Text("Item 2")
+			                     .Items(item => 
+				                 {
+				                    item.Add()
+				                        .Text("subItem2.1")
+				                        .LoadContentFrom(Url.Action("AjaxView1", "TabStrip"));
+				                 });
+							
+			                items.Add().Text("Item 3")
+									   .LoadContentFrom(Url.Action("AjaxView2", "TabStrip"));
+						})
+						.Render();
+				%>
+			]]>
+		</code>
+		<para>
+			To declare asynchronious content you should use <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.TabStripItemBuilder.LoadContentFrom(System.String)</codeEntityReference> method 
+			or <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.TabStripItemBuilder.LoadContentFrom(System.String,System.String)</codeEntityReference>.
+			The first method takes <codeInline>System.String</codeInline> as parameter, but it should be correct Action which will return the HTML for the content template.
+			The second one takes two string parameters - first one is the action name and the second is the controller name. The method will internally build the correct URL from the passed two parameters.
+			In this particular example we define Action to the TabStrip controller and Action AjaxView1 and AjaxView2, which will return User controls with partial rendering method.
+			When the tabstrip is rendered on the client on places of the content templates is rendered empty <codeInline>DIV</codeInline>. Subsequently when the user 
+			clicks on the item which consists the content template, the tabstrip will initiate an ajax request to the server using the URL set through the LoadContentFrom method.
+			If the request is succesfull the empty <codeInline>DIV</codeInline> will be populated with the returned data. <!-- say something for the error handling.-->
+		</para>
+		<para>
+			Here is a declaration of the user controls - AjaxView1 and AjaxView2:
+		</para>
+		<code>
+			<![CDATA[
+				<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
+				<p><strong>This content was loaded via ajax (<%= DateTime.Now.ToString() %>).</strong></p>
+				<p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+				<p>Mauris vitae ante. Curabitur augue. Nulla purus nibh, lobortis ut, feugiat at, aliquam id, purus. Sed venenatis, lorem venenatis volutpat commodo, purus quam lacinia justo, mattis interdum pede pede a odio. Fusce nibh. Morbi nisl mauris, dapibus in, tristique eget, accumsan et, pede. Donec mauris risus, pulvinar ut, faucibus eu, mollis in, nunc. In augue massa, commodo a, cursus vehicula, varius eu, dui. Suspendisse sodales suscipit lorem. Morbi malesuada, eros quis condimentum dignissim, lectus nibh tristique urna, non bibendum diam massa vel risus. Morbi suscipit. Proin egestas, eros at scelerisque scelerisque, dolor lacus fringilla lacus, ut ullamcorper mi magna at quam. Aliquam sed elit. Aliquam turpis purus, congue quis, iaculis id, ullamcorper sit amet, justo. Maecenas sed mauris. Proin magna justo, interdum in, tincidunt eu, viverra eu, turpis. Suspendisse mollis. In magna. Phasellus pellentesque, urna pellentesque convallis pellentesque, augue sem blandit pede, at rhoncus libero nisl a odio.</p>
+				<p>Sed vitae nibh non magna semper tempor. Duis dolor. Nam congue laoreet arcu. Fusce lobortis enim quis ligula. Maecenas commodo odio id mi. Maecenas scelerisque tellus eu odio. Etiam dolor purus, lacinia a, imperdiet in, aliquam et, eros. In pellentesque. Nullam ac massa. Integer et turpis. Ut quam augue, congue non, imperdiet id, eleifend ac, nisi. Etiam ac arcu. Cras iaculis accumsan erat. Nullam vulputate sapien nec nisi pretium rhoncus. Aliquam a nibh. Vivamus est ante, fermentum a, tincidunt ut, imperdiet nec, velit. Aenean non tortor. Sed nec mauris eget tellus condimentum rutrum.</p>
+			]]>
+		</code>
+		
+		<code>
+			<![CDATA[
+				<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
+				<p><strong>This content was also loaded via ajax (<%= DateTime.Now.ToString() %>).</strong></p>
+				<p>Proin elit arcu, rutrum commodo, vehicula tempus, commodo a, risus. Curabitur nec arcu. Donec sollicitudin mi sit amet mauris. Nam elementum quam ullamcorper ante. Etiam aliquet massa et lorem. Mauris dapibus lacus auctor risus. Aenean tempor ullamcorper leo. Vivamus sed magna quis ligula eleifend adipiscing. Duis orci. Aliquam sodales tortor vitae ipsum. Aliquam nulla. Duis aliquam molestie erat. Ut et mauris vel pede varius sollicitudin. Sed ut dolor nec orci tincidunt interdum. Phasellus ipsum. Nunc tristique tempus lectus.</p>
+				<p>Mauris vitae ante. Curabitur augue. Nulla purus nibh, lobortis ut, feugiat at, aliquam id, purus. Sed venenatis, lorem venenatis volutpat commodo, purus quam lacinia justo, mattis interdum pede pede a odio. Fusce nibh. Morbi nisl mauris, dapibus in, tristique eget, accumsan et, pede. Donec mauris risus, pulvinar ut, faucibus eu, mollis in, nunc. In augue massa, commodo a, cursus vehicula, varius eu, dui. Suspendisse sodales suscipit lorem. Morbi malesuada, eros quis condimentum dignissim, lectus nibh tristique urna, non bibendum diam massa vel risus. Morbi suscipit. Proin egestas, eros at scelerisque scelerisque, dolor lacus fringilla lacus, ut ullamcorper mi magna at quam. Aliquam sed elit. Aliquam turpis purus, congue quis, iaculis id, ullamcorper sit amet, justo. Maecenas sed mauris. Proin magna justo, interdum in, tincidunt eu, viverra eu, turpis. Suspendisse mollis. In magna. Phasellus pellentesque, urna pellentesque convallis pellentesque, augue sem blandit pede, at rhoncus libero nisl a odio.</p>
+				<p>Sed vitae nibh non magna semper tempor. Duis dolor. Nam congue laoreet arcu. Fusce lobortis enim quis ligula. Maecenas commodo odio id mi. Maecenas scelerisque tellus eu odio. Etiam dolor purus, lacinia a, imperdiet in, aliquam et, eros. In pellentesque. Nullam ac massa. Integer et turpis. Ut quam augue, congue non, imperdiet id, eleifend ac, nisi. Etiam ac arcu. Cras iaculis accumsan erat. Nullam vulputate sapien nec nisi pretium rhoncus. Aliquam a nibh. Vivamus est ante, fermentum a, tincidunt ut, imperdiet nec, velit. Aenean non tortor. Sed nec mauris eget tellus condimentum rutrum.</p>
+			]]>
+		</code>
+		<alert class="note">
+			<para>
+				Note that the actions should return PartialView():
+			</para>
+			<code language="C#" title="Controller">
+				<![CDATA[				
+		           public ActionResult AjaxView1()
+		           {
+		               return PartialView();
+		           }
+
+		           public ActionResult AjaxView2()
+		           {
+		              return PartialView();
+		           }
+				]]>
+			</code>
+		</alert>
+		<alert class="important">
+			<para>
+				Note that you cannot set URL and ContentURL at once. An exception will ne thrown.
+			</para>
+		</alert>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="09e4fd74-7a57-4102-af7e-a23447005198">Introduction</link>
+      <link xlink:href="9369fafd-5582-4d07-9ba7-ff91795940dc">Effects in TabStrip</link>
+      <link xlink:href="398ef44f-f997-4979-a5dd-0f80af3130b8">TabStrip Binding</link>
+      <link xlink:href="9a43e448-7ac6-4c7f-b0ce-9a022a38d69e">Client API</link>
+      <link xlink:href="b95455d3-88e1-4b2a-bacb-0a4445066959">Server API</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

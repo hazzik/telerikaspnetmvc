@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.Infrastructure
@@ -17,7 +17,7 @@ namespace Telerik.Web.Mvc.Infrastructure
     public static class Guard
     {
         /// <summary>
-        /// Ensures the specified collection is not null.
+        /// Ensures the specified argument is not null.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -38,7 +38,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         [DebuggerStepThrough]
         public static void IsNotNullOrEmpty(string parameter, string parameterName)
         {
-            if (string.IsNullOrEmpty((parameter ?? string.Empty).Trim()))
+            if (string.IsNullOrEmpty((parameter ?? string.Empty)))
             {
                 throw new ArgumentException(Resources.TextResource.CannotBeNullOrEmpty.FormatWith(parameterName));
             }
@@ -79,7 +79,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         }
 
         /// <summary>
-        /// Ensures the specified value is positive integer.
+        /// Ensures the specified value is a positive integer.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -93,7 +93,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         }
 
         /// <summary>
-        /// Ensures the specified value is not negative integer.
+        /// Ensures the specified value is not a negative integer.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -107,7 +107,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         }
 
         /// <summary>
-        /// Ensures the specified value is not negative float.
+        /// Ensures the specified value is not a negative float.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>
@@ -121,7 +121,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         }
 
         /// <summary>
-        /// Ensures the specified value is a virtual path which starts with ~/.
+        /// Ensures the specified path is a virtual path which starts with ~/.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <param name="parameterName">Name of the parameter.</param>

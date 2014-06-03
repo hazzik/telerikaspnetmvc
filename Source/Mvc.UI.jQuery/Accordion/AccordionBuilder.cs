@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Mvc.UI.jQuery
@@ -84,6 +84,18 @@ namespace Mvc.UI.jQuery
         public virtual AccordionBuilder OpenOn(string eventName)
         {
             Component.OpenOn = eventName;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Noes the active selection.
+        /// </summary>
+        /// <param name="value">if set to <c>true</c> [value].</param>
+        /// <returns></returns>
+        public virtual AccordionBuilder NoActiveSelection(bool value)
+        {
+            Component.NoActiveSelection = value;
 
             return this;
         }

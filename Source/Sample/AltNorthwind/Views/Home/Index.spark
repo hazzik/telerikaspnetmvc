@@ -1,0 +1,11 @@
+﻿<content name="TitleContent">
+    Home Page
+</content>
+<content name="MainContent">
+    <h2></h2>
+    <p>
+        <h2>${ViewData["Message"]}</h2>
+        
+        To learn more about ASP.NET MVC visit <a href="http://asp.net/mvc" title="ASP.NET MVC Website">http://asp.net/mvc</a>.
+    </p>
+</content>

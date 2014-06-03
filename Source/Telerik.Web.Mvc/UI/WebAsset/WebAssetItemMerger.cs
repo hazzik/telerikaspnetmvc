@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -8,25 +8,9 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Web;
 
     using Extensions;
     using Infrastructure;
-
-    /// <summary>
-    /// Defines the basic building block of web asset merging.
-    /// </summary>
-    public interface IWebAssetItemMerger
-    {
-        /// <summary>
-        /// Merges the specified assets.
-        /// </summary>
-        /// <param name="contentType">Type of the content.</param>
-        /// <param name="assetHandlerPath">The asset handler path.</param>
-        /// <param name="assets">The assets.</param>
-        /// <returns></returns>
-        IList<string> Merge(string contentType, string assetHandlerPath, WebAssetItemCollection assets);
-    }
 
     /// <summary>
     /// The default web asset merger.
@@ -35,23 +19,23 @@ namespace Telerik.Web.Mvc.UI
     {
         private readonly IWebAssetRegistry assetRegistry;
         private readonly IUrlResolver urlResolver;
-        private readonly HttpServerUtilityBase httpServer;
+        private readonly IUrlEncoder urlEncoder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebAssetItemMerger"/> class.
         /// </summary>
         /// <param name="assetRegistry">The asset registry.</param>
         /// <param name="urlResolver">The URL resolver.</param>
-        /// <param name="httpServer">The HTTP server.</param>
-        public WebAssetItemMerger(IWebAssetRegistry assetRegistry, IUrlResolver urlResolver, HttpServerUtilityBase httpServer)
+        /// <param name="urlEncoder">The URL encoder.</param>
+        public WebAssetItemMerger(IWebAssetRegistry assetRegistry, IUrlResolver urlResolver, IUrlEncoder urlEncoder)
         {
             Guard.IsNotNull(assetRegistry, "assetRegistry");
             Guard.IsNotNull(urlResolver, "urlResolver");
-            Guard.IsNotNull(httpServer, "httpServer");
+            Guard.IsNotNull(urlEncoder, "urlEncoder");
 
             this.assetRegistry = assetRegistry;
             this.urlResolver = urlResolver;
-            this.httpServer = httpServer;
+            this.urlEncoder = urlEncoder;
         }
 
         /// <summary>
@@ -69,7 +53,7 @@ namespace Telerik.Web.Mvc.UI
 
             IList<string> mergedList = new List<string>();
 
-            Func<string, string> getRelativePath = source => urlResolver.Resolve(assetRegistry.Locate(source));
+            Func<string, string, string> getRelativePath = (source, version) => urlResolver.Resolve(assetRegistry.Locate(source, version));
 
             if (!assets.IsEmpty())
             {
@@ -80,11 +64,11 @@ namespace Telerik.Web.Mvc.UI
 
                     if (item != null)
                     {
-                        mergedList.Add(getRelativePath(item.Source));
+                        mergedList.Add(getRelativePath(item.Source, null));
                     }
                     else if (itemGroup != null)
                     {
-                        if (!itemGroup.Disabled)
+                        if (itemGroup.Enabled)
                         {
                             if (!string.IsNullOrEmpty(itemGroup.ContentDeliveryNetworkUrl))
                             {
@@ -94,8 +78,8 @@ namespace Telerik.Web.Mvc.UI
                             {
                                 if (itemGroup.Combined)
                                 {
-                                    string id = assetRegistry.Store(contentType, itemGroup.Version, itemGroup.Compress, itemGroup.CacheDurationInDays, itemGroup.Items.Select(i => i.Source).ToList());
-                                    string virtualPath = "{0}?{1}={2}".FormatWith(assetHandlerPath, httpServer.UrlEncode(WebAssetHttpHandler.IdParameterName), httpServer.UrlEncode(id));
+                                    string id = assetRegistry.Store(contentType, itemGroup);
+                                    string virtualPath = "{0}?{1}={2}".FormatWith(assetHandlerPath, urlEncoder.Encode(WebAssetHttpHandler.IdParameterName), urlEncoder.Encode(id));
                                     string relativePath = urlResolver.Resolve(virtualPath);
 
                                     if (!mergedList.Contains(relativePath, StringComparer.OrdinalIgnoreCase))
@@ -109,7 +93,7 @@ namespace Telerik.Web.Mvc.UI
                                                           {
                                                               if (!mergedList.Contains(i.Source, StringComparer.OrdinalIgnoreCase))
                                                               {
-                                                                  mergedList.Add(getRelativePath(i.Source));
+                                                                  mergedList.Add(getRelativePath(i.Source, itemGroup.Version));
                                                               }
                                                           });
                                 }

@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc
@@ -16,7 +16,7 @@ namespace Telerik.Web.Mvc
     {
         private static string styleSheetFilesPath = "~/Content";
         private static string scriptFilesPath = "~/Scripts";
-        private static string version = typeof(WebAssetDefaultSettings).Assembly.GetName().Version.ToString(2);
+        private static string version = typeof(WebAssetDefaultSettings).Assembly.GetName().Version.ToString();
         private static bool compress = true;
         private static float cacheDurationInDays = 365f;
 

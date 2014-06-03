@@ -61,8 +61,6 @@
     <Compile Include="Accordion\AccordionItem.cs" />
     <Compile Include="Accordion\AccordionItemBuilder.cs" />
     <Compile Include="Accordion\AccordionItemFactory.cs" />
-    <Compile Include="Common\AnimationDuration.cs" />
-    <Compile Include="Common\AnimationDurationConverter.cs" />
     <Compile Include="Common\jQueryViewComponentBase.cs" />
     <Compile Include="Common\jQueryViewComponentDefaultSettings.cs" />
     <Compile Include="Common\jQueryViewComponentFactory.cs" />

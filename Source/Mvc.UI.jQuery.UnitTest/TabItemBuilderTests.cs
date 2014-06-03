@@ -11,13 +11,13 @@ namespace Mvc.UI.jQuery.UnitTest
 
     public class TabItemBuilderTests
     {
-        private readonly TabItem _item;
-        private readonly TabItemBuilder _builder;
+        private readonly Mvc.UI.jQuery.TabItem _item;
+        private readonly Mvc.UI.jQuery.TabItemBuilder _builder;
 
         public TabItemBuilderTests()
         {
-            _item = new TabItem();
-            _builder = new TabItemBuilder(_item);
+            _item = new Mvc.UI.jQuery.TabItem();
+            _builder = new Mvc.UI.jQuery.TabItemBuilder(_item);
         }
 
         [Fact]

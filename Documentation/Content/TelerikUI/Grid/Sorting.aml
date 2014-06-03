@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="669182c9-f8cb-490d-8aed-b3c8c5edd312" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>This help topic discusses the sorting feature of Telerik Grid for ASP.NET MVC</para>
+    </introduction>
+    <section address="Sorting">
+      <content>
+        <para>
+        	Sorting allows the user to sort the grid columns by clicking their header. To enable
+        	sorting use the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Sortable</codeEntityReference> method:
+        	<code lang="C#" title="View">
+        	<![CDATA[
+			<%= Html.Telerik().Grid(Model)
+			        .Name("Grid")
+			        .Sortable()
+			%>
+			]]>
+        	</code>
+        	This would enable sorting with default configuration - all bound colums are sortable and the user can sort by only one
+        	column at the same time.
+        </para>
+      </content>
+      <sections>
+      	<section address="SortingConfig">
+      		<title>Sorting Configuration</title>
+      		<content>
+      			You can customize the sorting behavior by using the 
+      			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Sortable(System.Action{Telerik.Web.Mvc.UI.GridSortSettingsBuilder})</codeEntityReference>
+      			method. It allows you to do the following:
+      			<list class="bullet">
+      				<listItem>
+      					Enable sorting based on some condition via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridSortSettingsBuilder.Enabled(System.Boolean)</codeEntityReference> method:
+			        	<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Sortable(sorting => sorting.Enabled((bool)ViewData["enableSorting"]))
+						%>
+						]]>
+						</code>
+      				</listItem>
+      				<listItem>
+      					Allow multiple column sorting via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridSortSettingsBuilder.SortMode(Telerik.Web.Mvc.UI.GridSortMode)</codeEntityReference> method:
+			        	<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Sortable(sorting => sorting.SortMode(GridSortMode.MultipleColumn))
+						%>
+						]]>
+						</code>
+      				</listItem>
+      			</list>
+      			If you want to disable sorting for a particular column you can use the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Sortable(System.Boolean)</codeEntityReference>
+      			method:
+	        	<code lang="C#" title="View">
+	        	<![CDATA[
+    				<%= Html.Telerik().Grid(Model)
+						    .Name("Grid")
+							.Columns(columns =>
+							{
+					            columns.Add(o => o.OrderID).Sortable(false);
+					        })
+					        .Sortable()
+					%>
+				]]>
+				</code>
+      		</content>
+      	</section>
+      </sections>
+    </section>
+    <relatedTopics>
+       	<link xlink:href="34ac75d0-5ce3-4bab-ac2a-208c720b4c99" />
+    	<link xlink:href="42427fad-1e7b-4c05-afea-e088bbf54517" />
+    	<link xlink:href="4609082c-4319-4274-ae29-d19412f4836f" />
+	</relatedTopics>
+  </developerConceptualDocument>
+</topic>

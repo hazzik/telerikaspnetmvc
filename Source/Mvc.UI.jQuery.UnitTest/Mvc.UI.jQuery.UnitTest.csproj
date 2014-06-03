@@ -71,7 +71,6 @@
     <Compile Include="AccordionItemFactoryTests.cs" />
     <Compile Include="AccordionItemTests.cs" />
     <Compile Include="AccordionTests.cs" />
-    <Compile Include="AnimationDurationConverterTests.cs" />
     <Compile Include="MessageBoxBuilderTests.cs" />
     <Compile Include="MessageBoxTests.cs" />
     <Compile Include="DatePickerBuilderTests.cs" />

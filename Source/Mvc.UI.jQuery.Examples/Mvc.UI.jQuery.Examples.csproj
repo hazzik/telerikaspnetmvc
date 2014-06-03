@@ -150,6 +150,8 @@
     <Content Include="Views\Accordion\Animation.txt" />
     <Content Include="Views\Accordion\Basic.txt" />
     <Content Include="Views\Accordion\CollapsibleContent.txt" />
+    <Content Include="Views\Accordion\ContentWithRenderPartial.aspx" />
+    <Content Include="Views\Accordion\ContentWithRenderPartial.txt" />
     <Content Include="Views\Accordion\CustomIcons.txt" />
     <Content Include="Views\Accordion\Events.txt" />
     <Content Include="Views\Accordion\NoAutoHeight.txt" />
@@ -180,6 +182,7 @@
     <Content Include="Views\ProgressBar\Basic.txt" />
     <Content Include="Views\ProgressBar\Events.txt" />
     <Content Include="Views\ProgressBar\UpdateElements.txt" />
+    <Content Include="Views\Accordion\DummyControl.ascx" />
     <Content Include="Views\Shared\Navigation.ascx" />
     <Content Include="Views\Slider\Basic.txt" />
     <Content Include="Views\Slider\Events.txt" />
@@ -212,7 +215,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>8013</DevelopmentServerPort>
+          <DevelopmentServerPort>7545</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost/Griffin</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

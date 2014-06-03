@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="6ee16ae2-c15a-4417-ad8f-e085be3957ca" revisionNumber="1">
+<developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>This topic is focused on the Server API</para>
+    </introduction>
+ 	<para>
+ 		Here is a list of the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.MenuBuilder</codeEntityReference>'s methods
+ 		accompanied with a short description:
+ 	</para>
+    <list class="bullet">
+    	<listItem>
+    		<para>
+    			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.Items(System.Action{Telerik.Web.Mvc.UI.MenuItemFactory})</codeEntityReference>
+    			method:
+    		</para>
+    		<para>
+    			You can use this method to declaratively add items to the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.Menu</codeEntityReference> component.
+    			Every <codeInline>MenuItem</codeInline> has an <codeInline>Items</codeInline> collection, which allows you to add child items. Note that this method will add the items to the Items collection 
+    			of the corresponding <codeInline>MenuItem</codeInline> object, not to the menu.
+    		</para>
+    		
+			<code language="C#" title="View">
+			<![CDATA[
+			...
+				Html.Telerik().Menu()
+					.Name("Menu")
+					.Items(items => 
+					{
+						items.Add()
+							 .Text("Item 1")
+							 .Items(items =>
+				             {
+				                items.Add()
+				                     .Text("Item 1.1")
+				                     .Items(item =>
+				                     {
+				                         item.Add().Text("Item 1.1.1");
+				                         item.Add().Text("Item 1.1.2");
+				                         item.Add().Text("Item 1.1.3");
+				                         item.Add().Text("Item 1.1.4");
+				                     });
+				             }
+		            })
+            ...
+			]]>
+			</code>			
+			<alert class="note">
+			  <para>
+			  	The child item ("Item 1.1") in the above example will be added to the Items collection of the item with title "Item 1".
+			  	You can also obverse in the code snippet how second level of hierarchy can be defined.
+			  </para>
+			</alert>
+    	</listItem>
+    	<listItem>
+    		<para>
+    			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.Theme(System.String)</codeEntityReference>
+    			method:
+    		</para>
+    		<para>
+    			With this method you can set the theme for the component.
+    		</para>
+    		<code language="C#" title="View">
+    			<![CDATA[
+    			   <%
+    			     Html.Telerik().Menu()
+    			                   .Name("Menu")
+    			                   .Items(items => { //add items })
+    			                   .Theme("Theme name")
+    			                   .Render();
+    			   %>
+    			]]>
+    		</code>
+    	</listItem>
+    	<listItem>
+    		<para>
+    			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.ItemAction(System.Action{Telerik.Web.Mvc.UI.MenuItem})</codeEntityReference>
+    			method:
+    		</para>
+    		<code language="C#" title="View">
+    			<![CDATA[
+    			   <%
+    			     Html.Telerik().Menu()
+    			                   .Name("Menu")
+    			                   .BindTo("siteMap") 
+    			                   .ItemAction((item)=>
+    			                   {
+    			                   		if (item.Parent == null)
+										{
+											item.SpriteCssClasses = "t" + item.Text;
+										}
+    			                   })
+    			                   .Render();
+    			   %>
+    			]]>
+    		</code>
+    		<para>
+    			This method allows you to pass an <codeInline>Action</codeInline> method with parameter <codeInline>MenuItem</codeInline>, which will be executed before rendering of the item.
+    			You can use it as a callback for each item. In other words it allows you to set properties of the item before rendering it.
+    		</para>    		
+			<alert class="note">
+			  <para>
+			  	This Action&lt;MenuItem&gt; has the same abilities as the Action passed as a second parameter into the <codeEntityReference qualifyHint="false" autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.BindTo(System.String)</codeEntityReference> method.
+			  	The difference here is that this action will be executed even if the items are declaratively added to the menu. Hence this method
+			  	is not bound by the way how the items are added to menu.
+			  </para>
+			</alert>
+    	</listItem>
+    	<listItem>
+    		<para>
+    			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.OpenOnClick(System.Boolean)</codeEntityReference>
+    			method:
+    		</para>
+    		<code language="C#" title="View">
+    			<![CDATA[
+    			   <%
+    			     Html.Telerik().Menu()
+    			                   .Name("Menu")
+    			                   .BindTo("siteMap") 
+    			                   .OpenOnClick(true)
+    			                   .Render();
+    			   %>
+    			]]>
+    		</code>
+    		<para>
+    			Turns on/off the ability of the menu to open menu on click. Once the menu is open it will not close even when you do not hover
+    			any of the root items.
+    		</para>    		
+    	</listItem>
+    	<listItem>
+    		<para>
+    			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.MenuBuilder.SelectedIndex(System.Int32)</codeEntityReference>
+    			method:
+    		</para>
+    		<code language="C#" title="View">
+    			<![CDATA[
+    			   <%
+    			     Html.Telerik().Menu()
+    			                   .Name("Menu")
+    			                   .BindTo("siteMap")
+    			                   .SelectedIndex(1)
+    			                   .Render();
+    			   %>
+    			]]>
+    		</code>
+    		<para>
+    			With this method you can determine which root item to be selected on initial rendering.
+    		</para>    		
+			<alert class="important">
+			  <para>
+				The method does not allow to enter index bigger than the count of the Items collection or negative integer. If you pass incorrect value 
+				the UI component will throw an exception.
+			  </para>
+			</alert>
+    	</listItem>
+    </list>
+    <relatedTopics>
+      <link xlink:href="5300fb2e-72f1-4a3c-be4e-1d978c126c3b">Introduction</link>
+      <link xlink:href="a3a06972-c013-4ada-aea7-b7cc9dde2751">Effects in Menu</link>
+      <link xlink:href="4cfa1cae-3ec4-4e1f-8346-905bdc8eb5c3">Menu Binding</link>
+      <link xlink:href="d4c13fcc-5e31-46eb-a9f0-15f978d263c1">Client API</link>
+      <link xlink:href="b226ab1a-93cd-4e35-a0c1-7cb023599969">Templates</link>
+      <link xlink:href="7046c1ff-50c9-4540-adf9-0c76ce94617c">Orientataion</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

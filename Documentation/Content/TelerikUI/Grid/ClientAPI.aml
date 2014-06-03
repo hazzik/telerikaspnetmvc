@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="de31e81e-857d-49d0-9882-c73fed26f0fa" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      This help topic discusses the client-side API and events exposed by
+	      Telerik Grid for ASP.NET MVC.
+      	<autoOutline lead="none" />
+      </para>
+    </introduction>
+    <section address="ClientSideObject">
+      <title>How to get the grid client-side object?</title>
+      <content>
+        <para>
+        	The grid client object is preserved in the <externalLink>
+					          <linkText>data store</linkText>
+					          <linkAlternateText>jQuery data store</linkAlternateText>
+					          <linkUri>http://docs.jquery.com/Core/data</linkUri>
+					      </externalLink> for the grid element.
+        </para>
+        <para>
+   			Here is a code snippet showing how to retrieve the client object of the PanelBar component.
+   		</para>
+   			
+			<code language="C#" title="View">
+			<![CDATA[
+				<%= Html.Telerik().Grid(Model)
+			            .Name("OrdersGrid")
+			    %>
+		    ]]>
+			</code>
+			
+			<code language="JavaScript">
+			<![CDATA[
+			   <script type="text/javascript">
+			   		function getGrid(){
+			   			var panel = $("#OrdersGrid").data("tGrid");
+			   			return panel;
+			   		}
+			   </script>
+			]]>
+			</code>
+      </content>
+    </section>
+  	<section address="ClientEvents">
+  		<title>Client events</title>
+  		<content>
+  			<para>
+  				Telerik Grid for ASP.NET MVC exposes the following client-side events
+  				<list class="bullet">
+  					<listItem>
+  						The <codeEntityReference autoUpdate="true">M:Telerik.Web.Mvc.UI.GridClientEventsBuilder.OnDataBinding(System.String)</codeEntityReference> event
+  						is raised every time the grid is being databound on the client-side (during Ajax and WebService binding). The grid
+  						needs data binding on initial load, when the user changes the current page, sorts or applies filtering.
+  					</listItem>
+					<listItem>
+  						The <codeEntityReference autoUpdate="true">M:Telerik.Web.Mvc.UI.GridClientEventsBuilder.OnError(System.String)</codeEntityReference> event 
+  						is raised when there is an error after Ajax request (during Ajax or WebService binding). Here is how to use it:
+  						<code lang="C#" title="View">
+  						<![CDATA[
+  						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .ClientEvents(events => events.OnError("onError"))
+						%>
+  						]]>
+  						</code>
+  						<code lang="JavaScript" title="OnError event handler">
+  						<![CDATA[
+  						function onError(e) {
+  						    //`this` is the DOM element of the grid
+  						    var grid = $(this).data('tGrid');
+  						    
+  						    //the current XMLHttpRequest object
+  						    var xhr = e.XMLHttpRequest;
+  						    //the text status of the error - 'timeout', 'error' etc.
+  						    var status = e.textStatus;
+  						    
+  						    if (status == 'error') {
+  						       //xhr.status is the HTTP code returned by the server
+  						       if (xhr.status == "404") {
+  						           alert("requested url not found")
+  						       }
+  						    }
+  						    
+  						    //To prevent the default error handling (which is to alert the error message) you can call `preventDefault`
+  						    
+  						    e.preventDefault();
+  						}
+  						]]>
+  						</code>
+  					</listItem>
+                    <listItem>
+                        The <codeEntityReference autoUpdate="true">M:Telerik.Web.Mvc.UI.GridClientEventsBuilder.OnLoad(System.String)</codeEntityReference> event
+                        is raised when the grid client-side object is initialized. Here is how to use it:
+                        <code lang="C#" title="View">
+                            <![CDATA[
+  						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .ClientEvents(events => events.OnLoad("onLoad"))
+						%>
+  						]]>
+                        </code>
+                        <code lang="JavaScript" title="OnLoad event handler">
+                            <![CDATA[
+  						function onLoad(e) {
+  						    //`this` is the DOM element of the grid
+  						    var grid = $(this).data('tGrid');
+                            
+                            //event handling code
+  						}
+  						]]>
+                        </code>
+                    </listItem>
+                    <listItem>
+						The <codeEntityReference autoUpdate="true">M:Telerik.Web.Mvc.UI.GridClientEventsBuilder.OnRowDataBound(System.String)</codeEntityReference> event 
+  						is raised for every grid row during databinding (Ajax and WebService binding). Here is how to use it:
+  						<code lang="C#" title="View">
+  						<![CDATA[
+  						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .ClientEvents(events => events.OnRowDataBound("onRowDataBound"))
+						%>
+  						]]>
+  						</code>
+  						<code lang="JavaScript" title="OnRowDataBound event handler">
+  						<![CDATA[
+  						function onRowDataBound(e) {
+  						    //`this` is the DOM element of the grid
+  						    var grid = $(this).data('tGrid');
+  						    
+  						    //the DOM element (<tr>) representing the row which is being databound
+  						    var row = e.row;
+  						    //the data item - JSON object.
+  						    var dataItem = e.dataItem;
+  						    
+  						    //You can use the OnRowDataBound event to customize the way data is presented on the client-side
+  						    
+  						    row.cells[1].innerHTML = '<strong>' + dataItem.text + '</strong>';
+  						}
+  						]]>
+  						</code>
+  					</listItem>
+  				</list>
+  			</para>
+  		</content>
+  	</section>
+  	<section address="ClientMethods">
+  		<title>Client Methods</title>
+  		<content>
+  			Telerik Grid for ASP.NET MVC exposes the following client-side methods:
+  			<list class="bullet">
+  				<listItem>
+  					<codeInline>ajaxRequest</codeInline> - it will cause the grid to request data during Ajax and WebService 
+  					binding scenarios.
+  					<code language="JavaScript" title="ajaxRequest example">
+  					<![CDATA[
+  					      var grid = $('#OrdersGrid').data('tGrid');
+  					      
+  					      grid.ajaxRequest();
+  					]]>
+  					</code>
+  					<alert class="note">
+  						The <codeInline>ajaxRequest</codeInline> method will raise the <codeInline>OnDataBinding</codeInline>
+  						client-side event.
+  					</alert>
+  				</listItem>
+  				<listItem>
+  					<codeInline>dataBind</codeInline> - binds the grid to a specified array of JavaScript objects. The
+  					columns of the grid need to be configured to match the properties of the JavaScript objects passed
+  					as datasource. 					
+  					<code language="JavaScript" title="dataBind example">
+  					<![CDATA[
+  					      var grid = $('#OrdersGrid').data('tGrid');
+  					      var data = new [
+  					          {OrderID: 1, ShipAddress: 'Address #1'}, 
+  					          {OrderID: 2, ShipAddress: 'Address #2'}, 
+  					      ]
+  					      
+  					      grid.dataBind(data);
+  					]]>
+  					</code>
+  					<alert class="note">
+  						The <codeInline>ajaxRequest</codeInline> method will not raise the <codeInline>OnDataBinding</codeInline>
+  						client-side event.
+  					</alert>  					
+  				</listItem>
+  				<listItem>
+  					<codeInline>rebind</codeInline> - rebinds the grid in Ajax and WebService binding
+	  					scenarios. You can pass additional arguments to the action method or web service method using <codeInline>
+	  					rebind</codeInline>. 
+  					
+  					<code language="JavaScript" title="rebind example">
+  					<![CDATA[
+  					      var grid = $('#OrdersGrid').data('tGrid');
+  					      //send additional arguments by passing them as JavaScript object
+  					      grid.rebind({customerID : 'ALFKI'});
+  					]]>
+  					</code>
+  					<alert class="note">
+	  					The difference between <codeInline>ajaxRequest</codeInline> and <codeInline>rebind</codeInline>
+	  					is that <codeInline>rebind</codeInline> resets the state of the grid - current page, sorted columns and applied filters.
+  					</alert>
+  				</listItem>
+  			</list>
+  		</content>
+  	</section>
+  	<section address="ExternalService">
+  		<title>Binding to external WebService</title>
+  		<content>
+  			The following example shows how to use the client-side API and events in order to bind the
+  			grid to external web service.
+  			
+  			<code lang="C#" title="View">
+  			<![CDATA[
+  			<%= Html.Telerik().Grid(new { text = "" })
+		            .Name("Grid")
+		            .Columns(columns =>
+		            {
+		                //Empty column
+		                columns.Add(o => { }).Title("Author").Width(100);
+		                //Empty column
+		                columns.Add(o => { }).Title("Avatar").Width(80);
+		                //Bound column
+		                columns.Add(o => o.text).Title("Post");
+		            })
+		            .ClientEvents(events => events
+		                .OnDataBinding("onDataBinding")
+		                .OnRowDataBound("onRowDataBound")
+		            )
+		            .Scrollable(scrolling=>scrolling.Height(400))
+    		%>
+  			]]>
+  			</code>
+  			<code lang="JavaScript" title="Implementation">
+  			<![CDATA[
+		    function onRowDataBound(e) {
+		        var row = e.row;
+		        var dataItem = e.dataItem;
+		        
+		        // update `Author` cell with template
+		        row.cells[0].innerHTML = [
+		            '<a class="t-link" href="http://www.twitter.com/', dataItem.from_user, '">',
+		            dataItem.from_user,
+		            '</a>'
+		        ].join('');
+		
+		        // update `Avatar` cell with template
+		        row.cells[1].innerHTML = [
+		            '<img width="48" height="48"',
+		            ' src="', dataItem.profile_image_url,
+		            '" alt="', dataItem.from_user, '" />'
+		            ].join('');
+		    }
+		
+		    function onDataBinding(e) {
+		        var grid = $(this).data('tGrid');
+		
+		        // call the twitter search api
+		        $.ajax({
+		            url: 'http://search.twitter.com/search.json',
+		            contentType: 'application/json; charset=utf-8',
+		            type: 'GET',
+		            dataType: 'jsonp',
+		            error: function(xhr, status) {
+		                alert(status);
+		            },
+		            data: {
+		                q: $('#searchText').val()
+		            },
+		            success: function(result) {
+		                grid.dataBind(result.results);
+		            }
+		        });
+  			]]>
+  			</code>
+  		</content>
+  	</section>
+    <relatedTopics>
+    	<link xlink:href="34ac75d0-5ce3-4bab-ac2a-208c720b4c99" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

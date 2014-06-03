@@ -14,60 +14,36 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{7ABD96
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{0E88584A-5AB3-49CD-A439-94E1146706CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mvc.UI.jQuery", "Mvc.UI.jQuery\Mvc.UI.jQuery.csproj", "{B07580A0-33CA-4344-9821-9547277A3AEC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mvc.UI.jQuery.Examples", "Mvc.UI.jQuery.Examples\Mvc.UI.jQuery.Examples.csproj", "{20D2320A-51A9-4DC4-ABD3-2F7410620479}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telerik.Web.Mvc.JavaScriptTest", "Telerik.Web.Mvc.JavaScriptTest\Telerik.Web.Mvc.JavaScriptTest.csproj", "{9AB0B48B-FB43-4EFF-A1DD-7A172CA4440F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{C37F913A-D511-4572-B46C-AD33F3D1E054}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telerik.Web.Mvc.UnitTest", "Telerik.Web.Mvc.UnitTest\Telerik.Web.Mvc.UnitTest.csproj", "{8B8CD7CD-01F9-430B-852A-3B11DE1C2854}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mvc.UI.jQuery.UnitTest", "Mvc.UI.jQuery.UnitTest\Mvc.UI.jQuery.UnitTest.csproj", "{2F3EF9F9-BE2D-442F-89AC-21A48C1690D2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mvc.UI.jQuery.Examples.Spark", "Mvc.UI.jQuery.Examples.Spark\Mvc.UI.jQuery.Examples.Spark.csproj", "{AEC2112A-D811-470B-8671-946E7BE4BAC8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mvc.UI.jQuery.Examples.NHaml", "Mvc.UI.jQuery.Examples.NHaml\Mvc.UI.jQuery.Examples.NHaml.csproj", "{28D710D1-7FD3-4B54-A8C8-01F173658980}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telerik.Web.Mvc.Examples", "Telerik.Web.Mvc.Examples\Telerik.Web.Mvc.Examples.csproj", "{6E626551-89A5-4625-8429-B442634725C0}"
 EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 9
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = http://192.168.0.23:8082/
+		SccTeamFoundationServer = http://vss.telerik.com:8082/
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = Telerik.Web.Mvc\\Telerik.Web.Mvc.csproj
 		SccProjectTopLevelParentUniqueName1 = Griffin.sln
 		SccProjectName1 = Telerik.Web.Mvc
 		SccLocalPath1 = Telerik.Web.Mvc
-		SccProjectUniqueName2 = Mvc.UI.jQuery\\Mvc.UI.jQuery.csproj
+		SccProjectUniqueName2 = Telerik.Web.Mvc.JavaScriptTest\\Telerik.Web.Mvc.JavaScriptTest.csproj
 		SccProjectTopLevelParentUniqueName2 = Griffin.sln
-		SccProjectName2 = Mvc.UI.jQuery
-		SccLocalPath2 = Mvc.UI.jQuery
-		SccProjectUniqueName3 = Mvc.UI.jQuery.Examples\\Mvc.UI.jQuery.Examples.csproj
+		SccProjectName2 = Telerik.Web.Mvc.JavaScriptTest
+		SccLocalPath2 = Telerik.Web.Mvc.JavaScriptTest
+		SccProjectUniqueName3 = Telerik.Web.Mvc.UnitTest\\Telerik.Web.Mvc.UnitTest.csproj
 		SccProjectTopLevelParentUniqueName3 = Griffin.sln
-		SccProjectName3 = Mvc.UI.jQuery.Examples
-		SccLocalPath3 = Mvc.UI.jQuery.Examples
-		SccProjectUniqueName4 = Telerik.Web.Mvc.JavaScriptTest\\Telerik.Web.Mvc.JavaScriptTest.csproj
+		SccProjectName3 = Telerik.Web.Mvc.UnitTest
+		SccLocalPath3 = Telerik.Web.Mvc.UnitTest
+		SccProjectUniqueName4 = Telerik.Web.Mvc.Examples\\Telerik.Web.Mvc.Examples.csproj
 		SccProjectTopLevelParentUniqueName4 = Griffin.sln
-		SccProjectName4 = Telerik.Web.Mvc.JavaScriptTest
-		SccLocalPath4 = Telerik.Web.Mvc.JavaScriptTest
-		SccProjectUniqueName5 = Telerik.Web.Mvc.UnitTest\\Telerik.Web.Mvc.UnitTest.csproj
-		SccProjectTopLevelParentUniqueName5 = Griffin.sln
-		SccProjectName5 = Telerik.Web.Mvc.UnitTest
-		SccLocalPath5 = Telerik.Web.Mvc.UnitTest
-		SccProjectUniqueName6 = Mvc.UI.jQuery.UnitTest\\Mvc.UI.jQuery.UnitTest.csproj
-		SccProjectTopLevelParentUniqueName6 = Griffin.sln
-		SccProjectName6 = Mvc.UI.jQuery.UnitTest
-		SccLocalPath6 = Mvc.UI.jQuery.UnitTest
-		SccProjectUniqueName7 = Mvc.UI.jQuery.Examples.Spark\\Mvc.UI.jQuery.Examples.Spark.csproj
-		SccProjectTopLevelParentUniqueName7 = Griffin.sln
-		SccProjectName7 = Mvc.UI.jQuery.Examples.Spark
-		SccLocalPath7 = Mvc.UI.jQuery.Examples.Spark
-		SccProjectUniqueName8 = Mvc.UI.jQuery.Examples.NHaml\\Mvc.UI.jQuery.Examples.NHaml.csproj
-		SccProjectTopLevelParentUniqueName8 = Griffin.sln
-		SccProjectName8 = Mvc.UI.jQuery.Examples.NHaml
-		SccLocalPath8 = Mvc.UI.jQuery.Examples.NHaml
+		SccProjectName4 = Telerik.Web.Mvc.Examples
+		SccLocalPath4 = Telerik.Web.Mvc.Examples
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,14 +54,6 @@ Global
 		{A7F7C110-D7F0-49B7-8DDA-FD2D1CC6F3B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7F7C110-D7F0-49B7-8DDA-FD2D1CC6F3B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7F7C110-D7F0-49B7-8DDA-FD2D1CC6F3B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B07580A0-33CA-4344-9821-9547277A3AEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B07580A0-33CA-4344-9821-9547277A3AEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B07580A0-33CA-4344-9821-9547277A3AEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B07580A0-33CA-4344-9821-9547277A3AEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20D2320A-51A9-4DC4-ABD3-2F7410620479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20D2320A-51A9-4DC4-ABD3-2F7410620479}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20D2320A-51A9-4DC4-ABD3-2F7410620479}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20D2320A-51A9-4DC4-ABD3-2F7410620479}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9AB0B48B-FB43-4EFF-A1DD-7A172CA4440F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9AB0B48B-FB43-4EFF-A1DD-7A172CA4440F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AB0B48B-FB43-4EFF-A1DD-7A172CA4440F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -94,30 +62,18 @@ Global
 		{8B8CD7CD-01F9-430B-852A-3B11DE1C2854}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B8CD7CD-01F9-430B-852A-3B11DE1C2854}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B8CD7CD-01F9-430B-852A-3B11DE1C2854}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2F3EF9F9-BE2D-442F-89AC-21A48C1690D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2F3EF9F9-BE2D-442F-89AC-21A48C1690D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2F3EF9F9-BE2D-442F-89AC-21A48C1690D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2F3EF9F9-BE2D-442F-89AC-21A48C1690D2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AEC2112A-D811-470B-8671-946E7BE4BAC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AEC2112A-D811-470B-8671-946E7BE4BAC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AEC2112A-D811-470B-8671-946E7BE4BAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AEC2112A-D811-470B-8671-946E7BE4BAC8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{28D710D1-7FD3-4B54-A8C8-01F173658980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28D710D1-7FD3-4B54-A8C8-01F173658980}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28D710D1-7FD3-4B54-A8C8-01F173658980}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28D710D1-7FD3-4B54-A8C8-01F173658980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E626551-89A5-4625-8429-B442634725C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E626551-89A5-4625-8429-B442634725C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E626551-89A5-4625-8429-B442634725C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E626551-89A5-4625-8429-B442634725C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A7F7C110-D7F0-49B7-8DDA-FD2D1CC6F3B1} = {7ABD96E4-D5EF-4D4F-9A97-389738ABF5B0}
-		{B07580A0-33CA-4344-9821-9547277A3AEC} = {7ABD96E4-D5EF-4D4F-9A97-389738ABF5B0}
 		{9AB0B48B-FB43-4EFF-A1DD-7A172CA4440F} = {0E88584A-5AB3-49CD-A439-94E1146706CB}
 		{8B8CD7CD-01F9-430B-852A-3B11DE1C2854} = {0E88584A-5AB3-49CD-A439-94E1146706CB}
-		{2F3EF9F9-BE2D-442F-89AC-21A48C1690D2} = {0E88584A-5AB3-49CD-A439-94E1146706CB}
-		{20D2320A-51A9-4DC4-ABD3-2F7410620479} = {C37F913A-D511-4572-B46C-AD33F3D1E054}
-		{AEC2112A-D811-470B-8671-946E7BE4BAC8} = {C37F913A-D511-4572-B46C-AD33F3D1E054}
-		{28D710D1-7FD3-4B54-A8C8-01F173658980} = {C37F913A-D511-4572-B46C-AD33F3D1E054}
+		{6E626551-89A5-4625-8429-B442634725C0} = {C37F913A-D511-4572-B46C-AD33F3D1E054}
 	EndGlobalSection
 EndGlobal

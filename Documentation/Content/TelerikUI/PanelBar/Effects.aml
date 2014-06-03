@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="54157497-10eb-4be8-a87c-e0482c082d14" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+     <para>
+      		This topic shows how to use Telerik PanelBar for ASP.NET MVC effects in an <token>Mvc</token>
+      		application.
+      		<autoOutline lead="none" />
+      </para>
+    <prerequisites>
+    	<content>
+    		The required resources are outlined <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8">here</link>.
+    	</content>
+   	</prerequisites>
+    
+    <section address="Effects">
+      <title>PanelBar's effects</title>
+      <content>
+      	<para>
+      		Telerik PanelBar for ASP.NET MVC has the ability to animate the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference> objects.
+      		Here is how to define simple animation effects in the panelbar:
+      	</para>
+        <list class="bullet">
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarBuilder.Effects(System.Action{Telerik.Web.Mvc.UI.EffectFactory})</codeEntityReference> method
+				is used to control the available animation effects. The action builds the animation effects.
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Toggle</codeEntityReference> effect 
+				expand and collapse the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference> objects without animation.
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Slide</codeEntityReference> effect animate
+			    is not supported by the panelbar. Use <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference> method instead.
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference> method
+				animates the height property of the <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference>s' content.
+				<para>
+					Height animation has two overloads:
+				</para>
+				<list class="ordered">
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand</codeEntityReference> method creates
+				  		new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PropertyAnimation</codeEntityReference>
+				  		object of <codeInline>PropertyAnimationType.Height</codeInline> type. The default values for the open and close duration
+				  		is <codeInline>DurationAnimation.Fast</codeInline>.
+					</listItem>
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Expand(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference>
+						method gives you ability to set animation using <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.AnimationBuilder</codeEntityReference>. This builder
+						allows you to set open/close duration. Here is a code snippet showing how you can use it in your project:
+						<code language="C#" title="View">
+							<![CDATA[
+								<% 	
+									Html.Telerik().PaneBar()
+						                .Name("PaneBar")
+						                .Effects(fx =>
+ 						                { 
+						                	fx
+						                	  .Height(properties =>
+						           				  properties
+						           				 	.OpenDuration(AnimationDuration.Normal)
+											        .CloseDuration(AnimationDuration.Normal));
+						                })
+			                            .Items(items =>{/*items definition */})
+							            .Render(); 
+						        %>
+							]]>
+						</code>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Opacity</codeEntityReference> effect 
+				turns on the fade-in/fade-out transition of <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PanelBarItem</codeEntityReference>s' content.
+				<para>
+					Opacity animation has two overloads:
+				</para>
+				<list class="ordered">
+					<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Opacity</codeEntityReference> method creates
+				  		new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PropertyAnimation</codeEntityReference>
+				  		object of <codeInline>PropertyAnimationType.Opacity</codeInline> type. The default values for the open and close duration
+				  		is <codeInline>DurationAnimation.Fast</codeInline>.
+				  	</listItem>
+				  	<listItem>				  		
+				  		<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.EffectFactory.Opacity(System.Action{Telerik.Web.Mvc.UI.AnimationBuilder})</codeEntityReference> method
+					  	creates new <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.PropertyAnimation</codeEntityReference> and and runs the code defined with <codeInline>Action&lt;AnimationBuilder&gt;</codeInline> parameter.
+					  	PropertyAnimation object gives ability to set animation using <codeEntityReference autoUpgrade="true">T:Telerik.Web.Mvc.UI.AnimationBuilder</codeEntityReference>. This builder
+						allows you to set open/close duration. Here is a code snippet showing how you can use it in your project:
+						<code language="C#" title="View">
+							<![CDATA[
+								<% 	
+									Html.Telerik().PaneBar()
+						                .Name("PaneBar")
+						                .Effects(fx =>
+ 						                { 
+						                	fx
+						                	  .Opacity(properties =>
+						           				  properties
+						           				 	.OpenDuration(AnimationDuration.Normal)
+											        .CloseDuration(AnimationDuration.Normal));
+						                })
+			                            .Items(items =>{/*items definition */})
+							            .Render(); 
+						        %>
+							]]>
+						</code>
+				  	</listItem>
+				</list>
+			</listItem>
+        </list>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="f7761b49-ae82-4570-8266-fba7f4591210">First look</link>
+      <link xlink:href="04ab6aeb-dd51-43f7-abdd-f468d1efc994">PanelBar binding</link>
+      <link xlink:href="09537707-dd41-4ca7-9d43-52d95abc664d">Expand/Collapse feature</link>
+      <link xlink:href="8e72f629-4cef-4406-acbd-e824586e2bae">Server API</link>
+      <link xlink:href="a1ec354a-a556-4577-ad93-4fd7cd0525fd">Client API</link>
+      <link xlink:href="cfb2af47-921f-42c9-936b-bc01dc602704">Templates</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

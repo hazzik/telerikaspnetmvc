@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="34f2240b-b2b7-4660-8ed3-3b030d91467e" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>This help topic discusses the filtering feature of Telerik Grid for ASP.NET MVC</para>
+    </introduction>
+    <section address="Filtering">
+      <content>
+        <para>
+        	Filtering allows the user to view only the relevant data in Telerik Grid for ASP.NET MVC. The grid
+        	displays type agnostic drop down menu with the available filtering operators.
+        </para>
+        <para>
+        	To enable filtering use the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Filterable</codeEntityReference> method:
+        	<code lang="C#" title="View">
+        	<![CDATA[
+			<%= Html.Telerik().Grid(Model)
+			        .Name("Grid")
+			        .Filterable()
+			%>
+			]]>
+        	</code>
+        	This would enable filtering with default configuration - all bound columns of primitive type will be filterable.
+        	<mediaLink><image xlink:href="GridFiltering"/></mediaLink>
+        </para>
+      </content>
+      <sections>
+      	<section address="FilteringConfig">
+      		<title>
+      			Filtering Configuration
+      		</title>
+      		<content>
+      			You can customize the filtering behavior by using the
+      			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Filterable(System.Action{Telerik.Web.Mvc.UI.GridFilterSettingsBuilder})</codeEntityReference>
+      			method. It allows you to enable filtering based on some condition via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridFilterSettingsBuilder.Enabled(System.Boolean)</codeEntityReference> method:
+	        	<code lang="C#">
+	        	<![CDATA[
+				<%= Html.Telerik().Grid(Model)
+				        .Name("Grid")
+				        .Filterable(filtering => filtering.Enabled((bool)ViewData["enableFiltering"]))
+				%>
+				]]>
+				</code>
+      			You can disable filtering for a particular column by using the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Filterable(System.Boolean)</codeEntityReference>
+      			method:
+      			<code lang="C#">
+ 				<![CDATA[
+        		<%= Html.Telerik().Grid(Model)
+						.Name("Grid")
+					    .Columns(columns =>
+						{
+				            columns.Add(o => o.OrderID).Filterable(false);
+				        })
+				        .Filterable()
+				%>
+				]]>
+      			</code>
+      		</content>
+      	</section>
+      </sections>
+    </section>
+    <relatedTopics>
+    	<link xlink:href="34ac75d0-5ce3-4bab-ac2a-208c720b4c99" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

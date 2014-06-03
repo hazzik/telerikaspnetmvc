@@ -6,7 +6,7 @@ namespace Telerik.Web.Mvc.HelpProcessor
     {
         public void Execute(string path)
         {
-            foreach (var file in Directory.GetFiles(path, "*.html", SearchOption.AllDirectories))
+            foreach (var file in Directory.GetFiles(Path.Combine(path, "html"), "*.html"))
             {
                 FileUtils.ReplaceInFile(file, "../icons", "icons");
                 FileUtils.ReplaceInFile(file, "../media", "media");

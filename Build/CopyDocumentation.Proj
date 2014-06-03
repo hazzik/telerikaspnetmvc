@@ -10,11 +10,26 @@
     </PropertyGroup>
     
     <Target Name="CopyDocumentation">
+        <BuildStep TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Name="DocumentationStep" Message="Building documentation">
+            <Output TaskParameter="Id" PropertyName="StepId" />
+        </BuildStep>
+
         <MSBuild Projects="$(SourceRoot)..\Documentation\TelerikMvcExtensionsManual.shfbproj" />
         <ItemGroup>
             <HelpFiles Include="$(SourceRoot)..\Documentation\Help\*.chm" />
         </ItemGroup>
         <Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(DeployDocumentationLocation)" />
+
+        <BuildStep  TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Succeeded" />
+        <OnError ExecuteTargets="MarkBuildStepAsFailed" />        
     </Target>
-    
+    <Target Name="MarkBuildStepAsFailed">
+        <BuildStep
+            TeamFoundationServerUrl="$(TeamFoundationServerUrl)"
+            BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Failed" />
+    </Target>
 </Project>

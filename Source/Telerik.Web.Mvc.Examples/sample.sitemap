@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<siteMap>
+	<siteMapNode title="Home" controller="Home" action="Overview">
+		<siteMapNode title="Grid">
+            <siteMapNode controller="Grid" action="FirstLook" title="First Look" />
+            <siteMapNode controller="Grid" action="ServerBinding" title="Server Binding" />
+            <siteMapNode controller="Grid" action="AjaxBinding" title="Ajax Binding" />
+            <siteMapNode controller="Grid" action="CustomBinding" title="Custom Binding" />
+            <siteMapNode controller="Grid" action="WebService" title="Web Service Binding" />
+            <siteMapNode controller="Grid" action="ExternalService" title="External Web Service Binding" />
+            <siteMapNode controller="Grid" action="AutoGenerateColumns" title="Auto Generated Columns" />
+            <siteMapNode controller="Grid" action="Paging" title="Paging" />
+            <siteMapNode controller="Grid" action="Sorting" title="Sorting" />
+            <siteMapNode controller="Grid" action="Editing" title="Editing" />
+            <siteMapNode controller="Grid" action="Templates" title="Templates" />
+            <siteMapNode controller="Grid" action="RelatedGrids" title="Related Grids" />
+            <siteMapNode controller="Grid" action="CustomRoute" title="Custom Route" />
+            <siteMapNode controller="Grid" action="CustomFormatting" title="Custom Formatting" />
+            <siteMapNode controller="Grid" action="ClientSideEvents" title="Client-side Events" />
+		</siteMapNode>
+		<siteMapNode title="Menu">
+            <siteMapNode controller="Menu" action="FirstLook" title="First Look"/>
+            <siteMapNode controller="Menu" action="SiteMapBinding" title="SiteMap Binding" />
+            <siteMapNode controller="Menu" action="Templates" title="Defining item content" />
+            <siteMapNode controller="Menu" action="Orientation" title="Orientation" />
+            <siteMapNode controller="Menu" action="AnimationEffects" title="Animation Effects" />
+            <siteMapNode controller="Menu" action="ClientSideEvents" title="Client-side Events" />
+            <siteMapNode controller="Menu" action="ClientSideAPI" title="Client-side API" />
+            <siteMapNode controller="Menu" action="Sprites" title="Sprites" />
+		</siteMapNode>
+		<siteMapNode title="PanelBar">
+            <siteMapNode controller="PanelBar" action="FirstLook" title="First Look"/>
+            <siteMapNode controller="PanelBar" action="SiteMapBinding" title="SiteMap Binding" />
+            <siteMapNode controller="PanelBar" action="DataBindingToModel" title="Data binding to model" />
+            <siteMapNode controller="PanelBar" action="Templates" title="Pre-set item content" />
+            <siteMapNode controller="PanelBar" action="AjaxLoading" title="Load on demand of content" />
+            <siteMapNode controller="PanelBar" action="AnimationEffects" title="Animation Effects" />
+            <siteMapNode controller="PanelBar" action="ClientSideEvents" title="Client-side Events" />
+            <siteMapNode controller="PanelBar" action="ClientSideAPI" title="Client-side API" />
+            <siteMapNode controller="PanelBar" action="Sprites" title="Sprites" />
+		</siteMapNode>
+		<siteMapNode title="TabStrip">
+            <siteMapNode controller="TabStrip" action="FirstLook" title="First Look"/>
+            <siteMapNode controller="TabStrip" action="SiteMapBinding" title="SiteMap Binding" />
+            <siteMapNode controller="TabStrip" action="DataBindingToModel" title="Data binding to model" />
+            <siteMapNode controller="PanelBar" action="Templates" title="Pre-set item content" />
+            <siteMapNode controller="TabStrip" action="AjaxLoading" title="Load on demand of content" />
+            <siteMapNode controller="TabStrip" action="AnimationEffects" title="Animation Effects" />
+            <siteMapNode controller="TabStrip" action="ClientSideEvents" title="Client-side Events" />
+            <siteMapNode controller="TabStrip" action="ClientSideAPI" title="Client-side API" />
+            <siteMapNode controller="TabStrip" action="Sprites" title="Sprites" />
+		</siteMapNode>
+    <siteMapNode title="Other product lines">
+		<siteMapNode title="UI controls for ASP.NET AJAX" url="http://www.telerik.com/products/aspnet-ajax.aspx"/>
+		<siteMapNode title="UI controls for Silverlight" url="http://www.telerik.com/products/silverlight.aspx"/>
+    </siteMapNode>
+	</siteMapNode>
+</siteMap>

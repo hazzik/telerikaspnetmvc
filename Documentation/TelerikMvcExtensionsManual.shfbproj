@@ -40,9 +40,32 @@
           <copy name="comments" source="*" target="/document/comments" />
         </component>
       </ComponentConfig>
-<ComponentConfig id="Cached MSDN URL References" enabled="True"><component id="Cached MSDN URL References" type="SandcastleBuilder.Components.CachedResolveReferenceLinksComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll" locale="{@Locale}" linkTarget="{@SdkLinkTarget}"><cache filename="{@LocalDataFolder}Cache\MsdnUrl.cache" /><targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@SDKLinks}" /><targets files="reflection.xml" type="{@ProjectLinks}" /></component></ComponentConfig>
-<ComponentConfig id="Cached Reflection Index Data" enabled="True"><component id="Cached Reflection Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll"><index name="reflection" value="/reflection/apis/api" key="@id" cache="10"><cache base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" cacheFile="{@LocalDataFolder}Cache\Reflection.cache" /><data files="reflection.xml" /></index><copy name="reflection" source="*" target="/document/reference" /></component></ComponentConfig>
-<ComponentConfig id="Code Block Component" enabled="True"><component id="Code Block Component" type="SandcastleBuilder.Components.CodeBlockComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll"><basePath value="{@HtmlEncProjectFolder}" /><languageFilter value="true" /><allowMissingSource value="false" /><removeRegionMarkers value="false" /><colorizer syntaxFile="{@SHFBFolder}Colorizer\highlight.xml" styleFile="{@SHFBFolder}Colorizer\highlight.xsl" copyImageUrl="../icons/CopyCode.gif" language="cs" tabSize="0" numberLines="false" outlining="true" keepSeeTags="false" defaultTitle="true" /></component></ComponentConfig></ComponentConfigurations>
+      <ComponentConfig id="Cached MSDN URL References" enabled="True">
+        <component id="Cached MSDN URL References" type="SandcastleBuilder.Components.CachedResolveReferenceLinksComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll" locale="{@Locale}" linkTarget="{@SdkLinkTarget}">
+          <cache filename="{@LocalDataFolder}Cache\MsdnUrl.cache" />
+          <targets base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" type="{@SDKLinks}" />
+          <targets files="reflection.xml" type="{@ProjectLinks}" />
+        </component>
+      </ComponentConfig>
+      <ComponentConfig id="Cached Reflection Index Data" enabled="True">
+        <component id="Cached Reflection Index Data" type="SandcastleBuilder.Components.CachedCopyFromIndexComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+          <index name="reflection" value="/reflection/apis/api" key="@id" cache="10">
+            <cache base="{@SandcastlePath}Data\Reflection" recurse="true" files="*.xml" cacheFile="{@LocalDataFolder}Cache\Reflection.cache" />
+            <data files="reflection.xml" />
+          </index>
+          <copy name="reflection" source="*" target="/document/reference" />
+        </component>
+      </ComponentConfig>
+      <ComponentConfig id="Code Block Component" enabled="True">
+        <component id="Code Block Component" type="SandcastleBuilder.Components.CodeBlockComponent" assembly="{@SHFBFolder}SandcastleBuilder.Components.dll">
+          <basePath value="{@HtmlEncProjectFolder}" />
+          <languageFilter value="true" />
+          <allowMissingSource value="false" />
+          <removeRegionMarkers value="false" />
+          <colorizer syntaxFile="{@SHFBFolder}Colorizer\highlight.xml" styleFile="{@SHFBFolder}Colorizer\highlight.xsl" copyImageUrl="../icons/CopyCode.gif" language="cs" tabSize="0" numberLines="false" outlining="true" keepSeeTags="false" defaultTitle="true" />
+        </component>
+      </ComponentConfig>
+    </ComponentConfigurations>
     <FrameworkVersion>3.5</FrameworkVersion>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="(global)" isDocumented="False" xmlns="" />
@@ -70,8 +93,11 @@
     <ContentLayout Include="ContentLayout.content" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\jQueryUI\Components\" />
-    <Folder Include="Content\jQueryUI\" />
+    <Folder Include="Content\TelerikUI\TabStrip\" />
+    <Folder Include="Content\TelerikUI\Menu\" />
+    <Folder Include="Content\TelerikUI\Grid\" />
+    <Folder Include="Content\TelerikUI\PanelBar\" />
+    <Folder Include="Content\TelerikUI\" />
     <Folder Include="Content\WebAssets\" />
     <Folder Include="CodeSnippets\" />
     <Folder Include="Media\" />
@@ -79,17 +105,39 @@
     <Folder Include="Content\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\jQueryUI\Components\MessageBox.aml" />
+    <None Include="Content\TelerikUI\Grid\Filtering.aml" />
+    <None Include="Content\TelerikUI\Grid\WebServiceBinding.aml" />
+    <None Include="Content\TelerikUI\Grid\Sorting.aml" />
+    <None Include="Content\TelerikUI\Grid\Paging.aml" />
+    <None Include="Content\TelerikUI\Grid\CustomBinding.aml" />
+    <None Include="Content\TelerikUI\Grid\ClientAPI.aml" />
+    <None Include="Content\TelerikUI\TabStrip\ServerAPI.aml" />
+    <None Include="Content\TelerikUI\TabStrip\Templates.aml" />
+    <None Include="Content\TelerikUI\TabStrip\Effects.aml" />
+    <None Include="Content\TelerikUI\TabStrip\ClientAPI.aml" />
+    <None Include="Content\TelerikUI\TabStrip\BindingOptions.aml" />
+    <None Include="Content\TelerikUI\TabStrip\Introduction.aml" />
+    <None Include="Content\TelerikUI\Grid\Columns.aml" />
+    <None Include="Content\TelerikUI\Grid\AjaxBinding.aml" />
+    <None Include="Content\TelerikUI\Grid\ServerBinding.aml" />
+    <None Include="Content\TelerikUI\Menu\Templates.aml" />
+    <None Include="Content\TelerikUI\Menu\ServerAPI.aml" />
+    <None Include="Content\TelerikUI\Menu\Orientation.aml" />
+    <None Include="Content\TelerikUI\Menu\Introduction.aml" />
+    <None Include="Content\TelerikUI\Menu\Effects.aml" />
+    <None Include="Content\TelerikUI\Menu\ClientAPI.aml" />
+    <None Include="Content\TelerikUI\Menu\BindingOptions.aml" />
+    <None Include="Content\TelerikUI\PanelBar\Introduction.aml" />
+    <None Include="Content\TelerikUI\Grid\Introduction.aml" />
+    <None Include="Content\TelerikUI\PanelBar\ServerAPI.aml" />
+    <None Include="Content\TelerikUI\PanelBar\Templates.aml" />
+    <None Include="Content\TelerikUI\PanelBar\BindingOptions.aml" />
+    <None Include="Content\TelerikUI\PanelBar\ClientAPI.aml" />
+    <None Include="Content\TelerikUI\PanelBar\Effects.aml" />
+    <None Include="Content\TelerikUI\PanelBar\ExpandCollapse.aml" />
+    <None Include="Content\TelerikUI\Introduction.aml" />
     <None Include="Content\Licensing.aml" />
-    <None Include="Content\jQueryUI\Components\DatePicker.aml" />
-    <None Include="Content\jQueryUI\Components\Slider.aml" />
-    <None Include="Content\jQueryUI\Components\Tab.aml" />
     <None Include="Content\GettingStarted\UsingSampleProjects.aml" />
-    <None Include="Content\jQueryUI\Components\ProgressBar.aml" />
-    <None Include="Content\jQueryUI\Components\Accordion.aml" />
-    <None Include="Content\jQueryUI\UsingInProject.aml" />
-    <None Include="Content\jQueryUI\Introduction.aml" />
-    <None Include="Content\jQueryUI.aml" />
     <None Include="Content\WebAssets\JavaScriptAssets.aml" />
     <None Include="Content\WebAssets\Introduction.aml" />
     <None Include="Content\WebAssets.aml" />
@@ -125,21 +173,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Media\PickReferencejQueryUI.png">
-      <ImageId>PickReferencejQueryUI</ImageId>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Media\jQueryUIScript.png">
-      <ImageId>jQueryUIScript</ImageId>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Media\jQueryUICss.png">
-      <ImageId>jQueryUICss</ImageId>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="Media\AccordionSample.png">
       <ImageId>AccordionSample</ImageId>
     </Image>
@@ -150,13 +183,34 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Media\jQueryUIExamplesDefault.png">
-      <ImageId>jQueryUIExamplesDefault</ImageId>
+    <Image Include="Media\TelerikPanelBarScripts.png">
+      <ImageId>TelerikPanelBarScripts</ImageId>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Media\jQueryUIExamplesHomePage.png">
-      <ImageId>jQueryUIExamplesHomePage</ImageId>
+    <Image Include="Media\PickReferenceTelerikUI.png">
+      <ImageId>PickReferenceTelerikUI</ImageId>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Media\TelerikUIDefaultTheme.png">
+      <ImageId>TelerikUIDefaultTheme</ImageId>
+    </Image>
+    <Image Include="Media\TelerikUIScript.png">
+      <ImageId>TelerikUIScript</ImageId>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Media\GridIntroduction.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Media\TelerikPanelBarInMvcApp.png">
+      <ImageId>TelerikPanelBarInMvcApp</ImageId>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Media\GridFiltering.png">
+      <ImageId>GridFiltering</ImageId>
     </Image>
   </ItemGroup>
   <!-- Import the SHFB build targets -->

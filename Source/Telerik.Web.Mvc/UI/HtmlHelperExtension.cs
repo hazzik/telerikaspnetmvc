@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -10,7 +10,6 @@ namespace Telerik.Web.Mvc.UI
     using System.Web.Mvc;
 
     using Infrastructure;
-    using Infrastructure.Implementation;
 
     /// <summary>
     /// HTMLHelper extension for providing access to <see cref="ViewComponentFactory"/>.
@@ -34,33 +33,24 @@ namespace Telerik.Web.Mvc.UI
 
             if (factory == null)
             {
-                IWebAssetItemMerger assetItemMerger = CreateAssetMerger(viewContext);
+                IServiceLocator locator = ServiceLocator.Current;
 
-                StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), new List<IStyleableComponent>(), viewContext, assetItemMerger);
-                ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, assetItemMerger, new ScriptWrapper());
+                IWebAssetItemMerger assetItemMerger = locator.Resolve<IWebAssetItemMerger>();
+                ScriptWrapperBase scriptWrapper = locator.Resolve<ScriptWrapperBase>();
+                IClientSideObjectWriterFactory clientSideObjectWriterFactory = locator.Resolve<IClientSideObjectWriterFactory>();
+
+                StyleSheetRegistrar styleSheetRegistrar = new StyleSheetRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.StyleSheetFilesPath), viewContext, assetItemMerger);
+                ScriptRegistrar scriptRegistrar = new ScriptRegistrar(new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath), new List<IScriptableComponent>(), viewContext, assetItemMerger, scriptWrapper);
 
                 StyleSheetRegistrarBuilder styleSheetRegistrarBuilder = new StyleSheetRegistrarBuilder(styleSheetRegistrar);
                 ScriptRegistrarBuilder scriptRegistrarBuilder = new ScriptRegistrarBuilder(scriptRegistrar);
 
-                factory = new ViewComponentFactory(styleSheetRegistrarBuilder, scriptRegistrarBuilder);
+                factory = new ViewComponentFactory(helper, clientSideObjectWriterFactory, styleSheetRegistrarBuilder, scriptRegistrarBuilder);
 
                 helper.ViewContext.HttpContext.Items[Key] = factory;
             }
 
             return factory;
-        }
-
-        private static IWebAssetItemMerger CreateAssetMerger(ControllerContext context)
-        {
-            IPathResolver pathResolver = new PathResolver();
-            IFileSystem fileSystem = new FileSystemWrapper();
-            IUrlResolver urlResolver = new UrlResolver(new UrlHelper(context.RequestContext));
-            IWebAssetLocator assetLocator = new WebAssetLocator(context.HttpContext.IsDebuggingEnabled, pathResolver, fileSystem);
-            ICacheManager cacheManager = new CacheManagerWrapper();
-            IWebAssetRegistry assetRegistry = new WebAssetRegistry(cacheManager, assetLocator, pathResolver, fileSystem);
-            IWebAssetItemMerger assetItemMerger = new WebAssetItemMerger(assetRegistry, urlResolver, context.HttpContext.Server);
-
-            return assetItemMerger;
         }
     }
 }

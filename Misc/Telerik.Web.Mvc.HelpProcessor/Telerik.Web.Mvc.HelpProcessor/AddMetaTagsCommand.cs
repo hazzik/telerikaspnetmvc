@@ -6,7 +6,7 @@
     {
         public void Execute(string path)
         {
-            foreach (var htmlFile in Directory.GetFiles(path, "*.htm", SearchOption.AllDirectories))
+            foreach (var htmlFile in Directory.GetFiles(Path.Combine(path, "html"), "*.htm"))
             {
                 var contents = File.ReadAllText(htmlFile);
                 contents = contents.Replace(@"<META NAME=""save"" CONTENT=""history"" />",

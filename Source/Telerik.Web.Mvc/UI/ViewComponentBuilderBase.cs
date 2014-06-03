@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -83,33 +83,6 @@ namespace Telerik.Web.Mvc.UI
         public virtual TBuilder AssetKey(string key)
         {
             Component.AssetKey = key;
-
-            return this as TBuilder;
-        }
-
-        /// <summary>
-        /// Sets the StyleSheets file path. Path must be a virtual path.
-        /// </summary>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        public virtual TBuilder StyleSheetFilesPath(string path)
-        {
-            Component.StyleSheetFilesPath = path;
-
-            return this as TBuilder;
-        }
-
-        /// <summary>
-        /// Sets the StyleSheet file names.
-        /// </summary>
-        /// <param name="names">The names.</param>
-        /// <returns></returns>
-        public virtual TBuilder StyleSheetFileNames(params string[] names)
-        {
-            Guard.IsNotNullOrEmpty(names, "names");
-
-            Component.StyleSheetFileNames.Clear();
-            Component.StyleSheetFileNames.AddRange(names);
 
             return this as TBuilder;
         }

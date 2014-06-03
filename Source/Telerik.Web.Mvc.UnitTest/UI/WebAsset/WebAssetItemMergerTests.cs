@@ -5,7 +5,6 @@
 
 namespace Telerik.Web.Mvc.UI.UnitTest
 {
-    using System.Web;
     using System.Collections.Generic;
 
     using Extensions;
@@ -18,7 +17,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
     {
         private readonly Mock<IWebAssetRegistry> _assetRegistry;
         private readonly Mock<IUrlResolver> _urlResolver;
-        private readonly Mock<HttpServerUtilityBase> _httpServer;
+        private readonly Mock<IUrlEncoder> _urlEncoder;
 
         private readonly WebAssetItemMerger _assetItemMerger;
 
@@ -26,9 +25,9 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         {
             _assetRegistry = new Mock<IWebAssetRegistry>();
             _urlResolver = new Mock<IUrlResolver>();
-            _httpServer = new Mock<HttpServerUtilityBase>();
+            _urlEncoder = new Mock<IUrlEncoder>();
 
-            _assetItemMerger = new WebAssetItemMerger(_assetRegistry.Object, _urlResolver.Object, _httpServer.Object);
+            _assetItemMerger = new WebAssetItemMerger(_assetRegistry.Object, _urlResolver.Object, _urlEncoder.Object);
         }
 
         [Fact]
@@ -37,9 +36,9 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             WebAssetItemCollection assets = new WebAssetItemCollection(WebAssetDefaultSettings.ScriptFilesPath)
                                              {
                                                  new WebAssetItem("~/Scripts/script1.js"),
-                                                 new WebAssetItemGroup("group1") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath },
-                                                 new WebAssetItemGroup("group2") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath },
-                                                 new WebAssetItemGroup("group3") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath }
+                                                 new WebAssetItemGroup("group1", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath },
+                                                 new WebAssetItemGroup("group2", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath },
+                                                 new WebAssetItemGroup("group3", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath }
                                              };
 
             WebAssetItemGroup group1 = assets.FindGroupByName("group1");
@@ -52,9 +51,9 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             group3.Items.AddRange(new[] { new WebAssetItem("~/Scripts/script4.js"), new WebAssetItem("~/Scripts/script5.js") });
             group3.Combined = true;
 
-            _httpServer.Setup(s => s.UrlEncode(It.IsAny<string>())).Returns((string u) => u);
-            _assetRegistry.Setup(r => r.Locate(It.IsAny<string>())).Returns((string p) => p);
-            _assetRegistry.Setup(r => r.Store(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<float>(), It.IsAny<IList<string>>())).Returns("123");
+            _urlEncoder.Setup(s => s.Encode(It.IsAny<string>())).Returns((string u) => u);
+            _assetRegistry.Setup(r => r.Locate(It.IsAny<string>(), It.IsAny<string>())).Returns((string p, string v) => p);
+            _assetRegistry.Setup(r => r.Store(It.IsAny<string>(), It.IsAny<WebAssetItemGroup>())).Returns("123");
 
             _urlResolver.Setup(resolver => resolver.Resolve(It.IsAny<string>())).Returns((string p) => p.Substring(1));
 

@@ -31,21 +31,9 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         }
 
         [Fact]
-        public void StyleSheet_files_path_should_be_same_as_default_stylesheet_files_path_when_new_instance_is_created()
-        {
-            Assert.Equal(WebAssetDefaultSettings.StyleSheetFilesPath, _baseComponent.Object.StyleSheetFilesPath);
-        }
-
-        [Fact]
         public void Script_files_path_should_be_same_as_default_script_files_path_when_new_instance_is_created()
         {
             Assert.Equal(WebAssetDefaultSettings.ScriptFilesPath, _baseComponent.Object.ScriptFilesPath);
-        }
-
-        [Fact]
-        public void StyleSheetFileNames_should_be_empty_when_new_instance_is_created()
-        {
-            Assert.Empty(_baseComponent.Object.StyleSheetFileNames);
         }
 
         [Fact]
@@ -66,14 +54,6 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             _baseComponent.Object.Name = "component";
 
             Assert.Equal("component", _baseComponent.Object.Name);
-        }
-
-        [Fact]
-        public void Should_be_able_to_set_stylesheet_files_path()
-        {
-            _baseComponent.Object.StyleSheetFilesPath = "~/assets/stylessheets";
-
-            Assert.Equal("~/assets/stylessheets", _baseComponent.Object.StyleSheetFilesPath);
         }
 
         [Fact]

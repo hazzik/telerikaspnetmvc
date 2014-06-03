@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -10,142 +10,10 @@ namespace Telerik.Web.Mvc.UI
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Web.Script.Serialization;
 
     using Extensions;
     using Infrastructure;
-
-    /// <summary>
-    /// Defines the basic building block of creating client side object.
-    /// </summary>
-    public interface IClientSideObjectWriter
-    {
-        /// <summary>
-        /// Starts writing this instance.
-        /// </summary>
-        /// <returns></returns>
-        IClientSideObjectWriter Start();
-
-        /// <summary>
-        /// Appends the specified key value pair to the end of this instance.
-        /// </summary>
-        /// <param name="keyValuePair">The key value pair.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string keyValuePair);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, string value);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, int value);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, int value, int defaultValue);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, int? value);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">if set to <c>true</c> [value].</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, bool value);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">if set to <c>true</c> [value].</param>
-        /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, bool value, bool defaultValue);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, DateTime value);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, DateTime? value);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="action">The action.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, Action action);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="values">The values.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, IList<string> values);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="values">The values.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append(string name, IList<int> values);
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <typeparam name="TEnum">The type of the enum.</typeparam>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append<TEnum>(string name, TEnum value) where TEnum : IComparable, IFormattable;
-
-        /// <summary>
-        /// Appends the specified name and value to the end of this instance.
-        /// </summary>
-        /// <typeparam name="TEnum">The type of the enum.</typeparam>
-        /// <param name="name">The name.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <returns></returns>
-        IClientSideObjectWriter Append<TEnum>(string name, TEnum value, TEnum defaultValue) where TEnum : IComparable, IFormattable;
-
-        /// <summary>
-        /// Completes this instance.
-        /// </summary>
-        void Complete();
-    }
 
     /// <summary>
     /// Class used to build initialization script of jQuery plugin.
@@ -384,7 +252,7 @@ namespace Telerik.Web.Mvc.UI
                     stringValues.Add("'{0}'".FormatWith(QuoteString(value)));
                 }
 
-                Append("{0}:[{1}]".FormatWith(name, string.Join(", ", stringValues.ToArray())));
+                Append("{0}:[{1}]".FormatWith(name, string.Join(",", stringValues.ToArray())));
             }
 
             return this;
@@ -407,7 +275,7 @@ namespace Telerik.Web.Mvc.UI
                     stringValues.Add(value.ToString(Culture.Invariant));
                 }
 
-                Append("{0}:[{1}]".FormatWith(name, string.Join(", ", stringValues.ToArray())));
+                Append("{0}:[{1}]".FormatWith(name, string.Join(",", stringValues.ToArray())));
             }
 
             return this;
@@ -454,6 +322,16 @@ namespace Telerik.Web.Mvc.UI
             }
 
             return this;
+        }
+
+        public IClientSideObjectWriter AppendCollection<T>(string name, IEnumerable<T> value)
+        {
+            return Append("{0}:{1}".FormatWith(name, new JavaScriptSerializer().Serialize(value)));
+        }
+
+        public IClientSideObjectWriter AppendObject(string name, object value)
+        {
+            return Append("{0}:{1}".FormatWith(name, new JavaScriptSerializer().Serialize(value)));
         }
 
         /// <summary>

@@ -75,7 +75,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         [Fact]
         public void Should_be_to_find_group_by_name()
         {
-            _collection.AddRange(new[] { new WebAssetItemGroup("group1") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath }, new WebAssetItemGroup("group2") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath }, new WebAssetItemGroup("group3") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath } });
+            _collection.AddRange(new[] { new WebAssetItemGroup("group1", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath }, new WebAssetItemGroup("group2", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath }, new WebAssetItemGroup("group3", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath } });
 
             Assert.NotNull(_collection.FindGroupByName("group2"));
         }
@@ -92,7 +92,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         public void Should_be_able_to_insert()
         {
             _collection.Insert(0, new WebAssetItem("~/scripts/script.js"));
-            _collection.Insert(1, new WebAssetItemGroup("group") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
+            _collection.Insert(1, new WebAssetItemGroup("group", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
 
             Assert.NotEmpty(_collection);
         }
@@ -112,8 +112,8 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             _collection.Add(new WebAssetItem("~/scripts/script.js"));
             _collection.Add(new WebAssetItem("~/scripts/script.js"));
 
-            _collection.Add(new WebAssetItemGroup("group1") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
-            _collection.Add(new WebAssetItemGroup("group1") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
+            _collection.Add(new WebAssetItemGroup("group1", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
+            _collection.Add(new WebAssetItemGroup("group1", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
 
             Assert.Equal(2, _collection.Count);
         }
@@ -130,10 +130,10 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         [Fact]
         public void Setting_duplicate_group_should_throw_exception()
         {
-            _collection.Add(new WebAssetItemGroup("group1") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
-            _collection.Add(new WebAssetItemGroup("group2") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
+            _collection.Add(new WebAssetItemGroup("group1", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
+            _collection.Add(new WebAssetItemGroup("group2", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
 
-            Assert.Throws<ArgumentException>(() => _collection[1] = new WebAssetItemGroup("group1") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
+            Assert.Throws<ArgumentException>(() => _collection[1] = new WebAssetItemGroup("group1", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath });
         }
 
         [Fact]

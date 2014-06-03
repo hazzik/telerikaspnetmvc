@@ -15,7 +15,7 @@
 
             var guidTopics = GetTopicsWhoseNameIsGuid(tocFileName);
 
-            GenerateFriendlyNameForGuidTopics(path, guidTopics);
+            GenerateFriendlyNameForGuidTopics(Path.Combine(path, "html"), guidTopics);
             UpdateToc(tocFileName, guidTopics);
         }
 
@@ -29,7 +29,7 @@
         
         private static void GenerateFriendlyNameForGuidTopics(string path, IEnumerable<Topic> guidTopics)
         {
-            foreach (var file in Directory.GetFiles(path, "*.html", SearchOption.AllDirectories))
+            foreach (var file in Directory.GetFiles(path, "*.html"))
             {
                 FileUtils.ReplaceInFile(file, guidTopics);
                 if (IsGuid(Path.GetFileNameWithoutExtension(file)))
@@ -64,7 +64,7 @@
             {
                 result.AppendFormat(" {0}", element.Attribute("Title").Value);
             }
-            return result.ToString().Trim().Replace(" ", "-") + ".html";
+            return result.ToString().Trim().Replace(" ", "-").Replace("/", "-") + ".html";
         }
 
 

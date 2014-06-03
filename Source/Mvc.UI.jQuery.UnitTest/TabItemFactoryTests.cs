@@ -13,17 +13,17 @@ namespace Mvc.UI.jQuery.UnitTest
     public class TabItemFactoryTests
     {
         private readonly Mock<ITabItemContainer> _container;
-        private readonly IList<TabItem> _items;
-        private readonly TabItemFactory _factory;
+        private readonly IList<Mvc.UI.jQuery.TabItem> _items;
+        private readonly Mvc.UI.jQuery.TabItemFactory _factory;
 
         public TabItemFactoryTests()
         {
-            _items = new List<TabItem>();
+            _items = new List<Mvc.UI.jQuery.TabItem>();
 
             _container = new Mock<ITabItemContainer>();
             _container.SetupGet(container => container.Items).Returns(_items);
 
-            _factory = new TabItemFactory(_container.Object);
+            _factory = new Mvc.UI.jQuery.TabItemFactory(_container.Object);
         }
 
         [Fact]

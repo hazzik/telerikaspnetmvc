@@ -31,6 +31,8 @@
                                                                     <%= Html.ActionLink("Custom icons example", "CustomIcons", "Accordion")%></li>
                                                                 <li>
                                                                     <%= Html.ActionLink("Events example", "Events", "Accordion")%></li>
+                                                                <li>
+                                                                    <%= Html.ActionLink("Content With Render Partial", "ContentWithRenderPartial", "Accordion")%></li>
                                                             </ul>
                                                         <%}
                                                 );

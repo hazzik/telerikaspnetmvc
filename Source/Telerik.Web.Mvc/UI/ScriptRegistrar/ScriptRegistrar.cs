@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -8,9 +8,11 @@ namespace Telerik.Web.Mvc.UI
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Web.Mvc;
+    using System.Web.Script.Serialization;
 
     using Extensions;
     using Infrastructure;
@@ -28,8 +30,6 @@ namespace Telerik.Web.Mvc.UI
         private static readonly IList<string> frameworkScriptFileNames = new List<string> { "jquery-1.3.2.js" };
 
         private readonly IList<IScriptableComponent> scriptableComponents;
-
-        private static string frameworkScriptPath = WebAssetDefaultSettings.ScriptFilesPath;
 
         private string assetHandlerPath;
         private bool hasRendered;
@@ -57,8 +57,10 @@ namespace Telerik.Web.Mvc.UI
 
             viewContext.HttpContext.Items[Key] = this;
 
-            DefaultGroup = new WebAssetItemGroup("default") { DefaultPath = FrameworkScriptPath };
+            DefaultGroup = new WebAssetItemGroup("default", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
             Scripts = scripts;
+            Scripts.Insert(0, DefaultGroup);
+
             this.scriptableComponents = scriptableComponents;
             ViewContext = viewContext;
             AssetMerger = assetItemMerger;
@@ -67,27 +69,6 @@ namespace Telerik.Web.Mvc.UI
 
             OnDocumentReadyActions = new List<Action>();
             OnWindowUnloadActions = new List<Action>();
-        }
-
-        /// <summary>
-        /// Gets or sets the framework script path. Path must be a virtual path.
-        /// </summary>
-        /// <value>The framework script path.</value>
-        public static string FrameworkScriptPath
-        {
-            [DebuggerStepThrough]
-            get
-            {
-                return frameworkScriptPath;
-            }
-
-            [DebuggerStepThrough]
-            set
-            {
-                Guard.IsNotVirtualPath(value, "value");
-
-                frameworkScriptPath = value;
-            }
         }
 
         /// <summary>
@@ -101,6 +82,18 @@ namespace Telerik.Web.Mvc.UI
             {
                 return frameworkScriptFileNames;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [exclude framework scripts].
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [exclude framework scripts]; otherwise, <c>false</c>.
+        /// </value>
+        public bool ExcludeFrameworkScripts
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -132,6 +125,16 @@ namespace Telerik.Web.Mvc.UI
         {
             get;
             private set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether [enable globalization].
+        /// </summary>
+        /// <value><c>true</c> if [enable globalization]; otherwise, <c>false</c>.</value>
+        public bool EnableGlobalization
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -251,11 +254,6 @@ namespace Telerik.Web.Mvc.UI
                                                     };
             CopyFrameworkScriptFiles();
 
-            if (!DefaultGroup.Items.IsEmpty())
-            {
-                append(new WebAssetItemCollection(DefaultGroup.DefaultPath) { DefaultGroup });
-            }
-
             CopyScriptFilesFromComponents();
 
             if (!Scripts.IsEmpty())
@@ -280,11 +278,21 @@ namespace Telerik.Web.Mvc.UI
             if (shouldWriteOnDocumentReady || shouldWriteOnWindowUnload)
             {
                 writer.WriteLine("<script type=\"text/javascript\">{0}//<![CDATA[".FormatWith(Environment.NewLine));
-
                 // pageLoad
                 if (shouldWriteOnDocumentReady)
                 {
                     writer.WriteLine(ScriptWrapper.OnPageLoadStart);
+
+                    // globalization
+                    if (EnableGlobalization && CultureInfo.CurrentCulture.Name != "en-US")
+                    {
+                        writer.WriteLine("if (!jQuery.telerik) jQuery.telerik = {};");
+                        GlobalizationInfo globalizationInfo = new GlobalizationInfo(CultureInfo.CurrentCulture);
+
+                        writer.Write("jQuery.telerik.cultureInfo=");
+                        writer.Write(new JavaScriptSerializer().Serialize(globalizationInfo.ToDictionary()));
+                        writer.WriteLine(";");
+                    }
 
                     bool isFirst = true;
 
@@ -360,23 +368,19 @@ namespace Telerik.Web.Mvc.UI
         {
             foreach (IScriptableComponent component in scriptableComponents)
             {
-                string assetKey = component.AssetKey;
+                string assetKey = string.IsNullOrEmpty(component.AssetKey) ? "default" : component.AssetKey;
                 string filesPath = component.ScriptFilesPath;
-
-                if (string.IsNullOrEmpty(assetKey))
-                {
-                    component.ScriptFileNames.Reverse().Each(source => Scripts.Insert(0, PathHelper.CombinePath(filesPath, source)));
-                }
-                else
-                {
-                    component.ScriptFileNames.Each(source => Scripts.Insert(0, assetKey, PathHelper.CombinePath(filesPath, source)));
-                }
+                
+                component.ScriptFileNames.Each(source => Scripts.Add(assetKey, PathHelper.CombinePath(filesPath, source)));
             }
         }
 
         private void CopyFrameworkScriptFiles()
         {
-            FrameworkScriptFileNames.Reverse().Each(source => DefaultGroup.Items.Insert(0, new WebAssetItem(PathHelper.CombinePath(FrameworkScriptPath, source))));
+            if (!ExcludeFrameworkScripts)
+            {
+                FrameworkScriptFileNames.Reverse().Each(source => DefaultGroup.Items.Insert(0, new WebAssetItem(PathHelper.CombinePath(DefaultGroup.DefaultPath, source))));
+            }
         }
     }
 }

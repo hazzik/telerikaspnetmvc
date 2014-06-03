@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -17,14 +17,12 @@ namespace Telerik.Web.Mvc.UI
     /// <summary>
     /// Manages ASP.NET MVC views style sheet files.
     /// </summary>
-    public class StyleSheetRegistrar : IStyleableComponentContainer
+    public class StyleSheetRegistrar
     {
         /// <summary>
         /// Used to ensure that the same instance is used for the same HttpContext.
         /// </summary>
         public static readonly string Key = typeof(StyleSheetRegistrar).AssemblyQualifiedName;
-
-        private readonly IList<IStyleableComponent> styleableComponents;
 
         private string assetHandlerPath;
         private bool hasRendered;
@@ -33,13 +31,11 @@ namespace Telerik.Web.Mvc.UI
         /// Initializes a new instance of the <see cref="StyleSheetRegistrar"/> class.
         /// </summary>
         /// <param name="styleSheets">The style sheets.</param>
-        /// <param name="styleableComponents">The styleable components.</param>
         /// <param name="viewContext">The view context.</param>
         /// <param name="assetItemMerger">The asset merger.</param>
-        public StyleSheetRegistrar(WebAssetItemCollection styleSheets, IList<IStyleableComponent> styleableComponents, ViewContext viewContext, IWebAssetItemMerger assetItemMerger)
+        public StyleSheetRegistrar(WebAssetItemCollection styleSheets, ViewContext viewContext, IWebAssetItemMerger assetItemMerger)
         {
             Guard.IsNotNull(styleSheets, "styleSheets");
-            Guard.IsNotNull(styleableComponents, "styleableComponents");
             Guard.IsNotNull(viewContext, "viewContext");
             Guard.IsNotNull(assetItemMerger, "assetItemMerger");
 
@@ -50,9 +46,8 @@ namespace Telerik.Web.Mvc.UI
 
             viewContext.HttpContext.Items[Key] = this;
 
-            DefaultGroup = new WebAssetItemGroup("default") { DefaultPath = WebAssetDefaultSettings.StyleSheetFilesPath };
+            DefaultGroup = new WebAssetItemGroup("default", false) { DefaultPath = WebAssetDefaultSettings.StyleSheetFilesPath };
             StyleSheets = styleSheets;
-            this.styleableComponents = styleableComponents;
             ViewContext = viewContext;
             AssetMerger = assetItemMerger;
 
@@ -121,20 +116,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Registers the specified component.
-        /// </summary>
-        /// <param name="component">The component.</param>
-        public virtual void Register(IStyleableComponent component)
-        {
-            Guard.IsNotNull(component, "component");
-
-            if (!styleableComponents.Contains(component))
-            {
-                styleableComponents.Add(component);
-            }
-        }
-
-        /// <summary>
         /// Writes the stylesheets in the response.
         /// </summary>
         public void Render()
@@ -175,8 +156,6 @@ namespace Telerik.Web.Mvc.UI
                 append(new WebAssetItemCollection(DefaultGroup.DefaultPath) { DefaultGroup });
             }
 
-            CopyStyleSheetFilesFromComponents();
-
             if (!StyleSheets.IsEmpty())
             {
                 append(StyleSheets);
@@ -187,24 +166,6 @@ namespace Telerik.Web.Mvc.UI
                 foreach (string stylesheet in mergedList)
                 {
                     writer.WriteLine("<link type=\"text/css\" href=\"{0}\" rel=\"stylesheet\"/>".FormatWith(stylesheet));
-                }
-            }
-        }
-
-        private void CopyStyleSheetFilesFromComponents()
-        {
-            foreach (IStyleableComponent component in styleableComponents)
-            {
-                string assetKey = component.AssetKey;
-                string filesPath = component.StyleSheetFilesPath;
-
-                if (string.IsNullOrEmpty(assetKey))
-                {
-                    component.StyleSheetFileNames.Each(source => StyleSheets.Add(PathHelper.CombinePath(filesPath, source)));
-                }
-                else
-                {
-                    component.StyleSheetFileNames.Each(source => StyleSheets.Add(assetKey, PathHelper.CombinePath(filesPath, source)));
                 }
             }
         }

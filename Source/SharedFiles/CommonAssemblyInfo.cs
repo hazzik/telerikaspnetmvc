@@ -14,6 +14,6 @@ using System.Security;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("2009.2.1007")]
-[assembly: AssemblyFileVersion("2009.2.1007")]
+[assembly: AssemblyVersion("2009.3.1104")]
+[assembly: AssemblyFileVersion("2009.3.1104")]
 [assembly: AllowPartiallyTrustedCallers]

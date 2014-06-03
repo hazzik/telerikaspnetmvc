@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Mvc.UI.jQuery
@@ -11,6 +11,9 @@ namespace Mvc.UI.jQuery
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI;
 
+    /// <summary>
+    /// Base class for jQueryUI component.
+    /// </summary>
     public abstract class jQueryViewComponentBase : ViewComponentBase
     {
         private static string hiddenInputSuffix = "hid";
@@ -22,7 +25,6 @@ namespace Mvc.UI.jQuery
         /// <param name="clientSideObjectWriterFactory">The client side object writer factory.</param>
         protected jQueryViewComponentBase(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory) : base(viewContext, clientSideObjectWriterFactory)
         {
-            StyleSheetFileNames.Add(jQueryViewComponentDefaultSettings.StyleSheetFile);
             ScriptFileNames.Add(jQueryViewComponentDefaultSettings.ScriptFile);
         }
 

@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     using Infrastructure;
 
     /// <summary>
-    /// Builder class for fluently configuring the group.
+    /// Defines the fluent interface for configuring the <see cref="WebAssetItemGroup"/>.
     /// </summary>
     public class WebAssetItemGroupBuilder : IHideObjectMembers
     {
@@ -54,7 +54,13 @@ namespace Telerik.Web.Mvc.UI
         /// Sets the content delivery network URL.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.ContentDeliveryNetworkUrl("http://www.example.com"))
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual WebAssetItemGroupBuilder ContentDeliveryNetworkUrl(string value)
         {
             assetItemGroup.ContentDeliveryNetworkUrl = value;
@@ -63,13 +69,18 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Marks the group as disabled.
+        /// Enables or disables the group
         /// </summary>
-        /// <param name="value">if set to <c>true</c> [value].</param>
-        /// <returns></returns>
-        public virtual WebAssetItemGroupBuilder Disabled(bool value)
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.Enabled((bool)ViewData["enabled"]))
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual WebAssetItemGroupBuilder Enabled(bool value)
         {
-            assetItemGroup.Disabled = value;
+            assetItemGroup.Enabled = value;
 
             return this;
         }
@@ -78,7 +89,13 @@ namespace Telerik.Web.Mvc.UI
         /// Sets the version.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.Version("1.1"))
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual WebAssetItemGroupBuilder Version(string value)
         {
             assetItemGroup.Version = value;
@@ -87,10 +104,15 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Sets whether the groups will be served as compressed.
+        /// Sets whether the groups will be served as compressed. By default asset groups are not compressed.
         /// </summary>
-        /// <param name="value">if set to <c>true</c> [value].</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.Compress(true))
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual WebAssetItemGroupBuilder Compress(bool value)
         {
             assetItemGroup.Compress = value;
@@ -102,7 +124,13 @@ namespace Telerik.Web.Mvc.UI
         /// Sets the caches the duration of this group.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.CacheDurationInDays(365))
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual WebAssetItemGroupBuilder CacheDurationInDays(float value)
         {
             assetItemGroup.CacheDurationInDays = value;
@@ -113,8 +141,13 @@ namespace Telerik.Web.Mvc.UI
         /// <summary>
         /// Sets whether the groups items will be served as combined.
         /// </summary>
-        /// <param name="value">if set to <c>true</c> [value].</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.Combined(true))
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual WebAssetItemGroupBuilder Combined(bool value)
         {
             assetItemGroup.Combined = value;
@@ -138,7 +171,13 @@ namespace Telerik.Web.Mvc.UI
         /// Adds the specified source as <see cref="WebAssetItem"/>.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///           .DefaultGroup(group => group.Add("script1.js"))
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual WebAssetItemGroupBuilder Add(string value)
         {
             assetItemGroup.Items.Add(CreateItem(value));

@@ -14,6 +14,7 @@ namespace Telerik.Web.Mvc
     using System.Web;
     using System.Web.Mvc;
     using System.Web.Routing;
+    using System.Web.UI;
 
     using Moq;
 
@@ -48,6 +49,7 @@ namespace Telerik.Web.Mvc
             httpContext.Setup(context => context.Request.ApplicationPath).Returns(ApplicationPath);
             httpContext.Setup(context => context.Request.Url).Returns(new Uri("http://localhost"));
             httpContext.Setup(context => context.Request.PathInfo).Returns(string.Empty);
+            httpContext.Setup(context => context.Request.Browser.CreateHtmlTextWriter(It.IsAny<TextWriter>())).Returns((TextWriter tw) => new HtmlTextWriter(tw));
             httpContext.Setup(context => context.Request.Browser.EcmaScriptVersion).Returns(new Version("5.0"));
             httpContext.Setup(context => context.Request.Browser.SupportsCss).Returns(true);
             httpContext.Setup(context => context.Request.Browser.MajorVersion).Returns(7);

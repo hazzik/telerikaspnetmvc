@@ -47,28 +47,10 @@
 
             <ProjectToBuild Include="CopyExamples.proj">
                 <AdditionalProperties>
-                    ExamplesDir=Mvc.UI.jQuery.Examples;
+                    ExamplesDir=Telerik.Web.Mvc.Examples;
                     DeployLocation=$(DeployLocation);
                     SourceRoot=$(SourceRoot);
                     ExampleReferences=@(CoreBinaries)
-                </AdditionalProperties>
-            </ProjectToBuild>
-
-            <ProjectToBuild Include="CopyExamples.proj">
-                <AdditionalProperties>
-                    ExamplesDir=Mvc.UI.jQuery.Examples.Spark;
-                    DeployLocation=$(DeployLocation);
-                    SourceRoot=$(SourceRoot);
-                    ExampleReferences=@(SparkBinaries)
-                </AdditionalProperties>
-            </ProjectToBuild>
-
-            <ProjectToBuild Include="CopyExamples.proj">
-                <AdditionalProperties>
-                    ExamplesDir=Mvc.UI.jQuery.Examples.NHaml;
-                    DeployLocation=$(DeployLocation);
-                    SourceRoot=$(SourceRoot);
-                    ExampleReferences=@(NHamlBinaries)
                 </AdditionalProperties>
             </ProjectToBuild>
 
@@ -79,7 +61,14 @@
                     SolutionToCopy=$(SolutionToCopy)
                 </AdditionalProperties>
             </ProjectToBuild>
-
+            
+            <ProjectToBuild Include="CopyResources.proj">
+                <AdditionalProperties>
+                    DeployLocation=$(DeployLocation);
+                    SourceRoot=$(SourceRoot)
+                </AdditionalProperties>
+            </ProjectToBuild>
+            
             <ProjectToBuild Include="CopyDocumentation.proj">
                 <AdditionalProperties>
                     DeployLocation=$(DeployLocation);
@@ -128,12 +117,12 @@
         </ItemGroup>
 
         <Copy SourceFiles="@(HelpFiles)" DestinationFolder="$(SourceRoot)..\Documentation\Help\aspnet-mvc" />
-        
+
         <ItemGroup>
             <HelpResourcesToInclude Include="$(SourceRoot)..\Documentation\Help\media\**"/>
             <HelpResourcesToInclude Include="$(SourceRoot)..\Documentation\Help\icons\**"/>
             <HelpResourcesToInclude Include="$(SourceRoot)..\Documentation\Help\aspnet-mvc\**"/>
-            
+
             <HelpResourcesToExclude Include="$(SourceRoot)..\Documentation\Help\html\**"/>
 
             <HelpResources Include="@(HelpResourcesToInclude)" Exclude="@(HelpResourcesToExclude)" />
@@ -151,10 +140,10 @@
             <ExampleBinaries Include="$(MSBuildExtensionsPath32)\..\Microsoft ASP.NET\ASP.NET MVC 1.0\Assemblies\System.Web.Mvc.dll"/>
         </ItemGroup>
         
-        <Copy SourceFiles="@(ExampleBinaries)" DestinationFolder="$(DeployLocation)\Examples\Mvc.UI.jQuery.Examples\bin" />
+        <Copy SourceFiles="@(ExampleBinaries)" DestinationFolder="$(DeployLocation)\Examples\Telerik.Web.Mvc.Examples\bin" />
         
         <ItemGroup>
-            <ExampleFiles Include="$(DeployLocation)\Examples\Mvc.UI.jQuery.Examples\**" />
+            <ExampleFiles Include="$(DeployLocation)\Examples\Telerik.Web.Mvc.Examples\**" />
         </ItemGroup>
         
         <Zip Files="@(ExampleFiles)" WorkingDirectory="$(DeployLocation)\Examples"

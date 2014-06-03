@@ -196,7 +196,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             _objectWriter.Start()
                          .Append("foo", list);
 
-            _writer.Verify(w => w.Write("foo:[1, 2, 3]"));
+            _writer.Verify(w => w.Write("foo:[1,2,3]"));
         }
 
         [Fact]
@@ -209,7 +209,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             _objectWriter.Start()
                          .Append("dummy", list);
 
-            _writer.Verify(w => w.Write("dummy:['foo', 'bar']"));
+            _writer.Verify(w => w.Write("dummy:['foo','bar']"));
         }
 
         [Fact]
@@ -221,17 +221,6 @@ namespace Telerik.Web.Mvc.UI.UnitTest
                          .Append("dummy", DummyEnum.Bar, DummyEnum.Foo);
 
             _writer.Verify(w => w.Write("dummy:'bar'"));
-        }
-
-        [Fact]
-        public void Should_be_able_to_append_enum_without_default_value()
-        {
-            _writer.Setup(w => w.Write(It.IsAny<string>())).Verifiable();
-
-            _objectWriter.Start()
-                         .Append("dummy", DummyEnum.Foo);
-
-            _writer.Verify(w => w.Write("dummy:'foo'"));
         }
 
         [Fact]

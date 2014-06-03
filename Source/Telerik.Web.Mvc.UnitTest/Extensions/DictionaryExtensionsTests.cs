@@ -12,6 +12,25 @@ namespace Telerik.Web.Mvc.Extensions.UnitTest
     public class DictionaryExtensionsTests
     {
         [Fact]
+        public void AddStyleAttribute_creates_style_attribute()
+        {
+            IDictionary<string, object> target = new Dictionary<string, object>();
+            target.AddStyleAttribute("height", "100px");
+
+            Assert.Equal("height:100px;", target["style"]);
+        }
+
+        [Fact]
+        public void AddStyleAttribute_style_attribute_appends_existing_attribute()
+        {
+            IDictionary<string, object> target = new Dictionary<string, object>();
+            target.AddStyleAttribute("width", "100px");
+            target.AddStyleAttribute("height", "100px");
+
+            Assert.Equal("width:100px;height:100px;", target["style"]);
+        }
+
+        [Fact]
         public void Should_be_able_to_merge_item()
         {
             IDictionary<string, object> target = new Dictionary<string, object>();
@@ -29,6 +48,15 @@ namespace Telerik.Web.Mvc.Extensions.UnitTest
             target.AppendInValue("key", " ", "value2");
 
             Assert.Equal("value value2", target["key"]);
+        }
+
+        [Fact]
+        public void PrependInValue_should_append_the_value_in_front_of_existing_value()
+        {
+            IDictionary<string, object> target = new Dictionary<string, object> { { "key", "value" } };
+            target.PrependInValue("key", " ", "value2");
+
+            Assert.Equal("value2 value", target["key"]);
         }
 
         [Fact]

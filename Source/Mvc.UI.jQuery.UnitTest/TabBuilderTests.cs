@@ -15,13 +15,13 @@ namespace Mvc.UI.jQuery.UnitTest
 
     public class TabBuilderTests
     {
-        private readonly Tab _tab;
-        private readonly TabBuilder _builder;
+        private readonly Mvc.UI.jQuery.Tab _tab;
+        private readonly Mvc.UI.jQuery.TabBuilder _builder;
 
         public TabBuilderTests()
         {
-            _tab = new Tab(new ViewContext(), new Mock<IClientSideObjectWriterFactory>().Object);
-            _builder = new TabBuilder(_tab);
+            _tab = new Mvc.UI.jQuery.Tab(new ViewContext(), new Mock<IClientSideObjectWriterFactory>().Object);
+            _builder = new Mvc.UI.jQuery.TabBuilder(_tab);
         }
 
         [Fact]

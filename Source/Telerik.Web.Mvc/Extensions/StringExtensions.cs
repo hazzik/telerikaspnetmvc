@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.Extensions
@@ -118,6 +118,25 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return Encoding.UTF8.GetString(binary);
+        }
+
+        [DebuggerStepThrough]
+        public static T ToEnum<T>(this string instance, T defaultValue) where T : IComparable, IFormattable
+        {
+            T convertedValue = defaultValue;
+
+            if (!string.IsNullOrEmpty(instance))
+            {
+                try
+                {
+                    convertedValue = (T) Enum.Parse(typeof(T), instance.Trim(), true);
+                }
+                catch (ArgumentException)
+                {
+                }
+            }
+
+            return convertedValue;
         }
     }
 }

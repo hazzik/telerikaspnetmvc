@@ -6,7 +6,7 @@
     {
         public void Execute(string path)
         {
-            var htmFiles = Directory.GetFiles(path, "*.htm", SearchOption.AllDirectories);
+            var htmFiles = Directory.GetFiles(Path.Combine(path, "html"), "*.htm");
 
             foreach (var fileName in htmFiles)
             {

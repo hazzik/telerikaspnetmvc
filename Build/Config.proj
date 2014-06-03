@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
 	<PropertyGroup>
 		<Year>2009</Year>
-		<Release>2</Release>
+		<Release>3</Release>
         <MSBuildCommunityTasksPath>.</MSBuildCommunityTasksPath>
 		<MinimumCoverage>1</MinimumCoverage>
 	</PropertyGroup>

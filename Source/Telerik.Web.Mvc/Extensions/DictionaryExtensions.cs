@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.Extensions
@@ -48,10 +48,48 @@ namespace Telerik.Web.Mvc.Extensions
         {
             Guard.IsNotNull(instance, "instance");
             Guard.IsNotNullOrEmpty(key, "key");
-            Guard.IsNotNull(separator, "separator");
+            Guard.IsNotNullOrEmpty(separator, "separator");
             Guard.IsNotNull(value, "value");
 
             instance[key] = instance.ContainsKey(key) ? instance[key] + separator + value : value.ToString();
+        }
+
+        public static void AddStyleAttribute(this IDictionary<string, object> instance, string key, string value)
+        {
+            Guard.IsNotNull(instance, "instance");
+            Guard.IsNotNullOrEmpty(key, "key");
+            Guard.IsNotNull(value, "value");
+
+            string style = string.Empty;
+            
+            if (instance.ContainsKey("style"))
+            {
+                style = (string)instance["style"];
+            }
+
+            StringBuilder builder = new StringBuilder(style);
+            builder.Append(key);
+            builder.Append(":");
+            builder.Append(value);
+            builder.Append(";");
+
+            instance["style"] = builder.ToString();
+        }
+        /// <summary>
+        /// Appends the specified value at the beginning of the existing value
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <param name="key"></param>
+        /// <param name="separator"></param>
+        /// <param name="value"></param>
+        public static void PrependInValue(this IDictionary<string, object> instance, string key, string separator, object value)
+        {
+            Guard.IsNotNull(instance, "instance");
+            Guard.IsNotNullOrEmpty(key, "key");
+            Guard.IsNotNullOrEmpty(separator, "separator");
+            Guard.IsNotNull(value, "value");
+
+            instance[key] = instance.ContainsKey(key) ? value + separator + instance[key] : value.ToString();
         }
 
         /// <summary>
@@ -79,7 +117,6 @@ namespace Telerik.Web.Mvc.Extensions
         /// <param name="instance">The instance.</param>
         /// <param name="from">From.</param>
         /// <param name="replaceExisting">if set to <c>true</c> [replace existing].</param>
-        [DebuggerStepThrough]
         public static void Merge(this IDictionary<string, object> instance, IDictionary<string, object> from, bool replaceExisting)
         {
             Guard.IsNotNull(instance, "instance");

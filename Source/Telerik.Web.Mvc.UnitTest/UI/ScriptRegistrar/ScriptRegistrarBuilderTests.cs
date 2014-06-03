@@ -75,6 +75,14 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         }
 
         [Fact]
+        public void Should_be_able_to_exclude_jQuery()
+        {
+            _builder.jQuery(false);
+
+            Assert.True(_scriptRegistrar.ExcludeFrameworkScripts);
+        }
+
+        [Fact]
         public void OnDocumentReady_should_add_new_action_in_on_document_ready_action_collection()
         {
             Action onLoad = delegate { };
@@ -89,7 +97,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         {
             Action onUnload = delegate { };
 
-            _builder.OnPageUnload(onUnload);
+            _builder.OnWindowUnload(onUnload);
 
             Assert.Same(onUnload, _scriptRegistrar.OnWindowUnloadActions[_scriptRegistrar.OnWindowUnloadActions.Count - 1]);
         }

@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -27,16 +27,39 @@ namespace Telerik.Web.Mvc.UI
         /// Initializes a new instance of the <see cref="WebAssetItemGroup"/> class.
         /// </summary>
         /// <param name="name">The name.</param>
-        public WebAssetItemGroup(string name)
+        /// <param name="isShared">if set to <c>true</c> [is shared].</param>
+        public WebAssetItemGroup(string name, bool isShared)
         {
             Guard.IsNotNullOrEmpty(name, "name");
 
             Name = name;
+            IsShared = isShared;
             Version = WebAssetDefaultSettings.Version;
             Compress = WebAssetDefaultSettings.Compress;
             CacheDurationInDays = WebAssetDefaultSettings.CacheDurationInDays;
             Combined = WebAssetDefaultSettings.Combined;
             Items = new InternalAssetItemCollection();
+            Enabled = true;
+        }
+
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
+        public string Name
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is shared.
+        /// </summary>
+        /// <value><c>true</c> if this instance is shared; otherwise, <c>false</c>.</value>
+        public bool IsShared
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -61,16 +84,6 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Gets or sets the name.
-        /// </summary>
-        /// <value>The name.</value>
-        public string Name
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
         /// Gets or sets the content delivery network URL.
         /// </summary>
         /// <value>The content delivery network URL.</value>
@@ -85,7 +98,7 @@ namespace Telerik.Web.Mvc.UI
         /// Gets or sets a value indicating whether this <see cref="WebAssetItemGroup"/> is disabled.
         /// </summary>
         /// <value><c>true</c> if disabled; otherwise, <c>false</c>.</value>
-        public bool Disabled
+        public bool Enabled
         {
             get;
             set;

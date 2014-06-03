@@ -5,11 +5,7 @@
 
 namespace Telerik.Web.Mvc.Infrastructure.Implementation.UnitTest
 {
-    using System.Web;
-    using System.Web.Mvc;
-    using System.Web.Routing;
-
-    using Moq;
+    using System;
     using Xunit;
 
     public class UrlResolverTests
@@ -18,18 +14,13 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.UnitTest
 
         public UrlResolverTests()
         {
-            Mock<HttpContextBase> httpContext = TestHelper.CreateMockedHttpContext();
-            UrlHelper urlHelper = new UrlHelper(new RequestContext(httpContext.Object, new RouteData()));
-
-            _resolver = new UrlResolver(urlHelper);
+            _resolver = new UrlResolver();
         }
 
         [Fact]
-        public void Resolve_should_return_correct_relative_path()
+        public void Resolve_should_throw_excepton_when_not_running_in_web_server()
         {
-            string path = _resolver.Resolve("~/scripts/jquery-1.3.2.min.js");
-
-            Assert.NotEqual(string.Empty, path);
+            Assert.Throws<ArgumentNullException>(() => _resolver.Resolve("~/scripts/jquery-1.3.2.min.js"));
         }
     }
 }

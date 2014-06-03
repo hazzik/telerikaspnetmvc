@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Mvc.UI.jQuery
@@ -10,6 +10,7 @@ namespace Mvc.UI.jQuery
     using System.Diagnostics;
     using System.IO;
     using System.Web.Mvc;
+    using System.Web.UI;
 
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.UI;
@@ -21,6 +22,8 @@ namespace Mvc.UI.jQuery
     {
         private bool autoHeight;
         private bool clearStyle;
+        private bool collapsibleContent;
+        private bool noActiveSelection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Accordion"/> class.
@@ -34,7 +37,7 @@ namespace Mvc.UI.jQuery
         }
 
         /// <summary>
-        /// Gets a IList<AccordionItem> object that contains all items in the Accordion control.
+        /// Gets the items.
         /// </summary>
         /// <value>The items.</value>
         public IList<AccordionItem> Items
@@ -112,13 +115,51 @@ namespace Mvc.UI.jQuery
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether no pane will be active.
+        /// </summary>
+        /// <value><c>true</c> if [no active selection]; otherwise, <c>false</c>.</value>
+        public bool NoActiveSelection
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return noActiveSelection;
+            }
+
+            [DebuggerStepThrough]
+            set
+            {
+                noActiveSelection = value;
+
+                if (noActiveSelection)
+                {
+                    collapsibleContent = true;
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a value indicating whether collapsible content.
         /// </summary>
         /// <value><c>true</c> if collapsible content; otherwise, <c>false</c>.</value>
         public bool CollapsibleContent
         {
-            get;
-            set;
+            [DebuggerStepThrough]
+            get
+            {
+                return collapsibleContent;
+            }
+
+            [DebuggerStepThrough]
+            set
+            {
+                collapsibleContent = value;
+
+                if (!collapsibleContent)
+                {
+                    noActiveSelection = false;
+                }
+            }
         }
 
         /// <summary>
@@ -167,18 +208,26 @@ namespace Mvc.UI.jQuery
         /// <param name="writer">The writer.</param>
         public override void WriteInitializationScript(TextWriter writer)
         {
-            int selectedIndex = Items.IndexOf(GetSelectedItem());
-
             IClientSideObjectWriter objectWriter = ClientSideObjectWriterFactory.Create(Id, "accordion", writer);
 
             objectWriter.Start()
-                        .Append("active", selectedIndex, 0)
                         .Append("animated", AnimationName)
                         .Append("autoHeight", AutoHeight, true)
                         .Append("clearStyle", ClearStyle, false)
                         .Append("collapsible", CollapsibleContent, false)
                         .Append("event", OpenOn)
                         .Append("fillSpace", FillSpace, false);
+
+            if (NoActiveSelection)
+            {
+                objectWriter.Append("active", false, true);
+            }
+            else
+            {
+                int selectedIndex = Items.IndexOf(GetSelectedItem());
+
+                objectWriter.Append("active", selectedIndex, 0);
+            }
 
             if (!string.IsNullOrEmpty(Icon) || !string.IsNullOrEmpty(SelectedIcon))
             {
@@ -199,19 +248,15 @@ namespace Mvc.UI.jQuery
             objectWriter.Append("change", OnChange)
                         .Complete();
 
-            //string activateScript = "jQuery('#{0}').accordion('activate',{1});".FormatWith(Id, selectedIndex);
-            //writer.WriteLine(activateScript);
-
             base.WriteInitializationScript(writer);
         }
 
         /// <summary>
         /// Writes the HTML.
         /// </summary>
-        protected override void WriteHtml()
+        protected override void WriteHtml(HtmlTextWriter writer)
         {
             AccordionItem selectedItem = GetSelectedItem();
-            TextWriter writer = ViewContext.HttpContext.Response.Output;
 
             if (!string.IsNullOrEmpty(Theme))
             {
@@ -227,7 +272,7 @@ namespace Mvc.UI.jQuery
                 item.HtmlAttributes.AppendInValue("class", " ", "ui-accordion-header ui-helper-reset ui-state-default ");
                 item.ContentHtmlAttributes.AppendInValue("class", " ", "ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom");
 
-                if (item == selectedItem)
+                if ((!NoActiveSelection) && (item == selectedItem))
                 {
                     item.ContentHtmlAttributes.AppendInValue("class", " ", "ui-accordion-content-active");
                 }
@@ -251,8 +296,6 @@ namespace Mvc.UI.jQuery
             {
                 writer.Write("</div>");
             }
-
-            base.WriteHtml();
         }
 
         private AccordionItem GetSelectedItem()

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5" DefaultTargets="CopyResources">
+    <Import Project="Config.proj" />
+    <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\TeamBuild\Microsoft.TeamFoundation.Build.targets" />
+    <Import Project="MSBuildTasks\MSBuild.Community.Tasks.Targets"/>
+    <Import Project="MSBuildTasks\Microsoft.Sdc.Common.tasks"/>
+
+    <Target Name="CopyResources">
+        <BuildStep TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Name="CopyResourcesStep" Message="Copying resources">
+            <Output TaskParameter="Id" PropertyName="StepId" />
+        </BuildStep>
+
+        <ItemGroup>
+            <ResourcesToInclude Include="$(SourceRoot)\Telerik.Web.Mvc\bin\Release\**\*.gif" />
+            <ResourcesToInclude Include="$(SourceRoot)\Telerik.Web.Mvc\bin\Release\**\*.png" />
+            <ResourcesToInclude Include="$(SourceRoot)\Telerik.Web.Mvc\bin\Release\**\*.css" />
+            <ResourcesToInclude Include="$(SourceRoot)\Telerik.Web.Mvc\bin\Release\**\*.js" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(ResourcesToInclude )" DestinationFolder="$(DeployLocation)\%(RecursiveDir)" />
+
+        <BuildStep  TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Succeeded" />
+        <OnError ExecuteTargets="MarkBuildStepAsFailed" />
+    </Target>
+    
+    <Target Name="MarkBuildStepAsFailed">
+        <BuildStep
+            TeamFoundationServerUrl="$(TeamFoundationServerUrl)"
+            BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Failed" />
+    </Target>
+    
+</Project>

@@ -21,5 +21,10 @@ namespace Telerik.Web.Mvc.JavaScriptTest.Controllers
 		{
 			return View();
 		}
+
+        public ActionResult GlobalizationSuite()
+        {
+            return View();
+        }
 	}
 }

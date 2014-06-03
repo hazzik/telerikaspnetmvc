@@ -1,0 +1,466 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="a1ec354a-a556-4577-ad93-4fd7cd0525fd" revisionNumber="1">
+  <developerWalkthroughDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+     <introduction>
+      <para>
+      	<autoOutline lead="none" />
+      </para>
+    </introduction>
+    <prerequisites>
+    	<content>
+    		You should add JavaScript files and other resources to your <token>Mvc</token> project. 
+    		The required actions are outlined <link xlink:href="45f9dbed-12d3-483e-a244-8dfc5f7c3ba8">here</link>.
+    	</content>
+   	</prerequisites>
+   	<section address="GetClientObjectOfPanelBar">
+   		<title>How to get panelbar client object?</title>
+   		<content>
+   			<para>
+   				The panelbar client object is preserved in the <externalLink>
+					          <linkText>data store</linkText>
+					          <linkAlternateText>jQuery data store</linkAlternateText>
+					          <linkUri>http://docs.jquery.com/Core/data</linkUri>
+					      </externalLink> for the current element.
+   			</para>
+   			<para>
+   				Here is a code snippet showing how to retrieve the client object of the panelbar.
+   			</para>
+   			
+			<code language="C#" title="View">
+			<![CDATA[
+				<% 
+				    Html.Telerik().PanelBar()
+			            .Name("PanelBar")
+			            .Items(items =>{/*items definition */})
+			            ...
+			            .Render(); 
+			    %>
+		    ]]>
+			</code>
+			
+			<code language="JavaScript">
+			<![CDATA[
+			   <script type="text/javascript">
+			   		function getPanelBar(){
+			   			var panel = $("#PanelBar").data("tPanelBar");
+			   			return panel;
+			   		}
+			   </script>
+			]]>
+			</code>
+
+   		</content>
+   	</section>
+    <section address="ClientEvents">
+      <title>Client events</title>
+      <content>
+      	<para>
+      		Telerik PanelBar for ASP.NET MVC provides client-side event handling. 
+      		Here is a code snippet showing how to subscribe the client events:
+      	</para>
+      	
+		<code language="C#" title="View">
+		<![CDATA[
+			<% 
+			    Html.Telerik().PanelBar()
+		            .Name("PanelBar")
+		            .Items(items =>{/*items definition */})
+					.ClientEvents(events =>
+					{
+						events.OnExpand("Expand");
+						events.OnCollapse("Collapse");
+						events.OnSelect("Select");
+						events.OnLoad(() =>
+						{%>
+							function(e) {
+								/*TODO: actions when the control is loaded.*/
+								// "this" is the sender. In this event handler will be the panelbar.
+							}
+						<%});
+					})
+		            .Render(); %>
+		]]>
+		</code>
+		
+		<code language="JavaScript">
+			<![CDATA[
+			<script type="text/javascript">
+			    function Expand(e) {
+			        // "this" in this event handler will be the link element.
+			        // the "e" is an object passed by the jQuery event trigger. 
+			    }
+		
+			    function Collapse(e) {
+			        // "this" in this event handler will be the link element.
+			        // the "e" is an object passed by the jQuery event trigger. 
+			    }
+		
+			    function Select(e) {
+			        // "this" in this event handler will be the link element.
+			        // the "e" is an object passed by the jQuery event trigger. 
+			    }
+			</script>
+			]]>
+		</code>
+
+		<para>
+			Explanation of code snippet:
+		</para>
+		<list class="bullet">
+			<listItem>
+				The OnLoad event is raised when the component is loaded on the client. To handle OnLoad event use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarClientEventsBuilder.OnLoad(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string parameter or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+			<listItem>
+				The OnExpand event is raised on expanding of the item. To handle OnExpand event you can use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarClientEventsBuilder.OnExpand(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string parameter or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+			<listItem>
+				The OnCollapse event is raised on collapsing of the item. To handle OnCollapse event you can use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarClientEventsBuilder.OnCollapse(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string param or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+			<listItem>
+				The OnSelect event is raised when one of the component's items is selected. To handle OnSelect event you can use the overload of the 
+				<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.PanelBarClientEventsBuilder.OnSelect(System.String)</codeEntityReference> method, which can accept name of the JavaScript function as a string param or <codeInline>Action</codeInline>.
+				The <codeInline>Action</codeInline> parameter will be directly rendered on the client without any modification.
+			</listItem>
+		</list>
+	  </content>
+    </section>
+    <section address="ClientAPI">
+      <title>Client API</title>
+            <content>
+      	<para>
+      		Telerik PanelBar for ASP.NET MVC provides client-side API to manipulate with its items. 
+      		Below is a code exceprts which describes how to subscribe and use the client API:
+      	</para>
+      	
+		<code language="C#" title="View">
+		<![CDATA[
+			<% 
+			    Html.Telerik().PanelBar()
+		            .Name("PanelBar")
+		            .Items(items =>
+		            {
+		                items.Add()
+		                     .Text("Item 1")
+		                     .Items(items =>
+		                     {
+		                         item.Add().Text("Child Item 1.1");
+		                         item.Add().Text("Child Item 1.2");
+		                     });
+		                items.Add()
+		                     .Text("Item 2");
+		            })
+		            .Render(); 
+		    %>
+		]]>
+		</code>
+		
+<code language="javascript">
+<![CDATA[
+	<script type="text/javascript">
+		function ExpandItem() {
+
+		    var panel = $("#PanelBar").data("tPanelBar");
+
+			var item = $("li:first", panel.element)[0]; //DOM element
+		
+			panel.expand(item);
+		}
+
+		function CollpaseItem() {
+			var panel = $("#PanelBar").data("tPanelBar");
+
+			var item = $("li:first", panel.element)[0]; //DOM element
+
+			panel.collapse(item);
+		}
+
+		function EnableItem() {
+			var panel = $("#PanelBar").data("tPanelBar");
+
+			var item = $("li:first", panel.element)[0]; //DOM element
+
+			panel.enable(item);
+		}
+
+		function DisableItem() {
+			var panel = $("#PanelBar").data("tPanelBar");
+
+			var item = $("li:first", panel.element)[0]; //DOM element
+
+			panel.disable(item);
+		}
+	</script>
+]]>
+</code>
+
+		<para>
+			Explanation of code snippet:
+		</para>
+		<para>
+		The expand, collapse, enable, disable methods internally convert passed parameter
+		to jQuery object. They can accept three types of arguments:
+		<list class="bullet">
+			<listItem>
+				DOM element (with some code showing how to get a dom element)
+			</listItem>
+			<listItem>
+				jQuery object (again with a sample)
+			</listItem>
+			<listItem>
+				String selector (again with a sample)
+			</listItem>
+		</list>
+		</para>
+		<list class="bullet">
+			<listItem>
+				The <codeInline>expand</codeInline> method can be used through "tPanelBar" object.
+				Here is an example which shows how to expand &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function ExpandItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+                               var domElement = $("li:first", panel.element)[0]; //first <li> element
+			                   panel.expand(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be expanded.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function ExpandItem() {
+			                  var panel = $("#PanelBar").data("tPanelBar");
+		                      var items = $("li", panel.element); //jQuery collection of <li> elements
+		                      panel.expand(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be expanded. This method will expand all 
+							&lt;li&gt; elements in the panelbar.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function ExpandItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+			                   panel.expand("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are expanded. In this example first item will expand.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeInline>collapse</codeInline> method can be used through "tPanelBar" object.
+				Here is an example which shows how to collapse &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function CollapseItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+                               var domElement = $("li:first", panel.element)[0]; //first <li> element
+			                   panel.collapse(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be collapsed.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function CollapseItem() {
+			                  var panel = $("#PanelBar").data("tPanelBar");
+		                      var items = $("li", panel.element); //jQuery collection of <li> elements
+		                      panel.collapse(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be collapsed. This method will collapse all 
+							&lt;li&gt; elements in the panelbar.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function CollapseItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+			                   panel.collapse("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are collapsed. In this example first item will collapse.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeInline>enable</codeInline> method can be used through "tPanelBar" object.
+				Here is an example which shows how to enable &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function EnableItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+                               var domElement = $("li:first", panel.element)[0]; //first <li> element
+			                   panel.enable(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be enabled.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function EnableItem() {
+			                  var panel = $("#PanelBar").data("tPanelBar");
+		                      var items = $("li", panel.element); //jQuery collection of <li> elements
+		                      panel.enable(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be enabled. This method will enable all 
+							&lt;li&gt; elements in the panelbar.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function EnableItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+			                   panel.enable("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are enabled. In this example first item will enable.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+			<listItem>
+				The <codeInline>disable</codeInline> method can be used through "tPanelBar" object.
+				Here is an example which shows how to disable &lt;li&gt; element with all described possibilities:
+				<list class="bullet">
+					<listItem>
+						<para>
+							Passing DOM element as a parameter:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function DisableItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+                               var domElement = $("li:first", panel.element)[0]; //first <li> element
+			                   panel.disable(domElement);
+		                    }
+						]]>
+						</code>
+						<para>
+							As you noticed, only passed DOM element which is &lt;li&gt; will be disabled.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery collection of &lt;li&gt; elements:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function DisableItem() {
+			                  var panel = $("#PanelBar").data("tPanelBar");
+		                      var items = $("li", panel.element); //jQuery collection of <li> elements
+		                      panel.disable(items);
+		                    }
+						]]>
+						</code>
+						<para>
+							All items in the jQuery collection will be disabled. This method will disable all 
+							&lt;li&gt; elements in the panelbar.
+						</para>
+					</listItem>
+					<listItem>
+						<para>
+							Passing jQuery selector as parameter of the method:
+						</para>						
+						<code language="JavaScript">
+						<![CDATA[
+							function DisableItem() {
+			                   var panel = $("#PanelBar").data("tPanelBar");
+			                   panel.disable("li:first");
+		                    }
+						]]>
+						</code>
+						<para>
+							jQuery get the passed selector and depending on the result the corresponding items 
+							are disabled. In this example first item will disable.
+						</para>
+					</listItem>
+				</list>
+			</listItem>
+		</list>
+	  </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="f7761b49-ae82-4570-8266-fba7f4591210">First look</link>
+      <link xlink:href="04ab6aeb-dd51-43f7-abdd-f468d1efc994">PanelBar binding</link>
+      <link xlink:href="09537707-dd41-4ca7-9d43-52d95abc664d">Expand/Collapse feature</link>
+      <link xlink:href="54157497-10eb-4be8-a87c-e0482c082d14">Effects in PanelBar</link>
+      <link xlink:href="8e72f629-4cef-4406-acbd-e824586e2bae">Server API</link>
+      <link xlink:href="cfb2af47-921f-42c9-936b-bc01dc602704">Templates</link>
+    </relatedTopics>
+  </developerWalkthroughDocument>
+</topic>

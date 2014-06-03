@@ -1,0 +1,31 @@
+﻿<p>
+This example shows how to use a templated column to add "Edit" and "Delete" buttons inside Telerik Grid for ASP.NET MVC. Templates allow you to customize
+the way the data is presented in the grid.
+</p>
+<p>
+    To set the template for a column you should use the overload of the <strong>Add</strong> method which accepts <strong>Action&lt;T&gt;</strong>.
+</p>
+<pre class="prettyprint">
+&lt;% 
+    Html.Telerik().Grid(Model)
+        .Name("Grid")
+        .Columns(columns => 
+        {
+           columns.Add(c => c.CustomerID).Width(80);
+           columns.Add(c => c.ContactName);
+           columns.Add(c => c.Country).Width(90);
+           columns.Add(c => c.Address).Width(200);
+           <em>
+           columns.Add(c => 
+           { 
+            %&gt;
+                &lt;%= Html.ActionLink("Edit", "Editing", new { id = c.CustomerID },
+                    new { @class="t-link action-edit" }) %&gt;
+                &lt;%= Html.ActionLink("Delete", "Delete", new { id = c.CustomerID },
+                    new { @class = "t-link action-delete" }) %&gt;
+            &lt;% 
+            });</em>
+        })
+        .Render();
+%&gt;
+</pre>

@@ -12,7 +12,13 @@
             var allTests = new top.jsUnitTestSuite();
             var suite = new top.jsUnitTestSuite();
             
-            suite.addTestPage("Home/TestPage");
+            suite.addTestPage("Grid/Filtering");
+            suite.addTestPage("Grid/Binding");
+            suite.addTestPage("Menu/OpenOnClick");
+            suite.addTestPage("Grid/Sorting");
+            suite.addTestPage("Grid/Paging");
+            suite.addTestPage("Core/DateFormatting");
+            suite.addTestPage("PanelBar/ExpandCollapse");
             
             allTests.addTestSuite(suite);
             return allTests;

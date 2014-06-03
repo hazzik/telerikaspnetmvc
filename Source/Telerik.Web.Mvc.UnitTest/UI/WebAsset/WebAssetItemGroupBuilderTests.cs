@@ -14,7 +14,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
         public WebAssetItemGroupBuilderTests()
         {
-            _itemGroup = new WebAssetItemGroup("foo") { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
+            _itemGroup = new WebAssetItemGroup("foo", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
             _builder = new WebAssetItemGroupBuilder(_itemGroup);
         }
 
@@ -43,9 +43,9 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         [Fact]
         public void Should_be_able_to_set_disabled()
         {
-            _builder.Disabled(true);
+            _builder.Enabled(false);
 
-            Assert.True(_itemGroup.Disabled);
+            Assert.False(_itemGroup.Enabled);
         }
 
         [Fact]

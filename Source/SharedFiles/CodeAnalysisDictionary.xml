@@ -12,11 +12,16 @@
         </Deprecated>
         <Recognized>
             <Word>Telerik</Word>
+            <Word>Sortable</Word>
+            <Word>Pageable</Word>
+            <Word>Filterable</Word>
+            <Word>Renderer</Word>
             <Word>Cacher</Word>
             <Word>Mvc</Word>
             <Word>Json</Word>
             <Word>jQuery</Word>
             <Word>Styleable</Word>
+            <Word>Navigatable</Word>
         </Recognized>
         <Unrecognized>
         </Unrecognized>

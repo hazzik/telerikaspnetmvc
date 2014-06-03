@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="4609082c-4319-4274-ae29-d19412f4836f" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+      This help topic shows how to configure the columns displayed by Telerik Grid
+      for ASP.NET MVC.
+      </para>
+    </introduction>
+    <section address="Columns">
+      <content>
+        <para>
+        	To define the columns of your grid you should use the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Columns(System.Action{Telerik.Web.Mvc.UI.GridColumnFactory{`0}})</codeEntityReference>
+			method. Here is some sample code:
+			<code lang="C#">
+			<![CDATA[
+			<% Html.Telerik().Grid(Model)
+			       .Name("Orders")
+			       .Columns(columns =>
+			       {
+			          //Column which will display the OrderID property of the Order
+			          columns.Add(o => o.OrderID);
+			          
+			          //Column which will display the OrderDate property. The header will display "Order"
+			          columns.Add(o => o.OrderDate).Title("Order");
+			          
+			          //Template column which shows an action link
+			          columns.Add(o => 
+			          {
+			          	%>
+			          		<%= Html.ActionLink("Edit", "Home", new { id = o.OrderID }) %>
+			          	<%
+			          }).Title("Edit");
+			       })
+			       .Render();
+			%>
+			]]>
+			</code>
+			<para>
+				<alert class="important">
+					If you need template columns the <codeInline>&lt;% Html.Telerik().Grid().Render(); %&gt;</codeInline>
+					definition should be used instead of <codeInline>&lt;%= Html.Telerik().Grid() %&gt;</codeInline>
+				</alert>
+				In this example we have defined two bound columns and a single templated column. The main difference
+				between templated and bound columns is that a bound column displays a property of the data item whereas
+				the template column may display anything. This flexibility of the templated columns comes at a price - the user cannot sort or filter a templated column.
+				<alert class="important">
+					Currently templated columns are supported only in <link xlink:href="2512933f-ff08-42ea-ba84-e5d2c69cc7f2" />
+					mode. Client-side templates will be implemented in a future release. As a workaround you can use the 
+					<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Format(System.String)</codeEntityReference>
+					method like this:
+					<code lang="C#" title="Using Format as client-side template">
+					<![CDATA[
+					 <%= Html.Telerik().Grid(Model)
+					         .Name("Grid")
+					         .Columns(columns =>
+					         {
+					             columns.Add(c => c.CustomerID).Format(
+					             	Html.ActionLink("Edit", "Home", new { id = "{0}"}})
+					             ).Encoded(false).Title("Edit");
+					         })
+					 %>
+					]]>
+					</code>
+				</alert>
+			</para>
+        </para>
+        <section address="ColumnConfig">
+        	<title>Configuring Columns</title>
+        	<content>
+        		Bound and template columns can be configured using the following methods:
+        		<list class="bullet">
+        			<listItem>
+        				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridColumnBuilderBase`2.HeaderHtmlAttributes(System.Object)</codeEntityReference>
+        				method is used to apply HTML attributes for the column header (the <codeInline>&lt;th&gt;</codeInline> tag rendered for the column in the grid header).
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).HeaderHtmlAttributes(new {@class="order-id-column"}});  
+						        })
+						%>
+        				]]>
+        				</code>
+        				This code snippet sets the <codeInline>class</codeInline> HTML attribute to "order-id-column".
+        			</listItem>
+        			<listItem>
+        				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridColumnBuilderBase`2.HtmlAttributes(System.Object)</codeEntityReference>
+        				method is used to apply HTML attributes for the column cell (the <codeInline>&lt;td&gt;</codeInline> tag rendered for each row in the grid).
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).HtmlAttributes(new {@class="order-id-cell"}});  
+						        })
+						%>
+        				]]>
+        				</code>
+        				This code snippet sets the <codeInline>class</codeInline> HTML attribute to "order-id-cell".
+        			</listItem>
+					<listItem>
+        				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridColumnBuilderBase`2.Title(System.String)</codeEntityReference>
+        				method is used to set the title of the column:
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).Title("ID");  
+						        })
+						%>
+        				]]>
+        				</code>
+        				This code snippet will set the title of the column to "ID".
+        				<alert class="note">
+						By default the grid will infer the title of a column from the property of the data item. For example if the column is bound to the "OrderID" 
+						property the inferred title is "Order ID". Use the <codeInline>Title</codeInline> method if you want to 
+						override this behavior.
+        				</alert>
+        			</listItem>        			
+        			<listItem>
+        				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridColumnBuilderBase`2.Width(System.Int32)</codeEntityReference>
+        				method is used to set the width of the column in pixels.
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).Width(200);  
+						        })
+						%>
+        				]]>
+        				</code>
+        				This code snippet sets the width of the column to 200px.
+        			</listItem>
+        		</list>
+        		The following methods are availble only for bound columns:
+        		<list class="bullet">
+        			<listItem>
+        				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Encoded(System.Boolean)</codeEntityReference>
+        				enables or disables HTML encoding for the column.
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).Encoded(false);
+						        })
+						%>
+        				]]>
+        				</code>
+        				<alert class="note">
+        					By default bound columns are HTML-encoded which means that the <codeInline>&lt;</codeInline> and <codeInline>&gt;</codeInline>
+        					symbols found in the cell contents are replaced with <codeInline>&amp;lt;</codeInline> and <codeInline>&amp;gt;</codeInline>
+        				</alert>
+        			</listItem>
+        			<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Filterable(System.Boolean)</codeEntityReference>
+        				enables or disables filtering for the column.
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).Filterable(false);
+						        })
+						        .Filterable()
+						%>
+        				]]>
+        				</code>
+        				This code snippet disables filtering the grid using the "OrderID" column.
+        				<alert class="important">
+        					By default all bound columns are filterable. Using the <codeInline>Filterable</codeInline>
+        					method has no effect if filtering of the grid is not globally enabled:
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Filterable()
+						%>
+        				]]>
+        				</code>
+        				</alert>
+        			</listItem>        			
+        			<listItem>
+        				The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Format(System.String)</codeEntityReference>
+        				sets fhe format string for the column.
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderDate).Format("{0:dd/MM/yyyy}");
+						        })
+						        .Filterable()
+						%>
+        				]]>
+        				</code>
+        				This code snippet sets the display format for the "OrderDate" column to be "dd/MM/yyyy".
+        				<alert class="important">
+        					Currently number formatting is supported only in <link xlink:href="2512933f-ff08-42ea-ba84-e5d2c69cc7f2" />
+        					mode. Client-side support for number formatting will be implemented in a future release.
+        				</alert>
+        				<alert class="note">
+        					Format can also be used to define client-side templates:
+							<code lang="C#" title="Using Format as client-side template">
+							<![CDATA[
+							 <%= Html.Telerik().Grid(Model)
+							         .Name("Grid")
+							         .Columns(columns =>
+							         {
+							             columns.Add(c => c.CustomerID).Format(
+							             	"<img src='>" + Url.Content("~/Content/Images/Customers/") + 
+							             	"{0}.jpg' alt='{0}' />"
+							             ).Encoded(false).Title("Avatar");
+							         })
+							 %>
+							]]>
+					</code>
+        				</alert>
+        			</listItem>
+        			<listItem>
+						The <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBoundColumnBuilder`1.Sortable(System.Boolean)</codeEntityReference>
+        				enables or disables sorting for the column.
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Columns(columns =>
+								{
+						            columns.Add(o => o.OrderID).Sortable(false);
+						        })
+						        .Sortable()
+						%>
+        				]]>
+        				</code>
+        				This code snippet disables sorting by the "OrderID" column.
+        				<alert class="important">
+        					By default all bound columns are sortable. Using the <codeInline>Sortable</codeInline>
+        					method has no effect if sorting of the grid is not globally enabled:
+        				<code lang="C#">
+        				<![CDATA[
+        				<%= Html.Telerik().Grid(Model)
+							    .Name("Orders")
+								.Sortable()
+						%>
+        				]]>
+        				</code>
+        				</alert>
+        			</listItem>
+        		</list>
+        	</content>
+        </section>
+      </content>
+    </section>
+    <relatedTopics>
+    	<link xlink:href="34ac75d0-5ce3-4bab-ac2a-208c720b4c99" />
+    	<link xlink:href="2512933f-ff08-42ea-ba84-e5d2c69cc7f2" />
+    	<link xlink:href="f526622b-542e-4eb6-a831-c358a590c495" />
+    	<link xlink:href="7872ef72-956e-4cb3-8872-b068f7833def" />
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

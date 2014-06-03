@@ -24,17 +24,18 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TELERIK_DATA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>
     </DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;CODE_ANALYSIS;TELERIK_DATA</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>true</RunCodeAnalysis>
@@ -42,8 +43,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Web" />
@@ -57,15 +65,291 @@
     <Reference Include="System.Web.Routing">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedFiles\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="WebAsset.cs" />
-    <Compile Include="WebAssetHttpHandler.cs" />
-    <Compile Include="WebAssetLocator.cs" />
-    <Compile Include="WebAssetRegistry.cs" />
+    <Compile Include="DataAnnotations\DisplayAttribute.cs" />
+    <Compile Include="Extensions\CustomAttributeProviderExtensions.cs" />
+    <Compile Include="Extensions\HttpRequestBaseExtensions.cs" />
+    <Compile Include="Extensions\QueryProviderExtensions.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Extensions\ContentContainerExtensions.cs" />
+    <Compile Include="Extensions\ExpressionExtensions.cs" />
+    <Compile Include="Extensions\HtmlTextWriterExtensions.cs" />
+    <Compile Include="Extensions\HtmlAttributesExtensions.cs" />
+    <Compile Include="Infrastructure\CacheBase.cs" />
+    <Compile Include="Infrastructure\DisposableBase.cs" />
+    <Compile Include="Infrastructure\Dynamic.cs" />
+    <Compile Include="Infrastructure\FilterDescriptorFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\AndNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\BooleanNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\ComparisonNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\DateTimeNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeVisitor.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterTokenExtensions.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterTokenType.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\IFilterNodeVisitor.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\IFilterNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterParser.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterParserException.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterToken.cs" />
+    <Compile Include="Infrastructure\GlobalizationInfo.cs" />
+    <Compile Include="Infrastructure\IAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\IControllerAuthorization.cs" />
+    <Compile Include="Infrastructure\IControllerTypeCache.cs" />
+    <Compile Include="Infrastructure\Implementation\ActionMethodCache.cs" />
+    <Compile Include="Infrastructure\Implementation\AuthorizeAttributeCache.cs" />
+    <Compile Include="Infrastructure\Implementation\AuthorizeAttributeBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\ExpressionBuilderBase.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\ExpressionBuilderFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\ExpressionFactory.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Filtering\FilterDescriptionExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Filtering\FilterDescriptorCollectionExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Filtering\FilterDescriptorExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Filtering\FilterExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\Aggregates\AggregateFunctionExpressionBuilderBase.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\Aggregates\EnumerableAggregateFunctionExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\Aggregates\EnumerableSelectorAggregateFunctionExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\GroupDescriptorCollectionExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\GroupDescriptorExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\GroupDescriptorExpressionBuilderBase.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\Grouping\QueryableAggregatesExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\IdentityExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\CustomTypeDescriptorExtensions.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\CustomTypeDescriptorPropertyAccessExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\DataRowFieldAccessExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\MemberAccessExpressionBuilderBase.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\PropertyAccessExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer\IMemberAccessToken.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer\IndexerToken.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer\MemberAccessTokenExtensions.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer\MemberAccessTokenizer.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\Tokenizer\PropertyToken.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\Unbox.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\XmlNodeChildElementAccessExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\Implementation\Expressions\MemberAccess\XmlNodeExtensions.cs" />
+    <Compile Include="Infrastructure\Implementation\FieldCache.cs" />
+    <Compile Include="Infrastructure\IFieldCache.cs" />
+    <Compile Include="Infrastructure\IActionMethodCache.cs" />
+    <Compile Include="Infrastructure\CompositeFilterDescriptor.cs" />
+    <Compile Include="Infrastructure\FilterCompositionLogicalOperator.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\FilterDescription.cs" />
+    <Compile Include="Infrastructure\FilterDescriptor.cs" />
+    <Compile Include="Infrastructure\FilterDescriptorBase.cs" />
+    <Compile Include="Infrastructure\FilterDescriptorCollection.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\FilterDescriptorExtensions.cs" />
+    <Compile Include="Infrastructure\FilterOperator.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterLexer.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\FilterOperatorExtensions.cs" />
+    <Compile Include="Infrastructure\IFilterDescriptor.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FunctionNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\ILogicalNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\IOperatorNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\IValueNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\NumberNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\OrNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\PropertyNode.cs" />
+    <Compile Include="Infrastructure\Implementation\Filtering\Parsing\StringNode.cs" />
+    <Compile Include="Infrastructure\PredicateFilterDescription.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\AggregateFunctionsGroup.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AggregateFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AggregateFunctionCollection.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AggregateResult.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AggregateResultCollection.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\AverageFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\CountFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\EnumerableAggregateFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\EnumerableAggregateFunctionBase.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\EnumerableSelectorAggregateFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\FirstFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\LastFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\MaxFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\MinFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Aggregates\SumFunction.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\Group.cs" />
+    <Compile Include="Infrastructure\GroupDescriptor.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\GroupExtensions.cs" />
+    <Compile Include="Infrastructure\Implementation\Grouping\IGroup.cs" />
+    <Compile Include="Infrastructure\Implementation\ReflectedAuthorizeAttributeCache.cs" />
+    <Compile Include="Infrastructure\Implementation\ControllerAuthorization.cs" />
+    <Compile Include="Infrastructure\Implementation\ControllerTypeCache.cs" />
+    <Compile Include="Infrastructure\IAuthorizeAttributeCache.cs" />
+    <Compile Include="IUrlGenerator.cs" />
+    <Compile Include="SortDescriptor.cs" />
+    <Compile Include="Infrastructure\Implementation\Sorting\SortDescriptorCollectionExpressionBuilder.cs" />
+    <Compile Include="Infrastructure\QueryableFactory.cs" />
+    <Compile Include="Infrastructure\ServiceLocator.cs" />
+    <Compile Include="Infrastructure\IReflectedAuthorizeAttributeCache.cs" />
+    <Compile Include="Infrastructure\IAuthorizeAttributeBuilder.cs" />
+    <Compile Include="Infrastructure\IObjectCopier.cs" />
+    <Compile Include="Infrastructure\Implementation\ObjectCopier.cs" />
+    <Compile Include="Infrastructure\IPropertyCache.cs" />
+    <Compile Include="Infrastructure\Implementation\NavigationItemAuthorization.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Infrastructure\Implementation\PropertyCache.cs" />
+    <Compile Include="Infrastructure\INavigationItemAuthorization.cs" />
+    <Compile Include="Infrastructure\IServiceLocator.cs" />
+    <Compile Include="Infrastructure\IUrlAuthorization.cs" />
+    <Compile Include="Infrastructure\Implementation\UrlAuthorization.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\QueryableExtensions.cs" />
+    <Compile Include="Infrastructure\IVirtualPathProvider.cs" />
+    <Compile Include="Infrastructure\Implementation\VirtualPathProviderWrapper.cs" />
+    <Compile Include="Infrastructure\Implementation\ServiceLocatorImpl.cs" />
+    <Compile Include="Infrastructure\Implementation\UrlEncoder.cs" />
+    <Compile Include="SiteMap\PopulateSiteMapAttribute.cs" />
+    <Compile Include="SiteMap\SiteMapBase.cs" />
+    <Compile Include="SiteMap\SiteMapBuilder.cs" />
+    <Compile Include="SiteMap\SiteMapChangeFrequency.cs" />
+    <Compile Include="SiteMap\SiteMapDictionary.cs" />
+    <Compile Include="SiteMap\SiteMapHandler.cs" />
+    <Compile Include="SiteMap\SiteMapManager.cs" />
+    <Compile Include="SiteMap\SiteMapNode.cs" />
+    <Compile Include="SiteMap\SiteMapNodeBuilder.cs" />
+    <Compile Include="SiteMap\SiteMapNodeFactory.cs" />
+    <Compile Include="SiteMap\SiteMapUpdatePriority.cs" />
+    <Compile Include="SiteMap\XmlSiteMap.cs" />
+    <Compile Include="UI\Effects\AnimationBuilder.cs" />
+    <Compile Include="UI\Effects\PropertyAnimation.cs" />
+    <Compile Include="UI\Effects\IAnimation.cs" />
+    <Compile Include="UI\Effects\PropertyAnimationType.cs" />
+    <Compile Include="UI\Effects\ToggleEffect.cs" />
+    <Compile Include="UI\Effects\EffectFactory.cs" />
+    <Compile Include="UI\Effects\IEffect.cs" />
+    <Compile Include="UI\Effects\IEffectEnabled.cs" />
+    <Compile Include="UI\Effects\SlideAnimation.cs" />
+    <Compile Include="UI\Grid\GridActionBindingContext.cs" />
+    <Compile Include="UI\Grid\GridAjaxSettings.cs" />
+    <Compile Include="UI\Grid\GridAjaxSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\GridBindingContextExtensions.cs" />
+    <Compile Include="UI\Grid\GridBoundColumnBuilder.cs" />
+    <Compile Include="UI\Grid\GridClientEvents.cs" />
+    <Compile Include="UI\Grid\GridClientEventsBuilder.cs" />
+    <Compile Include="UI\Grid\GridCellRenderingContext.cs" />
+    <Compile Include="UI\Grid\GridColumnGenerator.cs" />
+    <Compile Include="UI\Grid\GridCommand.cs" />
+    <Compile Include="UI\Grid\GridFilterSettings.cs" />
+    <Compile Include="UI\Grid\GridFilterSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\GridRequestSettings.cs" />
+    <Compile Include="UI\Grid\GridRowRenderingContext.cs" />
+    <Compile Include="UI\Grid\GridScrollableRenderer.cs" />
+    <Compile Include="UI\Grid\GridScrollSettings.cs" />
+    <Compile Include="UI\Grid\GridScrollSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\GridRequestSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\GridRequestSettingsBuilderBase.cs" />
+    <Compile Include="UI\Grid\GridPagerStyles.cs" />
+    <Compile Include="UI\Grid\GridSortSettings.cs" />
+    <Compile Include="UI\Grid\GridSortSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\GridTemplateColumnBuilder.cs" />
+    <Compile Include="UI\Grid\GridUrlParameters.cs" />
+    <Compile Include="UI\Grid\GridModel.cs" />
+    <Compile Include="UI\Grid\GridWebServiceSettings.cs" />
+    <Compile Include="UI\Grid\GridWebServiceSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\IGridBindingContext.cs" />
+    <Compile Include="UI\Effects\AnimationDuration.cs" />
+    <Compile Include="UI\Effects\AnimationDurationConverter.cs" />
+    <Compile Include="UI\IAsyncContentContainer.cs" />
+    <Compile Include="UI\IClientSideObjectWriter.cs" />
+    <Compile Include="UI\IClientSideObjectWriterFactory.cs" />
+    <Compile Include="UI\IContentContainer.cs" />
+    <Compile Include="UI\Grid\GridDataProcessor.cs" />
+    <Compile Include="UI\Grid\GridSortDescriptorSerializer.cs" />
+    <Compile Include="UI\Grid\GridSortMode.cs" />
+    <Compile Include="UI\Grid\GridRendererFactory.cs" />
+    <Compile Include="UI\Grid\Grid.cs" />
+    <Compile Include="UI\Grid\GridBuilder.cs" />
+    <Compile Include="UI\Grid\GridColumn.cs" />
+    <Compile Include="UI\Grid\GridColumnBuilderBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Grid\GridColumnFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\Grid\GridActionAttribute.cs" />
+    <Compile Include="UI\Grid\GridPagerSettings.cs" />
+    <Compile Include="UI\Grid\GridPagerSettingsBuilder.cs" />
+    <Compile Include="UI\Grid\GridPagerPosition.cs" />
+    <Compile Include="UI\Grid\GridRenderer.cs" />
+    <Compile Include="UI\Grid\GridUrlGenerator.cs" />
+    <Compile Include="UI\Grid\IGridColumnContainer.cs" />
+    <Compile Include="UI\Grid\IGridRenderer.cs" />
+    <Compile Include="UI\Grid\IGridRendererFactory.cs" />
+    <Compile Include="UI\IHtmlAttributesContainer.cs" />
+    <Compile Include="UI\INavigatable.cs" />
+    <Compile Include="LinkedObjectBase.cs" />
+    <Compile Include="LinkedObjectCollection.cs" />
+    <Compile Include="UI\INavigationItemContainer.cs" />
+    <Compile Include="UI\Menu\IMenuRendererFactory.cs" />
+    <Compile Include="UI\Menu\IMenuRenderer.cs" />
+    <Compile Include="UI\Menu\MenuRenderer.cs" />
+    <Compile Include="UI\Menu\MenuRendererFactory.cs" />
+    <Compile Include="UI\Menu\Menu.cs" />
+    <Compile Include="UI\Menu\MenuBuilder.cs" />
+    <Compile Include="UI\Menu\MenuItem.cs" />
+    <Compile Include="UI\Menu\MenuItemBuilder.cs" />
+    <Compile Include="UI\Menu\MenuItemFactory.cs" />
+    <Compile Include="UI\Menu\MenuOrientation.cs" />
+    <Compile Include="Infrastructure\IUrlEncoder.cs" />
+    <Compile Include="UI\Menu\MenuClientEvents.cs" />
+    <Compile Include="UI\Menu\MenuClientEventsBuilder.cs" />
+    <Compile Include="UI\NavigatableExtensions.cs" />
+    <Compile Include="UI\NavigationItem.cs" />
+    <Compile Include="UI\NavigationItemBuilder.cs" />
+    <Compile Include="UI\NavigationItemContainerExtensions.cs" />
+    <Compile Include="UI\NavigationItemImageRenderer.cs" />
+    <Compile Include="UI\PanelBar\IPanelBarRenderer.cs" />
+    <Compile Include="UI\PanelBar\IPanelBarRendererFactory.cs" />
+    <Compile Include="UI\PanelBar\PanelBar.cs" />
+    <Compile Include="UI\PanelBar\PanelBarBuilder.cs" />
+    <Compile Include="UI\PanelBar\PanelBarClientEvents.cs" />
+    <Compile Include="UI\PanelBar\PanelBarClientEventsBuilder.cs" />
+    <Compile Include="UI\PanelBar\PanelBarExpandMode.cs" />
+    <Compile Include="UI\PanelBar\PanelBarItem.cs" />
+    <Compile Include="UI\PanelBar\PanelBarItemBuilder.cs" />
+    <Compile Include="UI\PanelBar\PanelBarItemFactory.cs" />
+    <Compile Include="UI\PanelBar\PanelBarRenderer.cs" />
+    <Compile Include="Extensions\HtmlAttributesContainerExtensions.cs" />
+    <Compile Include="UI\PanelBar\PanelBarRendererFactory.cs" />
+    <Compile Include="UI\TabStrip\ITabStripRenderer.cs" />
+    <Compile Include="UI\TabStrip\ITabStripRendererFactory.cs" />
+    <Compile Include="UI\TabStrip\TabStripClientEvents.cs" />
+    <Compile Include="UI\TabStrip\TabStripClientEventsBuilder.cs" />
+    <Compile Include="UI\TabStrip\TabStripRendererFactory.cs" />
+    <Compile Include="UI\TabStrip\TabStrip.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\TabStrip\TabStripBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\TabStrip\TabStripItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\TabStrip\TabStripItemBuilder.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\TabStrip\TabStripItemFactory.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="UI\TabStrip\TabStripRenderer.cs" />
+    <Compile Include="UI\UiPrimitives.cs" />
+    <Compile Include="UI\WebAsset\IWebAssetItemMerger.cs" />
+    <Compile Include="WebAsset\IWebAssetRegistry.cs" />
+    <Compile Include="WebAsset\SharedWebAssetGroupBuilder.cs" />
+    <Compile Include="UrlGenerator.cs" />
+    <Compile Include="WebAsset\SharedWebAssets.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetConfigurationSection.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetItemConfigurationElement.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetItemConfigurationElementCollection.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetItemGroupConfigurationElement.cs" />
+    <Compile Include="WebAsset\Configuration\WebAssetItemGroupConfigurationElementCollection.cs" />
+    <Compile Include="WebAsset\WebAsset.cs" />
+    <Compile Include="WebAsset\WebAssetHttpHandler.cs" />
+    <Compile Include="WebAsset\WebAssetLocator.cs" />
+    <Compile Include="WebAsset\WebAssetRegistry.cs" />
     <Compile Include="UI\WebAsset\WebAssetDefaultSettings.cs" />
     <Compile Include="Infrastructure\IPathResolver.cs" />
     <Compile Include="Infrastructure\IHttpResponseCompressor.cs" />
@@ -77,7 +361,7 @@
     <Compile Include="Infrastructure\Implementation\CacheManagerWrapper.cs" />
     <Compile Include="Infrastructure\PathHelper.cs" />
     <Compile Include="UI\ClientSideObjectWriterFactory.cs" />
-    <Compile Include="UI\ClientSideValueAttribute.cs" />
+    <Compile Include="UI\ClientSideEnumValueAttribute.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Infrastructure\Implementation\ConfigurationManagerWrapper.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
@@ -89,7 +373,6 @@
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="Infrastructure\Implementation\PathResolver.cs" />
     <Compile Include="Infrastructure\Guard.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\ReaderWriterLockSlimExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Resources\TextResource.Designer.cs">
@@ -105,10 +388,8 @@
     <Compile Include="UI\WebAsset\IWebAssetItem.cs" />
     <Compile Include="Infrastructure\IUrlResolver.cs" />
     <Compile Include="UI\HtmlHelperExtension.cs" />
-    <Compile Include="UI\IStyleableComponentContainer.cs" />
     <Compile Include="UI\IScriptableComponent.cs" />
     <Compile Include="UI\IScriptableComponentContainer.cs" />
-    <Compile Include="UI\IStyleableComponent.cs" />
     <Compile Include="UI\ViewComponentFactory.cs" />
     <Compile Include="UI\ViewComponentBuilderBase.cs" />
     <Compile Include="UI\ViewComponentBase.cs" />
@@ -124,6 +405,7 @@
     <Compile Include="UI\ScriptRegistrar\ScriptRegistrar.cs" />
     <Compile Include="UI\ScriptRegistrar\ScriptRegistrarBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebAsset\WebAssetType.cs" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDictionary Include="..\SharedFiles\CodeAnalysisDictionary.xml" />
@@ -140,12 +422,131 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Build\EcmaScript.NET.modified.dll" />
+    <Content Include="Build\Yahoo.Yui.Compressor.dll" />
+    <Content Include="Content\Black\loading.gif" />
+    <Content Include="Content\Black\sprite.png" />
+    <Content Include="Content\WebBlue\loading.gif" />
+    <Content Include="Content\WebBlue\sprite.png" />
+    <Content Include="Content\telerik.webblue.css" />
+    <Content Include="Content\Web20\loading.gif" />
+    <Content Include="Content\Web20\sprite.png" />
+    <Content Include="Content\telerik.web20.css" />
+    <Content Include="Content\Telerik\loading.gif" />
+    <Content Include="Content\Telerik\sprite.png" />
+    <Content Include="Content\telerik.telerik.css" />
+    <Content Include="Content\Sunset\loading.gif" />
+    <Content Include="Content\Sunset\sprite.png" />
+    <Content Include="Content\telerik.sunset.css" />
+    <Content Include="Content\Sitefinity\loading.gif" />
+    <Content Include="Content\Sitefinity\sprite.png" />
+    <Content Include="Content\telerik.sitefinity.css" />
+    <Content Include="Content\Simple\loading.gif" />
+    <Content Include="Content\Simple\sprite.png" />
+    <Content Include="Content\telerik.simple.css" />
+    <Content Include="Content\Outlook\loading.gif" />
+    <Content Include="Content\Outlook\sprite.png" />
+    <Content Include="Content\telerik.outlook.css" />
+    <Content Include="Content\Office2007\loading.gif" />
+    <Content Include="Content\Office2007\sprite.png" />
+    <Content Include="Content\telerik.office2007.css" />
+    <Content Include="Content\Hay\loading.gif" />
+    <Content Include="Content\Hay\sprite.png" />
+    <Content Include="Content\telerik.hay.css" />
+    <Content Include="Content\Forest\loading.gif" />
+    <Content Include="Content\Forest\sprite.png" />
+    <Content Include="Content\telerik.forest.css" />
+    <Content Include="Content\telerik.black.css" />
+    <Content Include="Content\Default\loading.gif" />
+    <Content Include="Content\Vista\sprite.png" />
+    <Content Include="Content\telerik.vista.css" />
+    <Content Include="Content\Vista\loading.gif" />
+    <Content Include="Scripts\telerik.common.js" />
+    <Content Include="Content\Default\sprite.png" />
+    <Content Include="Content\telerik.common.css" />
+    <Content Include="Content\telerik.default.css" />
+    <Content Include="Scripts\telerik.grid.filtering.js" />
+    <Content Include="Scripts\telerik.menu.js" />
+    <Content Include="Scripts\telerik.panelbar.js" />
+    <Content Include="Scripts\telerik.tabstrip.js" />
+    <Content Include="Scripts\telerik.grid.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <!-- Reference the YUI CompressorTask -->
+  <UsingTask TaskName="CompressorTask" AssemblyFile="Build\Yahoo.Yui.Compressor.dll" />
+  <Target Name="AfterBuildDebug">
+    <!-- Copy the CSS files to Scripts -->
+    <Copy SourceFiles="@(Content)" DestinationFolder="$(OutputPath)\Scripts" Condition="'%(Extension)'=='.js'">
+      <Output TaskParameter="DestinationFiles" ItemName="Resources" />
+    </Copy>
+    <!-- Copy the CSS and Image files to Content -->
+    <ItemGroup>
+      <CssAndImageFiles Include="Content\**\*.*">
+        <Visible>False</Visible>
+      </CssAndImageFiles>
+    </ItemGroup>
+    <Copy SourceFiles="@(CssAndImageFiles)" DestinationFolder="$(OutputPath)\Content\%(RecursiveDir)">
+      <Output TaskParameter="DestinationFiles" ItemName="Resources" />
+    </Copy>
+    <ItemGroup>
+      <!-- FileWrites is the list of files to delete when performing a Clean -->
+      <FileWrites Include="@(Resources)" />
+    </ItemGroup>
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="AfterBuildRelease">
+    <!-- Get the assembly version -->
+    <GetAssemblyIdentity AssemblyFiles="$(IntermediateOutputPath)$(AssemblyName).dll">
+      <Output TaskParameter="Assemblies" ItemName="Info" />
+    </GetAssemblyIdentity>
+    <!-- Store it in property -->
+    <PropertyGroup>
+      <Version>%(Info.Version)</Version>
+    </PropertyGroup>
+    <!-- Copy all JavaScript to $(OutputPath)\Scripts, add versioning and ".min" suffix -->
+    <ItemGroup>
+      <JavaScriptFilesToSkip Include="Scripts\*.min.js" />
+      <JavaScriptFilesToMinify Include="Scripts\*.js" Exclude="@(JavaScriptFilesToSkip)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(JavaScriptFilesToMinify)" DestinationFiles="@(JavaScriptFilesToMinify -> '$(OutputPath)\Scripts\$(Version)\%(Filename).min.js')">
+      <Output TaskParameter="DestinationFiles" ItemName="JavaScriptFiles" />
+    </Copy>
+    <!-- Minify the JavaScript files -->
+    <CompressorTask JavaScriptFiles="%(JavaScriptFiles.Identity)" JavaScriptOutputFile="%(JavaScriptFiles.Identity)" IsEvalIgnored="true" LineBreakPosition="-1" PreserveAllSemicolons="false" DisableOptimizations="false" ObfuscateJavaScript="true" LoggingType="ALittleBit" />
+    <Copy SourceFiles="@(JavaScriptFilesToSkip)" DestinationFolder="$(OutputPath)\Scripts\$(Version)">
+      <Output TaskParameter="DestinationFiles" ItemName="JavaScriptFiles" />
+    </Copy>
+    <!-- Copy all CSS to $(OutputPath)\Content, add versioning and ".min" suffix -->
+    <ItemGroup>
+      <CssFilesToSkip Include="Content\**\*.custom.css" />
+      <CssFilesToMinify Include="Content\**\*.css" Exclude="@(CssFilesToSkip)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CssFilesToMinify)" DestinationFiles="@(CssFilesToMinify -> '$(OutputPath)\Content\$(Version)\%(Filename).min.css')">
+      <Output TaskParameter="DestinationFiles" ItemName="CssFiles" />
+    </Copy>
+    <!-- Minify the CSS files -->
+    <CompressorTask CssFiles="%(CssFiles.Identity)" CssOutputFile="%(CssFiles.Identity)" LineBreakPosition="0" PreserveAllSemicolons="true" DisableOptimizations="false" LoggingType="ALittleBit" />
+    <Copy SourceFiles="@(CssFilesToSkip)" DestinationFolder="$(OutputPath)\Content\$(Version)\%(RecursiveDir)">
+      <Output TaskParameter="DestinationFiles" ItemName="CssFiles" />
+    </Copy>
+    <!-- Copy the images and apply versioning -->
+    <ItemGroup>
+      <ImageFiles Include="Content\**\*.*">
+        <Visible>False</Visible>
+      </ImageFiles>
+    </ItemGroup>
+    <Copy SourceFiles="@(ImageFiles)" DestinationFolder="$(OutputPath)\Content\$(Version)\%(RecursiveDir)" Condition="'%(Extension)'!='.css'">
+      <Output TaskParameter="DestinationFiles" ItemName="Resources" />
+    </Copy>
+    <ItemGroup>
+      <FileWrites Include="@(Resources)" />
+      <FileWrites Include="@(JavaScriptFiles)" />
+      <FileWrites Include="@(CssFiles)" />
+    </ItemGroup>
   </Target>
-  -->
+  <Target Name="AfterCompile">
+    <Message Importance="high" Text="Processing JavaScript files..." />
+    <CallTarget Targets="AfterBuildDebug" Condition="'$(Configuration)' != 'Release'" />
+    <CallTarget Targets="AfterBuildRelease" Condition="'$(Configuration)' == 'Release'" />
+  </Target>
 </Project>

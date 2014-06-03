@@ -81,6 +81,24 @@ namespace Mvc.UI.jQuery.UnitTest
         }
 
         [Fact]
+        public void Setting_no_active_selection_to_true_sets_collapsible_content_to_true()
+        {
+            _accordion.CollapsibleContent = false;
+            _accordion.NoActiveSelection = true;
+
+            Assert.True(_accordion.CollapsibleContent);
+        }
+
+        [Fact]
+        public void Setting_collapsible_content_to_false_sets_no_active_selection_to_false()
+        {
+            _accordion.NoActiveSelection = true;
+            _accordion.CollapsibleContent = false;
+
+            Assert.False(_accordion.NoActiveSelection);
+        }
+
+        [Fact]
         public void WriteInitializationScript_should_write_scripts_for_icon_and_selected_icon()
         {
             Mock<IClientSideObjectWriter> writer = new Mock<IClientSideObjectWriter>();

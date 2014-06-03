@@ -48,16 +48,6 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         }
 
         [Fact]
-        public void Should_be_able_to_set_framework_script_path()
-        {
-            ScriptRegistrar.FrameworkScriptPath = "~/JavaScripts";
-
-            Assert.Equal("~/JavaScripts", ScriptRegistrar.FrameworkScriptPath);
-
-            ScriptRegistrar.FrameworkScriptPath = "~/Scripts";
-        }
-
-        [Fact]
         public void Should_be_able_to_change_framework_script_file_names()
         {
             ScriptRegistrar.FrameworkScriptFileNames.Add("foo.js");
@@ -111,6 +101,43 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
             Assert.Throws<InvalidOperationException>(() => _scriptRegistrar.Render()); // Call Twice
         }
+
+        [Fact]
+        public void AssetKey_set_to_default_adds_component_scripts_to_default_group()
+        {
+            SetupComponent("Default");
+            
+            _scriptRegistrar.Render();
+
+            Assert.Equal("~/Scripts/component.js", _scriptRegistrar.DefaultGroup.Items[1].Source);
+        }
+
+        [Fact]
+        public void Component_asset_group_should_be_added_after_default_group()
+        {
+            SetupComponent("test");
+            _scriptRegistrar.Render();
+
+            Assert.Equal(0, _scriptRegistrar.Scripts.IndexOf(_scriptRegistrar.DefaultGroup));
+        }
+
+        [Fact]
+        public void Component_scripts_without_asset_group_should_be_added_after_default_group()
+        {
+            SetupComponent("");
+            _scriptRegistrar.Render();
+            Assert.Equal(0, _scriptRegistrar.Scripts.IndexOf(_scriptRegistrar.DefaultGroup));
+        }
+
+		private void SetupComponent(string assetKey)
+		{
+			Mock<IScriptableComponent> component = new Mock<IScriptableComponent>();
+
+            component.SetupGet(c => c.AssetKey).Returns(assetKey);
+            component.SetupGet(c=> c.ScriptFilesPath).Returns("~/Scripts");
+            component.SetupGet(c=> c.ScriptFileNames).Returns(new [] {"component.js"});
+            _scriptRegistrar.Register(component.Object);
+		}
 
         private void SetupForRender()
         {

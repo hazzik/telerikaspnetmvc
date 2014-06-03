@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Mvc.UI.jQuery
@@ -13,6 +13,7 @@ namespace Mvc.UI.jQuery
     using Telerik.Web.Mvc.Extensions;
     using Telerik.Web.Mvc.Infrastructure;
     using Telerik.Web.Mvc.UI;
+    using System.Web.UI;
 
     /// <summary>
     /// Displays a theme switcher in an ASP.NET MVC view.
@@ -224,14 +225,10 @@ namespace Mvc.UI.jQuery
         /// <summary>
         /// Writes the HTML.
         /// </summary>
-        protected override void WriteHtml()
+        protected override void WriteHtml(HtmlTextWriter writer)
         {
-            TextWriter writer = ViewContext.HttpContext.Response.Output;
-
             HtmlAttributes.Merge("id", Id, false);
             writer.Write("<div{0}></div>".FormatWith(HtmlAttributes.ToAttributeString()));
-
-            base.WriteHtml();
         }
     }
 }

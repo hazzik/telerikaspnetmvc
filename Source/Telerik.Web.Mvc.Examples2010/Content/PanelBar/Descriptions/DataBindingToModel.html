@@ -1,0 +1,34 @@
+﻿<p>
+    This example shows how to bind Telerik PanelBar for ASP.NET MVC to bind to collection of objects.
+</p>
+<p>
+    The required steps are:
+</p>
+<ol>
+    <li>Pass a <strong>IEnumerable&lt;T&gt;</strong> to the view:
+    <pre class="prettyprint">
+public ActionResult DataBindingToModel()
+{
+    ViewData["panelbarData"] = NavigationDataBuilder.GetCollection();
+    return View();
+}
+    </pre>
+    </li>
+    <li>
+        Pass the collection as the first parameter of the <strong>BindTo</strong> method. The second parameter is an
+        <strong>Action&lt;PanelBarItem&gt;</strong> which is called for all databound items.
+        You should use it to set the required properties of each panel item:
+        <pre class="prettyprint">
+&lt;%= Html.Telerik().PanelBar()
+        .Name("PanelBar")
+        <em>.BindTo((IEnumerable&lt;NavigationData&gt;)ViewData["panelbarData"],
+            (item, navigationData) =>
+            {
+                item.Text = navigationData.Text;
+                item.ImageUrl = navigationData.ImageUrl;
+                item.Url = navigationData.NavigateUrl;
+            })</em>
+%&gt;
+        </pre>
+    </li>
+</ol>

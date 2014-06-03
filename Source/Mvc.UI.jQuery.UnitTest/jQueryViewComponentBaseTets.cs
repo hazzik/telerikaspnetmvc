@@ -33,12 +33,6 @@ namespace Mvc.UI.jQuery.UnitTest
         }
 
         [Fact]
-        public void StyleSheetFileNames_should_contain_defaut_stylesheet_file()
-        {
-            Assert.Contains(jQueryViewComponentDefaultSettings.StyleSheetFile, _baseComponent.Object.StyleSheetFileNames);
-        }
-
-        [Fact]
         public void ScriptFileNames_should_contain_defaut_ascript_file()
         {
             Assert.Contains(jQueryViewComponentDefaultSettings.ScriptFile, _baseComponent.Object.ScriptFileNames);

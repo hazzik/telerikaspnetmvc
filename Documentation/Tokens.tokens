@@ -10,20 +10,12 @@
     </ddue:linkUri>
 </ddue:externalLink></item>
   <item id="InstallationLocation"><ddue:localUri xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
-C:\Program Files\Telerik\Extensions for ASP.NET MVC</ddue:localUri></item>
+C:\Program Files\Telerik\Extensions for ASP.NET MVC Q3 2009</ddue:localUri></item>
   <item id="jQuery">jQuery</item>
   <item id="jQueryEasingJavaScript">jquery.easing.1.3.js</item>
   <item id="jQueryLink"><ddue:externalLink xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
     <ddue:linkText>jQuery</ddue:linkText>
     <ddue:linkUri>http://www.jquery.com</ddue:linkUri>
-</ddue:externalLink></item>
-  <item id="jQueryUI">jQuery UI Components</item>
-  <item id="jQueryUICss">jquery-ui-1.7.2.custom.css</item>
-  <item id="jQueryUIDll">Mvc.UI.jQuery.dll</item>
-  <item id="jQueryUIJavaScript">jquery-ui-1.7.2.custom.min.js</item>
-  <item id="jQueryUILink"><ddue:externalLink xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
-    <ddue:linkText>jQuery UI</ddue:linkText>
-    <ddue:linkUri>http://jqueryui.com</ddue:linkUri>
 </ddue:externalLink></item>
   <item id="Mvc">ASP.NET MVC</item>
   <item id="MvcDownloadLink"><ddue:externalLink xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
@@ -34,17 +26,18 @@ C:\Program Files\Telerik\Extensions for ASP.NET MVC</ddue:localUri></item>
     <ddue:linkText>ASP.NET MVC</ddue:linkText>
     <ddue:linkUri>http://www.asp.net/mvc/</ddue:linkUri>
 </ddue:externalLink></item>
-  <item id="TelerikMvc">Telerik Extensions for ASP.NET MVC</item>
-  <item id="TelerikMvcDll">Telerik.Web.Mvc.dll</item>
-  <item id="TelerikMvcZip">Telerik_Extensions_for_ASPNET_MVC_</item>
-  <item id="VersionWithUnderscores">2009_2_1007</item>
-  <item id="WebForms">ASP.NET Web Forms</item>
-  <item id="SparkLink"><ddue:externalLink xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
-    <ddue:linkText>Spark</ddue:linkText>
-    <ddue:linkUri>http://sparkviewengine.com</ddue:linkUri>
-</ddue:externalLink></item>
   <item id="NHamlLink"><ddue:externalLink xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
     <ddue:linkText>NHaml</ddue:linkText>
     <ddue:linkUri>http://code.google.com/p/nhaml</ddue:linkUri>
 </ddue:externalLink></item>
+  <item id="SparkLink"><ddue:externalLink xmlns:ddue="http://ddue.schemas.microsoft.com/authoring/2003/5">
+    <ddue:linkText>Spark</ddue:linkText>
+    <ddue:linkUri>http://sparkviewengine.com</ddue:linkUri>
+</ddue:externalLink></item>
+  <item id="TelerikMvc">Telerik Extensions for ASP.NET MVC</item>
+  <item id="TelerikMvcDll">Telerik.Web.Mvc.dll</item>
+  <item id="TelerikMvcZip">Telerik_Extensions_for_ASPNET_MVC_</item>
+  <item id="VersionWithUnderscores">2009_3_1104</item>
+  <item id="WebForms">ASP.NET Web Forms</item>
+  <item id="RadControls">RadControls for ASP.NET AJAX</item>
 </content>

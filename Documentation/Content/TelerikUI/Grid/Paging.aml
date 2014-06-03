@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="42427fad-1e7b-4c05-afea-e088bbf54517" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>This help topic discusses the paging feature of Telerik Grid for ASP.NET MVC</para>
+    </introduction>
+    <section address="Paging">
+      <content>
+        <para>
+        	By default Telerik Grid for ASP.NET will display all records from the data source it is bound to.
+        	Often the need use paging arises when there are lots of records to display. 
+        	To enable paging for your grid you should use the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Pageable</codeEntityReference>
+        	method:
+        	<code lang="C#" title="View">
+        	<![CDATA[
+			<%= Html.Telerik().Grid(Model)
+			        .Name("Grid")
+			        .Pageable()
+			%>
+			]]>
+        	</code>
+        	This would enable paging with default configuration - showing 10 records per page and using numeric pager style.
+        </para>
+      </content>
+      <sections>
+      	<section>
+      		<title>Pager Configuration</title>
+      		<content>
+      			You can customize the pager by using the 
+      			<codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridBuilder`1.Pageable(System.Action{Telerik.Web.Mvc.UI.GridPagerSettingsBuilder})</codeEntityReference>
+      			method. It allows you to do the following:
+      			<list class="bullet">
+      				<listItem>
+      					Enable paging based on some condition via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridPagerSettingsBuilder.Enabled(System.Boolean)</codeEntityReference> method:
+			        	<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Pageable(pager => pager.Enabled((bool)ViewData["enablePaging"]))
+						%>
+						]]>
+						</code>
+      				</listItem>
+      				<listItem>
+      					Change the page size via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridPagerSettingsBuilder.PageSize(System.Int32)</codeEntityReference> method:
+      					<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Pageable(pager => pager.PageSize(20))
+						%>
+						]]>
+						</code>
+      				</listItem>
+  					<listItem>
+      					Change the pager position via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridPagerSettingsBuilder.Position(Telerik.Web.Mvc.UI.GridPagerPosition)</codeEntityReference> method:
+      					<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Pageable(pager => pager.Position(GridPagerPosition.Top))
+						%>
+						]]>
+						</code>
+      				</listItem>
+      				<listItem>
+      					Set the total number of records of your datasource via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridPagerSettingsBuilder.Total(System.Int32)</codeEntityReference> method:
+      					<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Pageable(pager => pager.Total((int)ViewData["total"]))
+						%>
+						]]>
+						</code>
+						<alert class="note">
+							Setting the <codeInline>Total</codeInline> is only required when using Custom binding.
+						</alert>
+      				</listItem>
+      				<listItem>
+      					Change the pager style via the <codeEntityReference autoUpgrade="true">M:Telerik.Web.Mvc.UI.GridPagerSettingsBuilder.Style(Telerik.Web.Mvc.UI.GridPagerStyles)</codeEntityReference> method:
+      					<code lang="C#" title="View">
+			        	<![CDATA[
+						<%= Html.Telerik().Grid(Model)
+						        .Name("Grid")
+						        .Pageable(pager => pager.Style(GridPagerStyles.PageInput | GridPagerStyles.Numeric))
+						%>
+						]]>
+						</code>
+      				</listItem>
+      			</list>
+      		</content>
+      	</section>
+      </sections>
+    </section>
+    <relatedTopics>
+       	<link xlink:href="34ac75d0-5ce3-4bab-ac2a-208c720b4c99" />
+    	<link xlink:href="669182c9-f8cb-490d-8aed-b3c8c5edd312" />
+	</relatedTopics>
+  </developerConceptualDocument>
+</topic>

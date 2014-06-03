@@ -1,6 +1,6 @@
-// (c) Copyright Telerik Corp. 
-// This source is subject to the Microsoft Public License. 
-// See http://www.microsoft.com/opensource/licenses.mspx#Ms-PL. 
+// (c) Copyright 2002-2009 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.UI
@@ -11,7 +11,7 @@ namespace Telerik.Web.Mvc.UI
     using Infrastructure;
 
     /// <summary>
-    /// The Builder class for managing script files and statements fluently in ASP.NET MVC View.
+    /// Defines the fluent interface for configuring the <see cref="ScriptRegistrar"/> component.
     /// </summary>
     public class ScriptRegistrarBuilder : IHideObjectMembers
     {
@@ -54,7 +54,13 @@ namespace Telerik.Web.Mvc.UI
         /// Sets the asset handler path. Path must be a virtual path.
         /// </summary>
         /// <param name="value">The value.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///            .AssetHandlerPath("~/asset.axd")
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual ScriptRegistrarBuilder AssetHandlerPath(string value)
         {
             scriptRegistrar.AssetHandlerPath = value;
@@ -63,16 +69,66 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Executes the provided delegate that is used to register the script files fluently in default group.
+        /// Configures the <see cref="ScriptRegistrar.DefaultGroup"/>.
         /// </summary>
         /// <param name="configureAction">The configure action.</param>
-        /// <returns></returns>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///            .DefaultGroup(group => group
+        ///                 .Add("script1.js")
+        ///                 .Add("script2.js")
+        ///                 .Combined(true)
+        ///            )
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual ScriptRegistrarBuilder DefaultGroup(Action<WebAssetItemGroupBuilder> configureAction)
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
             WebAssetItemGroupBuilder builder = new WebAssetItemGroupBuilder(scriptRegistrar.DefaultGroup);
             configureAction(builder);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Enables globalization support.
+        /// </summary>
+        /// <param name="enable">if set to <c>true</c> [enable].</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///            .Globalization(true)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ScriptRegistrarBuilder Globalization(bool enable)
+        {
+            scriptRegistrar.EnableGlobalization = enable;
+            
+            return this;
+        }
+
+        /// <summary>
+        /// Includes the jQuery script files. By default jQuery JavaScript is included. 
+        /// </summary>
+        /// <remarks>
+        /// Telerik Extensions for ASP.NET MVC require jQuery so make sure you manually include the JavaScrip file
+        /// if you disable the automatic including.
+        /// </remarks>
+        /// <param name="enable">if set to <c>true</c> [enable].</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;%= Html.Telerik().ScriptRegistrar()
+        ///            .jQuery(false)
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ScriptRegistrarBuilder jQuery(bool enable)
+        {
+            scriptRegistrar.ExcludeFrameworkScripts = !enable;
 
             return this;
         }
@@ -86,7 +142,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(configureAction, "configureAction");
 
-            WebAssetItemCollectionBuilder builder = new WebAssetItemCollectionBuilder(scriptRegistrar.Scripts);
+            WebAssetItemCollectionBuilder builder = new WebAssetItemCollectionBuilder(WebAssetType.JavaScript, scriptRegistrar.Scripts);
 
             configureAction(builder);
 
@@ -94,39 +150,81 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Executes the provided delegate that is used to register on document ready script statements fluently.
+        /// Defines the inline handler executed when the DOM document is ready (using the $(document).ready jQuery event)
         /// </summary>
-        /// <param name="javaScript">The java script.</param>
-        /// <returns></returns>
-        public virtual ScriptRegistrarBuilder OnDocumentReady(Action javaScript)
+        /// <param name="onDocumentReadyAction">The action defining the inline handler</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().ScriptRegistrar()
+        ///           .OnDocumentReady(() =>
+        ///           {
+        ///             %&gt;
+        ///             function() {
+        ///                 alert("Document is ready");
+        ///             }
+        ///             &lt;%
+        ///           })
+        ///           .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ScriptRegistrarBuilder OnDocumentReady(Action onDocumentReadyAction)
         {
-            Guard.IsNotNull(javaScript, "javaScript");
+            Guard.IsNotNull(onDocumentReadyAction, "onDocumentReadyAction");
 
-            scriptRegistrar.OnDocumentReadyActions.Add(javaScript);
+            scriptRegistrar.OnDocumentReadyActions.Add(onDocumentReadyAction);
 
             return this;
         }
 
         /// <summary>
-        /// Executes the provided delegate that is used to register on window unload script statements fluently.
+        /// Defines the inline handler executed when the DOM window object is unloaded.
         /// </summary>
-        /// <param name="javaScript">The java script.</param>
-        /// <returns></returns>
-        public virtual ScriptRegistrarBuilder OnPageUnload(Action javaScript)
+        /// <param name="onWindowUnloadAction">The action defining the inline handler</param>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().ScriptRegistrar()
+        ///           .OnWindowUnload(() =>
+        ///           {
+        ///             %&gt;
+        ///             function() {
+        ///                 // event handler code
+        ///             }
+        ///             &lt;%
+        ///           })
+        ///           .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public virtual ScriptRegistrarBuilder OnWindowUnload(Action onWindowUnloadAction)
         {
-            Guard.IsNotNull(javaScript, "javaScript");
+            Guard.IsNotNull(onWindowUnloadAction, "onWindowUnloadAction");
 
-            scriptRegistrar.OnWindowUnloadActions.Add(javaScript);
+            scriptRegistrar.OnWindowUnloadActions.Add(onWindowUnloadAction);
 
             return this;
         }
 
         /// <summary>
-        /// Renders the internal script registrar.
+        /// Renders the <see cref="ScriptRegistrar"/>
         /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        /// &lt;% Html.Telerik().ScriptRegistrar()
+        ///           .Render();
+        /// %&gt;
+        /// </code>
+        /// </example>
         public virtual void Render()
         {
             scriptRegistrar.Render();
+        }
+
+        public override string ToString()
+        {
+            Render();
+            
+            return null;
         }
     }
 }

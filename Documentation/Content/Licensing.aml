@@ -4,78 +4,34 @@
     <introduction>
       <para>
       	<token>TelerikMvc</token> is distributed under a dual licensing model. The open source is designed for the general public, 
-      	allowing the community to view and use the source code of the product in accordance with the Microsoft Public License (Ms-PL) terms. 
+      	allowing the community to view and use the source code of the product in accordance with the GNU General Public License, version 2 terms. 
       	The commercial license is suitable for customers who cannot use open source software and/or who want to receive dedicated support from Telerik.
       </para>
-      <autoOutline lead="none" />
     </introduction>
     <section address="OpenSource">
       <title>Open source license</title>
       <content>
         <para>
-        	<token>TelerikMvc</token> is available as an open source product under the 
+        	<token>TelerikMvc</token> is available as an open source product under the terms of the
         	<externalLink>
-        		<linkText>Ms-PL (Microsoft Public License)</linkText>
-        		<linkAlternateText>Go to the official web page of MS-PL</linkAlternateText>
-        		<linkUri>http://www.microsoft.com/opensource/licenses.mspx#Ms-PL</linkUri>
+        		<linkText>GPL 2.0</linkText>
+        		<linkAlternateText>Go to the official web page of GPL</linkAlternateText>
+        		<linkUri>http://www.gnu.org/licenses/gpl-2.0.html</linkUri>
         	</externalLink>:
         </para>
-        <section>
-        	<title>Microsoft Public License (Ms-PL)</title>
-        	<content>
-        	<para>
-				This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
-			</para>
-			<list class="ordered">
-				<listItem>Definitions
-					<para>
-						The terms "reproduce," "reproduction," "derivative works," and "distribution" have the same meaning here as under U.S. copyright law. A "contribution" is the original software, or any additions or changes to the software. A "contributor" is any person that distributes its contribution under this license. "Licensed patents" are a contributor's patent claims that read directly on its contribution.
-					</para>
-				</listItem>
-				<listItem>Grant of Rights
-					<para>
-					(A) Copyright Grant- Subject to the terms of this license, including the license conditions and limitations in section 3, each contributor grants you a non-exclusive, worldwide, royalty-free copyright license to reproduce its contribution, prepare derivative works of its contribution, and distribute its contribution or any derivative works that you create.
-					</para>
-					<para>
-					(B) Patent Grant- Subject to the terms of this license, including the license conditions and limitations in section 3, each contributor grants you a non-exclusive, worldwide, royalty-free license under its licensed patents to make, have made, use, sell, offer for sale, import, and/or otherwise dispose of its contribution in the software or derivative works of the contribution in the software.
-					</para>
-				</listItem>
-				<listItem>Conditions and Limitations
-					<para>
-					(A) No Trademark License- This license does not grant you rights to use any contributors' name, logo, or trademarks.
-					</para>
-					<para>
-					(B) If you bring a patent claim against any contributor over patents that you claim are infringed by the software, your patent license from such contributor to the software ends automatically.
-					</para>
-					<para>
-					(C) If you distribute any portion of the software, you must retain all copyright, patent, trademark, and attribution notices that are present in the software.
-					</para>
-					<para>
-					(D) If you distribute any portion of the software in source code form, you may do so only under this license by including a complete copy of this license with your distribution. If you distribute any portion of the software in compiled or object code form, you may only do so under a license that complies with this license.
-					</para>
-					<para>
-					(E) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees, or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
-					</para>
-				</listItem>
-			</list>
-			</content>
-        </section>
       </content>
     </section>
     <section address="Commercial">
     	<title>Commercial license</title>
     	<content>
+    		<para>
     		The official version of <token>TelerikMvc</token> will offer also a
-    		commercial license with dedicated customer support. However the current
-    		preview release is available only under the Ms-PL license.
+    		commercial license with dedicated customer support. The commercial license is royalty free and removes any obligations imposed by the GPL 2.0 license.
+    		</para>
+    		<para>
+    		All minor updates (hotfixes and service packs) are included only as a part of the commercial license.
+    		</para>
     	</content>
     </section>
-    <relatedTopics>
-        <externalLink>
-        	<linkText>Ms-PL official page</linkText>
-        	<linkAlternateText>Go to the official web page of MS-PL</linkAlternateText>
-        	<linkUri>http://www.microsoft.com/opensource/licenses.mspx#Ms-PL</linkUri>
-        </externalLink>
-    </relatedTopics>
   </developerConceptualDocument>
 </topic>

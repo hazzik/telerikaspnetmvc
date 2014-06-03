@@ -22,6 +22,9 @@
             <SourcesToExclude Include="$(SourceRoot)\**\*.sln"/>
             <SourcesToExclude Include="$(SourceRoot)\**\Release.txt"/>
             <SourcesToExclude Include="$(SourceRoot)\Documentation\**"/>
+            <SourcesToExclude Include="$(SourceRoot)\Mvc.*\**"/>
+            <SourcesToExclude Include="$(SourceRoot)\Sample\**"/>
+            <SourcesToExclude Include="$(SourceRoot)\Telerik.Web.Mvc.Examples2010\**"/>
 
             <SourceToInclude Include="$(SourceRoot)\**\*.*" />
 
@@ -60,9 +63,25 @@
     </Target>
 
     <Target Name="CopySource">
+        <BuildStep TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)" Name="CopySourceStep" Message="Copying source">
+            <Output TaskParameter="Id" PropertyName="StepId" />
+        </BuildStep>
+        
         <CallTarget Targets="CopySourceFiles" />
         <CallTarget Targets="RemoveSourceControlBindings" />
         <CallTarget Targets="UpdateSnkFile" />
+
+        <BuildStep  TeamFoundationServerUrl="$(TeamFoundationServerUrl)" BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Succeeded" />
+        <OnError ExecuteTargets="MarkBuildStepAsFailed" />
     </Target>
 
+    <Target Name="MarkBuildStepAsFailed">
+        <BuildStep
+            TeamFoundationServerUrl="$(TeamFoundationServerUrl)"
+            BuildUri="$(BuildUri)"
+            Id="$(StepId)"
+            Status="Failed" />
+    </Target>
 </Project>
