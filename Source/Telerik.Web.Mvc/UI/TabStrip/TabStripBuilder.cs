@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -92,7 +92,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(viewDataKey, "viewDataKey");
 
-            Component.BindTo(viewDataKey, Component.ViewContext, siteMapAction);
+            Component.BindTo(viewDataKey, siteMapAction);
 
             return this;
         }
@@ -113,7 +113,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(viewDataKey, "viewDataKey");
 
-            Component.BindTo(viewDataKey, Component.ViewContext);
+            Component.BindTo(viewDataKey);
 
             return this;
         }
@@ -153,20 +153,20 @@ namespace Telerik.Web.Mvc.UI
         ///	           .Name("TabStrip")
         ///	           .Effects(fx =>
         ///	           {
-        ///		            fx.Slide(properties => properties
-        ///					    .OpenDuration(AnimationDuration.Normal)
-        ///					    .CloseDuration(AnimationDuration.Normal))
-        ///			          .Opacity(properties => properties
-        ///					    .OpenDuration(AnimationDuration.Normal)
-        ///					    .CloseDuration(AnimationDuration.Normal));
+        ///		            fx.Slide()
+        ///			          .Opacity()
+        ///					  .OpenDuration(AnimationDuration.Normal)
+        ///					  .CloseDuration(AnimationDuration.Normal);
         ///	           })
         /// </code>
         /// </example>
-        public TabStripBuilder Effects(Action<EffectFactory> addEffects)
+        public TabStripBuilder Effects(Action<EffectsBuilder> addEffects)
         {
-            Guard.IsNotNull(addEffects, "addEffects");
+            Guard.IsNotNull(addEffects, "addAction");
 
-            addEffects(new EffectFactory(Component));
+            EffectsBuilderFactory factory = new EffectsBuilderFactory();
+
+            addEffects(factory.Create(Component.Effects));
 
             return this;
         }

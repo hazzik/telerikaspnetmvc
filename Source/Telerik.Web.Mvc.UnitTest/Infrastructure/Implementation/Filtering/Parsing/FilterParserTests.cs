@@ -107,6 +107,28 @@
         }
 
         [Fact]
+        public void Should_parse_three_and_nested_expressions()
+        {
+            var result = Parse(@"OrderID~gt~10255~and~startswith(Customer.ContactName,'Paula')~and~startswith(ShipAddress,'2817')");
+
+            var firstExpression = (ComparisonNode)((AndNode)((AndNode)result).First).First;
+            var secondExpression = (FunctionNode)((AndNode)((AndNode)result).First).Second;
+            var thirdExpression = (FunctionNode)((AndNode)result).Second;
+
+            Assert.Equal(FilterOperator.IsGreaterThan, firstExpression.FilterOperator);
+            Assert.Equal("OrderID", ((PropertyNode)firstExpression.First).Name);
+            Assert.Equal(10255, Convert.ToInt32(((NumberNode)firstExpression.Second).Value));
+
+            Assert.Equal(FilterOperator.StartsWith, secondExpression.FilterOperator);
+            Assert.Equal("Customer.ContactName", ((PropertyNode)secondExpression.Arguments[0]).Name);
+            Assert.Equal("Paula", ((StringNode)secondExpression.Arguments[1]).Value);
+
+            Assert.Equal(FilterOperator.StartsWith, thirdExpression.FilterOperator);
+            Assert.Equal("ShipAddress", ((PropertyNode)thirdExpression.Arguments[0]).Name);
+            Assert.Equal("2817", ((StringNode)thirdExpression.Arguments[1]).Value);
+        }
+
+        [Fact]
         public void Should_parse_or_expression()
         {
             OrNode or = (OrNode)Parse("1~or~2");
@@ -145,7 +167,7 @@
         [Fact]
         public void Should_throw_if_no_primary_expression()
         {
-            Assert.Throws<FilterParserException>(() => Parse("@@"));
+            Assert.Throws<FilterParserException>(() => Parse("#"));
         }
 
         [Fact]

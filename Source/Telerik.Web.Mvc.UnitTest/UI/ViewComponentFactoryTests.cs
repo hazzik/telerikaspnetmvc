@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
     using System.Web.Mvc;
 
     using Infrastructure;
+    using Fluent;
 
     using Moq;
     using Xunit;
@@ -23,10 +24,11 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             Mock<IServiceLocator> locator = new Mock<IServiceLocator>();
 
             locator.Setup(l => l.Resolve<IUrlGenerator>()).Returns(new Mock<IUrlGenerator>().Object);
+            locator.Setup(l => l.Resolve<IConfigurationManager>()).Returns(new Mock<IConfigurationManager>().Object);
             locator.Setup(l => l.Resolve<INavigationItemAuthorization>()).Returns(new Mock<INavigationItemAuthorization>().Object);
-            locator.Setup(l => l.Resolve<IGridRendererFactory>()).Returns(new Mock<IGridRendererFactory>().Object);
-            locator.Setup(l => l.Resolve<IMenuRendererFactory>()).Returns(new Mock<IMenuRendererFactory>().Object);
-            locator.Setup(l => l.Resolve<ITabStripRendererFactory>()).Returns(new Mock<ITabStripRendererFactory>().Object);
+            locator.Setup(l => l.Resolve<IGridHtmlBuilderFactory>()).Returns(new Mock<IGridHtmlBuilderFactory>().Object);
+            locator.Setup(l => l.Resolve<IMenuHtmlBuilderFactory>()).Returns(new Mock<IMenuHtmlBuilderFactory>().Object);
+            locator.Setup(l => l.Resolve<ITabStripHtmlBuilderFactory>()).Returns(new Mock<ITabStripHtmlBuilderFactory>().Object);
 
             ServiceLocator.SetCurrent(() => locator.Object);
 
@@ -105,6 +107,56 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         public void PanelBar_should_return_new_instance()
         {
             Assert.NotNull(_factory.PanelBar());
+        }
+
+        [Fact]
+        public void DatePicker_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.DatePicker());
+        }
+
+        [Fact]
+        public void Calendar_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.Calendar());
+        }
+
+        [Fact]
+        public void IntegerTextBox_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.IntegerTextBox());
+        }
+
+        [Fact]
+        public void NumericTextBox_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.NumericTextBox<double>());
+        }
+
+        [Fact]
+        public void NumericTextBox_should_return_new_instance_with_type_double()
+        {
+            var builder = _factory.NumericTextBox<double>();
+            Assert.IsType<double>(builder.ToComponent().MinValue);
+        }
+
+        [Fact]
+        public void NumericTextBox_should_return_new_instance_with_type_float()
+        {
+            var builder = _factory.NumericTextBox<float>();
+            Assert.IsType<float>(builder.ToComponent().MinValue);
+        }
+
+        [Fact]
+        public void CurrencyTextBox_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.CurrencyTextBox());
+        }
+
+        [Fact]
+        public void PercentTextBox_should_return_new_instance()
+        {
+            Assert.NotNull(_factory.PercentTextBox());
         }
     }
 }

@@ -1,11 +1,11 @@
 namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
 
     public partial class TabStripController : Controller
-	{
-		[PopulateSiteMap(SiteMapName = "sample", ViewDataKey = "sample")]
-		[SourceCodeFile("Sitemap", "~/sample.sitemap")]
+    {
+        [PopulateSiteMap(SiteMapName = "sample", ViewDataKey = "sample")]
+        [SourceCodeFile("Sitemap", "~/sample.sitemap")]
         public ActionResult SiteMapBinding()
         {
             if (!SiteMapManager.SiteMaps.ContainsKey("sample"))

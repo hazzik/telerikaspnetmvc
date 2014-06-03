@@ -1,29 +1,27 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Animation Effects</asp:Content>
-
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
 
 <% Html.Telerik().TabStrip()
         .Name("TabStrip")
         .HtmlAttributes(new { style = "margin-top: 200px; height: 163px;" })
-		.Effects(fx =>
-		{
-            if ((string)ViewData["enabledAnimation"] == "height")
+        .Effects(fx =>
+        {
+            if (ViewData["animation"].ToString() == "expand")
             {
-                fx.Expand(properties =>
-                        properties
-                               .OpenDuration((int)ViewData["heightOpenDuration"])
-                               .CloseDuration((int)ViewData["heightCloseDuration"]));
+                fx.Expand();
             }
             else
             {
-                fx.Toggle().Opacity(properties =>
-                    properties
-                        .OpenDuration((int)ViewData["opacityOpenDuration"])
-                        .CloseDuration((int)ViewData["opacityCloseDuration"]));
+                /* activate only toggle, so that the items show */
+                fx.Toggle();
             }
-		})
+
+            if ((bool)ViewData["enableOpacityAnimation"])
+                fx.Opacity();
+
+            fx.OpenDuration((int)ViewData["openDuration"])
+              .CloseDuration((int)ViewData["closeDuration"]);
+        })
         .Items(tabstrip =>
         {
             tabstrip.Add()
@@ -88,52 +86,60 @@
               .PostTo("AnimationEffects", "TabStrip")
               .Begin())
    { %>
-    <ul>
-        <li style="float: left; width: 200px;">
-            <%= Html.RadioButton("enabledAnimation", "height", true, new { id = "height" })
-            %><label for="height"><strong>height animation</strong>, which will...</label>
-            <ul>
-                <li>
-                    <label for="heightOpenDuration">open for</label>
-                    <%= Html.TextBox("heightOpenDuration", ViewData["heightOpenDuration"])%> ms
-                </li>
-                <li>
-                    <label for="heightCloseDuration">close for</label>
-                    <%= Html.TextBox("heightCloseDuration", ViewData["heightCloseDuration"])%> ms
-                </li>
-            </ul>
+   <ul>
+         <li>
+            <%= Html.RadioButton("animation", "toggle", new { id = "toggle" }) %>
+            <label for="toggle"><strong>toggle</strong> animation</label>
+            <br />
+            <%= Html.RadioButton("animation", "expand", new { id = "expand" })%>
+            <label for="toggle"><strong>expand</strong> animation</label>
+            <br />
+            <%= Html.CheckBox(
+                    "enableOpacityAnimation",
+                    (bool)ViewData["enableOpacityAnimation"],
+                    "&nbsp;<strong>opacity</strong> animation")%>
         </li>
-        <li style="float: left; width: 200px;">
-            <%= Html.RadioButton("enabledAnimation", "opacity", new { id = "opacity" })
-            %><label for="opacity"><strong>opacity animation</strong>, which will...</label>
+        <li>
             <ul>
                 <li>
-                    <label for="opacityOpenDuration">open for</label>
-                    <%= Html.TextBox("opacityOpenDuration", ViewData["opacityOpenDuration"])%> ms
+                    <label for="openDuration">open for</label>
+                    <%= Html.Telerik().NumericTextBox()
+                            .Name("openDuration")
+                            .DecimalDigits(0)
+                            .NumberGroupSeparator("")
+                            .MinValue(0).MaxValue(10000)
+                            .Value(Convert.ToDouble(ViewData["openDuration"]))
+                    %> ms
                 </li>
                 <li>
-                    <label for="opacityCloseDuration">close for</label>
-                    <%= Html.TextBox("opacityCloseDuration", ViewData["opacityCloseDuration"])%> ms
+                    <label for="closeDuration">close for</label>
+                    <%= Html.Telerik().NumericTextBox()
+                            .Name("closeDuration")
+                            .DecimalDigits(0)
+                            .NumberGroupSeparator("")
+                            .MinValue(0).MaxValue(10000)
+                            .Value(Convert.ToDouble(ViewData["closeDuration"]))
+                    %> ms
                 </li>
             </ul>
         </li>
     </ul>
     
-    <button class="t-button t-state-default" type="submit">Apply Changes</button>
+    <button class="t-button t-state-default" type="submit">Apply</button>
 <% } %>
 
 <% Html.Telerik().ScriptRegistrar().OnDocumentReady(() => {%>
 	/* client-side validation */
     $('.configurator button').click(function(e) {
         $('.configurator :text').each(function () {
-            if (!/^\d+$/.test(this.value)) {
+            if ($(this).hasClass('t-state-error')) {
                 alert("TextBox `" + this.name + "` has an invalid param!");
                 e.preventDefault();
             }
         });
     });
 <%}); %>
-	
+		
 </asp:Content>
 
 
@@ -147,8 +153,9 @@
 	        right: 40px;
 	    }
 	    
-	    .configurator li { padding: 3px 0; margin: 0; }
+	    .configurator li { padding: 3px 0 .5em; margin: 0; }
 	    .configurator input[type=text] { width: 50px; }
+	    .configurator li li { padding: 3px 0; }
 		.configurator ul ul { padding-left: 24px; margin: 0; }
 		.configurator ul ul label { width: 48px; margin: 0; }
 	    .example .configurator .t-button { clear: both; margin: 0; }

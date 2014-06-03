@@ -1,8 +1,8 @@
-﻿
-namespace Telerik.Web.Mvc.UI.UnitTest
+﻿namespace Telerik.Web.Mvc.UI.UnitTest
 {
     using Xunit;
     using System.Web.Routing;
+    using Fluent;
 
     public class GridRequestSettingsBuilderTests
     {

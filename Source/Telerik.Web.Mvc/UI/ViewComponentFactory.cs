@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+﻿// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -7,19 +7,19 @@ namespace Telerik.Web.Mvc.UI
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Diagnostics;
     using System.Web.Mvc;
 
+    using Extensions;
     using Infrastructure;
 
+    using Fluent;
     /// <summary>
     /// Provides the factory methods for creating Telerik View Components.
     /// </summary>
     public class ViewComponentFactory : IHideObjectMembers
     {
-        private readonly HtmlHelper htmlHelper;
-        private readonly IClientSideObjectWriterFactory clientSideObjectWriterFactory;
-
         private readonly StyleSheetRegistrarBuilder styleSheetRegistrarBuilder;
         private readonly ScriptRegistrarBuilder scriptRegistrarBuilder;
 
@@ -31,11 +31,25 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(styleSheetRegistrar, "styleSheetRegistrar");
             Guard.IsNotNull(scriptRegistrar, "scriptRegistrar");
 
-            this.htmlHelper = htmlHelper;
-            this.clientSideObjectWriterFactory = clientSideObjectWriterFactory;
+            HtmlHelper = htmlHelper;
+            ClientSideObjectWriterFactory = clientSideObjectWriterFactory;
 
             styleSheetRegistrarBuilder = styleSheetRegistrar;
             scriptRegistrarBuilder = scriptRegistrar;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public HtmlHelper HtmlHelper
+        {
+            get;
+            private set;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public IClientSideObjectWriterFactory ClientSideObjectWriterFactory
+        {
+            get;
+            private set;
         }
 
         private ViewContext ViewContext
@@ -43,7 +57,7 @@ namespace Telerik.Web.Mvc.UI
             [DebuggerStepThrough]
             get
             {
-                return htmlHelper.ViewContext;
+                return HtmlHelper.ViewContext;
             }
         }
 
@@ -95,10 +109,10 @@ namespace Telerik.Web.Mvc.UI
         /// </code>
         /// </example>
         [DebuggerStepThrough]
-		public virtual MenuBuilder Menu()
-		{
-			return new MenuBuilder(Create(() => new Menu(ViewContext, clientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<IMenuRendererFactory>())));
-		}
+        public virtual MenuBuilder Menu()
+        {
+            return new MenuBuilder(Create(() => new Menu(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<IMenuHtmlBuilderFactory>())));
+        }
 
         /// <summary>
         /// Creates a new <see cref="Grid&lt;T&gt;"/> bound to the specified data item type.
@@ -118,29 +132,7 @@ namespace Telerik.Web.Mvc.UI
         [DebuggerStepThrough]
         public virtual GridBuilder<T> Grid<T>() where T : class
         {
-            return new GridBuilder<T>(Create(() => new Grid<T>(ViewContext, clientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<IGridRendererFactory>())));
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="Telerik.Web.UI.Grid&lt;T&gt;"/> bound to the specified data item type. Suitable for custom client-side binding where 
-        /// there is no server type corresponding to the data item.
-        /// </summary>
-        /// <example>
-        /// <code lang="CS">
-        ///  &lt;%= Html.Telerik().Grid(new {Name = "", Age = 0})
-        ///             .Name("Grid")
-        ///             .Columns(columns=>
-        ///             {
-        ///                 columns.Add(o => o.Name);
-        ///                 columns.Add(o => o.Age);
-        ///             })
-        /// %&gt;
-        /// </code>
-        /// </example>
-        [DebuggerStepThrough]
-        public virtual GridBuilder<T> Grid<T>(T value) where T : class
-        {
-            return Grid<T>();
+            return new GridBuilder<T>(Create(() => new Grid<T>(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<IGridHtmlBuilderFactory>())));
         }
 
         /// <summary>
@@ -158,7 +150,7 @@ namespace Telerik.Web.Mvc.UI
         public virtual GridBuilder<T> Grid<T>(IEnumerable<T> dataSource) where T : class
         {
             GridBuilder<T> builder = Grid<T>();
-            
+
             builder.Component.DataSource = dataSource;
 
             return builder;
@@ -203,9 +195,41 @@ namespace Telerik.Web.Mvc.UI
         [DebuggerStepThrough]
         public virtual TabStripBuilder TabStrip()
         {
-            return new TabStripBuilder(Create(() => new TabStrip(ViewContext, clientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<ITabStripRendererFactory>())));
+            return new TabStripBuilder(Create(() => new TabStrip(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<ITabStripHtmlBuilderFactory>())));
         }
 
+        /// <summary>
+        /// Creates a new <see cref="DatePicker"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().DatePicker()
+        ///             .Name("DatePicker")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual DatePickerBuilder DatePicker()
+        {
+            return new DatePickerBuilder(Create(() => new DatePicker(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IDatePickerHtmlBuilderFactory>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Calendar"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Calendar()
+        ///             .Name("Calendar")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual CalendarBuilder Calendar()
+        {
+            return new CalendarBuilder(Create(() => new Calendar(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<ICalendarHtmlBuilderFactory>())));
+        }
+        
         /// <summary>
         /// Creates a new <see cref="PanelBar"/>.
         /// </summary>
@@ -224,10 +248,109 @@ namespace Telerik.Web.Mvc.UI
         [DebuggerStepThrough]
         public virtual PanelBarBuilder PanelBar()
         {
-            return new PanelBarBuilder(Create(() => new PanelBar(ViewContext, clientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<IPanelBarRendererFactory>())));
+            return new PanelBarBuilder(Create(() => new PanelBar(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<IPanelBarHtmlBuilderFactory>())));
         }
 
-        private TViewComponent Create<TViewComponent>(Func<TViewComponent> factory) where TViewComponent : ViewComponentBase
+        /// <summary>
+        /// Creates a <see cref="TreeView"/>
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().TreeView()
+        ///             .Name("TreeView")
+        ///             .Items(items => { /* add items here */ });
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual TreeViewBuilder TreeView()
+        {
+            return new TreeViewBuilder(Create(() => new TreeView(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<IUrlGenerator>(), ServiceLocator.Current.Resolve<INavigationItemAuthorization>(), ServiceLocator.Current.Resolve<ITreeViewHtmlBuilderFactory>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="NumericTextBox{T}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().NumericTextBox()
+        ///             .Name("NumericTextBox")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        /// <returns>Returns <see cref="NumericTextBoxBuilder{double}"/>.</returns>
+        [DebuggerStepThrough]
+        public virtual NumericTextBoxBuilder<double> NumericTextBox()
+        {
+            return new NumericTextBoxBuilder<double>(Create(() => new NumericTextBox<double>(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<double>>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="NumericTextBox{T}"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().NumericTextBox<double>()
+        ///             .Name("NumericTextBox")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual NumericTextBoxBuilder<T> NumericTextBox<T>() where T: struct
+        {
+            return new NumericTextBoxBuilder<T>(Create(() => new NumericTextBox<T>(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<T>>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CurrencyTextBox"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().CurrencyTextBox()
+        ///             .Name("CurrencyTextBox")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual CurrencyTextBoxBuilder CurrencyTextBox()
+        {
+            return new CurrencyTextBoxBuilder(Create(() => new CurrencyTextBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<decimal>>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="PercentTextBox"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().PercentTextBox()
+        ///             .Name("PercentTextBox")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual PercentTextBoxBuilder PercentTextBox()
+        {
+            return new PercentTextBoxBuilder(Create(() => new PercentTextBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<double>>())));
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="IntegerTextBox"/>.
+        /// </summary>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().IntegerTextBox()
+        ///             .Name("IntegerTextBox")
+        /// %&gt;
+        /// </code>
+        /// </example>
+        [DebuggerStepThrough]
+        public virtual IntegerTextBoxBuilder IntegerTextBox()
+        {
+            return new IntegerTextBoxBuilder(Create(() => new IntegerTextBox(ViewContext, ClientSideObjectWriterFactory, ServiceLocator.Current.Resolve<ITextboxBaseHtmlBuilderFactory<int>>())));
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public TViewComponent Create<TViewComponent>(Func<TViewComponent> factory) where TViewComponent : ViewComponentBase
         {
             TViewComponent component = factory();
 

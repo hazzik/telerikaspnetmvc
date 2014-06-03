@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -38,6 +38,7 @@ namespace Telerik.Web.Mvc.UI
             Compress = WebAssetDefaultSettings.Compress;
             CacheDurationInDays = WebAssetDefaultSettings.CacheDurationInDays;
             Combined = WebAssetDefaultSettings.Combined;
+            UseTelerikContentDeliveryNetwork = WebAssetDefaultSettings.UseTelerikContentDeliveryNetwork;
             Items = new InternalAssetItemCollection();
             Enabled = true;
         }
@@ -81,6 +82,18 @@ namespace Telerik.Web.Mvc.UI
 
                 defaultPath = value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether Telerik content delivery network would be used.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [use Telerik content delivery network]; otherwise, <c>false</c>.
+        /// </value>
+        public bool UseTelerikContentDeliveryNetwork
+        {
+            get;
+            set;
         }
 
         /// <summary>

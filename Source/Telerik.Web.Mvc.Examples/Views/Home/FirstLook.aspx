@@ -1,7 +1,4 @@
-﻿<%@ Page Language="C#" MasterPageFile="~/Views/Shared/Site.Master" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server" />
-
+﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" MasterPageFile="~/Views/Shared/Site.Master" %>
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
 	<div id="overview">
 		<div id="overview-spotlight">
@@ -11,13 +8,13 @@
 			
 			<p id="how-to-get">
 				<a href="http://www.telerik.com/community/license-agreement.aspx?pId=697" id="download-link">Download Now!</a><br />
-				<span id="version-info">Version 2009.Q3, released 00/00/2009</span>
+				<span id="version-info">Version <%= ViewData["ProductVersion"] %> (<a href="http://www.telerik.com/products/aspnet-mvc/whats-new/release-history.aspx">release notes</a>)</span>
 			</p>
 		</div>
 		
 		<ul id="extensions-highlights">
 			<li>
-				<h2>Pure ASP.NET MVC components</h2>
+				<h2>Pure ASP.NET MVC Components</h2>
 				<p>Built on top of <a href="http://www.asp.net/mvc/">ASP.NET MVC</a> to leverage its values - lightweight rendering, clean HTML, separation of concerns, and testability.</p>
 			</li>
 			<li>
@@ -37,7 +34,7 @@
 				<p>The Extensions render clean, semantic HTML, which is essential for indexing your content in the major search engines.</p>
 			</li>
 			<li>
-				<h2>Cross-browser support</h2>
+				<h2>Cross-browser Support</h2>
 				<p>Telerik Extensions for ASP.NET MVC support all major browsers - Internet&nbsp;Explorer, Firefox, Safari, Opera and Google Chrome.</p>
 			</li>
 		</ul>

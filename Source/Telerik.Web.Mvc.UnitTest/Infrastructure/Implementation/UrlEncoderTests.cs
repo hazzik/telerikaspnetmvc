@@ -7,6 +7,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.UnitTest
 {
     using System;
     using Xunit;
+    
 
     public class UrlEncoderTests
     {

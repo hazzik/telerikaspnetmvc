@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -33,6 +33,7 @@ namespace Telerik.Web.Mvc
         private const string ChangeFrequencyAttributeName = "changeFrequency";
         private const string UpdatePriorityAttributeName = "updatePriority";
         private const string IncludeInSearchEngineIndexAttributeName = "includeInSearchEngineIndex";
+        private const string AreaAttributeName = "area";
 
         private static readonly string[] knownAttributes = CreateKnownAttributes();
 
@@ -107,34 +108,7 @@ namespace Telerik.Web.Mvc
 
             if (!string.IsNullOrEmpty(physicalPath))
             {
-                string content = fileSystem.ReadAllText(physicalPath);
-
-                if (!string.IsNullOrEmpty(content))
-                {
-                    using (StringReader sr = new StringReader(content))
-                    {
-                        using (XmlReader xr = XmlReader.Create(sr, new XmlReaderSettings { CloseInput = true, IgnoreWhitespace = true, IgnoreComments = true, IgnoreProcessingInstructions = true }))
-                        {
-                            XmlDocument doc = new XmlDocument();
-                            doc.Load(xr);
-
-                            Reset();
-
-                            if ((doc.DocumentElement != null) && doc.HasChildNodes)
-                            {
-                                CacheDurationInMinutes = GetFloatValueFromAttribute(doc.DocumentElement, "cacheDurationInMinutes", DefaultCacheDurationInMinutes);
-                                Compress = GetBooleanValueFromAttribute(doc.DocumentElement, "compress", true);
-                                GenerateSearchEngineMap = GetBooleanValueFromAttribute(doc.DocumentElement, "generateSearchEngineMap", true);
-
-                                XmlNode xmlRootNode = doc.DocumentElement.FirstChild;
-                                Iterate(RootNode, xmlRootNode);
-
-                                // Cache it for file change notification
-                                InsertInCache(physicalPath);
-                            }
-                        }
-                    }
-                }
+                InternalLoad(physicalPath);
             }
         }
 
@@ -146,6 +120,47 @@ namespace Telerik.Web.Mvc
             if (cacheManager.GetItem(cacheKey) == null)
             {
                 cacheManager.Insert(cacheKey, filePath, OnCacheItemRemoved, filePath);
+            }
+        }
+
+        // Marked as internal for unit test
+        internal virtual void InternalLoad(string physicalPath)
+        {
+            string content = fileSystem.ReadAllText(physicalPath);
+
+            if (!string.IsNullOrEmpty(content))
+            {
+                using (StringReader sr = new StringReader(content))
+                {
+                    using (XmlReader xr = XmlReader.Create(sr, new XmlReaderSettings { CloseInput = true, IgnoreWhitespace = true, IgnoreComments = true, IgnoreProcessingInstructions = true }))
+                    {
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(xr);
+
+                        Reset();
+
+                        if ((doc.DocumentElement != null) && doc.HasChildNodes)
+                        {
+                            CacheDurationInMinutes = GetFloatValueFromAttribute(doc.DocumentElement, "cacheDurationInMinutes", DefaultCacheDurationInMinutes);
+                            Compress = GetBooleanValueFromAttribute(doc.DocumentElement, "compress", true);
+                            GenerateSearchEngineMap = GetBooleanValueFromAttribute(doc.DocumentElement, "generateSearchEngineMap", true);
+
+                            XmlNode xmlRootNode = doc.DocumentElement.FirstChild;
+                            Iterate(RootNode, xmlRootNode);
+
+                            // Cache it for file change notification
+                            InsertInCache(physicalPath);
+                        }
+                    }
+                }
+            }
+        }
+
+        internal void OnCacheItemRemoved(string key, object value, CacheItemRemovedReason reason)
+        {
+            if (reason == CacheItemRemovedReason.DependencyChanged)
+            {
+                InternalLoad((string)value);
             }
         }
 
@@ -175,10 +190,7 @@ namespace Telerik.Web.Mvc
             {
                 foreach (XmlNode routeValue in xmlRouteValuesNode.ChildNodes)
                 {
-                    if (!string.IsNullOrEmpty(routeValue.InnerText))
-                    {
-                        routeValues.Add(routeValue.LocalName, routeValue.InnerText);
-                    }
+                    routeValues[routeValue.LocalName] = routeValue.InnerText;
                 }
             }
 
@@ -189,6 +201,13 @@ namespace Telerik.Web.Mvc
             string controllerName = GetStringValueFromAttribute(xmlNode, ControllerAttributeName);
             string actionName = GetStringValueFromAttribute(xmlNode, ActionAttributeName);
             string url = GetStringValueFromAttribute(xmlNode, UrlAttributeName);
+
+            string areaName = GetStringValueFromAttribute(xmlNode, AreaAttributeName);
+
+            if (areaName != null)
+            {
+                routeValues["area"] = areaName;
+            }
 
             if (!string.IsNullOrEmpty(routeName))
             {
@@ -221,7 +240,7 @@ namespace Telerik.Web.Mvc
 
             foreach (XmlAttribute attribute in xmlNode.Attributes)
             {
-                if (!string.IsNullOrEmpty(attribute.LocalName) && !string.IsNullOrEmpty(attribute.Value))
+                if (!string.IsNullOrEmpty(attribute.LocalName))
                 {
                     // Only add unknown attibutes
                     if (Array.BinarySearch(knownAttributes, attribute.LocalName, StringComparer.OrdinalIgnoreCase) < 0)
@@ -240,7 +259,7 @@ namespace Telerik.Web.Mvc
             {
                 XmlAttribute attribute = node.Attributes[attributeName];
 
-                if ((attribute != null) && !string.IsNullOrEmpty(attribute.Value))
+                if (attribute != null)
                 {
                     value = attribute.Value;
                 }
@@ -347,14 +366,6 @@ namespace Telerik.Web.Mvc
             Type enumType = typeof(T);
 
             return Enum.IsDefined(enumType, value) ? (T) Enum.Parse(enumType, value, true) : defaultValue;
-        }
-
-        private void OnCacheItemRemoved(string key, object value, CacheItemRemovedReason reason)
-        {
-            if (reason == CacheItemRemovedReason.DependencyChanged)
-            {
-                LoadFrom((string)value);
-            }
         }
     }
 }

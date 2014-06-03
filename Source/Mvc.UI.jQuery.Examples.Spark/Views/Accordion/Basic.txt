@@ -1,1 +1,0 @@
-﻿Click headers to expand/collapse content that is broken into logical sections, much like tabs. Optionally, toggle sections open/closed on mouseover. 

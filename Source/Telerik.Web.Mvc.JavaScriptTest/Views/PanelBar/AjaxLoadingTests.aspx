@@ -44,7 +44,14 @@
 
                 parent.Add().Text("Item 5")
                             .LoadContentFrom(Url.Action("AjaxView2", "PanelBar"));
-            })
+                parent.Add().Text("Item 6")
+                            .Content(() =>
+                            {%>
+                                <p>
+                                    Lipsum!!!</p>
+                            <%});
+            }) 
+            .Effects(effects=>effects.Toggle())
             .Render(); %>
 
     <script type="text/javascript">
@@ -54,11 +61,12 @@
         }
 
         function test_clicking_expanded_content_items_should_collapse_them() {
+        
             var item = getRootItem(0);
 
             item.trigger('click');
-
-            assertEquals("none", item.find('.t-content').css("display"));
+            
+            assertEquals('none', item.parent().find('.t-content').css("display"));
         }
 
         function test_clicking_expanded_content_items_should_toggle_arrow() {
@@ -66,7 +74,7 @@
 
             item.trigger('click');
 
-            assertTrue(item.find('.t-icon').hasClass('t-arrow-down'));
+            assertTrue(item.parent().find('.t-icon').hasClass('t-arrow-down'));
         }
 
         function test_clicking_collapsed_content_items_should_expand_them() {
@@ -74,7 +82,7 @@
 
             item.trigger('click');
 
-            assertEquals("block", item.find('.t-content').css("display"));
+            assertEquals("block", item.parent().find('.t-content').css("display"));
         }
 
         function test_clicking_collapsed_content_items_should_toggle_arrow() {
@@ -82,34 +90,18 @@
 
             item.trigger('click');
 
-            assertTrue(item.find('.t-icon').hasClass('t-arrow-up'));
-        }
-
-        function test_clicking_collaped_contentUrl_items_should_push_its_index_to_contentTabs() {
-            
-            var item = getRootItem(4);
-            var index = item.parent().children().index(item);
-            
-            item.trigger('click');
-            var isTrue = $.inArray(index, jQuery('#myPanelBar').data('tPanelBar').contentTabs) >= 0;
-            assertTrue(isTrue);
+            assertTrue(item.parent().find('.t-icon').hasClass('t-arrow-up'));
         }
 
         function test_clicking_should_make_item_active() {
-            var item = getRootItem(0);
+
+            var item = getRootItem(6);
             
             item.trigger('click');
-            
-            assertTrue(item.hasClass('t-state-active'));
+
+            assertTrue(item.parent().hasClass('t-state-active'));
         }
 
-        function test_clicking_collaped_contentUrl_items_should_expand_and_load_content_async() {
-            var item = getRootItem(5);
-
-            item.trigger('click');
-
-            assertEquals("block", item.find('.t-content').css("display"));
-        }
     </script>
 
 </asp:Content>

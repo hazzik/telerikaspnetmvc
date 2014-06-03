@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -16,18 +16,22 @@ namespace Telerik.Web.Mvc.UI
 
     using Extensions;
     using Infrastructure;
+    using System.Text;
 
     /// <summary>
     /// Manages ASP.NET MVC javascript files and statements.
     /// </summary>
     public class ScriptRegistrar : IScriptableComponentContainer
     {
+        internal const string jQuery = "jquery-1.4.2.js";
+        internal const string jQueryValidation = "jquery.validate.js";
+
         /// <summary>
         /// Used to ensure that the same instance is used for the same HttpContext.
         /// </summary>
         public static readonly string Key = typeof(ScriptRegistrar).AssemblyQualifiedName;
 
-        private static readonly IList<string> frameworkScriptFileNames = new List<string> { "jquery-1.3.2.js" };
+        private static readonly IList<string> frameworkScriptFileNames = new List<string> { jQuery };
 
         private readonly IList<IScriptableComponent> scriptableComponents;
 
@@ -68,7 +72,9 @@ namespace Telerik.Web.Mvc.UI
             AssetHandlerPath = WebAssetHttpHandler.DefaultPath;
 
             OnDocumentReadyActions = new List<Action>();
+            OnDocumentReadyStatements = new List<string>();
             OnWindowUnloadActions = new List<Action>();
+            OnWindowUnloadStatements = new List<string>();
         }
 
         /// <summary>
@@ -158,10 +164,30 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Gets the on document ready statements that is used in <code>RenderAction</code>.
+        /// </summary>
+        /// <value>The on page load actions.</value>
+        public IList<string> OnDocumentReadyStatements
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets the on window unload actions.
         /// </summary>
         /// <value>The on page unload actions.</value>
         public IList<Action> OnWindowUnloadActions
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the on window unload statements.that is used in <code>RenderAction</code>.
+        /// </summary>
+        /// <value>The on page load actions.</value>
+        public IList<string> OnWindowUnloadStatements
         {
             get;
             private set;
@@ -243,15 +269,20 @@ namespace Telerik.Web.Mvc.UI
         {
             IList<string> mergedList = new List<string>();
 
-            Action<WebAssetItemCollection> append = assets =>
-                                                    {
-                                                        IList<string> result = AssetMerger.Merge("application/x-javascript", AssetHandlerPath, assets);
+            bool isSecured = ViewContext.HttpContext.Request.IsSecureConnection;
+            bool canCompress = ViewContext.HttpContext.Request.CanCompress();
 
-                                                        if (!result.IsNullOrEmpty())
-                                                        {
-                                                            mergedList.AddRange(result);
-                                                        }
-                                                    };
+            Action<WebAssetItemCollection> append =
+                assets =>
+                {
+                    IList<string> result = AssetMerger.Merge("application/x-javascript", AssetHandlerPath, isSecured, canCompress, assets);
+
+                    if (!result.IsNullOrEmpty())
+                    {
+                        mergedList.AddRange(result);
+                    }
+                };
+
             CopyFrameworkScriptFiles();
 
             CopyScriptFilesFromComponents();
@@ -272,13 +303,19 @@ namespace Telerik.Web.Mvc.UI
 
         private void WriteScriptStatements(TextWriter writer)
         {
-            bool shouldWriteOnDocumentReady = !scriptableComponents.IsEmpty() || !OnDocumentReadyActions.IsEmpty();
-            bool shouldWriteOnWindowUnload = !scriptableComponents.IsEmpty() || !OnWindowUnloadActions.IsEmpty();
+            StringBuilder cleanUpScripts = WriteCleanUpScripts();
+
+            bool shouldWriteOnDocumentReady = !scriptableComponents.IsEmpty() || !OnDocumentReadyActions.IsEmpty() || !OnDocumentReadyStatements.IsEmpty();
+            bool shouldWriteOnWindowUnload = !OnWindowUnloadActions.IsEmpty() || !OnWindowUnloadStatements.IsEmpty() || cleanUpScripts.Length > 0;
 
             if (shouldWriteOnDocumentReady || shouldWriteOnWindowUnload)
             {
+                bool isFirst;
+
                 writer.WriteLine("<script type=\"text/javascript\">{0}//<![CDATA[".FormatWith(Environment.NewLine));
+
                 // pageLoad
+
                 if (shouldWriteOnDocumentReady)
                 {
                     writer.WriteLine(ScriptWrapper.OnPageLoadStart);
@@ -294,9 +331,9 @@ namespace Telerik.Web.Mvc.UI
                         writer.WriteLine(";");
                     }
 
-                    bool isFirst = true;
+                    isFirst = true;
 
-                    foreach (IScriptableComponent component in scriptableComponents)
+                    foreach (IScriptableComponent component in scriptableComponents.Where(s => !s.IsSelfInitialized))
                     {
                         if (!isFirst)
                         {
@@ -321,6 +358,20 @@ namespace Telerik.Web.Mvc.UI
                         isFirst = false;
                     }
 
+                    isFirst = true;
+
+                    foreach (string statement in OnDocumentReadyStatements)
+                    {
+                        if (!isFirst)
+                        {
+                            writer.WriteLine();
+                        }
+
+                        writer.Write(statement);
+
+                        isFirst = false;
+                    }
+
                     writer.WriteLine(ScriptWrapper.OnPageLoadEnd);
                 }
 
@@ -329,7 +380,7 @@ namespace Telerik.Web.Mvc.UI
                 {
                     writer.WriteLine(ScriptWrapper.OnPageUnloadStart);
 
-                    bool isFirst = true;
+                    isFirst = true;
 
                     foreach (Action action in OnWindowUnloadActions)
                     {
@@ -345,17 +396,19 @@ namespace Telerik.Web.Mvc.UI
 
                     isFirst = true;
 
-                    foreach (IScriptableComponent component in scriptableComponents)
+                    foreach (string statement in OnWindowUnloadStatements)
                     {
                         if (!isFirst)
                         {
                             writer.WriteLine();
                         }
 
-                        component.WriteCleanupScript(writer);
+                        writer.Write(statement);
 
                         isFirst = false;
                     }
+
+                    writer.WriteLine(cleanUpScripts.ToString()); // write clean up scripts
 
                     writer.WriteLine(ScriptWrapper.OnPageUnloadEnd);
                 }
@@ -364,13 +417,42 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
+        private StringBuilder WriteCleanUpScripts()
+        {
+            bool isFirst = true;
+
+            StringWriter cleanupWriter = new StringWriter();
+
+            foreach (IScriptableComponent component in scriptableComponents)
+            {
+                if (!isFirst)
+                {
+                    cleanupWriter.WriteLine();
+                }
+
+                component.WriteCleanupScript(cleanupWriter);
+
+                isFirst = false;
+            }
+
+            return cleanupWriter.GetStringBuilder();
+        }
+
         private void CopyScriptFilesFromComponents()
         {
             foreach (IScriptableComponent component in scriptableComponents)
             {
                 string assetKey = string.IsNullOrEmpty(component.AssetKey) ? "default" : component.AssetKey;
                 string filesPath = component.ScriptFilesPath;
-                
+
+                if (assetKey.IsCaseInsensitiveEqual("default") && WebAssetDefaultSettings.ScriptFilesPath.IsCaseInsensitiveEqual(filesPath))
+                {
+                    if (!DefaultGroup.DefaultPath.IsCaseInsensitiveEqual(WebAssetDefaultSettings.ScriptFilesPath))
+                    {
+                        filesPath = DefaultGroup.DefaultPath;
+                    }
+                }
+
                 component.ScriptFileNames.Each(source => Scripts.Add(assetKey, PathHelper.CombinePath(filesPath, source)));
             }
         }

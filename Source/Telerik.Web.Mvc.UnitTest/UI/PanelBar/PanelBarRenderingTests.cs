@@ -7,20 +7,27 @@
     using UI;
     using Xunit;
     using System;
+    using System.Web.Routing;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class PanelBarRenderingTest
     {
         private readonly PanelBar panelBar;
-        private readonly Mock<IPanelBarRenderer> renderer;
+        private readonly Mock<IPanelBarHtmlBuilder> builder;
 
         public PanelBarRenderingTest()
         {
             Mock<TextWriter> textWriter = new Mock<TextWriter>();
             Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(textWriter.Object);
 
-            renderer = new Mock<IPanelBarRenderer>();
+            builder = new Mock<IPanelBarHtmlBuilder>();
+            builder.Setup(r => r.PanelBarTag()).Returns(() => new HtmlTag("ul"));
+            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("li"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("a"));
+            builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("ul"));
 
-            panelBar = PanelBarTestHelper.CretePanelBar(writer.Object, renderer.Object);
+            panelBar = PanelBarTestHelper.CreatePanelbar(writer.Object, builder.Object);
             panelBar.Name = "PanelBar1";
 
             panelBar.Items.Add(new PanelBarItem { Text = "PanelBarItem1", RouteName = "ProductList" });
@@ -33,55 +40,45 @@
         {
             panelBar.Items.Clear();
 
-            renderer.Setup(r => r.PanelBarStart());
+            builder.Setup(r => r.PanelBarTag());
 
             panelBar.Render();
 
-            renderer.Verify(r => r.PanelBarStart(), Times.Never());
+            builder.Verify(r => r.PanelBarTag(), Times.Never());
         }
 
         [Fact]
         public void Render_should_output_once_PanelBar_begin_tag_if_items_are_not_zero()
         {
-            renderer.Setup(r => r.PanelBarStart());
+            builder.Setup(r => r.PanelBarTag()).Returns(() => new HtmlTag("div"));
 
             panelBar.Render();
 
-            renderer.Verify(r => r.PanelBarStart(), Times.AtMostOnce());
+            builder.Verify(r => r.PanelBarTag(), Times.Exactly(1));
         }
 
         [Fact]
-        public void Render_should_output_once_PanelBar_end_tag_if_items_are_not_zero()
+        public void Should_output_as_many_li_tags_as_items()
         {
-            renderer.Setup(r => r.PanelBarEnd());
+            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("li"));
 
             panelBar.Render();
 
-            renderer.Verify(r => r.PanelBarEnd(), Times.AtMostOnce());
+			builder.Verify(r =>  r.ItemTag(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count));
         }
 
         [Fact]
-        public void Render_should_output_as_many_header_items_as_count_of_Items()
+        public void Render_should_output_as_many_link_tags_as_items()
         {
-            renderer.Setup(r => r.HeaderItemContent(It.IsAny<PanelBarItem>()));
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("a"));
 
             panelBar.Render();
 
-			renderer.Verify(r => r.HeaderItemContent(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count));
+            builder.Verify(r => r.ItemInnerTag(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count));
         }
 
         [Fact]
-        public void Render_should_output_as_many_item_contents_as_count_of_Items()
-        {
-            renderer.Setup(r => r.HeaderItemContent(It.IsAny<PanelBarItem>()));
-
-            panelBar.Render();
-
-			renderer.Verify(r => r.HeaderItemContent(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count));
-        }
-
-        [Fact]
-        public void Render_should_output_once_GroupList_begin_tag_if_items_are_not_zero_and_first_item_has_Items()
+        public void Render_should_output_ul_tag()
         {
             PanelBarItem item = new PanelBarItem { Text = "Item1", RouteName = "ProductList" };
             item.Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList" });
@@ -89,72 +86,41 @@
             panelBar.Items.Clear();
             panelBar.Items.Add(item);
 
-            renderer.Setup(r => r.ListGroupStart(item));
+            builder.Setup(b => b.ChildrenTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("ul"));
 
             panelBar.Render();
 
-            renderer.Verify(r => r.ListGroupStart(item), Times.AtMostOnce());
+            builder.Verify(b => b.ChildrenTag(It.IsAny<PanelBarItem>()));
         }
 
         [Fact]
-        public void Render_should_output_once_GroupList_end_tag_before_list_end_tag()
-        {
-            PanelBarItem item = new PanelBarItem { Text = "Item1", RouteName = "ProductList",Enabled=true };
-            item.Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList" });
-
-            panelBar.Items.Clear();
-            panelBar.Items.Add(item);
-
-            renderer.Setup(r => r.ListGroupEnd()).Callback(() => renderer.Setup(r => r.ListItemEnd()).Verifiable()).Verifiable();
-
-            panelBar.Render();
-
-            renderer.VerifyAll();
-        }
-
-        [Fact]
-        public void Render_should_output_as_many_SubItems_as_first_item_has()
+        public void Render_should_output_child_items()
         {
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList" });
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", RouteName = "ProductList" });
 
-            renderer.Setup(r => r.ListItemStart(It.IsAny<PanelBarItem>()));
+            builder.Setup(b => b.ItemTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("li"));
 
             panelBar.Render();
 
-			renderer.Verify(r => r.ListItemStart(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count + panelBar.Items[0].Items.Count));
+			builder.Verify(b => b.ItemTag(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count + panelBar.Items[0].Items.Count));
         }
 
         [Fact]
-        public void Render_should_output_content_instead_of_group_items()
+        public void Render_should_output_content_instead_of_items()
         {
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList" });
             panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", RouteName = "ProductList" });
 
             panelBar.Items[0].Content = () => { };
 
-            renderer.Setup(r => r.ListGroupStart(It.IsAny<PanelBarItem>()));
-            renderer.Setup(r => r.WriteContent(It.IsAny<PanelBarItem>()));
+            builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>()));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div"));
 
             panelBar.Render();
 
-            renderer.Verify(r => r.ListGroupStart(It.IsAny<PanelBarItem>()), Times.Never());
-            renderer.Verify(r => r.WriteContent(It.IsAny<PanelBarItem>()), Times.Exactly(1));
-        }
-
-        [Fact]
-        public void Render_should_output_content_of_2_level_child_item()
-        {
-            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList", Enabled = true });
-            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", RouteName = "ProductList", Enabled = true });
-
-            panelBar.Items[0].Items[0].Content = () => { };
-
-            renderer.Setup(r => r.WriteContent(It.IsAny<PanelBarItem>()));
-
-            panelBar.Render();
-
-            renderer.Verify(r => r.WriteContent(It.IsAny<PanelBarItem>()), Times.Exactly(1));
+            builder.Verify(r => r.ChildrenTag(It.IsAny<PanelBarItem>()), Times.Never());
+            builder.Verify(r => r.ItemContentTag(It.IsAny<PanelBarItem>()), Times.Exactly(1));
         }
 
         [Fact]
@@ -167,11 +133,11 @@
 
             panelBar.Items[0].ContentUrl = contentUrl;
 
-            renderer.Setup(r => r.ListGroupStart(It.IsAny<PanelBarItem>()));
+            builder.Setup(r => r.ChildrenTag(It.IsAny<PanelBarItem>()));
 
             panelBar.Render();
 
-            renderer.Verify(r => r.ListGroupStart(It.IsAny<PanelBarItem>()), Times.Never());
+            builder.Verify(r => r.ChildrenTag(It.IsAny<PanelBarItem>()), Times.Never());
         }
 
         [Fact]
@@ -184,11 +150,11 @@
 
             panelBar.Items[0].ContentUrl = contentUrl;
 
-            renderer.Setup(r => r.WriteContent(It.IsAny<PanelBarItem>()));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<PanelBarItem>())).Returns(() => new HtmlTag("div"));
 
             panelBar.Render();
 
-            renderer.Verify(r => r.WriteContent(It.IsAny<PanelBarItem>()), Times.Exactly(1));
+            builder.Verify(r => r.ItemContentTag(It.IsAny<PanelBarItem>()), Times.Exactly(1));
         }
 
         [Fact]
@@ -197,23 +163,11 @@
             panelBar.Items.Clear();
             panelBar.Items.Add(new PanelBarItem { Text = "PanelBarItem1", RouteName = "ProductList", Visible = false });
 
-            renderer.Setup(r => r.HeaderItemContent(It.IsAny<PanelBarItem>()));
+            builder.Setup(r => r.ItemTag(It.IsAny<PanelBarItem>()));
 
             panelBar.Render();
 
-			renderer.Verify(r => r.HeaderItemContent(It.IsAny<PanelBarItem>()), Times.Never());
-        }
-
-        [Fact]
-        public void If_list_item_visible_property_is_false_should_not_render_this_item()
-        {
-            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", RouteName = "ProductList", Visible = false });
-
-            renderer.Setup(r => r.ListItemStart(It.IsAny<PanelBarItem>()));
-
-            panelBar.Render();
-
-			renderer.Verify(r => r.ListItemStart(It.IsAny<PanelBarItem>()), Times.Exactly(panelBar.Items.Count));
+            builder.Verify(r => r.ItemTag(It.IsAny<PanelBarItem>()), Times.Never());
         }
 
         [Fact]
@@ -311,6 +265,36 @@
         }
 
         [Fact]
+        public void Render_should_select_only_first_child_item_because_of_diff_route_values()
+        {
+            panelBar.HighlightPath = true;
+
+            panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
+            panelBar.ViewContext.RouteData.Values["action"] = "Basic";
+            panelBar.ViewContext.RouteData.Values["id"] = "10";
+            panelBar.Items[0].Text = "Grid";
+            panelBar.Items[0].Items.Add(new PanelBarItem
+            {
+                Text = "SubItem1",
+                ControllerName = "Grid",
+                ActionName = "Basic",
+                RouteValues = new RouteValueDictionary(new { id = 5 })
+            });
+            panelBar.Items[0].Items.Add(new PanelBarItem
+            {
+                Text = "SubItem2",
+                ControllerName = "Grid",
+                ActionName = "Basic",
+                RouteValues = new RouteValueDictionary(new { id = 10 })
+            });
+
+            panelBar.Render();
+
+            Assert.True(panelBar.Items[0].Items[1].Selected);
+            Assert.False(panelBar.Items[0].Items[0].Selected);
+        }
+
+        [Fact]
         public void Render_should_expand_first_item_and_select_first_child_item() 
         {
             panelBar.HighlightPath = true;
@@ -325,6 +309,25 @@
 
             Assert.True(panelBar.Items[0].Expanded);
             Assert.True(panelBar.Items[0].Items[0].Selected);
+        }
+
+        [Fact]
+        public void Render_should_not_expand_item_if_it_is_disabled_even_highlightPath()
+        {
+            panelBar.HighlightPath = true;
+
+            panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
+            panelBar.ViewContext.RouteData.Values["action"] = "Basic";
+
+            panelBar.Items[0].Text = "Grid";
+            panelBar.Items[0].Enabled = false;
+
+            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1", ControllerName = "Grid", ActionName = "Basic" });
+            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", ControllerName = "Grid", ActionName = "InMemory" });
+
+            panelBar.Render();
+
+            Assert.False(panelBar.Items[0].Expanded);
         }
 
         [Fact]
@@ -369,9 +372,9 @@
         {
             panelBar.Items.Clear();
 
-            panelBar.Items.Add(new PanelBarItem { Text = "Item1", RouteName = "route", Enabled = true });
-            panelBar.Items.Add(new PanelBarItem { Text = "Item2", RouteName = "route", Enabled = true });
-            panelBar.Items.Add(new PanelBarItem { Text = "Item3", RouteName = "route", Enabled = true });
+            panelBar.Items.Add(new PanelBarItem { Text = "Item1", Enabled = true });
+            panelBar.Items.Add(new PanelBarItem { Text = "Item2", Enabled = true });
+            panelBar.Items.Add(new PanelBarItem { Text = "Item3", Enabled = true });
 
             panelBar.ExpandMode = PanelBarExpandMode.Multiple;
 
@@ -385,13 +388,37 @@
         }
 
         [Fact]
-        public void Render_should_output_selected_item_if_selectedIndex_is_in_range() 
+        public void SelectedItem_should_expand_item_with_children()
         {
             panelBar.SelectedIndex = 1;
+            panelBar.Items[1].Items.Add(new PanelBarItem { Text = "subITem1" });
+            panelBar.Items[1].Items.Add(new PanelBarItem { Text = "subITem2" });
 
             panelBar.Render();
 
-            Assert.True(panelBar.Items[1].Selected);
+            Assert.True(panelBar.Items[1].Expanded);
+        }
+
+        [Fact]
+        public void SelectedItem_should_expand_items_with_content()
+        {
+            panelBar.SelectedIndex = 1;
+            panelBar.Items[1].Content = () => { };
+
+            panelBar.Render();
+
+            Assert.True(panelBar.Items[1].Expanded);
+        }
+
+        [Fact]
+        public void SelectedItem_should_expand_items_with_contentUrl()
+        {
+            panelBar.SelectedIndex = 1;
+            panelBar.Items[1].ContentUrl = "fakeLink";
+
+            panelBar.Render();
+
+            Assert.True(panelBar.Items[1].Expanded);
         }
 
         [Fact]
@@ -425,6 +452,47 @@
             panelBar.Render();
 
             Assert.True(panelBar.Items[0].Expanded);
+        }
+
+        [Fact]
+        public void Render_should_throw_exception_if_selectedIndex_is_out_of_range()
+        {
+            panelBar.SelectedIndex = 20; //out of range.
+
+            Assert.Throws(typeof(ArgumentOutOfRangeException), () => panelBar.Render());
+        }
+
+        [Fact]
+        public void Render_should_output_only_one_expanded_header_item_if_single_expand_mode() 
+        {
+            panelBar.Items[0].Expanded = true;
+            panelBar.Items[1].Expanded = true;
+
+            panelBar.ExpandMode = PanelBarExpandMode.Single;
+
+            panelBar.Render();
+
+            Assert.False(panelBar.Items[1].Expanded);
+        }
+
+        [Fact]
+        public void Render_should_expand_second_level_if_highlightpath_is_true_and_expand_mode_is_single() 
+        {
+            panelBar.HighlightPath = true;
+            panelBar.ExpandMode = PanelBarExpandMode.Single;
+
+            panelBar.ViewContext.RouteData.Values["controller"] = "Grid";
+            panelBar.ViewContext.RouteData.Values["action"] = "FirstBasic";
+            panelBar.Items[0].Text = "Grid";
+            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem1" });
+            panelBar.Items[0].Items.Add(new PanelBarItem { Text = "SubItem2", ControllerName = "Grid", ActionName = "InMemory", Enabled = true });
+
+            panelBar.Items[0].Items[0].Items.Add(new PanelBarItem { Text = "SubSubItem1", ControllerName = "Grid", ActionName = "FirstBasic", });
+
+            panelBar.Render();
+
+            Assert.True(panelBar.Items[0].Expanded);
+            Assert.True(panelBar.Items[0].Items[0].Expanded);
         }
     }
 }

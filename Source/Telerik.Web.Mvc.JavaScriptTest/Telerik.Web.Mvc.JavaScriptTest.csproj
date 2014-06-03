@@ -12,17 +12,17 @@
     <AssemblyName>Telerik.Web.Mvc.JavaScriptTest</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+     
+     
+     
+     
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MVC1</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -30,9 +30,29 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;MVC1</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU' ">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;MVC2</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,22 +63,35 @@
     <Reference Include="System.Data.DataSetExtensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
   </ItemGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU'">
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
+    <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\TreeViewController.cs" />
+    <Compile Include="Controllers\InputController.cs" />
+    <Compile Include="Controllers\DatePickerController.cs" />
     <Compile Include="Controllers\PanelBarController.cs" />
     <Compile Include="Controllers\CoreController.cs" />
     <Compile Include="Controllers\GridController.cs" />
@@ -104,13 +137,24 @@
     <Content Include="Scripts\jsUnit\images\logo_jsunit.gif" />
     <Content Include="Scripts\jsUnit\images\powerby-transparent.gif" />
     <Content Include="Scripts\jsUnit\images\red.gif" />
+    <Content Include="Views\Calendar\Navigation.aspx" />
     <Content Include="Views\Core\DateFormatting.aspx" />
+    <Content Include="Views\DatePicker\DateParsing.aspx" />
+    <Content Include="Views\DatePicker\DatePicker.aspx" />
+    <Content Include="Views\DatePicker\ParseByToken.aspx" />
     <Content Include="Views\Grid\Binding.aspx" />
+    <Content Include="Views\Grid\ClientTemplates.aspx" />
+    <Content Include="Views\Grid\Localization.aspx" />
+    <Content Include="Views\Grid\Layout.aspx" />
+    <Content Include="Views\Grid\Editing.aspx" />
     <Content Include="Views\Grid\Filtering.aspx" />
+    <Content Include="Views\Grid\Grouping.aspx" />
     <Content Include="Views\Grid\Paging.aspx" />
+    <Content Include="Views\Grid\Selection.aspx" />
     <Content Include="Views\Grid\Sorting.aspx" />
     <Content Include="Views\Home\GlobalizationSuite.aspx" />
     <Content Include="Views\Home\Suite.aspx" />
+    <Content Include="Views\Input\NumericTextBox.aspx" />
     <Content Include="Views\Menu\OpenOnClick.aspx" />
     <Content Include="Views\PanelBar\AjaxView1.ascx" />
     <Content Include="Views\PanelBar\AjaxView2.ascx" />
@@ -119,9 +163,11 @@
     <Content Include="Views\PanelBar\SingleExpandClientAPI.aspx" />
     <Content Include="Views\PanelBar\SingleExpandCollapse.aspx" />
     <Content Include="Views\PanelBar\ExpandCollapse.aspx" />
+    <Content Include="Views\Shared\EditorTemplates\Date.ascx" />
     <Content Include="Views\TabStrip\AjaxLoadingTests.aspx" />
     <Content Include="Views\TabStrip\AjaxView1.ascx" />
     <Content Include="Views\TabStrip\AjaxView2.ascx" />
+    <Content Include="Views\TreeView\ExpandCollapse.aspx" />
     <Content Include="Web.config" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\jquery-1.3.2.js" />
@@ -181,7 +227,7 @@
     </ItemGroup>
   </Target>
   <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)\..\$(ProjectName)" />
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)..\$(ProjectName)" />
   </Target>
   <ProjectExtensions>
     <VisualStudio>
@@ -189,7 +235,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>7541</DevelopmentServerPort>
+          <DevelopmentServerPort>4864</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

@@ -5,6 +5,7 @@
     using Telerik.Web.Mvc.UI;
     using Xunit;
 	using System;
+using System.Web.Mvc;
 
     public class NavigationItemBuilderTests
     {
@@ -13,8 +14,10 @@
 
         public NavigationItemBuilderTests()
         {
+            var viewContext = TestHelper.CreateViewContext();
+
             this.Item = new NavigationItemTestDouble();
-            this.builder = new NavigationItemBuilderTestDouble(Item);
+            this.builder = new NavigationItemBuilderTestDouble(Item, viewContext);
         }
 
         [Fact]
@@ -309,6 +312,12 @@
         }
 
         [Fact]
+        public void LinkHtmlAttributes_should_merged_with_value()
+        {
+            builder.LinkHtmlAttributes(new { style = "z-index:1" });
+            Assert.Equal("z-index:1", Item.LinkHtmlAttributes["style"]);
+        }
+        [Fact]
         public void ImageHtmlAttributes_should_return_builder_object()
         {
             const string value = "test";
@@ -357,6 +366,23 @@
             Assert.IsType(typeof(NavigationItemBuilderTestDouble), returnedBuilder);
         }
 
+
+        [Fact]
+        public void Content_with_string_param_should_set_Content_property_of_item()
+        {
+            builder.Content("<ul><li>something</li></ul>");
+
+            Assert.NotNull(Item.Content);
+        }
+
+        [Fact]
+        public void Content_with_string_param_should_return_TBuilder_object()
+        {
+            var returnedBuilder = builder.Content("<ul><li>something</li></ul>");
+
+            Assert.IsType(typeof(NavigationItemBuilderTestDouble), returnedBuilder);
+        }
+
         [Fact]
         public void ContentHtmlAttributes_should_merge_passed_object_to_ContentHtmlAttributes_property_of_item()
         {
@@ -382,8 +408,8 @@
 
     public class NavigationItemBuilderTestDouble : NavigationItemBuilder<NavigationItemTestDouble, NavigationItemBuilderTestDouble>, IHideObjectMembers
     {
-        public NavigationItemBuilderTestDouble(NavigationItemTestDouble Item)
-            : base(Item)
+        public NavigationItemBuilderTestDouble(NavigationItemTestDouble Item, ViewContext viewContext)
+            : base(Item, viewContext)
         {
         }
     }

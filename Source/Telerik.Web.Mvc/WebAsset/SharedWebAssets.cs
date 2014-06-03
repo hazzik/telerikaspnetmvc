@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -93,8 +93,14 @@ namespace Telerik.Web.Mvc
                                                   Version = !string.IsNullOrEmpty(configurationGroup.Version) ? configurationGroup.Version : defaultVersion,
                                                   Compress = configurationGroup.Compress,
                                                   CacheDurationInDays = configurationGroup.CacheDurationInDays,
+
                                                   Combined = configurationGroup.Combined
                                               };
+
+                if (configurationGroup.UseTelerikContentDeliveryNetwork.HasValue)
+                {
+                    group.UseTelerikContentDeliveryNetwork = configurationGroup.UseTelerikContentDeliveryNetwork.Value;
+                }
 
                 foreach (WebAssetItemConfigurationElement configurationItem in configurationGroup.Items)
                 {

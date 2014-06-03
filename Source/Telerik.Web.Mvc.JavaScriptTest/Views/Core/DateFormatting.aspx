@@ -243,7 +243,11 @@
     </ul>
     <%
         Html.Telerik().ScriptRegistrar().Globalization(true)
-                            .DefaultGroup(group => group.Add("telerik.common.js").Add("telerik.grid.js"));
+                            .DefaultGroup(group => group
+                                .Add("telerik.common.js")
+                                .Add("telerik.calendar.js")
+                                .Add("telerik.datepicker.js")
+                                .Add("telerik.grid.js"));
 
     %>
 </asp:Content>

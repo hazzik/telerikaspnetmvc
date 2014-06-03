@@ -1,10 +1,11 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc
 {
+    using Telerik.Web.Mvc.Extensions;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -114,13 +115,13 @@ namespace Telerik.Web.Mvc
                     if (!string.IsNullOrEmpty(content))
                     {
                         // Compress
-                        if (asset.Compress)
+                        if (asset.Compress && !context.IsMono())
                         {
                             httpResponseCompressor.Compress(context);
                         }
 
                         // Write
-                        using (StreamWriter sw = new StreamWriter(response.OutputStream))
+                        using (StreamWriter sw = new StreamWriter((response.OutputStream)))
                         {
                             sw.Write(content);
                         }

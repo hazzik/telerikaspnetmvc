@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -41,6 +41,8 @@ namespace Telerik.Web.Mvc.UI
             ScriptFileNames = new List<string>();
 
             HtmlAttributes = new RouteValueDictionary();
+
+            IsSelfInitialized = (ViewContext.HttpContext.Items["$SelfInitialize$"] != null) || ViewContext.HttpContext.Request.IsAjaxRequest();
         }
 
         /// <summary>
@@ -158,7 +160,11 @@ namespace Telerik.Web.Mvc.UI
         public void Render()
         {
             EnsureRequired();
-            WriteHtml(ViewContext.HttpContext.Request.Browser.CreateHtmlTextWriter(ViewContext.HttpContext.Response.Output));
+            
+            using (HtmlTextWriter textWriter = new HtmlTextWriter(ViewContext.HttpContext.Response.Output))
+            {
+                WriteHtml(textWriter);    
+            }
         }
 
         /// <summary>
@@ -177,6 +183,12 @@ namespace Telerik.Web.Mvc.UI
         {
         }
 
+        public bool IsSelfInitialized
+        {
+            get;
+            private set;
+        }
+
         /// <summary>
         /// Ensures the required settings.
         /// </summary>
@@ -193,7 +205,7 @@ namespace Telerik.Web.Mvc.UI
         /// </summary>
         protected virtual void WriteHtml(HtmlTextWriter writer)
         {
-            if (ViewContext.HttpContext.Request.IsAjaxRequest())
+            if (IsSelfInitialized)
             {
                 writer.AddAttribute(HtmlTextWriterAttribute.Type, "text/javascript");
                 writer.RenderBeginTag(HtmlTextWriterTag.Script);

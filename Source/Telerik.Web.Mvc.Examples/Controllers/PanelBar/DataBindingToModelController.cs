@@ -1,16 +1,14 @@
 namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
     using Telerik.Web.Mvc.Examples.Models;
 
     public partial class PanelBarController : Controller
-	{
-		[SourceCodeFile("NavigationDataBuilder", "~/Models/NavigationData.cs")]
+    {
         public ActionResult DataBindingToModel()
         {
-            ViewData.Model = NavigationDataBuilder.GetCollection();
-
-            return View();
+            NorthwindDataContext northwind = new NorthwindDataContext();
+            return View(northwind.Categories);
         }
     }
 }

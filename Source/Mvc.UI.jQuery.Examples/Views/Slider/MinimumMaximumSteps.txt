@@ -1,1 +1,0 @@
-﻿Fix the minimun/maximum value of the range slider so that the user can only select a maximum/minimum.

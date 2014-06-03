@@ -1,4 +1,6 @@
-﻿namespace Telerik.Web.Mvc.UnitTest.Menu
+﻿using System.Collections.Generic;
+using System;
+namespace Telerik.Web.Mvc.UnitTest.Menu
 {
 	using System;
 	using System.IO;
@@ -18,7 +20,7 @@
 		public MenuBuilderTests()
 		{
 			Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(TextWriter.Null);
-			menu = MenuTestHelper.CreteMenu(writer.Object, null);
+			menu = MenuTestHelper.CreateMenu(writer.Object, null);
 			builder = new MenuBuilder(menu);
 		}
 
@@ -118,6 +120,62 @@
         }
 
         [Fact]
+        public void BintTo_for_IEnumerable_should_create_two_items()
+        {
+            List<TestObject> list = new List<TestObject>
+                                    {
+                                        new TestObject{Text="", Url=""},
+                                        new TestObject{Text="", Url=""}
+                                    };
+
+
+
+            Action<MenuItem, TestObject> action = (item, obj) => { if (!string.IsNullOrEmpty(obj.Url)) { item.Url = obj.Url; } };
+            builder.BindTo(list, action);
+
+            Assert.Equal(2, menu.Items.Count);
+        }
+
+        [Fact]
+        public void BintTo_for_IEnumerable_should_return_builder()
+        {
+            var returnedBuilder = builder.BindTo(new List<TestObject>(), (item, obj) => { });
+
+            Assert.IsType(typeof(MenuBuilder), returnedBuilder);
+        }
+
+        [Fact]
+        public void Bind_for_Heterogene_collection()
+        {
+            Action<NavigationBindingFactory<MenuItem>> actionTestObject =
+            mapper =>
+            {
+                mapper.For<TestObject>(binding =>
+                    binding
+                    .Children(o => o.childObjects)
+                    .ItemDataBound((item, o) => item.Text = o.Text));
+                mapper.For<ChildObject>(binding =>
+                    binding
+                    .Children(o => null)
+                    .ItemDataBound((item, o) => item.Text = o.Text));
+            };
+
+            builder.BindTo(Repository.repository.GetTestObjectsList(),
+                            actionTestObject);
+
+            Assert.Equal(20, menu.Items.Count);
+            Assert.Equal(10, menu.Items[0].Items.Count);
+        }
+
+        [Fact]
+        public void Effects_should_return_builder()
+        {
+            var returnedBuilder = builder.Effects((effects) => { });
+
+            Assert.IsType(typeof(MenuBuilder), returnedBuilder);
+        }
+
+        [Fact]
         public void ItemAction_should_set_ItemAction_property_of_panelBar()
         {
             Action<MenuItem> action = (item) => { };
@@ -155,7 +213,7 @@
         }
 
         [Fact]
-        public void HighlightPath_should_set_HighlightPath_property_of_PanelBar()
+        public void HighlightPath_should_set_HighlightPath_property_of_Menu()
         {
             const bool value = true;
 
@@ -172,5 +230,59 @@
 
             Assert.IsType(typeof(MenuBuilder), returnedBuilder);
         }
+
+        [Fact]
+        public void ClientEvents_should_set_events_of_the_menu()
+        {
+            Action<MenuClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+
+            builder.ClientEvents(clientEventsAction);
+
+            Assert.NotNull(menu.ClientEvents.OnLoad);
+        }
+
+        [Fact]
+        public void ClientEvents_should_return_builder()
+        {
+            Action<MenuClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+
+            var returnedBuilder = builder.ClientEvents(clientEventsAction);
+
+            Assert.IsType(typeof(MenuBuilder), returnedBuilder);
+        }
 	}
+}
+public class TestObject 
+{
+    public int ID { get; set; }
+    public string Text { get; set; }
+    public string Url { get; set; }
+    public IEnumerable<ChildObject> childObjects { get; set; }
+}
+
+public class ChildObject 
+{
+    public int ID { get; set; }
+    public string Text { get; set; }
+}
+
+public class Repository 
+{
+    public static Repository repository = new Repository();
+
+    public IEnumerable<TestObject> GetTestObjectsList()
+    {
+        for (int i = 0; i < 20; i++)
+        {
+            yield return new TestObject { ID = i, Text = "Customer" + i, childObjects = GetChildObjectsList() };
+        }
+    }
+
+    private IEnumerable<ChildObject> GetChildObjectsList()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new ChildObject { ID = i, Text = "Order" + i };
+        }
+    }
 }

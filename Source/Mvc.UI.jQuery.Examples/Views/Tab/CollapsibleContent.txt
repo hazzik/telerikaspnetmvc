@@ -1,3 +1,0 @@
-﻿Click the selected tab to toggle its content closed/open. To enable this functionality, set the collapsible option to true.<br /><br />
-
-<strong>CollapsibleContent(true)</strong>

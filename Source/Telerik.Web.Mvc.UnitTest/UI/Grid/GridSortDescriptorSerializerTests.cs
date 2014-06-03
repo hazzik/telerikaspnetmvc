@@ -24,13 +24,13 @@
                 }
             };
 
-            Assert.Equal("Column1-asc~Column2-desc", GridSortDescriptorSerializer.Serialize(descriptors));
+            Assert.Equal("Column1-asc~Column2-desc", GridDescriptorSerializer.Serialize(descriptors));
         }
 
         [Fact]
         public void Should_deserialize_columns()
         {
-            IList<SortDescriptor> descriptors = GridSortDescriptorSerializer.Deserialize("Column1-asc~Column2-desc");
+            IList<SortDescriptor> descriptors = GridDescriptorSerializer.Deserialize<SortDescriptor>("Column1-asc~Column2-desc");
 
             Assert.Equal(descriptors[0].Member, "Column1");
             Assert.Equal(descriptors[0].SortDirection, ListSortDirection.Ascending);
@@ -41,13 +41,13 @@
         [Fact]
         public void Deserialize_empty_data_returns_empty_list()
         {
-            Assert.True(GridSortDescriptorSerializer.Deserialize("").IsEmpty());
+            Assert.True(GridDescriptorSerializer.Deserialize<SortDescriptor>("").IsEmpty());
         }
 
         [Fact]
         public void Deserialize_data_without_separators_returns_empty_list()
         {
-            Assert.True(GridSortDescriptorSerializer.Deserialize("Column 1 asc Column2 desc").IsEmpty());
+            Assert.True(GridDescriptorSerializer.Deserialize<SortDescriptor>("Column 1 asc Column2 desc").IsEmpty());
         }
     }
 }

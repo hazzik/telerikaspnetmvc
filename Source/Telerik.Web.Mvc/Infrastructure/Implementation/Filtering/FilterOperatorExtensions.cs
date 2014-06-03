@@ -1,4 +1,6 @@
-// (c) Copyright 2002-2009 Telerik 
+using Telerik.Web.Mvc.Infrastructure;
+using Telerik.Web.Mvc.Infrastructure.Implementation;
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -59,11 +61,21 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
 
         private static Expression GenerateEqual(Expression left, Expression right)
         {
+            if (left.Type == typeof(string))
+            {
+                left = GenerateToLowerCall(left);
+                right = GenerateToLowerCall(right);
+            }
             return Expression.Equal(left, right);
         }
 
         private static Expression GenerateNotEqual(Expression left, Expression right)
         {
+            if (left.Type == typeof(string))
+            {
+                left = GenerateToLowerCall(left);
+                right = GenerateToLowerCall(right);
+            }
             return Expression.NotEqual(left, right);
         }
 
@@ -115,28 +127,28 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
         {
             return Expression.Equal(
                 GenerateCaseInsensitiveStringMethodCall(StringContainsMethodInfo, left, right),
-                ExpressionParser.TrueLiteral);
+                ExpressionConstants.TrueLiteral);
         }
 
         private static Expression GenerateIsContainedIn(Expression left, Expression right)
         {
             return Expression.Equal(
                 GenerateCaseInsensitiveStringMethodCall(StringContainsMethodInfo, right, left),
-                ExpressionParser.TrueLiteral);
+                ExpressionConstants.TrueLiteral);
         }
 
         private static Expression GenerateStartsWith(Expression left, Expression right)
         {
             return Expression.Equal(
                 GenerateCaseInsensitiveStringMethodCall(StringStartsWithMethodInfo, left, right), 
-                ExpressionParser.TrueLiteral);
+                ExpressionConstants.TrueLiteral);
         }
 
         private static Expression GenerateEndsWith(Expression left, Expression right)
         {
             return Expression.Equal(
                 GenerateCaseInsensitiveStringMethodCall(StringEndsWithMethodInfo, left, right),
-                ExpressionParser.TrueLiteral);
+                ExpressionConstants.TrueLiteral);
         }
 
         private static Expression GenerateCaseInsensitiveStringMethodCall(MethodInfo methodInfo, Expression left, Expression right)

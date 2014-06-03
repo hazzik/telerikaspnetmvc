@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">First Look</asp:Content>
-
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
    
     <% Html.Telerik().PanelBar()
@@ -30,7 +27,7 @@
                         subItem.Add()
                                .Text("Inbox")
                                .ImageUrl("~/Content/PanelBar/FirstLook/mailInbox.gif")
-                               .ImageHtmlAttributes(new { alt = "Inbox" });
+                               .ImageHtmlAttributes(new { alt = "Inbox" }).Enabled(false);
 
                         subItem.Add()
                                .Text("My Mail")
@@ -56,7 +53,7 @@
                 item.Add()
                     .Text("Contacts")
                     .ImageUrl("~/Content/PanelBar/FirstLook/contacts.gif")
-                    .ImageHtmlAttributes(new { alt = "Contacts" })
+                    .ImageHtmlAttributes(new { alt = "Contacts" }).Enabled(false)
                     .Items((subItem) => 
                     {
                         subItem.Add()
@@ -178,7 +175,7 @@
 			<label for="multiple"><strong>multiple panels</strong> to be expanded at a time</label>
 		</li>
 	</ul>
-    <button type="submit" class="t-button t-state-default">Apply Changes</button>
+    <button type="submit" class="t-button t-state-default">Apply</button>
 <% } %>
 		
 </asp:Content>

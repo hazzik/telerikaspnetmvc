@@ -1,3 +1,0 @@
-﻿By default, accordions always keep one section open. To allow for all sections to be be collapsible, set the CollapsibleContent option to true. Click on the currently open section to collapse its content pane.<br /><br />
-
-<strong>CollapsibleContent(true)</strong>

@@ -1,6 +1,8 @@
-﻿namespace Telerik.Web.Mvc.UI.UnitTest.Grid
+﻿namespace Telerik.Web.Mvc.UI.Fluent.UnitTest
 {
     using System;
+    using Telerik.Web.Mvc.UI.UnitTest;
+    using Telerik.Web.Mvc.UI.UnitTest.Grid;
     using System.IO;
     using System.Web.UI;
     using System.Collections.Generic;
@@ -9,6 +11,7 @@
     using Moq;
 
     using UI;
+    using System.Linq.Expressions;
 
     public class GridBuilderTests
     {
@@ -48,7 +51,7 @@
         [Fact]
         public void Columns_builds_the_columns_of_the_grid()
         {
-            builder.Columns(columns => columns.Add(c => c.Id));
+            builder.Columns(columns => columns.Bound(c => c.Id));
 
             Assert.Equal(1, grid.Columns.Count);
         }
@@ -82,19 +85,17 @@
         }
 
         [Fact]
-        public void OperationSettings_calls_delegate()
+        public void Should_add_data_keys()
         {
-            bool called = false;
-            builder.ServerBinding(settings => called = true);
-            Assert.True(called);
-        }
+            Expression<Func<Customer, int>> expression = c => c.Id;
 
-        [Fact]
-        public void Ajax_calls_delegate()
-        {
-            bool called = false;
-            builder.Ajax(settings => called = true);
-            Assert.True(called);
+            builder.DataKeys(keys =>
+            {
+                keys.Add(expression).RouteKey("customerId");
+            });
+
+            Assert.Same(expression, ((GridDataKey<Customer, int>)grid.DataKeys[0]).Expression);
+            Assert.Same("customerId", grid.DataKeys[0].RouteKey);
         }
     }
 }

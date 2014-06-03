@@ -1,4 +1,5 @@
-﻿// (c) Copyright 2002-2009 Telerik 
+﻿using Telerik.Web.Mvc.Infrastructure;
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -16,18 +17,18 @@ namespace Telerik.Web.Mvc.UI
     using Infrastructure;
     using Resources;
 
-    public class PanelBar : ViewComponentBase, INavigationItemContainer<PanelBarItem>, IEffectEnabled
+    public class PanelBar : ViewComponentBase, INavigationItemComponent<PanelBarItem>, IEffectEnabled
     {
         private readonly IList<IEffect> defaultEffects = new List<IEffect> { new PropertyAnimation(PropertyAnimationType.Height) };
 
-        private readonly IPanelBarRendererFactory rendererFactory;
+        private readonly IPanelBarHtmlBuilderFactory builderFactory;
 
-        internal bool isBindToSiteMap;
-
-        private bool isExpanded;
+        internal bool isBoundToSiteMap;
         internal bool isPathHighlighted;
+        internal bool isExpanded;
 
-        public PanelBar(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator, INavigationItemAuthorization authorization, IPanelBarRendererFactory rendererFactory) : base(viewContext, clientSideObjectWriterFactory)
+        public PanelBar(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator, INavigationItemAuthorization authorization, IPanelBarHtmlBuilderFactory rendererFactory)
+            : base(viewContext, clientSideObjectWriterFactory)
         {
             Guard.IsNotNull(urlGenerator, "urlGenerator");
             Guard.IsNotNull(authorization, "authorization");
@@ -35,15 +36,14 @@ namespace Telerik.Web.Mvc.UI
             Authorization = authorization;
             UrlGenerator = urlGenerator;
 
-            this.rendererFactory = rendererFactory;
+            this.builderFactory = rendererFactory;
 
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.panelbar.js" });
 
-            Effects = new List<IEffect>(defaultEffects.Count);
-
             ClientEvents = new PanelBarClientEvents();
 
-            defaultEffects.Each(el => Effects.Add(el));
+            this.Effects = new Effects();
+            defaultEffects.Each(el => Effects.Container.Add(el));
 
             ExpandMode = PanelBarExpandMode.Multiple;
             HighlightPath = true;
@@ -107,10 +107,10 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public IList<IEffect> Effects
+        public Effects Effects
         {
             get;
-            private set;
+            set;
         }
 
         public IList<PanelBarItem> Items
@@ -125,13 +125,9 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Start();
 
-            if (!defaultEffects.SequenceEqual(Effects))
+            if (!defaultEffects.SequenceEqual(Effects.Container))
             {
-                var effectSerialization = new List<string>();
-
-                Effects.Each(e => effectSerialization.Add(e.Serialize()));
-
-                objectWriter.Append("effects:[{0}]".FormatWith(String.Join(",", effectSerialization.ToArray())));
+                objectWriter.Serialize("effects", Effects);
             }
 
             objectWriter.Append("onExpand", ClientEvents.OnExpand);
@@ -153,70 +149,110 @@ namespace Telerik.Web.Mvc.UI
 
             if (!Items.IsEmpty())
             {
-                IPanelBarRenderer renderer = rendererFactory.Create(this, writer);
-
-                renderer.PanelBarStart();
-
-                int itemIndex = 0;
-                isExpanded = false;
-
                 if (SelectedIndex != -1 && Items.Count < SelectedIndex)
                 {
                     throw new ArgumentOutOfRangeException(TextResource.IndexOutOfRange);
                 }
 
+                int itemIndex = 0;
+
+                IPanelBarHtmlBuilder builder = builderFactory.Create(this);
+
+                IHtmlNode panelbarTag = builder.PanelBarTag();
+
                 //this loop is required because of SelectedIndex feature.
-                Items.Each(HighlightSelectedItem);
+                if (HighlightPath)
+                {
+                    Items.Each(HighlightSelectedItem);
+                }
 
                 this.Items.Each(item =>
                 {
-                    if (!this.isPathHighlighted)
+                    if (item.Enabled)
                     {
-                        if (itemIndex == this.SelectedIndex)
-                        {
-                            item.Selected = true;
-
-                            if (!item.Items.IsEmpty())
-                                item.Expanded = true;
-                        }
+                        PrepareItem(item, itemIndex);
                     }
+
                     itemIndex++;
 
-                    WriteItemDependingOnItsBinding(item, renderer, false);
+                    WriteItem(item, panelbarTag, builder);
                 });
 
-                renderer.PanelBarEnd();
+                panelbarTag.WriteTo(writer);
             }
-
             base.WriteHtml(writer);
         }
 
-        private void WriteItemDependingOnItsBinding(PanelBarItem item, IPanelBarRenderer renderer, bool isSubItem)
-        {
-            if (item.Visible)
-            {
-                if (isBindToSiteMap)
-                {
-                    if (item.IsAccessible(Authorization, ViewContext))
-                    {
-                        WriteItem(item, renderer, isSubItem);
-                    }
-                }
-                else
-                {
-                    WriteItem(item, renderer, isSubItem);
-                }
-            }
-        }
-
-        private void WriteItem(PanelBarItem item, IPanelBarRenderer renderer, bool isSubItem)
+        private void WriteItem(PanelBarItem item, IHtmlNode parentTag, IPanelBarHtmlBuilder builder)
         {
             if (ItemAction != null)
             {
                 ItemAction(item);
             }
 
-            if (Equals(ExpandMode, PanelBarExpandMode.Single))
+            if (item.Visible)
+            {
+                if (!isBoundToSiteMap || item.IsAccessible(Authorization, ViewContext))
+                {
+                    IHtmlNode itemTag = builder.ItemTag(item).AppendTo(parentTag);
+
+                    builder.ItemInnerTag(item).AppendTo(itemTag);
+
+                    if (item.Content != null || !string.IsNullOrEmpty(item.ContentUrl))
+                    {
+                        builder.ItemContentTag(item).AppendTo(itemTag);
+                    }
+                    else if (!item.Items.IsEmpty() && item.Items.IsAccessible(Authorization, ViewContext))
+                    {
+                        IHtmlNode ul = builder.ChildrenTag(item).AppendTo(itemTag);
+
+                        item.Items.Each(child => WriteItem(child, ul, builder));
+                    }
+                }
+            }
+        }
+
+        private void HighlightSelectedItem(PanelBarItem item)
+        {
+            if (item.Enabled)
+            {
+                string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
+                string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
+
+                var urlHelper = new UrlHelper(ViewContext.RequestContext);
+                var panelBarItemUrl = item.GenerateUrl(ViewContext, UrlGenerator);
+                var currentUrl = urlHelper.Action(actionName, controllerName);
+
+                if (!currentUrl.IsNullOrEmpty() && panelBarItemUrl.IsCaseInsensitiveEqual(currentUrl))
+                {
+                    item.Selected = true;
+                    isPathHighlighted = true;
+
+                    PanelBarItem tmpItem = item.Parent;
+                    while (tmpItem != null)
+                    {
+                        tmpItem.Expanded = true;
+                        tmpItem = tmpItem.Parent;
+                    }
+                }
+                item.Items.Each(HighlightSelectedItem);
+            }
+        }
+
+        private void PrepareItem(PanelBarItem item, int itemIndex) 
+        {
+            if (!this.isPathHighlighted)
+            {
+                if (itemIndex == this.SelectedIndex)
+                {
+                    item.Selected = true;
+
+                    if (!item.Items.IsEmpty() || item.Content != null || !string.IsNullOrEmpty(item.ContentUrl))
+                        item.Expanded = true;
+                }
+            }
+
+            if (ExpandMode == PanelBarExpandMode.Single)
             {
                 if (item.Expanded && !isExpanded)
                 {
@@ -224,7 +260,10 @@ namespace Telerik.Web.Mvc.UI
                 }
                 else
                 {
-                    item.Expanded = false;
+                    if (item.Parent != null && item.Parent.Expanded)
+                        item.Expanded = true;
+                    else
+                        item.Expanded = false;
                 }
             }
             else
@@ -232,69 +271,6 @@ namespace Telerik.Web.Mvc.UI
                 if (ExpandAll)
                 {
                     item.Expanded = true;
-                }
-            }
-
-            renderer.ListItemStart(item);
-
-            if (!isSubItem)
-            {
-                renderer.HeaderItemContent(item);
-            }
-            else
-            {
-                renderer.ItemContent(item);
-            }
-
-            WriteContent(item, renderer);
-
-            renderer.ListItemEnd();
-        }
-
-        private void WriteContent(PanelBarItem item, IPanelBarRenderer renderer)
-        {
-            if (item.Content != null || !string.IsNullOrEmpty(item.ContentUrl))
-            {
-                renderer.WriteContent(item);
-            }
-            else
-            {
-                if (!item.Items.IsEmpty() && string.IsNullOrEmpty(item.ContentUrl))
-                {
-                    renderer.ListGroupStart(item);
-                    item.Items.Each(subItem => WriteItemDependingOnItsBinding(subItem, renderer, true));
-                    renderer.ListGroupEnd();
-                }
-            }
-        }
-
-        private void HighlightSelectedItem(PanelBarItem item)
-        {
-            if (HighlightPath)
-            {
-                string controllerName = ViewContext.RouteData.Values["controller"] as string;
-                string actionName = ViewContext.RouteData.Values["action"] as string;
-
-                if (!string.IsNullOrEmpty(controllerName) && (string.Equals(controllerName, item.Text) ||
-                                                              string.Equals(controllerName, item.ControllerName)))
-                {
-                    if (!string.IsNullOrEmpty(actionName) && string.Equals(actionName, item.ActionName))
-                    {
-                        item.Selected = true;
-                        isPathHighlighted = true;
-
-                        PanelBarItem tmpItem = item.Parent;
-                        while (tmpItem != null) 
-                        {
-                            tmpItem.Expanded = true;
-                            tmpItem = tmpItem.Parent;
-                        }
-                    }
-                }
-
-                if (!item.Items.IsEmpty())
-                {
-                    item.Items.Each(HighlightSelectedItem);
                 }
             }
         }

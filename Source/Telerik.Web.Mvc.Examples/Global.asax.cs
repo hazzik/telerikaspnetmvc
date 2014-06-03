@@ -1,8 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web;
-	using System.Web.Mvc;
-	using System.Web.Routing;
+    using System.Web;
+    using System.Web.Mvc;
+    using System.Web.Routing;
 
     public class MvcApplication : HttpApplication
     {
@@ -11,14 +11,14 @@
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
-				"CustomRoute",
-				"{controller}/CustomRoute/{page}/{orderBy}/{filter}",
-				new { controller = "Grid", action = "CustomRoute", page = 1, orderBy = "", filter = "" });
+                "CustomRoute",
+                "{controller}/customroute/{page}/{orderBy}/{filter}",
+                new { controller = "Grid", action = "CustomRoute", page = 1, orderBy = "", filter = "" });
 
             routes.MapRoute(
-				"Default",
-				"{controller}/{action}/{id}",
-				new { controller = "Home", action = "FirstLook", id = "" });
+                "Default",
+                "{controller}/{action}/{id}",
+                new { controller = "Home", action = "FirstLook", id = "" });
         }
 
         protected void Application_Start()

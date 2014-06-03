@@ -1,17 +1,19 @@
 namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
 
     public partial class MenuController : Controller
-	{
-        public ActionResult AnimationEffects(bool? enableHeightAnimation, int? heightOpenDuration, int? heightCloseDuration, bool? enableOpacityAnimation, int? opacityOpenDuration, int? opacityCloseDuration)
+    {
+        public ActionResult AnimationEffects(
+             string animation,
+             bool? enableOpacityAnimation,
+             int? openDuration,
+             int? closeDuration)
         {
-            ViewData["enableHeightAnimation"] = enableHeightAnimation ?? true;
-            ViewData["heightOpenDuration"] = heightOpenDuration ?? 200;
-            ViewData["heightCloseDuration"] = heightCloseDuration ?? 200;
-			ViewData["enableOpacityAnimation"] = enableOpacityAnimation ?? true;
-			ViewData["opacityOpenDuration"] = opacityOpenDuration ?? 200;
-			ViewData["opacityCloseDuration"] = opacityCloseDuration ?? 200;
+            ViewData["animation"] = animation ?? "slide";
+            ViewData["enableOpacityAnimation"] = enableOpacityAnimation ?? true;
+            ViewData["openDuration"] = openDuration ?? 200;
+            ViewData["closeDuration"] = closeDuration ?? 200;
 
             return View();
         }

@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:content contentPlaceHolderID="ExampleTitle" runat="server">Client-side API</asp:content>
-
 <asp:content contentPlaceHolderID="MainContent" runat="server">
 <% Html.Telerik().PanelBar()
         .Name("PanelBar")

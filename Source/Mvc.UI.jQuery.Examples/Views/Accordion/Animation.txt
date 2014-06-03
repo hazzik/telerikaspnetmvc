@@ -1,3 +1,0 @@
-﻿Choose your favorite animation using animate option. All defined easing methods are supported.<br /><br />
-
-<strong>Animate(effectName)</strong>

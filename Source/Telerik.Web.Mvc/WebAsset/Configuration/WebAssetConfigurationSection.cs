@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -17,23 +17,23 @@ namespace Telerik.Web.Mvc.Configuration
         </sectionGroup>
     </configSections>
     <telerik>
-        <webAssets>
+        <webAssets useTelerikContentDeliveryNetwork="true">
             <styleSheets>
                 <add name="" defaultPath="" contentDeliveryNetworkUrl="">
                     <items>
-                        <item source=""/>
-                        <item source=""/>
-                        <item source=""/>
-                    <items>
+                        <add source=""/>
+                        <add source=""/>
+                        <add source=""/>
+                    </items>
                 </add>
             </styleSheets>
             <scripts>
                 <add name="" defaultPath="" contentDeliveryNetworkUrl="">
                     <items>
-                        <item source=""/>
-                        <item source=""/>
-                        <item source=""/>
-                    <items>
+                        <add source=""/>
+                        <add source=""/>
+                        <add source=""/>
+                    </items>
                 </add>
             </scripts>
         </webAssets>
@@ -65,6 +65,28 @@ namespace Telerik.Web.Mvc.Configuration
                 Guard.IsNotNullOrEmpty(value, "value");
 
                 sectionName = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to use telerik content delivery network.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if [use telerik content delivery network]; otherwise, <c>false</c>.
+        /// </value>
+        [ConfigurationProperty("useTelerikContentDeliveryNetwork")]
+        public bool UseTelerikContentDeliveryNetwork
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return (bool)this["useTelerikContentDeliveryNetwork"];
+            }
+
+            [DebuggerStepThrough]
+            set
+            {
+                this["useTelerikContentDeliveryNetwork"] = value;
             }
         }
 

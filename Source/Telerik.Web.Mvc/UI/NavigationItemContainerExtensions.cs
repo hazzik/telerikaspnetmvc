@@ -1,4 +1,4 @@
-// (c) Copyright Telerik Corp. 
+﻿// (c) Copyright Telerik Corp. 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -6,16 +6,27 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
     using System.Web.Mvc;
-
     using Extensions;
     using Infrastructure;
     using Resources;
 
     public static class NavigationItemContainerExtensions
     {
-        public static string GetItemUrl<TComponent, TItem>(this TComponent component, TItem item, ViewContext viewContext, IUrlGenerator generator) where TComponent : ViewComponentBase, INavigationItemContainer<TItem> where TItem : NavigationItem<TItem>, IContentContainer
+        public static string GetItemUrl<TComponent, TItem>(this TComponent component, TItem item)
+            where TComponent : ViewComponentBase, INavigationItemComponent<TItem>
+            where TItem : NavigationItem<TItem>, IContentContainer
+        {
+            return component.GetItemUrl(item, "#");
+        }
+
+        public static string GetItemUrl<TComponent, TItem>(this TComponent component, TItem item, string defaultValue)
+            where TComponent : ViewComponentBase, INavigationItemComponent<TItem>
+            where TItem : NavigationItem<TItem>, IContentContainer
         {
             IAsyncContentContainer asyncContentContainer = item as IAsyncContentContainer;
 
@@ -27,12 +38,16 @@ namespace Telerik.Web.Mvc.UI
             if (item.Content != null)
             {
                 if (string.IsNullOrEmpty(item.Url))
-                    return component.GetItemContentId(item);
+                {
+                    return "#" + component.GetItemContentId(item);
+                }
                 else
+                {
                     return item.Url;
+                }
             }
 
-            return item.GenerateUrl(viewContext, generator) ?? "#";
+            return item.GenerateUrl(component.ViewContext, component.UrlGenerator) ?? defaultValue;
         }
 
         public static string GetImageUrl<T>(this T item, ViewContext viewContext) where T : NavigationItem<T>
@@ -42,16 +57,44 @@ namespace Telerik.Web.Mvc.UI
             return urlHelper.Content(item.ImageUrl);
         }
 
-        private static string GetItemContentId<TComponent, TItem>(this TComponent component, TItem item) where TComponent : ViewComponentBase, INavigationItemContainer<TItem> where TItem : NavigationItem<TItem>, IContentContainer
+        public static string GetItemContentId<TComponent, TItem>(this TComponent component, TItem item)
+            where TComponent : ViewComponentBase, INavigationItemContainer<TItem>
+            where TItem : NavigationItem<TItem>, IContentContainer
         {
             return item.ContentHtmlAttributes.ContainsKey("id") ?
-                   "#{0}".FormatWith(item.ContentHtmlAttributes["id"].ToString()) :
-                   "#{0}-{1}".FormatWith(component.Id, (component.Items.IndexOf(item) + 1).ToString(Culture.Invariant));
+                   "{0}".FormatWith(item.ContentHtmlAttributes["id"].ToString()) :
+                   "{0}-{1}".FormatWith(component.Id, (component.Items.Where(i => i.Visible == true).IndexOf(item) + 1).ToString(Culture.Invariant));
         }
 
-        public static void BindTo<T>(this INavigationItemContainer<T> component, string sitemapViewDataKey, ViewContext viewContext, Action<T, SiteMapNode> siteMapAction) where T : NavigationItem<T>, new()
+        public static string GetItemText<TComponent, TItem>(this TComponent component, TItem item, IActionMethodCache actionMethodCache)
+            where TComponent : ViewComponentBase, INavigationItemContainer<TItem>
+            where TItem : NavigationItem<TItem>, IContentContainer
         {
-            var siteMap = viewContext.ViewData.Eval(sitemapViewDataKey) as SiteMapBase;
+            string text = item.Text;
+
+            if (string.IsNullOrEmpty(text) && ((!string.IsNullOrEmpty(item.ControllerName) && !string.IsNullOrEmpty(item.ActionName))))
+            {
+                foreach (MethodInfo method in actionMethodCache.GetActionMethods(component.ViewContext.RequestContext, item.ControllerName, item.ActionName))
+                {
+                    if (method != null)
+                    {
+                        string displayName = method.GetDisplayName();
+
+                        if (!string.IsNullOrEmpty(displayName))
+                        {
+                            text = displayName;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return text;
+        }
+
+        public static void BindTo<T>(this INavigationItemComponent<T> component, string sitemapViewDataKey, Action<T, SiteMapNode> siteMapAction) where T : NavigationItem<T>, new()
+        {
+            var siteMap = component.ViewContext.ViewData.Eval(sitemapViewDataKey) as SiteMapBase;
 
             if (siteMap == null)
             {
@@ -66,12 +109,12 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        public static void BindTo<T>(this INavigationItemContainer<T> component, string sitemapViewDataKey, ViewContext viewContext) where T : NavigationItem<T>, new()
+        public static void BindTo<T>(this INavigationItemComponent<T> component, string sitemapViewDataKey) where T : NavigationItem<T>, new()
         {
-            BindTo(component, sitemapViewDataKey, viewContext, null);
+            BindTo(component, sitemapViewDataKey, null);
         }
 
-        public static void BindTo<TNavigationItem, TDataItem>(this INavigationItemContainer<TNavigationItem> component, IEnumerable<TDataItem> dataSource, Action<TNavigationItem, TDataItem> action) where TNavigationItem : NavigationItem<TNavigationItem>, new()
+        public static void BindTo<TNavigationItem, TDataItem>(this INavigationItemComponent<TNavigationItem> component, IEnumerable<TDataItem> dataSource, Action<TNavigationItem, TDataItem> action) where TNavigationItem : NavigationItem<TNavigationItem>, new()
         {
             foreach (TDataItem dataItem in dataSource)
             {
@@ -83,43 +126,47 @@ namespace Telerik.Web.Mvc.UI
             }
         }
 
-        private static bool isPathHighlighted;
-        public static bool HighlightItem<T>(this INavigationItemContainer<T> component, ViewContext viewContext) where T : NavigationItem<T>
+        public static void BindTo<TNavigationItem>(this INavigationItemContainer<TNavigationItem> component,
+            IEnumerable dataSource, Action<NavigationBindingFactory<TNavigationItem>> factoryAction)
+                where TNavigationItem : NavigationItem<TNavigationItem>, INavigationItemContainer<TNavigationItem>, new()
         {
-            isPathHighlighted = false;
-            component.Items.Each(item =>
+            NavigationBindingFactory<TNavigationItem> factory = new NavigationBindingFactory<TNavigationItem>();
+
+            factoryAction(factory);
+
+            foreach (object dataItem in dataSource)
             {
-                HighlightSelectedItem(item, viewContext);
-            });
-            return isPathHighlighted;
+                TNavigationItem item = new TNavigationItem();
+                component.Items.Add(item);
+                Bind(item, dataItem, factory);
+            }
         }
 
-        private static void HighlightSelectedItem<T>(T item, ViewContext viewContext)
-            where T : NavigationItem<T>
+        public static void Bind<TNavigationItem>(TNavigationItem component, object dataItem,
+            NavigationBindingFactory<TNavigationItem> factory)
+                where TNavigationItem : NavigationItem<TNavigationItem>, INavigationItemContainer<TNavigationItem>, new()
         {
-            string controllerName = viewContext.RouteData.Values["controller"] as string;
-            string actionName = viewContext.RouteData.Values["action"] as string;
+            INavigationBinding<TNavigationItem> binding = factory.container.Where(b => b.Type == dataItem.GetType()).First();
 
-            if (!string.IsNullOrEmpty(controllerName) && !string.IsNullOrEmpty(item.ControllerName) &&
-                !string.IsNullOrEmpty(item.Text) && (string.Equals(controllerName.ToLower(), item.Text.ToLower()) ||
-                 string.Equals(controllerName.ToLower(), item.ControllerName.ToLower())))
+            binding.ItemDataBound(component, dataItem);
+            IEnumerable children = binding.Children(dataItem);
+
+            if (children != null)
             {
-                if (!string.IsNullOrEmpty(actionName) && !string.IsNullOrEmpty(item.ActionName) 
-                    && string.Equals(actionName.ToLower(), item.ActionName.ToLower()))
+                foreach (var childDataItem in children)
                 {
-                    item.Selected = true;
-                    isPathHighlighted = true;
+                    TNavigationItem item = new TNavigationItem();
+                    component.Items.Add(item);
+
+                    Bind(item, childDataItem, factory);
                 }
             }
-            if (item is INavigationItemContainer<T>)
-            {
-                ((INavigationItemContainer<T>)item).Items.Each(subItem => { HighlightSelectedItem(subItem, viewContext); });
-            }
         }
 
-        private static void LoadItemsFromSiteMapNode<T>(SiteMapNode node, INavigationItemContainer<T> parent, Action<T, SiteMapNode> siteMapAction) where T : NavigationItem<T>, new()
+        private static void LoadItemsFromSiteMapNode<T>(SiteMapNode node, INavigationItemContainer<T> parent, Action<T, SiteMapNode> siteMapAction)
+            where T : NavigationItem<T>, new()
         {
-            var item = new T {Text = node.Title, Visible = node.Visible };
+            var item = new T { Text = node.Title, Visible = node.Visible };
 
             if (!string.IsNullOrEmpty(node.RouteName))
             {
@@ -148,7 +195,7 @@ namespace Telerik.Web.Mvc.UI
 
             if (item is INavigationItemContainer<T>)
             {
-                node.ChildNodes.Each(childNode => LoadItemsFromSiteMapNode(childNode, (INavigationItemContainer<T>) item, siteMapAction));
+                node.ChildNodes.Each(childNode => LoadItemsFromSiteMapNode(childNode, (INavigationItemContainer<T>)item, siteMapAction));
             }
         }
     }

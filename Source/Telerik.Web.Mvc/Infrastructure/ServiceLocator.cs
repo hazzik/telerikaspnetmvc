@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -13,10 +13,11 @@ namespace Telerik.Web.Mvc.Infrastructure
 
     public static class ServiceLocator
     {
-        private static readonly object syncLock = new object();
+        private static readonly Func<IServiceLocator> defaultSingletonFactory = () => new ServiceLocatorImpl(HttpContext.Current.IsDebuggingEnabled);
 
+        private static readonly object syncLock = new object();
+        private static Func<IServiceLocator> singletonFactory;
         private static IServiceLocator singleton;
-        private static Func<IServiceLocator> singletonFactory = () => new ServiceLocatorImpl(HttpContext.Current.IsDebuggingEnabled);
 
         public static IServiceLocator Current
         {
@@ -29,7 +30,9 @@ namespace Telerik.Web.Mvc.Infrastructure
                     {
                         if (singleton == null)
                         {
-                            singleton = singletonFactory();
+                            singleton = (singletonFactory != null) ?
+                                        singletonFactory() :
+                                        ((HttpContext.Current != null) ? defaultSingletonFactory() : null);
                         }
                     }
                 }

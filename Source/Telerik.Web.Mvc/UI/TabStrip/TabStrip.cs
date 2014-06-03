@@ -1,4 +1,5 @@
-// (c) Copyright 2002-2009 Telerik 
+using Telerik.Web.Mvc.Infrastructure;
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -15,28 +16,28 @@ namespace Telerik.Web.Mvc.UI
     using Extensions;
     using Infrastructure;
 
-    public class TabStrip : ViewComponentBase, INavigationItemContainer<TabStripItem>, IEffectEnabled
+    public class TabStrip : ViewComponentBase, INavigationItemComponent<TabStripItem>, IEffectEnabled
     {
         private readonly IList<IEffect> defaultEffects = new List<IEffect>{ new SlideAnimation() };
 
-        private readonly ITabStripRendererFactory rendererFactory;
+        private readonly ITabStripHtmlBuilderFactory builderFactory;
+        internal bool isPathHighlighted;
 
-        public TabStrip(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator, INavigationItemAuthorization authorization, ITabStripRendererFactory rendererFactory) : base(viewContext, clientSideObjectWriterFactory)
+        public TabStrip(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator, INavigationItemAuthorization authorization, ITabStripHtmlBuilderFactory rendererFactory) : base(viewContext, clientSideObjectWriterFactory)
         {
             Guard.IsNotNull(urlGenerator, "urlGenerator");
             Guard.IsNotNull(authorization, "authorization");
             Guard.IsNotNull(rendererFactory, "rendererFactory");
 
-            this.rendererFactory = rendererFactory;
+            this.builderFactory = rendererFactory;
 
             UrlGenerator = urlGenerator;
             Authorization = authorization;
 
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.tabstrip.js" });
 
-            Effects = new List<IEffect>(defaultEffects.Count);
-
-            defaultEffects.Each(el => Effects.Add(el));
+            this.Effects = new Effects();
+            defaultEffects.Each(el => Effects.Container.Add(el));
 
             ClientEvents = new TabStripClientEvents();
 
@@ -63,10 +64,10 @@ namespace Telerik.Web.Mvc.UI
             private set;
         }
 
-        public IList<IEffect> Effects
+        public Effects Effects
         {
             get;
-            private set;
+            set;
         }
 
         public IList<TabStripItem> Items
@@ -101,13 +102,9 @@ namespace Telerik.Web.Mvc.UI
 
             objectWriter.Start();
 
-            if (!defaultEffects.SequenceEqual(Effects))
+            if (!defaultEffects.SequenceEqual(Effects.Container))
             {
-                var effectSerialization = new List<string>();
-
-                Effects.Each(e => effectSerialization.Add(e.Serialize()));
-
-                objectWriter.Append("effects:[{0}]".FormatWith(String.Join(",", effectSerialization.ToArray())));
+                objectWriter.Serialize("effects", Effects);
             }
 
             objectWriter.Append("onSelect", ClientEvents.OnSelect);
@@ -125,18 +122,17 @@ namespace Telerik.Web.Mvc.UI
 
             if (!Items.IsEmpty())
             {
-                ITabStripRenderer renderer = rendererFactory.Create(this, writer);
+                ITabStripHtmlBuilder builder = builderFactory.Create(this);
 
                 int itemIndex = 0;
                 bool isPathHighlighted = false;
 
-                renderer.TabStripStart();
+                IHtmlNode tabStripTag = builder.TabStripTag();
 
-                renderer.ItemsStart();
-
+                //this loop is required because of SelectedIndex feature.
                 if (HighlightPath)
                 {
-                    isPathHighlighted = this.HighlightItem(ViewContext);
+                    Items.Each(HighlightSelectedItem);
                 }
 
                 Items.Each(item =>
@@ -149,28 +145,48 @@ namespace Telerik.Web.Mvc.UI
                         }
                         itemIndex++;
                     }
-                    RenderItem(item, renderer);
+                    
+                    WriteItem(item, tabStripTag, builder);
                 });
 
-                renderer.ItemsEnd();
-
-                Items.Each(renderer.TabContent);
-
-                renderer.TabStripEnd();
+                tabStripTag.WriteTo(writer);
             }
             base.WriteHtml(writer);
         }
 
-        private void RenderItem(TabStripItem item, ITabStripRenderer renderer)
+        private void WriteItem(TabStripItem item, IHtmlNode parentTag, ITabStripHtmlBuilder builder)
         {
+            if (ItemAction != null)
+            {
+                ItemAction(item);
+            }
+            
             if (item.Visible && item.IsAccessible(Authorization, ViewContext))
             {
-                if (ItemAction != null)
-                {
-                    ItemAction(item);
-                }
+                IHtmlNode itemTag = builder.ItemTag(item).AppendTo(parentTag.Children[0]);
 
-                renderer.ItemContent(item);
+                builder.ItemInnerTag(item).AppendTo(itemTag);
+
+                if (item.Content != null || !string.IsNullOrEmpty(item.ContentUrl))
+                {
+                    builder.ItemContentTag(item).AppendTo(parentTag);
+                }
+            }
+        }
+
+        private void HighlightSelectedItem(TabStripItem item)
+        {
+            string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
+            string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
+
+            if (string.Equals(controllerName, item.Text, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(controllerName, item.ControllerName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.Equals(actionName, item.ActionName, StringComparison.OrdinalIgnoreCase))
+                {
+                    isPathHighlighted = true;
+                    item.Selected = true;
+                }
             }
         }
     }

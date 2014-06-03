@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Telerik.Web.Mvc.Resources;
+using System.Data;
 
 namespace Telerik.Web.Mvc.Extensions
 {
@@ -94,8 +95,18 @@ namespace Telerik.Web.Mvc.Extensions
 
         internal static int GetNumericTypeKind(this Type type)
         {
+            if (type == null)
+            {
+                return 0;
+            }
+            
             type = GetNonNullableType(type);
-            if (type.IsEnum) return 0;
+
+            if (type.IsEnum)
+            {
+                return 0;
+            }
+
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Char:
@@ -357,11 +368,16 @@ namespace Telerik.Web.Mvc.Extensions
             }
         }
 
+        internal static bool IsDataRow(this Type type)
+        {
+            return type.IsCompatibleWith(typeof(DataRow)) || type.IsCompatibleWith(typeof(DataRowView));
+        }
+
         internal static string ToJavaScriptType(this Type type)
         {
             if (type == null)
             {
-                return string.Empty;
+                return "Object";
             }
 
             if (IsNumericType(type))
@@ -386,7 +402,7 @@ namespace Telerik.Web.Mvc.Extensions
 
             if (type.IsEnum)
             {
-                return "String";
+                return "Enum";
             }
 
             return "Object";

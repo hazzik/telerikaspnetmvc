@@ -1,5 +1,8 @@
 ﻿namespace Telerik.Web.Mvc.Examples.Models
 {
+    using System.Runtime.Serialization;
+    
+    [KnownType(typeof(CustomerDto))]
     public class CustomerDto
     {
         public string ContactName

@@ -1,4 +1,4 @@
-﻿// (c) Copyright 2002-2009 Telerik 
+﻿// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -29,9 +29,16 @@ namespace Telerik.Web.Mvc.UI
         /// Initializes a new instance of the <see cref="NavigationItemBuilder&lt;TItem, TBuilder&gt;"/> class.
         /// </summary>
         /// <param name="item">The item.</param>
-        protected NavigationItemBuilder(NavigationItem<TItem> item)
+        protected NavigationItemBuilder(NavigationItem<TItem> item, ViewContext viewContext)
         {
             this.item = item;
+            this.ViewContext = viewContext;
+        }
+
+        internal ViewContext ViewContext
+        {
+            get;
+            set;
         }
 
         protected TItem Item
@@ -63,12 +70,21 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder HtmlAttributes(object attributes)
+        public TBuilder HtmlAttributes(object attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 
             item.HtmlAttributes.Clear();
             item.HtmlAttributes.Merge(attributes);
+
+            return this as TBuilder;
+        }
+
+        public TBuilder LinkHtmlAttributes(object attributes)
+        {
+            Guard.IsNotNull(attributes, "attributes");
+            item.LinkHtmlAttributes.Clear();
+            item.LinkHtmlAttributes.Merge(attributes);
 
             return this as TBuilder;
         }
@@ -85,7 +101,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Text(string value)
+        public TBuilder Text(string value)
         {
             item.Text = value;
 
@@ -107,7 +123,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Visible(bool value)
+        public TBuilder Visible(bool value)
         {
             item.Visible = value;
 
@@ -125,7 +141,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Enabled(bool value)
+        public TBuilder Enabled(bool value)
         {
             item.Enabled = value;
 
@@ -143,7 +159,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Selected(bool value)
+        public TBuilder Selected(bool value)
         {
             item.Selected = value;
 
@@ -163,7 +179,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Route(string routeName, RouteValueDictionary routeValues)
+        public TBuilder Route(string routeName, RouteValueDictionary routeValues)
         {
             item.Route(routeName, routeValues);
 
@@ -185,7 +201,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Route(string routeName, object routeValues)
+        public TBuilder Route(string routeName, object routeValues)
         {
             item.Route(routeName, routeValues);
 
@@ -206,7 +222,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Route(string routeName)
+        public TBuilder Route(string routeName)
         {
             return Route(routeName, (object)null);
         }
@@ -225,7 +241,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Action(string actionName, string controllerName, RouteValueDictionary routeValues)
+        public TBuilder Action(string actionName, string controllerName, RouteValueDictionary routeValues)
         {
             item.Action(actionName, controllerName, routeValues);
 
@@ -247,7 +263,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Action(string actionName, string controllerName, object routeValues)
+        public TBuilder Action(string actionName, string controllerName, object routeValues)
         {
             item.Action(actionName, controllerName, routeValues);
             SetTextIfEmpty(actionName);
@@ -268,7 +284,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Action(string actionName, string controllerName)
+        public TBuilder Action(string actionName, string controllerName)
         {
             return Action(actionName, controllerName, (object)null);
         }
@@ -285,7 +301,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Url(string value)
+        public TBuilder Url(string value)
         {
             if (item is IAsyncContentContainer) 
             {   
@@ -310,7 +326,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder ImageUrl(string value)
+        public TBuilder ImageUrl(string value)
         {
             Guard.IsNotNullOrEmpty(value, "value");
 
@@ -334,7 +350,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder ImageHtmlAttributes(object attributes)
+        public TBuilder ImageHtmlAttributes(object attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 
@@ -358,7 +374,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder SpriteCssClasses(params string[] cssClasses)
+        public TBuilder SpriteCssClasses(params string[] cssClasses)
         {
             Item.SpriteCssClasses = String.Join(" ", cssClasses);
 
@@ -366,7 +382,7 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
-        /// Sets the HTML content which the item should display (tab item or panelbar item).
+        /// Sets the HTML content which the item should display.
         /// </summary>
         /// <param name="value">The action which renders the content.</param>
         /// <code lang="CS">
@@ -384,11 +400,36 @@ namespace Telerik.Web.Mvc.UI
         ///            .Render();
         /// %&gt;
         /// </code>        
-        public virtual TBuilder Content(Action value)
+        public TBuilder Content(Action value)
         {
             Guard.IsNotNull(value, "value");
 
             Item.Content = value;
+
+            return this as TBuilder;
+        }
+
+
+        /// <summary>
+        /// Sets the HTML content which the item should display as a string.
+        /// </summary>
+        /// <param name="value">The action which renders the content.</param>
+        /// <code lang="CS">
+        ///  &lt;% Html.Telerik().Menu()
+        ///            .Name("Menu")
+        ///            .Items(items => items
+        ///                     .Add()
+        ///                     .Text("First Item")
+        ///                     .Content("&lt;strong&gt; First Item Content&lt;/strong&gt;");
+        ///                  )
+        ///            .Render();
+        /// %&gt;
+        /// </code>        
+        public TBuilder Content(string value)
+        {
+            Guard.IsNotNull(value, "value");
+
+            Item.Content = () => ViewContext.HttpContext.Response.Write(value);
 
             return this as TBuilder;
         }
@@ -408,7 +449,7 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>        
-        public virtual TBuilder ContentHtmlAttributes(object attributes)
+        public TBuilder ContentHtmlAttributes(object attributes)
         {
             Guard.IsNotNull(attributes, "attributes");
 
@@ -434,59 +475,9 @@ namespace Telerik.Web.Mvc.UI
         /// %&gt;
         /// </code>
         /// </example>
-        public virtual TBuilder Action<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
+        public TBuilder Action<TController>(Expression<Action<TController>> controllerAction) where TController : Controller
         {
-            MethodCallExpression call = (MethodCallExpression) controllerAction.Body;
-
-            string controllerName = typeof(TController).Name;
-
-            if (!controllerName.EndsWith("Controller", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new ArgumentException(TextResource.ControllerNameMustEndWithController, "controllerAction");
-            }
-
-            controllerName = controllerName.Substring(0, controllerName.Length - "Controller".Length);
-
-            if (controllerName.Length == 0)
-            {
-                throw new ArgumentException(TextResource.CannotRouteToClassNamedController, "controllerAction");
-            }
-
-            if (call.Method.IsDefined(typeof(NonActionAttribute), false))
-            {
-                throw new ArgumentException(TextResource.TheSpecifiedMethodIsNotAnActionMethod, "controllerAction");
-            }
-
-            string actionName = call.Method.GetCustomAttributes(typeof(ActionNameAttribute), false)
-                                           .OfType<ActionNameAttribute>()
-                                           .Select(attribute => attribute.Name)
-                                           .FirstOrDefault() ?? call.Method.Name;
-
-            item.ControllerName = controllerName;
-            item.ActionName = actionName;
-
-            ParameterInfo[] parameters = call.Method.GetParameters();
-
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                Expression arg = call.Arguments[i];
-                object value;
-                ConstantExpression ce = arg as ConstantExpression;
-
-                if (ce != null)
-                {
-                    value = ce.Value;
-                }
-                else
-                {
-                    Expression<Func<object>> lambdaExpression = Expression.Lambda<Func<object>>(Expression.Convert(arg, typeof(object)));
-                    Func<object> func = lambdaExpression.Compile();
-                    value = func();
-                }
-
-                item.RouteValues.Add(parameters[i].Name, value);
-            }
-
+            item.Action(controllerAction);
             return this as TBuilder;
         }
 

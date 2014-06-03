@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Sprites</asp:Content>
-
 <asp:Content contentPlaceHolderID="HeadContent" runat="server">
 	<style type="text/css">
 		#PanelBar .t-sprite

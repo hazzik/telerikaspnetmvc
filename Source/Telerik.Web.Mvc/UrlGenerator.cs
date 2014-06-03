@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -19,34 +19,21 @@ namespace Telerik.Web.Mvc
             return new UrlHelper(requestContext).Content(url);
         }
 
-        public string Generate(RequestContext requestContext, INavigatable navigationItem)
+        public string Generate(RequestContext requestContext, INavigatable navigationItem, RouteValueDictionary routeValues)
         {
             Guard.IsNotNull(requestContext, "requestContext");
             Guard.IsNotNull(navigationItem, "navigationItem");
 
             UrlHelper urlHelper = new UrlHelper(requestContext);
-
-            Func<RouteValueDictionary> getRouteValues = () =>
-                                                        {
-                                                            RouteValueDictionary routeValues = new RouteValueDictionary();
-
-                                                            if (!navigationItem.RouteValues.IsNullOrEmpty())
-                                                            {
-                                                                routeValues.Merge(navigationItem.RouteValues);
-                                                            }
-
-                                                            return routeValues;
-                                                        };
-
             string generatedUrl = null;
 
             if (!string.IsNullOrEmpty(navigationItem.RouteName))
             {
-                generatedUrl = urlHelper.RouteUrl(navigationItem.RouteName, getRouteValues());
+                generatedUrl = urlHelper.RouteUrl(navigationItem.RouteName, routeValues);
             }
             else if (!string.IsNullOrEmpty(navigationItem.ControllerName) && !string.IsNullOrEmpty(navigationItem.ActionName))
             {
-                generatedUrl = urlHelper.Action(navigationItem.ActionName, navigationItem.ControllerName, getRouteValues());
+                generatedUrl = urlHelper.Action(navigationItem.ActionName, navigationItem.ControllerName, routeValues);
             }
             else if (!string.IsNullOrEmpty(navigationItem.Url))
             {
@@ -54,8 +41,24 @@ namespace Telerik.Web.Mvc
                                urlHelper.Content(navigationItem.Url) :
                                navigationItem.Url;
             }
+            else if (!routeValues.IsEmpty())
+            {
+                generatedUrl = urlHelper.RouteUrl(routeValues);
+            }
 
             return generatedUrl;
+
+        }
+        public string Generate(RequestContext requestContext, INavigatable navigationItem)
+        {
+            RouteValueDictionary routeValues = new RouteValueDictionary();
+
+            if (!navigationItem.RouteValues.IsNullOrEmpty())
+            {
+                routeValues.Merge(navigationItem.RouteValues);
+            }
+
+            return Generate(requestContext, navigationItem, routeValues);
         }
     }
 }

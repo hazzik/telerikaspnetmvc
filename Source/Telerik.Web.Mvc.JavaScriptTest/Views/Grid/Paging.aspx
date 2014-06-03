@@ -8,8 +8,8 @@
             .Name("Grid_DefaultPager")
             .Columns(columns =>
             {
-                columns.Add(c => c.Name);
-                columns.Add(c => c.BirthDate.Day);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate.Day);
             })
             .Ajax(settings => { })
 			.BindTo((List<Customer>)ViewData["moreData"])
@@ -19,8 +19,8 @@
             .Name("Grid_NextPrevAndInputPager")
             .Columns(columns =>
             {
-                columns.Add(c => c.Name);
-                columns.Add(c => c.BirthDate.Day);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate.Day);
             })
             .Ajax(delegate{})
 			.BindTo((List<Customer>)ViewData["lessData"])
@@ -30,8 +30,8 @@
             .Name("Grid_UpdatePager")
             .Columns(columns =>
             {
-                columns.Add(c => c.Name);
-                columns.Add(c => c.BirthDate.Day);
+                columns.Bound(c => c.Name);
+                columns.Bound(c => c.BirthDate.Day);
             })
             .Ajax(settings => { })
             .BindTo((List<Customer>)ViewData["moreData"])
@@ -58,34 +58,28 @@
 
         function test_grid_colum_names_are_initialized() {
             var grid = getGrid("#Grid_DefaultPager");
-            assertEquals("Name", grid.columns[0].name);
-            assertEquals("BirthDate.Day", grid.columns[1].name);
-        }
-
-        function test_createColumnMappings_when_no_columns_returns_no_mappings() {
-            var grid =createGrid(gridElement, { columns: [] });
-            var mappings = grid.createColumnMappings({ Name: "John" });
-            assertUndefined(mappings["Name"]);
+            assertEquals("Name", grid.columns[0].member);
+            assertEquals("BirthDate.Day", grid.columns[1].member);
         }
 
         function test_createColumnMappings_maps_data_fields_to_column() {
-            var grid =createGrid(gridElement, { columns: [
-                { name: "Name" },
-                { name: "Id" }
+            var grid = createGrid(gridElement, { columns: [
+                { member: "Name" },
+                { member: "Id" }
             ]
             
             });
 
             var dataItem = { Id: 1, Name: "John" };
             grid.createColumnMappings(dataItem);
-            var nameMapping = grid.columns[0].mapping;
+            var nameMapping = grid.columns[0].display;
             assertNotUndefined(nameMapping);
             assertEquals(dataItem.Name, nameMapping(dataItem));
         }
 
         function test_createColumnMappings_maps_fields_of_nested_objects() {
             var grid =createGrid(gridElement, { columns: [
-	            { name: "NestedObject.Id" }
+	            { member: "NestedObject.Id" }
 	        ]
             
             });
@@ -93,7 +87,7 @@
             var dataItem = { NestedObject: { Id: 1} };
 
             grid.createColumnMappings(dataItem);
-            var nestedObjectMapping = grid.columns[0].mapping;
+            var nestedObjectMapping = grid.columns[0].display;
             assertEquals(dataItem.NestedObject.Id, nestedObjectMapping(dataItem));
         }
 
@@ -101,7 +95,7 @@
             var grid = getGrid("#Grid_DefaultPager");
             var data = [{ Name: "Test", BirthDate: { Day: 1}}];
 
-            grid.bindTo(data);
+            grid.dataBind(data);
             assertEquals("Test", $("#Grid_DefaultPager tbody tr:nth-child(1) td:nth-child(1)").text());
             assertEquals("1", $("#Grid_DefaultPager tbody tr:nth-child(1) td:nth-child(2)").text());
         }
@@ -134,6 +128,12 @@
             var grid =createGrid(gridElement, { pageSize: 10 });
             grid.total = 9;
             assertEquals(1, grid.totalPages());
+        }
+
+        function test_total_when_total_is_zero() {
+            var grid =createGrid(gridElement, { pageSize: 10 });
+            grid.total = 0;
+            assertEquals(0, grid.totalPages());
         }
 
         function test_update_default_pager_sets_the_text() {
@@ -210,6 +210,10 @@
             assertEquals(1, grid.firstItemInPage());
         }
 
+        function test_firstItemInPage_when_total_is_0() {
+            var grid = createGrid(gridElement, { currentPage: 1, pageSize: 10, total: 0 });
+            assertEquals(0, grid.firstItemInPage());
+        }
         function test_firstItemInPage_second_page() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 20 });
             assertEquals(11, grid.firstItemInPage());
@@ -228,15 +232,6 @@
         function test_last_itemInPage_last_page_page_size_divides_total_with_remainder() {
             var grid =createGrid(gridElement, { currentPage: 2, pageSize: 10, total: 19 });
             assertEquals(19, grid.lastItemInPage());
-        }
-
-        function test_updatePager_updates_the_status_message() {
-            var grid = getGrid("#Grid_NextPrevAndInputPager");
-            grid.ajaxRequest = function() { };
-            grid.currentPage = 2;
-            grid.updatePager(2);
-
-            assertEquals("Displaying items 2 - 2 of 2", $("#Grid_NextPrevAndInputPager .t-status-text").text());
         }
 
         function test_sanitizePage_returns_the_value_if_valid_integer_below_total_pages() {
@@ -268,7 +263,7 @@
         function test_pressing_enter_in_pager_text_box_pages() {
             var grid = getGrid("#Grid_NextPrevAndInputPager");
             grid.ajaxRequest = function() { };
-            $("#Grid_NextPrevAndInputPager .t-pager input[type=text]").val("2").trigger({ type: "keydown", keyCode: 13 });
+            $("#Grid_NextPrevAndInputPager .t-pager input").val("2").trigger({ type: "keydown", keyCode: 13 });
             assertEquals(2, grid.currentPage);
         }
 
@@ -283,7 +278,7 @@
             var grid = getGrid("#Grid_UpdatePager");
 
             grid.total = 10;
-            grid.dataBind({ data: []});
+            grid.dataBind([]);
 
             assertEquals(1, $(".t-numeric", grid.element).children().length);
         }

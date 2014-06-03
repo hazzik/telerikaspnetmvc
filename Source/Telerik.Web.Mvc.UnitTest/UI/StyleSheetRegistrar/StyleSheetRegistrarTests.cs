@@ -73,7 +73,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         {
             _styleSheetRegistrar.DefaultGroup.Items.Add(new WebAssetItem("~/Content/site.css"));
 
-            _assetMerger.Setup(m => m.Merge(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<WebAssetItemCollection>())).Returns(new List<string> { "/Content/site.css", "/Content/component1.css" });
+            _assetMerger.Setup(m => m.Merge(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<WebAssetItemCollection>())).Returns(new List<string> { "/Content/site.css", "/Content/component1.css" });
             _httpContext.Setup(context => context.Response.Output.WriteLine(It.IsAny<string>())).Verifiable();
         }
     }

@@ -18,12 +18,10 @@
 <pre class="prettyprint">
 &lt;%= Html.Telerik().Menu()
         .Name("Menu")
-        .Effects(fx => fx.Slide(properties => properties
-                            .OpenDuration(200)
-                            .CloseDuration(300))
-                         .Opacity(properties => properties
-                            .OpenDuration(200)
-                            .CloseDuration(300))
+        .Effects(fx => fx.Slide()
+                         .Opacity()
+                         .OpenDuration(200)
+                         .CloseDuration(300)
         )
         .Items(items => { /*items definition*/ })
 %&gt;

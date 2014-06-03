@@ -1,6 +1,6 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<NavigationData>>" %>
 
-<asp:content contentplaceholderid="ExampleTitle" runat="server">Binding to Model</asp:content>
+
 <asp:content contentplaceholderid="MainContent" runat="server">
 
     <% Html.Telerik().TabStrip()

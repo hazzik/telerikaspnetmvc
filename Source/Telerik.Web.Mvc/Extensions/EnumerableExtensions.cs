@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -13,7 +13,7 @@ namespace Telerik.Web.Mvc.Extensions
     using System.Linq;
     using System.Diagnostics;
     
-    internal static class EnumerableExtensions
+    public static class EnumerableExtensions
     {
         class GenericEnumerable<T> : IEnumerable<T>
         {
@@ -40,6 +40,13 @@ namespace Telerik.Web.Mvc.Extensions
                     yield return item;
                 }
             }
+        }
+
+        public static void Each<T>(this IEnumerable<T> instance, Action<T, int> action)
+        {
+            int index = 0;
+            foreach (T item in instance)
+                action(item, index ++);
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -178,6 +178,21 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Appends the specified statement in $(document).ready jQuery event. This method should be
+        /// used in <code>Html.RenderAction()</code>.
+        /// </summary>
+        /// <param name="statements">The statements.</param>
+        /// <returns></returns>
+        public virtual ScriptRegistrarBuilder OnDocumentReady(string statements)
+        {
+            Guard.IsNotNullOrEmpty(statements, "statements");
+
+            scriptRegistrar.OnDocumentReadyStatements.Add(statements);
+
+            return this;
+        }
+
+        /// <summary>
         /// Defines the inline handler executed when the DOM window object is unloaded.
         /// </summary>
         /// <param name="onWindowUnloadAction">The action defining the inline handler</param>
@@ -201,6 +216,21 @@ namespace Telerik.Web.Mvc.UI
             Guard.IsNotNull(onWindowUnloadAction, "onWindowUnloadAction");
 
             scriptRegistrar.OnWindowUnloadActions.Add(onWindowUnloadAction);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified statement window unload event. This method should be
+        /// used in <code>Html.RenderAction()</code>.
+        /// </summary>
+        /// <param name="statements">The statements.</param>
+        /// <returns></returns>
+        public virtual ScriptRegistrarBuilder OnWindowUnload(string statements)
+        {
+            Guard.IsNotNullOrEmpty(statements, "statements");
+
+            scriptRegistrar.OnWindowUnloadStatements.Add(statements);
 
             return this;
         }

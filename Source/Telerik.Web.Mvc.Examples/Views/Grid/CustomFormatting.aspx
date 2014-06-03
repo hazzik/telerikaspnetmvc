@@ -1,21 +1,18 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Order>>" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Custom Formatting</asp:Content>
-
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
 
 <%= Html.Telerik().Grid(Model)
         .Name("Grid")
         .Columns(columns =>
         {
-            columns.Add(o => o.OrderID).Width(81);
-            columns.Add(o => o.Customer.ContactName).Width(200);
-            columns.Add(o => o.ShipAddress);
-            columns.Add(o => o.Freight).Width(200);
+            columns.Bound(o => o.OrderID).Width(110);
+            columns.Bound(o => o.Customer.ContactName).Width(200);
+            columns.Bound(o => o.ShipAddress);
+            columns.Bound(o => o.Freight).Width(200);
         })
         .CellAction(cell => 
         {
-            if (cell.Column.Name == "Freight")
+            if (cell.Column.Member == "Freight")
             {
                 Order order = cell.DataItem;
 				

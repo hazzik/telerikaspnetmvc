@@ -1,4 +1,6 @@
-// (c) Copyright 2002-2009 Telerik 
+using Telerik.Web.Mvc.Infrastructure;
+using Telerik.Web.Mvc.Infrastructure.Implementation;
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -89,8 +91,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
         {
             var memberType = this.FilterDescriptor.MemberType;
 
-            MemberAccessExpressionBuilderBase memberAccessBuilder =
-                ExpressionBuilderFactory.MemberAccess(this.ParameterExpression.Type, memberType, this.FilterDescriptor.Member);
+            var memberAccessBuilder =
+                            ExpressionBuilderFactory.MemberAccess(this.ParameterExpression.Type, memberType, this.FilterDescriptor.Member);
+            memberAccessBuilder.Options.CopyFrom(this.Options); 
+            
             memberAccessBuilder.ParameterExpression = this.ParameterExpression;
 
             Expression memberAccessExpression = memberAccessBuilder.CreateMemberAccessExpression();
@@ -107,7 +111,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
         {
             if (value == null)
             {
-                return ExpressionParser.NullLiteral;
+                return ExpressionConstants.NullLiteral;
             }
             return Expression.Constant(value);
         }
@@ -146,7 +150,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             }
             var ce = expr as ConstantExpression;
             //TODO: check here
-            if (((ce != null) && (ce == ExpressionParser.NullLiteral)) && !(type.IsValueType && !type.IsNullableType()))
+            if (((ce != null) && (ce == ExpressionConstants.NullLiteral)) && !(type.IsValueType && !type.IsNullableType()))
             {
                 return Expression.Constant(null, type);
             }

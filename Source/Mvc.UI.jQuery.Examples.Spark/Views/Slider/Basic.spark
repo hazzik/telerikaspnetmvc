@@ -1,8 +1,0 @@
-<content name="TitleContent">
-    Slider Basic Example
-</content>
-<content name="MainContent">
-    <% Html.jQuery().Slider()
-                    .Name("mySlider")
-                    .Render(); %>
-</content>

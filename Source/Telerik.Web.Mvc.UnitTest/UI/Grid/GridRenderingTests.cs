@@ -1,4 +1,5 @@
-﻿namespace Telerik.Web.Mvc.UI.UnitTest.Grid
+﻿using Telerik.Web.Mvc.Infrastructure;
+namespace Telerik.Web.Mvc.UI.UnitTest.Grid
 {
     using System.Linq;
 
@@ -8,203 +9,164 @@
     using UI;
     using System.IO;
     using System.Collections.Generic;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class GridRenderingTests
     {
         private readonly Grid<Customer> grid;
-        private readonly Mock<IGridRenderer<Customer>> renderer;
+        private readonly Mock<IGridHtmlBuilder<Customer>> builder;
         private readonly Mock<IClientSideObjectWriter> objectWriter;
         private readonly Customer customer;
 
         public GridRenderingTests()
         {
-            renderer = new Mock<IGridRenderer<Customer>>();
+            var virtualPathProvider = new Mock<IVirtualPathProvider>();
+            virtualPathProvider.Setup(vpp => vpp.FileExists(It.IsAny<string>())).Returns(false);
+
+            var serviceLocator = new Mock<IServiceLocator>();
+            serviceLocator.Setup(sl => sl.Resolve<IVirtualPathProvider>()).Returns(virtualPathProvider.Object);
+
+            ServiceLocator.SetCurrent(() => serviceLocator.Object);
+
+            builder = new Mock<IGridHtmlBuilder<Customer>>();
+
+            builder.Setup(r => r.GridTag()).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.TableTag()).Returns(() => new HtmlTag("table"));
+            builder.Setup(r => r.BodyTag(It.IsAny<IHtmlNode>())).Returns(() => new HtmlTag("tbody"));
+            builder.Setup(r => r.HeadTag(It.IsAny<IHtmlNode>())).Returns(() => new HtmlTag("thead"));
+            builder.Setup(r => r.HeadCellTag(It.IsAny<GridColumnBase<Customer>>())).Returns(() => new HtmlTag("th"));
+            builder.Setup(r => r.FootCellTag()).Returns(() => new HtmlTag("td"));
+            builder.Setup(r => r.FootTag(It.IsAny<IHtmlNode>())).Returns(() => new HtmlTag("tfoot"));
+            builder.Setup(r => r.RowTag()).Returns(() => new HtmlTag("tr"));
+            builder.Setup(r => r.LoadingIndicatorTag()).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.PagerStatusTag()).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.PagerTag()).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.RowTag(It.IsAny<GridRow<Customer>>())).Returns(() => new HtmlTag("td"));
+            builder.Setup(r => r.CellTag(It.IsAny<GridCell<Customer>>())).Returns(() => new HtmlTag("td"));
+            
             objectWriter = new Mock<IClientSideObjectWriter>();
-            grid = GridTestHelper.CreateGrid(null, renderer.Object, objectWriter.Object);
+            grid = GridTestHelper.CreateGrid(null, builder.Object, objectWriter.Object);
 
             customer = new Customer { Id = 1, Name = "John Doe" };
             grid.DataSource = new[] { customer };
 
-            grid.Columns.Add(new GridColumn<Customer>(c => c.Id));
-            grid.Columns.Add(new GridColumn<Customer>(c => c.Name));
+            grid.Columns.Add(new GridBoundColumn<Customer, int>(grid, c => c.Id));
+            grid.Columns.Add(new GridBoundColumn<Customer, string>(grid, c => c.Name));
         }
 
         [Fact]
         public void Render_should_output_as_many_rows_as_items_in_datasource()
         {
-            renderer.Setup(r => r.RowStart(It.IsAny<GridRowRenderingContext<Customer>>()));
+            builder.Setup(r => r.RowTag(It.IsAny<GridRow<Customer>>())).Returns(() => new HtmlTag("tr"));
 
             grid.Render();
 
-            renderer.Verify(r => r.RowStart(It.IsAny<GridRowRenderingContext<Customer>>()), Times.Exactly(grid.DataSource.Count()));
-        }
-
-        [Fact]
-        public void Render_should_output_the_value_of_the_data_item()
-        {
-            renderer.Setup(r => r.RowCellContent(It.IsAny<GridCellRenderingContext<Customer>>())).Verifiable();
-
-            grid.Render();
-
-            renderer.Verify();
+            builder.Verify(r => r.RowTag(It.IsAny<GridRow<Customer>>()), Times.Exactly(grid.DataSource.Count()));
         }
 
         [Fact]
         public void Render_calls_pager()
         {
-            renderer.Setup(r => r.Pager()).Verifiable();
+            builder.Setup(r => r.PagerTag()).Returns(() => new HtmlTag("div"));
             grid.Paging.Enabled = true;
 
             grid.Render();
 
-            renderer.Verify();
+            builder.Verify(r => r.PagerTag());
         }
 
         [Fact]
         public void Render_calls_page_twice_if_pager_position_set_to_both()
         {
-            renderer.Setup(r => r.Pager());
+            builder.Setup(r => r.PagerTag()).Returns(() => new HtmlTag("div"));
             grid.Paging.Enabled = true;
             grid.Paging.Position = GridPagerPosition.Both;
 
             grid.Render();
 
-            renderer.Verify(r=>r.Pager(), Times.Exactly(2));
+            builder.Verify(r => r.PagerTag(), Times.Exactly(2));
         }
 
         [Fact]
-        public void Render_calls_the_start_and_end_grid()
+        public void Should_start_grid()
         {
-            renderer.Setup(r => r.GridStart()).Verifiable();
-            renderer.Setup(r => r.GridEnd()).Verifiable();
+            builder.Setup(r => r.GridTag()).Returns(new HtmlTag("div"));
 
             grid.Render();
 
-            renderer.VerifyAll();
+            builder.Verify(r => r.GridTag());
         }
 
         [Fact]
         public void Render_calls_start_end_table()
         {
-            renderer.Setup(r => r.TableStart()).Verifiable();
-            renderer.Setup(r => r.TableEnd()).Verifiable();
+            builder.Setup(r => r.TableTag()).Returns(() => new HtmlTag("table"));
 
             grid.Render();
 
-            renderer.VerifyAll();
+            builder.Verify(r => r.TableTag());
         }
 
         [Fact]
         public void Render_calls_start_end_tablehead()
         {
-            renderer.Setup(r => r.HeaderStart()).Verifiable();
-            renderer.Setup(r => r.HeaderEnd()).Verifiable();
+            builder.Setup(r => r.HeadTag(It.IsAny<IHtmlNode>())).Returns(() => new HtmlTag("thead"));
 
             grid.Render();
 
-            renderer.VerifyAll();
+            builder.Verify(r => r.HeadTag(It.IsAny<IHtmlNode>()));
         }
 
         [Fact]
         public void Render_calls_start_end_tablefooter()
         {
-            renderer.Setup(r => r.FooterStart()).Verifiable();
-            renderer.Setup(r => r.FooterEnd()).Verifiable();
+            builder.Setup(r => r.FootTag(It.IsAny<IHtmlNode>())).Returns(() => new HtmlTag("tfoot"));
 
             grid.Paging.Enabled = true;
             grid.Render();
 
-            renderer.VerifyAll();
+            builder.Verify(r => r.FootTag(It.IsAny<IHtmlNode>()));
         }
 
         [Fact]
-        public void Render_calls_start_end_tablehead_row()
+        public void Footer_not_rendered()
         {
-            renderer.Setup(r => r.HeaderRowStart()).Verifiable();
-            renderer.Setup(r => r.HeaderRowEnd()).Verifiable();
-
+            builder.Setup(r => r.FootTag(It.IsAny<IHtmlNode>()));
+            grid.Footer = false;
+            
             grid.Render();
 
-            renderer.VerifyAll();
+            builder.Verify(r => r.FootTag(It.IsAny<IHtmlNode>()), Times.Never());
         }
 
         [Fact]
         public void Render_calls_start_end_head_cell()
         {
-            renderer.Setup(r => r.HeaderCellStart(It.IsAny<GridColumn<Customer>>())).Verifiable();
-            renderer.Setup(r => r.HeaderCellEnd()).Verifiable();
+            builder.Setup(r => r.HeadCellTag(It.IsAny<GridBoundColumn<Customer, int>>())).Returns(new HtmlTag("th"));
 
             grid.Render();
 
-            renderer.VerifyAll();
-        }
-
-        [Fact]
-        public void Render_calls_head_contents()
-        {
-            renderer.Setup(r => r.HeaderCellContent(It.IsAny<GridColumn<Customer>>())).Verifiable();
-            
-            grid.Render();
-            
-            renderer.Verify();
-        }
-
-        [Fact]
-        public void Render_calls_start_end_tablefooter_row()
-        {
-            renderer.Setup(r => r.FooterRowStart()).Verifiable();
-            renderer.Setup(r => r.FooterRowEnd()).Verifiable();
-
-            grid.Paging.Enabled = true;
-            grid.Render();
-
-            renderer.VerifyAll();
-        }
-
-        [Fact]
-        public void Render_calls_start_end_footer_cell()
-        {
-            renderer.Setup(r => r.FooterCellStart()).Verifiable();
-            renderer.Setup(r => r.FooterCellEnd()).Verifiable();
-
-            grid.Paging.Enabled = true;
-            grid.Render();
-
-            renderer.VerifyAll();
+            builder.Verify(r => r.HeadCellTag(It.IsAny<GridBoundColumn<Customer, int>>()));
         }
 
         [Fact]
         public void Render_calls_body_start_end()
         {
-            renderer.Setup(r => r.BodyStart()).Verifiable();
-            renderer.Setup(r => r.BodyEnd()).Verifiable();
+            builder.Setup(r => r.BodyTag(It.IsAny<IHtmlNode>())).Returns(() => new HtmlTag("tbody"));
 
             grid.Render();
 
-            renderer.VerifyAll();
-        }
-
-        [Fact]
-        public void Render_calls_row_start_end()
-        {
-            renderer.Setup(r => r.RowStart(It.IsAny<GridRowRenderingContext<Customer>>())).Verifiable();
-            renderer.Setup(r => r.RowEnd()).Verifiable();
-
-            grid.Render();
-
-            renderer.VerifyAll();
+            builder.Verify(r => r.BodyTag(It.IsAny<IHtmlNode>()));
         }
 
         [Fact]
         public void Render_calls_cell_start_end_contents()
         {
-            renderer.Setup(r => r.RowCellStart(It.IsAny<GridCellRenderingContext<Customer>>())).Verifiable();
-            renderer.Setup(r => r.RowCellContent(It.IsAny<GridCellRenderingContext<Customer>>())).Verifiable();
-            renderer.Setup(r => r.RowCellEnd()).Verifiable();
+            builder.Setup(r => r.CellTag(It.IsAny<GridCell<Customer>>())).Returns(() => new HtmlTag("td"));
 
             grid.Render();
 
-            renderer.VerifyAll();
+            builder.Verify(r => r.CellTag(It.IsAny<GridCell<Customer>>()));
 		}
 
 		[Fact]
@@ -212,11 +174,11 @@
 		{
 			grid.Paging.Enabled = true;
 
-			renderer.Setup(r => r.LoadingIndicator()).Verifiable();
+            builder.Setup(r => r.LoadingIndicatorTag()).Returns(() => new HtmlTag("div"));
 
 			grid.Render();
 
-			renderer.VerifyAll();
+            builder.Verify(r => r.LoadingIndicatorTag());
 		}
 
         [Fact]

@@ -6,6 +6,7 @@
     using Moq;
     using Xunit;
     using System;
+    using System.Collections.Generic;
 
     public class PanelBarBuilderTests
     {
@@ -15,7 +16,7 @@
         public PanelBarBuilderTests()
         {
             Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(TextWriter.Null);
-            panelBar = PanelBarTestHelper.CretePanelBar(writer.Object, null);
+            panelBar = PanelBarTestHelper.CreatePanelbar(writer.Object, null);
             builder = new PanelBarBuilder(panelBar);
         }
 
@@ -102,6 +103,55 @@
             var returnedBuilder = builder.BindTo(viewDataKey);
 
             Assert.IsType(typeof(PanelBarBuilder), returnedBuilder);
+        }
+
+
+        [Fact]
+        public void BintTo_for_IEnumerable_should_create_two_items()
+        {
+            List<TestObject> list = new List<TestObject>
+                                    {
+                                        new TestObject{Text="", Url=""},
+                                        new TestObject{Text="", Url=""}
+                                    };
+
+
+
+            Action<PanelBarItem, TestObject> action = (item, obj) => { if (!string.IsNullOrEmpty(obj.Url)) { item.Url = obj.Url; } };
+            builder.BindTo(list, action);
+
+            Assert.Equal(2, panelBar.Items.Count);
+        }
+
+        [Fact]
+        public void BintTo_for_IEnumerable_should_return_builder()
+        {
+            var returnedBuilder = builder.BindTo(new List<TestObject>(), (item, obj) => { });
+
+            Assert.IsType(typeof(PanelBarBuilder), returnedBuilder);
+        }
+
+        [Fact]
+        public void Bind_for_Heterogene_collection() 
+        {
+            Action<NavigationBindingFactory<PanelBarItem>> actionTestObject =
+            mapper =>
+            {
+                mapper.For<TestObject>(binding =>
+                    binding
+                    .Children(o => o.childObjects)
+                    .ItemDataBound((item, o) => item.Text = o.Text));
+                mapper.For<ChildObject>(binding =>
+                    binding
+                    .Children(o => null)
+                    .ItemDataBound((item, o) => item.Text = o.Text));
+            };
+
+            builder.BindTo(Repository.repository.GetTestObjectsList(),
+                            actionTestObject);
+
+            Assert.Equal(20, panelBar.Items.Count);
+            Assert.Equal(10, panelBar.Items[0].Items.Count);
         }
 
         [Fact]
@@ -193,6 +243,40 @@
             var returnedBuilder = builder.SelectedIndex(value);
 
             Assert.IsType(typeof(PanelBarBuilder), returnedBuilder);
+        }
+
+
+        [Fact]
+        public void ClientEvents_should_set_events_of_the_menu()
+        {
+            Action<PanelBarClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+
+            builder.ClientEvents(clientEventsAction);
+
+            Assert.NotNull(panelBar.ClientEvents.OnLoad);
+        }
+
+        [Fact]
+        public void ClientEvents_should_return_builder()
+        {
+            Action<PanelBarClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+
+            var returnedBuilder = builder.ClientEvents(clientEventsAction);
+
+            Assert.IsType(typeof(PanelBarBuilder), returnedBuilder);
+        }
+
+        [Fact]
+        public void Effects_creates_fx_factory()
+        {
+            var fxFacCreated = false;
+
+            builder.Effects(fx =>
+            {
+                fxFacCreated = fx != null;
+            });
+
+            Assert.True(fxFacCreated);
         }
     }
 }

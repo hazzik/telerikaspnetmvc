@@ -1,4 +1,0 @@
-﻿Populate an alternate field with its own date format whenever a date is selected using the AlternateField and AlternateFieldFormat options. This feature could be used to present a human-friendly date for user selection, while passing a more computer-friendly date through for further processing.<br /><br />
-
-<strong>AlternateField(selector)</strong><br />
-<strong>AlternateFieldFormat(format)</strong>

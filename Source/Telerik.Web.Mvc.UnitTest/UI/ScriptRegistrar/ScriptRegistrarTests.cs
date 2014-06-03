@@ -129,7 +129,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             Assert.Equal(0, _scriptRegistrar.Scripts.IndexOf(_scriptRegistrar.DefaultGroup));
         }
 
-		private void SetupComponent(string assetKey)
+        private void SetupComponent(string assetKey)
 		{
 			Mock<IScriptableComponent> component = new Mock<IScriptableComponent>();
 
@@ -156,7 +156,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
             _scriptRegistrar.Register(component2.Object);
 
-            _assetMerger.Setup(m => m.Merge(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<WebAssetItemCollection>())).Returns(new List<string> { "/Scripts/site.js", "/Scripts/component1.js" });
+            _assetMerger.Setup(m => m.Merge(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<WebAssetItemCollection>())).Returns(new List<string> { "/Scripts/site.js", "/Scripts/component1.js" });
 
             _scriptRegistrar.OnDocumentReadyActions.Add(delegate { });
             _scriptRegistrar.OnWindowUnloadActions.Add(delegate { });

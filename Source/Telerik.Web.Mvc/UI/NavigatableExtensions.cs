@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -6,6 +6,10 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Collections.Generic;
+    using System.Reflection;
+    using Telerik.Web.Mvc.Resources;
+    using System;
+    using System.Linq.Expressions;
     using System.Linq;
     using System.Web.Mvc;
     using System.Web.Routing;
@@ -44,6 +48,60 @@ namespace Telerik.Web.Mvc.UI
             navigatable.ControllerName = controllerName;
             navigatable.ActionName = actionName;
             navigatable.SetRouteValues(routeValues);
+        }
+
+        public static void Action<TController>(this INavigatable item, Expression<Action<TController>> controllerAction) where TController : Controller
+        {
+            MethodCallExpression call = (MethodCallExpression)controllerAction.Body;
+
+            string controllerName = typeof(TController).Name;
+
+            if (!controllerName.EndsWith("Controller", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException(TextResource.ControllerNameMustEndWithController, "controllerAction");
+            }
+
+            controllerName = controllerName.Substring(0, controllerName.Length - "Controller".Length);
+
+            if (controllerName.Length == 0)
+            {
+                throw new ArgumentException(TextResource.CannotRouteToClassNamedController, "controllerAction");
+            }
+
+            if (call.Method.IsDefined(typeof(NonActionAttribute), false))
+            {
+                throw new ArgumentException(TextResource.TheSpecifiedMethodIsNotAnActionMethod, "controllerAction");
+            }
+
+            string actionName = call.Method.GetCustomAttributes(typeof(ActionNameAttribute), false)
+                                           .OfType<ActionNameAttribute>()
+                                           .Select(attribute => attribute.Name)
+                                           .FirstOrDefault() ?? call.Method.Name;
+
+            item.ControllerName = controllerName;
+            item.ActionName = actionName;
+
+            ParameterInfo[] parameters = call.Method.GetParameters();
+
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                Expression arg = call.Arguments[i];
+                object value;
+                ConstantExpression ce = arg as ConstantExpression;
+
+                if (ce != null)
+                {
+                    value = ce.Value;
+                }
+                else
+                {
+                    Expression<Func<object>> lambdaExpression = Expression.Lambda<Func<object>>(Expression.Convert(arg, typeof(object)));
+                    Func<object> func = lambdaExpression.Compile();
+                    value = func();
+                }
+
+                item.RouteValues.Add(parameters[i].Name, value);
+            }
         }
 
         /// <summary>
@@ -103,15 +161,10 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="navigatable">The <see cref="INavigatable"/> object.</param>
         /// <param name="viewContext">The <see cref="ViewContext"/> object</param>
         /// <param name="urlGenerator">The <see cref="IUrlGenerator"/> generator.</param>
-        /// <param name="routeValues">The route values as <see cref="RouteValueDictionary"/>.</param>
         public static string GenerateUrl(this INavigatable navigatable, ViewContext viewContext, IUrlGenerator urlGenerator, RouteValueDictionary routeValues)
         {
-            string url = urlGenerator.Generate(viewContext.RequestContext, navigatable) ??
-                         new UrlHelper(viewContext.RequestContext).RouteUrl(routeValues);
-
-            return url;
+            return urlGenerator.Generate(viewContext.RequestContext, navigatable, routeValues);
         }
-
         /// <summary>
         /// Verify whether the <see cref="INavigatable"/> object is accessible.
         /// </summary>

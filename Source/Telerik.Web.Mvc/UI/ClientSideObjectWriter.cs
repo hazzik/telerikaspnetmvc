@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -103,6 +103,25 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Appends the specified name and nullable value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter AppendNullableString(string name, string value)
+        {
+
+            if (!string.IsNullOrEmpty(name) && value != null)
+            {
+                string formattedValue = QuoteString(value);
+
+                Append("{0}:'{1}'".FormatWith(name, formattedValue));
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Appends the specified name and value to the end of this instance.
         /// </summary>
         /// <param name="name">The name.</param>
@@ -155,6 +174,70 @@ namespace Telerik.Web.Mvc.UI
         /// Appends the specified name and value to the end of this instance.
         /// </summary>
         /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter Append(string name, double value) 
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                Append("{0}:'{1}'".FormatWith(name, value));
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter Append(string name, double? value) 
+        {
+            if (value.HasValue)
+            {
+                Append(name, value.Value);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter Append(string name, decimal value) 
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                Append("{0}:'{1}'".FormatWith(name, value));
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter Append(string name, decimal? value) 
+        {
+            if (value.HasValue)
+            {
+                Append(name, value.Value);
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <returns></returns>
         public IClientSideObjectWriter Append(string name, bool value)
@@ -185,6 +268,120 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Appends the specified name and only the date of the passed <seealso cref="DateTime"/>.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter AppendDateOnly(string name, DateTime value)
+        {
+            if (!string.IsNullOrEmpty(name) && (value != DateTime.MinValue))
+            {
+                string dateValue = "new $.telerik.datetime({0},{1},{2})".FormatWith(value.Year.ToString("0000", Culture.Invariant), (value.Month - 1).ToString("00", Culture.Invariant), value.Day.ToString("00", Culture.Invariant));
+
+                Append("{0}:{1}".FormatWith(name, dateValue));
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and only the date of the passed <seealso cref="DateTime"/>.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter AppendDateOnly(string name, DateTime? value)
+        {
+            if (!string.IsNullOrEmpty(name) && (value != null && value != DateTime.MinValue))
+            {
+                string dateValue = "new $.telerik.datetime({0},{1},{2})".FormatWith(value.Value.Year.ToString("0000", Culture.Invariant), (value.Value.Month - 1).ToString("00", Culture.Invariant), value.Value.Day.ToString("00", Culture.Invariant));
+
+                Append("{0}:{1}".FormatWith(name, dateValue));
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Appends the specified name and only the date of the passed <seealso cref="IEnumerable<DateTime>"/>.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public IClientSideObjectWriter AppendDatesOnly(string name, IEnumerable<DateTime> collection)
+        {
+            if (collection.Count() > 0)
+            {
+                List<DateTime> dates = collection.ToList();
+                dates.Sort();
+
+                StringBuilder builder = new StringBuilder();
+
+                int year = -1;
+                int month = -1;
+                bool yearAppended = false;
+                bool monthAppended = false;
+                
+                foreach (DateTime date in dates) 
+                {
+                    if (year != date.Year)
+                    {
+                        if (yearAppended)
+                        {
+                            if (monthAppended) 
+                            {
+                                builder.Append("]");
+                            }
+                            builder.Append("}");
+                            builder.Append(",");
+                            yearAppended = false;
+                        }
+                        builder.Append("'");
+                        builder.Append(date.Year);
+                        builder.Append("':{");
+
+                        monthAppended = false;
+                    }
+                    if (month != date.Month)
+                    {
+                        if (monthAppended)
+                        {
+                            builder.Append("]");
+                            builder.Append(",");
+                            monthAppended = false;
+                        }
+                        builder.Append("'");
+                        builder.Append(date.Month - 1);
+                        builder.Append("':[");
+                    }
+
+                    if (year == date.Year && month == date.Month)
+                    {
+                        builder.Append(",");
+                    }
+                    builder.Append(date.Day);
+
+                    if (month != date.Month)
+                    {
+                        month = date.Month;
+                        monthAppended = true;
+                    }
+
+                    if (year != date.Year)
+                    {
+                        year = date.Year;
+                        yearAppended = true;
+                    }
+                }
+                builder.Append("]}");
+                Append("{0}:{{{1}}}".FormatWith(name, builder.ToString()));
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Appends the specified name and value to the end of this instance.
         /// </summary>
         /// <param name="name">The name.</param>
@@ -194,7 +391,7 @@ namespace Telerik.Web.Mvc.UI
         {
             if (!string.IsNullOrEmpty(name) && (value != DateTime.MinValue))
             {
-                string dateValue = "new Date({0},{1},{2},{3},{4},{5},{6})".FormatWith(value.Year.ToString("0000", Culture.Invariant), (value.Month - 1).ToString("00", Culture.Invariant), value.Day.ToString("00", Culture.Invariant), value.Hour.ToString("00", Culture.Invariant), value.Minute.ToString("00", Culture.Invariant), value.Second.ToString("00", Culture.Invariant), value.Millisecond.ToString("000", Culture.Invariant));
+                string dateValue = "new $.telerik.datetime({0},{1},{2},{3},{4},{5},{6})".FormatWith(value.Year.ToString("0000", Culture.Invariant), (value.Month - 1).ToString("00", Culture.Invariant), value.Day.ToString("00", Culture.Invariant), value.Hour.ToString("00", Culture.Invariant), value.Minute.ToString("00", Culture.Invariant), value.Second.ToString("00", Culture.Invariant), value.Millisecond.ToString("000", Culture.Invariant));
 
                 Append("{0}:{1}".FormatWith(name, dateValue));
             }

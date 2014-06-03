@@ -14,7 +14,7 @@ namespace Telerik.Web.Mvc.Examples
         {
             IEnumerable<Order> data = GetData(new GridCommand());
 
-            //Required for pager configuration
+            // Required for pager configuration
             ViewData["total"] = GetCount();
 
             return View(data);
@@ -25,11 +25,10 @@ namespace Telerik.Web.Mvc.Examples
         {
             IEnumerable<Order> data = GetData(command);
 
-            var dataContext = new NorthwindDataContext();
             return View(new GridModel
                             {
                                 Data = data,
-                                Total = dataContext.Orders.Count()
+                                Total = data.Count()
                             });
         }
 
@@ -39,13 +38,19 @@ namespace Telerik.Web.Mvc.Examples
             loadOptions.LoadWith<Order>(o => o.Customer);
 
             var dataContext = new NorthwindDataContext
-                                  {
-                                      LoadOptions = loadOptions
-                                  };
+            {
+                LoadOptions = loadOptions
+            };
 
             IQueryable<Order> data = dataContext.Orders;
 
-            //Apply sorting
+            //Apply filtering
+            if (command.FilterDescriptors.Any())
+            {
+                data = data.Where(ExpressionBuilder.Expression<Order>(command.FilterDescriptors));
+            }
+
+            // Apply sorting
             foreach (SortDescriptor sortDescriptor in command.SortDescriptors)
             {
                 if (sortDescriptor.SortDirection == ListSortDirection.Ascending)
@@ -53,7 +58,7 @@ namespace Telerik.Web.Mvc.Examples
                     switch (sortDescriptor.Member)
                     {
                         case "OrderID":
-                            data = data.OrderBy(order => order.OrderID);
+                            data = data.OrderBy(ExpressionBuilder.Expression<Order, int>(sortDescriptor.Member));
                             break;
                         case "Customer.ContactName":
                             data = data.OrderBy(order => order.Customer.ContactName);
@@ -85,12 +90,12 @@ namespace Telerik.Web.Mvc.Examples
                     }
                 }
             }
+            
 
-            //Then paging
-
+            // ... and paging
             if (command.PageSize > 0)
             {
-                data = data.Skip((command.Page - 1)*command.PageSize);
+                data = data.Skip((command.Page - 1) * command.PageSize);
             }
 
             data = data.Take(command.PageSize);

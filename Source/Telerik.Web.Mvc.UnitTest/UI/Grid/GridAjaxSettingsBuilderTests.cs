@@ -1,5 +1,4 @@
-﻿
-namespace Telerik.Web.Mvc.UI
+﻿namespace Telerik.Web.Mvc.UI.Fluent
 {
     using Xunit;
     
@@ -8,7 +7,7 @@ namespace Telerik.Web.Mvc.UI
         [Fact]
         public void Enabled_sets_the_enabled_property()
         {
-            GridAjaxSettings settings = new GridAjaxSettings();
+            GridBindingSettings settings = new GridBindingSettings();
             GridAjaxSettingsBuilder builder = new GridAjaxSettingsBuilder(settings);
             builder.Enabled(true);
 

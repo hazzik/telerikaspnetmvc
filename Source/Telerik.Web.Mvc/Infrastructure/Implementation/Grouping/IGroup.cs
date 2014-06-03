@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Web.Script.Serialization;
     /// <summary>
     /// Represents an item that is created after grouping.
     /// </summary>

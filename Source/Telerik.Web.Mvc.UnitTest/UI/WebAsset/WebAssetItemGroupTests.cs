@@ -8,6 +8,8 @@ namespace Telerik.Web.Mvc.UI.UnitTest
     using System;
 
     using Xunit;
+    using Moq;
+    using Telerik.Web.Mvc.Infrastructure;
 
     public class WebAssetItemGroupTests
     {
@@ -15,6 +17,11 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
         public WebAssetItemGroupTests()
         {
+            var servicLocator = new Mock
+                <IServiceLocator>();
+            servicLocator.Setup(l => l.Resolve<IConfigurationManager>()).Returns(new Mock<IConfigurationManager>().Object);
+
+            ServiceLocator.SetCurrent(() => servicLocator.Object);
             _assetItemGroup = new WebAssetItemGroup("Dummy", false) { DefaultPath = WebAssetDefaultSettings.ScriptFilesPath };
         }
 

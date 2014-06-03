@@ -40,7 +40,7 @@ namespace Telerik.Web.Mvc.UnitTest
             _compressor = new Mock<IHttpResponseCompressor>();
             _cacher = new Mock<IHttpResponseCacher>();
             _urlGenerator = new Mock<IUrlGenerator>();
-            _httpContext = TestHelper.CreateMockedHttpContext();
+            _httpContext = TestHelper.CreateMockedHttpContext(true);
 
             _handler = new SiteMapHandler(_siteMaps, _compressor.Object, _cacher.Object, _urlGenerator.Object);
         }

@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -12,12 +12,15 @@ namespace Telerik.Web.Mvc.Extensions
     using System.Text;
 
     using Infrastructure;
+    using System.Text.RegularExpressions;
 
     /// <summary>
     /// Contains the extension methods of <see cref="string"/>.
     /// </summary>
     public static class StringExtensions
     {
+        private static readonly Regex NameExpression = new Regex("([A-Z]+(?=$|[A-Z][a-z])|[A-Z]?[a-z]+)", RegexOptions.Compiled);
+
         /// <summary>
         /// Replaces the format item in a specified System.String with the text equivalent of the value of a corresponding System.Object instance in a specified array.
         /// </summary>
@@ -28,6 +31,11 @@ namespace Telerik.Web.Mvc.Extensions
         public static string FormatWith(this string instance, params object[] args)
         {
             return string.Format(Culture.Current, instance, args);
+        }
+
+        public static bool HasValue(this string value)
+        {
+            return !string.IsNullOrEmpty(value);
         }
 
         /// <summary>
@@ -56,6 +64,18 @@ namespace Telerik.Web.Mvc.Extensions
         public static bool IsCaseInsensitiveEqual(this string instance, string comparing)
         {
             return string.Compare(instance, comparing, StringComparison.OrdinalIgnoreCase) == 0;
+        }
+
+        /// <summary>
+        /// Determines whether this instance is null or empty string.
+        /// </summary>
+        /// <param name="instance">The string to check its value.</param>
+        /// <returns>
+        /// <c>true</c> if the value is null or empty string; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsNullOrEmpty(this string instance) 
+        {
+            return string.IsNullOrEmpty(instance);
         }
 
         /// <summary>
@@ -137,6 +157,23 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return convertedValue;
+        }
+
+        public static string AsTitle(this string value)
+        {
+            int lastIndex = value.LastIndexOf(".", StringComparison.Ordinal);
+
+            if (lastIndex > -1)
+            {
+                value = value.Substring(lastIndex + 1);
+            }
+
+            return value.SplitPascalCase();
+        }
+
+        public static string SplitPascalCase(this string value)
+        {
+            return NameExpression.Replace(value, " $1").Trim();
         }
     }
 }

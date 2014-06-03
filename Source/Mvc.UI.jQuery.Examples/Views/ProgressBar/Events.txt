@@ -1,2 +1,0 @@
-﻿<strong>Change</strong><br/>
-This event is triggered when the value of the progressbar changes.

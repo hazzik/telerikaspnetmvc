@@ -14,6 +14,12 @@ using System.Security;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("2009.3.1104")]
-[assembly: AssemblyFileVersion("2009.3.1104")]
+#if MVC1
+[assembly: AssemblyVersion("2010.1.309.135")]
+[assembly: AssemblyFileVersion("2010.1.309.135")]
+#endif
+#if MVC2
+[assembly: AssemblyVersion("2010.1.309.235")]
+[assembly: AssemblyFileVersion("2010.1.309.235")]
+#endif
 [assembly: AllowPartiallyTrustedCallers]

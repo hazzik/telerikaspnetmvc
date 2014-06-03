@@ -5,7 +5,7 @@
         Binding</h2>
     <%= Html.Telerik().Grid(Model)
             .Name("Grid1")
-            .Columns(columns =>columns.Add(c => c.Name))
+            .Columns(columns =>columns.Bound(c => c.Name))
             .Ajax(settings => { })
             .Pageable(pager => pager.PageSize(10))
     %>
@@ -13,8 +13,8 @@
             .Name("Grid2")
             .Columns(columns =>
             {
-                columns.Add(c => c.Name);
-                columns.Add(c => c.Name);
+                columns.Bound(c => c.Name).HtmlAttributes(new { dir="rtl" });
+                columns.Bound(c => c.Name);
             })
             .Ajax(settings => { })
             .Pageable(pager => pager.PageSize(10))
@@ -36,7 +36,7 @@
 
         function test_should_removes_rows_when_data_length_is_less_than_page_size() {
             var grid = getGrid();
-            grid.bindTo([{}, {}]);
+            grid.dataBind([{}, {}]);
 
             assertEquals(2, $("tbody tr", grid.element).length);
         }
@@ -44,14 +44,14 @@
         function test_should_create_rows_up_to_page_size_when_they_dont_exist() {
             var grid = getGrid();
             $("tbody tr", grid.element).remove();
-            grid.bindTo([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
+            grid.dataBind([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
             assertEquals(10, $("tbody tr", grid.element).length);
         }
         
         function test_should_bind_columns_with_same_name() {
             var grid = getGrid("#Grid2");
-            
-            grid.bindTo([ { Name: "Test" } ]);
+
+            grid.dataBind([{ Name: "Test"}]);
             
             assertEquals("Test", $("tbody tr td:last", grid.element).html());
             assertEquals("Test", $("tbody tr:last td:first", grid.element).html());
@@ -61,11 +61,23 @@
         function test_should_apply_alt_style() {
             var grid = getGrid();
             $("tbody tr", grid.element).remove();
-            grid.bindTo([{}, {}]);
+            grid.dataBind([{}, {}]);
             assertEquals(2, $("tbody tr", grid.element).length);
             assertEquals("t-alt", $("tbody tr:nth-child(2)", grid.element).attr("class"));
         }
         
+        function test_should_serialize_attributes() {
+            var grid = getGrid("#Grid2");
+            
+            assertEquals(' dir="rtl"', grid.columns[0].attr);
+        }
+        
+        function test_should_apply_column_html_attributes() {
+            var grid = getGrid('#Grid2');
+            $('tbody tr', grid.element).remove();
+            grid.dataBind([{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}]);
+            assertEquals('rtl', $('#Grid2 tbody tr:first td:first').attr('dir'));
+        }
     </script>
 
 </asp:Content>

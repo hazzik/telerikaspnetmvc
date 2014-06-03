@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
     using Xunit;
     using System.IO;
     using System.Web.UI;
+    using System.Collections.Generic;
 
     public class TabStripBuilderTests
     {
@@ -20,7 +21,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             Mock<TextWriter> textWriter = new Mock<TextWriter>();
             Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(textWriter.Object);
 
-            _tabStrip = TabStripTestHelper.CreteTabStrip(writer.Object, null);
+            _tabStrip = TabStripTestHelper.CreateTabStrip(writer.Object, null);
             _builder = new TabStripBuilder(_tabStrip);
         }
 
@@ -87,6 +88,30 @@ namespace Telerik.Web.Mvc.UI.UnitTest
             Assert.IsType(typeof(TabStripBuilder), returnedBuilder);
         }
 
+        [Fact]
+        public void BintTo_for_IEnumerable_should_create_two_items()
+        {
+            List<TestObject> list = new List<TestObject>
+                                    {
+                                        new TestObject{Text="", Url=""},
+                                        new TestObject{Text="", Url=""}
+                                    };
+
+
+
+            Action<TabStripItem, TestObject> action = (item, obj) => { if (!string.IsNullOrEmpty(obj.Url)) { item.Url = obj.Url; } };
+            _builder.BindTo(list, action);
+
+            Assert.Equal(2, _tabStrip.Items.Count);
+        }
+
+        [Fact]
+        public void BintTo_for_IEnumerable_should_return_builder()
+        {
+            var returnedBuilder = _builder.BindTo(new List<TestObject>(), (item, obj) => { });
+
+            Assert.IsType(typeof(TabStripBuilder), returnedBuilder);
+        }
 
         [Fact]
         public void ItemAction_should_set_ItemAction_property_of_panelBar()
@@ -140,6 +165,40 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         {
             const bool value = true;
             var returnedBuilder = _builder.HighlightPath(value);
+
+            Assert.IsType(typeof(TabStripBuilder), returnedBuilder);
+        }
+
+        [Fact]
+        public void Effects_creates_fx_factory()
+        {
+            var fxFacCreated = false;
+
+            _builder.Effects(fx =>
+            {
+                fxFacCreated = fx != null;
+            });
+
+            Assert.True(fxFacCreated);
+        }
+
+
+        [Fact]
+        public void ClientEvents_should_set_events_of_the_tabstrip()
+        {
+            Action<TabStripClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+
+            _builder.ClientEvents(clientEventsAction);
+
+            Assert.NotNull(_tabStrip.ClientEvents.OnLoad);
+        }
+
+        [Fact]
+        public void ClientEvents_should_return_builder()
+        {
+            Action<TabStripClientEventsBuilder> clientEventsAction = eventBuilder => { eventBuilder.OnLoad("Load"); };
+
+            var returnedBuilder = _builder.ClientEvents(clientEventsAction);
 
             Assert.IsType(typeof(TabStripBuilder), returnedBuilder);
         }

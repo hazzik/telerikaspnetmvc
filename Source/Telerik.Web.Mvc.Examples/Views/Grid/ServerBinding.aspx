@@ -5,15 +5,16 @@
         .Name("Grid")
         .Columns(columns =>
 		{
-			columns.Add(o => o.OrderID).Width(100);
-			columns.Add(o => o.Customer.ContactName).Width(200);
-			columns.Add(o => o.ShipAddress);
-			columns.Add(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(120);
+			columns.Bound(o => o.OrderID).Width(100);
+            columns.Bound(o => o.Customer.ContactName).Width(200);
+            columns.Bound(o => o.ShipAddress);
+            columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(120);
         })
+        .Groupable()
         .Pageable()
         .Sortable()
         .Filterable()
 %>
 </asp:Content>
 
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Server Binding</asp:Content>
+

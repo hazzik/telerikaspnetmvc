@@ -1,4 +1,4 @@
-﻿// (c) Copyright 2002-2009 Telerik 
+﻿// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
 
     using Infrastructure;
+    using System.Collections;
 
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="PanelBar"/> component.
@@ -104,9 +105,9 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(viewDataKey, "viewDataKey");
 
-            Component.isBindToSiteMap = true;
+            Component.isBoundToSiteMap = true;
 
-            Component.BindTo(viewDataKey, Component.ViewContext, siteMapAction);
+            Component.BindTo(viewDataKey, siteMapAction);
 
             return this;
         }
@@ -127,9 +128,9 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(viewDataKey, "viewDataKey");
 
-            Component.isBindToSiteMap = true;
+            Component.isBoundToSiteMap = true;
 
-            Component.BindTo(viewDataKey, Component.ViewContext);
+            Component.BindTo(viewDataKey);
 
             return this;
         }
@@ -160,6 +161,37 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Binds the panelbar to a list of objects. The panelbar will create a hierarchy of items using the specified mappings.
+        /// </summary>
+        /// <typeparam name="T">The type of the data item</typeparam>
+        /// <param name="dataSource">The data source.</param>
+        /// <param name="factoryAction">The action which will configure the mappings</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().PanelBar()
+        ///             .Name("PanelBar")
+        ///             .BindTo(Model, mapping => mapping
+        ///                     .For&lt;Customer&gt;(binding => binding
+        ///                         .Children(c => c.Orders) // The "child" items will be bound to the the "Orders" property
+        ///                         .ItemDataBound((item, c) => item.Text = c.ContactName) // Map "Customer" properties to PanelBarItem properties
+        ///                     )
+        ///                     .For&lt;Order&lt;(binding => binding
+        ///                         .Children(o => null) // "Orders" do not have child objects so return "null"
+        ///                         .ItemDataBound((item, o) => item.Text = o.OrderID.ToString()) // Map "Order" properties to PanelBarItem properties
+        ///                     )
+        ///             ) 
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public PanelBarBuilder BindTo(IEnumerable dataSource, Action<NavigationBindingFactory<PanelBarItem>> factoryAction)
+        {
+            Guard.IsNotNull(factoryAction, "factoryAction");
+            Component.BindTo(dataSource, factoryAction);
+
+            return this;
+        }
+
+        /// <summary>
         /// Configures the effects of the panelbar.
         /// </summary>
         /// <param name="effectsAction">The action which configures the effects.</param>
@@ -169,20 +201,20 @@ namespace Telerik.Web.Mvc.UI
         ///	           .Name("PanelBar")
         ///	           .Effects(fx =>
         ///	           {
-        ///		            fx.Height(properties => properties
-        ///					    .OpenDuration(AnimationDuration.Normal)
-        ///					    .CloseDuration(AnimationDuration.Normal))
-        ///			          .Opacity(properties => properties
-        ///					    .OpenDuration(AnimationDuration.Normal)
-        ///					    .CloseDuration(AnimationDuration.Normal));
+        ///		            fx.Height()
+        ///			          .Opacity()
+        ///					  .OpenDuration(AnimationDuration.Normal)
+        ///					  .CloseDuration(AnimationDuration.Normal);
         ///	           })
         /// </code>
         /// </example>
-        public PanelBarBuilder Effects(Action<EffectFactory> addEffects)
+        public PanelBarBuilder Effects(Action<EffectsBuilder> addEffects)
         {
             Guard.IsNotNull(addEffects, "addAction");
 
-            addEffects(new EffectFactory(Component));
+            EffectsBuilderFactory factory = new EffectsBuilderFactory();
+
+            addEffects(factory.Create(Component.Effects));
 
             return this;
         }

@@ -1,4 +1,5 @@
-// (c) Copyright 2002-2009 Telerik 
+using Telerik.Web.Mvc.Infrastructure;
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -16,13 +17,15 @@ namespace Telerik.Web.Mvc.UI
     using Infrastructure;
     using Telerik.Web.Mvc.Resources;
 
-    public class Menu : ViewComponentBase, INavigationItemContainer<MenuItem>, IEffectEnabled
+    public class Menu : ViewComponentBase, INavigationItemComponent<MenuItem>, IEffectEnabled
     {
         private readonly IList<IEffect> defaultEffects = new List<IEffect> { new SlideAnimation() };
 
-        private readonly IMenuRendererFactory rendererFactory;
+        private readonly IMenuHtmlBuilderFactory rendererFactory;
+        internal bool isPathHighlighted;
 
-        public Menu(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator, INavigationItemAuthorization authorization, IMenuRendererFactory factory) : base(viewContext, clientSideObjectWriterFactory)
+        public Menu(ViewContext viewContext, IClientSideObjectWriterFactory clientSideObjectWriterFactory, IUrlGenerator urlGenerator, INavigationItemAuthorization authorization, IMenuHtmlBuilderFactory factory)
+            : base(viewContext, clientSideObjectWriterFactory)
         {
             Guard.IsNotNull(urlGenerator, "urlGenerator");
             Guard.IsNotNull(authorization, "authorization");
@@ -36,9 +39,8 @@ namespace Telerik.Web.Mvc.UI
 
             ScriptFileNames.AddRange(new[] { "telerik.common.js", "telerik.menu.js" });
 
-            Effects = new List<IEffect>(defaultEffects.Count);
-
-            defaultEffects.Each(el => Effects.Add(el));
+            this.Effects = new Effects();
+            defaultEffects.Each(el => Effects.Container.Add(el));
 
             Items = new LinkedObjectCollection<MenuItem>(null);
 
@@ -82,10 +84,10 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
-        public IList<IEffect> Effects
+        public Effects Effects
         {
             get;
-            private set;
+            set;
         }
 
         public IList<MenuItem> Items
@@ -119,13 +121,9 @@ namespace Telerik.Web.Mvc.UI
             objectWriter.Start()
                         .Append("orientation", Orientation, MenuOrientation.Horizontal);
 
-            if (!defaultEffects.SequenceEqual(Effects))
+            if (!defaultEffects.SequenceEqual(Effects.Container))
             {
-                var effectSerialization = new List<string>();
-
-                Effects.Each(e => effectSerialization.Add(e.Serialize()));
-
-                objectWriter.Append("effects:[{0}]".FormatWith(String.Join(",", effectSerialization.ToArray())));
+                objectWriter.Serialize("effects", Effects);
             }
 
             if (OpenOnClick)
@@ -149,83 +147,83 @@ namespace Telerik.Web.Mvc.UI
 
             if (!Items.IsEmpty())
             {
-                IMenuRenderer renderer = rendererFactory.Create(this, writer);
-
-                int itemIndex = 0;
-                bool isPathHighlighted = false;
-
                 if (SelectedIndex != -1 && Items.Count < SelectedIndex)
                 {
                     throw new ArgumentOutOfRangeException(TextResource.IndexOutOfRange);
                 }
 
-                renderer.MenuStart();
-
                 if (HighlightPath)
                 {
-                    isPathHighlighted = this.HighlightItem(ViewContext);
+                    Items.Each(HighlightSelectedItem);
                 }
 
-                Items.Each(item =>
-                {
-                    if (!isPathHighlighted)
-                    {
-                        if (itemIndex == this.SelectedIndex)
-                        {
-                            item.Selected = true;
-                        }
-                        itemIndex++;
-                    }
+                IMenuHtmlBuilder builder = rendererFactory.Create(this);
 
-                    WriteItem(item, renderer);
-                });
+                IHtmlNode menuTag = builder.MenuTag();
 
-                renderer.MenuEnd();
+                Items.Each(item => WriteItem(item, menuTag, builder));
+
+                menuTag.WriteTo(writer);
             }
-
+            
             base.WriteHtml(writer);
         }
 
-        private void WriteItem(MenuItem item, IMenuRenderer renderer)
+        private void WriteItem(MenuItem item, IHtmlNode parentTag, IMenuHtmlBuilder builder)
         {
+            if (ItemAction != null)
+            {
+                ItemAction(item);
+            }
+
             if (item.Visible && item.IsAccessible(Authorization, ViewContext))
             {
-                if (ItemAction != null)
+                IHtmlNode itemTag = builder.ItemTag(item).AppendTo(parentTag);
+
+                builder.ItemInnerContentTag(item).AppendTo(itemTag);
+
+                if (item.Content != null)
                 {
-                    ItemAction(item);
+                    builder.ItemContentTag(item).AppendTo(itemTag);
                 }
+                else if (!item.Items.IsEmpty() && item.Items.IsAccessible(Authorization, ViewContext))
+                {
+                    IHtmlNode ul = builder.ChildrenTag().AppendTo(itemTag);
 
-                item.Url = item.GenerateUrl(ViewContext, UrlGenerator) ?? "#";
-
-                renderer.ItemStart(item);
-
-                renderer.Link(item);
-
-                WriteContent(item, renderer);
-
-                renderer.ItemEnd();
+                    item.Items.Each(child => WriteItem(child, ul, builder));
+                }
             }
         }
 
-        private void WriteContent(MenuItem item, IMenuRenderer renderer)
+        private void HighlightSelectedItem(MenuItem item)
         {
-            if (item.Content != null)
-            {
-                item.HtmlAttributes.Clear();
-                renderer.GroupStart();
-                renderer.ItemStart(item);
-                renderer.WriteContent(item);
-                renderer.ItemEnd();
-                renderer.GroupEnd();
-            }
-            else if (!item.Items.IsEmpty() && item.Items.IsAccessible(Authorization, ViewContext))
-            {
-                renderer.GroupStart();
+            string controllerName = ViewContext.RouteData.Values["controller"] as string ?? string.Empty;
+            string actionName = ViewContext.RouteData.Values["action"] as string ?? string.Empty;
 
-                item.Items.Each(subitem => WriteItem(subitem, renderer));
+            var urlHelper = new UrlHelper(ViewContext.RequestContext);
+            var menuItemUrl = item.GenerateUrl(ViewContext, UrlGenerator);
+            var currentUrl = urlHelper.Action(actionName, controllerName);
 
-                renderer.GroupEnd();
+            if (!currentUrl.IsNullOrEmpty() && menuItemUrl.IsCaseInsensitiveEqual(currentUrl))
+            {
+                isPathHighlighted = true;
+
+                item.Selected = item.Parent != null;
+
+                MenuItem tmpItem = item;
+                do
+                {
+                    if (!tmpItem.Selected)
+                    {
+                        tmpItem.HtmlAttributes.Add("class", "t-highlighted");
+                    }
+                    tmpItem = tmpItem.Parent;
+                }
+                while (tmpItem != null);
+
+                return;
             }
+            item.Items.Each(HighlightSelectedItem);
         }
     }
 }

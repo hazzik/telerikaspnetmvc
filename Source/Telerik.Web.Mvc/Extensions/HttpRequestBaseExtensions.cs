@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -29,6 +29,21 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return applicationPath;
+        }
+
+        /// <summary>
+        /// Determines whether this instance can compress the specified instance.
+        /// </summary>
+        /// <param name="instance">The instance.</param>
+        /// <returns>
+        /// 	<c>true</c> if this instance can compress the specified instance; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool CanCompress(this HttpRequestBase instance)
+        {
+            string encoding = (instance.Headers["Accept-Encoding"] ?? string.Empty).ToUpperInvariant();
+            bool ie6 = (instance.Browser.MajorVersion < 7) && instance.Browser.IsBrowser("IE");
+
+            return !ie6 && (encoding.Contains("GZIP") || encoding.Contains("DEFLATE"));
         }
     }
 }

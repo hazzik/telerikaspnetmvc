@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -141,9 +141,12 @@ namespace Telerik.Web.Mvc.UI
         {
             IList<string> mergedList = new List<string>();
 
+            bool isSecured = ViewContext.HttpContext.Request.IsSecureConnection;
+            bool canCompress = ViewContext.HttpContext.Request.CanCompress();
+
             Action<WebAssetItemCollection> append = assets =>
                                                     {
-                                                        IList<string> result = AssetMerger.Merge("text/css", AssetHandlerPath, assets);
+                                                        IList<string> result = AssetMerger.Merge("text/css", AssetHandlerPath, isSecured, canCompress, assets);
 
                                                         if (!result.IsNullOrEmpty())
                                                         {

@@ -1,3 +1,0 @@
-﻿Customize the header icons with the HeaderIcon option, which accepts classes for the header's default and selected (open) state. Use any class from the UI CSS framework, or create custom classes with background images.<br /><br />
-
-<strong>HeaderIcon("CssClass")</strong>

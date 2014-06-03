@@ -1,6 +1,6 @@
 ﻿<p>
-    This example shows how Telerik Grid for ASP.NET MVC is using server (HTTP GET) requests for paging, sorting
-    and filtering. This operation mode is referred to as "Server binding". This is the default mode and does not
+    This example shows how Telerik Grid for ASP.NET MVC is using server (HTTP GET) requests for paging, sorting,
+    filtering and grouping. This operation mode is referred to as "Server binding". This is the default mode and does not
     require any configuration. All the required data is submitted in the query string. In order to support
     multiple grids on the same page the Grid is adding prefixes before the query string parameters. Here is how a typical URL
     looks like (assuming that the Name of the grid is "OrdersGrid"): http://www.example.com/ServerBinding?OrdersGrid-page=1&OrdersGrid-orderBy=OrderID-asc&OrdersGrid-filter=OrderID~gt~10258
@@ -14,10 +14,10 @@
         <em>.PrefixUrlParameters(false)</em>
         .Columns(columns =>
         {
-            columns.Add(o => o.OrderID).Width(81);
-            columns.Add(o => o.Customer.ContactName).Width(200);
-            columns.Add(o => o.ShipAddress);
-            columns.Add(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
+            columns.Bound(o => o.OrderID).Width(81);
+            columns.Bound(o => o.Customer.ContactName).Width(200);
+            columns.Bound(o => o.ShipAddress);
+            columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
         })
         .Pageable()
         .Sortable()

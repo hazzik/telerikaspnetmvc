@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+﻿// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -6,8 +6,8 @@
 namespace Telerik.Web.Mvc.UI
 {
     using System.Collections;
-    using System.Collections.Generic;
     using System.Web.Mvc;
+    using System.Collections.Generic;
 
     public interface IGridBindingContext
     {
@@ -31,7 +31,22 @@ namespace Telerik.Web.Mvc.UI
             get;
         }
 
-        IDictionary<string, ValueProviderResult> ValueProvider
+        ControllerBase Controller
+        {
+            get;
+        }
+
+        IList<GroupDescriptor> GroupDescriptors
+        {
+            get;
+        }
+
+        IList<SortDescriptor> SortDescriptors
+        {
+            get;
+        }
+
+        IList<CompositeFilterDescriptor> FilterDescriptors
         {
             get;
         }

@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -35,6 +35,14 @@ namespace Telerik.Web.Mvc.UI
         IClientSideObjectWriter Append(string name, string value);
 
         /// <summary>
+        /// Appends the specified name and nullable value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter AppendNullableString(string name, string value);
+
+        /// <summary>
         /// Appends the specified name and value to the end of this instance.
         /// </summary>
         /// <param name="name">The name.</param>
@@ -63,6 +71,38 @@ namespace Telerik.Web.Mvc.UI
         /// Appends the specified name and value to the end of this instance.
         /// </summary>
         /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter Append(string name, double value);
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter Append(string name, double? value);
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter Append(string name, decimal value);
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter Append(string name, decimal? value);
+
+        /// <summary>
+        /// Appends the specified name and value to the end of this instance.
+        /// </summary>
+        /// <param name="name">The name.</param>
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <returns></returns>
         IClientSideObjectWriter Append(string name, bool value);
@@ -75,6 +115,30 @@ namespace Telerik.Web.Mvc.UI
         /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
         /// <returns></returns>
         IClientSideObjectWriter Append(string name, bool value, bool defaultValue);
+
+        /// <summary>
+        /// Appends the specified name and only the date of the passed <seealso cref="DateTime"/>.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter AppendDateOnly(string name, DateTime date);
+
+        /// <summary>
+        /// Appends the specified name and only the date of the passed <seealso cref="Nullable<DateTime>"/>.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter AppendDateOnly(string name, DateTime? date);
+
+        /// <summary>
+        /// Appends the specified name and only the dates of the passed <seealso cref="IEnumerable<DateTime>"/>.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        IClientSideObjectWriter AppendDatesOnly(string name, IEnumerable<DateTime> dates);
 
         /// <summary>
         /// Appends the specified name and value to the end of this instance.

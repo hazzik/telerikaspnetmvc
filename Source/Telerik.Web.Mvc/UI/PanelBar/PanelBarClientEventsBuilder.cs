@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -73,7 +73,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public PanelBarClientEventsBuilder OnExpand(string handlerName)
         {
-            clientEvents.OnExpand = () => viewContext.HttpContext.Response.Write(handlerName);
+            clientEvents.OnExpand = HandlerAction(handlerName);
 
             return this;
         }
@@ -119,7 +119,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public PanelBarClientEventsBuilder OnCollapse(string handlerName)
         {
-            clientEvents.OnCollapse = () => viewContext.HttpContext.Response.Write(handlerName);
+            clientEvents.OnCollapse = HandlerAction(handlerName);
 
             return this;
         }
@@ -165,7 +165,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public PanelBarClientEventsBuilder OnSelect(string handlerName)
         {
-            clientEvents.OnSelect = () => viewContext.HttpContext.Response.Write(handlerName);
+            clientEvents.OnSelect = HandlerAction(handlerName);
 
             return this;
         }
@@ -211,7 +211,7 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public PanelBarClientEventsBuilder OnLoad(string handlerName)
         {
-            clientEvents.OnLoad = () => viewContext.HttpContext.Response.Write(handlerName);
+            clientEvents.OnLoad = HandlerAction(handlerName);
 
             return this;
         }
@@ -257,9 +257,14 @@ namespace Telerik.Web.Mvc.UI
         /// </example>
         public PanelBarClientEventsBuilder OnError(string handlerName)
         {
-            clientEvents.OnError = () => viewContext.HttpContext.Response.Write(handlerName);
+            clientEvents.OnError = HandlerAction(handlerName);
 
             return this;
+        }
+
+        private Action HandlerAction(string handlerName)
+        {
+            return () => viewContext.HttpContext.Response.Write(handlerName);
         }
     }
 }

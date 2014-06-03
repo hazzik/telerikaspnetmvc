@@ -17,15 +17,6 @@
         private readonly IDictionary<string, ValueProviderResult> valueProvider;
         private readonly ViewDataDictionary viewData;
 
-        private class ControllerTestDouble : Controller
-        {
-            public ControllerTestDouble(IDictionary<string, ValueProviderResult> valueProvider, ViewDataDictionary viewData)
-            {
-                ValueProvider = valueProvider;
-                ViewData = viewData;
-            }
-        }
-
         public GridActionAttributeTests()
         {
             filterExecutedContext = new Mock<ActionExecutedContext>();
@@ -75,6 +66,7 @@
             valueProvider.Add(GridUrlParameters.CurrentPage, "1");
             valueProvider.Add(GridUrlParameters.OrderBy, "Name-asc");
             valueProvider.Add(GridUrlParameters.Filter, "Age~eq~1");
+            valueProvider.Add(GridUrlParameters.PageSize, "42");
 
             gridAttribute.OnActionExecuting(filterExecutingContext.Object);
 
@@ -83,6 +75,7 @@
             Assert.Equal(1, gridCommand.Page);
             Assert.Equal("Name", gridCommand.SortDescriptors[0].Member);
             Assert.Equal("Age", ((FilterDescriptor)gridCommand.FilterDescriptors[0]).Member);
+            Assert.Equal(42, gridCommand.PageSize);
         }
     }
 }

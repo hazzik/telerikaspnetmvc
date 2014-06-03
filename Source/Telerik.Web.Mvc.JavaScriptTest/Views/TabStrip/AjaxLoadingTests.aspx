@@ -57,61 +57,26 @@
             return $('#myTab').find('.t-item').eq(index)
         }
 
-        function getContentItem(index) {
-            return $('#myTab').find('.t-content').eq(index)
+        function getTabStrip() {
+            return $("#myTab").data("tTabStrip");
         }
 
-//        function test_clicking_should_make_clicked_item_active() {
-//            var item = getRootItem(1);
+        function test_clicking_should_make_clicked_item_active() {
+            var item = getRootItem(1);
 
-//            item.trigger('click');
-//            
-//            assertTrue(item.hasClass('t-state-active'));
-//        }
-//        
-//        function test_clicking_should_make_all_items_except_clicked_unactive()
-//        {
-//            var item = getRootItem(0);
-//            
-//            item.trigger('click');
-
-//            assertEquals(1, item.parent().find('.t-state-active').length);
-//        }
-
-//        function test_clicked_item_should_make_tab_content_active() {
-
-//            var item = getRootItem(1);
-//            var content = getContentItem(1);            
-
-//            item.trigger('click');
-
-//            assertTrue(content.hasClass('t-state-active'));
-//        }
-
-//        function test_clicking_should_make_all_items_except_clicked_unactive() {
-//        
-//            var item = getRootItem(0);
-
-//            item.trigger('click');
-
-//            assertEquals(1, $('#myTab').find('.t-content').find('.t-state-active').length);
-//        }
-//        
-//        function test_clicking_unactive_contentUrl_items_should_push_its_index_to_contentTabs() {
-
-//            var item = getRootItem(2);
-//            
-//            var index = item.parent().children().index(item);
-
-//            item.trigger('click');
-
-//            var isTrue = $.inArray(index, jQuery('#myTab').data('tTabStrip').contentTabs) >= 3;
-//            assertTrue(isTrue);
-//        }
+            item.find('> .t-link').trigger('click');
+            
+            assertTrue(item.hasClass('t-state-active'));
+        }
         
-        //how to test: once the data is async loaded it should not be requestes again?
-        
-        //current clicked item should be active and all other should be unactive.
+        function test_clicking_should_make_all_items_except_clicked_unactive()
+        {
+            var item = getRootItem(0);
+
+            item.find('> .t-link').trigger('click');
+
+            assertEquals(1, item.parent().find('.t-state-active').length);
+        }
     </script>
 
 </asp:Content>

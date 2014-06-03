@@ -12,13 +12,23 @@
             var allTests = new top.jsUnitTestSuite();
             var suite = new top.jsUnitTestSuite();
             
+            suite.addTestPage("Core/DateFormatting");
+            suite.addTestPage("Calendar/Navigation");
+            suite.addTestPage("DatePicker/DateParsing");
+            suite.addTestPage("DatePicker/DatePicker");
+            suite.addTestPage("DatePicker/ParseByToken");
+            suite.addTestPage("Grid/Localization");
+            suite.addTestPage("Grid/Grouping");
+            suite.addTestPage("Grid/ClientTemplates");
+            suite.addTestPage("Grid/Editing");
+            suite.addTestPage("Grid/Selection");
             suite.addTestPage("Grid/Filtering");
             suite.addTestPage("Grid/Binding");
-            suite.addTestPage("Menu/OpenOnClick");
             suite.addTestPage("Grid/Sorting");
             suite.addTestPage("Grid/Paging");
-            suite.addTestPage("Core/DateFormatting");
+            suite.addTestPage("Menu/OpenOnClick");
             suite.addTestPage("PanelBar/ExpandCollapse");
+            suite.addTestPage("TreeView/ExpandCollapse");
             
             allTests.addTestSuite(suite);
             return allTests;

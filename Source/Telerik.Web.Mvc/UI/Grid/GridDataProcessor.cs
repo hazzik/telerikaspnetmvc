@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -21,6 +21,7 @@ namespace Telerik.Web.Mvc.UI
         private IEnumerable processedDataSource;
         private IList<SortDescriptor> sortDescriptors;
         private IList<IFilterDescriptor> filterDescriptors;
+        private IList<GroupDescriptor> groupDescriptors;
 
         public GridDataProcessor(IGridBindingContext bindingContext)
         {
@@ -44,10 +45,43 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (sortDescriptors == null)
                 {
-                    sortDescriptors = GridSortDescriptorSerializer.Deserialize(bindingContext.ValueOf<string>(GridUrlParameters.OrderBy));
+                    string sortExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.OrderBy);
+
+                    if (sortExpression != null)
+                    {
+                        sortDescriptors = GridDescriptorSerializer.Deserialize<SortDescriptor>(sortExpression);
+                    }
+
+                    if (sortDescriptors == null)
+                    {
+                        sortDescriptors = bindingContext.SortDescriptors;
+                    }
                 }
 
                 return sortDescriptors;
+            }
+        }
+
+        public IList<GroupDescriptor> GroupDescriptors
+        {
+            get
+            {
+                if (groupDescriptors == null)
+                {
+                    string groupExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.GroupBy);
+                    
+                    if (groupExpression != null)
+                    {
+                        groupDescriptors = GridDescriptorSerializer.Deserialize<GroupDescriptor>(groupExpression);
+                    }
+
+                    if (groupDescriptors == null)
+                    {
+                        groupDescriptors = bindingContext.GroupDescriptors;
+                    }
+                }
+
+                return groupDescriptors;
             }
         }
 
@@ -57,12 +91,23 @@ namespace Telerik.Web.Mvc.UI
             {
                 if (filterDescriptors == null)
                 {
-                    filterDescriptors = FilterDescriptorFactory.Create(bindingContext.ValueOf<string>(GridUrlParameters.Filter));
+                    string filterExpression = bindingContext.GetGridParameter<string>(GridUrlParameters.Filter);
+
+                    if (filterExpression != null)
+                    {
+                        filterDescriptors = FilterDescriptorFactory.Create(filterExpression);
+                    }
+
+                    if (filterDescriptors == null)
+                    {
+                        filterDescriptors = bindingContext.FilterDescriptors.Cast<IFilterDescriptor>().ToList();
+                    }
                 }
 
                 return filterDescriptors;
             }
         }
+
         public int PageCount
         {
             get
@@ -94,7 +139,7 @@ namespace Telerik.Web.Mvc.UI
         {
             get
             {
-                return bindingContext.ValueOf<int?>(GridUrlParameters.CurrentPage) ?? 1;
+                return bindingContext.GetGridParameter<int?>(GridUrlParameters.CurrentPage) ?? 1;
             }
         }
 
@@ -114,7 +159,7 @@ namespace Telerik.Web.Mvc.UI
             if (!bindingContext.EnableCustomBinding)
             {
                 IQueryable dataSource = bindingContext.DataSource.AsQueryable();
-                GridModel model = dataSource.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors);
+                GridModel model = dataSource.ToGridModel(CurrentPage, bindingContext.PageSize, SortDescriptors, FilterDescriptors, GroupDescriptors);
                 totalCount = model.Total;
                 processedDataSource = model.Data;
             }

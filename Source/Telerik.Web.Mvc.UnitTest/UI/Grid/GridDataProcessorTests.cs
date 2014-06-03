@@ -13,16 +13,21 @@
         private readonly GridDataProcessor dataProcessor;
         private readonly Mock<IGridBindingContext> context;
         private readonly IDictionary<string, ValueProviderResult> valueProvider;
-
+        
         public GridDataProcessorTests()
         {
             valueProvider = new Dictionary<string, ValueProviderResult>();
 
             context = new Mock<IGridBindingContext>();
             context.Setup(c => c.Prefix(GridUrlParameters.OrderBy)).Returns(GridUrlParameters.OrderBy);
+            context.Setup(c => c.Prefix(GridUrlParameters.GroupBy)).Returns(GridUrlParameters.GroupBy);
             context.Setup(c => c.Prefix(GridUrlParameters.CurrentPage)).Returns(GridUrlParameters.CurrentPage);
             context.Setup(c => c.Prefix(GridUrlParameters.Filter)).Returns(GridUrlParameters.Filter);
-            context.SetupGet(c => c.ValueProvider).Returns(valueProvider);
+            context.Setup(c => c.GroupDescriptors).Returns(() => new GroupDescriptor[]{});
+            context.Setup(c => c.SortDescriptors).Returns(() => new SortDescriptor[]{});
+            context.Setup(c => c.FilterDescriptors).Returns(() => new CompositeFilterDescriptor[] { });
+
+            context.SetupGet(c => c.Controller).Returns(new ControllerTestDouble(valueProvider, new ViewDataDictionary()));
             context.Setup(c => c.PageSize).Returns(10);
             dataProcessor = new GridDataProcessor(context.Object);
         }

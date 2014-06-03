@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Sprites</asp:Content>
-
 <asp:Content contentPlaceHolderID="HeadContent" runat="server">
 	<style type="text/css">
 		#Menu .t-sprite
@@ -85,6 +82,5 @@
 				});
 
         })
-        .HtmlAttributes(new { style = "z-index: 3; position: relative;" })
 %>
 </asp:Content>

@@ -1,1 +1,0 @@
-﻿<%@ Application Codebehind="Global.asax.cs" Inherits="Mvc.UI.jQuery.Examples.NHaml.MvcApplication" Language="C#" %>

@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -27,15 +27,6 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
                 return (Converter<object, T>) Delegate.CreateDelegate(typeof(Converter<object, T>), genericMethod);
             }
             return ValueField;
-        }
-
-        private static TElem? NullableField<TElem>(object value) where TElem : struct
-        {
-            if (DBNull.Value == value)
-            {
-                return null;
-            }
-            return (TElem?) value;
         }
 
         private static T ReferenceField(object value)

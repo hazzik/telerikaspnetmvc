@@ -1,13 +1,26 @@
 ﻿<p>
-This example shows the sorting modes supported by Telerik Grid for ASP.NET MVC. The user can sort either by a single column only (<strong>GridSortMode.SingleColumn</strong> which is the default)
-or sort simultaneously by more than one column (<strong>GridSortMode.MultipleColumn</strong>).
+This example shows the sorting capability of Telerik Grid for ASP.NET MVC. To enable sorting use the <code>Sortable</code> method.
 </p>
 <p>
-You can set the sort mode using the <strong>Sortable</strong> method:
+The user can sort by a single column or by multiple columns. To enable multiple column sorting use the <code>SortMode</code> method:
 </p>
 <pre class="prettyprint">
 &lt;%= Html.Telerik().Grid(Model)
         .Name("Grid")
-        <em>.Sortable(sorting => sorting.SortMode(GridSortMode.MultipleColumn)</em>
- %&gt;
+        .Sortable(sorting =&gt; sorting
+            <em>.SortMode(GridSortMode.MultipleColumn)</em>
+        )
+ %&gt; 
+</pre>
+
+<p>
+    The user can specify which columns to be initially sorted using the <code>OrderBy</code> method:
+</p>
+<pre class="prettyprint">
+&lt;%= Html.Telerik().Grid(Model)
+        .Name("Grid")
+        .Sortable(sorting =&gt; sorting
+            <em>.OrderBy(sortOrder => sortOrder.Add(o => o.OrderID).Descending())</em>
+        )
+ %&gt;    
 </pre>

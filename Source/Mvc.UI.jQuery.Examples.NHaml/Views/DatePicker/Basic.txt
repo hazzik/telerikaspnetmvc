@@ -1,1 +1,0 @@
-﻿The datepicker is tied to a standard form input field. Focus on the input (click, or use the tab key) to open an interactive calendar in a small overlay.

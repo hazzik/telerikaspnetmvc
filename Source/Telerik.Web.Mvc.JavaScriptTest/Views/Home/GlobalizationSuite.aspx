@@ -12,7 +12,6 @@
     </script>
 
     <%
-        List<string> list = new List<string>();
         Response.Write("<script type='text/javascript'>");
 
         foreach (System.Globalization.CultureInfo ci in System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures))

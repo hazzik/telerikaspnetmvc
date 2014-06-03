@@ -102,7 +102,7 @@
             menu.open = function() { opend = true }
 
             var element = $("li:first", menu.element)[0];
-            menu.mouseenter({ relatedTarget: element }, element.nextSibling);
+            menu.mouseenter({ relatedTarget: element, indexOf: function() { }, type:'mouseenter' }, element.nextSibling);
 
             assertTrue(opend);
         }

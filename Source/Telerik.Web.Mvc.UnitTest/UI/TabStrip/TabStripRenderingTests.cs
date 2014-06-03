@@ -1,6 +1,8 @@
-﻿namespace Telerik.Web.Mvc.UI.UnitTest
+﻿using Telerik.Web.Mvc.Infrastructure;
+namespace Telerik.Web.Mvc.UI.UnitTest
 {
     using System;
+    using Telerik.Web.Mvc.Infrastructure;
     using System.IO;
     using System.Web;
     using System.Web.Mvc;
@@ -15,18 +17,28 @@
 
     public class TabStripRenderingTests
     {
-
         private readonly TabStrip tabStrip;
-        private readonly Mock<ITabStripRenderer> renderer;
+        private readonly Mock<ITabStripHtmlBuilder> builder;
 
         public TabStripRenderingTests()
         {
             Mock<TextWriter> textWriter = new Mock<TextWriter>();
             Mock<HtmlTextWriter> writer = new Mock<HtmlTextWriter>(textWriter.Object);
 
-            renderer = new Mock<ITabStripRenderer>();
+            builder = new Mock<ITabStripHtmlBuilder>();
+            builder.Setup(r => r.TabStripTag()).Returns(() => 
+            {
+                IHtmlNode result = new HtmlTag("div");
 
-            tabStrip = TabStripTestHelper.CreteTabStrip(writer.Object, renderer.Object);
+                new HtmlTag("ul").AppendTo(result);
+
+                return result;
+            });
+            builder.Setup(r => r.ItemTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("li"));
+            builder.Setup(r => r.ItemContentTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("div"));
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a"));
+
+            tabStrip = TabStripTestHelper.CreateTabStrip(writer.Object, builder.Object);
             tabStrip.Name = "TabStrip1";
 
             tabStrip.Items.Add(new TabStripItem { Text = "TabStripItem1", RouteName = "ProductList" });
@@ -35,96 +47,40 @@
         }
 
         [Fact]
-        public void Render_should_not_output_anything_in_case_of_empty_data_source()
-        {
-            tabStrip.Items.Clear();
-
-            renderer.Setup(r => r.TabStripStart());
-
-            tabStrip.Render();
-
-            renderer.Verify(r => r.TabStripStart(), Times.Never());
-        }
-
-        [Fact]
         public void Render_should_output_start_div_if_items_are_not_zero()
         {
-            renderer.Setup(r => r.TabStripStart());
+            builder.Setup(r => r.TabStripTag()).Returns(() =>
+            {
+                IHtmlNode result = new HtmlTag("div");
+
+                new HtmlTag("ul").AppendTo(result);
+
+                return result;
+            });
 
             tabStrip.Render();
 
-            renderer.Verify(r => r.TabStripStart(), Times.Exactly(1));
+            builder.Verify(r => r.TabStripTag());
         }
 
         [Fact]
-        public void Render_should_output_end_div_if_items_are_not_zero()
+        public void Render_should_output_item_tag()
         {
-            renderer.Setup(r => r.TabStripEnd());
+            builder.Setup(r => r.ItemTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("li"));
 
             tabStrip.Render();
 
-            renderer.Verify(r => r.TabStripEnd(), Times.Exactly(1));
-        }
-
-        [Fact]
-        public void Render_should_output_start_ul_tag()
-        {
-            renderer.Setup(r => r.ItemsStart());
-
-            tabStrip.Render();
-
-            renderer.Verify(r => r.ItemsStart(), Times.Exactly(1));
-        }
-
-
-        [Fact]
-        public void Render_should_output_end_ul_tag()
-        {
-            renderer.Setup(r => r.ItemsEnd());
-
-            tabStrip.Render();
-
-            renderer.Verify(r => r.ItemsEnd(), Times.Exactly(1));
+            builder.Verify(r => r.ItemTag(It.IsAny<TabStripItem>()));
         }
 
         [Fact]
         public void Render_should_call_ItemContent_as_many_times_as_items_count()
         {
-            renderer.Setup(r => r.ItemContent(It.IsAny<TabStripItem>()));
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Returns(() => new HtmlTag("a"));
 
             tabStrip.Render();
 
-            renderer.Verify(r => r.ItemContent(It.IsAny<TabStripItem>()), Times.Exactly(tabStrip.Items.Count));
-        }
-
-        [Fact]
-        public void Render_should_call_ItemContent_before_TabContent()
-        {
-            renderer.Setup(r => r.ItemContent(It.IsAny<TabStripItem>())).Callback(() => renderer.Setup(r => r.TabContent(It.IsAny<TabStripItem>())).Verifiable()).Verifiable();
-
-            tabStrip.Render();
-
-            renderer.VerifyAll();
-        }
-
-        [Fact]
-        public void Render_should_call_TabContent_as_many_times_as_items_count()
-        {
-            renderer.Setup(r => r.TabContent(It.IsAny<TabStripItem>()));
-
-            tabStrip.Render();
-
-            renderer.Verify(r => r.TabContent(It.IsAny<TabStripItem>()), Times.Exactly(tabStrip.Items.Count));
-        }
-
-        [Fact]
-        public void Render_should_call_TabContent_before_TabStripEnd()
-        {
-            renderer.Setup(r => r.TabContent(It.IsAny<TabStripItem>())).Callback(() => renderer.Setup(r => r.TabStripEnd()).Verifiable()).Verifiable();
-
-            tabStrip.Render();
-
-            renderer.VerifyAll();
+            builder.Verify(r => r.ItemInnerTag(It.IsAny<TabStripItem>()), Times.Exactly(tabStrip.Items.Count));
         }
 
         [Fact]
@@ -133,11 +89,11 @@
             tabStrip.Items.Clear();
             tabStrip.Items.Add(new TabStripItem { Text = "TabStripItem1", RouteName = "ProductList", Visible = false });
 
-            renderer.Setup(r => r.ItemContent(It.IsAny<TabStripItem>())).Verifiable();
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Verifiable();
 
             tabStrip.Render();
 
-            renderer.Verify(r => r.ItemContent(It.IsAny<TabStripItem>()), Times.Never());            
+            builder.Verify(r => r.ItemInnerTag(It.IsAny<TabStripItem>()), Times.Never());            
         }
 
         [Fact]
@@ -148,11 +104,11 @@
 
             TabStripTestHelper.authorization.Setup(a => a.IsAccessibleToUser(TabStripTestHelper.viewContext.RequestContext, It.IsAny<INavigatable>())).Returns(false);
 
-            renderer.Setup(r => r.ItemContent(It.IsAny<TabStripItem>())).Verifiable();
+            builder.Setup(r => r.ItemInnerTag(It.IsAny<TabStripItem>())).Verifiable();
 
             tabStrip.Render();
 
-            renderer.Verify(r => r.ItemContent(It.IsAny<TabStripItem>()), Times.Never());
+            builder.Verify(r => r.ItemInnerTag(It.IsAny<TabStripItem>()), Times.Never());
         }
 
         public void When_urlGenerator_returns_null_url_should_be_ds() 
@@ -201,6 +157,75 @@
             tabStrip.Render();
 
             Assert.True(tabStrip.Items[1].Selected);
+        }
+
+        ////
+
+        [Fact]
+        public void Render_should_call_objectWriter_start_method()
+        {
+            Mock<TextWriter> writer = new Mock<TextWriter>();
+
+            TabStripTestHelper.clientSideObjectWriter.Setup(ow => ow.Start()).Verifiable();
+
+            tabStrip.WriteInitializationScript(writer.Object);
+
+            TabStripTestHelper.clientSideObjectWriter.Verify(ow => ow.Start());
+        }
+
+        [Fact]
+        public void ObjectWriter_should_call_objectWriter_complete_method()
+        {
+            Mock<TextWriter> writer = new Mock<TextWriter>();
+
+            TabStripTestHelper.clientSideObjectWriter.Setup(w => w.Complete());
+
+            tabStrip.WriteInitializationScript(writer.Object);
+
+            TabStripTestHelper.clientSideObjectWriter.Verify(w => w.Complete());
+        }
+
+        [Fact]
+        public void ObjectWriter_should_append_Select_property_of_clientEvents()
+        {
+            Mock<TextWriter> writer = new Mock<TextWriter>();
+
+            tabStrip.ClientEvents.OnSelect = () => { };
+
+            TabStripTestHelper.clientSideObjectWriter.Setup(w => w.Append("onSelect", tabStrip.ClientEvents.OnSelect)).Verifiable();
+
+            tabStrip.WriteInitializationScript(writer.Object);
+
+            TabStripTestHelper.clientSideObjectWriter.Verify(w => w.Append("onSelect", tabStrip.ClientEvents.OnSelect));
+        }
+
+
+        [Fact]
+        public void ObjectWriter_should_append_Error_property_of_clientEvents()
+        {
+            Mock<TextWriter> writer = new Mock<TextWriter>();
+
+            tabStrip.ClientEvents.OnError = () => { };
+
+            TabStripTestHelper.clientSideObjectWriter.Setup(w => w.Append("onError", tabStrip.ClientEvents.OnError)).Verifiable();
+
+            tabStrip.WriteInitializationScript(writer.Object);
+
+            TabStripTestHelper.clientSideObjectWriter.Verify(w => w.Append("onError", tabStrip.ClientEvents.OnError));
+        }
+
+        [Fact]
+        public void ObjectWriter_should_append_Load_property_of_clientEvents()
+        {
+            Mock<TextWriter> writer = new Mock<TextWriter>();
+
+            tabStrip.ClientEvents.OnLoad = () => { };
+
+            TabStripTestHelper.clientSideObjectWriter.Setup(w => w.Append("onLoad", tabStrip.ClientEvents.OnLoad)).Verifiable();
+
+            tabStrip.WriteInitializationScript(writer.Object);
+
+            TabStripTestHelper.clientSideObjectWriter.Verify(w => w.Append("onLoad", tabStrip.ClientEvents.OnLoad));
         }
     }
 }

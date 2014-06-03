@@ -139,8 +139,6 @@ using Xunit;
             Assert.IsType(typeof(PanelBarClientEventsBuilder), returned);
         }
 
-        //
-
         [Fact]
         public void Loaded_Action_param_should_set_Loaded_property()
         {

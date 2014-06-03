@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -6,11 +6,12 @@
 namespace Telerik.Web.Mvc.Infrastructure.Implementation
 {
     using System;
+    using System.Web;
     using System.Collections.Generic;
     using System.Web.Routing;
 
     using UI;
-
+    
     /// <summary>
     /// Default Service locator.
     /// </summary>
@@ -174,12 +175,20 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
                      { typeof(IUrlGenerator).TypeHandle, locator => new UrlGenerator() },
                      { typeof(IClientSideObjectWriterFactory).TypeHandle, locator => new ClientSideObjectWriterFactory() },
                      { typeof(ScriptWrapperBase).TypeHandle, locator => new ScriptWrapper() },
-                     { typeof(IGridRendererFactory).TypeHandle, locator => new GridRendererFactory() },
-                     { typeof(IPanelBarRendererFactory).TypeHandle, locator => new PanelBarRendererFactory(locator.Resolve<IActionMethodCache>()) },
-                     { typeof(IMenuRendererFactory).TypeHandle, locator => new MenuRendererFactory(locator.Resolve<IActionMethodCache>()) },
-                     { typeof(ITabStripRendererFactory).TypeHandle, locator => new TabStripRendererFactory(locator.Resolve<IActionMethodCache>()) }
+                     { typeof(IGridHtmlBuilderFactory).TypeHandle, locator => new GridHtmlBuilderFactory() },
+                     { typeof(IPanelBarHtmlBuilderFactory).TypeHandle, locator => new PanelBarHtmlBuilderFactory(locator.Resolve<IActionMethodCache>()) },
+                     { typeof(IMenuHtmlBuilderFactory).TypeHandle, locator => new MenuHtmlBuilderFactory(locator.Resolve<IActionMethodCache>()) },
+                     { typeof(ITabStripHtmlBuilderFactory).TypeHandle, locator => new TabStripHtmlBuilderFactory(locator.Resolve<IActionMethodCache>()) },
+                     { typeof(IDatePickerHtmlBuilderFactory).TypeHandle, locator => new DatePickerHtmlBuilderFactory() },
+                     { typeof(ICalendarHtmlBuilderFactory).TypeHandle, locator => new CalendarHtmlBuilderFactory() },
+                     { typeof(ITreeViewHtmlBuilderFactory).TypeHandle, locator => new TreeViewHtmlBuilderFactory(locator.Resolve<IActionMethodCache>()) },
+                     { typeof(ITextboxBaseHtmlBuilderFactory<short>).TypeHandle, locator => new TextboxBaseHtmlBuilderFactory<short>() },
+                     { typeof(ITextboxBaseHtmlBuilderFactory<int>).TypeHandle, locator => new TextboxBaseHtmlBuilderFactory<int>() },
+                     { typeof(ITextboxBaseHtmlBuilderFactory<float>).TypeHandle, locator => new TextboxBaseHtmlBuilderFactory<float>() },
+                     { typeof(ITextboxBaseHtmlBuilderFactory<double>).TypeHandle, locator => new TextboxBaseHtmlBuilderFactory<double>() },
+                     { typeof(ITextboxBaseHtmlBuilderFactory<decimal>).TypeHandle, locator => new TextboxBaseHtmlBuilderFactory<decimal>() }
                  };
-
+            
             return defaultFactories;
         }
     }

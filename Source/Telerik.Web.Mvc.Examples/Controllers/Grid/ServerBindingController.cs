@@ -1,12 +1,12 @@
 namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
 
-	public partial class GridController : Controller
+    public partial class GridController : Controller
     {
-		public ActionResult ServerBinding()
-		{
-			return View(GetOrders());
-		}
+        public ActionResult ServerBinding()
+        {
+            return View(GetOrders());
+        }
     }
 }

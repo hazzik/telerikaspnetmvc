@@ -52,7 +52,7 @@
                 item.Add().Text("Child 1");
             });
 
-            var result = ((LinkedObjectCollection<PanelBarItem>)(((PanelBarItem)(returnedBuilder.ToItem())).Items)).Count;
+            var result = ((LinkedObjectCollection<PanelBarItem>)(((returnedBuilder.ToItem())).Items)).Count;
             Assert.Equal(1, result);
         }
 

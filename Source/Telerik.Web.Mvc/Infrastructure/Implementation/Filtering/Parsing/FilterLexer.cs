@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -9,6 +9,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Collections.Generic;
     using System.Text;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Lexer")]
     public class FilterLexer
     {
         private const char Separator = '~';
@@ -305,18 +306,32 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
             SkipSeparators();
 
             char currentCharacter = Peek();
+            StringBuilder result = new StringBuilder();
 
-            if (!char.IsLetter(currentCharacter))
+            if (!IsIdentifierStart(currentCharacter))
             {
                 identifier = null;
                 return false;
             }
+            else
+            {
+                result.Append(currentCharacter);
+                Next();
+            }
 
-            StringBuilder result = new StringBuilder();
-
-            identifier = Read(character => char.IsLetter(character) || character == '.', result);
+            identifier = Read(character => IsIdentifierPart(character) || character == '.', result);
 
             return true;
+        }
+
+        private static bool IsIdentifierPart(char character)
+        {
+            return char.IsLetter(character) || char.IsDigit(character) || character == '_' || character == '$';
+        }
+
+        private static bool IsIdentifierStart(char character)
+        {
+            return char.IsLetter(character) || character == '_' || character == '$' || character == '@';
         }
 
         private string Read(Func<char, bool> predicate, StringBuilder result)

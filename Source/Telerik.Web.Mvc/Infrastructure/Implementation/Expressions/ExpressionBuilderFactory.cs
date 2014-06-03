@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -11,10 +11,10 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
     using System.Xml;
 
     using Extensions;
+    using System.Linq;
 
     internal static class ExpressionBuilderFactory
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "memberType")]
         public static MemberAccessExpressionBuilderBase MemberAccess(Type elementType, Type memberType, string memberName)
         {
             memberType = memberType ?? typeof(object);
@@ -35,6 +35,23 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
             }
 
             return new PropertyAccessExpressionBuilder(elementType, memberName);
+        }
+
+        public static MemberAccessExpressionBuilderBase MemberAccess(Type elementType, string memberName, bool liftMemberAccess)
+        {
+            var builder = MemberAccess(elementType, null, memberName);
+            
+            builder.Options.LiftMemberAccessToNull = liftMemberAccess;
+            
+            return builder;
+        }
+
+        public static MemberAccessExpressionBuilderBase MemberAccess(IQueryable source, Type memberType, string memberName)
+        {
+            var builder = MemberAccess(source.ElementType, memberType, memberName);
+            builder.Options.LiftMemberAccessToNull = source.Provider.IsLinqToObjectsProvider();
+
+            return builder;
         }
     }
 }

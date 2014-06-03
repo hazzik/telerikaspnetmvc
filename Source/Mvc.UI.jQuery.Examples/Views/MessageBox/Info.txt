@@ -1,1 +1,0 @@
-﻿Displays a message box that can contain text and symbols that inform and instruct the user.

@@ -1,6 +1,6 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
 
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Basic</asp:Content>
+
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
 
 	<% Html.Telerik().TabStrip()
@@ -9,7 +9,7 @@
             {
                 tabstrip.Add()
                     .Text("ASP.NET MVC")
-					.ImageUrl("~/Content/Images/Icons/Suites/mvc.png")
+					.ImageUrl("~/Content/Common/Icons/Suites/mvc.png")
                     .Content(() =>
                     {%>
                         <ul>
@@ -24,7 +24,7 @@
 
                 tabstrip.Add()
                     .Text("Silverlight")
-                    .ImageUrl("~/Content/Images/Icons/Suites/sl.png")
+                    .ImageUrl("~/Content/Common/Icons/Suites/sl.png")
                     .Content(() =>
                     {%>
                         <ul>
@@ -39,7 +39,7 @@
 
                 tabstrip.Add()
                     .Text("ASP.NET AJAX")
-					.ImageUrl("~/Content/Images/Icons/Suites/ajax.png")
+					.ImageUrl("~/Content/Common/Icons/Suites/ajax.png")
                     .Content(() =>
                     {%>
                         <ul>
@@ -54,7 +54,7 @@
 
                 tabstrip.Add()
                     .Text("OpenAccess ORM")
-					.ImageUrl("~/Content/Images/Icons/Suites/orm.png")
+					.ImageUrl("~/Content/Common/Icons/Suites/orm.png")
                     .Content(() =>
                     {%>
                         <ul>
@@ -69,7 +69,7 @@
 
                 tabstrip.Add()
                     .Text("Reporting")
-					.ImageUrl("~/Content/Images/Icons/Suites/rep.png")
+					.ImageUrl("~/Content/Common/Icons/Suites/rep.png")
                     .Content(() =>
                     {%>
                         <ul>
@@ -84,7 +84,7 @@
 
                 tabstrip.Add()
                     .Text("Sitefinity ASP.NET CMS")
-					.ImageUrl("~/Content/Images/Icons/Suites/sitefinity.png")
+					.ImageUrl("~/Content/Common/Icons/Suites/sitefinity.png")
                     .Content(() =>
                     {%>
                         <ul>

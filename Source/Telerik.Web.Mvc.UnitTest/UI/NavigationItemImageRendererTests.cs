@@ -6,6 +6,7 @@
 
     using Moq;
     using Xunit;
+    using Telerik.Web.Mvc.Infrastructure;
     
     public class NavigationItemImageRendererTests
     {

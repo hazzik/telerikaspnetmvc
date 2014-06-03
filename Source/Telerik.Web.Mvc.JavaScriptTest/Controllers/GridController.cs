@@ -16,12 +16,27 @@ namespace Telerik.Web.Mvc.JavaScriptTest.Controllers
 
             return View();
         }
-        
+
+        public ActionResult Grouping()
+        {
+            return View(TestData(20));
+        }
+
+        public ActionResult Localization()
+        {
+            return View(TestData(20));
+        }
+
         public ActionResult Sorting()
         {
 			var data = TestData(2);
 
 			return View(data);
+        }
+
+        public ActionResult Selection()
+        {
+            return View(TestData(20));
         }
 
         public ActionResult Binding()
@@ -32,6 +47,27 @@ namespace Telerik.Web.Mvc.JavaScriptTest.Controllers
         public ActionResult Filtering()
         {
             return View(TestData(20));
+        }
+
+        public ActionResult Editing()
+        {
+            return View(TestData(20));
+        }
+        
+        public ActionResult ClientTemplates()
+        {
+            return View(TestData(20));
+        }
+
+        public ActionResult Layout()
+        {
+            return View(TestData(11));
+        }
+
+        [GridAction]
+        public ActionResult GroupingAjax()
+        {
+            return View(new GridModel(TestData(11)));
         }
 
 		private List<Customer> TestData(int rowCount)

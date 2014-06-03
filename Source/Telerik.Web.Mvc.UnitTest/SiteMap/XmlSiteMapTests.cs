@@ -109,13 +109,9 @@ namespace Telerik.Web.Mvc.UnitTest
         {
             Mock<XmlSiteMap> siteMap = new Mock<XmlSiteMap>(_pathResolver.Object, _fileSystem.Object, _cacheManager.Object);
 
-            siteMap.Setup(sm => sm.LoadFrom(It.IsAny<string>())).Verifiable();
+            siteMap.Setup(sm => sm.InternalLoad(It.IsAny<string>())).Verifiable();
 
-            _cacheManager.Setup(cache => cache.Insert(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CacheItemRemovedCallback>(), It.IsAny<string>())).Callback((string key, object value, CacheItemRemovedCallback onRemoveCallback, string[] dependencies) => onRemoveCallback(key, value, CacheItemRemovedReason.DependencyChanged));
-
-            siteMap.Object.InsertInCache("foo");
-
-            siteMap.Verify();
+            siteMap.Object.OnCacheItemRemoved("foo", @"C:\Temp\Web.sitemap", CacheItemRemovedReason.DependencyChanged);
         }
 
         private void SetupLoad()

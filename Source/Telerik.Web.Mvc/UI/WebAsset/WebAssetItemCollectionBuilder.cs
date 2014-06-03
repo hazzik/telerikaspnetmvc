@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -139,29 +139,33 @@ namespace Telerik.Web.Mvc.UI
                 throw new ArgumentException(TextResource.GroupWithSpecifiedNameDoesNotExistInAssetTypeOfSharedWebAssets.FormatWith(name, assetType), "name");
             }
 
-            if (assets.FindGroupByName(name) != null)
+            if (assets.FindGroupByName(name) == null)
             {
-                throw new ArgumentException(TextResource.LocalGroupWithSpecifiedNameAlreadyExists.FormatWith(name));
+                // People might have the same group reference in multiple place.
+                // So we will skip it once it is added.
+
+                // throw new ArgumentException(TextResource.LocalGroupWithSpecifiedNameAlreadyExists.FormatWith(name));
+
+                // Add a copy of the shared asset
+                WebAssetItemGroup localGroup = new WebAssetItemGroup(group.Name, true)
+                                                   {
+                                                       DefaultPath = group.DefaultPath,
+                                                       UseTelerikContentDeliveryNetwork = group.UseTelerikContentDeliveryNetwork,
+                                                       ContentDeliveryNetworkUrl = group.ContentDeliveryNetworkUrl,
+                                                       Enabled = group.Enabled,
+                                                       Version = group.Version,
+                                                       Compress = group.Compress,
+                                                       CacheDurationInDays = group.CacheDurationInDays,
+                                                       Combined = group.Combined
+                                                   };
+
+                foreach (WebAssetItem item in group.Items)
+                {
+                    localGroup.Items.Add(new WebAssetItem(item.Source));
+                }
+
+                assets.Add(localGroup);
             }
-
-            // Add a copy of the shared asset
-            WebAssetItemGroup localGroup = new WebAssetItemGroup(group.Name, true)
-                                               {
-                                                   DefaultPath = group.DefaultPath,
-                                                   ContentDeliveryNetworkUrl = group.ContentDeliveryNetworkUrl,
-                                                   Enabled = group.Enabled,
-                                                   Version = group.Version,
-                                                   Compress = group.Compress,
-                                                   CacheDurationInDays = group.CacheDurationInDays,
-                                                   Combined = group.Combined
-                                               };
-
-            foreach (WebAssetItem item in group.Items)
-            {
-                localGroup.Items.Add(new WebAssetItem(item.Source));
-            }
-
-            assets.Add(localGroup);
 
             return this;
         }

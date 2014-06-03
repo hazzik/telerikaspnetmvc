@@ -1,16 +1,19 @@
 namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
 
     public partial class TabStripController : Controller
-	{
-        public ActionResult AnimationEffects(string enabledAnimation, int? heightOpenDuration, int? heightCloseDuration, int? opacityOpenDuration, int? opacityCloseDuration)
+    {
+        public ActionResult AnimationEffects(
+              string animation,
+              bool? enableOpacityAnimation,
+              int? openDuration,
+              int? closeDuration)
         {
-            ViewData["enabledAnimation"] = enabledAnimation ?? "height";
-            ViewData["heightOpenDuration"] = heightOpenDuration ?? 200;
-            ViewData["heightCloseDuration"] = heightCloseDuration ?? 200;
-			ViewData["opacityOpenDuration"] = opacityOpenDuration ?? 200;
-			ViewData["opacityCloseDuration"] = opacityCloseDuration ?? 200;
+            ViewData["animation"] = animation ?? "expand";
+            ViewData["enableOpacityAnimation"] = enableOpacityAnimation ?? true;
+            ViewData["openDuration"] = openDuration ?? 200;
+            ViewData["closeDuration"] = closeDuration ?? 200;
 
             return View();
         }

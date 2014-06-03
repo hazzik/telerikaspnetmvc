@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -8,21 +8,12 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
     using System;
     using System.Linq.Expressions;
 
-    internal abstract class FilterExpressionBuilder
+    internal abstract class FilterExpressionBuilder : ExpressionBuilderBase
     {
-        private readonly ParameterExpression parameterExpression;
-
-        protected FilterExpressionBuilder(ParameterExpression parameterExpression)
+        protected FilterExpressionBuilder(ParameterExpression parameterExpression) :
+            base(parameterExpression.Type)
         {
-            this.parameterExpression = parameterExpression;
-        }
-
-        public ParameterExpression ParameterExpression
-        {
-            get
-            {
-                return this.parameterExpression;
-            }
+            this.ParameterExpression = parameterExpression;
         }
 
         public abstract Expression CreateBodyExpression();

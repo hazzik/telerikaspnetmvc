@@ -1,7 +1,12 @@
+﻿// (c) Copyright 2002-2010 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
+// All other rights reserved.
+
 namespace Telerik.Web.Mvc.UI
 {
     /// <summary>
-    /// Contains constants for CSS class names, used across all UI extensions
+    /// Contains constants for CSS class names
     /// </summary>
     public static class UIPrimitives
     {
@@ -9,6 +14,11 @@ namespace Telerik.Web.Mvc.UI
         /// Active state of items
         /// </summary>
         public const string ActiveState = "t-state-active";
+
+        /// <summary>
+        /// Button
+        /// </summary>
+        public const string Button = "t-button";
 
         /// <summary>
         /// Content - rendered around custom content
@@ -56,9 +66,29 @@ namespace Telerik.Web.Mvc.UI
         public const string Item = "t-item";
 
         /// <summary>
+        /// First in list of items
+        /// </summary>
+        public const string First = "t-first";
+
+        /// <summary>
         /// Last in list of items
         /// </summary>
         public const string Last = "t-last";
+
+        /// <summary>
+        /// Top in list of items
+        /// </summary>
+        public const string Top = "t-top";
+
+        /// <summary>
+        /// Bottom in list of items
+        /// </summary>
+        public const string Bottom = "t-bot";
+
+        /// <summary>
+        /// Middle in list of items
+        /// </summary>
+        public const string Middle = "t-mid";
 
         /// <summary>
         /// Last in list of headers
@@ -89,5 +119,75 @@ namespace Telerik.Web.Mvc.UI
         /// Widget - rendered always on the outmost HTML element of a UI component
         /// </summary>
         public const string Widget = "t-widget";
+
+        /// <summary>
+        /// Input - input rendered in the div wrapper
+        /// </summary>
+        public const string Input = "t-input";
+
+        /// <summary>
+        /// CheckBox - rendered on all checkbox
+        /// </summary>
+        public const string CheckBox = "t-checkbox";
+
+
+        /// <summary>
+        /// Contains CSS classes, used in the Grid
+        /// </summary>
+        public static class Grid
+        {
+            /// <summary>
+            /// Grid action
+            /// </summary>
+            public const string Action = "t-grid-action";
+
+            public const string Edit = "t-grid-edit";
+            
+            public const string Delete = "t-grid-delete";
+            
+            public const string Update = "t-grid-update";
+            
+            public const string Cancel = "t-grid-cancel";
+            
+            public const string Insert = "t-grid-insert";
+
+            public const string Add = "t-grid-add";
+            
+            public const string Select = "t-grid-select";
+
+            public const string GroupCell = "t-groupcell";
+
+            public const string GroupCol = "t-groupcol";
+
+            public const string GroupIndicator = "t-group-indicator";
+
+            /// <summary>
+            /// Grid action
+            /// </summary>
+            public const string ActionForm = "t-grid-actions";
+
+            /// <summary>
+            /// Container element for editing / inserting form
+            /// </summary>
+            public const string EditingContainer = "t-edit-container";
+
+            /// <summary>
+            /// Container element for editing / inserting form
+            /// </summary>
+            public const string EditingForm = "t-edit-form";
+
+            /// <summary>
+            /// Toolbar which contains different commands
+            /// </summary>
+            public const string ToolBar = "t-grid-toolbar";
+        }
+
+        public static class TreeView
+        {
+            /// <summary>
+            /// Class that shows treeview lines
+            /// </summary>
+            public const string Lines = "t-treeview-lines";
+        }
     }
 }

@@ -1,1 +1,0 @@
-﻿Retrieve the value from the controller action method if no value specified.

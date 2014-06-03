@@ -1,10 +1,10 @@
 namespace Telerik.Web.Mvc.Examples
 {
-	using System.Web.Mvc;
+    using System.Web.Mvc;
 
     public partial class PanelBarController : Controller
-	{
-		public ActionResult ClientSideApi()
+    {
+        public ActionResult ClientSideApi()
         {
             return View();
         }

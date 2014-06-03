@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:content contentPlaceHolderID="ExampleTitle" runat="server">Client-side API</asp:content>
-
 <asp:content contentPlaceHolderID="MainContent" runat="server">
 <%= Html.Telerik().Menu()
         .Name("Menu")
@@ -49,15 +46,12 @@
 <% using (Html.Configurator("Client API").Begin()) { %>
     <p>
         <label for="itemIndex">Item index:</label>
-        <%= Html.TextBox("itemIndex", "0", new { style = "width: 40px" })%>
-    </p>
-    
-    <p>
-        <button onclick="Open()">Open</button> / <button onclick="Close()">Close</button>
-    </p>
-    
-    <p>
-        <button onclick="Enable()">Enable</button> / <button onclick="Disable()">Disable</button>
+        <%= Html.TextBox("itemIndex", "0", new { style = "width: 40px", @class = "t-input" })%> <br />
+        
+        <button class="t-button t-state-default" onclick="Open()">Open</button> /
+        <button class="t-button t-state-default" onclick="Close()">Close</button> <br />
+        <button class="t-button t-state-default" onclick="Enable()">Enable</button> /
+        <button class="t-button t-state-default" onclick="Disable()">Disable</button>
     </p>
 <% } %>
         
@@ -99,7 +93,13 @@
 	    .configurator p
 	    {
 	        margin: 0;
-	        padding: .4em 0;
+	        padding: 2em 0 1em;
+	    }
+	    .configurator .t-button
+	    {
+	        display: inline-block;
+	        *display: inline;
+	        zoom: 1;
 	    }
     </style>
 </asp:Content>

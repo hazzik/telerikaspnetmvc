@@ -57,7 +57,7 @@ namespace Telerik.Web.Mvc.UI.UnitTest
 
             _urlResolver.Setup(resolver => resolver.Resolve(It.IsAny<string>())).Returns((string p) => p.Substring(1));
 
-            IList<string> items = _assetItemMerger.Merge("application/x-javascript", WebAssetHttpHandler.DefaultPath, assets);
+            IList<string> items = _assetItemMerger.Merge("application/x-javascript", WebAssetHttpHandler.DefaultPath, false, true, assets);
 
             Assert.Equal("/Scripts/script1.js", items[0]);
             Assert.Equal("http://cdn.com", items[1]);

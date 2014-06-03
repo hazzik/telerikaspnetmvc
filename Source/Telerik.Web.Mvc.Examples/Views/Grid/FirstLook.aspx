@@ -1,38 +1,42 @@
-<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Order>>" %>
+<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<OrderDto>>" %>
 
-<asp:content contentPlaceHolderID="exampletitle" runat="server">First Look</asp:content>
-
-<asp:content contentPlaceHolderID="maincontent" runat="server">
-
+<asp:content contentplaceholderid="maincontent" runat="server">
 <% using (Html.Configurator("The grid should...")
               .PostTo("FirstLook", "Grid")
               .Begin())
    { %>
     <ul>
         <li><%= Html.CheckBox("ajax", true, "make <strong>AJAX</strong> requests")%></li>
+        <li><%= Html.CheckBox("grouping", true, "allow <strong>grouping</strong> of data")%></li>
         <li><%= Html.CheckBox("filtering", true, "allow <strong>filtering</strong> of data")%></li>
         <li><%= Html.CheckBox("paging", true, "have <strong>pages</strong> with 10 items")%></li>
         <li><%= Html.CheckBox("scrolling", true, "show a <strong>scrollbar</strong> when there are many items")%></li>
         <li><%= Html.CheckBox("sorting", true, "allow <strong>sorting</strong> of data")%></li>
+        <li><%= Html.CheckBox("showFooter", true, "show footer")%></li>
     </ul>
     <button class="t-button t-state-default" type="submit">Apply</button>
 <% } %>
 
-<%= Html.Telerik().Grid<Order>(Model)
+<%= Html.Telerik().Grid<OrderDto>(Model)
         .Name("Grid")
         .Columns(columns =>
 		{
-			columns.Add(o => o.OrderID).Width(100);
-			columns.Add(o => o.Customer.ContactName).Width(200);
-			columns.Add(o => o.ShipAddress);
-			columns.Add(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(120);
+			columns.Bound(o => o.OrderID).Width(100);
+            columns.Bound(o => o.ContactName).Width(200);
+            columns.Bound(o => o.ShipAddress);
+            columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(120);
         })
-        .ServerBinding(serverBinding => serverBinding.Action("FirstLook", "Grid", new { ajax = ViewData["ajax"] }))
-		.Ajax(ajax => ajax.Enabled((bool)ViewData["ajax"]).Action("_FirstLook", "Grid"))
+        .DataBinding(dataBinding => 
+        {
+            dataBinding.Server().Select("FirstLook", "Grid", new { ajax = ViewData["ajax"] });
+            dataBinding.Ajax().Select("_FirstLook", "Grid").Enabled((bool)ViewData["ajax"]);
+        })
         .Scrollable(scrolling => scrolling.Enabled((bool)ViewData["scrolling"]))
         .Sortable(sorting => sorting.Enabled((bool)ViewData["sorting"]))
         .Pageable(paging => paging.Enabled((bool)ViewData["paging"]))
         .Filterable(filtering => filtering.Enabled((bool)ViewData["filtering"]))
+        .Groupable(grouping => grouping.Enabled((bool)ViewData["grouping"]))
+        .Footer((bool)ViewData["showFooter"])
 %>
 
 </asp:content>

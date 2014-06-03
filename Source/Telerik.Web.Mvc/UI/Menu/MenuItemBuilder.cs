@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -8,6 +8,7 @@ namespace Telerik.Web.Mvc.UI
     using System;
 
     using Infrastructure;
+using System.Web.Mvc;
 
     /// <summary>
     /// Defines the fluent interface for configuring child menu items.
@@ -15,16 +16,20 @@ namespace Telerik.Web.Mvc.UI
     public class MenuItemBuilder : NavigationItemBuilder<MenuItem, MenuItemBuilder>, IHideObjectMembers
     {
         private readonly MenuItem item;
+        private readonly ViewContext viewContext;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MenuItemBuilder"/> class.
         /// </summary>
         /// <param name="item">The item.</param>
-        public MenuItemBuilder(MenuItem item) : base(item)
+        public MenuItemBuilder(MenuItem item, ViewContext viewContext)
+            : base(item, viewContext)
         {
             Guard.IsNotNull(item, "item");
+            Guard.IsNotNull(viewContext, "viewContext");
 
             this.item = item;
+            this.viewContext = viewContext;
         }
 
         /// <summary>
@@ -50,7 +55,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(addAction, "addAction");
 
-            MenuItemFactory factory = new MenuItemFactory(item);
+            MenuItemFactory factory = new MenuItemFactory(item, viewContext);
 
             addAction(factory);
 

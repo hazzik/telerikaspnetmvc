@@ -1,24 +1,94 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
 
 namespace Telerik.Web.Mvc.Extensions
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
     using System.Linq.Expressions;
-    using System;
-
-    using Infrastructure;
     using Infrastructure.Implementation.Expressions;
+    using Telerik.Web.Mvc;
     using Telerik.Web.Mvc.Infrastructure.Implementation;
-    using System.Reflection;
 
     public static class QueryableExtensions
     {
+        public static GridModel ToGridModel(this IQueryable queryable, int page, int pageSize, string orderBy, string groupBy, string filter)
+        {
+            GridCommand command = GridCommand.Parse(page, pageSize, orderBy, groupBy, filter);
+
+            return queryable.ToGridModel(page, pageSize, command.SortDescriptors, command.FilterDescriptors, command.GroupDescriptors);
+        }
+
+        public static GridModel ToGridModel(this IQueryable queryable, GridState state)
+        {
+            return queryable.ToGridModel(state.Page, state.Size, state.OrderBy, state.GroupBy, state.Filter);
+        }
+
+        public static GridModel ToGridModel(this IQueryable queryable, int page, int pageSize, IList<SortDescriptor> sortDescriptors, IEnumerable<IFilterDescriptor> filterDescriptors,
+            IEnumerable<GroupDescriptor> groupDescriptors)
+        {
+            IQueryable data = queryable;
+
+            if (filterDescriptors.Any())
+            {
+                data = data.Where(filterDescriptors);
+            }
+
+            GridModel result = new GridModel();
+
+            result.Total = data.Count();
+            IList<SortDescriptor> temporarySortDescriptors = new List<SortDescriptor>();
+
+            if (!sortDescriptors.Any() && queryable.Provider.IsEntityFrameworkProvider())
+            {
+                // The Entity Framework provider demands OrderBy before calling Skip.
+                SortDescriptor sortDescriptor = new SortDescriptor
+                {
+                    Member = queryable.ElementType.FirstSortableProperty()
+                };
+                sortDescriptors.Add(sortDescriptor);
+                temporarySortDescriptors.Add(sortDescriptor);
+            }
+
+            if (groupDescriptors.Any())
+            {
+                groupDescriptors.Reverse().Each(groupDescriptor =>
+                {
+                    SortDescriptor sortDescriptor = new SortDescriptor
+                    {
+                        Member = groupDescriptor.Member,
+                        SortDirection = groupDescriptor.SortDirection
+                    };
+                    
+                    sortDescriptors.Insert(0, sortDescriptor);
+                    temporarySortDescriptors.Add(sortDescriptor);
+                });
+            }
+            
+            if (sortDescriptors.Any())
+            {
+                data = data.Sort(sortDescriptors);
+            }
+
+            data = data.Page(page - 1, pageSize);
+
+            if (groupDescriptors.Any())
+            {
+                data = data.GroupBy(groupDescriptors);
+            }
+            
+            result.Data = data;
+
+            temporarySortDescriptors.Each(sortDescriptor => sortDescriptors.Remove(sortDescriptor));
+
+            return result;
+        }
+        
         private static IQueryable CallQueryableMethod(this IQueryable source, string methodName, LambdaExpression selector)
         {
             IQueryable query = source.Provider.CreateQuery(
@@ -246,7 +316,8 @@ namespace Telerik.Web.Mvc.Extensions
 
         internal static IQueryable SelectDistinct(this IQueryable source, Type propertyType, string propertyName)
         {
-            var builder = ExpressionBuilderFactory.MemberAccess(source.ElementType, propertyType, propertyName);
+            var builder = ExpressionBuilderFactory.MemberAccess(source, propertyType, propertyName);
+
             LambdaExpression lambda = builder.CreateLambdaExpression();
 
             var queryable = source.Select(lambda);
@@ -373,68 +444,6 @@ namespace Telerik.Web.Mvc.Extensions
             }
 
             return list;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="queryable"></param>
-        /// <param name="page"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="orderBy"></param>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        public static GridModel<T> ToGridModel<T>(this IQueryable<T> queryable, int page, int pageSize, string orderBy, string filter)
-        {
-            IQueryable data = queryable;
-
-            GridModel result = ToGridModel(data, page, pageSize, orderBy, filter);
-
-            return new GridModel<T>
-            {
-                Total = result.Total,
-                Data = result.Data.Cast<T>()
-            };
-        }
-
-        public static GridModel ToGridModel(this IQueryable queryable, int page, int pageSize, string orderBy, string filter)
-        {
-            GridCommand command = GridCommand.Parse(page, pageSize, orderBy, filter);
-
-            return queryable.ToGridModel(page, pageSize, command.SortDescriptors, command.FilterDescriptors);
-        }
-
-        public static GridModel ToGridModel(this IQueryable queryable, int page, int pageSize, IList<SortDescriptor> sortDescriptors, IList<IFilterDescriptor> filterDescriptors)
-        {
-            IQueryable data = queryable;
-
-            if (!filterDescriptors.IsEmpty())
-            {
-                data = data.Where(filterDescriptors);
-            }
-
-            GridModel result = new GridModel();
-
-            result.Total = data.Count();
-
-            if (sortDescriptors.IsEmpty() && queryable.Provider.IsEntityFrameworkProvider())
-            {
-                // The Entity Framework provider demands OrderBy before calling Skip.
-                sortDescriptors.Add(new SortDescriptor
-                {
-                    Member = queryable.ElementType.FirstSortableProperty()
-                });
-            }
-
-            if (!sortDescriptors.IsEmpty())
-            {
-                data = data.Sort(sortDescriptors);
-            }
-
-            result.Data = data.Page(page - 1, pageSize);
-
-            return result;
         }
 
         internal static bool IsBindableType(Type type)

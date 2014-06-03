@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -11,6 +11,8 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
     using System.Reflection;
     using System.Web.Mvc;
     using System.Web.Routing;
+
+    using Extensions;
 
     public class AuthorizeAttributeCache : CacheBase<RuntimeTypeHandle, IDictionary<string, IEnumerable<AuthorizeAttribute>>>, IAuthorizeAttributeCache
     {
@@ -49,29 +51,16 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         {
             IDictionary<string, IEnumerable<AuthorizeAttribute>> attributes = new Dictionary<string, IEnumerable<AuthorizeAttribute>>(StringComparer.OrdinalIgnoreCase);
 
-            AuthorizeAttribute controllerAuthorizeAttribute = controllerType.GetCustomAttributes(authorizeAttributeType, true)
-                                                                            .OfType<AuthorizeAttribute>()
-                                                                            .SingleOrDefault();
+            IEnumerable<AuthorizeAttribute> controllerAuthorizeAttribute = controllerType.GetCustomAttributes(authorizeAttributeType, true)
+                                                                                         .OfType<AuthorizeAttribute>();
 
             foreach (KeyValuePair<string, IList<MethodInfo>> pair in actionMethods)
             {
-                IList<AuthorizeAttribute> actionAttributes = new List<AuthorizeAttribute>();
-
-                if (controllerAuthorizeAttribute != null)
-                {
-                    actionAttributes.Add(controllerAuthorizeAttribute);
-                }
+                IList<AuthorizeAttribute> actionAttributes = new List<AuthorizeAttribute>(controllerAuthorizeAttribute);
 
                 foreach (MethodInfo method in pair.Value)
                 {
-                    AuthorizeAttribute actionAuthorizeAttribute = method.GetCustomAttributes(authorizeAttributeType, true)
-                                                                        .OfType<AuthorizeAttribute>()
-                                                                        .FirstOrDefault();
-
-                    if (actionAuthorizeAttribute != null)
-                    {
-                        actionAttributes.Add(actionAuthorizeAttribute);
-                    }
+                    actionAttributes.AddRange(method.GetCustomAttributes(authorizeAttributeType, true).OfType<AuthorizeAttribute>());
                 }
 
                 attributes.Add(pair.Key, actionAttributes.OrderBy(a => a.Order));

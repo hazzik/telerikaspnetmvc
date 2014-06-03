@@ -62,6 +62,7 @@
                     });
             }
             )
+            .Effects(fx => fx.Toggle())
             .Render(); %>
 
     <script type="text/javascript">

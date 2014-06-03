@@ -1,4 +1,4 @@
-﻿// (c) Copyright 2002-2009 Telerik 
+﻿// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -51,10 +51,9 @@ namespace Telerik.Web.Mvc.UI
 
         public string Serialize()
         {
-            return String.Format(Culture.Current, "{{name:'{0}',properties:['{1}'],openDuration:{2},closeDuration:{3}}}",
+            return String.Format(Culture.Current, "{{name:'{0}',properties:['{1}']}}",
                                  Name,
-                                 AnimationType.ToString().ToLower(Culture.Invariant),
-                                 OpenDuration, CloseDuration);
+                                 AnimationType.ToString().ToLower(Culture.Invariant));
         }
     }
 }

@@ -93,6 +93,14 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         }
 
         [Fact]
+        public void OnDocumentReady_should_add_new_statement_in_on_document_ready_statement_collection()
+        {
+            _builder.OnDocumentReady("var foo = 'bar';");
+
+            Assert.Contains("var foo = 'bar';", _scriptRegistrar.OnDocumentReadyStatements);
+        }
+
+        [Fact]
         public void OnWindowUnload_should_add_new_action_in_on_window_unload_action_collection()
         {
             Action onUnload = delegate { };
@@ -103,9 +111,27 @@ namespace Telerik.Web.Mvc.UI.UnitTest
         }
 
         [Fact]
+        public void OnWindowUnload_should_add_new_statement_in_on_window_unload_statement_collection()
+        {
+            _builder.OnWindowUnload("foo.dispose();");
+
+            Assert.Contains("foo.dispose();", _scriptRegistrar.OnWindowUnloadStatements);
+        }
+
+        [Fact]
         public void Render_should_not_throw_exception()
         {
             Assert.DoesNotThrow(() => _builder.Render());
+        }
+
+        [Fact]
+        public void Globalization_should_set_EnableGlobalization_property() 
+        {
+            const bool enable = true;
+
+            _builder.Globalization(enable);
+
+            Assert.True(_scriptRegistrar.EnableGlobalization);
         }
     }
 }

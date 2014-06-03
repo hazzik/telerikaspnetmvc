@@ -15,12 +15,10 @@
 <pre class="prettyprint">
 &lt;%= Html.Telerik().PanelBar()
         .Name("PanelBar")
-        .Effects(fx => fx.Expand(properties => properties
-                            .OpenDuration(200)
-                            .CloseDuration(300))
-                         .Opacity(properties => properties
-                            .OpenDuration(200)
-                            .CloseDuration(300))
+        .Effects(fx => fx.Expand()
+                         .Opacity()
+                         .OpenDuration(200)
+                         .CloseDuration(300)
         )
         .Items(items => { /*items definition*/ })
 %&gt;

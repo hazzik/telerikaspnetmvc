@@ -10,8 +10,9 @@
 
 		public MenuItemBuilderTests()
         {
+            var viewContext = TestHelper.CreateViewContext();
 			item = new MenuItem();
-			builder = new MenuItemBuilder(item);
+            builder = new MenuItemBuilder(item, viewContext);
         }
 
         [Fact]

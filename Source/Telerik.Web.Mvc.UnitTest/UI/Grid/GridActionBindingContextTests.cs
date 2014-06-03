@@ -16,7 +16,7 @@
         {
             valueProvider = new Dictionary<string, ValueProviderResult>();
             dataSource = new object[]{};
-            bindingContext = new GridActionBindingContext(false, valueProvider, dataSource, 0);
+            bindingContext = new GridActionBindingContext(false, new ControllerTestDouble(valueProvider, new ViewDataDictionary()), dataSource, 0);
         }
 
         [Fact]

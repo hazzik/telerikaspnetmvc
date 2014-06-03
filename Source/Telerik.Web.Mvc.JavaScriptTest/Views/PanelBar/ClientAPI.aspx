@@ -54,6 +54,7 @@
                 events.OnSelect("Select");
                 events.OnLoad("Load");
             })
+            .Effects(effects => effects.Toggle())
             .Render(); %>
     
    <script type="text/javascript">
@@ -70,7 +71,7 @@
 
         function test_clicking_should_raise_onSelect_event() {
 
-            var item = getRootItem(2);
+            var item = getRootItem(1);
 
             isRaised = false;
 
@@ -86,8 +87,8 @@
             isRaised = false;
 
             var item = getRootItem(0);
-            panel.expand(item);
-            panel.collapse(item);
+            
+            item.find('> .t-link').trigger('click');
 
             assertTrue(isRaised);
         }
@@ -100,7 +101,7 @@
 
             var item = getRootItem(0);
 
-            panel.expand(item);
+            item.find('> .t-link').trigger('click');
 
             assertTrue(isRaised);
         }

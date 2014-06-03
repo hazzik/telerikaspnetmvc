@@ -1,4 +1,0 @@
-﻿Restrict the range of selectable dates with the minDate and maxDate options.<br /><br />
-
-<strong>MinimumValue(minDate)</strong><br />
-<strong>MaximumValue(maxDate)</strong>

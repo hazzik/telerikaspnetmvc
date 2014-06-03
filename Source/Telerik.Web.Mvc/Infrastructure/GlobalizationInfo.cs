@@ -1,3 +1,8 @@
+// (c) Copyright 2002-2010 Telerik 
+// This source is subject to the GNU General Public License, version 2
+// See http://www.gnu.org/licenses/gpl-2.0.html. 
+// All other rights reserved.
+
 namespace Telerik.Web.Mvc.Infrastructure
 {
     using System.Collections.Generic;
@@ -10,6 +15,7 @@ namespace Telerik.Web.Mvc.Infrastructure
         public GlobalizationInfo(CultureInfo cultureInfo)
         {
             DateTimeFormatInfo dateTimeFormats = cultureInfo.DateTimeFormat;
+            NumberFormatInfo numberFormats = cultureInfo.NumberFormat;
 
             globalization["shortDate"] = dateTimeFormats.ShortDatePattern;
             globalization["longDate"] = dateTimeFormats.LongDatePattern;
@@ -28,6 +34,28 @@ namespace Telerik.Web.Mvc.Infrastructure
             globalization["pm"] = dateTimeFormats.PMDesignator;
             globalization["dateSeparator"] = dateTimeFormats.DateSeparator;
             globalization["timeSeparator"] = dateTimeFormats.TimeSeparator;
+
+            globalization["currencydecimaldigits"] = numberFormats.CurrencyDecimalDigits;
+            globalization["currencydecimalseparator"] = numberFormats.CurrencyDecimalSeparator;
+            globalization["currencygroupseparator"] = numberFormats.CurrencyGroupSeparator;
+            globalization["currencygroupsize"] = numberFormats.CurrencyGroupSizes[0];
+            globalization["currencynegative"] = numberFormats.CurrencyNegativePattern;
+            globalization["currencypositive"] = numberFormats.CurrencyPositivePattern;
+            globalization["currencysymbol"] = numberFormats.CurrencySymbol;
+
+            globalization["numericdecimaldigits"] = numberFormats.NumberDecimalDigits;
+            globalization["numericdecimalseparator"] = numberFormats.NumberDecimalSeparator;
+            globalization["numericgroupseparator"] = numberFormats.NumberGroupSeparator;
+            globalization["numericgroupsize"] = numberFormats.NumberGroupSizes[0];
+            globalization["numericnegative"] = numberFormats.NumberNegativePattern;
+
+            globalization["percentdecimaldigits"] = numberFormats.PercentDecimalDigits;
+            globalization["percentdecimalseparator"] = numberFormats.PercentDecimalSeparator;
+            globalization["percentgroupseparator"] = numberFormats.PercentGroupSeparator;
+            globalization["percentgroupsize"] = numberFormats.PercentGroupSizes[0];
+            globalization["percentnegative"] = numberFormats.PercentNegativePattern;
+            globalization["percentpositive"] = numberFormats.PercentPositivePattern;
+            globalization["percentsymbol"] = numberFormats.PercentSymbol;
         }
 
         public IDictionary<string, object> ToDictionary()

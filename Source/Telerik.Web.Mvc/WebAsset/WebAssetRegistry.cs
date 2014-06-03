@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -26,7 +26,7 @@ namespace Telerik.Web.Mvc
     {
         private static readonly Regex urlRegEx = new Regex(@"url\s*\((\""|\')?(?<path>[^)]+)?(\""|\')?\)", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.CultureInvariant);
 
-        private static readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim(LockRecursionPolicy.SupportsRecursion);
+        private static readonly ReaderWriterLockSlim syncLock = new ReaderWriterLockSlim();
 
         private readonly bool isInDebugMode;
         private readonly ICacheManager cacheManager;
@@ -233,26 +233,27 @@ namespace Telerik.Web.Mvc
                             List<string> physicalPaths = new List<string>();
                             StringBuilder contentBuilder = new StringBuilder();
 
-                            foreach (MergedAssetDirectory directoy in asset.Directories)
+                            var files = asset.Directories
+                                             .SelectMany(d => d.Files.Select(f => new { Directory = d, File = f }))
+                                             .OrderBy(f => f.File.Order);
+
+                            foreach (var pair in files)
                             {
-                                foreach (MergedAssetFile file in directoy.Files.OrderBy(f => f.Order))
+                                string path = "~/" + pair.Directory.Path + "/" + pair.File.Name;
+
+                                string virtualPath = assetLocator.Locate(path, asset.Version);
+                                string fileContent = virtualPathProvider.ReadAllText(virtualPath);
+
+                                if (string.Compare(asset.ContentType, "text/css", StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    string path = "~/" + directoy.Path + "/" + file.Name;
+                                    string baseDiretory = virtualPathProvider.GetDirectory(virtualPath);
 
-                                    string virtualPath = assetLocator.Locate(path, asset.Version);
-                                    string fileContent = virtualPathProvider.ReadAllText(virtualPath);
-
-                                    if (string.Compare(asset.ContentType, "text/css", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        string baseDiretory = virtualPathProvider.GetDirectory(virtualPath);
-                                        
-                                        fileContent = ReplaceImagePath(baseDiretory, asset.Version, fileContent);
-                                    }
-
-                                    contentBuilder.AppendLine(fileContent);
-
-                                    physicalPaths.Add(pathResolver.Resolve(virtualPath));
+                                    fileContent = ReplaceImagePath(baseDiretory, asset.Version, fileContent);
                                 }
+
+                                contentBuilder.AppendLine(fileContent);
+
+                                physicalPaths.Add(pathResolver.Resolve(virtualPath));
                             }
 
                             assetHolder = new WebAssetHolder { Asset = asset, Content = contentBuilder.ToString() };

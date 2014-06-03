@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -68,14 +68,15 @@ namespace Telerik.Web.Mvc
             {
                 GridCommand command = new GridCommand
                 {
-                  Page = filterContext.Controller.ValueProvider.ValueOf<int>(GridUrlParameters.CurrentPage)
+                    Page = filterContext.Controller.ValueOf<int>(GridUrlParameters.CurrentPage),
+                    PageSize = filterContext.Controller.ValueOf<int>(GridUrlParameters.PageSize)
                 };
 
-                string orderBy = filterContext.Controller.ValueProvider.ValueOf<string>(GridUrlParameters.OrderBy);
+                string orderBy = filterContext.Controller.ValueOf<string>(GridUrlParameters.OrderBy);
 
-                command.SortDescriptors.AddRange(GridSortDescriptorSerializer.Deserialize(orderBy));
+                command.SortDescriptors.AddRange(GridDescriptorSerializer.Deserialize<SortDescriptor>(orderBy));
                 
-                string filter = filterContext.Controller.ValueProvider.ValueOf<string>(GridUrlParameters.Filter);
+                string filter = filterContext.Controller.ValueOf<string>(GridUrlParameters.Filter);
 
                 command.FilterDescriptors.AddRange(FilterDescriptorFactory.Create(filter));
 
@@ -97,7 +98,7 @@ namespace Telerik.Web.Mvc
                     return;
                 }
 
-                GridActionBindingContext context = new GridActionBindingContext(EnableCustomBinding, filterContext.Controller.ValueProvider, model.Data, model.Total);
+                GridActionBindingContext context = new GridActionBindingContext(EnableCustomBinding, filterContext.Controller, model.Data, model.Total);
                 GridDataProcessor dataProcessor = new GridDataProcessor(context);
 
                 filterContext.Result = new JsonResult 

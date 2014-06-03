@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+﻿// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -11,21 +11,18 @@ namespace Telerik.Web.Mvc.UI
 
     public class GridActionBindingContext : IGridBindingContext
     {
-        public GridActionBindingContext(bool enableCustomBinding, IDictionary<string, ValueProviderResult> valueProvider, IEnumerable dataSource, int total)
+        public GridActionBindingContext(bool enableCustomBinding, ControllerBase controller, IEnumerable dataSource, int total)
         {
             EnableCustomBinding = enableCustomBinding;
-            ValueProvider = valueProvider;
+            Controller = controller;
             DataSource = dataSource;
             Total = total;
+            SortDescriptors = new List<SortDescriptor>();
+            GroupDescriptors = new List<GroupDescriptor>();
+            FilterDescriptors = new List<CompositeFilterDescriptor>();
         }
 
         public bool EnableCustomBinding
-        {
-            get;
-            private set;
-        }
-
-        public IDictionary<string, ValueProviderResult> ValueProvider
         {
             get;
             private set;
@@ -37,12 +34,36 @@ namespace Telerik.Web.Mvc.UI
             set;
         }
 
+        public IList<SortDescriptor> SortDescriptors
+        {
+            get;
+            private set;
+        }
+
+        public IList<CompositeFilterDescriptor> FilterDescriptors
+        {
+            get;
+            private set;
+        }
+
+        public IList<GroupDescriptor> GroupDescriptors
+        {
+            get;
+            private set;
+        }
+
         public int PageSize
         {
             get 
             {
-                return ValueProvider.ValueOf<int>(Prefix(GridUrlParameters.PageSize)); 
+                return this.GetGridParameter<int>(GridUrlParameters.PageSize); 
             }
+        }
+
+        public ControllerBase Controller
+        {
+            get;
+            private set;
         }
 
         public int Total

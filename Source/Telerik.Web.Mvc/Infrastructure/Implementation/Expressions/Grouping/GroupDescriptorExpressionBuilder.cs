@@ -1,4 +1,6 @@
-// (c) Copyright 2002-2009 Telerik 
+using Telerik.Web.Mvc.Infrastructure;
+using Telerik.Web.Mvc.Infrastructure.Implementation;
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -85,7 +87,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation.Expressions
 
         protected override LambdaExpression CreateGroupByExpression()
         {
-            var memberAccessBuilder = ExpressionBuilderFactory.MemberAccess(this.ItemType, this.groupDescriptor.MemberType, this.groupDescriptor.Member);
+            var memberAccessBuilder = ExpressionBuilderFactory.MemberAccess(this.Queryable, this.groupDescriptor.MemberType, this.groupDescriptor.Member);
             memberAccessBuilder.ParameterExpression = this.ParameterExpression;
             return memberAccessBuilder.CreateLambdaExpression();
         }

@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -9,6 +9,8 @@ namespace Telerik.Web.Mvc.UI
     using System.Collections.Generic;
 
     using Infrastructure;
+    using Extensions;
+    using System.Collections;
 
     /// <summary>
     /// Defines the fluent interface for configuring the <see cref="Menu"/> component.
@@ -19,7 +21,8 @@ namespace Telerik.Web.Mvc.UI
         /// Initializes a new instance of the <see cref="MenuBuilder"/> class.
         /// </summary>
         /// <param name="component">The component.</param>
-        public MenuBuilder(Menu component) : base(component)
+        public MenuBuilder(Menu component)
+            : base(component)
         {
         }
 
@@ -43,7 +46,7 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNull(addAction, "addAction");
 
-            MenuItemFactory factory = new MenuItemFactory(Component);
+            MenuItemFactory factory = new MenuItemFactory(Component, Component.ViewContext);
 
             addAction(factory);
 
@@ -141,10 +144,12 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(viewDataKey, "viewDataKey");
 
-            Component.BindTo(viewDataKey, Component.ViewContext, siteMapAction);
+            Component.BindTo(viewDataKey, siteMapAction);
 
             return this;
         }
+
+
         /// <summary>
         /// Binds the menu to a sitemap.
         /// </summary>
@@ -161,13 +166,14 @@ namespace Telerik.Web.Mvc.UI
         {
             Guard.IsNotNullOrEmpty(viewDataKey, "viewDataKey");
 
-            Component.BindTo(viewDataKey, Component.ViewContext);
+            Component.BindTo(viewDataKey);
 
             return this;
         }
 
         /// <summary>
-        /// Binds the menu to a list of objects
+        /// Binds the menu to a list of objects. The menu will be "flat" which means a menu item will be created for 
+        /// every item in the data source.
         /// </summary>
         /// <typeparam name="T">The type of the data item</typeparam>
         /// <param name="dataSource">The data source.</param>
@@ -193,29 +199,61 @@ namespace Telerik.Web.Mvc.UI
         }
 
         /// <summary>
+        /// Binds the menu to a list of objects. The menu will create a hierarchy of items using the specified mappings.
+        /// </summary>
+        /// <typeparam name="T">The type of the data item</typeparam>
+        /// <param name="dataSource">The data source.</param>
+        /// <param name="factoryAction">The action which will configure the mappings</param>
+        /// <example>
+        /// <code lang="CS">
+        ///  &lt;%= Html.Telerik().Menu()
+        ///             .Name("Menu")
+        ///             .BindTo(Model, mapping => mapping
+        ///                     .For&lt;Customer&gt;(binding => binding
+        ///                         .Children(c => c.Orders) // The "child" items will be bound to the the "Orders" property
+        ///                         .ItemDataBound((item, c) => item.Text = c.ContactName) // Map "Customer" properties to MenuItem properties
+        ///                     )
+        ///                     .For&lt;Order&lt;(binding => binding
+        ///                         .Children(o => null) // "Orders" do not have child objects so return "null"
+        ///                         .ItemDataBound((item, o) => item.Text = o.OrderID.ToString()) // Map "Order" properties to MenuItem properties
+        ///                     )
+        ///             ) 
+        /// %&gt;
+        /// </code>
+        /// </example>
+        public MenuBuilder BindTo(IEnumerable dataSource, Action<NavigationBindingFactory<MenuItem>> factoryAction)
+        {
+            Guard.IsNotNull(factoryAction, "factoryAction");
+
+            Component.BindTo(dataSource, factoryAction);
+
+            return this;
+        }
+
+        /// <summary>
         /// Configures the effects of the menu.
         /// </summary>
         /// <param name="effectsAction">The action which configures the effects.</param>
         /// <example>
         /// <code lang="CS">
         /// &lt;%= Html.Telerik().Menu()
-		///	           .Name("Menu")
-		///	           .Effects(fx =>
-		///	           {
-		///		            fx.Slide(properties => properties
-		///					    .OpenDuration(AnimationDuration.Normal)
-		///					    .CloseDuration(AnimationDuration.Normal))
-		///			          .Opacity(properties => properties
-		///					    .OpenDuration(AnimationDuration.Normal)
-		///					    .CloseDuration(AnimationDuration.Normal));
+        ///	           .Name("Menu")
+        ///	           .Effects(fx =>
+        ///	           {
+        ///		            fx.Slide()
+        ///			          .Opacity()
+        ///					  .OpenDuration(AnimationDuration.Normal)
+        ///					  .CloseDuration(AnimationDuration.Normal);
         ///	           })
         /// </code>
         /// </example>
-        public MenuBuilder Effects(Action<EffectFactory> effectsAction)
+        public MenuBuilder Effects(Action<EffectsBuilder> addEffects)
         {
-            Guard.IsNotNull(effectsAction, "effectsAction");
+            Guard.IsNotNull(addEffects, "addAction");
 
-            effectsAction(new EffectFactory(Component));
+            EffectsBuilderFactory factory = new EffectsBuilderFactory();
+
+            addEffects(factory.Create(Component.Effects));
 
             return this;
         }

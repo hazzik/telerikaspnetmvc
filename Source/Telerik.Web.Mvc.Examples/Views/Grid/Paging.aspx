@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Order>>" %>
-
-<asp:content contentPlaceHolderID="ExampleTitle" runat="server">Paging</asp:content>
-
 <asp:content contentPlaceHolderID="MainContent" runat="server">
 
 <% using (Html.Configurator("The pager should contain...")
@@ -43,12 +40,12 @@
         .Name("Grid")
         .Columns(columns =>
         {
-            columns.Add(o => o.OrderID).Width(81);
-            columns.Add(o => o.Customer.ContactName).Width(200);
-            columns.Add(o => o.ShipAddress);
-            columns.Add(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
+            columns.Bound(o => o.OrderID).Width(81);
+            columns.Bound(o => o.Customer.ContactName).Width(200);
+            columns.Bound(o => o.ShipAddress);
+            columns.Bound(o => o.OrderDate).Format("{0:MM/dd/yyyy}").Width(100);
         })
-        .Ajax(ajax => ajax.Action("_Paging", "Grid"))
+        .DataBinding(dataBinding => dataBinding.Ajax().Select("_Paging", "Grid"))
         .Pageable(paging => paging.Style(pagerStyles))
         .Render();
 %>

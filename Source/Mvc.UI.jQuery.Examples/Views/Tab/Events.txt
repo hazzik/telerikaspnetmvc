@@ -1,8 +1,0 @@
-﻿<strong>Add</strong><br/>
-This event is triggered when a tab is added.<br/>
-<strong>Removed</strong><br/>
-This event is triggered when a tab is removed.<br/>
-<strong>Enable</strong><br/>
-This event is triggered when a tab is enabled.<br/>
-<strong>Disable</strong><br/>
-This event is triggered when a tab is disabled.<br/>

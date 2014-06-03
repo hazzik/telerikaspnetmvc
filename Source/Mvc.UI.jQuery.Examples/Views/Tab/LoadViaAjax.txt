@@ -1,4 +1,0 @@
-﻿Fetch external content via Ajax for the tabs by setting an actin link using LoadContentFrom. 
-While the Ajax request is waiting for a response, the tab label changes to say "Loading...", then returns to the normal label once loaded.<br /><br />
-
-<strong>LoadContentFrom(Url.Action(actionName, controllerName))</strong>

@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Telerik.Web.Mvc.Examples")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("DotNetShoutout")]
+[assembly: AssemblyCompany("Telerik")]
 [assembly: AssemblyProduct("Telerik.Web.Mvc.Examples")]
-[assembly: AssemblyCopyright("Copyright © DotNetShoutout 2009")]
+[assembly: AssemblyCopyright("Copyright © Telerik 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

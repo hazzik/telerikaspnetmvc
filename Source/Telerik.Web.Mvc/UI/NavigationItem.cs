@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -18,7 +18,6 @@ namespace Telerik.Web.Mvc.UI
         private string controllerName;
         private string actionName;
         private string url;
-        private Action content;
 
         private bool selected;
         private bool enabled;
@@ -27,6 +26,7 @@ namespace Telerik.Web.Mvc.UI
         {
             HtmlAttributes = new RouteValueDictionary();
             ImageHtmlAttributes = new RouteValueDictionary();
+            LinkHtmlAttributes = new RouteValueDictionary();
             RouteValues = new RouteValueDictionary();
             ContentHtmlAttributes = new RouteValueDictionary();
             Visible = true;
@@ -55,6 +55,12 @@ namespace Telerik.Web.Mvc.UI
         }
 
         public IDictionary<string, object> ImageHtmlAttributes
+        {
+            get;
+            private set;
+        }
+
+        public IDictionary<string, object> LinkHtmlAttributes
         {
             get;
             private set;
@@ -161,7 +167,7 @@ namespace Telerik.Web.Mvc.UI
         public RouteValueDictionary RouteValues
         {
             get;
-            private set;
+            set;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings", Justification = "Url might not be a valid uri.")]
@@ -190,14 +196,8 @@ namespace Telerik.Web.Mvc.UI
 
         public Action Content
         {
-            get
-            {
-                return content;
-            }
-            set
-            {
-                content = value;
-            }
+            get;
+            set;
         }
     }
 }

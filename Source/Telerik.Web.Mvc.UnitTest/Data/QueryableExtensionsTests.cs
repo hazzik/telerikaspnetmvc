@@ -30,6 +30,40 @@
         }
 
         [Fact]
+        public void Filter_string_equals_caseinsensitive()
+        {
+            IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };
+
+            IQueryable quearyablePeople = QueryableFactory.CreateQueryable(people);
+
+            IQueryable<Person> filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
+            {
+                Member = "Name",
+                Operator = FilterOperator.IsEqualTo,
+                Value = "a"
+            }}).Cast<Person>();
+
+            Assert.Same(people.ElementAt(0), filteredPeople.FirstOrDefault());
+        }
+
+        [Fact]
+        public void Filter_string_not_equal_caseinsensitive()
+        {
+            IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };
+
+            IQueryable quearyablePeople = QueryableFactory.CreateQueryable(people);
+
+            IQueryable<Person> filteredPeople = quearyablePeople.Where(new[] { new FilterDescriptor
+            {
+                Member = "Name",
+                Operator = FilterOperator.IsNotEqualTo,
+                Value = "a"
+            }}).Cast<Person>();
+
+            Assert.Same(people.ElementAt(1), filteredPeople.FirstOrDefault());
+        }
+
+        [Fact]
         public void Sort_should_sort_the_data()
         {
             IEnumerable<Person> people = new[] { new Person { Name = "A" }, new Person { Name = "B" } };
@@ -103,31 +137,12 @@
         }
 
         [Fact]
-        public void All_features_at_once()
+        public void Empty_group()
         {
             IQueryable people = CreateTestData();
-            Expression<Func<Person, bool>> expression = (Person p) => p.ID >= 0 && p.ID <= 2;
-            IQueryable<IGroup> result = people
-                .Where(expression)
-                .Sort(new[] { 
-                    new SortDescriptor { 
-                        Member = "ID", 
-                        SortDirection = ListSortDirection.Descending 
-                    }
-                })
-                .GroupBy(new[]{
-                    new GroupDescriptor{
-                        Member = "ID"
-                    }
-                })
-                .Page(0, 1)
-                .Cast<IGroup>();
-
-            IGroup firstGroup = result.First();
-            IEnumerable<Person> itemsInFirstGroup = firstGroup.Items.Cast<Person>();
-            Assert.Equal(1, result.Count());
-            Assert.Equal(2, firstGroup.Key);
-            Assert.Equal("Person#2", itemsInFirstGroup.First().Name);
+            IQueryable<Person> grouppedPeople = people.GroupBy(new GroupDescriptor[]{})
+                .Cast<Person>();
+            Assert.Equal(grouppedPeople.Count(), CreateTestData().Count());
         }
 
         private IQueryable CreateTestData()

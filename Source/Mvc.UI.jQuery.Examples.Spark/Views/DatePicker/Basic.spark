@@ -1,8 +1,0 @@
-<content name="TitleContent">
-    DatePicker Basic Example
-</content>
-<content name="MainContent">
-    <% Html.jQuery().DatePicker()
-                    .Name("txtDate")
-                    .Render(); %>
-</content>

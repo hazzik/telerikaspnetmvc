@@ -35,6 +35,40 @@
         }
 
         [Fact]
+        public void Should_parse_identifier_containing_underscore()
+        {
+            IList<FilterToken> tokens = Tokenize("_underscore");
+            Assert.Equal(FilterTokenType.Property, tokens[0].TokenType);
+            Assert.Equal("_underscore", tokens[0].Value);
+        }
+
+        [Fact]
+        public void Should_parse_identifier_containing_dollar()
+        {
+            var tokens = Tokenize("$dollar");
+
+            Assert.Equal(FilterTokenType.Property, tokens[0].TokenType);
+            Assert.Equal("$dollar", tokens[0].Value);
+        }
+
+        [Fact]
+        public void Should_parse_identifier_starting_with_at()
+        {
+            var tokens = Tokenize("@at");
+
+            Assert.Equal(FilterTokenType.Property, tokens[0].TokenType);
+            Assert.Equal("@at", tokens[0].Value);
+        }
+
+        [Fact]
+        public void Should_parse_identifier_containing_digits()
+        {
+            var tokens = Tokenize("property1");
+            Assert.Equal(FilterTokenType.Property, tokens[0].TokenType);
+            Assert.Equal("property1", tokens[0].Value);
+        }
+
+        [Fact]
         public void Tokenize_returns_boolean_false()
         {
             IList<FilterToken> tokens = Tokenize("false");

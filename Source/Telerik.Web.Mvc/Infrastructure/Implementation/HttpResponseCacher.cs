@@ -1,4 +1,4 @@
-// (c) Copyright 2002-2009 Telerik 
+// (c) Copyright 2002-2010 Telerik 
 // This source is subject to the GNU General Public License, version 2
 // See http://www.gnu.org/licenses/gpl-2.0.html. 
 // All other rights reserved.
@@ -22,7 +22,7 @@ namespace Telerik.Web.Mvc.Infrastructure.Implementation
         {
             Guard.IsNotNull(context, "context");
 
-            if (duration > TimeSpan.Zero)
+            if ((duration > TimeSpan.Zero) || !context.IsDebuggingEnabled) // Do not cache in debug mode.
             {
                 HttpCachePolicyBase cache = context.Response.Cache;
 

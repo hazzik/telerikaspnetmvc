@@ -1,7 +1,4 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:content contentPlaceHolderID="ExampleTitle" runat="server">Client-side API</asp:content>
-
 <asp:content contentPlaceHolderID="MainContent" runat="server">
 <% Html.Telerik().TabStrip()
         .Name("TabStrip")
@@ -62,21 +59,18 @@
                         </p>
                     <%});
 		})
-        .HtmlAttributes(new { style = "float: left; width: 595px;" })
+        .HtmlAttributes(new { style = "float: left; width: 605px;" })
 		.Render(); %>
 	
 <% using (Html.Configurator("Client API").Begin()) { %>
     <p>
         <label for="itemIndex">Item index:</label>
-        <%= Html.TextBox("itemIndex", "0", new { style = "width: 40px" })%>
-    </p>
-    
-    <p>
-        <button onclick="Select()">Select</button>
-    </p>
-    
-    <p>
-        <button onclick="Enable()">Enable</button> / <button onclick="Disable()">Disable</button>
+        <%= Html.TextBox("itemIndex", "0", new { style = "width: 40px" })%> <br />
+        
+        <button class="t-button t-state-default" onclick="Select()">Select</button><br />
+        
+        <button class="t-button t-state-default" onclick="Enable()">Enable</button> /
+        <button class="t-button t-state-default" onclick="Disable()">Disable</button>
     </p>
 <% } %>
         
@@ -120,7 +114,15 @@
 	    .configurator p
 	    {
 	        margin: 0;
-	        padding: .4em 0;
+	        padding: 1em 0;
+	    }
+	    
+	    .configurator .t-button
+	    {
+	        display: inline-block;
+	        *display: inline;
+	        zoom: 1;
+	        margin-top: 1em;
 	    }
     </style>
 </asp:Content>

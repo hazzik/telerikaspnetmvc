@@ -9,6 +9,8 @@
 </div>
 
 <script type="text/javascript">
+    //<![CDATA[
+
 	window.$console = {
 		log: function(msg) {
 			$('<div />')
@@ -22,6 +24,8 @@
 				.animate({ backgroundColor: '#ffffff' }, 800);
 		}
 	};
+	
+	//]]>
 </script>
 
 <% Html.Telerik().ScriptRegistrar()

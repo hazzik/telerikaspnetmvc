@@ -23,7 +23,7 @@
 			textWriter = new Mock<TextWriter>();
 			textWriter.Setup(tw => tw.Write(It.IsAny<string>())).Callback<string>(s => output += s);
 
-			menu = MenuTestHelper.CreteMenu(htmlWriter.Object, null);
+			menu = MenuTestHelper.CreateMenu(htmlWriter.Object, null);
 			menu.Name = "myMenu";
 		}
 
@@ -45,38 +45,68 @@
 			Assert.Equal("jQuery('#myMenu').tMenu({orientation:'vertical'});", output);
 		}
 
-		[Fact]
-		public void Menu_with_non_default_effects_should_serialize_them()
-		{
-            menu.Effects.Clear();
-		    menu.Effects.Add(
-		        new PropertyAnimation(PropertyAnimationType.Opacity)
-		            {
-		                OpenDuration = 100,
-		                CloseDuration = 200
-		            });
+        [Fact]
+        public void Menu_with_non_default_effects_should_serialize_them()
+        {
+            menu.Effects.Container.Clear();
+            menu.Effects.Container.Add(new PropertyAnimation(PropertyAnimationType.Opacity));
 
-			menu.WriteInitializationScript(textWriter.Object);
+            menu.Effects.OpenDuration = 100;
+            menu.Effects.CloseDuration = 200;
 
-			Assert.Equal("jQuery('#myMenu').tMenu({effects:[{name:'property',properties:['opacity'],openDuration:100,closeDuration:200}]});", output);
-		}
+            menu.WriteInitializationScript(textWriter.Object);
 
-		[Fact]
-		public void Menu_serializes_multiple_effects_correctly()
-		{
-            menu.Effects.Clear();
-		    menu.Effects.Add(new SlideAnimation { OpenDuration = 100, CloseDuration = 200 });
-		    menu.Effects.Add(new PropertyAnimation(PropertyAnimationType.Opacity) { OpenDuration = 100, CloseDuration = 200 });
-            menu.Effects.Add(new ToggleEffect());
+            Assert.Equal("jQuery('#myMenu').tMenu({effects:{list:[{name:'property',properties:['opacity']}],openDuration:100,closeDuration:200}});", output);
+        }
 
-			menu.WriteInitializationScript(textWriter.Object);
+        [Fact]
+        public void Menu_serializes_multiple_effects_correctly()
+        {
+            menu.Effects.Container.Clear();
+            menu.Effects.Container.Add(new SlideAnimation());
+            menu.Effects.Container.Add(new PropertyAnimation(PropertyAnimationType.Opacity));
+            menu.Effects.Container.Add(new ToggleEffect());
 
-			Assert.Equal("jQuery('#myMenu').tMenu(" + 
-							"{effects:[" +
-								"{name:'slide',openDuration:100,closeDuration:200}," +
-								"{name:'property',properties:['opacity'],openDuration:100,closeDuration:200}," +
-								"{name:'toggle'}" +
-							"]});", output);
-		}
+            menu.Effects.OpenDuration = 200;
+            menu.Effects.CloseDuration = 200;
+
+            menu.WriteInitializationScript(textWriter.Object);
+
+            Assert.Equal("jQuery('#myMenu').tMenu(" +
+                            "{effects:{list:[" +
+                                "{name:'slide'}," +
+                                "{name:'toggle'}," +
+                                "{name:'property',properties:['opacity']}]," +
+                                "openDuration:200,closeDuration:200" +
+                            "}});", output);
+        }
+
+        [Fact]
+        public void Menu_serializes_multiple_property_animations_correctly()
+        {
+            menu.Effects.Container.Clear();
+            menu.Effects.Container.Add(new PropertyAnimation(PropertyAnimationType.Opacity));
+            menu.Effects.Container.Add(new PropertyAnimation(PropertyAnimationType.Height));
+
+            menu.Effects.OpenDuration = 200;
+            menu.Effects.CloseDuration = 200;
+
+            menu.WriteInitializationScript(textWriter.Object);
+
+            Assert.Equal("jQuery('#myMenu').tMenu(" +
+                            "{effects:{list:[" +
+                                "{name:'property',properties:['opacity','height']}],openDuration:200,closeDuration:200" +
+                            "}});", output);
+        }
+
+        [Fact]
+        public void Menu_with_openOnClick_serializes_correctly()
+        {
+            menu.OpenOnClick = true;
+
+            menu.WriteInitializationScript(textWriter.Object);
+
+            Assert.Equal("jQuery('#myMenu').tMenu({openOnClick:true});", output);
+        }
 	}
 }

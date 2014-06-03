@@ -1,4 +1,0 @@
-﻿Show month and year dropdowns in place of the static month/year header to facilitate navigation through large timeframes. Add the boolean AllowMonthChange and AllowYearChange options.<br /><br />
-
-<strong>AllowMonthChange(true)</strong><br />
-<strong>AllowYearChange(true)</strong>

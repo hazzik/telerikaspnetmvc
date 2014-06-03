@@ -12,10 +12,10 @@
     <AssemblyName>Telerik.Web.Mvc.UnitTest</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>SAK</SccProjectName>
-    <SccLocalPath>SAK</SccLocalPath>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccProvider>SAK</SccProvider>
+     
+     
+     
+     
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\SharedFiles\Telerik.Web.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MVC1</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,9 +32,29 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;MVC1</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug MVC2 NET35\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MVC2</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU' ">
+    <OutputPath>bin\Release MVC2 NET35\</OutputPath>
+    <DefineConstants>TRACE;MVC2</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Moq, Version=3.0.307.1, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
@@ -54,16 +74,28 @@
     <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Routing">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="xunit, Version=1.1.0.1323, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\xunit.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <Choose>
+    <When Condition=" '$(Configuration)|$(Platform)' == 'Debug MVC2 NET35|AnyCPU' Or '$(Configuration)|$(Platform)' == 'Release MVC2 NET35|AnyCPU'">
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </When>
+    <Otherwise>
+      <ItemGroup>
+        <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+      </ItemGroup>
+    </Otherwise>
+  </Choose>
   <ItemGroup>
     <Compile Include="..\SharedFiles\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
@@ -76,6 +108,7 @@
     <Compile Include="Infrastructure\CacheBaseTests.cs" />
     <Compile Include="Infrastructure\DisposableBaseTests.cs" />
     <Compile Include="Infrastructure\FilterDescriptorFactoryTests.cs" />
+    <Compile Include="Infrastructure\HtmlTagTests.cs" />
     <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterLexerTests.cs" />
     <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeTests.cs" />
     <Compile Include="Infrastructure\Implementation\Filtering\Parsing\FilterNodeVisitorTests.cs" />
@@ -110,34 +143,64 @@
     <Compile Include="SiteMap\SiteMapNodeTests.cs" />
     <Compile Include="SiteMap\XmlSiteMapTests.cs" />
     <Compile Include="UI\AnimationDurationConverterTests.cs" />
+    <Compile Include="UI\Calendar\CalendarBuilderTests.cs" />
+    <Compile Include="UI\Calendar\CalendarClientEventsBuilderTests.cs" />
+    <Compile Include="UI\Calendar\CalendarRenderingTests.cs" />
+    <Compile Include="UI\Calendar\CalendarSelectionSettingsBuilderTests.cs" />
+    <Compile Include="UI\Calendar\CalendarTestHelper.cs" />
+    <Compile Include="UI\Calendar\CalendarHtmlBuilderFactoryTests.cs" />
+    <Compile Include="UI\Calendar\CalendarHtmlBuilderTests.cs" />
     <Compile Include="UI\ClientSideObjectWriterTests.cs" />
     <Compile Include="UI\Customer.cs" />
-    <Compile Include="UI\Effects\EffectFactoryTests.cs" />
+    <Compile Include="UI\DatePicker\DatePickerBuilderTests.cs" />
+    <Compile Include="UI\DatePicker\DatePickerHtmlBuilderFactoryTests.cs" />
+    <Compile Include="UI\DatePicker\DatePickerHtmlBuilderTests.cs" />
+    <Compile Include="UI\DatePicker\DatePickerRenderingTests.cs" />
+    <Compile Include="UI\DatePicker\DatePickerTestHelper.cs" />
+    <Compile Include="UI\DatePicker\DatePickerClientEventsBuilderTests.cs" />
+    <Compile Include="UI\Effects\EffectsSerializationTests.cs" />
+    <Compile Include="UI\Effects\ToggleAnimationSerializationTests.cs" />
+    <Compile Include="UI\Effects\PropertyAnimationSerializationTests.cs" />
+    <Compile Include="UI\Effects\SlideAnimationSerializationTests.cs" />
+    <Compile Include="UI\Effects\EffectBuilderTests.cs" />
     <Compile Include="UI\Effects\EffectPropertyBuildersTests.cs" />
     <Compile Include="UI\Grid\GridActionAttributeTests.cs" />
     <Compile Include="UI\Grid\GridActionBindingContextTests.cs" />
     <Compile Include="UI\Grid\GridAjaxSettingsBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridBoundColumnTests.cs" />
     <Compile Include="UI\Grid\GridBuilderTests.cs" />
-    <Compile Include="UI\Grid\GridColumnBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridBoundColumnBuilderTests.cs" />
     <Compile Include="UI\Grid\GridDataProcessorTests.cs" />
     <Compile Include="UI\Grid\GridRequestSettingsBuilderTests.cs" />
     <Compile Include="UI\Grid\GridSortDescriptorSerializerTests.cs" />
-    <Compile Include="UI\Grid\GridColumnTests.cs" />
-    <Compile Include="UI\Grid\GridPagerBuilderTests.cs" />
+    <Compile Include="UI\Grid\GridPagerSettingsBuilderTests.cs" />
     <Compile Include="UI\Grid\GridPagerTests.cs" />
-    <Compile Include="UI\Grid\GridRendererFactoryTests.cs" />
-    <Compile Include="UI\Grid\GridRendererTests.cs" />
+    <Compile Include="UI\Grid\GridHtmlBuilderTests.cs" />
     <Compile Include="UI\Grid\GridRenderingTests.cs" />
     <Compile Include="UI\Grid\GridTestHelper.cs" />
     <Compile Include="UI\Grid\GridWorkingConditionsTests.cs" />
+    <Compile Include="UI\TextBox\IntegerTextBoxRenderingTests.cs" />
+    <Compile Include="UI\TextBox\NumericTextBoxBuilderTests.cs" />
+    <Compile Include="UI\TextBox\PercentTextBoxRenderingTests.cs" />
+    <Compile Include="UI\TextBox\PercentTextBoxBuilderTests.cs" />
+    <Compile Include="UI\TextBox\CurrencyTextBoxBuilderTests.cs" />
+    <Compile Include="UI\TextBox\CurrencyTextBoxRenderingTests.cs" />
+    <Compile Include="UI\TextBox\NumericTextBoxRenderingTests.cs" />
+    <Compile Include="UI\TextBox\InputClientEventsBuilderTests.cs" />
+    <Compile Include="UI\TextBox\InputHtmlBuilderFactoryTests.cs" />
+    <Compile Include="UI\TextBox\InputHtmlBuilderTests.cs" />
+    <Compile Include="UI\TextBox\InputTestHelper.cs" />
+    <Compile Include="UI\TextBox\InputBuilderTests.cs" />
     <Compile Include="UI\Menu\MenuBuilderTests.cs" />
     <Compile Include="UI\Menu\MenuClientEventsBuilderTests.cs" />
-    <Compile Include="UI\Menu\MenuRendererFactoryTests.cs" />
-    <Compile Include="UI\Menu\MenuRendererTests.cs" />
+    <Compile Include="UI\Menu\MenuHtmlBuilderTests.cs" />
     <Compile Include="UI\Menu\MenuRenderingTests.cs" />
     <Compile Include="UI\Menu\MenuTestHelper.cs" />
     <Compile Include="UI\Menu\MenuItemBuilderTests.cs" />
     <Compile Include="UI\Menu\MenuSerializationTests.cs" />
+    <Compile Include="UI\NavigationBindingBuilderTests.cs" />
+    <Compile Include="UI\NavigationBindingFactoryTests.cs" />
+    <Compile Include="UI\NavigationBindingTests.cs" />
     <Compile Include="UI\NavigationItemBuilderTests.cs" />
     <Compile Include="UI\NavigationItemImageRendererTests.cs" />
     <Compile Include="UI\NavigationItemTests.cs" />
@@ -145,7 +208,7 @@
     <Compile Include="UI\PanelBar\PanelBarClientEventsBuilderTests.cs" />
     <Compile Include="UI\PanelBar\PanelBarItemBuilderTests.cs" />
     <Compile Include="UI\PanelBar\PanelBarItemFactoryTests.cs" />
-    <Compile Include="UI\PanelBar\PanelBarRendererTests.cs" />
+    <Compile Include="UI\PanelBar\PanelBarHtmlBuilderTests.cs" />
     <Compile Include="UI\PanelBar\PanelBarRenderingTests.cs" />
     <Compile Include="UI\PanelBar\PanelBarTestHelper.cs" />
     <Compile Include="UI\TabStrip\TabStripClientEventsBuilderTests.cs" />
@@ -153,9 +216,18 @@
     <Compile Include="UI\TabStrip\TabStripItemFactoryTests.cs" />
     <Compile Include="UI\TabStrip\TabStripItemTests.cs" />
     <Compile Include="UI\TabStrip\TabStripBuilderTests.cs" />
-    <Compile Include="UI\TabStrip\TabStripRendererTests.cs" />
+    <Compile Include="UI\TabStrip\TabStripHtmlBuilderTests.cs" />
     <Compile Include="UI\TabStrip\TabStripRenderingTests.cs" />
     <Compile Include="UI\TabStrip\TabStripTestHelper.cs" />
+    <Compile Include="UI\TreeView\TreeViewDataBindingConfigurationBuilderTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewBuilderTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewBindingSettingsBuilderBuilderTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewHtmlBuilderTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewItemBuilderTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewItemFactoryTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewSerializationTests.cs" />
+    <Compile Include="UI\TreeView\TreeViewTestHelper.cs" />
+    <Compile Include="UI\TreeView\TreeViewRendererTests.cs" />
     <Compile Include="UI\WebAsset\WebAssetDefaultSettingsTests.cs" />
     <Compile Include="UrlGeneratorTests.cs" />
     <Compile Include="WebAsset\WebAssetLocatorTests.cs" />

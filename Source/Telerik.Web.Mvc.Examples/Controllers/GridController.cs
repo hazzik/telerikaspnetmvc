@@ -4,33 +4,13 @@ namespace Telerik.Web.Mvc.Examples
     using System.Data.Linq;
     using System.Linq;
     using System.Web.Mvc;
-    
+
     using Models;
 
     [AutoPopulateSourceCode]
-    [PopulateSiteMap(SiteMapName = "examples", ViewDataKey = "telerik.mvc.examples")]
+    [PopulateProductSiteMap(SiteMapName = "examples", ViewDataKey = "telerik.mvc.examples")]
     public partial class GridController : Controller
     {
-
-        private IList<CustomerDto> GetEditableCustomers()
-        {
-            IList<CustomerDto> customers = (IList<CustomerDto>)Session["Customers"];
-            
-            if (customers == null)
-            {
-                Session["Customers"] = customers = (from c in GetCustomers()
-                select new CustomerDto
-                {
-                    ContactName = c.ContactName,
-                    Address = c.Address,
-                    Country = c.Country,
-                    CustomerID = c.CustomerID
-                }).ToList();
-            }
-
-            return customers;
-		}
-
         private static IEnumerable<Order> GetOrders()
         {
             NorthwindDataContext northwind = new NorthwindDataContext();
@@ -42,13 +22,31 @@ namespace Telerik.Web.Mvc.Examples
 
             return northwind.Orders;
         }
+        
+        private static IEnumerable<OrderDto> GetOrderDto()
+        {
+            NorthwindDataContext northwind = new NorthwindDataContext();
+
+            DataLoadOptions loadOptions = new DataLoadOptions();
+
+            loadOptions.LoadWith<Order>(o => o.Customer);
+            northwind.LoadOptions = loadOptions;
+
+            return northwind.Orders.Select(order => new OrderDto
+                {
+                    ContactName = order.Customer.ContactName,
+                    OrderDate = order.OrderDate,
+                    OrderID = order.OrderID,
+                    ShipAddress = order.ShipAddress
+                });
+        }
 
         private static IEnumerable<Order> GetOrdersForCustomer(string customerId)
         {
             NorthwindDataContext northwind = new NorthwindDataContext();
-            
-            return from order in northwind.Orders 
-                   where order.CustomerID == customerId 
+
+            return from order in northwind.Orders
+                   where order.CustomerID == customerId
                    select order;
         }
 

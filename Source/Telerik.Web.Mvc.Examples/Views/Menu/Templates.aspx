@@ -1,12 +1,8 @@
 <%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
-
-<asp:Content contentPlaceHolderID="ExampleTitle" runat="server">Templates</asp:Content>
-
 <asp:Content contentPlaceHolderID="MainContent" runat="server">
 
 	<% Html.Telerik().Menu()
             .Name("Menu")
-            .HtmlAttributes(new { style = "z-index: 3; position: relative;" })
 			.Items(menu => {
                 menu.Add()
 					.Text("Products > Books")

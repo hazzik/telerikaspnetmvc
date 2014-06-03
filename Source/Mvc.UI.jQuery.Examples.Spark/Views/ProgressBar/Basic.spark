@@ -1,9 +1,0 @@
-<content name="TitleContent">
-    ProgressBar Basic Example
-</content>
-<content name="MainContent">
-    <% Html.jQuery().ProgressBar()
-                    .Name("myProgressBar")
-                    .Value(60)
-                    .Render(); %>
-</content>

@@ -216,4 +216,43 @@
   <data name="CannotFindPropertyToSortBy" xml:space="preserve">
     <value>Cannot find a public property of primitive type to sort by.</value>
   </data>
+  <data name="DateOutOfRange" xml:space="preserve">
+    <value>Date should be less than MinDate and bigger than MaxDate.</value>
+  </data>
+  <data name="MinDateShouldBeLessThanMaxDate" xml:space="preserve">
+    <value>MinDate should be less than MaxDate.</value>
+  </data>
+  <data name="StringNotCorrectDate" xml:space="preserve">
+    <value>Passed string cannot be parsed to DateTime object.</value>
+  </data>
+  <data name="MinValueShouldBeLessThanMaxValue" xml:space="preserve">
+    <value>MinValue should be less than MaxValue</value>
+  </data>
+  <data name="ValueOutOfRange" xml:space="preserve">
+    <value>Value should be less than MinValue and bigger than MaxValue.</value>
+  </data>
+  <data name="PropertyShouldBeInRange" xml:space="preserve">
+    <value>{0} should be bigger than {1} and less then {2}</value>
+  </data>
+  <data name="DataKeysEmpty" xml:space="preserve">
+    <value>The DataKeys collection is empty. Please specify a data key.</value>
+  </data>
+  <data name="EditCommandRequiresUpdate" xml:space="preserve">
+    <value>The Update data binding setting is required by the edit command. Please specify the Update action or url in the DataBinding configuration.</value>
+  </data>
+  <data name="DeleteCommandRequiresDelete" xml:space="preserve">
+    <value>The Delete data binding setting is required by the delete command. Please specify the Delete action or url in the DataBinding configuration.</value>
+  </data>
+  <data name="InsertCommandRequiresInsert" xml:space="preserve">
+    <value>The Insert data binding setting is required by the insert command. Please specify the Insert action or url in the DataBinding configuration.</value>
+  </data>
+  <data name="OnlyPropertyAndFieldExpressionsAreSupported" xml:space="preserve">
+    <value>Only property and field expressions are supported</value>
+  </data>
+  <data name="YouCannotAddMoreThanOnceColumnWhenSortModeIsSetToSingle" xml:space="preserve">
+    <value>You cannot add more than once column when sort mode is set to single column.</value>
+  </data>
+  <data name="MemberExpressionRequired" xml:space="preserve">
+    <value>Bound columns require a field or property access expression.</value>
+  </data>
 </root>
